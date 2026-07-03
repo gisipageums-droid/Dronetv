@@ -177,30 +177,44 @@ const EventTemplate1: React.FC = () => {
   const {  eventName } = useParams();
   const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData } = useTemplate();
 
-  const fetchTemplateData = async (eventName: string) => {
+  const fetchTemplateData = async (nameOrSlug: string) => {
     try {
       setIsLoading(true);
-     const response = await fetch(
-          EVENTS_API ? `${EVENTS_API}/${eventName}` : `${LAMBDA.eventPreview}/${eventName}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      
+      const url = EVENTS_API ? `${EVENTS_API}/${nameOrSlug}` : `${LAMBDA.eventPreview}/${nameOrSlug}`;
+      const response = await fetch(url, { method: "GET", headers: { "Content-Type": "application/json" } });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (response.ok) {
+        const data = await response.json();
+        setFinalTemplate(data.data.data);
+        setAIGenData(data.data.data);
+        setIsLoading(false);
+        return;
       }
 
-      const data = await response.json();
-      setFinalTemplate(data.data.data);
-      setAIGenData(data.data.data);
-      setIsLoading(false);
+      // Slug-based fallback: look up real event name from dashboard
+      const dashUrl = `${LAMBDA.events}/events-dashboard?viewType=main`;
+      const dashRes = await fetch(dashUrl);
+      if (dashRes.ok) {
+        const dash = await dashRes.json();
+        const cards = dash.cards || [];
+        const match = cards.find((c: { urlSlug?: string }) => c.urlSlug === nameOrSlug);
+        if (match?.eventName) {
+          const retryUrl = EVENTS_API
+            ? `${EVENTS_API}/${encodeURIComponent(match.eventName)}`
+            : `${LAMBDA.eventPreview}/${encodeURIComponent(match.eventName)}`;
+          const retryRes = await fetch(retryUrl, { method: "GET", headers: { "Content-Type": "application/json" } });
+          if (retryRes.ok) {
+            const retryData = await retryRes.json();
+            setFinalTemplate(retryData.data.data);
+            setAIGenData(retryData.data.data);
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
+
+      throw new Error(`HTTP error! status: ${response.status}`);
     } catch (error) {
-      console.error("Error fetching template data:", error);
       if (error instanceof Error) setError(error.message);
       else setError("Something went wrong please try again!");
       setIsLoading(false);

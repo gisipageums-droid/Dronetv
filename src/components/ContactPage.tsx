@@ -59,7 +59,7 @@ const ContactPage = () => {
   ];
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-20 min-h-screen bg-gray-50">
       {/* Hero */}
       <div className="bg-black text-white relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
