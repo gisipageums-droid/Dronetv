@@ -10,19 +10,26 @@ import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { CheckCircle, X } from "lucide-react";
 import { COMPANY_API, PROFESSIONAL_API, EVENTS_API, LAMBDA } from '../../lib/apiConfig';
+import { validateToken, getMe, clearSession } from '../../lib/authService';
 
 // User Authentication Types and Context
 interface User {
   email: string;
   fullName: string;
+  id?: string;
+  role?: string;
+  isAdmin?: boolean;
   token?: string;
   timestamp?: string;
   userData?: {
+    id?: string;
     email?: string;
     fullName?: string;
     city?: string;
     state?: string;
     phone?: string;
+    role?: string;
+    isAdmin?: boolean;
     [key: string]: any;
   };
 }
@@ -52,6 +59,7 @@ interface UserAuthContextType {
   adminLogin: (adminData: Admin) => void;
   logout: () => void;
   adminLogout: () => void;
+  refreshUser: () => Promise<void>;
   haveAccount: boolean;
   setHaveAccount: React.Dispatch<React.SetStateAction<boolean>>;
   accountEmail: string | null;
@@ -114,12 +122,44 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     setAdmin(adminToStore);
   };
 
+  const refreshUser = async () => {
+    try {
+      const fresh = await getMe();
+      const updated = {
+        email: fresh.email,
+        fullName: fresh.fullName,
+        id: fresh.id,
+        role: fresh.role,
+        isAdmin: fresh.isAdmin,
+        token: localStorage.getItem('token') || undefined,
+        timestamp: new Date().toISOString(),
+        userData: fresh,
+      };
+      localStorage.setItem('user', JSON.stringify(updated));
+      setUser(updated);
+    } catch {
+      // Token invalid — clear session
+      clearSession();
+      setUser(null);
+      setAdmin(null);
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && user) {
+      validateToken().then(valid => {
+        if (!valid) {
+          clearSession();
+          setUser(null);
+          setAdmin(null);
+        }
+      });
+    }
+  }, []);
+
   const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("adminData");
-    localStorage.removeItem("admin");
-    localStorage.removeItem("adminToken");
+    clearSession();
     setUser(null);
     setAdmin(null);
   };
@@ -157,6 +197,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
         adminLogin,
         logout,
         adminLogout,
+        refreshUser,
         haveAccount,
         setHaveAccount,
         accountEmail,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { AUTH_API } from '../lib/apiConfig';
+import { resetPassword } from '../lib/authService';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState<string>('');
@@ -28,24 +28,14 @@ export default function ResetPassword() {
     setError('');
 
     try {
-      const res = await fetch(AUTH_API ? `${AUTH_API}/reset-password` : "https://omiuy3d12e.execute-api.ap-south-1.amazonaws.com/reset_password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword: password })
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setSuccess(data.message || "Password reset successful!");
-        setError('');
-        setPassword('');
-        setConfirmPassword('');
-      } else {
-        setError(data.message || "Failed to reset password.");
-        setSuccess('');
-      }
-    } catch (err) {
-      setError("Network error. Please try again.");
+      const data = await resetPassword(token, password);
+      setSuccess(data.message || "Password reset successful!");
+      setError('');
+      setPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      setError(err.message || "Failed to reset password.");
+      setSuccess('');
     }
   };
 

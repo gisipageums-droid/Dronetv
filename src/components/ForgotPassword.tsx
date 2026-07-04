@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AUTH_API } from '../lib/apiConfig';
+import { forgotPassword } from '../lib/authService';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -35,19 +35,7 @@ const ForgotPassword: React.FC = () => {
 
     setIsLoading(true)
     try {
-      const response = await fetch(AUTH_API ? `${AUTH_API}/forgot-password` : 'https://ly8r7e8131.execute-api.ap-south-1.amazonaws.com/dev/forgot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email })
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to send reset email')
-      }
-      const responseData = await response.json()
+      await forgotPassword(email)
       setIsSubmitted(true)
     } catch (error: any) {
       setErrors({ submit: error.message || 'Failed to send reset email. Please try again.' })
