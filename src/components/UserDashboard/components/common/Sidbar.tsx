@@ -10,9 +10,8 @@ import {
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
 import axios from "axios";
-import { AUTH_API, LAMBDA } from '../../../../lib/apiConfig';
-
-const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+import { LAMBDA } from '../../../../lib/apiConfig';
+import { PERMISSIONS } from '../../../../lib/roles';
 
 interface SubItem {
   icon: React.ElementType;
@@ -28,134 +27,143 @@ interface NavGroup {
   paths: string[];
 }
 
-const NAV_GROUPS: NavGroup[] = [
-  {
-    id: "listings",
-    icon: Building2,
-    label: "My Listings",
-    paths: ["/user-companies", "/user-professionals", "/user-events"],
-    items: [
-      { icon: Building2, label: "Companies",     href: "/user-companies" },
-      { icon: Users,     label: "Professionals", href: "/user-professionals" },
-      { icon: Calendar,  label: "Events",        href: "/user-events" },
-    ],
-  },
-  {
-    id: "professionals",
-    icon: Users,
-    label: "Professionals",
-    paths: ["/professionals/", "/professionals/portfolio", "/professionals/career-path"],
-    items: [
-      { icon: Briefcase,      label: "Job Board",       href: "/professionals/job-board" },
-      { icon: User,           label: "Pilot Directory", href: "/professionals/pilot-directory" },
-      { icon: Award,          label: "Certifications",  href: "/professionals/certifications" },
-      { icon: ImageIcon,      label: "Portfolio",       href: "/professionals/portfolio" },
-      { icon: GraduationCap,  label: "Training",        href: "/professionals/training" },
-      { icon: TrendingUp,     label: "Career Path",     href: "/professionals/career-path" },
-      { icon: Users2,         label: "Networking",      href: "/professionals/networking" },
-      { icon: Users,          label: "Community",       href: "/professionals/community" },
-    ],
-  },
-  {
-    id: "events",
-    icon: Calendar,
-    label: "Events",
-    paths: ["/events/"],
-    items: [
-      { icon: Calendar,      label: "Event Calendar", href: "/events/calendar" },
-      { icon: Star,          label: "Expos",          href: "/events/expos" },
-      { icon: Users,         label: "Conferences",    href: "/events/conferences" },
-      { icon: GraduationCap, label: "Workshops",      href: "/events/workshops" },
-      { icon: Award,         label: "Competitions",   href: "/events/competitions" },
-      { icon: Video,         label: "Webinars",       href: "/events/webinars" },
-      { icon: Users2,        label: "Meetups",        href: "/events/meetups" },
-    ],
-  },
-  {
-    id: "media",
-    icon: Tv,
-    label: "Media Hub",
-    paths: ["/media/", "/user-media-hub", "/gallery"],
-    items: [
-      { icon: Newspaper,    label: "News Pulse",         href: "/media/news-pulse" },
-      { icon: BookOpen,     label: "Magazine",           href: "/media/magazine" },
-      { icon: Video,        label: "Video Spotlight",    href: "/media/video-spotlight" },
-      { icon: ImageIcon,    label: "Gallery",            href: "/media/gallery" },
-      { icon: Star,         label: "Impact Stories",     href: "/media/impact-stories" },
-      { icon: BarChart2,    label: "Market Intelligence",href: "/media/market-intelligence" },
-      { icon: Cpu,          label: "Tech Trends",        href: "/media/tech-trends" },
-      { icon: FileText,     label: "Press Releases",     href: "/media/press-releases" },
-      { icon: ClipboardList,label: "Industry Reports",   href: "/media/industry-reports" },
-    ],
-  },
-  {
-    id: "partnerships",
-    icon: Handshake,
-    label: "Partnerships",
-    paths: ["/partnerships/", "/partnerships/benefits"],
-    items: [
-      { icon: Factory,      label: "Drone Manufacturers", href: "/partnerships/drone-manufacturers" },
-      { icon: Bot,          label: "AI & Tech Companies", href: "/partnerships/ai-tech" },
-      { icon: Calendar,     label: "Event Organizers",    href: "/partnerships/event-organizers" },
-      { icon: GraduationCap,label: "Education Partners",  href: "/partnerships/education-partners" },
-      { icon: Briefcase,    label: "Industry Players",    href: "/partnerships/industry-players" },
-      { icon: Star,         label: "Partner Benefits",    href: "/partnerships/benefits" },
-      { icon: Handshake,    label: "Become a Partner",   href: "/partnerships/become-a-partner" },
-    ],
-  },
-  {
-    id: "content",
-    icon: Share2,
-    label: "Content",
-    paths: ["/user-posts", "/user-addons"],
-    items: [
-      { icon: Share2,      label: "My Posts", href: "/user-posts" },
-      { icon: ShoppingBag, label: "Addons",   href: "/user-addons" },
-    ],
-  },
-  {
-    id: "analytics",
-    icon: FileText,
-    label: "Analytics",
-    paths: ["/user-leads", "/user-contacted"],
-    items: [
-      { icon: FileText,      label: "Leads",     href: "/user-leads" },
-      { icon: MessageSquare, label: "Contacted", href: "/user-contacted" },
-    ],
-  },
-  {
-    id: "tokens",
-    icon: Coins,
-    label: "Tokens",
-    paths: ["/user-recharge", "/user-buy", "/user-bid-keywords", "/user-page-placements", "/user-active-campaigns"],
-    items: [
-      { icon: Wallet,   label: "Token Wallet",      href: "/user-recharge" },
-      { icon: Zap,      label: "Buy Tokens",        href: "/user-buy" },
-      { icon: Target,   label: "Bid for Keywords",  href: "/user-bid-keywords" },
-      { icon: Layout,   label: "Page Placements",   href: "/user-page-placements" },
-      { icon: BarChart2,label: "Active Campaigns",  href: "/user-active-campaigns" },
-    ],
-  },
-  {
-    id: "account",
-    icon: Globe,
-    label: "Account",
-    paths: ["/user-website", "/user-profile", "/user-plans", "/user-transactions"],
-    items: [
-      { icon: User,    label: "Profile",      href: "/user-profile" },
-      { icon: Globe,   label: "Website",      href: "/user-website" },
-      { icon: Package, label: "My Package",   href: "/user-plans" },
-      { icon: Receipt, label: "Transactions", href: "/user-transactions" },
-    ],
-  },
-];
+function getNavGroups(role: string, isAdmin: boolean): NavGroup[] {
+  const can = {
+    company:    isAdmin || role === 'company',
+    prof:       isAdmin || role === 'professional',
+    event:      isAdmin || role === 'event_organizer',
+    leads:      isAdmin || ['company', 'professional', 'event_organizer'].includes(role),
+  };
+
+  const listingItems = [
+    can.company && { icon: Building2, label: "Companies",     href: "/user-companies" },
+    can.prof    && { icon: Users,     label: "Professionals", href: "/user-professionals" },
+    can.event   && { icon: Calendar,  label: "Events",        href: "/user-events" },
+  ].filter(Boolean) as SubItem[];
+
+  const groups: NavGroup[] = [
+    // My Listings — only roles that have listings
+    ...(listingItems.length > 0 ? [{
+      id: "listings", icon: Building2, label: "My Listings",
+      paths: ["/user-companies", "/user-professionals", "/user-events"],
+      items: listingItems,
+    }] : []),
+
+    {
+      id: "professionals", icon: Users, label: "Professionals",
+      paths: ["/professionals/"],
+      items: [
+        { icon: Briefcase,      label: "Job Board",        href: "/professionals/job-board" },
+        { icon: User,           label: "Pilot Directory",  href: "/professionals/pilot-directory" },
+        { icon: Award,          label: "Certifications",   href: "/professionals/certifications" },
+        { icon: GraduationCap,  label: "Training",         href: "/professionals/training" },
+        { icon: TrendingUp,     label: "Career Path",      href: "/professionals/career-path" },
+        { icon: Users2,         label: "Community",        href: "/professionals/community" },
+      ],
+    },
+    {
+      id: "events", icon: Calendar, label: "Events",
+      paths: ["/events/"],
+      items: [
+        { icon: Calendar,      label: "Event Calendar",  href: "/events/calendar" },
+        { icon: Star,          label: "Expos",           href: "/events/expos" },
+        { icon: Users,         label: "Conferences",     href: "/events/conferences" },
+        { icon: GraduationCap, label: "Workshops",       href: "/events/workshops" },
+        { icon: Award,         label: "Competitions",    href: "/events/competitions" },
+        { icon: Video,         label: "Webinars",        href: "/events/webinars" },
+        { icon: Users2,        label: "Meetups",         href: "/events/meetups" },
+      ],
+    },
+    {
+      id: "media", icon: Tv, label: "Media Hub",
+      paths: ["/media/", "/user-media-hub", "/gallery"],
+      items: [
+        { icon: Newspaper,     label: "News Pulse",          href: "/media/news-pulse" },
+        { icon: BookOpen,      label: "Magazine",            href: "/media/magazine" },
+        { icon: Video,         label: "Video Spotlight",     href: "/media/video-spotlight" },
+        { icon: ImageIcon,     label: "Gallery",             href: "/media/gallery" },
+        { icon: Star,          label: "Impact Stories",      href: "/media/impact-stories" },
+        { icon: BarChart2,     label: "Market Intelligence", href: "/media/market-intelligence" },
+        { icon: Cpu,           label: "Tech Trends",         href: "/media/tech-trends" },
+        { icon: FileText,      label: "Press Releases",      href: "/media/press-releases" },
+        { icon: ClipboardList, label: "Industry Reports",    href: "/media/industry-reports" },
+      ],
+    },
+    {
+      id: "partnerships", icon: Handshake, label: "Partnerships",
+      paths: ["/partnerships/"],
+      items: [
+        { icon: Factory,       label: "Drone Manufacturers", href: "/partnerships/drone-manufacturers" },
+        { icon: Bot,           label: "AI & Tech Companies", href: "/partnerships/ai-tech" },
+        { icon: Calendar,      label: "Event Organizers",    href: "/partnerships/event-organizers" },
+        { icon: GraduationCap, label: "Education Partners",  href: "/partnerships/education-partners" },
+        { icon: Briefcase,     label: "Industry Players",    href: "/partnerships/industry-players" },
+        { icon: Star,          label: "Partner Benefits",    href: "/partnerships/benefits" },
+        { icon: Handshake,     label: "Become a Partner",   href: "/partnerships/become-a-partner" },
+      ],
+    },
+    {
+      id: "content", icon: Share2, label: "Content",
+      paths: ["/user-posts", "/user-addons"],
+      items: [
+        { icon: Share2,      label: "My Posts", href: "/user-posts" },
+        { icon: ShoppingBag, label: "Addons",   href: "/user-addons" },
+      ],
+    },
+    // Analytics — only for listing owners
+    ...(can.leads ? [{
+      id: "analytics", icon: FileText, label: "Analytics",
+      paths: ["/user-leads", "/user-contacted"],
+      items: [
+        { icon: FileText,      label: "Leads",     href: "/user-leads" },
+        { icon: MessageSquare, label: "Contacted", href: "/user-contacted" },
+      ],
+    }] : []),
+
+    {
+      id: "tokens", icon: Coins, label: "Tokens",
+      paths: ["/user-recharge", "/user-buy", "/user-bid-keywords", "/user-page-placements", "/user-active-campaigns"],
+      items: [
+        { icon: Wallet,    label: "Token Wallet",     href: "/user-recharge" },
+        { icon: Zap,       label: "Buy Tokens",       href: "/user-buy" },
+        { icon: Target,    label: "Bid for Keywords", href: "/user-bid-keywords" },
+        { icon: Layout,    label: "Page Placements",  href: "/user-page-placements" },
+        { icon: BarChart2, label: "Active Campaigns", href: "/user-active-campaigns" },
+      ],
+    },
+    {
+      id: "account", icon: Globe, label: "Account",
+      paths: ["/user-website", "/user-profile", "/user-plans", "/user-transactions"],
+      items: [
+        { icon: User,    label: "Profile",      href: "/user-profile" },
+        { icon: Globe,   label: "Website",      href: "/user-website" },
+        { icon: Package, label: "My Package",   href: "/user-plans" },
+        { icon: Receipt, label: "Transactions", href: "/user-transactions" },
+      ],
+    },
+    // AI Suite — admin only
+    ...(isAdmin ? [{
+      id: "ai", icon: Brain, label: "AI Suite",
+      paths: ["/user-ai"],
+      items: [
+        { icon: Brain, label: "AI Dashboard", href: "/user-ai" },
+      ],
+    }] : []),
+  ];
+
+  return groups;
+}
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(() => typeof window !== "undefined" && window.innerWidth >= 1024);
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
-  const { user, logout } = useUserAuth();
+  const { user, logout, isAdminLogin } = useUserAuth();
   const navigate = useNavigate();
+
+  const role = user?.role || 'user';
+  const isAdmin = !!(user?.isAdmin || isAdminLogin);
+  const NAV_GROUPS = getNavGroups(role, isAdmin);
 
   const userId = user?.userData?.email || user?.email || "";
 

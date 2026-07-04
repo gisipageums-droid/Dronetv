@@ -51,6 +51,7 @@ import ResetPassword from "./components/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminProtectedRoute from "./components/adminProtectedRoute";
 import AiProtectedRoute from "./components/AiProtectedRoute";
+import RoleGuard from "./components/RoleGuard";
 import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
 import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
 import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
@@ -455,31 +456,31 @@ const AppContent = () => {
           <Route
             path="/user-professionals"
             element={
-              <ProtectedRoute>
+              <RoleGuard roles={['professional', 'admin']}>
                 <UserDashboardLayout>
                   <Professinal />
                 </UserDashboardLayout>
-              </ProtectedRoute>
+              </RoleGuard>
             }
           />
           <Route
             path="/user-events"
             element={
-              <ProtectedRoute>
+              <RoleGuard roles={['event_organizer', 'admin']}>
                 <UserDashboardLayout>
                   <Event />
                 </UserDashboardLayout>
-              </ProtectedRoute>
+              </RoleGuard>
             }
           />
           <Route
             path="/user-companies"
             element={
-              <ProtectedRoute>
+              <RoleGuard roles={['company', 'admin']}>
                 <UserDashboardLayout>
                   <UserCompany />
                 </UserDashboardLayout>
-              </ProtectedRoute>
+              </RoleGuard>
             }
           />
           <Route
@@ -635,11 +636,11 @@ const AppContent = () => {
           <Route
             path="/user-leads"
             element={
-              <ProtectedRoute>
+              <RoleGuard roles={['company', 'professional', 'event_organizer', 'admin']}>
                 <UserDashboardLayout>
                   <CompanyLeadsPage />
                 </UserDashboardLayout>
-              </ProtectedRoute>
+              </RoleGuard>
             }
           />
           <Route
@@ -665,11 +666,11 @@ const AppContent = () => {
           <Route
             path="/user-ai"
             element={
-              <AiProtectedRoute>
+              <RoleGuard roles={['admin']}>
                 <UserDashboardLayout>
                   <AiDashboard />
                 </UserDashboardLayout>
-              </AiProtectedRoute>
+              </RoleGuard>
             }
           />
         <Route path="/eventsexcel" element={<EventsExcelDataProcessor />} />
