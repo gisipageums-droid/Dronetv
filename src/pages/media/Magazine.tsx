@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { MEDIA_API, LAMBDA } from '../../lib/apiConfig';
 
 const MEDIA_BASE = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
@@ -129,16 +130,13 @@ export default function MagazinePage() {
                         {article.author && article.date && <span> · </span>}
                         {article.date && <span>{article.date}</span>}
                       </div>
-                      {article.externalLink && (
-                        <a
-                          href={article.externalLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs font-bold text-gray-900 hover:text-yellow-600 transition-colors"
-                        >
-                          Read →
-                        </a>
-                      )}
+                      <Link
+                        to={`/media/magazine/${article.contentId}`}
+                        state={{ item: article }}
+                        className="text-xs font-bold text-gray-900 hover:text-yellow-600 transition-colors"
+                      >
+                        Read →
+                      </Link>
                     </div>
                   </div>
                 </div>

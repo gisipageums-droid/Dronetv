@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { MapPin, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MapPin } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 
 const staticStories = [
@@ -78,11 +79,9 @@ export default function ImpactStoriesPage() {
                       {item.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{item.location}</span>}
                       {item.source && <span>{item.source}</span>}
                     </div>
-                    {item.externalLink && (
-                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
-                        Read More <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
+                    <Link to={`/media/impact-stories/${item.contentId}`} state={{ item }} className="text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                      Read More →
+                    </Link>
                   </div>
                 </div>
               </div>

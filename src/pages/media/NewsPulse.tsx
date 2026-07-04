@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 
+
 const filters = ['All News', 'Market', 'Defence', 'Policy', 'Agriculture', 'Technology', 'Training'];
 
 const staticNews = [
@@ -134,13 +135,11 @@ export default function NewsPulsePage() {
                         <div className="p-5">
                           <div className="flex items-center justify-between mb-3">
                             <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category || 'News'}</span>
-                            <span className="text-xs text-gray-400">{item.date ? new Date(item.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : ''}</span>
+                            <span className="text-xs text-gray-400">{item.date ? new Date(item.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}</span>
                           </div>
                           <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3">{item.title}</h3>
                           <p className="text-xs text-gray-500 font-semibold">{item.source}</p>
-                          {item.externalLink && (
-                            <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs text-yellow-600 font-bold hover:text-yellow-700 mt-2 block">Read more →</a>
-                          )}
+                          <Link to={`/media/news/${item.contentId}`} state={{ item }} className="text-xs text-yellow-600 font-bold hover:text-yellow-700 mt-2 block">Read more →</Link>
                         </div>
                       </div>
                     ))}

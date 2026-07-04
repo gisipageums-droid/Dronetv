@@ -59,7 +59,7 @@ function VideoCard({ item }: { item: MediaItem }) {
           <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>
         )}
         <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1">{item.title}</h3>
-        {item.description && <p className="text-xs text-gray-500 mb-3 line-clamp-2">{item.description}</p>}
+        {item.description && <p className="text-xs text-gray-500 mb-3">{item.description}</p>}
         {item.externalLink && (
           <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
             className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors">
