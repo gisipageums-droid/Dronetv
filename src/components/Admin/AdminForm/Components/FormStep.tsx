@@ -81,7 +81,7 @@ export const FormStep: React.FC<FormStepProps> = ({
                       isActive
                         ? 'bg-yellow-400 text-black'
                         : isCompleted
-                        ? 'bg-amber-600 text-white'
+                        ? 'bg-amber-600 text-black'
                         : 'bg-gray-300 text-gray-600'
                     }`}>
                       {isCompleted ? '✓' : stepNumber}

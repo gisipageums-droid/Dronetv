@@ -2156,7 +2156,7 @@ function EventsForm() {
         )}
 
         {/* Step Content Container */}
-        <div className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6">
+        <div key={current} className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6 animate-step-slide-up">
           <StepComponent step={stepData} allSteps={steps} />
         </div>
 

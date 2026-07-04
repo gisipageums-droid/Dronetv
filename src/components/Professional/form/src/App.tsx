@@ -465,7 +465,7 @@ function AppInner() {
         )}
 
         {/* --- Step Content Container --- */}
-        <div className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6">
+        <div key={current} className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6 animate-step-slide-up">
           {current === 0 ? (
             <Step1 step={stepData} setStepValid={setStep1Valid} showErrors={showStep1Error} />
           ) : current === 5 ? (

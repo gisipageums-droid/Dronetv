@@ -3377,40 +3377,51 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               Company Category
             </h2>
             <p className="mb-4 text-sm text-slate-600">
-              Select your company's main business category (you can select multiple)
+              Select all categories that apply to your company
             </p>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {categoryOptions.map(({ value, description }) => (
-                <label
-                  key={value}
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${formData.companyCategory.includes(value)
-                    ? "border-amber-500 bg-yellow-50 shadow-md"
-                    : "border-amber-300 hover:border-amber-400"
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {categoryOptions.map(({ value, description }) => {
+                const isSelected = formData.companyCategory.includes(value);
+                return (
+                  <label
+                    key={value}
+                    className={`relative flex flex-col items-center p-5 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                      isSelected
+                        ? "border-amber-500 bg-amber-50 shadow-md ring-2 ring-amber-300"
+                        : "border-gray-200 bg-white hover:border-amber-300 hover:shadow-sm"
                     }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.companyCategory.includes(value)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        handleCategoryChange([...formData.companyCategory, value]);
-                      } else {
-                        handleCategoryChange(formData.companyCategory.filter((cat) => cat !== value));
-                      }
-                    }}
-                    className="sr-only"
-                  />
-                  <h3 className={`text-lg font-bold mb-2 ${formData.companyCategory.includes(value) ? "text-amber-900" : "text-gray-700"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          handleCategoryChange([...formData.companyCategory, value]);
+                        } else {
+                          handleCategoryChange(formData.companyCategory.filter((c) => c !== value));
+                        }
+                      }}
+                      className="sr-only"
+                    />
+                    <div className={`absolute top-3 right-3 w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                      isSelected ? "border-amber-500 bg-amber-500" : "border-gray-300 bg-white"
                     }`}>
-                    {value}
-                  </h3>
-                  <p className={`text-xs text-center ${formData.companyCategory.includes(value) ? "text-amber-700" : "text-gray-500"
-                    }`}>
-                    {description}
-                  </p>
-                </label>
-              ))}
+                      {isSelected && (
+                        <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                    <h3 className={`text-base font-bold mb-1 ${isSelected ? "text-amber-900" : "text-gray-700"}`}>
+                      {value}
+                    </h3>
+                    <p className={`text-xs text-center leading-relaxed ${isSelected ? "text-amber-700" : "text-gray-500"}`}>
+                      {description}
+                    </p>
+                  </label>
+                );
+              })}
             </div>
 
             {formData.companyCategory.length === 0 && (

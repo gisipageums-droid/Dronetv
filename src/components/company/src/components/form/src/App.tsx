@@ -1006,7 +1006,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     );
   }
 
-  return <div>{renderStep()}</div>;
+  return <div key={currentStep} className="animate-step-slide-up">{renderStep()}</div>;
 }
 
 export default App;
