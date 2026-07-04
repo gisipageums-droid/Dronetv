@@ -75,7 +75,7 @@ export default function TechTrendsPage() {
           </div>
           <div className="flex gap-8 flex-shrink-0">
             <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">7</span>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{!loading && items.length > 0 ? items.length : staticTrends.length}</span>
               <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Key Trends</span>
             </div>
             <div>
@@ -123,9 +123,10 @@ export default function TechTrendsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {items.map((item, i) => (
-              <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0">
+              <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />}
+                <div className="p-5 flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span className="text-black font-extrabold text-xs">{String(i + 1).padStart(2, '0')}</span>
                   </div>
                   <div className="flex-1">

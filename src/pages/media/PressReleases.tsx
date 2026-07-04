@@ -62,8 +62,9 @@ export default function PressReleasesPage() {
         ) : (
           <div className="space-y-4">
             {filtered.map(item => (
-              <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+              <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-48 object-cover" />}
+                <div className="p-5 flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div className="flex-1">
                     {item.category && <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
                     <h3 className="text-sm font-bold text-gray-900 mb-1">{item.title}</h3>

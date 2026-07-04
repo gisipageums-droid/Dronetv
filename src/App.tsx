@@ -219,6 +219,7 @@ const AppContent = () => {
           <Route path="/media/impact-stories" element={<ImpactStoriesPage />} />
           <Route path="/media/impact-stories/:contentId" element={<MediaDetailPage contentType="impact-story" backPath="/media/impact-stories" backLabel="Impact Stories" externalLinkLabel="Read Full Story" />} />
           <Route path="/media/market-intelligence" element={<MarketIntelligencePage />} />
+          <Route path="/media/market-intelligence/:contentId" element={<MediaDetailPage contentType="market-intelligence" backPath="/media/market-intelligence" backLabel="Market Intelligence" externalLinkLabel="View Original Source" />} />
           <Route path="/media/tech-trends" element={<TechTrendsPage />} />
           <Route path="/media/press-releases" element={<PressReleasesPage />} />
           <Route path="/media/industry-reports" element={<IndustryReportsPage />} />

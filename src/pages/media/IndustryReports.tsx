@@ -145,7 +145,7 @@ export default function IndustryReportsPage() {
                       <span className="text-xs font-semibold text-gray-600">{item.source}</span>
                       {item.externalLink && (
                         <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
-                          Download <ExternalLink className="w-3 h-3" />
+                          View More <ExternalLink className="w-3 h-3" />
                         </a>
                       )}
                     </div>
