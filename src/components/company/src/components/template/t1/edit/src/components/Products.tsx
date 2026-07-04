@@ -1080,7 +1080,7 @@ export default function EditableProducts({
             >
               {product.isPopular && (
                 <div className="absolute top-4 left-4 z-10">
-                  <Badge className="bg-yellow-400 text-white">
+                  <Badge className="bg-yellow-400 text-black">
                     <Star className="w-3 h-3 mr-1" fill="currentColor" />
                     Popular
                   </Badge>

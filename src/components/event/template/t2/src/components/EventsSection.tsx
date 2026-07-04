@@ -64,7 +64,7 @@ export function EventsSection() {
                 <div className={`h-2 bg-orange-500`} />
                 <div className="p-6 sm:p-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className={`px-3 py-1 bg-yellow-400 text-white rounded-full text-xs sm:text-sm`}>
+                    <span className={`px-3 py-1 bg-yellow-400 text-black rounded-full text-xs sm:text-sm`}>
                       {event.category}
                     </span>
                   </div>

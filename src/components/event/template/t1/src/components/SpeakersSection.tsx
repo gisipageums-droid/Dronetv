@@ -131,7 +131,7 @@ const SpeakersSection = () => {
                 onClick={() => setActiveDay(index)}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   activeDay === index
-                    ? 'bg-yellow-500 text-white shadow-lg'
+                    ? 'bg-yellow-500 text-black shadow-lg'
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
                 }`}
               >
@@ -160,7 +160,7 @@ const SpeakersSection = () => {
         </div>
 
         {/* Stats */}
-        <div className="mt-16 bg-yellow-500 rounded-2xl p-8 text-white">
+        <div className="mt-16 bg-yellow-500 rounded-2xl p-8 text-black">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold mb-2">{totalSpeakers}</div>

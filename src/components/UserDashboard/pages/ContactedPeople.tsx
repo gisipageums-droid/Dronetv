@@ -421,7 +421,7 @@ const ContactedPeople: React.FC = () => {
               onClick={() => setViewMode("card")}
               className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
                 viewMode === "card"
-                  ? "bg-yellow-400 text-white"
+                  ? "bg-yellow-400 text-black"
                   : "bg-gray-100 text-gray-700"
               }`}
             >
@@ -431,7 +431,7 @@ const ContactedPeople: React.FC = () => {
               onClick={() => setViewMode("table")}
               className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
                 viewMode === "table"
-                  ? "bg-yellow-400 text-white"
+                  ? "bg-yellow-400 text-black"
                   : "bg-gray-100 text-gray-700"
               }`}
             >
@@ -526,7 +526,7 @@ const ContactedPeople: React.FC = () => {
 
                   <button
                     onClick={() => handleChat(contact)}
-                    className="w-full bg-yellow-400 text-white px-4 py-2 rounded-lg hover:bg-yellow-500 transition flex items-center justify-center gap-2"
+                    className="w-full bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-500 transition flex items-center justify-center gap-2"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Chat
@@ -631,7 +631,7 @@ const ContactedPeople: React.FC = () => {
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleChat(contact)}
-                          className="bg-yellow-400 text-white px-3 py-1 rounded text-sm hover:bg-yellow-500"
+                          className="bg-yellow-400 text-black px-3 py-1 rounded text-sm hover:bg-yellow-500"
                         >
                           Chat
                         </button>

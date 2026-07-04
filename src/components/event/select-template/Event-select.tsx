@@ -193,7 +193,7 @@ const EventSelect: React.FC = () => {
                                     whileTap={{ scale: 0.98 }}
                                     type="button"
                                     className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 flex-1 ${isActive
-                                        ? "bg-yellow-500 text-white shadow-md"
+                                        ? "bg-yellow-500 text-black shadow-md"
                                         : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
                                         }`}
                                     onClick={(e) => {

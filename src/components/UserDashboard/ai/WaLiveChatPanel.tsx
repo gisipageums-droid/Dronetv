@@ -332,7 +332,7 @@ export default function WaLiveChatPanel() {
                     <div className="flex items-center justify-between mt-0.5">
                       <p className="text-[11px] text-gray-400 truncate">{preview}</p>
                       {conv.unread_count && conv.unread_count > 0 ? (
-                        <span className="ml-1 shrink-0 min-w-[18px] h-[18px] bg-amber-400 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                        <span className="ml-1 shrink-0 min-w-[18px] h-[18px] bg-amber-400 text-black text-[10px] font-bold rounded-full flex items-center justify-center px-1">
                           {conv.unread_count > 99 ? "99+" : conv.unread_count}
                         </span>
                       ) : null}
@@ -394,7 +394,7 @@ export default function WaLiveChatPanel() {
                           className={
                             incoming
                               ? "max-w-[75%] px-4 py-2.5 bg-white border border-gray-100 rounded-2xl rounded-tl-none text-sm text-gray-800"
-                              : "max-w-[75%] px-4 py-2.5 bg-amber-400 text-white rounded-2xl rounded-tr-none text-sm ml-auto"
+                              : "max-w-[75%] px-4 py-2.5 bg-amber-400 text-black rounded-2xl rounded-tr-none text-sm ml-auto"
                           }
                         >
                           {msg.message}

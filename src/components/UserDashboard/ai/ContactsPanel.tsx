@@ -232,7 +232,7 @@ function ContactModal({ initial, onClose, onSaved }: ContactModalProps) {
           <button
             onClick={submit}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
             {isEdit ? "Save Changes" : "Add Contact"}
@@ -422,7 +422,7 @@ const ContactsPanel: React.FC = () => {
           </button>
           <button
             onClick={() => { setEditContact(null); setShowModal(true); }}
-            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors"
           >
             <Plus size={15} />
             Add Contact

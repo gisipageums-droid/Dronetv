@@ -44,7 +44,7 @@ const Footer: React.FC<FooterProps> = ({ content }) => {
               className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-blue-500 dark:text-orange-500 mb-4"
               onClick={() => scrollToSection("#home")}
             >
-              <div className="rounded-full bg-yellow-500 text-white h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+              <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
                 <span className="uppercase">
                   {footerContent?.personalInfo.name[0] || "P"}
                 </span>

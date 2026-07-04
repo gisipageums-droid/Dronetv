@@ -333,7 +333,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
               Leads Management
             </h2>
           </div>
-          <div className="mt-4 sm:mt-0 bg-amber-500 rounded-xl px-6 py-3 shadow-md">
+          <div className="mt-4 sm:mt-0 bg-amber-700 rounded-xl px-6 py-3 shadow-md">
             <div className="flex items-center">
               <Coins size={20} className="text-white mr-2" />
               <span className="text-white font-bold text-lg">
@@ -374,7 +374,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-amber-200">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-amber-100">
-              <thead className="bg-amber-500">
+              <thead className="bg-amber-700">
                 <tr>
                   {["Company", "Name", "Subject", "Status", "Action"].map(
                     (header) => (
@@ -446,7 +446,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
                         ) : (
                           <button
                             onClick={() => handleViewClick(lead.leadId)}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm flex items-center"
+                            className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-sm flex items-center"
                           >
                             <Eye size={14} className="mr-2" /> View (10 tokens)
                           </button>
@@ -506,7 +506,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
               >
                 Cancel
               </button>
-              <button className="flex-1 py-2 bg-amber-500 text-white rounded-lg">
+              <button className="flex-1 py-2 bg-amber-700 text-white rounded-lg">
                 Buy Tokens
               </button>
             </div>
@@ -519,7 +519,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl shadow-xl w-full h-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="bg-amber-500 px-6 py-4 rounded-t-2xl">
+            <div className="bg-amber-700 px-6 py-4 rounded-t-2xl">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold text-white">Lead Details</h3>
                 <button

@@ -549,7 +549,7 @@
 //                       index === current
 //                         ? "bg-yellow-400 text-black"
 //                         : index < current
-//                         ? "bg-yellow-400 text-white"
+//                         ? "bg-yellow-400 text-black"
 //                         : "bg-gray-300 text-black"
 //                     }`}
 //                   >
@@ -1051,7 +1051,7 @@
 //                       index === current
 //                         ? "bg-yellow-400 text-black"
 //                         : index < current
-//                         ? "bg-yellow-400 text-white"
+//                         ? "bg-yellow-400 text-black"
 //                         : "bg-gray-300 text-black"
 //                     }`}
 //                   >
@@ -1559,7 +1559,7 @@
 //                       index === current
 //                         ? "bg-yellow-400 text-black"
 //                         : index < current
-//                         ? "bg-yellow-400 text-white"
+//                         ? "bg-yellow-400 text-black"
 //                         : "bg-gray-300 text-black"
 //                     }`}
 //                   >
@@ -2106,7 +2106,7 @@ function EventsForm() {
                     className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${index === current
                       ? "bg-yellow-400 text-black"
                       : index < current
-                        ? "bg-yellow-400 text-white"
+                        ? "bg-yellow-400 text-black"
                         : "bg-gray-300 text-black"
                       }`}
                   >

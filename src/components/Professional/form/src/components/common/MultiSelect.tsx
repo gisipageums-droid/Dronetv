@@ -157,13 +157,13 @@
 //             }}
 //             // className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all min-w-[140px] ${
 //             //   selected.includes(name)
-//             //     ? "bg-amber-500 text-white border-amber-600 shadow-lg scale-105"
+//             //     ? "bg-amber-700 text-white border-amber-600 shadow-lg scale-105"
 //             //     : "bg-white text-gray-700 border-amber-300 hover:bg-amber-50 hover:border-amber-400"
 //             // }`}
 //             className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all 
 //               w-full h-24 justify-between ${
 //               selected.includes(name)
-//                 ? "bg-amber-500 text-white border-amber-600 shadow-lg scale-105"
+//                 ? "bg-amber-700 text-white border-amber-600 shadow-lg scale-105"
 //                 : "bg-white text-gray-700 border-amber-300 hover:bg-amber-50 hover:border-amber-400"
 //             }`}
 //           >
@@ -230,7 +230,7 @@ export const MultiSelect = ({
           >
             {variant === "subcategories" && (
               selected.includes(name) ? (
-                <span className="w-4 h-4 flex items-center justify-center rounded-sm border border-amber-500 bg-amber-500 text-white text-[10px]">✓</span>
+                <span className="w-4 h-4 flex items-center justify-center rounded-sm border border-amber-500 bg-amber-700 text-white text-[10px]">✓</span>
               ) : (
                 <span className="w-4 h-4 border border-amber-300 rounded-sm bg-white"></span>
               )

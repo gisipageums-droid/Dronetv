@@ -32,7 +32,7 @@ function stageColor(stage: string): { header: string; badge: string; border: str
     case "lead-qualification":
       return { header: "bg-blue-500", badge: "bg-blue-100 text-blue-700", border: "border-blue-200" };
     case "proposal":
-      return { header: "bg-amber-500", badge: "bg-amber-100 text-amber-700", border: "border-amber-200" };
+      return { header: "bg-amber-700", badge: "bg-amber-100 text-amber-700", border: "border-amber-200" };
     case "negotiation":
       return { header: "bg-purple-500", badge: "bg-purple-100 text-purple-700", border: "border-purple-200" };
     case "closed-won":
@@ -40,7 +40,7 @@ function stageColor(stage: string): { header: string; badge: string; border: str
     case "closed-lost":
       return { header: "bg-red-500", badge: "bg-red-100 text-red-700", border: "border-red-200" };
     default:
-      return { header: "bg-gray-400", badge: "bg-gray-100 text-gray-600", border: "border-gray-200" };
+      return { header: "bg-gray-600", badge: "bg-gray-100 text-gray-600", border: "border-gray-200" };
   }
 }
 
@@ -164,7 +164,7 @@ function MoveModal({ onClose, onMoved }: MoveModalProps) {
           <button
             onClick={submit}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
             Move Lead
@@ -270,7 +270,7 @@ function EditModal({ lead, onClose, onSaved }: EditModalProps) {
           <button
             onClick={submit}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : null}
             Save Changes
@@ -447,7 +447,7 @@ const FunnelPanel: React.FC = () => {
           </button>
           <button
             onClick={() => setShowMoveModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors"
           >
             <Plus size={15} />
             Move Lead

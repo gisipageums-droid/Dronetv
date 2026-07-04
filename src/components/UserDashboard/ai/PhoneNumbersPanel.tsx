@@ -239,7 +239,7 @@ function SearchAvailableTab() {
         <button
           onClick={doSearch}
           disabled={loading}
-          className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors disabled:opacity-60"
+          className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg px-4 py-2 transition-colors disabled:opacity-60"
         >
           {loading ? <Loader2 size={15} className="animate-spin" /> : <Search size={15} />}
           Search

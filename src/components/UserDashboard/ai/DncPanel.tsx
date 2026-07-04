@@ -97,7 +97,7 @@ function AddNumbersModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
                   onClick={() => { setMode(m); setError(""); setResult(null); }}
                   className={`px-4 py-1.5 text-sm font-semibold rounded-lg border transition-all ${
                     mode === m
-                      ? "bg-amber-400 border-amber-400 text-white"
+                      ? "bg-amber-400 border-amber-400 text-black"
                       : "bg-white border-gray-200 text-gray-600 hover:border-amber-300"
                   }`}
                 >

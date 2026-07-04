@@ -452,7 +452,7 @@ function EventsForm() {
                       index === current
                         ? "bg-yellow-400 text-black"
                         : index < current
-                        ? "bg-yellow-400 text-white"
+                        ? "bg-yellow-400 text-black"
                         : "bg-gray-300 text-black"
                     }`}
                   >

@@ -408,7 +408,7 @@ function AppInner() {
                 <div className="flex flex-col items-center">
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 flex-shrink-0 ${
                     index < current
-                      ? "bg-amber-400 border-amber-400 text-white"
+                      ? "bg-amber-400 border-amber-400 text-black"
                       : index === current
                       ? "bg-black border-black text-yellow-300"
                       : "bg-white border-gray-300 text-gray-400"
