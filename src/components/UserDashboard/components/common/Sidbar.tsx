@@ -193,7 +193,7 @@ const Sidebar: React.FC = () => {
         style={{ background: "#111827" }}
       >
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 border-b border-white/10 flex-shrink-0" style={{ paddingTop: "88px", paddingBottom: "16px" }}>
+        <div className="flex items-center gap-3 px-4 border-b border-white/10 flex-shrink-0" style={{ paddingTop: "16px", paddingBottom: "16px" }}>
           <div className="w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center flex-shrink-0">
             <Tv size={16} className="text-black" />
           </div>
