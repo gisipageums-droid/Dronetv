@@ -493,7 +493,6 @@ export default function Blog({
             updatedContent.posts = updatedContent.posts.map((post) =>
               post.id === postId ? { ...post, image: uploadData.imageUrl } : post
             );
-            console.log("Image auto-uploaded to S3:", uploadData.imageUrl);
             
             // Remove from pending images since it's uploaded
             setPendingImages(prev => {
@@ -693,7 +692,6 @@ export default function Blog({
           updatedContent.posts = updatedContent.posts.map((post) =>
             post.id === postId ? { ...post, image: uploadData.imageUrl } : post
           );
-          console.log("Image uploaded to S3:", uploadData.imageUrl);
         } else {
           const errorData = await uploadResponse.json();
           console.error("Image upload failed:", errorData);

@@ -274,7 +274,6 @@ const ProfessionalForm: React.FC = () => {
         throw new Error("Failed to create portfolio");
 
       portfolioId = initData.id;
-      console.log("✅ Created portfolio with ID:", portfolioId);
 
       // ✅ Step 2: Parallel image uploads
       const uploadPromises: Promise<void>[] = [];
@@ -312,7 +311,6 @@ const ProfessionalForm: React.FC = () => {
 
         const data = await res.json();
         if (!res.ok) console.error(`❌ Failed to upload ${fieldName}`, data);
-        else console.log(`✅ Uploaded ${fieldName}`, data);
       };
 
       // Queue uploads
@@ -344,7 +342,6 @@ const ProfessionalForm: React.FC = () => {
 
       await Promise.all(uploadPromises);
 
-      console.log("🎯 All images uploaded for portfolio ID:", portfolioId);
       navigate("/professionals");
     } catch (err) {
       console.error("❌ handleSubmit error:", err);

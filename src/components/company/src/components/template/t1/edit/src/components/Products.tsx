@@ -189,7 +189,6 @@ export default function EditableProducts({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log("Product image uploaded to S3:", uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();

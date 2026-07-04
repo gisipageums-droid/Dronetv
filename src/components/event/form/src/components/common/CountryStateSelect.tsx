@@ -106,7 +106,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
 
       try {
         setLoadingStates(true);
-        console.log('Fetching states for country:', countryValue);
         
         // Test with a few known variations to handle case sensitivity
         const countryVariations = [
@@ -121,7 +120,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
         // Try different country name formats
         for (const countryName of countryVariations) {
           try {
-            console.log('Trying country name:', countryName);
             const response = await fetch('https://countriesnow.space/api/v0.1/countries/states', {
               method: 'POST',
               headers: {
@@ -133,7 +131,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
             });
             
             const data: StatesApiResponse = await response.json();
-            console.log('States API response for', countryName, ':', data);
             
             if (!data.error && data.data && data.data.states && data.data.states.length > 0) {
               statesData = data;
@@ -151,7 +148,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
           // Sort states alphabetically
           const sortedStates = statesData.data.states.sort((a, b) => a.name.localeCompare(b.name));
           setStates(sortedStates);
-          console.log('States loaded:', sortedStates.length);
         } else {
           console.error('Error fetching states after trying all variations:', lastError);
           setStates([]);
@@ -186,7 +182,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
   );
 
   const handleCountrySelect = (country: Country) => {
-    console.log('Country selected:', country.country);
     onCountryChange(country.country);
     setCountryDropdownOpen(false);
     setCountrySearchTerm('');

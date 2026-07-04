@@ -1539,7 +1539,6 @@ import { Eye, X, RefreshCw, FileText, Image as ImageIcon } from "lucide-react";
 
 export const Summary = () => {
   const { data } = useForm();
-  console.log("Event summary payload data", data);
 
   // State for full view modal
   const [fullViewUrl, setFullViewUrl] = useState<string | null>(null);

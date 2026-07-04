@@ -161,7 +161,6 @@ export default function Hero({
     formData.append("imageField", `${imageField}_${Date.now()}`);
     formData.append("templateSelection", templateSelection);
 
-    console.log(`Uploading ${imageField} to S3:`, file);
 
     try {
       const uploadResponse = await fetch(
@@ -174,7 +173,6 @@ export default function Hero({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
         toast.success(`${imageField} uploaded to S3 successfully!`);
         return uploadData.imageUrl;
       } else {
@@ -361,7 +359,6 @@ export default function Hero({
           setPendingSmallImageFile(null);
         }
 
-        console.log(`${imageField} uploaded to S3:`, awsImageUrl);
       } else {
         // If upload fails, keep the file as pending
         if (croppingFor === "heroImage") {

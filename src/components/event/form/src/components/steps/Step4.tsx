@@ -2838,12 +2838,6 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
     setUploading(prev => ({ ...prev, [partnerIndex]: true }));
 
     try {
-      console.log('Starting upload for file:', file.name, 'size:', file.size, 'type:', file.type);
-      console.log('Form data fields:', {
-        userId: 'event-partner',
-        fieldName: file.name,
-        file: file
-      });
 
       const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
         method: 'POST',
@@ -2851,7 +2845,6 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
         // Don't set Content-Type header - let browser set it with boundary
       });
 
-      console.log('Upload response status:', response.status);
       
       if (!response.ok) {
         let errorText = 'Unknown error';
@@ -2865,7 +2858,6 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
       }
 
       const responseData: UploadResponse = await response.json();
-      console.log('Upload API response:', responseData);
       
       if (!responseData.success) {
         throw new Error(responseData.error || 'Upload failed on server');

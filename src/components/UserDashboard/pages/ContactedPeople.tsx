@@ -70,7 +70,6 @@ interface UserRole {
 // Mock toast
 const toast = {
   error: (msg: string) => console.error(msg),
-  success: (msg: string) => console.log(msg),
 };
 
 const ContactedPeople: React.FC = () => {

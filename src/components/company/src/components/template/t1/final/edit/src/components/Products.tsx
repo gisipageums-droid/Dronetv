@@ -287,7 +287,6 @@ export default function EditableProducts({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log("Image uploaded to S3:", uploadData.imageUrl);
         toast.success("Product image uploaded to AWS!");
         return uploadData.imageUrl;
       } else {

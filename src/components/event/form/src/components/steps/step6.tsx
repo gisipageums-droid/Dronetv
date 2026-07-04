@@ -483,7 +483,6 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
   // Initialize from context data only once
   useEffect(() => {
     if (!hasInitialized.current && data.resume && Array.isArray(data.resume) && data.resume.length > 0) {
-      console.log('Loading pre-filled resume data:', data.resume);
       const initializedDocs = data.resume.map(doc => ({
         ...doc,
         uploadDate: doc.uploadDate instanceof Date ? doc.uploadDate : new Date(doc.uploadDate || Date.now())
@@ -523,7 +522,6 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
       showFullText,
     };
 
-    console.log("Submitting extracted data:", payload);
 
     if (onSubmit) {
       onSubmit(payload);
@@ -586,7 +584,6 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       try {
-        console.log(`Processing file: ${file.name} (${file.type})`);
         const extractedText = await extractTextFromFile(file);
         const document: ExtractedDocument = {
           id: Date.now().toString() + i,
@@ -597,7 +594,6 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
           uploadDate: new Date(),
         };
         newDocuments.push(document);
-        console.log(`Successfully processed: ${file.name}`);
       } catch (error) {
         console.error(`Error processing file ${file.name}:`, error);
         const document: ExtractedDocument = {

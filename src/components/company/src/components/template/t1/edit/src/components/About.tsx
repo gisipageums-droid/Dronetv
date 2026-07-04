@@ -403,7 +403,6 @@ const handleAutoSave = async () => {
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
           finalImageUrl = uploadData.imageUrl;
-          console.log("Office image auto-uploaded to S3:", uploadData.imageUrl);
         } else {
           const errorData = await uploadResponse.json();
           console.error("Image auto-upload failed:", errorData.message || "Unknown error");
@@ -582,7 +581,6 @@ const handleAutoSave = async () => {
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
             finalImageUrl = uploadData.imageUrl;
-            console.log("Office image uploaded to S3:", uploadData.imageUrl);
             toast.success("Image uploaded successfully!");
           } else {
             const errorData = await uploadResponse.json();

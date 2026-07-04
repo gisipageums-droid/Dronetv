@@ -483,7 +483,6 @@ export default function Blog({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log("Image uploaded to S3:", uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();

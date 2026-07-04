@@ -263,7 +263,6 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log(`Company logo ${companyId} uploaded to S3:`, uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();

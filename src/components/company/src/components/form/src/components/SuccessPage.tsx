@@ -32,7 +32,6 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({ formData }) => {
         // Use navigate function instead of Navigate component
         setTimeout(() => {
           setAIGenData(data);
-          console.log("AIgen:", AIGenData);
           navigate("/edit/template/t2");
         }, 3000);
 

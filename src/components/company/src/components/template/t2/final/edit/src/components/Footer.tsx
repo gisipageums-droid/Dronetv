@@ -291,7 +291,6 @@ export default function Footer({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log("Logo uploaded to S3:", uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
@@ -449,7 +448,6 @@ export default function Footer({
         onStateChange(updatedData);
       }
 
-      console.log("Auto-saved successfully");
     } catch (error) {
       console.error("Error during auto-save:", error);
     } finally {

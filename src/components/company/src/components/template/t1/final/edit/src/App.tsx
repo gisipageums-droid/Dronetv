@@ -249,7 +249,6 @@ export default function App() {
         const data = await response.json();
 
         if (isMounted) {
-          console.log("Fetched data:", data);
           setFinaleDataReview(data.data);
           setIsLoading(false);
         }

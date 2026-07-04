@@ -1935,7 +1935,6 @@ export default function Clients({
         [croppingFor.index]: file,
       }));
 
-      console.log("Client image cropped, file ready for auto-upload:", file);
 
       // Auto-upload immediately after cropping
       await handleImageUpload();
@@ -1995,7 +1994,6 @@ export default function Clients({
         formData.append("imageField", `clients[${index}].image`);
         formData.append("templateSelection", templateSelection);
 
-        console.log("Auto-uploading client image to S3:", file);
 
         const uploadPromise = fetch(
           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
@@ -2008,7 +2006,6 @@ export default function Clients({
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL
             updateClient(index, "image", uploadData.imageUrl);
-            console.log("Image auto-uploaded to S3:", uploadData.imageUrl);
             return { success: true, index };
           } else {
             const errorData = await uploadResponse.json();

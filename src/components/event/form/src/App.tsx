@@ -1690,7 +1690,7 @@ import { EVENTS_API, LAMBDA as LAMBDA_CFG } from '../../../../lib/apiConfig';
 // ✅ Token Validation API URL
 const TOKEN_VALIDATION_API_URL = EVENTS_API
   ? `${EVENTS_API}/token-validation/`
-  : "https://zhjkyvzz15.execute-api.ap-south-1.amazonaws.com/dev/";
+  : `${LAMBDA_CFG.eventsFormBase}/token-validation/`;
 
 // ================== Token validation function ====================
 const validateUserTokens = async (
@@ -1896,7 +1896,6 @@ function EventsForm() {
     if (!isLogin && !data.contactInfo?.email) {
       // For non-logged in users without email, we can proceed without token validation
       // or you might want to show a different message
-      console.log("User not logged in and no email provided, skipping token validation");
       return true;
     }
 
@@ -2005,7 +2004,6 @@ function EventsForm() {
         eventType: "conference",
       };
 
-      console.log("Event submission payload:", payload);
 
       let response;
 
@@ -2015,12 +2013,10 @@ function EventsForm() {
           `https://your-event-api-endpoint.com/${userId}/${eventId}`,
           payload
         );
-        console.log("Update response:", response.data);
       }
       // Otherwise → create new event (POST)
       else {
         response = await submitForm(payload);
-        console.log("Create response:", response);
       }
 
       setSuccess(true);

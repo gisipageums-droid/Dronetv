@@ -290,17 +290,9 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
   formData.append('fieldName', file.name); // FILE NAME - not 'originalFileName'
 
   try {
-    console.log('Starting upload for file:', file.name, 'size:', file.size, 'type:', file.type);
-    console.log('Form data fields:', {
-      userId: userId,
-      fieldName: file.name,
-      file: file
-    });
 
     // DEBUG: Log what's actually in formData
-    console.log('Actual FormData entries:');
     for (let [key, value] of formData.entries()) {
-      console.log(`  ${key}:`, value);
     }
     
     const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
@@ -309,7 +301,6 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
       // Don't set Content-Type header - let browser set it with boundary
     });
 
-    console.log('Upload response status:', response.status);
     
     if (!response.ok) {
       let errorText = 'Unknown error';
@@ -323,7 +314,6 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
     }
 
     const responseData: UploadResponse = await response.json();
-    console.log('Upload API response:', responseData);
     
     if (!responseData.success) {
       throw new Error(responseData.error || 'Upload failed on server');
@@ -470,12 +460,10 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
     updateField("mediaGallery", newMedia);
 
     try {
-      console.log(`Uploading file ${index}:`, file.name);
       
       // Upload to bucket API
       const uploadedUrl = await uploadToBucket(file, index);
       
-      console.log(`Upload successful for file ${index}:`, uploadedUrl);
       
       // IMPORTANT: Get the latest mediaGallery state to avoid stale closure
       const currentMediaGallery = data.mediaGallery || mediaGallery;
@@ -564,12 +552,10 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
       updateField("heroBanner", newHeroBanner);
 
       try {
-        console.log('Uploading hero banner:', file.name);
         
         // Upload to bucket API
         const uploadedUrl = await uploadToBucket(file, -1); // Using -1 as index for hero banner
         
-        console.log('Hero banner upload successful:', uploadedUrl);
         
         // Update with the actual uploaded URL
         const updatedHeroBanner = { 
@@ -1021,11 +1007,6 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
         const lowerUrl = mediaItem.mediaUrl.toLowerCase();
         const lowerFileName = mediaItem.fileName?.toLowerCase() || '';
         
-        console.log('File type detection:', {
-          url: lowerUrl,
-          fileName: lowerFileName,
-          mediaType: mediaItem.mediaType
-        });
         
         // Check for image file extensions in URL or filename
         const isImage = 
@@ -1044,7 +1025,6 @@ export const Step5 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
           mediaItem.mediaType === 'image';
         
         if (isImage) {
-          console.log('Detected as image');
           return 'image';
         }
         // Check for PDF

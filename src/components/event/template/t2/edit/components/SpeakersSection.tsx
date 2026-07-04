@@ -201,7 +201,6 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
   // Initialize data from props
   useEffect(() => {
     if (speakersData && !dataLoaded) {
-      console.log('Initializing speakers data:', speakersData);
 
       // Transform API data to component format with proper fallbacks
       const transformedSpeakers = speakersData.speakers?.map(speaker => ({
@@ -444,7 +443,6 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
           }
 
           const result = await saveResponse.json();
-          console.log('Save successful:', result);
         } catch (apiError) {
           console.error('API save error:', apiError);
           // Continue with local state update even if API fails

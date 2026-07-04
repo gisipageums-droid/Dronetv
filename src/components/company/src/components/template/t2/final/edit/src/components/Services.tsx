@@ -291,7 +291,6 @@ export default function Services({
 
       // Set the actual file for auto-upload
       setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
-      console.log("Service image cropped, file ready for auto-upload:", file);
 
       // Auto-upload immediately after cropping
       await handleImageUpload();
@@ -353,7 +352,6 @@ export default function Services({
         formData.append("imageField", `services[${index}].image`);
         formData.append("templateSelection", templateSelection);
 
-        console.log("Auto-uploading service image to S3:", file);
 
         const uploadPromise = fetch(
           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
@@ -366,7 +364,6 @@ export default function Services({
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL
             updateServiceField(index, "image", uploadData.imageUrl);
-            console.log("Image auto-uploaded to S3:", uploadData.imageUrl);
             return { success: true, index };
           } else {
             const errorData = await uploadResponse.json();

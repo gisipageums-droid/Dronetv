@@ -2623,14 +2623,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     let interval: any;
 
     if (startPolling) {
-      console.log("Starting DigiLocker polling...");
 
       const poll = async () => {
         const token = digiTokenRef.current;
         const state = digiStateRef.current;
 
         if (!token || !state) {
-          console.log("Missing token or state for polling");
           return;
         }
 
@@ -2647,7 +2645,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             const data = response.data.data;
             const currentFormData = formDataRef.current;
 
-            console.log("DigiLocker Data Found:", data);
 
             // Parse Date of Birth (DD-MM-YYYY to YYYY-MM-DD or as is)
             let formattedDob = "";
@@ -2864,14 +2861,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         // Restore address - CRITICAL: Must restore for verified GST
         if (parsedData.gstAddress) {
           setGstAddress(parsedData.gstAddress);
-          console.log('Restored GST address:', parsedData.gstAddress);
         }
 
         // Restore complete verified GST data - THIS IS CRITICAL
         if (parsedData.verifiedGSTData) {
           // Set the verified data state immediately
           setVerifiedGSTData(parsedData.verifiedGSTData);
-          console.log('Restored verified GST data:', parsedData.verifiedGSTData);
 
           // Also add these to formData so they persist across the app
           if (parsedData.verifiedGSTData.companyName) {
@@ -2902,7 +2897,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           updateFormData(updates);
         }
 
-        console.log('Restored GST section data from localStorage:', parsedData);
       } catch (error) {
         console.error('Failed to load GST section data from localStorage:', error);
       }
@@ -3115,7 +3109,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   };
 
   useEffect(() => {
-    console.log("Form data updated:", formData);
   }, [formData]);
 
   const EmailVerificationModal = () => {

@@ -277,7 +277,6 @@ export default function EditableAbout({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log("Office image uploaded to S3:", uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
@@ -450,7 +449,6 @@ export default function EditableAbout({
         onStateChange(updatedState);
       }
 
-      console.log("Auto-saved successfully");
     } catch (error) {
       console.error("Error during auto-save:", error);
     } finally {

@@ -1219,7 +1219,6 @@ export default function EditableUsedBy({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log(`Company logo uploaded to S3:`, uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();

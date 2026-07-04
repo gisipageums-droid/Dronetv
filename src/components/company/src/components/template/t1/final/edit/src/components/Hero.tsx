@@ -142,7 +142,6 @@ export default function EditableHero({
                 updatedState.customerImages = updatedCustomerImages;
               }
 
-              console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
               return uploadData.imageUrl;
             } else {
               const errorData = await response.json();
@@ -170,7 +169,6 @@ export default function EditableHero({
         setAutoSaveStatus("idle");
       }, 2000);
 
-      console.log("Hero section auto-saved successfully");
     } catch (error) {
       console.error("Error auto-saving hero section:", error);
       setAutoSaveStatus("error");

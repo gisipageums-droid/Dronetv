@@ -1283,7 +1283,7 @@ const EventAdminDashboard: React.FC = () => {
 
   const handleDeleteAction = async (eventId: string) => {
     const response = await fetch(
-      "https://pjqm3sgpzf.execute-api.ap-south-1.amazonaws.com/dev/delete-event",
+      `${LAMBDA.eventsDelete}/delete-event`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

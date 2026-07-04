@@ -1026,7 +1026,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }));
 
       toast.success(`${fieldName} uploaded successfully!`);
-      console.log(`✅ File uploaded: ${fieldName}`, uploadResult);
     } catch (error: any) {
       setFileProcessingStatus((prev) => ({
         ...prev,
@@ -1130,15 +1129,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         },
       };
 
-      console.log("📤 Submitting form with payload:", {
-        ...payload,
-        uploadedFiles: Object.keys(uploadedFiles),
-        formDataFileFields: Object.keys(formDataWithFileRefs).filter(
-          (key) =>
-            typeof formDataWithFileRefs[key] === "string" &&
-            formDataWithFileRefs[key].startsWith("http")
-        ),
-      });
 
       setUploadProgress(75);
 
@@ -1165,7 +1155,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         response = await retryRequest(FORM_SUBMIT_API_URL, payload, 3, 60000);
       }
 
-      console.log("✅ Form submitted successfully:", response.data);
 
       // setDraftDetails(response.data);
       setDraftDetails({
@@ -1188,7 +1177,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         localStorage.removeItem("gstSectionData");
         localStorage.removeItem("digi_client_token");
         localStorage.removeItem("digi_state");
-        console.log("✅ All form data cleared from localStorage after successful submission");
       } catch (e) {
         console.error("Failed to clear local data after submit", e);
       }
