@@ -381,7 +381,7 @@ const TransactionHistory: React.FC = () => {
                         </div>
                         <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
                             <div className="text-xl md:text-2xl font-bold text-emerald-700">
-                                {formatTokens(transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').reduce((sum, tx) => sum + tx.amount, 0))}
+                                {formatTokens(transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').reduce((sum, tx) => sum + (tx.tokenCount || Math.floor(tx.amount / 10)), 0))}
                             </div>
                             <div className="text-amber-600 text-xs md:text-sm">Tokens</div>
                         </div>
@@ -500,7 +500,7 @@ const TransactionHistory: React.FC = () => {
                                                 <span className={`flex-shrink-0 text-sm md:text-base font-bold whitespace-nowrap ${
                                                     transaction.type === 'credit' ? 'text-emerald-700' : 'text-amber-800'
                                                 }`}>
-                                                    {transaction.type === 'credit' ? '+' : '-'}{formatTokens(Math.abs(transaction.amount))} tokens
+                                                    {transaction.type === 'credit' ? '+' : '-'}{formatTokens(Math.abs(transaction.tokenCount || Math.floor(transaction.amount / 10)))} tokens
                                                 </span>
                                             </div>
 
