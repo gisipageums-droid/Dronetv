@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
-import { MapPin, ExternalLink, Search, Briefcase } from 'lucide-react';
+import { MapPin, Search, X } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
+
+const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
+interface ApplyForm { name: string; email: string; phone: string; message: string; }
 
 const staticJobs = [
   { icon: '🌾', title: 'Agriculture Drone Pilot', company: 'Agri-Drone Service Company — Telangana', category: 'Agriculture', type: 'Full-Time', salary: 'Rs. 30,000–40,000/mo', location: 'Hyderabad / Field' },
@@ -26,6 +30,40 @@ export default function JobBoardPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [applyModal, setApplyModal] = useState<{ open: boolean; item: MediaItem | null }>({ open: false, item: null });
+  const [applyForm, setApplyForm] = useState<ApplyForm>({ name: '', email: '', phone: '', message: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const openApply = (item: MediaItem) => {
+    setApplyModal({ open: true, item });
+    setApplyForm({ name: '', email: '', phone: '', message: '' });
+    setSubmitted(false);
+  };
+
+  const closeApply = () => { setApplyModal({ open: false, item: null }); setSubmitted(false); };
+
+  const handleApply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      await fetch(CONTACT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: applyForm.name,
+          phone: applyForm.phone,
+          email: applyForm.email,
+          message: `Job Application — ${applyModal.item?.title}: ${applyForm.message}`,
+        }),
+      });
+      setSubmitted(true);
+    } catch {
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -111,19 +149,13 @@ export default function JobBoardPage() {
                         {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-1 inline-block">{item.category}</span>}
                         <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
                         {item.company && <p className="text-xs text-gray-500">{item.company}{item.location ? ` · ${item.location}` : ''}</p>}
-                        {item.description && <p className="text-xs text-gray-400 mt-1 line-clamp-2">{item.description}</p>}
+                        {item.description && <p className="text-xs text-gray-400 mt-1">{item.description}</p>}
                       </div>
                     </div>
                     <div className="flex items-center gap-3 flex-shrink-0">
                       {item.salary && <span className="text-sm font-bold text-gray-700">{item.salary}</span>}
                       {item.platform && <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{item.platform}</span>}
-                      {item.externalLink ? (
-                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
-                          Apply <ExternalLink className="w-3 h-3" />
-                        </a>
-                      ) : (
-                        <a href="mailto:bd@dronetv.in" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Apply →</a>
-                      )}
+                      <button onClick={() => openApply(item)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Apply →</button>
                     </div>
                   </div>
                 </div>
@@ -195,6 +227,63 @@ export default function JobBoardPage() {
           </div>
         </div>
       </div>
+
+      {applyModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-base font-bold text-gray-900">Apply for this Role</h2>
+              <button onClick={closeApply} className="p-1.5 rounded hover:bg-gray-100"><X className="w-5 h-5 text-gray-500" /></button>
+            </div>
+            <div className="px-6 py-5">
+              {!submitted ? (
+                <>
+                  <p className="text-sm font-semibold text-gray-800 mb-1">{applyModal.item?.title}</p>
+                  {applyModal.item?.company && <p className="text-xs text-gray-400 mb-4">{applyModal.item.company}</p>}
+                  <form onSubmit={handleApply} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Full Name *</label>
+                      <input type="text" required value={applyForm.name} onChange={e => setApplyForm(f => ({ ...f, name: e.target.value }))}
+                        placeholder="Your full name"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Email *</label>
+                      <input type="email" required value={applyForm.email} onChange={e => setApplyForm(f => ({ ...f, email: e.target.value }))}
+                        placeholder="Your email address"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Phone *</label>
+                      <input type="tel" required value={applyForm.phone} onChange={e => setApplyForm(f => ({ ...f, phone: e.target.value }))}
+                        placeholder="+91 XXXXX XXXXX"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Brief message / experience</label>
+                      <textarea rows={3} value={applyForm.message} onChange={e => setApplyForm(f => ({ ...f, message: e.target.value }))}
+                        placeholder="Tell us briefly about your experience..."
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
+                    </div>
+                    <button type="submit" disabled={submitting}
+                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
+                      {submitting ? 'Submitting...' : 'Submit Application'}
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <div className="text-center py-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">✓</span>
+                  </div>
+                  <h3 className="font-bold text-gray-900 mb-2">Application Submitted!</h3>
+                  <p className="text-sm text-gray-500">We'll review your application and get back to you at {applyForm.email}.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

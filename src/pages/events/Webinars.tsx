@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Calendar, ExternalLink, Monitor } from 'lucide-react';
+import { Monitor, X } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
+
+const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
 
 const topicSections = [
   { icon: '📜', title: 'Regulatory and Compliance', desc: 'DGCA rule updates, airspace management, BVLOS approval processes, type certification, and import-export compliance for drone companies operating in India.' },
@@ -18,15 +21,54 @@ const expectItems = [
   { icon: '📋', title: 'Participation Certificates', desc: 'Selected organisers issue certificates of participation which can be added to your professional profile.' },
 ];
 
+interface RegForm { name: string; email: string; phone: string; }
+
 export default function WebinarsPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState<{ open: boolean; item: MediaItem | null }>({ open: false, item: null });
+  const [form, setForm] = useState<RegForm>({ name: '', email: '', phone: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
     fetchContent('webinar', controller.signal).then(setItems).catch(() => {}).finally(() => setLoading(false));
     return () => controller.abort();
   }, []);
+
+  const openModal = (item: MediaItem) => {
+    setModal({ open: true, item });
+    setForm({ name: '', email: '', phone: '' });
+    setSubmitted(false);
+  };
+
+  const closeModal = () => {
+    setModal({ open: false, item: null });
+    setSubmitted(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      await fetch(CONTACT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          message: `Webinar Registration: ${modal.item?.title}`,
+        }),
+      });
+      setSubmitted(true);
+    } catch {
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
@@ -64,7 +106,7 @@ export default function WebinarsPage() {
               <Monitor className="w-10 h-10 text-gray-300 mx-auto mb-3" />
               <p className="font-semibold text-gray-500 mb-1">No webinars currently listed</p>
               <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
-                Hosting a drone, GIS, or AI webinar? Submit it here for free listing and promotion to DroneTv.in's audience of drone, geospatial, and AI professionals across India.
+                Hosting a drone, GIS, or AI webinar? Submit it here for free listing and promotion to DroneTv.in's audience.
               </p>
               <a href="mailto:bd@dronetv.in?subject=Submit Webinar"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
@@ -75,6 +117,7 @@ export default function WebinarsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {items.map(item => (
                 <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                  {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-44 object-cover" />}
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-3">
                       {item.price ? (
@@ -84,7 +127,7 @@ export default function WebinarsPage() {
                     </div>
                     <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1">{item.title}</h3>
                     {item.platform && <p className="text-xs text-gray-400 mb-3">{item.platform}</p>}
-                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3">{item.description}</p>}
                     {item.source && (
                       <div className="mb-3">
                         <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Speaker</p>
@@ -100,15 +143,9 @@ export default function WebinarsPage() {
                     )}
                   </div>
                   <div className="border-t border-gray-100 px-5 py-3 bg-gray-50">
-                    {item.externalLink ? (
-                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
-                        Register to Attend <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ) : (
-                      <a href="mailto:bd@dronetv.in?subject=Webinar Registration" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">
-                        Register to Attend →
-                      </a>
-                    )}
+                    <button onClick={() => openModal(item)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                      Register to Attend →
+                    </button>
                   </div>
                 </div>
               ))}
@@ -168,6 +205,66 @@ export default function WebinarsPage() {
           </div>
         </div>
       </div>
+
+      {/* Registration Modal */}
+      {modal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-base font-bold text-gray-900">Register to Attend</h2>
+              <button onClick={closeModal} className="p-1.5 rounded hover:bg-gray-100">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="px-6 py-5">
+              {!submitted ? (
+                <>
+                  <p className="text-sm font-semibold text-gray-800 mb-1">{modal.item?.title}</p>
+                  {modal.item?.date && <p className="text-xs text-gray-400 mb-4">{modal.item.date}</p>}
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Full Name *</label>
+                      <input type="text" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                        placeholder="Your full name"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Email *</label>
+                      <input type="email" required value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                        placeholder="Your email address"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Phone *</label>
+                      <input type="tel" required value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                        placeholder="+91 XXXXX XXXXX"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
+                    <button type="submit" disabled={submitting}
+                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
+                      {submitting ? 'Registering...' : 'Confirm Registration'}
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <div className="text-center py-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">✓</span>
+                  </div>
+                  <h3 className="font-bold text-gray-900 mb-2">You're registered!</h3>
+                  <p className="text-sm text-gray-500 mb-4">We'll send you the details at {form.email}.</p>
+                  {modal.item?.externalLink && (
+                    <a href={modal.item.externalLink} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-black text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-gray-900 transition-colors">
+                      Join Webinar →
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1438,6 +1438,7 @@ const EventAdminDashboard: React.FC = () => {
   };
 
   const modalConfig = getModalConfig();
+  const viewFilteredEvents = events.filter(e => matchesView(e, viewFilter));
 
   return (
     <div className="w-full min-h-screen bg-[#F4F5F7]">
@@ -1471,10 +1472,10 @@ const EventAdminDashboard: React.FC = () => {
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
-          { label: "Total", value: events.length, color: "border-t-yellow-400" },
-          { label: "Pending Review", value: events.filter(e => e.reviewStatus === "under_review").length, color: "border-t-orange-400" },
-          { label: "Approved", value: events.filter(e => e.reviewStatus === "approved").length, color: "border-t-green-500" },
-          { label: "Rejected", value: events.filter(e => e.reviewStatus === "rejected").length, color: "border-t-red-500" },
+          { label: "Total", value: viewFilteredEvents.length, color: "border-t-yellow-400" },
+          { label: "Pending Review", value: viewFilteredEvents.filter(e => e.reviewStatus === "under_review").length, color: "border-t-orange-400" },
+          { label: "Approved", value: viewFilteredEvents.filter(e => e.reviewStatus === "approved").length, color: "border-t-green-500" },
+          { label: "Rejected", value: viewFilteredEvents.filter(e => e.reviewStatus === "rejected").length, color: "border-t-red-500" },
         ].map(stat => (
           <div key={stat.label} className={`bg-white rounded-lg border border-gray-200 border-t-4 ${stat.color} p-4 shadow-sm`}>
             <div className="text-2xl font-black text-gray-900">{loading ? "—" : stat.value}</div>
