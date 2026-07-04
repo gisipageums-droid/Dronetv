@@ -102,7 +102,8 @@ const NAV: Section[] = [
         label: "Professionals",
         icon: <Users size={17} />,
         sub: [
-          { label: "Job Board",       path: "/admin/media/dashboard?type=job",           icon: <Briefcase size={14} /> },
+          { label: "Job Board",        path: "/admin/media/dashboard?type=job",                icon: <Briefcase size={14} /> },
+          { label: "Job Applications", path: "/admin/media/dashboard?type=job-application",   icon: <ClipboardList size={14} /> },
           { label: "Pilot Directory", path: "/admin/professional/dashboard",             icon: <UserCircle size={14} /> },
           { label: "Certifications",  path: "/admin/media/dashboard?type=certification", icon: <Award size={14} /> },
           { label: "Portfolio",       path: "/admin/media/dashboard?type=portfolio",     icon: <Layers size={14} /> },
@@ -238,7 +239,7 @@ const BREADCRUMBS: Record<string, string> = {
 
 const PARTNERSHIPS_CMS = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
 const EVENTS_CMS = new Set(["competition","webinar","meetup"]);
-const PROFESSIONALS_CMS = new Set(["job","training","certification","portfolio","networking","community"]);
+const PROFESSIONALS_CMS = new Set(["job","job-application","training","certification","portfolio","networking","community"]);
 
 function computeGroupId(pathname: string, search: string): string {
   const sp = new URLSearchParams(search);

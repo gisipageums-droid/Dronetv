@@ -24,6 +24,7 @@ const EVENTS_TYPES: { value: ContentType; label: string }[] = [
 
 const PROFESSIONALS_TYPES: { value: ContentType; label: string }[] = [
   { value: 'job', label: 'Job Listing' },
+  { value: 'job-application', label: 'Job Applications' },
   { value: 'training', label: 'Training Program' },
   { value: 'certification', label: 'Certification' },
   { value: 'networking', label: 'Networking' },
@@ -111,12 +112,14 @@ const FIELD_CONFIG: Record<ContentType, FieldKey[]> = {
   'education-partner':   ['company', 'location', 'category'],
   'industry-player':     ['company', 'location', 'category'],
   'applications':        ['company', 'location', 'category'],
+  'job-application':     ['company', 'source', 'author', 'category'],
 };
 
 const FIELD_LABELS: Partial<Record<ContentType, Partial<Record<FieldKey, string>>>> = {
-  'webinar':     { source: 'Speaker', company: 'Organizer' },
-  'competition': { company: 'Organizer' },
-  'meetup':      { company: 'Organizer' },
+  'webinar':          { source: 'Speaker', company: 'Organizer' },
+  'competition':      { company: 'Organizer' },
+  'meetup':           { company: 'Organizer' },
+  'job-application':  { company: 'Applicant', source: 'Email', author: 'Phone', category: 'Applied For' },
 };
 
 const EMPTY_FORM = {

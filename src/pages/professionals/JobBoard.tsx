@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Search, X } from 'lucide-react';
-import { fetchContent, MediaItem } from '../../lib/mediaApi';
-import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
+import { fetchContent, createContent, MediaItem } from '../../lib/mediaApi';
 
-const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
 interface ApplyForm { name: string; email: string; phone: string; message: string; }
 
 const staticJobs = [
@@ -47,15 +45,15 @@ export default function JobBoardPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await fetch(CONTACT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: applyForm.name,
-          phone: applyForm.phone,
-          email: applyForm.email,
-          message: `Job Application — ${applyModal.item?.title}: ${applyForm.message}`,
-        }),
+      await createContent({
+        contentType: 'job-application',
+        title: applyModal.item?.title ?? 'Job Application',
+        description: applyForm.message,
+        company: applyForm.name,
+        source: applyForm.email,
+        author: applyForm.phone,
+        category: applyModal.item?.company ?? '',
+        isPublished: false,
       });
       setSubmitted(true);
     } catch {
