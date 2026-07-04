@@ -46,8 +46,8 @@ export default function JobBoardPage() {
     setSubmitting(true);
     try {
       await createContent({
-        contentType: 'job-application',
-        title: applyModal.item?.title ?? 'Job Application',
+        contentType: 'job',
+        title: `[Application] ${applyModal.item?.title ?? 'Job Application'}`,
         description: applyForm.message,
         company: applyForm.name,
         source: applyForm.email,
