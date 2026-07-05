@@ -831,7 +831,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                                 className={`inline-flex items-center px-1.5 py-0.5 mr-1 mb-1 rounded border cursor-pointer transition-all hover:shadow-sm whitespace-nowrap ${
                                   isSubSubSelected
                                     ? "bg-green-50 border-green-300 text-green-800"
-                                    : "hover:bg-slate-50 border-slate-200"
+                                    : "hover:bg-slate-50 border-slate-200 text-gray-800"
                                 }`}
                               >
                                 <input
