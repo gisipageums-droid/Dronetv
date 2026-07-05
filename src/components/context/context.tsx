@@ -158,6 +158,18 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     }
   }, []);
 
+  // Listen for background profile fetch completing (role update)
+  useEffect(() => {
+    const handleRoleUpdate = () => {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
+      }
+    };
+    window.addEventListener('user-role-updated', handleRoleUpdate);
+    return () => window.removeEventListener('user-role-updated', handleRoleUpdate);
+  }, []);
+
   const logout = () => {
     clearSession();
     setUser(null);

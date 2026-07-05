@@ -135,27 +135,39 @@ export async function login(payload: {
   const data = await res.json();
   if (!res.ok) throw new Error(data.detail || data.message || 'Login failed');
 
-  // Fetch profile to derive role (old Lambda doesn't return role)
-  let role = 'user';
-  try {
-    const profileRes = await fetch(`${LAMBDA.profile}/profile?userId=${encodeURIComponent(payload.email)}`);
-    if (profileRes.ok) {
-      const profileData = await profileRes.json();
+  const email = data.userData?.email || payload.email;
+  const mapped: LoginResponse = {
+    token: data.token || '',
+    email,
+    fullName: data.userData?.fullName || '',
+    role: 'user',
+    userData: { ...(data.userData || data), role: 'user' },
+  };
+  saveSession(mapped);
+
+  // Fetch profile in background to update role without blocking login
+  fetch(`${LAMBDA.profile}/profile?userId=${encodeURIComponent(email)}`)
+    .then(r => r.ok ? r.json() : null)
+    .then(profileData => {
+      if (!profileData) return;
       const p = profileData.profile || {};
+      let role = 'user';
       if (p.companies?.length > 0) role = 'company';
       else if (p.professionals?.length > 0) role = 'professional';
       else if (p.events?.length > 0) role = 'event_organizer';
-    }
-  } catch { /* role stays 'user' */ }
+      if (role !== 'user') {
+        const stored = localStorage.getItem(USER_KEY);
+        if (stored) {
+          const u = JSON.parse(stored);
+          u.role = role;
+          if (u.userData) u.userData.role = role;
+          localStorage.setItem(USER_KEY, JSON.stringify(u));
+          window.dispatchEvent(new Event('user-role-updated'));
+        }
+      }
+    })
+    .catch(() => {/* ignore */});
 
-  const mapped: LoginResponse = {
-    token: data.token || '',
-    email: data.userData?.email || payload.email,
-    fullName: data.userData?.fullName || '',
-    role,
-    userData: { ...(data.userData || data), role },
-  };
-  saveSession(mapped);
   return mapped;
 }
 
@@ -174,26 +186,37 @@ export async function googleLogin(token: string): Promise<LoginResponse> {
   if (!res.ok) throw new Error(data.detail || data.message || 'Google login failed');
 
   const email = data.userData?.email || data.email || '';
-  let role = 'user';
-  try {
-    const profileRes = await fetch(`${LAMBDA.profile}/profile?userId=${encodeURIComponent(email)}`);
-    if (profileRes.ok) {
-      const profileData = await profileRes.json();
-      const p = profileData.profile || {};
-      if (p.companies?.length > 0) role = 'company';
-      else if (p.professionals?.length > 0) role = 'professional';
-      else if (p.events?.length > 0) role = 'event_organizer';
-    }
-  } catch { /* role stays 'user' */ }
-
   const mapped: LoginResponse = {
     token: data.token || '',
     email,
     fullName: data.userData?.fullName || data.fullName || '',
-    role,
-    userData: { ...(data.userData || data), role },
+    role: 'user',
+    userData: { ...(data.userData || data), role: 'user' },
   };
   saveSession(mapped);
+
+  fetch(`${LAMBDA.profile}/profile?userId=${encodeURIComponent(email)}`)
+    .then(r => r.ok ? r.json() : null)
+    .then(profileData => {
+      if (!profileData) return;
+      const p = profileData.profile || {};
+      let role = 'user';
+      if (p.companies?.length > 0) role = 'company';
+      else if (p.professionals?.length > 0) role = 'professional';
+      else if (p.events?.length > 0) role = 'event_organizer';
+      if (role !== 'user') {
+        const stored = localStorage.getItem(USER_KEY);
+        if (stored) {
+          const u = JSON.parse(stored);
+          u.role = role;
+          if (u.userData) u.userData.role = role;
+          localStorage.setItem(USER_KEY, JSON.stringify(u));
+          window.dispatchEvent(new Event('user-role-updated'));
+        }
+      }
+    })
+    .catch(() => {/* ignore */});
+
   return mapped;
 }
 
