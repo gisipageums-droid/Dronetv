@@ -15,6 +15,7 @@ export interface LoginResponse {
   token: string;
   email: string;
   fullName: string;
+  role?: string;
   userData: UserData;
 }
 
@@ -133,11 +134,26 @@ export async function login(payload: {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.detail || data.message || 'Login failed');
+
+  // Fetch profile to derive role (old Lambda doesn't return role)
+  let role = 'user';
+  try {
+    const profileRes = await fetch(`${LAMBDA.profile}/profile?userId=${encodeURIComponent(payload.email)}`);
+    if (profileRes.ok) {
+      const profileData = await profileRes.json();
+      const p = profileData.profile || {};
+      if (p.companies?.length > 0) role = 'company';
+      else if (p.professionals?.length > 0) role = 'professional';
+      else if (p.events?.length > 0) role = 'event_organizer';
+    }
+  } catch { /* role stays 'user' */ }
+
   const mapped: LoginResponse = {
     token: data.token || '',
     email: data.userData?.email || payload.email,
     fullName: data.userData?.fullName || '',
-    userData: data.userData || data,
+    role,
+    userData: { ...(data.userData || data), role },
   };
   saveSession(mapped);
   return mapped;
@@ -156,11 +172,26 @@ export async function googleLogin(token: string): Promise<LoginResponse> {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.detail || data.message || 'Google login failed');
+
+  const email = data.userData?.email || data.email || '';
+  let role = 'user';
+  try {
+    const profileRes = await fetch(`${LAMBDA.profile}/profile?userId=${encodeURIComponent(email)}`);
+    if (profileRes.ok) {
+      const profileData = await profileRes.json();
+      const p = profileData.profile || {};
+      if (p.companies?.length > 0) role = 'company';
+      else if (p.professionals?.length > 0) role = 'professional';
+      else if (p.events?.length > 0) role = 'event_organizer';
+    }
+  } catch { /* role stays 'user' */ }
+
   const mapped: LoginResponse = {
     token: data.token || '',
-    email: data.userData?.email || data.email || '',
+    email,
     fullName: data.userData?.fullName || data.fullName || '',
-    userData: data.userData || data,
+    role,
+    userData: { ...(data.userData || data), role },
   };
   saveSession(mapped);
   return mapped;
