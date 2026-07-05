@@ -42,7 +42,10 @@ export const ADMIN_API = BACKEND
 
 // Lambda base URLs (fallback — used when VITE_BACKEND_URL is not set)
 export const LAMBDA = {
-  auth:         'https://6gizqpfbmk.execute-api.ap-south-1.amazonaws.com/prod',
+  auth:         'https://6gizqpfbmk.execute-api.ap-south-1.amazonaws.com/prod',  // new backend (not yet deployed)
+  authLogin:    'https://yxzlfcqwf7.execute-api.ap-south-1.amazonaws.com/prod/login_post',
+  authRegister: 'https://rnpcnionle.execute-api.ap-south-1.amazonaws.com/user_register_post',
+  authGoogle:   'https://67duf9ey84.execute-api.ap-south-1.amazonaws.com/google_log/Google_login',
   company:      'https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod',
   companyAdmin: 'https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod',
   companyDraft: 'https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod',

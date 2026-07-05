@@ -37,8 +37,9 @@ export function getStoredUser(): UserData | null {
 }
 
 function saveSession(res: LoginResponse) {
-  localStorage.setItem(TOKEN_KEY, res.token);
-  localStorage.setItem(USER_KEY, JSON.stringify(res.userData));
+  if (res.token) localStorage.setItem(TOKEN_KEY, res.token);
+  const userData = res.userData || (res as any);
+  localStorage.setItem(USER_KEY, JSON.stringify(userData));
 }
 
 export function clearSession() {
@@ -105,22 +106,64 @@ export async function register(payload: {
   state?: string;
   phone?: string;
 }): Promise<{ message: string }> {
-  return post('/register', payload);
+  if (AUTH_API) return post('/register', payload);
+  const res = await fetch(LAMBDA.authRegister, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || data.message || 'Registration failed');
+  return data;
 }
 
 export async function login(payload: {
   email: string;
   password: string;
 }): Promise<LoginResponse> {
-  const res = await post<LoginResponse>('/login', payload);
-  saveSession(res);
-  return res;
+  if (AUTH_API) {
+    const res = await post<LoginResponse>('/login', payload);
+    saveSession(res);
+    return res;
+  }
+  const res = await fetch(LAMBDA.authLogin, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || data.message || 'Login failed');
+  const mapped: LoginResponse = {
+    token: data.token || '',
+    email: data.userData?.email || payload.email,
+    fullName: data.userData?.fullName || '',
+    userData: data.userData || data,
+  };
+  saveSession(mapped);
+  return mapped;
 }
 
 export async function googleLogin(token: string): Promise<LoginResponse> {
-  const res = await post<LoginResponse>('/google-login', { token });
-  saveSession(res);
-  return res;
+  if (AUTH_API) {
+    const res = await post<LoginResponse>('/google-login', { token });
+    saveSession(res);
+    return res;
+  }
+  const res = await fetch(LAMBDA.authGoogle, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || data.message || 'Google login failed');
+  const mapped: LoginResponse = {
+    token: data.token || '',
+    email: data.userData?.email || data.email || '',
+    fullName: data.userData?.fullName || data.fullName || '',
+    userData: data.userData || data,
+  };
+  saveSession(mapped);
+  return mapped;
 }
 
 export async function forgotPassword(email: string): Promise<{ message: string }> {
