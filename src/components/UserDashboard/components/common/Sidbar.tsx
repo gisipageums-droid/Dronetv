@@ -10,8 +10,10 @@ import {
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
 import axios from "axios";
-import { LAMBDA } from '../../../../lib/apiConfig';
+import { LAMBDA, AUTH_API } from '../../../../lib/apiConfig';
 import { PERMISSIONS } from '../../../../lib/roles';
+
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
 interface SubItem {
   icon: React.ElementType;
