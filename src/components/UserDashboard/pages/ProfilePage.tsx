@@ -3,6 +3,7 @@ import token from "../assets/token.jpeg";
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../context/context';
 import { toast } from 'react-toastify';
+import { useRazorpay } from 'react-razorpay';
 import { X, Lock, Search } from 'lucide-react';
 import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
@@ -29,14 +30,9 @@ interface UserDetails {
   state: string;
 }
 
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
-
 const ProfilePage: React.FC = () => {
   const { user, login } = useUserAuth();
+  const { Razorpay } = useRazorpay();
   const stored = user?.userData;
   const [userDetails, setUserDetails] = useState<any>(stored);
 
@@ -261,7 +257,7 @@ const ProfilePage: React.FC = () => {
         }
       };
 
-      const razorpayInstance = new window.Razorpay(options);
+      const razorpayInstance = new Razorpay(options);
       razorpayInstance.open();
 
     } catch (error) {
