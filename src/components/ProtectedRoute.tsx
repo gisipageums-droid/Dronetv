@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
   const { isLogin } = useUserAuth();
 
   useEffect(() => {
-    if (isLogin === false) {
+    if (!isLogin && !localStorage.getItem('user')) {
       navigate("/login");
     }
   }, [isLogin, navigate]);
