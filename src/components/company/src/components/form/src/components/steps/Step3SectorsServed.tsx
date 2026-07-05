@@ -248,7 +248,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                         className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-white text-xs ${
                           selectedSectors.includes(sector)
                             ? 'border-blue-500 bg-blue-50 text-blue-700'
-                            : 'border-slate-300 bg-white'
+                            : 'border-slate-300 bg-white text-gray-800'
                         }`}
                       >
                         <input
