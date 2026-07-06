@@ -1167,10 +1167,15 @@ const GSTVerificationSection: React.FC<{
           onVerifySuccess(mappedData);
           if (regAddress) onAddressChange(regAddress);
         } else {
-          // silent — no toast in child component
+          toast.error('CIN verification failed. Please fill company details manually.');
         }
-      } catch {
-        // silent
+      } catch (err: any) {
+        const msg = err?.response?.data?.message || err?.message || '';
+        if (msg.includes('revoked') || msg.includes('token')) {
+          toast.warning('Verification service temporarily unavailable. Please fill company details manually.');
+        } else {
+          toast.error('CIN verification failed. Please fill company details manually.');
+        }
       } finally {
         setIsVerifyingCIN(false);
       }
@@ -1496,9 +1501,11 @@ const GSTVerificationSection: React.FC<{
                 rows={3}
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 resize-none"
               />
-              <p className="text-xs text-red-500 mt-1">
-                Please provide the full address as registered with the GST portal (excluding state and pincode).
-              </p>
+              {!address && (
+                <p className="text-xs text-red-500 mt-1">
+                  Please provide the full address as registered with the GST portal (excluding state and pincode).
+                </p>
+              )}
             </div>
           </div>
 
