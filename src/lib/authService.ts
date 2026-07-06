@@ -221,11 +221,29 @@ export async function googleLogin(token: string): Promise<LoginResponse> {
 }
 
 export async function forgotPassword(email: string): Promise<{ message: string }> {
-  return post('/forgot-password', { email });
+  const res = await fetch(AUTH_API ? `${AUTH_API}/forgot-password` : LAMBDA.authForgot, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || err.message || 'Failed to send reset email');
+  }
+  return res.json();
 }
 
 export async function resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
-  return post('/reset-password', { token, newPassword });
+  const res = await fetch(AUTH_API ? `${AUTH_API}/reset-password` : LAMBDA.authReset, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, newPassword }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || err.message || 'Failed to reset password');
+  }
+  return res.json();
 }
 
 // ─── Protected auth methods ───────────────────────────────────────────────────
