@@ -456,31 +456,31 @@ const AppContent = () => {
           <Route
             path="/user-professionals"
             element={
-              <RoleGuard roles={['professional', 'admin']}>
+              <ProtectedRoute>
                 <UserDashboardLayout>
                   <Professinal />
                 </UserDashboardLayout>
-              </RoleGuard>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/user-events"
             element={
-              <RoleGuard roles={['event_organizer', 'admin']}>
+              <ProtectedRoute>
                 <UserDashboardLayout>
                   <Event />
                 </UserDashboardLayout>
-              </RoleGuard>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/user-companies"
             element={
-              <RoleGuard roles={['company', 'admin']}>
+              <ProtectedRoute>
                 <UserDashboardLayout>
                   <UserCompany />
                 </UserDashboardLayout>
-              </RoleGuard>
+              </ProtectedRoute>
             }
           />
           <Route

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   Building2, Users, Calendar, User, Wallet, Clock1,
   MessageSquare, Globe, FileText, Brain, LogOut, X, Grid3X3, Video, ShoppingBag, Share2,
-  Target, Layout, Package,
+  Target, Layout, Package, UserCog,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
@@ -28,6 +28,7 @@ const MobileBottomNav: React.FC = () => {
     { icon: Package,      label: "My Package",  href: "/user-plans" },
     { icon: Clock1,       label: "Transactions", href: "/user-transactions" },
     { icon: MessageSquare, label: "Contacted",  href: "/user-contacted" },
+    { icon: UserCog,       label: "Profile",    href: "/user-profile" },
     ...(user?.email === "dronesimulatorpro@gmail.com"
       ? [{ icon: Brain, label: "AI", href: "/user-ai" }]
       : []),
