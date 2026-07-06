@@ -312,7 +312,7 @@ const ProfilePage: React.FC = () => {
                       name={key}
                       value={(userDetails as any)[key] || ''}
                       onChange={handleChange}
-                      className="w-full border border-amber-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      className="w-full border border-amber-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-900 bg-white"
                     />
                   ) : (
                     <p className="text-amber-900 font-medium">{(userDetails as any)[key] || 'Not provided'}</p>

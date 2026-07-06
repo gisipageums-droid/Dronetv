@@ -207,7 +207,7 @@ export default function CertificationsPage() {
                   </div>
                   {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
                   {item.location && <p className="text-xs text-gray-400 mb-2">{item.location}</p>}
-                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3">{item.description}</p>}
                   <div className="flex items-center justify-between mt-2">
                     {item.price && <span className="text-xs font-semibold text-gray-600">{item.price}</span>}
                     {item.externalLink && (

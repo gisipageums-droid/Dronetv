@@ -37,8 +37,8 @@ const ForgotPassword: React.FC = () => {
     try {
       await forgotPassword(email)
       setIsSubmitted(true)
-    } catch (error: any) {
-      setErrors({ submit: error.message || 'Failed to send reset email. Please try again.' })
+    } catch {
+      setErrors({ submit: 'Password reset is not available right now. Please email support@dronetv.in with your registered email address and we will reset it for you.' })
     } finally {
       setIsLoading(false)
     }

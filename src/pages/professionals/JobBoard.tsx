@@ -142,7 +142,7 @@ export default function JobBoardPage() {
                 <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4 border-l-4 border-l-yellow-400">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div className="flex items-start gap-3 flex-1 min-w-0">
-                      {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-gray-100" />}
+                      {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-gray-100" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
                       <div className="min-w-0">
                         {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-1 inline-block">{item.category}</span>}
                         <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
