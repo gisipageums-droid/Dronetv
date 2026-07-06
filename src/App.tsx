@@ -636,11 +636,11 @@ const AppContent = () => {
           <Route
             path="/user-leads"
             element={
-              <RoleGuard roles={['company', 'professional', 'event_organizer', 'admin']}>
+              <ProtectedRoute>
                 <UserDashboardLayout>
                   <CompanyLeadsPage />
                 </UserDashboardLayout>
-              </RoleGuard>
+              </ProtectedRoute>
             }
           />
           <Route
