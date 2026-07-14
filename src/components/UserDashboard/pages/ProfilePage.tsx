@@ -419,7 +419,7 @@ const ProfilePage: React.FC = () => {
       </div>
 
       {showTokenPurchase && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md border border-amber-200">
             <div className="p-6 border-b border-amber-200">
               <div className="flex justify-between items-center mb-4">
@@ -470,7 +470,7 @@ const ProfilePage: React.FC = () => {
       )}
 
       {showAllTransactions && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden border border-amber-200">
             <div className="p-6 border-b border-amber-200 flex-shrink-0">
               <div className="flex justify-between items-center mb-4">

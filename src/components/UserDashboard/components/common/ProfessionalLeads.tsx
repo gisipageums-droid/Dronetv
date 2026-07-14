@@ -495,7 +495,7 @@ const ProfessionalLeads: React.FC = () => {
 
       {/* Token Modal */}
       {showTokenModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
             <div className="flex justify-center mb-4">
               <div className="bg-amber-100 rounded-full p-3">
@@ -526,7 +526,7 @@ const ProfessionalLeads: React.FC = () => {
 
       {/* Message Modal */}
       {showMessageModal && selectedLead && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
           <div className="bg-white rounded-2xl shadow-xl w-full h-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="bg-amber-700 px-6 py-4 rounded-t-2xl">
@@ -659,7 +659,7 @@ const ProfessionalLeads: React.FC = () => {
 
       {/* Chat Modal */}
       {showChatModal && selectedLead && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000000] p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[75vh] flex flex-col">
             {/* Chat Header */}
             <div className="flex items-center justify-between p-3 bg-[#075e54] text-white rounded-t-lg flex-shrink-0">
