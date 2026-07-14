@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import { toast } from "sonner";
 import axios from "axios";
@@ -221,6 +221,44 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
 
         </div>
       </div>
+    </div>
+  );
+};
+
+// =================== My Posted Jobs ==============================
+function getMyPostedJobs(userId: string): { contentId: string; title: string; createdAt: string }[] {
+  try { return JSON.parse(localStorage.getItem(`dtv_my_jobs_${userId}`) || '[]'); } catch { return []; }
+}
+
+const MyPostedJobs: React.FC = () => {
+  const { user } = useUserAuth();
+  const userId = (user as any)?.userData?.email || (user as any)?.email || '';
+  const [jobs] = useState(() => userId ? getMyPostedJobs(userId) : []);
+  if (!userId || jobs.length === 0) return null;
+  return (
+    <div className="mt-10">
+      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <Briefcase className="w-5 h-5 text-yellow-500" /> My Posted Jobs
+      </h2>
+      <div className="space-y-3">
+        {jobs.map(j => (
+          <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Briefcase className="w-4 h-4 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{j.title}</p>
+                <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')} · Pending DroneTv review</p>
+              </div>
+            </div>
+            <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-gray-400 mt-3">
+        Jobs go live on the <Link to="/professionals/job-board" className="text-yellow-600 underline">Job Board</Link> after admin approval.
+      </p>
     </div>
   );
 };
@@ -571,6 +609,8 @@ const CompanyPage: React.FC = () => {
           No companies found matching "{searchTerm}"
         </div>
       )}
+
+      <MyPostedJobs />
 
       {/* Aadhaar / Publish Modal */}
       {publishingCompany && (

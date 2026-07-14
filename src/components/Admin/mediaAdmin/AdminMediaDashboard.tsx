@@ -352,20 +352,31 @@ export default function AdminMediaDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filtered.map(item => (
-                  <tr key={item.contentId} className="hover:bg-gray-50 transition-colors">
+                {filtered.map(item => {
+                  const isApplication = item.title.startsWith('[Application]');
+                  const displayTitle = isApplication ? item.title.replace('[Application] ', '') : item.title;
+                  return (
+                  <tr key={item.contentId} className={`hover:bg-gray-50 transition-colors ${isApplication ? 'bg-blue-50/40' : ''}`}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {item.imageUrl && <img src={item.imageUrl} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />}
-                        <span className="font-medium text-gray-900 line-clamp-1">{item.title}</span>
+                        <div>
+                          {isApplication && (
+                            <span className="inline-block bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded mb-0.5 uppercase tracking-wide">Application</span>
+                          )}
+                          <span className="font-medium text-gray-900 line-clamp-1 block">{displayTitle}</span>
+                          {isApplication && item.company && (
+                            <span className="text-xs text-gray-500 block">{item.company} · {item.source} · {item.author}</span>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="bg-gray-100 text-gray-700 text-xs font-bold px-2 py-0.5 rounded capitalize">
-                        {ALL_TYPE_DEFS.find(t => t.value === item.contentType)?.label || item.contentType}
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded capitalize ${isApplication ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}`}>
+                        {isApplication ? 'Job Application' : (ALL_TYPE_DEFS.find(t => t.value === item.contentType)?.label || item.contentType)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{item.source || item.company || '—'}</td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">{isApplication ? (item.source || '—') : (item.source || item.company || '—')}</td>
                     <td className="px-4 py-3 text-gray-500 text-xs">{item.date || new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
                     <td className="px-4 py-3">
                       <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.isPublished ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
@@ -387,7 +398,8 @@ export default function AdminMediaDashboard() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -395,7 +407,7 @@ export default function AdminMediaDashboard() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 overflow-y-auto py-8">
+        <div className="fixed inset-0 z-[10000000] flex items-start justify-center bg-black/60 overflow-y-auto py-8">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 my-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-bold text-gray-900">{editItem ? 'Edit Content' : 'Add New Content'}</h2>
@@ -668,7 +680,7 @@ export default function AdminMediaDashboard() {
       )}
 
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/60 z-[10000000] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6">
             <div className="flex items-center gap-3 mb-3">
               <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0" />

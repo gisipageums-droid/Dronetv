@@ -1,8 +1,20 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Search, X } from 'lucide-react';
+import { MapPin, Search, X, Briefcase, Plus } from 'lucide-react';
 import { fetchContent, createContent, MediaItem } from '../../lib/mediaApi';
+import { useUserAuth } from '../../components/context/context';
 
 interface ApplyForm { name: string; email: string; phone: string; message: string; }
+interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; }
+const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '' };
+const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence', 'Manufacturing', 'R&D', 'Operations'];
+
+function getMyPostedJobs(userId: string): { contentId: string; title: string; createdAt: string }[] {
+  try { return JSON.parse(localStorage.getItem(`dtv_my_jobs_${userId}`) || '[]'); } catch { return []; }
+}
+function saveMyPostedJob(userId: string, job: { contentId: string; title: string; createdAt: string }) {
+  const existing = getMyPostedJobs(userId);
+  localStorage.setItem(`dtv_my_jobs_${userId}`, JSON.stringify([job, ...existing]));
+}
 
 const staticJobs = [
   { icon: '🌾', title: 'Agriculture Drone Pilot', company: 'Agri-Drone Service Company — Telangana', category: 'Agriculture', type: 'Full-Time', salary: 'Rs. 30,000–40,000/mo', location: 'Hyderabad / Field' },
@@ -24,6 +36,8 @@ const salaryGuide = [
 const allCategories = ['All', 'Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence'];
 
 export default function JobBoardPage() {
+  const { user } = useUserAuth();
+  const userId = (user as any)?.userData?.email || (user as any)?.email || '';
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -32,6 +46,11 @@ export default function JobBoardPage() {
   const [applyForm, setApplyForm] = useState<ApplyForm>({ name: '', email: '', phone: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [postJobModal, setPostJobModal] = useState(false);
+  const [postJobForm, setPostJobForm] = useState<PostJobForm>(EMPTY_POST);
+  const [postSubmitting, setPostSubmitting] = useState(false);
+  const [postSubmitted, setPostSubmitted] = useState(false);
+  const [myJobs, setMyJobs] = useState(() => userId ? getMyPostedJobs(userId) : []);
 
   const openApply = (item: MediaItem) => {
     setApplyModal({ open: true, item });
@@ -60,6 +79,36 @@ export default function JobBoardPage() {
       setSubmitted(true);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handlePostJob = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!postJobForm.title || !postJobForm.company) return;
+    setPostSubmitting(true);
+    try {
+      const created = await createContent({
+        contentType: 'job',
+        title: postJobForm.title,
+        description: postJobForm.description,
+        company: postJobForm.company,
+        location: postJobForm.location,
+        salary: postJobForm.salary,
+        category: postJobForm.category,
+        platform: postJobForm.jobType,
+        author: userId,
+        source: userId,
+        isPublished: false,
+      });
+      if (userId && created?.contentId) {
+        saveMyPostedJob(userId, { contentId: created.contentId, title: postJobForm.title, createdAt: new Date().toISOString() });
+        setMyJobs(getMyPostedJobs(userId));
+      }
+      setPostSubmitted(true);
+    } catch {
+      setPostSubmitted(true);
+    } finally {
+      setPostSubmitting(false);
     }
   };
 
@@ -205,6 +254,31 @@ export default function JobBoardPage() {
           </div>
         </div>
 
+        {myJobs.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-4 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
+              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">My</span>
+              My Posted Jobs
+            </h2>
+            <div className="space-y-2">
+              {myJobs.map(j => (
+                <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Briefcase className="w-4 h-4 text-yellow-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{j.title}</p>
+                      <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')} · Pending admin review</p>
+                    </div>
+                  </div>
+                  <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white text-base mb-1">Post a Job on DroneTv.in</h3>
@@ -214,10 +288,17 @@ export default function JobBoardPage() {
             <p className="text-xs text-white/40 mt-1">Scale and Brand subscribers post unlimited jobs as part of their package.</p>
           </div>
           <div className="flex gap-3 flex-shrink-0">
-            <a href="mailto:bd@dronetv.in?subject=Post a Job"
-              className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
-              Post a Job
-            </a>
+            {userId ? (
+              <button onClick={() => { setPostJobForm(EMPTY_POST); setPostSubmitted(false); setPostJobModal(true); }}
+                className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                <Plus className="w-4 h-4" /> Post a Job
+              </button>
+            ) : (
+              <a href="/login"
+                className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                Login to Post a Job
+              </a>
+            )}
             <a href="/professionals/pilot-directory"
               className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">
               Browse Pilot Profiles
@@ -225,6 +306,89 @@ export default function JobBoardPage() {
           </div>
         </div>
       </div>
+
+      {postJobModal && (
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg my-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2"><Briefcase className="w-4 h-4 text-yellow-500" />Post a Job</h2>
+              <button onClick={() => setPostJobModal(false)} className="p-1.5 rounded hover:bg-gray-100"><X className="w-5 h-5 text-gray-500" /></button>
+            </div>
+            <div className="px-6 py-5">
+              {!postSubmitted ? (
+                <form onSubmit={handlePostJob} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Job Title *</label>
+                    <input type="text" required value={postJobForm.title} onChange={e => setPostJobForm(f => ({ ...f, title: e.target.value }))}
+                      placeholder="e.g. Agriculture Drone Pilot"
+                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Company Name *</label>
+                      <input type="text" required value={postJobForm.company} onChange={e => setPostJobForm(f => ({ ...f, company: e.target.value }))}
+                        placeholder="Your company"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Location</label>
+                      <input type="text" value={postJobForm.location} onChange={e => setPostJobForm(f => ({ ...f, location: e.target.value }))}
+                        placeholder="e.g. Hyderabad"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Category</label>
+                      <select value={postJobForm.category} onChange={e => setPostJobForm(f => ({ ...f, category: e.target.value }))}
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400">
+                        <option value="">Select category</option>
+                        {JOB_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Job Type</label>
+                      <select value={postJobForm.jobType} onChange={e => setPostJobForm(f => ({ ...f, jobType: e.target.value }))}
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400">
+                        {['Full-Time', 'Part-Time', 'Contract', 'Freelance'].map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Salary / Compensation</label>
+                    <input type="text" value={postJobForm.salary} onChange={e => setPostJobForm(f => ({ ...f, salary: e.target.value }))}
+                      placeholder="e.g. Rs. 40,000–60,000/mo"
+                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Job Description</label>
+                    <textarea rows={3} value={postJobForm.description} onChange={e => setPostJobForm(f => ({ ...f, description: e.target.value }))}
+                      placeholder="Describe the role, requirements, and responsibilities..."
+                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
+                  </div>
+                  <p className="text-xs text-gray-400">Your job will be reviewed by DroneTv team before going live on the job board.</p>
+                  <button type="submit" disabled={postSubmitting}
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
+                    {postSubmitting ? 'Submitting...' : 'Submit Job Listing'}
+                  </button>
+                </form>
+              ) : (
+                <div className="text-center py-6">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">✓</span>
+                  </div>
+                  <h3 className="font-bold text-gray-900 mb-2">Job Submitted!</h3>
+                  <p className="text-sm text-gray-500 mb-4">Your job listing is pending review. It will appear on the job board once approved.</p>
+                  <button onClick={() => setPostJobModal(false)}
+                    className="px-6 py-2 bg-yellow-400 text-black font-bold rounded-lg text-sm hover:bg-yellow-500">
+                    Close
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {applyModal.open && (
         <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4 overflow-y-auto">

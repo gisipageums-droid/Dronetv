@@ -691,7 +691,7 @@ const apiService = {
   async fetchAllCompanies(signal?: AbortSignal): Promise<ApiResponse> {
     try {
       const response = await fetch(
-        COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=admin` : `${LAMBDA.company}/dashboard-cards?viewType=admin`,
+        COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=admin&limit=500` : `${LAMBDA.company}/dashboard-cards?viewType=admin&limit=500`,
         {
           method: "GET",
           headers: {
