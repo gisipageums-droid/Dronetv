@@ -95,12 +95,11 @@ const ProfessionalsPage: React.FC = () => {
     return (
       <div
         onClick={() => {
-          if (professional.templateSelection === "template-1") {
-            navigate(`/professional/${professional.userName}`);
-          } else if (professional.templateSelection === "template-2") {
-            navigate(`/professionals/${professional.userName}`);
+          const slug = professional.urlSlug || professional.userName;
+          if (professional.templateSelection === "template-2") {
+            navigate(`/professionals/${slug}`);
           } else {
-            navigate(`/professional/${professional.userName}`);
+            navigate(`/professional/${slug}`);
           }
         }}
         className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden flex flex-col"
