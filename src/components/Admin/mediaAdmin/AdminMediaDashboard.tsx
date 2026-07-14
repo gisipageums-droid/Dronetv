@@ -42,7 +42,7 @@ const ALL_TYPE_DEFS = [...MEDIA_TYPES, ...EVENTS_TYPES, ...PROFESSIONALS_TYPES, 
 
 const EVENTS_VALS = new Set(EVENTS_TYPES.map(t => t.value));
 const PROFESSIONALS_VALS = new Set(PROFESSIONALS_TYPES.map(t => t.value));
-const PARTNERSHIPS_VALS = new Set(PARTNERSHIPS_TYPES.map(t => t.value));
+const PARTNERSHIPS_VALS = new Set([...PARTNERSHIPS_TYPES.map(t => t.value), 'applications' as ContentType]);
 
 type SectionMode = 'media' | 'events' | 'professionals' | 'partnerships';
 
