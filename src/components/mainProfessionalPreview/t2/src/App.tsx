@@ -38,7 +38,12 @@ export default function MainProTemp2() {
       }
       
       const data = await response.json();
-      setFinaleDataReview(data.items[0] || {});
+      if (data.error || !data.items || data.items.length === 0) {
+        setError('not found');
+        setIsLoading(false);
+        return;
+      }
+      setFinaleDataReview(data.items[0]);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching template data:", error);
@@ -79,17 +84,26 @@ export default function MainProTemp2() {
   }
 
   if (error) {
+    const isNotFound = error.includes('404') || error.includes('not found');
     return (
       <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Error Loading Page</h2>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg"
-          >
-            Try Again
-          </button>
+          <h2 className="text-2xl font-bold mb-4">
+            {isNotFound ? 'Profile Not Yet Published' : 'Error Loading Page'}
+          </h2>
+          <p className="text-muted-foreground mb-4">
+            {isNotFound
+              ? 'This professional has not published their profile yet.'
+              : error}
+          </p>
+          {!isNotFound && (
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg"
+            >
+              Try Again
+            </button>
+          )}
         </div>
       </div>
     );

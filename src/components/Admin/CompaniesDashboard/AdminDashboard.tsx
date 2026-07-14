@@ -690,24 +690,42 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
 const apiService = {
   async fetchAllCompanies(signal?: AbortSignal): Promise<ApiResponse> {
     try {
-      const response = await fetch(
-        COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=admin&limit=500` : `${LAMBDA.company}/dashboard-cards?viewType=admin&limit=500`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-          },
-          signal,
-        }
-      );
+      const adminUrl = COMPANY_API
+        ? `${COMPANY_API}/dashboard-cards?viewType=admin&limit=500`
+        : `${LAMBDA.company}/dashboard-cards?viewType=admin&limit=500`;
+      const mainUrl = COMPANY_API
+        ? `${COMPANY_API}/dashboard-cards?viewType=main`
+        : `${LAMBDA.company}/dashboard-cards?viewType=main`;
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      };
+
+      const [adminResp, mainResp] = await Promise.all([
+        fetch(adminUrl, { method: "GET", headers, signal }),
+        fetch(mainUrl, { method: "GET", headers, signal }),
+      ]);
+
+      if (!adminResp.ok) {
+        throw new Error(`HTTP error! status: ${adminResp.status}`);
       }
 
-      const data = await response.json();
-      return data;
+      const adminData: ApiResponse = await adminResp.json();
+      const mainData = mainResp.ok ? await mainResp.json() : { cards: [] };
+
+      // Lambda admin view has a hard cap (~100 records). Supplement with main view
+      // so newly registered companies are not hidden from admin.
+      const adminIds = new Set((adminData.cards || []).map((c) => c.publishedId));
+      const extra = (mainData.cards || []).filter(
+        (c: Company) => c.publishedId && !adminIds.has(c.publishedId)
+      );
+
+      return {
+        ...adminData,
+        cards: [...(adminData.cards || []), ...extra],
+        totalCount: (adminData.totalCount || 0) + extra.length,
+      };
     } catch (error: any) {
       if (error?.name === "AbortError") throw error;
       throw error;
