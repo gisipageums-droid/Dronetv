@@ -31,7 +31,6 @@ const PROFESSIONALS_TYPES: { value: ContentType; label: string }[] = [
 ];
 
 const PARTNERSHIPS_TYPES: { value: ContentType; label: string }[] = [
-  { value: 'applications', label: 'Applications' },
   { value: 'manufacturer', label: 'Manufacturer' },
   { value: 'ai-company', label: 'AI Tech Company' },
   { value: 'event-organizer', label: 'Event Organizer' },
@@ -421,7 +420,7 @@ export default function AdminMediaDashboard() {
               <div>
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Content Type *</label>
                 <select value={form.contentType} onChange={e => setForm(f => ({ ...f, contentType: e.target.value as ContentType }))}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
                   disabled={!!editItem}>
                   {config.types.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
@@ -431,7 +430,7 @@ export default function AdminMediaDashboard() {
               <div>
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Title *</label>
                 <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
                   placeholder="Content title" />
               </div>
 
@@ -439,7 +438,7 @@ export default function AdminMediaDashboard() {
               <div>
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Description</label>
                 <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                  rows={3} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400 resize-none"
+                  rows={3} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400 resize-none"
                   placeholder="Short description or summary" />
               </div>
 
@@ -605,7 +604,7 @@ export default function AdminMediaDashboard() {
               <div>
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Image URL</label>
                 <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
                   placeholder="https://..." />
               </div>
 
@@ -615,13 +614,13 @@ export default function AdminMediaDashboard() {
                   <div>
                     <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">External Link</label>
                     <input value={form.externalLink} onChange={e => setForm(f => ({ ...f, externalLink: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
                       placeholder="https://..." />
                   </div>
                   <div>
                     <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Video URL</label>
                     <input value={form.videoUrl} onChange={e => setForm(f => ({ ...f, videoUrl: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
                       placeholder="YouTube URL" />
                   </div>
                 </div>
@@ -629,7 +628,7 @@ export default function AdminMediaDashboard() {
                 <div>
                   <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">External Link</label>
                   <input value={form.externalLink} onChange={e => setForm(f => ({ ...f, externalLink: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
                     placeholder="https://..." />
                 </div>
               )}
@@ -640,7 +639,7 @@ export default function AdminMediaDashboard() {
                 <div className="flex gap-2">
                   <input value={tagInput} onChange={e => setTagInput(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400"
+                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
                     placeholder="Type tag + Enter" />
                   <button onClick={addTag} className="px-3 py-2 bg-gray-100 rounded-lg text-sm font-medium hover:bg-gray-200">Add</button>
                 </div>
