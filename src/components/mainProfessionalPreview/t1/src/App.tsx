@@ -54,9 +54,20 @@ const FinalT1: React.FC = () => {
       try {
         setIsLoading(true);
 
+        let cardsData: any = null;
         const cardsRes = await fetch(CARDS_API, { signal: controller.signal });
-        if (!cardsRes.ok) throw new Error("Failed to load profiles");
-        const cardsData = await cardsRes.json();
+        if (cardsRes.ok) {
+          cardsData = await cardsRes.json();
+        }
+        // Fall back to Lambda if local API failed or returned empty
+        if (!cardsData || !(cardsData.cards || []).length) {
+          const lambdaCardsRes = await fetch(
+            `${LAMBDA.professional}/professional-dashboard-cards?viewType=main`,
+            { signal: controller.signal }
+          );
+          if (!lambdaCardsRes.ok) throw new Error("Failed to load profiles");
+          cardsData = await lambdaCardsRes.json();
+        }
         const card = (cardsData.cards || []).find(
           (c: any) => c.urlSlug === urlSlug
         );
@@ -64,15 +75,33 @@ const FinalT1: React.FC = () => {
 
         const templateParam =
           card.templateSelection === "template-2" ? "template2" : "template1";
-        const contentRes = await fetch(
-          `${CONTENT_API}/${card.userId}/${card.professionalId}?template=${templateParam}`,
-          { signal: controller.signal }
-        );
-        if (!contentRes.ok) throw new Error("Failed to load profile content");
-        const contentData = await contentRes.json();
+
+        let profileContent: any = null;
+
+        if (PROFESSIONAL_API) {
+          const contentRes = await fetch(
+            `${CONTENT_API}/${card.userId}/${card.professionalId}?template=${templateParam}`,
+            { signal: controller.signal }
+          );
+          if (contentRes.ok) {
+            const contentData = await contentRes.json();
+            profileContent = Array.isArray(contentData) ? contentData[0] : contentData;
+          }
+        }
+
+        // Fall back to profTemplateFinalLoad if CONTENT_API unavailable or returned empty
+        if (!profileContent || (Array.isArray(profileContent) && profileContent.length === 0)) {
+          const finalLoadUrl = `${LAMBDA.profTemplateFinalLoad}/get-teme?userId=${encodeURIComponent(card.userId)}&professionalId=${encodeURIComponent(card.professionalId)}`;
+          const fallbackRes = await fetch(finalLoadUrl, { signal: controller.signal });
+          if (!fallbackRes.ok) throw new Error("Failed to load profile content");
+          const fallbackData = await fallbackRes.json();
+          profileContent = fallbackData.data || null;
+        }
+
+        if (!profileContent) throw new Error("Profile content unavailable");
 
         setTemplateType(card.templateSelection || "template-1");
-        setProfileData(Array.isArray(contentData) ? contentData[0] : contentData);
+        setProfileData(profileContent);
         setIsLoading(false);
       } catch (err: any) {
         if (err.name !== "AbortError") {

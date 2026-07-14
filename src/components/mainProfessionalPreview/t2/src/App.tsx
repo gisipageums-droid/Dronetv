@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTemplate } from "../../../context/context";
 import { About } from './components/About';
 import { Certifications } from './components/Certifications';
@@ -19,34 +19,64 @@ export default function MainProTemp2() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
   const { urlSlug } = useParams();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to fetch template data
-  async function fetchTemplateData( urlSlug: string) {
+  async function fetchTemplateData(urlSlug: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/template/${urlSlug}` : `${LAMBDA.profTemplateSingle}/${urlSlug}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+
+      if (PROFESSIONAL_API) {
+        const response = await fetch(`${PROFESSIONAL_API}/template/${urlSlug}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (!data.error && data.items && data.items.length > 0) {
+            setFinaleDataReview(data.items[0]);
+            setIsLoading(false);
+            return;
+          }
+        }
       }
-      
-      const data = await response.json();
-      if (data.error || !data.items || data.items.length === 0) {
+
+      // Step 1: find the professional card by urlSlug from public listing
+      const cardsResp = await fetch(
+        `${LAMBDA.professional}/professional-dashboard-cards?viewType=main`,
+        { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+      );
+      if (!cardsResp.ok) throw new Error(`Cards fetch failed: ${cardsResp.status}`);
+      const cardsData = await cardsResp.json();
+      const card = (cardsData.cards || []).find((c: any) => c.urlSlug === urlSlug);
+      if (!card) {
         setError('not found');
         setIsLoading(false);
         return;
       }
-      setFinaleDataReview(data.items[0]);
+
+      // Template-1 professionals are handled by /professional/:urlSlug route
+      if (card.templateSelection === 'template-1') {
+        navigate(`/professional/${urlSlug}`, { replace: true });
+        return;
+      }
+
+      // Step 2: fetch full template data using userId + professionalId
+      const tmplResp = await fetch(
+        `${LAMBDA.profTemplateFinalLoad}/get-teme?userId=${encodeURIComponent(card.userId)}&professionalId=${encodeURIComponent(card.professionalId)}`,
+        { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+      );
+      if (!tmplResp.ok) throw new Error(`Template fetch failed: ${tmplResp.status}`);
+      const tmplData = await tmplResp.json();
+      if (!tmplData.data) {
+        setError('not found');
+        setIsLoading(false);
+        return;
+      }
+      setFinaleDataReview(tmplData.data);
       setIsLoading(false);
-    } catch (error) {
-      console.error("Error fetching template data:", error);
+    } catch (error: any) {
       setError(error.message);
       setIsLoading(false);
     }
