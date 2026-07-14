@@ -72,7 +72,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
 
   return (
     <>
-      <motion.div className="fixed bottom-20 right-10 z-50">
+      <motion.div className="fixed bottom-20 right-4 sm:right-10 z-50">
         <motion.button
           onClick={() => setModel(true)}
           className="bg-yellow-500 text-black font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
