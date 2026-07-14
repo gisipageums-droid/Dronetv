@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase } from "lucide-react";
+import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase, Users, Mail, Phone } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
+import { fetchAdminContent, MediaItem } from "../../../lib/mediaApi";
 import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
@@ -259,6 +260,125 @@ const MyPostedJobs: React.FC = () => {
       <p className="text-xs text-gray-400 mt-3">
         Jobs go live on the <Link to="/professionals/job-board" className="text-yellow-600 underline">Job Board</Link> after admin approval.
       </p>
+    </div>
+  );
+};
+
+// =================== Job Applications Received ==============================
+const JobApplicationsReceived: React.FC<{ companyNames: string[] }> = ({ companyNames }) => {
+  const [applications, setApplications] = useState<MediaItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (companyNames.length === 0) { setLoading(false); return; }
+    const controller = new AbortController();
+    fetchAdminContent(controller.signal)
+      .then(items => {
+        const names = new Set(companyNames.map(n => n.toLowerCase().trim()));
+        const apps = items.filter(i =>
+          i.title.startsWith('[Application]') &&
+          names.has((i.category || '').toLowerCase().trim())
+        );
+        setApplications(apps);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+    return () => controller.abort();
+  }, [companyNames.join(',')]);
+
+  if (loading) return (
+    <div className="mt-10">
+      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <Users className="w-5 h-5 text-blue-500" /> Job Applications Received
+      </h2>
+      <div className="text-sm text-gray-400 py-4">Loading applications...</div>
+    </div>
+  );
+
+  if (companyNames.length === 0) return null;
+
+  return (
+    <div className="mt-10">
+      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <Users className="w-5 h-5 text-blue-500" /> Job Applications Received
+        {applications.length > 0 && (
+          <span className="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">{applications.length}</span>
+        )}
+      </h2>
+
+      {applications.length === 0 ? (
+        <div className="bg-white rounded-xl border border-dashed border-gray-200 p-6 text-center">
+          <Users className="w-8 h-8 text-gray-200 mx-auto mb-2" />
+          <p className="text-sm text-gray-500">No applications yet for your job listings.</p>
+          <p className="text-xs text-gray-400 mt-1">
+            Applications received via <Link to="/professionals/job-board" className="text-blue-500 underline">Job Board</Link> will appear here.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {applications.map(app => {
+            const jobTitle = app.title.replace('[Application] ', '');
+            const isOpen = expanded === app.contentId;
+            return (
+              <div key={app.contentId} className="bg-white rounded-xl border border-blue-100 shadow-sm overflow-hidden">
+                <button
+                  onClick={() => setExpanded(isOpen ? null : app.contentId)}
+                  className="w-full flex items-center justify-between p-4 text-left hover:bg-blue-50/40 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Users className="w-4 h-4 text-blue-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{app.company || 'Applicant'}</p>
+                      <p className="text-xs text-gray-400">Applied for: <span className="font-medium text-gray-600">{jobTitle}</span> · {new Date(app.createdAt).toLocaleDateString('en-IN')}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-blue-500 font-semibold flex-shrink-0">{isOpen ? 'Hide ▲' : 'View ▼'}</span>
+                </button>
+
+                {isOpen && (
+                  <div className="px-4 pb-4 border-t border-blue-50 pt-3 space-y-2">
+                    {app.source && (
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Mail className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                        <a href={`mailto:${app.source}`} className="text-blue-600 hover:underline">{app.source}</a>
+                      </div>
+                    )}
+                    {app.author && (
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Phone className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                        <a href={`tel:${app.author}`} className="text-blue-600 hover:underline">{app.author}</a>
+                      </div>
+                    )}
+                    {app.description && (
+                      <div className="bg-gray-50 rounded-lg p-3 mt-2">
+                        <p className="text-xs font-semibold text-gray-500 mb-1">Message</p>
+                        <p className="text-sm text-gray-700">{app.description}</p>
+                      </div>
+                    )}
+                    <div className="flex gap-2 pt-1">
+                      {app.source && (
+                        <a href={`mailto:${app.source}?subject=Re: ${jobTitle} Application`}
+                          className="text-xs font-bold bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-colors">
+                          Reply via Email
+                        </a>
+                      )}
+                      {app.author && (
+                        <a href={`tel:${app.author}`}
+                          className="text-xs font-bold border border-blue-200 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors">
+                          Call Applicant
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
@@ -611,6 +731,7 @@ const CompanyPage: React.FC = () => {
       )}
 
       <MyPostedJobs />
+      <JobApplicationsReceived companyNames={companies.map(c => c.companyName)} />
 
       {/* Aadhaar / Publish Modal */}
       {publishingCompany && (
