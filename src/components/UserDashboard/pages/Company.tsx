@@ -430,24 +430,24 @@ const CompanyPage: React.FC = () => {
       }));
       setCompanies(cards);
 
-      // Fetch template company names in parallel and update
-      const detailsBase = COMPANY_API
-        ? `${COMPANY_API}/dashboard-cards/published-details`
-        : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details`;
+      // Fetch template company names in parallel from the public preview Lambda
+      const previewBase = COMPANY_API
+        ? `${COMPANY_API}/template`
+        : `${LAMBDA.companyPreviewLoad}/template`;
 
       const updates = await Promise.allSettled(
         cards.map(async (c) => {
-          if (!c.publishedId) return null;
-          const r = await fetch(`${detailsBase}/${c.publishedId}`, {
-            headers: { "X-User-Id": userId },
-          });
+          const urlSlug = (data.cards || []).find((raw: any) => raw.publishedId === c.publishedId)?.urlSlug;
+          if (!urlSlug) return null;
+          const r = await fetch(`${previewBase}?companyName=${encodeURIComponent(urlSlug)}`);
           if (!r.ok) return null;
           const d = await r.json();
-          const profileName: string = d?.content?.profile?.companyName || "";
+          const content = d?.data?.content || d?.content || {};
+          const profileName: string = content?.profile?.companyName || "";
           if (profileName && !PLACEHOLDER_NAMES.has(profileName.toLowerCase().trim())) {
             return { publishedId: c.publishedId, companyName: profileName };
           }
-          const headerName: string = d?.content?.header?.companyName || d?.content?.company?.name || "";
+          const headerName: string = content?.header?.companyName || content?.company?.name || "";
           if (headerName && !PLACEHOLDER_NAMES.has(headerName.toLowerCase().trim())) {
             return { publishedId: c.publishedId, companyName: headerName };
           }
