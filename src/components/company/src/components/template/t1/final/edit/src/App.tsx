@@ -341,7 +341,7 @@ export default function App() {
       />
       <Hero
         heroData={content.hero}
-        companyName={content.company.name}
+        companyName={content.company?.name || ""}
         onStateChange={heroStateChange}
         publishedId={finaleDataReview.publishedId}
         userId={finaleDataReview.userId}
