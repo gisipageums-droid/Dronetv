@@ -456,6 +456,27 @@ export default function Header({
                   className="hidden"
                 />
               </div>
+
+              {/* Company Name — editable in edit mode */}
+              {isEditMode ? (
+                <input
+                  type="text"
+                  value={headerState.companyName}
+                  onChange={(e) =>
+                    setHeaderState((prev) => ({ ...prev, companyName: e.target.value }))
+                  }
+                  className="ml-2 border-b-2 border-blue-400 bg-transparent text-base font-bold text-gray-800 focus:outline-none focus:border-blue-600 min-w-[120px] max-w-[200px]"
+                  placeholder="Company name"
+                />
+              ) : (
+                <span
+                  className="ml-2 text-base font-bold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors"
+                  onClick={handleEditLogo}
+                  title="Click to edit logo & name"
+                >
+                  {headerState.companyName}
+                </span>
+              )}
             </motion.div>
 
             {/* Desktop Navigation - Static */}

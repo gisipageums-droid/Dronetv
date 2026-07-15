@@ -426,9 +426,10 @@ const CompanyPage: React.FC = () => {
         publishedDate: c.publishedDate || "",
         createdAt: c.createdAt || "",
         reviewStatus: c.reviewStatus || "active",
-        previewImage: c.previewImage || "",
+        previewImage: c.previewImage || c.headerLogo || "",
       }));
       setCompanies(cards);
+      setLoading(false); // Show cards immediately, update name in background
 
       // Fetch template company names in parallel from the public preview Lambda
       const previewBase = COMPANY_API
@@ -470,7 +471,6 @@ const CompanyPage: React.FC = () => {
         );
       }
     } catch (err) {
-    } finally {
       setLoading(false);
     }
   };
