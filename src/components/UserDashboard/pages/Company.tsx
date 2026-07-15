@@ -615,6 +615,12 @@ const CompanyPage: React.FC = () => {
         { publishedId: publishingCompany.publishedId, action: 'approve' },
         { headers: { 'Content-Type': 'application/json' } }
       );
+      // Best-effort: sync company status in profile Lambda so leads work
+      fetch(COMPANY_API ? `${COMPANY_API}/leads/company-activate` : `${LAMBDA.profile}/leads/company-activate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publishedId: publishingCompany.publishedId, userId, template: publishingCompany.templateSelection || "template-1", status: "active" }),
+      }).catch(() => {});
       toast.success('Your listing is now live!');
       handleClosePublishModal();
       await fetchCompanies(userId);
