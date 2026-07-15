@@ -113,7 +113,7 @@ export default function App() {
     <div>
       <Header headerData={finaleDataReview.content.header} />
       <Hero heroData={finaleDataReview.content.hero} />
-      <UsedBy usedByData={finaleDataReview.content.usedBy} />
+      <UsedBy usedByData={finaleDataReview.content.UsedBy ?? finaleDataReview.content.usedBy} />
       <About aboutData={finaleDataReview.content.about} />
       <CompanyProfile profileData={finaleDataReview.content.profile} />
       <Services serviceData={finaleDataReview.content.services} />
