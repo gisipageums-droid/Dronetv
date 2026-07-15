@@ -196,6 +196,7 @@ const AppContent = () => {
   const hideNavigation =
     location.pathname.startsWith("/admin/") ||
     location.pathname.startsWith("/user/companies/edit") ||
+    location.pathname.startsWith("/user/companies/preview") ||
     location.pathname.startsWith("/user/professionals/edit") ||
     location.pathname.startsWith("/professional/edit") ||
     location.pathname.startsWith("/professional/form") ||

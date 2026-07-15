@@ -44,7 +44,7 @@ export default function Header({ headerData }) {
 
   const headerStyles: React.CSSProperties = {
     position: "fixed",
-    top: "56px",
+    top: "0",
     left: "0",
     right: "0",
     width: "100%",
@@ -57,7 +57,7 @@ export default function Header({ headerData }) {
 
   const mobileMenuStyles: React.CSSProperties = {
     position: "fixed",
-    top: "112px",
+    top: "56px",
     left: "0",
     right: "0",
     zIndex: 999,

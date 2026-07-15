@@ -67,10 +67,8 @@ export default function Contact({ content, publishedId }) {
           category: "Enterprise",
         });
       } else {
-        const err = await response.json();
-        // alert("❌ Failed to send message: " + (err.message || "Unknown error"));
         toast.error(
-          "❌ Failed to send message: " + (err.message || "Unknown error")
+          "❌ Message could not be sent. Please try again or contact the company directly."
         );
       }
     } catch (error) {

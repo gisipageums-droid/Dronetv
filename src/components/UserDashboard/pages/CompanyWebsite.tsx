@@ -74,6 +74,22 @@ const CompanyWebsite: React.FC = () => {
       .catch(() => {});
   }, [company]);
 
+  useEffect(() => {
+    if (!company || currentLogo) return;
+    const url = COMPANY_API
+      ? `${COMPANY_API}/templates?publishId=${company.publishedId}`
+      : `${LAMBDA.companyTemplateLoad}/templates?publishId=${company.publishedId}`;
+    fetch(url)
+      .then((r) => r.json())
+      .then((data) => {
+        const c = data?.data?.content || {};
+        const logo = c.header?.logoSrc || c.header?.logoUrl || c.company?.logo || "";
+        if (logo) setCurrentLogo(logo);
+      })
+      .catch(() => {});
+  }, [company]);
+
+
 
   const handleFormSubmit = useCallback(async (aiGenData: any) => {
     if (!company) return;

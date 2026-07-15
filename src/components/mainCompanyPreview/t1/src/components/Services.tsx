@@ -83,19 +83,11 @@ export default function Services({ serviceData }) {
     savedScrollY.current = window.scrollY;
     setSelectedService(service);
     setIsModalOpen(true);
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${savedScrollY.current}px`;
-    document.body.style.width = '100%';
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
+    document.body.style.overflow = 'hidden';
   };
 
   const closeModal = () => {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    document.body.style.paddingRight = '';
-    window.scrollTo(0, savedScrollY.current);
+    document.body.style.overflow = '';
     setIsModalOpen(false);
     setSelectedService(null);
   };
