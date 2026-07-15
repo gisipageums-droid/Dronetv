@@ -2276,12 +2276,12 @@ export default function EditableCompanyProfile({
   // Track changes for auto-save
   const changesCountRef = useRef(0);
 
-  // Notify parent of state changes
+  // Notify parent of state changes — use tempProfileState so unsaved edits are included on publish
   useEffect(() => {
     if (onStateChange) {
-      onStateChange(profileState);
+      onStateChange(unsavedChanges ? tempProfileState : profileState);
     }
-  }, [profileState, onStateChange]);
+  }, [profileState, tempProfileState, unsavedChanges, onStateChange]);
 
   // Intersection Observer for visibility
   useEffect(() => {

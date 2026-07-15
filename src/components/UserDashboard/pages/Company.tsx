@@ -406,6 +406,8 @@ const CompanyPage: React.FC = () => {
 
   useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
 
+  const PLACEHOLDER_NAMES = new Set(["company name", "innovative labs", "your company", "unnamed company"]);
+
   const fetchCompanies = async (userId: string) => {
     try {
       setLoading(true);
@@ -414,20 +416,59 @@ const CompanyPage: React.FC = () => {
       );
       if (!res.ok) throw new Error("Failed to fetch companies");
       const data = await res.json();
-      setCompanies(
-        (data.cards || []).map((c: any) => ({
-          publishedId: c.publishedId || "",
-          userId: c.userId || "",
-          draftId: c.draftId || "",
-          companyName: c.companyName || "Unnamed Company",
-          location: c.location || "Location not specified",
-          sectors: Array.isArray(c.sectors) ? c.sectors : c.sectors ? [c.sectors] : ["General"],
-          publishedDate: c.publishedDate || "",
-          createdAt: c.createdAt || "",
-          reviewStatus: c.reviewStatus || "active",
-          previewImage: c.previewImage || "",
-        }))
+      const cards = (data.cards || []).map((c: any) => ({
+        publishedId: c.publishedId || "",
+        userId: c.userId || "",
+        draftId: c.draftId || "",
+        companyName: c.companyName || "Unnamed Company",
+        location: c.location || "Location not specified",
+        sectors: Array.isArray(c.sectors) ? c.sectors : c.sectors ? [c.sectors] : ["General"],
+        publishedDate: c.publishedDate || "",
+        createdAt: c.createdAt || "",
+        reviewStatus: c.reviewStatus || "active",
+        previewImage: c.previewImage || "",
+      }));
+      setCompanies(cards);
+
+      // Fetch template company names in parallel and update
+      const detailsBase = COMPANY_API
+        ? `${COMPANY_API}/dashboard-cards/published-details`
+        : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details`;
+
+      const updates = await Promise.allSettled(
+        cards.map(async (c) => {
+          if (!c.publishedId) return null;
+          const r = await fetch(`${detailsBase}/${c.publishedId}`, {
+            headers: { "X-User-Id": userId },
+          });
+          if (!r.ok) return null;
+          const d = await r.json();
+          const profileName: string = d?.content?.profile?.companyName || "";
+          if (profileName && !PLACEHOLDER_NAMES.has(profileName.toLowerCase().trim())) {
+            return { publishedId: c.publishedId, companyName: profileName };
+          }
+          const headerName: string = d?.content?.header?.companyName || d?.content?.company?.name || "";
+          if (headerName && !PLACEHOLDER_NAMES.has(headerName.toLowerCase().trim())) {
+            return { publishedId: c.publishedId, companyName: headerName };
+          }
+          return null;
+        })
       );
+
+      const nameMap: Record<string, string> = {};
+      updates.forEach((r) => {
+        if (r.status === "fulfilled" && r.value) {
+          nameMap[r.value.publishedId] = r.value.companyName;
+        }
+      });
+
+      if (Object.keys(nameMap).length > 0) {
+        setCompanies((prev) =>
+          prev.map((c) =>
+            nameMap[c.publishedId] ? { ...c, companyName: nameMap[c.publishedId] } : c
+          )
+        );
+      }
     } catch (err) {
     } finally {
       setLoading(false);
