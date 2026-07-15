@@ -109,7 +109,7 @@ export default function App() {
 
       />
       <UsedBy
-        usedByData={finaleDataReview.content.usedBy}
+        usedByData={finaleDataReview.content.UsedBy ?? finaleDataReview.content.usedBy}
       />
       <About
         aboutData={finaleDataReview.content.about}

@@ -348,7 +348,7 @@ export default function App() {
         templateSelection={finaleDataReview.templateSelection}
       />
       <UsedBy
-        usedByData={content.usedBy}
+        usedByData={content.UsedBy ?? content.usedBy}
         onStateChange={usedByStateChange}
         publishedId={finaleDataReview.publishedId}
         userId={finaleDataReview.userId}
