@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { MapPin, Search, X, Briefcase, Plus } from 'lucide-react';
 import { fetchContent, createContent, MediaItem } from '../../lib/mediaApi';
 import { useUserAuth } from '../../components/context/context';
@@ -51,6 +52,13 @@ export default function JobBoardPage() {
   const [postSubmitting, setPostSubmitting] = useState(false);
   const [postSubmitted, setPostSubmitted] = useState(false);
   const [myJobs, setMyJobs] = useState(() => userId ? getMyPostedJobs(userId) : []);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('postjob') === 'true' && userId) {
+      setPostJobModal(true);
+    }
+  }, [searchParams, userId]);
 
   const openApply = (item: MediaItem) => {
     setApplyModal({ open: true, item });
