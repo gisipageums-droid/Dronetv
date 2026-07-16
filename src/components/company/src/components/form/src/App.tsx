@@ -144,7 +144,16 @@ function mapFormDataToAIGenData(fd: FormData, draftId: string, userId: string) {
       gallery: {
         heading: { title: `${companyName} Portfolio`, description: `Showcasing our ${industry} expertise` },
         categories: ['All', 'Portfolio', 'Projects'],
-        images: []
+      },
+      documents: {
+        brochure: fd.brochurePdfUrl || '',
+        catalogue: fd.cataloguePdfUrl || '',
+        caseStudies: fd.caseStudiesUrl || '',
+        brandGuidelines: fd.brandGuidelinesUrl || '',
+        dgcaCertificate: fd.dgcaTypeCertificateUrl || '',
+        rptoCertificate: fd.rptoAuthorisationCertificateUrl || '',
+        promoVideo5min: fd.promoVideoFiveMinUrl || '',
+        promoVideo1min: fd.promoVideoOneMinUrl || '',
       },
       header: {
         logoSrc: fd.companyLogoUrl || '',

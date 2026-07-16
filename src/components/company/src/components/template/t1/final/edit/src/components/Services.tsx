@@ -1119,7 +1119,7 @@ export default function Services({
               {/* Benefits */}
               <h3 className="font-semibold mb-2">Key Benefits</h3>
               <ul className="space-y-2 mb-4">
-                {displayContent.services[selectedServiceIndex].benefits.map(
+                {(displayContent.services[selectedServiceIndex].benefits || []).map(
                   (b, bi) => (
                     <li key={bi} className="flex gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500 mt-1" />

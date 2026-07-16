@@ -791,7 +791,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && sendChatMessage()}
                   placeholder="Type a message..."
-                  className="flex-1 px-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-[#075e54] text-sm"
+                  className="flex-1 px-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-[#075e54] text-sm text-gray-900"
                 />
                 <button
                   onClick={sendChatMessage}

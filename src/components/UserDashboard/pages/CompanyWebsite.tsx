@@ -95,15 +95,14 @@ const CompanyWebsite: React.FC = () => {
     if (!company) return;
     setSubmitting(true);
     try {
-      // Fetch existing published content so scraped data is not lost
+      // Fetch existing published content so scraped data / gallery is not lost
       let existingContent: any = {};
       try {
         const detailsRes = await fetch(
-          COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${company.publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${company.publishedId}`,
-          { headers: { "Content-Type": "application/json", "X-User-Id": company.userId } }
+          `${LAMBDA.companyTemplateLoad}/templates?publishId=${company.publishedId}`
         );
         const details = await detailsRes.json();
-        existingContent = details?.content || {};
+        existingContent = details?.data?.content || {};
       } catch { /* proceed with empty — will use full generated content */ }
 
       const newContent = aiGenData.content || {};
@@ -149,6 +148,12 @@ const CompanyWebsite: React.FC = () => {
         ...(newContent.clients?.clients?.length > 0 ? {
           clients: { ...existingContent.clients, clients: newContent.clients.clients },
         } : {}),
+        // Gallery images — always preserve existing; never overwrite with empty array
+        ...(existingContent.gallery?.images?.length > 0 ? {
+          gallery: { ...existingContent.gallery, ...(newContent.gallery || {}), images: existingContent.gallery.images },
+        } : {}),
+        // Documents from Update Details step 8 (PDFs and videos)
+        ...(newContent.documents ? { documents: newContent.documents } : {}),
       } : newContent;
 
       const finalContent = {
