@@ -197,6 +197,7 @@ export default function Contact({ contactData, publishedId }) {
                       placeholder="Your Number"
                       value={formData.phone}
                       onChange={handleChange}
+                      required
                       className="border-border focus:border-primary bg-input-background"
                     />
                   </div>

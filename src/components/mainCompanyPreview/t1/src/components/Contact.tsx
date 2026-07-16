@@ -181,6 +181,7 @@ export default function Contact({ content, publishedId }) {
                   placeholder="+1234567890"
                   value={formData.phone}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
