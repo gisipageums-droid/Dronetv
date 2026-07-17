@@ -5,8 +5,8 @@ import { fetchContent, createContent, MediaItem } from '../../lib/mediaApi';
 import { useUserAuth } from '../../components/context/context';
 
 interface ApplyForm { name: string; email: string; phone: string; message: string; }
-interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; }
-const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '' };
+interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; imageUrl: string; }
+const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '', imageUrl: '' };
 const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence', 'Manufacturing', 'R&D', 'Operations'];
 
 function getMyPostedJobs(userId: string): { contentId: string; title: string; createdAt: string }[] {
@@ -106,6 +106,7 @@ export default function JobBoardPage() {
         platform: postJobForm.jobType,
         author: userId,
         source: userId,
+        imageUrl: postJobForm.imageUrl || undefined,
         isPublished: false,
       });
       if (userId && created?.contentId) {
@@ -373,6 +374,12 @@ export default function JobBoardPage() {
                     <textarea rows={3} value={postJobForm.description} onChange={e => setPostJobForm(f => ({ ...f, description: e.target.value }))}
                       placeholder="Describe the role, requirements, and responsibilities..."
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Company Logo / Banner Image URL <span className="text-gray-400 font-normal">(optional)</span></label>
+                    <input type="url" value={postJobForm.imageUrl} onChange={e => setPostJobForm(f => ({ ...f, imageUrl: e.target.value }))}
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
                   </div>
                   <p className="text-xs text-gray-400">Your job will be reviewed by DroneTv team before going live on the job board.</p>
                   <button type="submit" disabled={postSubmitting}
