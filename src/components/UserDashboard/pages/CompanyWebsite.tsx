@@ -39,29 +39,44 @@ const CompanyWebsite: React.FC = () => {
   const [logoUploading, setLogoUploading] = useState(false);
   const [currentLogo, setCurrentLogo] = useState<string>("");
   const [iframeKey, setIframeKey] = useState(0);
+  const [statusRefreshing, setStatusRefreshing] = useState(false);
   const logoInputRef = useRef<HTMLInputElement | null>(null);
 
   const userId = user?.email || user?.userData?.email || "";
 
-  useEffect(() => {
+  const loadCompanyData = useCallback((onDone?: () => void) => {
     if (!userId) return;
     const CARDS_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards` : `${LAMBDA.company}/dashboard-cards`;
     const savedUserId = localStorage.getItem("dronetv_company_userId") || "";
     const idsToTry = [userId, savedUserId].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
 
     const tryNext = (idx: number) => {
-      if (idx >= idsToTry.length) { setLoading(false); return; }
+      if (idx >= idsToTry.length) { setLoading(false); onDone?.(); return; }
       fetch(`${CARDS_API}?userId=${idsToTry[idx]}`)
         .then((r) => r.json())
         .then((data) => {
           const cards: Company[] = data.cards || [];
-          if (cards.length > 0) { setAllCompanies(cards); setCompany(cards[0]); setLoading(false); }
-          else tryNext(idx + 1);
+          if (cards.length > 0) {
+            setAllCompanies(cards);
+            setCompany(prev => {
+              const match = prev ? cards.find(c => c.publishedId === prev.publishedId) : null;
+              return match || cards[0];
+            });
+            setLoading(false);
+            onDone?.();
+          } else tryNext(idx + 1);
         })
         .catch(() => tryNext(idx + 1));
     };
     tryNext(0);
   }, [userId]);
+
+  useEffect(() => { loadCompanyData(); }, [loadCompanyData]);
+
+  const handleRefreshStatus = useCallback(() => {
+    setStatusRefreshing(true);
+    loadCompanyData(() => setStatusRefreshing(false));
+  }, [loadCompanyData]);
 
   useEffect(() => {
     if (!company) return;
@@ -440,6 +455,15 @@ const CompanyWebsite: React.FC = () => {
                   Your company is listed. Our team will review and verify your listing shortly.
                 </p>
               </div>
+              <button
+                onClick={handleRefreshStatus}
+                disabled={statusRefreshing}
+                className="flex items-center gap-1 text-xs font-medium text-yellow-700 border border-yellow-400 bg-yellow-100 hover:bg-yellow-200 rounded-lg px-2.5 py-1.5 transition-colors disabled:opacity-50 flex-shrink-0"
+                title="Check latest status"
+              >
+                <Loader2 className={`w-3 h-3 ${statusRefreshing ? 'animate-spin' : 'hidden'}`} />
+                {statusRefreshing ? 'Checking...' : 'Refresh Status'}
+              </button>
             </div>
           )}
 
