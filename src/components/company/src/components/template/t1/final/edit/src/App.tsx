@@ -330,84 +330,87 @@ export default function App() {
     );
   }
 
+  const resolvedPublishedId = finaleDataReview.publishedId || pub || "";
+  const resolvedUserId = finaleDataReview.userId || userId || "";
+
   return (
     <div>
       <Header
         headerData={content.header}
         onStateChange={headerStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <Hero
         heroData={content.hero}
         companyName={content.company?.name || ""}
         onStateChange={heroStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <UsedBy
         usedByData={content.UsedBy ?? content.usedBy}
         onStateChange={usedByStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <About
         aboutData={content.about}
         onStateChange={aboutStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <EditableCompanyProfile
         profileData={content.profile}
         onStateChange={profileStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <Services
         serviceData={content.services}
         onStateChange={servicesStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <Products
         productData={content.products}
         onStateChange={productsStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <EditableGallerySection
         galleryData={content.gallery}
         onStateChange={galleryStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <Blog
         blogData={content.blog}
         onStateChange={blogStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <Testimonials
         content={content.testimonials}
         onStateChange={testimonialsStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <Contact
         content={content.contact}
         onStateChange={contactStateChange}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
       <Publish />
@@ -415,8 +418,8 @@ export default function App() {
       <Footer
         onStateChange={footerStateChange}
         content={content.footer}
-        publishedId={finaleDataReview.publishedId}
-        userId={finaleDataReview.userId}
+        publishedId={resolvedPublishedId}
+        userId={resolvedUserId}
         templateSelection={finaleDataReview.templateSelection}
       />
     </div>

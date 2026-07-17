@@ -26,6 +26,7 @@ const CompanyWebsite: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const [company, setCompany] = useState<Company | null>(null);
+  const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [companyCategory, setCompanyCategory] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -54,7 +55,7 @@ const CompanyWebsite: React.FC = () => {
         .then((r) => r.json())
         .then((data) => {
           const cards: Company[] = data.cards || [];
-          if (cards.length > 0) { setCompany(cards[0]); setLoading(false); }
+          if (cards.length > 0) { setAllCompanies(cards); setCompany(cards[0]); setLoading(false); }
           else tryNext(idx + 1);
         })
         .catch(() => tryNext(idx + 1));
@@ -359,11 +360,29 @@ const CompanyWebsite: React.FC = () => {
 
       {/* Header */}
       <div className="flex items-start justify-between px-4 sm:px-6 pt-5 pb-4 gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">{company.companyName}</h1>
-            {isVerified && <BadgeCheck className="w-5 h-5 text-green-600 flex-shrink-0" title="Verified" />}
-          </div>
+        <div className="min-w-0 flex-1">
+          {allCompanies.length > 1 ? (
+            <div className="mb-1">
+              <label className="text-xs text-gray-500 font-medium mb-1 block">Select Company</label>
+              <select
+                value={company.publishedId}
+                onChange={(e) => {
+                  const selected = allCompanies.find(c => c.publishedId === e.target.value);
+                  if (selected) { setCompany(selected); setCurrentLogo(""); setShowPublish(false); setIframeKey(k => k + 1); }
+                }}
+                className="text-sm font-semibold text-gray-900 border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 max-w-xs w-full"
+              >
+                {allCompanies.map(c => (
+                  <option key={c.publishedId} value={c.publishedId}>{c.companyName}</option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">{company.companyName}</h1>
+              {isVerified && <BadgeCheck className="w-5 h-5 text-green-600 flex-shrink-0" title="Verified" />}
+            </div>
+          )}
           <p className="text-sm text-gray-500 mt-0.5 truncate">{company.location}</p>
         </div>
         <button

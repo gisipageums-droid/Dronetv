@@ -161,15 +161,9 @@ const CompaniesPage: React.FC = () => {
       .then(r => r.json())
       .then(d => {
         const raw: Company[] = Array.isArray(d.cards) ? d.cards : [];
-        const seen = new Set<string>();
-        const unique = raw.filter(c => {
-          const k = (c.companyName || '').toLowerCase().trim();
-          if (!k || seen.has(k)) return false;
-          seen.add(k); return true;
-        });
-        setAllCompanies(unique);
+        setAllCompanies(raw);
         const stateSet = new Set<string>();
-        unique.forEach(c => {
+        raw.forEach(c => {
           const parts = (c.location || '').split(',');
           const st = parts[parts.length - 1]?.trim().replace(/\s+India$/i, '').trim();
           if (st && st.length > 1 && st.length < 30) stateSet.add(st);
