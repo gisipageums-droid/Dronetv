@@ -5,6 +5,7 @@ import About from "./components/About";
 import Blog from "./components/Blog";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import Documents from "./components/Documents";
 import GallerySection from "./components/Gallery";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -120,7 +121,7 @@ export default function App() {
       <Products productData={finaleDataReview.content.products} />
       <Blog blogData={finaleDataReview.content.blog} />
       <GallerySection galleryData={finaleDataReview.content.gallery} />
-
+      <Documents documents={finaleDataReview.content.documents} />
       <Testimonials content={finaleDataReview.content.testimonials} />
       <Contact
         content={finaleDataReview.content.contact}

@@ -11,6 +11,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import { useTemplate } from "../../../context/context";
 import { useParams, useNavigate } from "react-router-dom";
+import Documents from "./components/Documents";
 import GallerySection from "./components/Gallery";
 import CompanyProfile from "./components/Profile"
 import Back from "./components/Back"
@@ -127,6 +128,7 @@ export default function App() {
 
       <GallerySection
         galleryData={finaleDataReview.content.gallery} />
+      <Documents documents={finaleDataReview.content.documents} />
       <Blog
         blogData={finaleDataReview.content.blog}
 
