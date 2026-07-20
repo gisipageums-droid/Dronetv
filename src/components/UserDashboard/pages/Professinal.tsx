@@ -472,7 +472,10 @@ const Professinal: React.FC = () => {
             </button>
           ) : (
             <button
-              onClick={() => navigate("/professional/select")}
+              onClick={() => {
+                try { localStorage.removeItem("professionalFormDraft"); } catch { /* ignore */ }
+                navigate("/professional/select");
+              }}
               className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 hover:bg-yellow-600 hover:scale-110 transition-all duration-200 self-start sm:self-auto"
             >
               <Plus className="w-5 h-5" />
