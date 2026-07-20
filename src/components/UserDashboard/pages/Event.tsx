@@ -16,6 +16,8 @@ import ListingLimitBanner from "../components/common/ListingLimitBanner";
 import { EVENTS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+const DEFAULT_EVENT_IMAGE_PATHS = new Set(["/assets/default-event-image.png", "/images/default-event-image.png"]);
+const isCustomImageUrl = (url: string | undefined) => !!url && !DEFAULT_EVENT_IMAGE_PATHS.has(url);
 
 function getEventLimit(earned: number) {
   if (earned >= 8000) return Infinity;
@@ -201,8 +203,8 @@ const EventCard: React.FC<EventCardProps> = ({
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             {/* Event Image */}
-            <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110 cursor-pointer" onClick={() => { setThumbUrl(event.thumbnailUrl || ''); setThumbModal(true); }}>
-              {(event.thumbnailUrl || event.previewImage || event.heroBannerImage) ? (
+            <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110 cursor-pointer" onClick={() => { setThumbUrl(isCustomImageUrl(event.thumbnailUrl) ? event.thumbnailUrl! : ''); setThumbModal(true); }}>
+              {(isCustomImageUrl(event.thumbnailUrl) || isCustomImageUrl(event.previewImage) || isCustomImageUrl(event.heroBannerImage)) ? (
                 <img
                   src={event.thumbnailUrl || event.previewImage || event.heroBannerImage}
                   alt={event.eventName}
