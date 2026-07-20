@@ -239,7 +239,7 @@ interface PostJobForm { title: string; company: string; location: string; salary
 const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '', imageUrl: '', applicationDeadline: '' };
 const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence', 'Manufacturing', 'R&D', 'Operations'];
 
-const MyPostedJobs: React.FC<{ onPostJob: () => void }> = ({ onPostJob }) => {
+const MyPostedJobs: React.FC<{ onPostJob: () => void; refreshKey?: number }> = ({ onPostJob, refreshKey }) => {
   const { user } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || '';
   const [jobs, setJobs] = useState(() => userId ? getMyPostedJobs(userId) : []);
@@ -256,7 +256,7 @@ const MyPostedJobs: React.FC<{ onPostJob: () => void }> = ({ onPostJob }) => {
 
   useEffect(() => {
     if (userId) setJobs(getMyPostedJobs(userId));
-  }, [userId]);
+  }, [userId, refreshKey]);
 
   if (!userId) return null;
 
@@ -443,6 +443,7 @@ const CompanyPage: React.FC = () => {
   const [postJobForm, setPostJobForm] = useState<PostJobForm>(EMPTY_POST);
   const [postSubmitting, setPostSubmitting] = useState(false);
   const [postSubmitted, setPostSubmitted] = useState(false);
+  const [jobsRefreshKey, setJobsRefreshKey] = useState(0);
 
   // Aadhaar modal state
   const [publishingCompany, setPublishingCompany] = useState<Company | null>(null);
@@ -703,6 +704,7 @@ const CompanyPage: React.FC = () => {
       });
       if (userId && created?.contentId) {
         saveMyPostedJob(userId, { contentId: created.contentId, title: postJobForm.title, createdAt: new Date().toISOString() });
+        setJobsRefreshKey(k => k + 1);
       }
       setPostSubmitted(true);
     } catch {
@@ -858,7 +860,7 @@ const CompanyPage: React.FC = () => {
         </div>
       )}
 
-      <MyPostedJobs onPostJob={() => { setPostJobModal(true); setPostSubmitted(false); setPostJobForm({ ...EMPTY_POST, company: company?.companyName || '' }); }} />
+      <MyPostedJobs refreshKey={jobsRefreshKey} onPostJob={() => { setPostJobModal(true); setPostSubmitted(false); setPostJobForm({ ...EMPTY_POST, company: companies[0]?.companyName || '' }); }} />
       <JobApplicationsReceived companyNames={companies.map(c => c.companyName)} />
 
       {/* Post Job Modal */}
@@ -892,8 +894,17 @@ const CompanyPage: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-700 mb-1 block">Company Name *</label>
-                  <input required value={postJobForm.company} onChange={e => setPostJobForm(p => ({ ...p, company: e.target.value }))}
-                    placeholder="Your company name" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                  {companies.length > 0 ? (
+                    <select required value={postJobForm.company} onChange={e => setPostJobForm(p => ({ ...p, company: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                      <option value="">Select your company</option>
+                      {companies.map(c => <option key={c.publishedId} value={c.companyName}>{c.companyName}</option>)}
+                    </select>
+                  ) : (
+                    <input required value={postJobForm.company} onChange={e => setPostJobForm(p => ({ ...p, company: e.target.value }))}
+                      placeholder="Your company name" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                  )}
+                  <p className="text-[11px] text-gray-400 mt-1">Must match your registered company exactly so applications reach your dashboard.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>

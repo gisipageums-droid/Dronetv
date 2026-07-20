@@ -270,20 +270,26 @@ export default function JobBoardPage() {
               My Posted Jobs
             </h2>
             <div className="space-y-2">
-              {myJobs.map(j => (
-                <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Briefcase className="w-4 h-4 text-yellow-600" />
+              {myJobs.map(j => {
+                const isLive = items.some(i => i.contentId === j.contentId);
+                return (
+                  <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Briefcase className="w-4 h-4 text-yellow-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">{j.title}</p>
+                        <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')} · {isLive ? 'Live on Job Board' : 'Pending admin review'}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">{j.title}</p>
-                      <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')} · Pending admin review</p>
-                    </div>
+                    {isLive
+                      ? <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
+                      : <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
+                    }
                   </div>
-                  <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
