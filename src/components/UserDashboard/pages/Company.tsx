@@ -235,8 +235,8 @@ function saveMyPostedJob(userId: string, job: { contentId: string; title: string
   localStorage.setItem(`dtv_my_jobs_${userId}`, JSON.stringify([job, ...existing]));
 }
 
-interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; }
-const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '' };
+interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; imageUrl: string; applicationDeadline: string; }
+const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '', imageUrl: '', applicationDeadline: '' };
 const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence', 'Manufacturing', 'R&D', 'Operations'];
 
 const MyPostedJobs: React.FC<{ onPostJob: () => void }> = ({ onPostJob }) => {
@@ -695,6 +695,8 @@ const CompanyPage: React.FC = () => {
         salary: postJobForm.salary,
         category: postJobForm.category,
         platform: postJobForm.jobType,
+        imageUrl: postJobForm.imageUrl,
+        applicationDeadline: postJobForm.applicationDeadline,
         author: userId,
         source: userId,
         isPublished: false,
@@ -926,6 +928,18 @@ const CompanyPage: React.FC = () => {
                   <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Description</label>
                   <textarea rows={4} value={postJobForm.description} onChange={e => setPostJobForm(p => ({ ...p, description: e.target.value }))}
                     placeholder="Describe the role, requirements, responsibilities..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Image URL</label>
+                    <input value={postJobForm.imageUrl} onChange={e => setPostJobForm(p => ({ ...p, imageUrl: e.target.value }))}
+                      placeholder="https://..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Application Deadline</label>
+                    <input type="date" value={postJobForm.applicationDeadline} onChange={e => setPostJobForm(p => ({ ...p, applicationDeadline: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                  </div>
                 </div>
                 <div className="flex gap-3 justify-end pt-2">
                   <button type="button" onClick={() => setPostJobModal(false)} className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors">Cancel</button>

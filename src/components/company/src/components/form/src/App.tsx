@@ -438,16 +438,23 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       const publishedProducts: any[] = publishedData?.content?.products?.products || [];
 
       const formDataFromDraft = draftData?.formData || {};
+      // Previously saved Update Details selections (saved on last submit)
+      const cachedFields: any = publishedData?.content?._updateCache || {};
 
-      // Use scraped services/products as fallback when draft has none
+      // Priority: cached Update Details > original draft > scraped from website
       const mergedFormData = {
         ...formDataFromDraft,
-        services: formDataFromDraft.services?.length > 0
-          ? formDataFromDraft.services
-          : publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' })),
-        products: formDataFromDraft.products?.length > 0
-          ? formDataFromDraft.products
-          : publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' })),
+        ...cachedFields,
+        services: cachedFields.services?.length > 0
+          ? cachedFields.services
+          : formDataFromDraft.services?.length > 0
+            ? formDataFromDraft.services
+            : publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' })),
+        products: cachedFields.products?.length > 0
+          ? cachedFields.products
+          : formDataFromDraft.products?.length > 0
+            ? formDataFromDraft.products
+            : publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' })),
       };
 
       if (Object.keys(mergedFormData).length > 0) {
@@ -817,6 +824,24 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       const aiGenData = mapFormDataToAIGenData(formData, companyData.draftId, companyData.userId);
       aiGenData.publishedId = companyData.publishedId;
       aiGenData.templateSelection = companyData.templateSelection;
+      // Save safe (non-sensitive) fields so form pre-fills next time user opens Update Details
+      const CACHE_KEYS = [
+        'companyCategory', 'sectorsServed', 'sectorsOther',
+        'mainCategories', 'otherMainCategories', 'geographyOfOperations', 'coverageType',
+        'manufacturingSubcategories', 'manufOther', 'serviceSubcategories', 'servicesOther',
+        'trainingTypes', 'trainingOther', 'photoVideoSubcategories', 'photoVideoOther',
+        'softwareSubcategories', 'softwareOther', 'aiSolutions', 'aiSolutionsOther',
+        'aiProducts', 'aiProductsOther', 'aiServices', 'aiServicesOther',
+        'gnssSolutions', 'gnssSolutionsOther', 'gnssProducts', 'gnssProductsOther',
+        'gnssServices', 'gnssServicesOther', 'services', 'products', 'clients',
+        'testimonials', 'companyValuesSelection', 'promoFormats',
+        'companyLogoUrl', 'brochurePdfUrl', 'cataloguePdfUrl', 'caseStudiesUrl',
+        'brandGuidelinesUrl', 'dgcaTypeCertificateUrl', 'rptoAuthorisationCertificateUrl',
+        'promoVideoFiveMinUrl', 'promoVideoOneMinUrl',
+      ] as const;
+      aiGenData._updateCache = Object.fromEntries(
+        CACHE_KEYS.filter(k => k in (formData as any)).map(k => [k, (formData as any)[k]])
+      );
       if (onEmbeddedSubmit) {
         onEmbeddedSubmit(aiGenData);
       } else {

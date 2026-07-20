@@ -182,6 +182,7 @@ const CompanyWebsite: React.FC = () => {
       const finalContent = {
         ...(hasExisting ? mergedContent : newContent),
         _detailsUpdatedAt: new Date().toISOString(),
+        ...(aiGenData._updateCache ? { _updateCache: aiGenData._updateCache } : {}),
       };
 
       const newCompanyName = ((newContent.profile?.companyName || newContent.company?.name) as string || '').trim();
