@@ -494,6 +494,16 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
+      // Extract full name from content so the Lambda can update the top-level attribute
+      // (the Pilot Directory / dashboard cards read the top-level fullName, not content.hero.name)
+      const fullName = (
+        finalTemplate?.content?.hero?.name ||
+        finalTemplate?.content?.header?.name ||
+        ''
+      ).trim();
+
+      const body = fullName ? { ...finalTemplate, fullName } : finalTemplate;
+
       const response = await fetch(
         PROFESSIONAL_API ? `${PROFESSIONAL_API}/publish` : `${LAMBDA.profPublish}/`,
         {
@@ -501,7 +511,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(finalTemplate),
+          body: JSON.stringify(body),
         }
       );
 
