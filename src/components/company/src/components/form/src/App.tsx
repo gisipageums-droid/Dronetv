@@ -412,7 +412,13 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
 
   useEffect(() => {
     if (initialCompanyCategory && initialCompanyCategory.length > 0) {
-      setFormData((prev) => ({ ...prev, companyCategory: initialCompanyCategory }));
+      // Seed only — never clobber a richer selection already restored from
+      // the update-details cache or an unsaved local draft (see below).
+      setFormData((prev) =>
+        prev.companyCategory && prev.companyCategory.length > 0
+          ? prev
+          : { ...prev, companyCategory: initialCompanyCategory }
+      );
     }
   }, [initialCompanyCategory?.join(",")]);
 
@@ -440,21 +446,32 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       const formDataFromDraft = draftData?.formData || {};
       // Previously saved Update Details selections (saved on last submit)
       const cachedFields: any = publishedData?.content?._updateCache || {};
+      // In-progress edits from this browser that never reached a final submit
+      let localDraft: any = {};
+      try {
+        const saved = companyData.publishedId ? localStorage.getItem(`companyUpdateDraft_${companyData.publishedId}`) : null;
+        if (saved) localDraft = JSON.parse(saved);
+      } catch { /* ignore corrupt local draft */ }
 
-      // Priority: cached Update Details > original draft > scraped from website
+      // Priority: unsaved local draft > cached Update Details > original draft > scraped from website
       const mergedFormData = {
         ...formDataFromDraft,
         ...cachedFields,
-        services: cachedFields.services?.length > 0
-          ? cachedFields.services
-          : formDataFromDraft.services?.length > 0
-            ? formDataFromDraft.services
-            : publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' })),
-        products: cachedFields.products?.length > 0
-          ? cachedFields.products
-          : formDataFromDraft.products?.length > 0
-            ? formDataFromDraft.products
-            : publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' })),
+        ...localDraft,
+        services: localDraft.services?.length > 0
+          ? localDraft.services
+          : cachedFields.services?.length > 0
+            ? cachedFields.services
+            : formDataFromDraft.services?.length > 0
+              ? formDataFromDraft.services
+              : publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' })),
+        products: localDraft.products?.length > 0
+          ? localDraft.products
+          : cachedFields.products?.length > 0
+            ? cachedFields.products
+            : formDataFromDraft.products?.length > 0
+              ? formDataFromDraft.products
+              : publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' })),
       };
 
       if (Object.keys(mergedFormData).length > 0) {
@@ -462,6 +479,15 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       }
     }).finally(() => setIsDraftLoading(false));
   }, [embedded, companyData?.draftId, companyData?.userId, companyData?.publishedId]);
+
+  // Autosave in-progress Update Details edits so they survive a reload/reopen
+  // before the user reaches the final submit (nothing persists otherwise).
+  useEffect(() => {
+    if (!embedded || !companyData?.publishedId || isDraftLoading) return;
+    try {
+      localStorage.setItem(`companyUpdateDraft_${companyData.publishedId}`, JSON.stringify(formData));
+    } catch { /* storage unavailable — non-fatal, just no autosave this session */ }
+  }, [embedded, companyData?.publishedId, isDraftLoading, formData]);
 
   // Set selected template from parent when creating new company via dashboard
   useEffect(() => {
@@ -844,6 +870,9 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       );
       if (onEmbeddedSubmit) {
         onEmbeddedSubmit(aiGenData);
+        if (companyData.publishedId) {
+          try { localStorage.removeItem(`companyUpdateDraft_${companyData.publishedId}`); } catch { /* ignore */ }
+        }
       } else {
         const templateNum = companyData.templateSelection === 'template-2' ? '2' : '1';
         navigate(

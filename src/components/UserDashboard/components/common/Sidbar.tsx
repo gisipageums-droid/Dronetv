@@ -29,27 +29,21 @@ interface NavGroup {
   paths: string[];
 }
 
-function getNavGroups(role: string, isAdmin: boolean): NavGroup[] {
-  const can = {
-    company:    isAdmin || role === 'company',
-    prof:       isAdmin || role === 'professional',
-    event:      isAdmin || role === 'event_organizer',
-    leads:      isAdmin || ['company', 'professional', 'event_organizer'].includes(role),
-  };
-
-  const listingItems = [
-    can.company && { icon: Building2, label: "Companies",     href: "/user-companies" },
-    can.prof    && { icon: Users,     label: "Professionals", href: "/user-professionals" },
-    can.event   && { icon: Calendar,  label: "Events",        href: "/user-events" },
-  ].filter(Boolean) as SubItem[];
+function getNavGroups(_role: string, isAdmin: boolean): NavGroup[] {
+  // Every logged-in user can list a company, a professional profile, and events —
+  // these aren't mutually exclusive, so listing options are never role-gated.
+  const listingItems: SubItem[] = [
+    { icon: Building2, label: "Companies",     href: "/user-companies" },
+    { icon: Users,     label: "Professionals", href: "/user-professionals" },
+    { icon: Calendar,  label: "Events",        href: "/user-events" },
+  ];
 
   const groups: NavGroup[] = [
-    // My Listings — only roles that have listings
-    ...(listingItems.length > 0 ? [{
+    {
       id: "listings", icon: Building2, label: "My Listings",
       paths: ["/user-companies", "/user-professionals", "/user-events"],
       items: listingItems,
-    }] : []),
+    },
 
     {
       id: "professionals", icon: Users, label: "Professionals",
@@ -112,15 +106,14 @@ function getNavGroups(role: string, isAdmin: boolean): NavGroup[] {
         { icon: ShoppingBag, label: "Addons",   href: "/user-addons" },
       ],
     },
-    // Analytics — only for listing owners
-    ...(can.leads ? [{
+    {
       id: "analytics", icon: FileText, label: "Analytics",
       paths: ["/user-leads", "/user-contacted"],
       items: [
         { icon: FileText,      label: "Leads",     href: "/user-leads" },
         { icon: MessageSquare, label: "Contacted", href: "/user-contacted" },
       ],
-    }] : []),
+    },
 
     {
       id: "tokens", icon: Coins, label: "Tokens",
