@@ -542,10 +542,21 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
-      const data = {
+      // Extract event name from content so the Lambda can update the top-level attribute
+      const eventName = (
+        finalTemplate?.content?.header?.eventName ||
+        finalTemplate?.content?.footer?.eventName ||
+        finalTemplate?.header?.eventName ||
+        finalTemplate?.footer?.eventName ||
+        ''
+      ).trim();
+
+      const data: any = {
         content: finalTemplate,
         submissionId: AIGenData.eventId,
+        ...(eventName ? { eventName } : {}),
       };
+
       const response = await fetch(
         EVENTS_API ? `${EVENTS_API}/publish` : `${LAMBDA.eventsPublish}/events-publish/event-publish`,
         {
@@ -561,9 +572,24 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
+      // If admin is publishing, auto-approve so event stays visible in public list
+      if (isAdminLogin && AIGenData.eventId) {
+        try {
+          await fetch(
+            EVENTS_API ? `${EVENTS_API}/event/${AIGenData.eventId}` : `${LAMBDA.eventsAdmin}/event/${AIGenData.eventId}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ eventId: AIGenData.eventId, action: "approve", userId: AIGenData.userId }),
+            }
+          );
+        } catch { /* best effort */ }
+      }
+
       toast.success(
-        "Your template is successfully published and now it is under review"
+        isAdminLogin
+          ? "Event updated and published successfully"
+          : "Your template is successfully published and now it is under review"
       );
       if (isLogin=== false) {
         if(isAdminLogin){

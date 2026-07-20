@@ -858,7 +858,7 @@ const CompanyPage: React.FC = () => {
         </div>
       )}
 
-      <MyPostedJobs onPostJob={() => { setPostJobModal(true); setPostSubmitted(false); setPostJobForm(EMPTY_POST); }} />
+      <MyPostedJobs onPostJob={() => { setPostJobModal(true); setPostSubmitted(false); setPostJobForm({ ...EMPTY_POST, company: company?.companyName || '' }); }} />
       <JobApplicationsReceived companyNames={companies.map(c => c.companyName)} />
 
       {/* Post Job Modal */}
@@ -888,30 +888,30 @@ const CompanyPage: React.FC = () => {
                 <div>
                   <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Title *</label>
                   <input required value={postJobForm.title} onChange={e => setPostJobForm(p => ({ ...p, title: e.target.value }))}
-                    placeholder="e.g. Drone Pilot – Agriculture" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                    placeholder="e.g. Drone Pilot – Agriculture" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-700 mb-1 block">Company Name *</label>
                   <input required value={postJobForm.company} onChange={e => setPostJobForm(p => ({ ...p, company: e.target.value }))}
-                    placeholder="Your company name" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                    placeholder="Your company name" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-gray-700 mb-1 block">Location</label>
                     <input value={postJobForm.location} onChange={e => setPostJobForm(p => ({ ...p, location: e.target.value }))}
-                      placeholder="e.g. Hyderabad" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                      placeholder="e.g. Hyderabad" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-gray-700 mb-1 block">Salary</label>
                     <input value={postJobForm.salary} onChange={e => setPostJobForm(p => ({ ...p, salary: e.target.value }))}
-                      placeholder="e.g. ₹30,000–40,000/mo" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                      placeholder="e.g. ₹30,000–40,000/mo" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-gray-700 mb-1 block">Category</label>
                     <select value={postJobForm.category} onChange={e => setPostJobForm(p => ({ ...p, category: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white">
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
                       <option value="">Select category</option>
                       {JOB_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
@@ -919,7 +919,7 @@ const CompanyPage: React.FC = () => {
                   <div>
                     <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Type</label>
                     <select value={postJobForm.jobType} onChange={e => setPostJobForm(p => ({ ...p, jobType: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white">
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
                       {['Full-Time', 'Part-Time', 'Contract', 'Internship'].map(t => <option key={t}>{t}</option>)}
                     </select>
                   </div>
@@ -927,18 +927,18 @@ const CompanyPage: React.FC = () => {
                 <div>
                   <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Description</label>
                   <textarea rows={4} value={postJobForm.description} onChange={e => setPostJobForm(p => ({ ...p, description: e.target.value }))}
-                    placeholder="Describe the role, requirements, responsibilities..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
+                    placeholder="Describe the role, requirements, responsibilities..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Image URL</label>
                     <input value={postJobForm.imageUrl} onChange={e => setPostJobForm(p => ({ ...p, imageUrl: e.target.value }))}
-                      placeholder="https://..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                      placeholder="https://..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-gray-700 mb-1 block">Application Deadline</label>
                     <input type="date" value={postJobForm.applicationDeadline} onChange={e => setPostJobForm(p => ({ ...p, applicationDeadline: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
                   </div>
                 </div>
                 <div className="flex gap-3 justify-end pt-2">

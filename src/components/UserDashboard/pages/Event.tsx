@@ -3,12 +3,13 @@ import {
   Building2,
   Edit,
   Eye,
+  Image,
   MapPin,
   Plus,
   Search,
   Users,
 } from "lucide-react";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
@@ -100,8 +101,28 @@ const EventCard: React.FC<EventCardProps> = ({
   onEdit,
   event,
 }) => {
-  const placeholderImg =
-    event.previewImage || event?.eventName?.charAt(0) || "E";
+  const placeholderImg = event?.eventName?.charAt(0) || "E";
+  const [thumbModal, setThumbModal] = useState(false);
+  const [thumbUrl, setThumbUrl] = useState('');
+  const [thumbSaving, setThumbSaving] = useState(false);
+
+  const handleSaveThumbnail = useCallback(async () => {
+    if (!thumbUrl.trim()) return;
+    setThumbSaving(true);
+    try {
+      await fetch(
+        EVENTS_API ? `${EVENTS_API}/event/${event.eventId}` : `${LAMBDA.eventsAdmin}/event/${event.eventId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId: event.eventId, action: 'update', userId: event.userId, thumbnailUrl: thumbUrl.trim() }),
+        }
+      );
+      event.thumbnailUrl = thumbUrl.trim();
+      setThumbModal(false);
+    } catch { /* best effort */ }
+    finally { setThumbSaving(false); }
+  }, [thumbUrl, event]);
   const navigate = useNavigate();
 
   const formatDate = (dateString: string): string => {
@@ -159,17 +180,19 @@ const EventCard: React.FC<EventCardProps> = ({
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             {/* Event Image */}
-            <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110">
-              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-yellow-600">
-                {event.previewImage ? (
-                  <img
-                    src={event.heroBannerImage} 
-                    alt={event.eventName}
-                    className="w-full h-full object-cover rounded-md"
-                  />
-                ) : (
-                  placeholderImg
-                )}
+            <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110 cursor-pointer" onClick={() => { setThumbUrl(event.thumbnailUrl || ''); setThumbModal(true); }}>
+              {(event.thumbnailUrl || event.previewImage || event.heroBannerImage) ? (
+                <img
+                  src={event.thumbnailUrl || event.previewImage || event.heroBannerImage}
+                  alt={event.eventName}
+                  className="w-full h-full object-cover"
+                  onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              ) : (
+                <span className="text-2xl font-bold text-yellow-600">{placeholderImg}</span>
+              )}
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <Image className="w-5 h-5 text-white" />
               </div>
             </div>
 
@@ -273,13 +296,30 @@ const EventCard: React.FC<EventCardProps> = ({
           </button>
         </div>
 
-        {/* Event ID */}
-        {/* <div className="mt-4 pt-4 border-t border-yellow-200">
-          <div className="text-xs text-gray-500">
-            ID: {event?.eventId || "No ID"}
-          </div>
-        </div> */}
       </div>
+
+      {/* Thumbnail update modal */}
+      {thumbModal && (
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60" onClick={() => setThumbModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-5" onClick={e => e.stopPropagation()}>
+            <p className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2"><Image className="w-4 h-4 text-yellow-500" /> Update Event Thumbnail</p>
+            <input
+              type="url"
+              value={thumbUrl}
+              onChange={e => setThumbUrl(e.target.value)}
+              placeholder="https://... (image URL)"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-3"
+            />
+            {thumbUrl && <img src={thumbUrl} alt="preview" className="w-full h-32 object-cover rounded-lg mb-3" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setThumbModal(false)} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
+              <button onClick={handleSaveThumbnail} disabled={thumbSaving || !thumbUrl.trim()} className="px-4 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg disabled:opacity-60">
+                {thumbSaving ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
