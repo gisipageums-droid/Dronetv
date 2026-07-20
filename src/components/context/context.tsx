@@ -379,7 +379,14 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
-      const extractedName = (finalTemplate?.content?.profile?.companyName || finalTemplate?.content?.company?.name || '').trim();
+      const PLACEHOLDER_COMPANY_NAMES = new Set(['company name', 'innovative labs', 'your company', 'unnamed company']);
+      const isRealName = (n: string) => !!n && !PLACEHOLDER_COMPANY_NAMES.has(n.toLowerCase().trim());
+      const nameCandidates = [
+        finalTemplate?.content?.header?.companyName,
+        finalTemplate?.content?.profile?.companyName,
+        finalTemplate?.content?.company?.name,
+      ];
+      const extractedName = (nameCandidates.find(n => isRealName((n || '').trim())) || '').trim();
       const body = extractedName ? { ...finalTemplate, companyName: extractedName } : finalTemplate;
       const response = await fetch(
         COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`,
@@ -431,7 +438,14 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
-      const extractedName = (finalTemplate?.content?.profile?.companyName || finalTemplate?.content?.company?.name || '').trim();
+      const PLACEHOLDER_COMPANY_NAMES = new Set(['company name', 'innovative labs', 'your company', 'unnamed company']);
+      const isRealName = (n: string) => !!n && !PLACEHOLDER_COMPANY_NAMES.has(n.toLowerCase().trim());
+      const nameCandidates = [
+        finalTemplate?.content?.header?.companyName,
+        finalTemplate?.content?.profile?.companyName,
+        finalTemplate?.content?.company?.name,
+      ];
+      const extractedName = (nameCandidates.find(n => isRealName((n || '').trim())) || '').trim();
       const body = extractedName ? { ...finalTemplate, companyName: extractedName } : finalTemplate;
       const response = await fetch(
         COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`,
