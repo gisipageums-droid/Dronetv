@@ -379,6 +379,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
+      const extractedName = (finalTemplate?.content?.profile?.companyName || finalTemplate?.content?.company?.name || '').trim();
+      const body = extractedName ? { ...finalTemplate, companyName: extractedName } : finalTemplate;
       const response = await fetch(
         COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`,
         {
@@ -386,7 +388,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(finalTemplate),
+          body: JSON.stringify(body),
         }
       );
 
@@ -429,6 +431,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
+      const extractedName = (finalTemplate?.content?.profile?.companyName || finalTemplate?.content?.company?.name || '').trim();
+      const body = extractedName ? { ...finalTemplate, companyName: extractedName } : finalTemplate;
       const response = await fetch(
         COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`,
         {
@@ -436,7 +440,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(finalTemplate),
+          body: JSON.stringify(body),
         }
       );
 

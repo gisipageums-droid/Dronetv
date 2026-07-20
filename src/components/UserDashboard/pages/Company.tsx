@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase, Users, Mail, Phone } from "lucide-react";
+import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase, Users, Mail, Phone, Send } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
-import { fetchAdminContent, MediaItem } from "../../../lib/mediaApi";
+import { fetchAdminContent, fetchContent, createContent, MediaItem } from "../../../lib/mediaApi";
 import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
@@ -230,33 +230,78 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
 function getMyPostedJobs(userId: string): { contentId: string; title: string; createdAt: string }[] {
   try { return JSON.parse(localStorage.getItem(`dtv_my_jobs_${userId}`) || '[]'); } catch { return []; }
 }
+function saveMyPostedJob(userId: string, job: { contentId: string; title: string; createdAt: string }) {
+  const existing = getMyPostedJobs(userId);
+  localStorage.setItem(`dtv_my_jobs_${userId}`, JSON.stringify([job, ...existing]));
+}
 
-const MyPostedJobs: React.FC = () => {
+interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; }
+const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '' };
+const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence', 'Manufacturing', 'R&D', 'Operations'];
+
+const MyPostedJobs: React.FC<{ onPostJob: () => void }> = ({ onPostJob }) => {
   const { user } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || '';
-  const [jobs] = useState(() => userId ? getMyPostedJobs(userId) : []);
-  if (!userId || jobs.length === 0) return null;
+  const [jobs, setJobs] = useState(() => userId ? getMyPostedJobs(userId) : []);
+  const [liveIds, setLiveIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (jobs.length === 0) return;
+    const controller = new AbortController();
+    fetchContent('job', controller.signal)
+      .then(items => setLiveIds(new Set(items.map(i => i.contentId))))
+      .catch(() => {});
+    return () => controller.abort();
+  }, [jobs.length]);
+
+  useEffect(() => {
+    if (userId) setJobs(getMyPostedJobs(userId));
+  }, [userId]);
+
+  if (!userId) return null;
+
   return (
     <div className="mt-10">
-      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <Briefcase className="w-5 h-5 text-yellow-500" /> My Posted Jobs
-      </h2>
-      <div className="space-y-3">
-        {jobs.map(j => (
-          <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Briefcase className="w-4 h-4 text-yellow-600" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">{j.title}</p>
-                <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')} · Pending DroneTv review</p>
-              </div>
-            </div>
-            <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
-          </div>
-        ))}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <Briefcase className="w-5 h-5 text-yellow-500" /> My Posted Jobs
+        </h2>
+        <button
+          onClick={onPostJob}
+          className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm"
+        >
+          <Plus size={16} /> Post a Job
+        </button>
       </div>
+      {jobs.length === 0 ? (
+        <div className="bg-white rounded-xl border border-dashed border-gray-200 p-6 text-center">
+          <Briefcase className="w-8 h-8 text-gray-200 mx-auto mb-2" />
+          <p className="text-sm text-gray-500">No jobs posted yet.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {jobs.map(j => {
+            const isLive = liveIds.has(j.contentId);
+            return (
+              <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Briefcase className="w-4 h-4 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">{j.title}</p>
+                    <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')}</p>
+                  </div>
+                </div>
+                {isLive
+                  ? <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
+                  : <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
+                }
+              </div>
+            );
+          })}
+        </div>
+      )}
       <p className="text-xs text-gray-400 mt-3">
         Jobs go live on the <Link to="/professionals/job-board" className="text-yellow-600 underline">Job Board</Link> after admin approval.
       </p>
@@ -394,6 +439,10 @@ const CompanyPage: React.FC = () => {
 
   const [detailsUpdatedIds, setDetailsUpdatedIds] = useState<Set<string>>(new Set());
   const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
+  const [postJobModal, setPostJobModal] = useState(false);
+  const [postJobForm, setPostJobForm] = useState<PostJobForm>(EMPTY_POST);
+  const [postSubmitting, setPostSubmitting] = useState(false);
+  const [postSubmitted, setPostSubmitted] = useState(false);
 
   // Aadhaar modal state
   const [publishingCompany, setPublishingCompany] = useState<Company | null>(null);
@@ -631,6 +680,36 @@ const CompanyPage: React.FC = () => {
     }
   };
 
+  const handlePostJob = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!postJobForm.title || !postJobForm.company) return;
+    setPostSubmitting(true);
+    try {
+      const userId = user?.email || user?.userData?.email || '';
+      const created = await createContent({
+        contentType: 'job',
+        title: postJobForm.title,
+        description: postJobForm.description,
+        company: postJobForm.company,
+        location: postJobForm.location,
+        salary: postJobForm.salary,
+        category: postJobForm.category,
+        platform: postJobForm.jobType,
+        author: userId,
+        source: userId,
+        isPublished: false,
+      });
+      if (userId && created?.contentId) {
+        saveMyPostedJob(userId, { contentId: created.contentId, title: postJobForm.title, createdAt: new Date().toISOString() });
+      }
+      setPostSubmitted(true);
+    } catch {
+      setPostSubmitted(true);
+    } finally {
+      setPostSubmitting(false);
+    }
+  };
+
   useEffect(() => {
     const userId = user?.email || user?.userData?.email || "";
     if (!userId) return;
@@ -777,17 +856,88 @@ const CompanyPage: React.FC = () => {
         </div>
       )}
 
-      <div className="flex justify-end mb-2">
-        <Link
-          to="/professionals/job-board?postjob=true"
-          className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm"
-        >
-          <Plus size={16} />
-          Post a Job
-        </Link>
-      </div>
-      <MyPostedJobs />
+      <MyPostedJobs onPostJob={() => { setPostJobModal(true); setPostSubmitted(false); setPostJobForm(EMPTY_POST); }} />
       <JobApplicationsReceived companyNames={companies.map(c => c.companyName)} />
+
+      {/* Post Job Modal */}
+      {postJobModal && (
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setPostJobModal(false)}>
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Briefcase className="text-yellow-500" size={22} />
+                <h3 className="text-xl font-semibold text-gray-900">Post a Job</h3>
+              </div>
+              <button onClick={() => setPostJobModal(false)} className="p-1 rounded-full hover:bg-gray-100"><X size={20} className="text-gray-500" /></button>
+            </div>
+
+            {postSubmitted ? (
+              <div className="text-center py-8">
+                <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
+                <h4 className="text-lg font-bold text-gray-900 mb-2">Job Submitted!</h4>
+                <p className="text-sm text-gray-500 mb-6">Your job listing is under review. It will go live on the Job Board after admin approval.</p>
+                <button onClick={() => { setPostJobModal(false); setPostSubmitted(false); setPostJobForm(EMPTY_POST); }}
+                  className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg transition-colors">
+                  Done
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handlePostJob} className="space-y-4">
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Title *</label>
+                  <input required value={postJobForm.title} onChange={e => setPostJobForm(p => ({ ...p, title: e.target.value }))}
+                    placeholder="e.g. Drone Pilot – Agriculture" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 mb-1 block">Company Name *</label>
+                  <input required value={postJobForm.company} onChange={e => setPostJobForm(p => ({ ...p, company: e.target.value }))}
+                    placeholder="Your company name" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Location</label>
+                    <input value={postJobForm.location} onChange={e => setPostJobForm(p => ({ ...p, location: e.target.value }))}
+                      placeholder="e.g. Hyderabad" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Salary</label>
+                    <input value={postJobForm.salary} onChange={e => setPostJobForm(p => ({ ...p, salary: e.target.value }))}
+                      placeholder="e.g. ₹30,000–40,000/mo" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Category</label>
+                    <select value={postJobForm.category} onChange={e => setPostJobForm(p => ({ ...p, category: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white">
+                      <option value="">Select category</option>
+                      {JOB_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Type</label>
+                    <select value={postJobForm.jobType} onChange={e => setPostJobForm(p => ({ ...p, jobType: e.target.value }))}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white">
+                      {['Full-Time', 'Part-Time', 'Contract', 'Internship'].map(t => <option key={t}>{t}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Description</label>
+                  <textarea rows={4} value={postJobForm.description} onChange={e => setPostJobForm(p => ({ ...p, description: e.target.value }))}
+                    placeholder="Describe the role, requirements, responsibilities..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
+                </div>
+                <div className="flex gap-3 justify-end pt-2">
+                  <button type="button" onClick={() => setPostJobModal(false)} className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors">Cancel</button>
+                  <button type="submit" disabled={postSubmitting} className="flex items-center gap-2 px-5 py-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg transition-colors disabled:opacity-60">
+                    {postSubmitting ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : <><Send size={16} /> Submit Job</>}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Aadhaar / Publish Modal */}
       {publishingCompany && (

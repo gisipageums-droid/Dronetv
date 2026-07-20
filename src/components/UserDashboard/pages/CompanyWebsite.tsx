@@ -168,8 +168,15 @@ const CompanyWebsite: React.FC = () => {
         ...(existingContent.gallery?.images?.length > 0 ? {
           gallery: { ...existingContent.gallery, ...(newContent.gallery || {}), images: existingContent.gallery.images },
         } : {}),
-        // Documents from Update Details step 8 (PDFs and videos)
-        ...(newContent.documents ? { documents: newContent.documents } : {}),
+        // Documents: merge new non-empty URLs over existing, never clear existing with empty
+        ...(newContent.documents ? {
+          documents: {
+            ...(existingContent.documents || {}),
+            ...Object.fromEntries(
+              Object.entries(newContent.documents as Record<string, string>).filter(([, url]) => typeof url === 'string' && url.trim() !== '')
+            ),
+          },
+        } : {}),
       } : newContent;
 
       const finalContent = {
@@ -177,6 +184,7 @@ const CompanyWebsite: React.FC = () => {
         _detailsUpdatedAt: new Date().toISOString(),
       };
 
+      const newCompanyName = ((newContent.profile?.companyName || newContent.company?.name) as string || '').trim();
       await fetch(COMPANY_API ? `${COMPANY_API}/update` : `${LAMBDA.companyDraft2}/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -186,9 +194,14 @@ const CompanyWebsite: React.FC = () => {
           draftId: company.draftId,
           templateSelection: company.templateSelection,
           content: finalContent,
+          ...(newCompanyName ? { companyName: newCompanyName } : {}),
         }),
       });
 
+      if (newCompanyName) {
+        setCompany(prev => prev ? { ...prev, companyName: newCompanyName } : prev);
+        setAllCompanies(prev => prev.map(c => c.publishedId === company.publishedId ? { ...c, companyName: newCompanyName } : c));
+      }
       setIframeKey((k) => k + 1);
       toast.success("Details saved! You can now publish your company.");
       setShowPublish(true);
