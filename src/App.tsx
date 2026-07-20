@@ -192,7 +192,8 @@ const AppContent = () => {
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/edit") ||
     location.pathname.startsWith("/professional") ||
-    location.pathname.startsWith("/template");
+    location.pathname.startsWith("/template") ||
+    location.pathname.startsWith("/event/leads");
   const hideNavigation =
     location.pathname.startsWith("/admin/") ||
     location.pathname.startsWith("/user/companies/edit") ||

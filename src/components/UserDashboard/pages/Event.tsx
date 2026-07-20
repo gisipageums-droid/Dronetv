@@ -105,6 +105,9 @@ const EventCard: React.FC<EventCardProps> = ({
   const [thumbModal, setThumbModal] = useState(false);
   const [thumbUrl, setThumbUrl] = useState('');
   const [thumbSaving, setThumbSaving] = useState(false);
+  const [titleModal, setTitleModal] = useState(false);
+  const [titleValue, setTitleValue] = useState('');
+  const [titleSaving, setTitleSaving] = useState(false);
 
   const handleSaveThumbnail = useCallback(async () => {
     if (!thumbUrl.trim()) return;
@@ -123,6 +126,24 @@ const EventCard: React.FC<EventCardProps> = ({
     } catch { /* best effort */ }
     finally { setThumbSaving(false); }
   }, [thumbUrl, event]);
+
+  const handleSaveTitle = useCallback(async () => {
+    if (!titleValue.trim()) return;
+    setTitleSaving(true);
+    try {
+      await fetch(
+        EVENTS_API ? `${EVENTS_API}/event/${event.eventId}` : `${LAMBDA.eventsAdmin}/event/${event.eventId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId: event.eventId, action: 'update', userId: event.userId, eventName: titleValue.trim() }),
+        }
+      );
+      event.eventName = titleValue.trim();
+      setTitleModal(false);
+    } catch { /* best effort */ }
+    finally { setTitleSaving(false); }
+  }, [titleValue, event]);
   const navigate = useNavigate();
 
   const formatDate = (dateString: string): string => {
@@ -198,8 +219,16 @@ const EventCard: React.FC<EventCardProps> = ({
 
             {/* Event Info */}
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
-                {event?.eventName || "Unnamed Event"}
+              <h3 className="text-lg font-bold text-gray-900 line-clamp-2 flex items-center gap-2">
+                <span>{event?.eventName || "Unnamed Event"}</span>
+                <button
+                  type="button"
+                  onClick={() => { setTitleValue(event.eventName || ''); setTitleModal(true); }}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-yellow-600 flex-shrink-0"
+                  title="Edit event title"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
               </h3>
               <div className="flex items-center text-gray-600 mt-1">
                 <MapPin className="w-4 h-4 mr-1 text-yellow-500" />
@@ -315,6 +344,28 @@ const EventCard: React.FC<EventCardProps> = ({
               <button onClick={() => setThumbModal(false)} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
               <button onClick={handleSaveThumbnail} disabled={thumbSaving || !thumbUrl.trim()} className="px-4 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg disabled:opacity-60">
                 {thumbSaving ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Title update modal */}
+      {titleModal && (
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60" onClick={() => setTitleModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-5" onClick={e => e.stopPropagation()}>
+            <p className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2"><Edit className="w-4 h-4 text-yellow-500" /> Edit Event Title</p>
+            <input
+              type="text"
+              value={titleValue}
+              onChange={e => setTitleValue(e.target.value)}
+              placeholder="Event title"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-3"
+            />
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setTitleModal(false)} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
+              <button onClick={handleSaveTitle} disabled={titleSaving || !titleValue.trim()} className="px-4 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg disabled:opacity-60">
+                {titleSaving ? 'Saving…' : 'Save'}
               </button>
             </div>
           </div>
