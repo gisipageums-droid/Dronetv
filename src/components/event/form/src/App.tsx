@@ -1689,8 +1689,8 @@ import { EVENTS_API, LAMBDA as LAMBDA_CFG } from '../../../../lib/apiConfig';
 
 // ✅ Token Validation API URL
 const TOKEN_VALIDATION_API_URL = EVENTS_API
-  ? `${EVENTS_API}/token-validation/`
-  : `${LAMBDA_CFG.eventsFormBase}/token-validation/`;
+  ? `${EVENTS_API}/token-validation`
+  : LAMBDA_CFG.eventsFormBase;
 
 // ================== Token validation function ====================
 const validateUserTokens = async (
