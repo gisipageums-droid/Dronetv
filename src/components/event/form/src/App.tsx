@@ -1811,6 +1811,7 @@ function EventsForm() {
   const { isLogin, user, isAdminLogin } = useUserAuth();
   const { current, next, prev, goTo } = useFormSteps(7); // 6 steps + summary
   const [steps, setSteps] = useState<any[]>([]);
+  const [stepValid, setStepValid] = useState(true);
   const { data, setData, updateField } = useForm();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -2153,7 +2154,7 @@ function EventsForm() {
 
         {/* Step Content Container */}
         <div key={current} className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6 animate-step-slide-up">
-          <StepComponent step={stepData} allSteps={steps} />
+          <StepComponent step={stepData} allSteps={steps} setStepValid={setStepValid} />
         </div>
 
         {/* Navigation Buttons */}
@@ -2169,7 +2170,9 @@ function EventsForm() {
           {current < 6 ? (
             <button
               onClick={next}
-              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+              disabled={!stepValid}
+              title={!stepValid ? "Please fill in all required fields" : undefined}
+              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
