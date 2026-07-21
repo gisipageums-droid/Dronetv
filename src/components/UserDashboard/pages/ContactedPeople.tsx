@@ -398,7 +398,7 @@ const ContactedPeople: React.FC = () => {
                 placeholder="Search contacts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 text-gray-900"
               />
             </div>
           </div>
@@ -407,7 +407,7 @@ const ContactedPeople: React.FC = () => {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 text-gray-900"
           >
             {categories.map((cat) => (
               <option key={cat}>{cat}</option>
@@ -736,7 +736,7 @@ const ContactedPeople: React.FC = () => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 placeholder="Type a message..."
-                className="flex-1 px-4 py-2 bg-gray-100 rounded-full focus:ring-2 focus:ring-[#075e54]"
+                className="flex-1 px-4 py-2 bg-gray-100 rounded-full focus:ring-2 focus:ring-[#075e54] text-gray-900"
               />
 
               <button

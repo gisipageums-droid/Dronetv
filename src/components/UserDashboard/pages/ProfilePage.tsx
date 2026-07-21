@@ -488,7 +488,7 @@ const ProfilePage: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Search transactions..."
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
+                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-gray-900"
                     value={transactionSearch}
                     onChange={(e) => setTransactionSearch(e.target.value)}
                   />
@@ -499,7 +499,7 @@ const ProfilePage: React.FC = () => {
                 <div className="relative">
                   <input
                     type="date"
-                    className="w-full py-2 px-4 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
+                    className="w-full py-2 px-4 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-gray-900"
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value)}
                   />
