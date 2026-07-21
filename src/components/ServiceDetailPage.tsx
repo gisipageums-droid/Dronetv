@@ -319,7 +319,7 @@ export default function ServiceDetailPage() {
         <div className="mt-8 flex justify-center">
 
 
-          <Link to={template === "template-1" ? `/company/${companyName}` : `/companies/${companyName}`}>
+          <Link to={template === "template-1" ? `/company/${companyName}#contact` : `/companies/${companyName}#contact`}>
             <button className="px-6 py-2.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
               Contact us
             </button>

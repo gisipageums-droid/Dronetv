@@ -201,7 +201,7 @@ export default function NetworkingPage() {
                       {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
                       {item.location && <p className="text-xs text-gray-400 mb-2">📍 {item.location}</p>}
                       {item.date && <p className="text-xs text-gray-400 mb-2">📅 {item.date}</p>}
-                      {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                      {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-5">{item.description}</p>}
                       {item.externalLink && (
                         <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
                           className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">

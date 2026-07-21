@@ -73,7 +73,7 @@ export default function ImpactStoriesPage() {
                 <div className="p-5">
                   {item.category && <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
                   <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
-                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-5">{item.description}</p>}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 text-xs text-gray-400">
                       {item.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{item.location}</span>}

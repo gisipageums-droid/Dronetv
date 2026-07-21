@@ -124,7 +124,7 @@ export default function CompetitionsPage() {
                   <div className="p-4">
                     {item.category && <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
                     <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
-                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{item.description}</p>}
+                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-4">{item.description}</p>}
                     {item.price && <div className="text-xs font-bold text-green-700 mb-2">{item.price}</div>}
                     <div className="space-y-1">
                       {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}

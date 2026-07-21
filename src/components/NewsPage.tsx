@@ -133,7 +133,7 @@ export default function NewsPage() {
                       <div className="p-4 flex flex-col flex-1">
                         {item.category && <span className="bg-black text-yellow-400 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
                         <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
-                        {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3 flex-1">{item.description}</p>}
+                        {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-5 flex-1">{item.description}</p>}
                         <div className="space-y-1 mt-auto">
                           {(item.source || item.author) && <div className="flex items-center gap-1.5 text-xs text-gray-400"><User className="w-3 h-3 flex-shrink-0" />{item.source || item.author}</div>}
                           {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-400"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}

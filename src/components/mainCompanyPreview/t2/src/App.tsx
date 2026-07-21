@@ -60,6 +60,16 @@ export default function App() {
     }
   }, [urlSlug]);
 
+  // Scroll to the section named in the URL hash (e.g. #contact) once content has loaded
+  useEffect(() => {
+    if (isLoading || !window.location.hash) return;
+    const id = window.location.hash.slice(1);
+    const timer = setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background text-foreground theme-transition flex items-center justify-center">
