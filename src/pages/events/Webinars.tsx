@@ -30,6 +30,7 @@ export default function WebinarsPage() {
   const [form, setForm] = useState<RegForm>({ name: '', email: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -41,18 +42,21 @@ export default function WebinarsPage() {
     setModal({ open: true, item });
     setForm({ name: '', email: '', phone: '' });
     setSubmitted(false);
+    setSubmitError(false);
   };
 
   const closeModal = () => {
     setModal({ open: false, item: null });
     setSubmitted(false);
+    setSubmitError(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setSubmitError(false);
     try {
-      await fetch(CONTACT_URL, {
+      const res = await fetch(CONTACT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -62,9 +66,10 @@ export default function WebinarsPage() {
           message: `Webinar Registration: ${modal.item?.title}`,
         }),
       });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setSubmitted(true);
     } catch {
-      setSubmitted(true);
+      setSubmitError(true);
     } finally {
       setSubmitting(false);
     }
@@ -240,6 +245,11 @@ export default function WebinarsPage() {
                         placeholder="+91 XXXXX XXXXX"
                         className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
                     </div>
+                    {submitError && (
+                      <p className="text-xs text-red-600 font-medium">
+                        Registration failed. Please check your connection and try again.
+                      </p>
+                    )}
                     <button type="submit" disabled={submitting}
                       className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
                       {submitting ? 'Registering...' : 'Confirm Registration'}

@@ -39,10 +39,12 @@ export default function JobBoardPage() {
   const [applyForm, setApplyForm] = useState<ApplyForm>({ name: '', email: '', phone: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
   const [postJobModal, setPostJobModal] = useState(false);
   const [postJobForm, setPostJobForm] = useState<PostJobForm>(EMPTY_POST);
   const [postSubmitting, setPostSubmitting] = useState(false);
   const [postSubmitted, setPostSubmitted] = useState(false);
+  const [postSubmitError, setPostSubmitError] = useState(false);
   const [myJobs, setMyJobs] = useState<MediaItem[]>([]);
   const [searchParams] = useSearchParams();
 
@@ -66,13 +68,15 @@ export default function JobBoardPage() {
     setApplyModal({ open: true, item });
     setApplyForm({ name: '', email: '', phone: '', message: '' });
     setSubmitted(false);
+    setSubmitError(false);
   };
 
-  const closeApply = () => { setApplyModal({ open: false, item: null }); setSubmitted(false); };
+  const closeApply = () => { setApplyModal({ open: false, item: null }); setSubmitted(false); setSubmitError(false); };
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setSubmitError(false);
     try {
       await createContent({
         contentType: 'job',
@@ -86,7 +90,7 @@ export default function JobBoardPage() {
       });
       setSubmitted(true);
     } catch {
-      setSubmitted(true);
+      setSubmitError(true);
     } finally {
       setSubmitting(false);
     }
@@ -96,6 +100,7 @@ export default function JobBoardPage() {
     e.preventDefault();
     if (!postJobForm.title || !postJobForm.company) return;
     setPostSubmitting(true);
+    setPostSubmitError(false);
     try {
       const created = await createContent({
         contentType: 'job',
@@ -116,7 +121,7 @@ export default function JobBoardPage() {
       }
       setPostSubmitted(true);
     } catch {
-      setPostSubmitted(true);
+      setPostSubmitError(true);
     } finally {
       setPostSubmitting(false);
     }
@@ -302,7 +307,7 @@ export default function JobBoardPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0">
             {userId ? (
-              <button onClick={() => { setPostJobForm(EMPTY_POST); setPostSubmitted(false); setPostJobModal(true); }}
+              <button onClick={() => { setPostJobForm(EMPTY_POST); setPostSubmitted(false); setPostSubmitError(false); setPostJobModal(true); }}
                 className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
                 <Plus className="w-4 h-4" /> Post a Job
               </button>
@@ -386,6 +391,11 @@ export default function JobBoardPage() {
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
                   </div>
                   <p className="text-xs text-gray-400">Your job will be reviewed by DroneTv team before going live on the job board.</p>
+                  {postSubmitError && (
+                    <p className="text-xs text-red-600 font-medium">
+                      Submission failed. Please check your connection and try again.
+                    </p>
+                  )}
                   <button type="submit" disabled={postSubmitting}
                     className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
                     {postSubmitting ? 'Submitting...' : 'Submit Job Listing'}
@@ -446,6 +456,11 @@ export default function JobBoardPage() {
                         placeholder="Tell us briefly about your experience..."
                         className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
                     </div>
+                    {submitError && (
+                      <p className="text-xs text-red-600 font-medium">
+                        Submission failed. Please check your connection and try again.
+                      </p>
+                    )}
                     <button type="submit" disabled={submitting}
                       className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
                       {submitting ? 'Submitting...' : 'Submit Application'}
