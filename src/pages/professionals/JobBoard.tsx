@@ -159,7 +159,7 @@ export default function JobBoardPage() {
           </div>
           <div className="flex gap-8 flex-shrink-0">
             <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">20+</span>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || staticJobs.length}</span>
               <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Active Listings</span>
             </div>
             <div>

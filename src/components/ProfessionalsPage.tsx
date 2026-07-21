@@ -3,6 +3,7 @@ import { Search, ChevronDown, MapPin, SlidersHorizontal, X } from "lucide-react"
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
+import { fetchContent } from '../lib/mediaApi';
 
 interface Professional {
   professionalId: string;
@@ -33,8 +34,15 @@ const ProfessionalsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [jobCount, setJobCount] = useState<number | null>(null);
   const professionalsPerPage = 12;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchContent('job', controller.signal).then(items => setJobCount(items.length)).catch(() => {});
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const fetchProfessionals = async () => {
@@ -286,10 +294,10 @@ const ProfessionalsPage: React.FC = () => {
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { to: '/professionals/job-board', icon: '💼', count: '20+', unit: 'Jobs Listed', title: 'Job Board', desc: 'Drone pilot, GIS analyst, AI engineer, instructor, and UAV operator jobs across India.' },
-            { to: '/professionals/pilot-directory', icon: '🧑‍✈️', count: 'Free', unit: 'To List', title: 'Pilot Directory', desc: 'Create your verified pilot profile. Get discovered by drone companies hiring or contracting.' },
+            { to: '/professionals/job-board', icon: '💼', count: jobCount === null ? '…' : String(jobCount), unit: 'Jobs Listed', title: 'Job Board', desc: 'Drone pilot, GIS analyst, AI engineer, instructor, and UAV operator jobs across India.' },
+            { to: '/professionals/pilot-directory', icon: '🧑‍✈️', count: '100', unit: 'Tokens To List', title: 'Pilot Directory', desc: 'Create your verified pilot profile. Get discovered by drone companies hiring or contracting.' },
             { to: '/professionals/certifications', icon: '🏅', count: '3', unit: 'Categories', title: 'Certifications', desc: 'Complete DGCA RPC certification guide — Small, Medium, and Large drone categories.' },
-            { to: '/professionals/portfolio', icon: '🗂️', count: 'Free', unit: 'To Upload', title: 'Portfolio', desc: 'Showcase your drone work — aerial maps, farm surveys, inspection reports, cinematic reels.' },
+            { to: '/professionals/portfolio', icon: '🗂️', count: '100', unit: 'Tokens To Upload', title: 'Portfolio', desc: 'Showcase your drone work — aerial maps, farm surveys, inspection reports, cinematic reels.' },
             { to: '/professionals/training', icon: '🎓', count: '240+', unit: 'RPTOs', title: 'Training', desc: 'Find DGCA-approved training organisations near you and compare courses.' },
             { to: '/professionals/networking', icon: '🔗', count: 'Events', unit: 'Meetups', title: 'Networking', desc: 'Connect with drone companies, fellow pilots, and industry professionals at events.' },
             { to: '/professionals/community', icon: '👥', count: 'Active', unit: 'Community', title: 'Community', desc: 'Discussion forums, WhatsApp groups, flyins, and peer support across India.' },

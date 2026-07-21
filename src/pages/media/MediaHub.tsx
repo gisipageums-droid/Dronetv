@@ -1,13 +1,19 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { fetchContent, ContentType } from '../../lib/mediaApi';
 
-const hubs = [
+const hubs: {
+  to: string; icon: string; title: string; desc: string; tags: string[];
+  countType?: ContentType; countLabel?: (n: number) => string; update?: string;
+}[] = [
   {
     to: '/media/news-pulse',
     icon: '📰',
     title: 'News Pulse',
     desc: 'Daily coverage of India\'s drone industry — policy, market, defence, agriculture.',
     tags: ['Market', 'Policy', 'Defence'],
-    update: '18 articles this month',
+    countType: 'news',
+    countLabel: (n) => `${n} article${n === 1 ? '' : 's'} published`,
   },
   {
     to: '/media/magazine',
@@ -15,7 +21,8 @@ const hubs = [
     title: 'Magazine',
     desc: 'In-depth quarterly analysis of the drone market, technology, and company profiles.',
     tags: ['Quarterly', 'Analysis', 'Data'],
-    update: '4 issues published',
+    countType: 'magazine',
+    countLabel: (n) => `${n} issue${n === 1 ? '' : 's'} published`,
   },
   {
     to: '/media/video-spotlight',
@@ -23,7 +30,8 @@ const hubs = [
     title: 'Video Spotlight',
     desc: 'Video interviews with India\'s top drone manufacturers, pilots, and policymakers.',
     tags: ['Interviews', 'Expo', 'YouTube'],
-    update: '50+ interviews',
+    countType: 'video',
+    countLabel: (n) => `${n} interview${n === 1 ? '' : 's'}`,
   },
   {
     to: '/gallery',
@@ -39,7 +47,8 @@ const hubs = [
     title: 'Impact Stories',
     desc: 'Verified outcomes from real drone deployments — agriculture, infrastructure, defence.',
     tags: ['Agriculture', 'Survey', 'Defence'],
-    update: '8 stories published',
+    countType: 'impact-story',
+    countLabel: (n) => `${n} stor${n === 1 ? 'y' : 'ies'} published`,
   },
   {
     to: '/media/market-intelligence',
@@ -55,7 +64,8 @@ const hubs = [
     title: 'Tech Trends',
     desc: 'The technologies defining India\'s drone industry in 2026 — BVLOS, AI, swarms.',
     tags: ['AI', 'BVLOS', 'Swarm'],
-    update: '7 trends for 2026',
+    countType: 'tech-trends',
+    countLabel: (n) => `${n} trend${n === 1 ? '' : 's'} for 2026`,
   },
   {
     to: '/media/press-releases',
@@ -71,11 +81,22 @@ const hubs = [
     title: 'Industry Reports',
     desc: 'Curated research from IBEF, DGCA, NITI Aayog, and DroneTv editorial.',
     tags: ['IBEF', 'DGCA', 'Research'],
-    update: '5 reports available',
+    countType: 'industry-report',
+    countLabel: (n) => `${n} report${n === 1 ? '' : 's'} available`,
   },
 ];
 
 export default function MediaHubPage() {
+  const [counts, setCounts] = useState<Partial<Record<ContentType, number>>>({});
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const types = Array.from(new Set(hubs.map(h => h.countType).filter((t): t is ContentType => !!t)));
+    Promise.all(types.map(t => fetchContent(t, controller.signal).then(items => [t, items.length] as const).catch(() => [t, 0] as const)))
+      .then(results => setCounts(Object.fromEntries(results)));
+    return () => controller.abort();
+  }, []);
+
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       <div className="bg-black text-white relative overflow-hidden">
@@ -92,7 +113,7 @@ export default function MediaHubPage() {
           </div>
           <div className="flex gap-8 flex-shrink-0">
             <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">50+</span>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{counts.video ?? '…'}</span>
               <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Videos</span>
             </div>
             <div>
@@ -120,7 +141,11 @@ export default function MediaHubPage() {
                 <span className="text-2xl">{h.icon}</span>
                 <div>
                   <h3 className="text-white font-bold text-sm group-hover:text-yellow-400 transition-colors">{h.title}</h3>
-                  <p className="text-white/40 text-xs">{h.update}</p>
+                  <p className="text-white/40 text-xs">
+                    {h.countType
+                      ? (counts[h.countType] !== undefined ? h.countLabel!(counts[h.countType]!) : '…')
+                      : h.update}
+                  </p>
                 </div>
               </div>
               <div className="px-5 py-4">
