@@ -59,6 +59,15 @@ interface Company {
   needsAdminAction: boolean;
 }
 
+interface ContactLead {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  submittedAt: string;
+}
+
 interface ApiResponse {
   success: boolean;
   viewType: string;
@@ -921,6 +930,13 @@ const AdminDashboard: React.FC = () => {
     company: Company | null;
   }>({ isOpen: false, data: null, company: null });
 
+  // leads (contact form + webinar registration submissions)
+  const [leads, setLeads] = useState<ContactLead[]>([]);
+  const [leadsLoading, setLeadsLoading] = useState<boolean>(false);
+  const [leadsError, setLeadsError] = useState<string | null>(null);
+  const [leadsSearchTerm, setLeadsSearchTerm] = useState<string>("");
+  const [leadsRefreshKey, setLeadsRefreshKey] = useState<number>(0);
+
   // Confirmation modals state
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
@@ -994,12 +1010,20 @@ const AdminDashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync statusFilter when URL changes via sidebar navigation
+  // Fetch leads (contact form + webinar registration submissions) when the tab is opened
   useEffect(() => {
-    const view = searchParams.get("view") ?? "all";
-    if (view === "leads") setStatusFilter("under_review");
-    else if (view === "all") setStatusFilter("all");
-  }, [searchParams]);
+    if (viewFilter !== "leads") return;
+    const controller = new AbortController();
+    setLeadsLoading(true);
+    setLeadsError(null);
+    const url = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
+    fetch(url, { signal: controller.signal })
+      .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+      .then(data => setLeads(data.items || []))
+      .catch(err => { if (err.name !== 'AbortError') setLeadsError('Failed to load leads.'); })
+      .finally(() => setLeadsLoading(false));
+    return () => controller.abort();
+  }, [viewFilter, leadsRefreshKey]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -1036,6 +1060,17 @@ const AdminDashboard: React.FC = () => {
       return matchesSearch && matchesStatus;
     });
   }, [companies, debouncedSearchTerm, statusFilter]);
+
+  const filteredLeads = useMemo(() => {
+    const q = leadsSearchTerm.trim().toLowerCase();
+    if (!q) return leads;
+    return leads.filter(lead =>
+      (lead.name || "").toLowerCase().includes(q) ||
+      (lead.email || "").toLowerCase().includes(q) ||
+      (lead.phone || "").toLowerCase().includes(q) ||
+      (lead.message || "").toLowerCase().includes(q)
+    );
+  }, [leads, leadsSearchTerm]);
 
   const getMostRecentDate = (company: Company) =>
     Math.max(
@@ -1370,8 +1405,7 @@ const AdminDashboard: React.FC = () => {
             onClick={() => {
               setSearchParams(prev => { if (tab.id === "all") { prev.delete("view"); } else { prev.set("view", tab.id); } return prev; }, { replace: true });
               setCurrentPage(1);
-              if (tab.id === "leads") setStatusFilter("under_review");
-              else setStatusFilter("all");
+              setStatusFilter("all");
             }}
             className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-400" : "text-gray-500 border-transparent hover:text-gray-700"}`}
           >
@@ -1388,8 +1422,69 @@ const AdminDashboard: React.FC = () => {
         </div>
       )}
 
+      {viewFilter === "leads" && (
+        <div>
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
+              <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type="text"
+                placeholder="Search leads…"
+                value={leadsSearchTerm}
+                onChange={e => setLeadsSearchTerm(e.target.value)}
+                className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
+              />
+            </div>
+            <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+              {filteredLeads.length} {filteredLeads.length === 1 ? "lead" : "leads"}
+            </span>
+          </div>
+
+          {leadsLoading ? (
+            <LoadingSpinner />
+          ) : leadsError ? (
+            <ErrorMessage error={leadsError} onRetry={() => setLeadsRefreshKey(k => k + 1)} />
+          ) : filteredLeads.length === 0 ? (
+            <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
+              <Building2 className="w-24 h-24 text-gray-400" />
+              <p className="text-sm font-semibold text-gray-400">No leads yet.</p>
+            </div>
+          ) : (
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200 bg-gray-50">
+                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Name</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Contact</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Message</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide whitespace-nowrap">Submitted</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredLeads.map(lead => (
+                      <tr key={lead.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                        <td className="px-4 py-3 font-semibold text-gray-900 align-top whitespace-nowrap">{lead.name}</td>
+                        <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">
+                          <div>{lead.email}</div>
+                          <div className="text-xs text-gray-400">{lead.phone}</div>
+                        </td>
+                        <td className="px-4 py-3 text-gray-600 align-top max-w-md">{lead.message}</td>
+                        <td className="px-4 py-3 text-gray-500 align-top whitespace-nowrap">
+                          {lead.submittedAt ? new Date(lead.submittedAt).toLocaleString('en-IN') : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Horizontal toolbar + content */}
-      {viewFilter !== "subscriptions" && (
+      {viewFilter !== "subscriptions" && viewFilter !== "leads" && (
       <React.Fragment>
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
@@ -1442,7 +1537,7 @@ const AdminDashboard: React.FC = () => {
             <div className="flex gap-2 items-center">
               <Building2 className="w-5 h-5 text-yellow-500" />
               <h2 className="text-base font-bold text-gray-900">
-                {viewFilter === "leads" ? "Lead Management" : statusFilter === "all" ? "All Companies" : statusFilter === "under_review" ? "Under Review Companies" : statusFilter === "approved" ? "Approved Companies" : "Rejected Companies"}
+                {statusFilter === "all" ? "All Companies" : statusFilter === "under_review" ? "Under Review Companies" : statusFilter === "approved" ? "Approved Companies" : "Rejected Companies"}
               </h2>
             </div>
             <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
