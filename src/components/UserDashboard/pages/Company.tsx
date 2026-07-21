@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase, Users, Mail, Phone, Send } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
-import { fetchAdminContent, fetchContent, createContent, MediaItem } from "../../../lib/mediaApi";
+import { fetchAdminContent, createContent, MediaItem } from "../../../lib/mediaApi";
 import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
@@ -227,14 +227,6 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
 };
 
 // =================== My Posted Jobs ==============================
-function getMyPostedJobs(userId: string): { contentId: string; title: string; createdAt: string }[] {
-  try { return JSON.parse(localStorage.getItem(`dtv_my_jobs_${userId}`) || '[]'); } catch { return []; }
-}
-function saveMyPostedJob(userId: string, job: { contentId: string; title: string; createdAt: string }) {
-  const existing = getMyPostedJobs(userId);
-  localStorage.setItem(`dtv_my_jobs_${userId}`, JSON.stringify([job, ...existing]));
-}
-
 interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; imageUrl: string; applicationDeadline: string; }
 const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '', imageUrl: '', applicationDeadline: '' };
 const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence', 'Manufacturing', 'R&D', 'Operations'];
@@ -242,20 +234,16 @@ const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematogr
 const MyPostedJobs: React.FC<{ onPostJob: () => void; refreshKey?: number }> = ({ onPostJob, refreshKey }) => {
   const { user } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || '';
-  const [jobs, setJobs] = useState(() => userId ? getMyPostedJobs(userId) : []);
-  const [liveIds, setLiveIds] = useState<Set<string>>(new Set());
+  const [jobs, setJobs] = useState<MediaItem[]>([]);
 
+  // Server-backed so a job posted on one device shows up on every device, not just localStorage
   useEffect(() => {
-    if (jobs.length === 0) return;
+    if (!userId) { setJobs([]); return; }
     const controller = new AbortController();
-    fetchContent('job', controller.signal)
-      .then(items => setLiveIds(new Set(items.map(i => i.contentId))))
+    fetchAdminContent(controller.signal, 'job')
+      .then(all => setJobs(all.filter(j => j.author === userId && !j.title.startsWith('[Application]'))))
       .catch(() => {});
     return () => controller.abort();
-  }, [jobs.length]);
-
-  useEffect(() => {
-    if (userId) setJobs(getMyPostedJobs(userId));
   }, [userId, refreshKey]);
 
   if (!userId) return null;
@@ -280,26 +268,23 @@ const MyPostedJobs: React.FC<{ onPostJob: () => void; refreshKey?: number }> = (
         </div>
       ) : (
         <div className="space-y-3">
-          {jobs.map(j => {
-            const isLive = liveIds.has(j.contentId);
-            return (
-              <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Briefcase className="w-4 h-4 text-yellow-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">{j.title}</p>
-                    <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')}</p>
-                  </div>
+          {jobs.map(j => (
+            <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Briefcase className="w-4 h-4 text-yellow-600" />
                 </div>
-                {isLive
-                  ? <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
-                  : <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
-                }
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">{j.title}</p>
+                  <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')}</p>
+                </div>
               </div>
-            );
-          })}
+              {j.isPublished
+                ? <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
+                : <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
+              }
+            </div>
+          ))}
         </div>
       )}
       <p className="text-xs text-gray-400 mt-3">
@@ -703,7 +688,6 @@ const CompanyPage: React.FC = () => {
         isPublished: false,
       });
       if (userId && created?.contentId) {
-        saveMyPostedJob(userId, { contentId: created.contentId, title: postJobForm.title, createdAt: new Date().toISOString() });
         setJobsRefreshKey(k => k + 1);
       }
       setPostSubmitted(true);

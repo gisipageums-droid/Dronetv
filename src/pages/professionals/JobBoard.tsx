@@ -1,21 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MapPin, Search, X, Briefcase, Plus } from 'lucide-react';
-import { fetchContent, createContent, MediaItem } from '../../lib/mediaApi';
+import { fetchContent, fetchAdminContent, createContent, MediaItem } from '../../lib/mediaApi';
 import { useUserAuth } from '../../components/context/context';
 
 interface ApplyForm { name: string; email: string; phone: string; message: string; }
 interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; imageUrl: string; }
 const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '', imageUrl: '' };
 const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence', 'Manufacturing', 'R&D', 'Operations'];
-
-function getMyPostedJobs(userId: string): { contentId: string; title: string; createdAt: string }[] {
-  try { return JSON.parse(localStorage.getItem(`dtv_my_jobs_${userId}`) || '[]'); } catch { return []; }
-}
-function saveMyPostedJob(userId: string, job: { contentId: string; title: string; createdAt: string }) {
-  const existing = getMyPostedJobs(userId);
-  localStorage.setItem(`dtv_my_jobs_${userId}`, JSON.stringify([job, ...existing]));
-}
 
 const staticJobs = [
   { icon: '🌾', title: 'Agriculture Drone Pilot', company: 'Agri-Drone Service Company — Telangana', category: 'Agriculture', type: 'Full-Time', salary: 'Rs. 30,000–40,000/mo', location: 'Hyderabad / Field' },
@@ -51,8 +43,18 @@ export default function JobBoardPage() {
   const [postJobForm, setPostJobForm] = useState<PostJobForm>(EMPTY_POST);
   const [postSubmitting, setPostSubmitting] = useState(false);
   const [postSubmitted, setPostSubmitted] = useState(false);
-  const [myJobs, setMyJobs] = useState(() => userId ? getMyPostedJobs(userId) : []);
+  const [myJobs, setMyJobs] = useState<MediaItem[]>([]);
   const [searchParams] = useSearchParams();
+
+  const loadMyJobs = useCallback(() => {
+    if (!userId) { setMyJobs([]); return; }
+    fetchAdminContent(undefined, 'job')
+      .then(all => setMyJobs(all.filter(j => j.author === userId && !j.title.startsWith('[Application]'))))
+      .catch(() => {});
+  }, [userId]);
+
+  // Server-backed so a job posted on one device shows up on every device, not just localStorage
+  useEffect(() => { loadMyJobs(); }, [loadMyJobs]);
 
   useEffect(() => {
     if (searchParams.get('postjob') === 'true' && userId) {
@@ -110,8 +112,7 @@ export default function JobBoardPage() {
         isPublished: false,
       });
       if (userId && created?.contentId) {
-        saveMyPostedJob(userId, { contentId: created.contentId, title: postJobForm.title, createdAt: new Date().toISOString() });
-        setMyJobs(getMyPostedJobs(userId));
+        loadMyJobs();
       }
       setPostSubmitted(true);
     } catch {
@@ -270,26 +271,23 @@ export default function JobBoardPage() {
               My Posted Jobs
             </h2>
             <div className="space-y-2">
-              {myJobs.map(j => {
-                const isLive = items.some(i => i.contentId === j.contentId);
-                return (
-                  <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Briefcase className="w-4 h-4 text-yellow-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">{j.title}</p>
-                        <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')} · {isLive ? 'Live on Job Board' : 'Pending admin review'}</p>
-                      </div>
+              {myJobs.map(j => (
+                <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Briefcase className="w-4 h-4 text-yellow-600" />
                     </div>
-                    {isLive
-                      ? <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
-                      : <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
-                    }
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{j.title}</p>
+                      <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')} · {j.isPublished ? 'Live on Job Board' : 'Pending admin review'}</p>
+                    </div>
                   </div>
-                );
-              })}
+                  {j.isPublished
+                    ? <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
+                    : <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
+                  }
+                </div>
+              ))}
             </div>
           </div>
         )}
