@@ -302,8 +302,14 @@ export default function AdminMediaDashboard() {
     <div className="min-h-screen bg-[#F4F5F7]">
       <div className="mb-5 flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-extrabold text-gray-900">{config.title}</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{sectionItems.length} items · {config.subtitle}</p>
+          <h1 className="text-xl font-extrabold text-gray-900">
+            {activeType === 'applications' ? 'Partner Applications' : config.title}
+          </h1>
+          <p className="text-sm text-gray-500 mt-0.5">
+            {activeType === 'applications'
+              ? `${filtered.length} applications received`
+              : `${sectionItems.length} items · ${config.subtitle}`}
+          </p>
         </div>
         <button onClick={openCreate} className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
           <Plus className="w-4 h-4" /> Add Content
