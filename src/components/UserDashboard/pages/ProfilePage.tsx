@@ -163,7 +163,7 @@ const ProfilePage: React.FC = () => {
       setLoading(true);
 
       const response = await fetch(
-        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/place-order` : `${LAMBDA.tokenGateway}/drontv-token-buy-payment-gateway/place-order`,
+        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/place-order` : `${LAMBDA.tokenGateway}/place-order`,
         {
           method: 'POST',
           headers: {
@@ -196,7 +196,7 @@ const ProfilePage: React.FC = () => {
   const handlePaymentSuccess = async (response: any, transactionId: string) => {
     try {
       const confirmResponse = await fetch(
-        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/confirm-order` : `${LAMBDA.tokenGateway}/drontv-token-buy-payment-gateway/confirm-order`,
+        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`,
         {
           method: 'POST',
           headers: {

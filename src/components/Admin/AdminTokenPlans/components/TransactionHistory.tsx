@@ -40,7 +40,7 @@ export function TransactionHistory() {
     const fetchTransactions = async () => {
       try {
         const response = await fetch(
-          PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/Transaction-History/All-users-data` : `${LAMBDA.transactions}/drontv-token-buy-payment-gateway/Transaction-History/All-users-data`,
+          PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/Transaction-History/All-users-data` : `${LAMBDA.transactions}/Transaction-History/All-users-data`,
           { signal: controller.signal }
         );
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
