@@ -47,6 +47,7 @@ export const FormInput: React.FC<FormInputProps> = ({
           placeholder={placeholder}
           rows={rows || 4}
           disabled={disabled}
+          required={required}
           className={inputClasses}
         />
       ) : (
@@ -56,6 +57,7 @@ export const FormInput: React.FC<FormInputProps> = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
+          required={required}
           className={inputClasses}
         />
       )}
@@ -109,6 +111,7 @@ export const Select: React.FC<SelectProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
+        required={required}
         className={selectClasses}
       >
         <option value="">{placeholder}</option>
