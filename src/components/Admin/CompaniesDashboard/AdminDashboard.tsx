@@ -21,7 +21,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop";
 import { motion, AnimatePresence } from "motion/react";
-import { COMPANY_API, ADMIN_API, LAMBDA } from '../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 
 // -------------------- Types --------------------
 interface Company {
@@ -60,12 +60,19 @@ interface Company {
 }
 
 interface ContactLead {
-  id: string;
-  name: string;
+  leadId: string;
+  firstName?: string;
+  lastName?: string;
+  companyName?: string;
+  company?: string;
+  publishedId?: string;
+  subject?: string;
+  message: string;
   email: string;
   phone: string;
-  message: string;
-  submittedAt: string;
+  viewed?: boolean;
+  submittedAt?: string;
+  createdAt?: string;
 }
 
 interface ApiResponse {
@@ -1010,13 +1017,13 @@ const AdminDashboard: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetch leads (contact form + webinar registration submissions) when the tab is opened
+  // Fetch real company leads (buyer inquiries submitted to listed companies) when the tab is opened
   useEffect(() => {
     if (viewFilter !== "leads") return;
     const controller = new AbortController();
     setLeadsLoading(true);
     setLeadsError(null);
-    const url = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
+    const url = `${LAMBDA.adminLeads}/admin-leads`;
     fetch(url, { signal: controller.signal })
       .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
       .then(data => setLeads(data.items || []))
@@ -1065,7 +1072,8 @@ const AdminDashboard: React.FC = () => {
     const q = leadsSearchTerm.trim().toLowerCase();
     if (!q) return leads;
     return leads.filter(lead =>
-      (lead.name || "").toLowerCase().includes(q) ||
+      (`${lead.firstName || ""} ${lead.lastName || ""}`).toLowerCase().includes(q) ||
+      (lead.companyName || lead.company || "").toLowerCase().includes(q) ||
       (lead.email || "").toLowerCase().includes(q) ||
       (lead.phone || "").toLowerCase().includes(q) ||
       (lead.message || "").toLowerCase().includes(q)
@@ -1455,23 +1463,34 @@ const AdminDashboard: React.FC = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-200 bg-gray-50">
-                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Name</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Company</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">From</th>
                       <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Contact</th>
                       <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Message</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Status</th>
                       <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide whitespace-nowrap">Submitted</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredLeads.map(lead => (
-                      <tr key={lead.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                        <td className="px-4 py-3 font-semibold text-gray-900 align-top whitespace-nowrap">{lead.name}</td>
+                      <tr key={lead.leadId} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                        <td className="px-4 py-3 font-semibold text-gray-900 align-top whitespace-nowrap">{lead.companyName || lead.company || "—"}</td>
+                        <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">{`${lead.firstName || ""} ${lead.lastName || ""}`.trim() || "—"}</td>
                         <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">
                           <div>{lead.email}</div>
                           <div className="text-xs text-gray-400">{lead.phone}</div>
                         </td>
-                        <td className="px-4 py-3 text-gray-600 align-top max-w-md">{lead.message}</td>
+                        <td className="px-4 py-3 text-gray-600 align-top max-w-md">
+                          {lead.subject && <div className="font-semibold text-xs text-gray-500 mb-0.5">{lead.subject}</div>}
+                          {lead.message}
+                        </td>
+                        <td className="px-4 py-3 align-top">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded ${lead.viewed ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                            {lead.viewed ? 'Viewed' : 'Unviewed'}
+                          </span>
+                        </td>
                         <td className="px-4 py-3 text-gray-500 align-top whitespace-nowrap">
-                          {lead.submittedAt ? new Date(lead.submittedAt).toLocaleString('en-IN') : "—"}
+                          {(lead.submittedAt || lead.createdAt) ? new Date(lead.submittedAt || lead.createdAt || '').toLocaleString('en-IN') : "—"}
                         </td>
                       </tr>
                     ))}

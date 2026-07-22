@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Search, Download, CheckCircle, XCircle, Clock } from "lucide-react";
+import { toast } from "react-toastify";
 import { PAYMENT_API, LAMBDA } from '../../../../lib/apiConfig';
 
 interface Transaction {
@@ -86,6 +87,8 @@ export function TransactionHistory() {
   };
 
   const exportCSV = () => {
+    if (loading) { toast.warning("Transactions are still loading — please wait a moment and try again."); return; }
+    if (filteredTransactions.length === 0) { toast.warning("No transactions to export."); return; }
     const headers = ["ID", "User Name", "Email", "Phone", "Date", "Amount", "Currency", "Tokens", "Plan", "Period", "Status"];
     const rows = filteredTransactions.map((t) => [
       t.id,
@@ -158,7 +161,7 @@ export function TransactionHistory() {
           </select>
         </div>
 
-        <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-black font-bold rounded-lg transition-colors text-sm">
+        <button onClick={exportCSV} disabled={loading} className="flex items-center gap-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-black font-bold rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed">
           <Download className="w-4 h-4" />
           Export CSV
         </button>

@@ -88,6 +88,7 @@ export const LAMBDA = {
   products:     'https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product',
   partner:      'https://0etsqrl2k1.execute-api.ap-south-1.amazonaws.com',
   contact:      'https://zlnlobchx7.execute-api.ap-south-1.amazonaws.com',
+  adminLeads:   'https://zlnlobchx7.execute-api.ap-south-1.amazonaws.com',
   profTemplateSingle: 'https://t6nbbkwszi.execute-api.ap-south-1.amazonaws.com/prod2',
   profLeadContact: 'https://l7p8i65gl5.execute-api.ap-south-1.amazonaws.com/prod',
   profTemplateDash: 'https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev',

@@ -3,6 +3,16 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, createContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
+import { ADMIN_API, LAMBDA } from '../../../lib/apiConfig';
+
+interface AppSubmission {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  submittedAt: string;
+}
 
 const MEDIA_TYPES: { value: ContentType; label: string }[] = [
   { value: 'news', label: 'News' },
@@ -160,6 +170,12 @@ export default function AdminMediaDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState<MediaItem | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Applications received to DroneTv.in (webinar registrations, job applications, contact-us, partner sign-ups)
+  const [appSubmissions, setAppSubmissions] = useState<AppSubmission[]>([]);
+  const [appLoading, setAppLoading] = useState(false);
+  const [appError, setAppError] = useState(false);
+  const [appSearch, setAppSearch] = useState('');
+
   useEffect(() => {
     setActiveType(urlType ?? 'all');
   }, [urlType]);
@@ -194,6 +210,28 @@ export default function AdminMediaDashboard() {
     loadItems(controller.signal);
     return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    if (activeType !== 'applications') return;
+    const controller = new AbortController();
+    setAppLoading(true);
+    setAppError(false);
+    const url = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
+    fetch(url, { signal: controller.signal })
+      .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+      .then(data => setAppSubmissions(data.items || []))
+      .catch(err => { if (err.name !== 'AbortError') setAppError(true); })
+      .finally(() => setAppLoading(false));
+    return () => controller.abort();
+  }, [activeType]);
+
+  const filteredAppSubmissions = appSubmissions.filter(sub => {
+    const q = appSearch.trim().toLowerCase();
+    if (!q) return true;
+    return (sub.name || '').toLowerCase().includes(q) ||
+      (sub.email || '').toLowerCase().includes(q) ||
+      (sub.message || '').toLowerCase().includes(q);
+  });
 
   const sectionItems = items.filter(i => config.types.some(t => t.value === i.contentType));
 
@@ -307,13 +345,15 @@ export default function AdminMediaDashboard() {
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">
             {activeType === 'applications'
-              ? `${filtered.length} applications received`
+              ? `${appSubmissions.length} applications received`
               : `${sectionItems.length} items · ${config.subtitle}`}
           </p>
         </div>
-        <button onClick={openCreate} className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
-          <Plus className="w-4 h-4" /> Add Content
-        </button>
+        {activeType !== 'applications' && (
+          <button onClick={openCreate} className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
+            <Plus className="w-4 h-4" /> Add Content
+          </button>
+        )}
       </div>
 
       <div className="py-1">
@@ -335,11 +375,49 @@ export default function AdminMediaDashboard() {
 
         <div className="relative w-full max-w-xs mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" placeholder="Search content..." value={search} onChange={e => setSearch(e.target.value)}
+          <input type="text" placeholder={activeType === 'applications' ? 'Search applications...' : 'Search content...'}
+            value={activeType === 'applications' ? appSearch : search}
+            onChange={e => activeType === 'applications' ? setAppSearch(e.target.value) : setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
         </div>
 
-        {loading ? (
+        {activeType === 'applications' ? (
+          appLoading ? (
+            <div className="text-center py-16 text-gray-400">Loading...</div>
+          ) : appError ? (
+            <div className="text-center py-16 text-red-400">Failed to load applications.</div>
+          ) : filteredAppSubmissions.length === 0 ? (
+            <div className="text-center py-16 text-gray-400">No applications received yet.</div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+              <table className="w-full min-w-[600px] text-sm">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Name</th>
+                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Contact</th>
+                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Message</th>
+                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide whitespace-nowrap">Submitted</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {filteredAppSubmissions.map(sub => (
+                    <tr key={sub.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 font-medium text-gray-900 align-top whitespace-nowrap">{sub.name}</td>
+                      <td className="px-4 py-3 text-gray-500 text-xs align-top whitespace-nowrap">
+                        <div>{sub.email}</div>
+                        <div>{sub.phone}</div>
+                      </td>
+                      <td className="px-4 py-3 text-gray-600 text-xs align-top max-w-md">{sub.message}</td>
+                      <td className="px-4 py-3 text-gray-500 text-xs align-top whitespace-nowrap">
+                        {sub.submittedAt ? new Date(sub.submittedAt).toLocaleString('en-IN') : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        ) : loading ? (
           <div className="text-center py-16 text-gray-400">Loading...</div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">No content yet. Click "Add Content" to create your first item.</div>
@@ -421,6 +499,7 @@ export default function AdminMediaDashboard() {
               </button>
             </div>
 
+            <form onSubmit={e => { e.preventDefault(); handleSave(); }}>
             <div className="px-6 py-5 space-y-4">
               {/* Content type selector — top row */}
               <div>
@@ -437,7 +516,7 @@ export default function AdminMediaDashboard() {
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Title *</label>
                 <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
-                  placeholder="Content title" />
+                  placeholder="Content title" required />
               </div>
 
               {/* Description — always shown */}
@@ -672,14 +751,15 @@ export default function AdminMediaDashboard() {
             </div>
 
             <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
-              <button onClick={() => setShowForm(false)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
                 Cancel
               </button>
-              <button onClick={handleSave} disabled={saving}
+              <button type="submit" disabled={saving}
                 className="flex items-center gap-2 px-5 py-2 bg-yellow-400 text-black font-bold rounded-lg text-sm hover:bg-yellow-300 transition-colors disabled:opacity-50">
                 {saving ? 'Saving...' : <><Check className="w-4 h-4" /> {editItem ? 'Update' : 'Create'}</>}
               </button>
             </div>
+            </form>
           </div>
         </div>
       )}
