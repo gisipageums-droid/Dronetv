@@ -9,14 +9,14 @@ const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profil
 
 const TOKEN_RATE = 10; // ₹10 = 1 token
 
-const PRESETS = [
-  { amount: 50,   label: '₹50',   tokens: 5,    tag: '' },
-  { amount: 100,  label: '₹100',  tokens: 10,   tag: '' },
-  { amount: 500,  label: '₹500',  tokens: 50,   tag: 'Min Bid' },
-  { amount: 1000, label: '₹1,000',tokens: 100,  tag: 'Popular' },
-  { amount: 2000, label: '₹2,000',tokens: 200,  tag: '' },
-  { amount: 5000, label: '₹5,000',tokens: 500,  tag: 'Best Value' },
-];
+interface TopUpPlan {
+  id: string;
+  name: string;
+  price: number;
+  tokens: number;
+  discount: number;
+  type: string;
+}
 
 const TOKEN_USES = [
   { icon: Target, label: 'Keyword Bids', desc: 'Win sponsored spots when buyers search drone keywords', tokens: '50–500 ₮/week' },
@@ -29,7 +29,9 @@ const BuyTokenPage: React.FC = () => {
   const { Razorpay } = useRazorpay();
   const { user } = useUserAuth();
 
-  const [selectedPreset, setSelectedPreset] = useState<number | null>(null);
+  const [plans, setPlans] = useState<TopUpPlan[]>([]);
+  const [loadingPlans, setLoadingPlans] = useState(true);
+  const [selectedPlan, setSelectedPlan] = useState<TopUpPlan | null>(null);
   const [customAmount, setCustomAmount] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -46,6 +48,13 @@ const BuyTokenPage: React.FC = () => {
   }, [userId]);
 
   useEffect(() => {
+    axios.get(PAYMENT_API ? `${PAYMENT_API}/plans` : `${LAMBDA.plans}/dev`)
+      .then(r => { if (r.data?.data?.plans) setPlans(r.data.data.plans); })
+      .catch(() => {})
+      .finally(() => setLoadingPlans(false));
+  }, []);
+
+  useEffect(() => {
     if (showSuccess) {
       const t = setTimeout(() => setShowSuccess(false), 4000);
       return () => clearTimeout(t);
@@ -59,11 +68,11 @@ const BuyTokenPage: React.FC = () => {
     }
   }, [errorMessage]);
 
-  const finalAmount = selectedPreset !== null
-    ? selectedPreset
+  const finalAmount = selectedPlan
+    ? selectedPlan.price
     : parseFloat(customAmount) || 0;
 
-  const tokens = Math.floor(finalAmount / TOKEN_RATE);
+  const tokens = selectedPlan ? selectedPlan.tokens : Math.floor(finalAmount / TOKEN_RATE);
   const isValid = finalAmount >= 10;
 
   const placeOrder = (orderData: any) =>
@@ -96,6 +105,7 @@ const BuyTokenPage: React.FC = () => {
         email: user?.userData?.email || '',
         name: user?.userData?.fullName || '',
         phone: user?.userData?.phone || '',
+        ...(selectedPlan ? { notes: { planId: selectedPlan.id, planName: selectedPlan.name, period: selectedPlan.type } } : {}),
       };
 
       const placeRes = await placeOrder(orderData);
@@ -123,7 +133,7 @@ const BuyTokenPage: React.FC = () => {
           if (confirmRes.success) {
             setShowSuccess(true);
             setCurrentBalance(prev => prev + tokens);
-            setSelectedPreset(null);
+            setSelectedPlan(null);
             setCustomAmount('');
           } else {
             setErrorMessage(confirmRes.message || 'Payment verification failed');
@@ -183,32 +193,40 @@ const BuyTokenPage: React.FC = () => {
           {/* LEFT — Preset + Custom + Pay */}
           <div className="lg:col-span-2 space-y-4">
 
-            {/* Preset amounts */}
+            {/* Top-up packs (same catalog as Token Wallet's Top-up Packs tab) */}
             <div className="bg-gray-900 border border-white/8 rounded-xl p-5">
-              <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">Select Amount</div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-                {PRESETS.map(p => (
-                  <button
-                    key={p.amount}
-                    onClick={() => { setSelectedPreset(p.amount); setCustomAmount(''); }}
-                    className={`relative rounded-xl border p-3 text-left transition-all ${
-                      selectedPreset === p.amount
-                        ? 'border-yellow-400 bg-yellow-400/10'
-                        : 'border-white/10 bg-gray-800 hover:border-yellow-400/30'
-                    }`}
-                  >
-                    {p.tag && (
-                      <span className="absolute -top-2 left-2 text-[9px] font-black bg-yellow-400 text-black px-1.5 py-0.5 rounded-full">
-                        {p.tag}
-                      </span>
-                    )}
-                    <div className={`text-base font-black ${selectedPreset === p.amount ? 'text-yellow-400' : 'text-white'}`}>
-                      {p.label}
-                    </div>
-                    <div className="text-xs text-white/50 mt-0.5">{p.tokens} tokens</div>
-                  </button>
-                ))}
-              </div>
+              <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">Select a Pack</div>
+              {loadingPlans ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="w-6 h-6 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : plans.length === 0 ? (
+                <div className="text-center py-6 text-white/30 text-sm mb-4">No packs available right now — use the custom amount below.</div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                  {plans.map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => { setSelectedPlan(p); setCustomAmount(''); }}
+                      className={`relative rounded-xl border p-3 text-left transition-all ${
+                        selectedPlan?.id === p.id
+                          ? 'border-yellow-400 bg-yellow-400/10'
+                          : 'border-white/10 bg-gray-800 hover:border-yellow-400/30'
+                      }`}
+                    >
+                      {p.discount > 0 && (
+                        <span className="absolute -top-2 left-2 text-[9px] font-black bg-yellow-400 text-black px-1.5 py-0.5 rounded-full">
+                          {p.discount}% OFF
+                        </span>
+                      )}
+                      <div className={`text-base font-black ${selectedPlan?.id === p.id ? 'text-yellow-400' : 'text-white'}`}>
+                        ₹{p.price.toLocaleString()}
+                      </div>
+                      <div className="text-xs text-white/50 mt-0.5">{p.tokens.toLocaleString()} tokens · {p.name}</div>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Custom amount */}
               <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Or enter custom amount</div>
@@ -219,7 +237,7 @@ const BuyTokenPage: React.FC = () => {
                   min="10"
                   step="10"
                   value={customAmount}
-                  onChange={e => { setCustomAmount(e.target.value); setSelectedPreset(null); }}
+                  onChange={e => { setCustomAmount(e.target.value); setSelectedPlan(null); }}
                   placeholder="Min ₹10"
                   className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/50 text-sm"
                 />
