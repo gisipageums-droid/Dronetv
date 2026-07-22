@@ -7,9 +7,12 @@ import {
 } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { AUTH_API, LAMBDA } from "../../../lib/apiConfig";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+const UPGRADE_API = AUTH_API ? `${AUTH_API}/upgrade-package` : `${LAMBDA.profile}/upgrade-package`;
+const TOKEN_RATE = 10; // ₹10 = 1 token, must match backend
 
 const PACKAGES = [
   {
@@ -102,6 +105,8 @@ const MyPackage: React.FC = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [confirmPkg, setConfirmPkg] = useState<(typeof PACKAGES)[number] | null>(null);
+  const [upgrading, setUpgrading] = useState(false);
 
   const userId = user?.userData?.email || user?.email || "";
 
@@ -113,6 +118,30 @@ const MyPackage: React.FC = () => {
       .catch(() => setProfile(null))
       .finally(() => setLoading(false));
   }, [userId]);
+
+  const handleUpgrade = async () => {
+    if (!confirmPkg || !userId) return;
+    setUpgrading(true);
+    try {
+      const res = await axios.post(UPGRADE_API, { userId, packageId: confirmPkg.id });
+      if (res.data?.success) {
+        setProfile((prev) => ({
+          ...prev,
+          tokenBalance: res.data.tokenBalance,
+          packageType: res.data.packageType,
+          packageExpiry: res.data.packageExpiry,
+        }));
+        toast.success(`Upgraded to ${confirmPkg.name}!`);
+        setConfirmPkg(null);
+      } else {
+        toast.error(res.data?.message || "Upgrade failed");
+      }
+    } catch (e: any) {
+      toast.error(e.response?.data?.message || "Upgrade failed. Please try again.");
+    } finally {
+      setUpgrading(false);
+    }
+  };
 
   const currentTier = (profile?.packageType ?? "reach").toLowerCase();
   const currentPkg = PACKAGES.find((p) => p.id === currentTier) ?? PACKAGES[0];
@@ -236,7 +265,7 @@ const MyPackage: React.FC = () => {
                     )}
                   </div>
                   <button
-                    onClick={() => navigate('/user-recharge')}
+                    onClick={() => setConfirmPkg(pkg)}
                     className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-black transition-colors border ${c.bg} ${c.border} ${c.text} hover:opacity-80`}
                   >
                     Upgrade to {pkg.name}
@@ -269,6 +298,65 @@ const MyPackage: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Upgrade confirmation modal */}
+      {confirmPkg && (() => {
+        const c = colorMap[confirmPkg.color];
+        const tokenCost = Math.round(confirmPkg.price / TOKEN_RATE);
+        const balance = profile?.tokenBalance ?? 0;
+        const insufficient = balance < tokenCost;
+        return (
+          <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4" onClick={() => !upgrading && setConfirmPkg(null)}>
+            <div className={`bg-gray-900 border rounded-2xl p-6 max-w-md w-full ${c.border}`} onClick={(e) => e.stopPropagation()}>
+              <h3 className="text-lg font-black text-white mb-1">Upgrade to {confirmPkg.name}</h3>
+              <p className="text-xs text-white/50 mb-4">{formatINR(confirmPkg.price)}/year · {confirmPkg.tokens.toLocaleString()} tokens included</p>
+
+              <div className="space-y-1.5 mb-4">
+                {confirmPkg.benefits.map((b) => (
+                  <div key={b} className="flex items-center gap-2">
+                    <CheckCircle size={13} className="text-green-400 flex-shrink-0" />
+                    <span className="text-xs text-gray-200">{b}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-xl bg-white/5 border border-white/10 p-3 mb-4">
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span className="text-white/60">Cost</span>
+                  <span className="font-black text-yellow-400">{tokenCost.toLocaleString()} ₮</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60">Your balance</span>
+                  <span className={`font-black ${insufficient ? "text-red-400" : "text-white"}`}>{balance.toLocaleString()} ₮</span>
+                </div>
+              </div>
+
+              {insufficient && (
+                <p className="text-xs text-red-400 mb-4">
+                  Not enough tokens for this upgrade. You need {(tokenCost - balance).toLocaleString()} more.
+                </p>
+              )}
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setConfirmPkg(null)}
+                  disabled={upgrading}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white/70 border border-white/15 hover:bg-white/5 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpgrade}
+                  disabled={upgrading || insufficient}
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${c.bg} ${c.border} border ${c.text} hover:opacity-80`}
+                >
+                  {upgrading ? "Upgrading..." : `Confirm — Deduct ${tokenCost.toLocaleString()} ₮`}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
