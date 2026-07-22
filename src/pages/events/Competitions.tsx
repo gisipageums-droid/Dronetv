@@ -70,6 +70,15 @@ const expectItems = [
 export default function CompetitionsPage() {
   const [cmsItems, setcmsItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -124,7 +133,16 @@ export default function CompetitionsPage() {
                   <div className="p-4">
                     {item.category && <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
                     <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
-                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-4">{item.description}</p>}
+                    {item.description && (
+                      <div className="mb-3">
+                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-4'}`}>{item.description}</p>
+                        {item.description.length > 180 && (
+                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                            {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                          </button>
+                        )}
+                      </div>
+                    )}
                     {item.price && <div className="text-xs font-bold text-green-700 mb-2">{item.price}</div>}
                     <div className="space-y-1">
                       {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}

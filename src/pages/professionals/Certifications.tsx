@@ -93,6 +93,15 @@ const rptOs = [
 
 export default function CertificationsPage() {
   const [cmsItems, setCmsItems] = useState<MediaItem[]>([]);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -200,14 +209,27 @@ export default function CertificationsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {cmsItems.map(item => (
                 <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
-                  {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-32 object-cover rounded-lg mb-3" />}
+                  {item.imageUrl && (
+                    <div className="w-full h-32 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                      <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain" />
+                    </div>
+                  )}
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <h3 className="font-bold text-gray-900 text-sm leading-snug">{item.title}</h3>
                     {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded flex-shrink-0">{item.category}</span>}
                   </div>
                   {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
                   {item.location && <p className="text-xs text-gray-400 mb-2">{item.location}</p>}
-                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3">{item.description}</p>}
+                  {item.description && (
+                    <div className="mb-3">
+                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-4'}`}>{item.description}</p>
+                      {item.description.length > 180 && (
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                        </button>
+                      )}
+                    </div>
+                  )}
                   <div className="flex items-center justify-between mt-2">
                     {item.price && <span className="text-xs font-semibold text-gray-600">{item.price}</span>}
                     {item.externalLink && (

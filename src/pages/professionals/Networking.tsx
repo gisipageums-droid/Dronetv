@@ -104,6 +104,15 @@ const threads = [
 
 export default function NetworkingPage() {
   const [cmsItems, setCmsItems] = useState<MediaItem[]>([]);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -127,8 +136,8 @@ export default function NetworkingPage() {
           </div>
           <div className="flex gap-8 flex-shrink-0">
             <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">3</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">City Chapters</span>
+              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{cmsItems.length}</span>
+              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Groups Listed</span>
             </div>
             <div>
               <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Monthly</span>
@@ -201,7 +210,16 @@ export default function NetworkingPage() {
                       {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
                       {item.location && <p className="text-xs text-gray-400 mb-2">📍 {item.location}</p>}
                       {item.date && <p className="text-xs text-gray-400 mb-2">📅 {item.date}</p>}
-                      {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-5">{item.description}</p>}
+                      {item.description && (
+                        <div className="mb-3">
+                          <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-5'}`}>{item.description}</p>
+                          {item.description.length > 220 && (
+                            <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                              {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                            </button>
+                          )}
+                        </div>
+                      )}
                       {item.externalLink && (
                         <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
                           className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">

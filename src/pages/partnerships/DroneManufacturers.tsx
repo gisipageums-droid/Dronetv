@@ -16,6 +16,15 @@ export default function DroneManufacturersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -84,7 +93,9 @@ export default function DroneManufacturersPage() {
                 {filtered.map(item => (
                   <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                     {item.imageUrl ? (
-                      <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />
+                      <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
+                        <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain" />
+                      </div>
                     ) : (
                       <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
                         <Building2 className="w-10 h-10 text-yellow-400" />
@@ -93,7 +104,16 @@ export default function DroneManufacturersPage() {
                     <div className="p-4">
                       {item.category && <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
                       <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
-                      {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3">{item.description}</p>}
+                      {item.description && (
+                        <div className="mb-3">
+                          <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-4'}`}>{item.description}</p>
+                          {item.description.length > 180 && (
+                            <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                              {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                            </button>
+                          )}
+                        </div>
+                      )}
                       {item.tags && item.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mb-3">
                           {item.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}

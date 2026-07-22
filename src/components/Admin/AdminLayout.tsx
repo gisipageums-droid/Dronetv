@@ -140,6 +140,7 @@ const NAV: Section[] = [
           { label: "Competitions",   path: "/admin/media/dashboard?type=competition",        icon: <Award size={14} /> },
           { label: "Webinars",       path: "/admin/media/dashboard?type=webinar",            icon: <Video size={14} /> },
           { label: "Meetups",        path: "/admin/media/dashboard?type=meetup",             icon: <Users2 size={14} /> },
+          { label: "Registrations",  path: "/admin/company/dashboard?view=leads",            icon: <Users2 size={14} /> },
         ],
       },
       {
