@@ -439,9 +439,12 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
         ? fetch(publishedUrl, { headers: { 'X-User-Id': companyData.userId } }).then(r => r.json()).catch(() => ({}))
         : Promise.resolve({}),
     ]).then(([draftData, publishedData]) => {
-      // Extract services & products from published template content (scraped at registration)
+      // Extract services & products from published template content (AI-generated after registration —
+      // usually more complete than the raw registration form, which often only has placeholder entries)
       const publishedServices: any[] = publishedData?.content?.services?.services || [];
       const publishedProducts: any[] = publishedData?.content?.products?.products || [];
+      const publishedAboutImage: string = publishedData?.content?.about?.officeImage || '';
+      const publishedHeroImage: string = publishedData?.content?.hero?.mainHeroImage || '';
 
       const formDataFromDraft = draftData?.formData || {};
       // Previously saved Update Details selections (saved on last submit)
@@ -453,7 +456,9 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
         if (saved) localDraft = JSON.parse(saved);
       } catch { /* ignore corrupt local draft */ }
 
-      // Priority: unsaved local draft > cached Update Details > original draft > scraped from website
+      // Priority: unsaved local draft > cached Update Details > published website content > raw registration form
+      // (the raw registration form's services/products/images are frequently left as placeholders — the
+      // published site's AI-generated content is the more reliable source once it exists)
       const mergedFormData = {
         ...formDataFromDraft,
         ...cachedFields,
@@ -462,16 +467,18 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
           ? localDraft.services
           : cachedFields.services?.length > 0
             ? cachedFields.services
-            : formDataFromDraft.services?.length > 0
-              ? formDataFromDraft.services
-              : publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' })),
+            : publishedServices.length > 0
+              ? publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' }))
+              : formDataFromDraft.services || [],
         products: localDraft.products?.length > 0
           ? localDraft.products
           : cachedFields.products?.length > 0
             ? cachedFields.products
-            : formDataFromDraft.products?.length > 0
-              ? formDataFromDraft.products
-              : publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' })),
+            : publishedProducts.length > 0
+              ? publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' }))
+              : formDataFromDraft.products || [],
+        aboutImageUrl: localDraft.aboutImageUrl || cachedFields.aboutImageUrl || formDataFromDraft.aboutImageUrl || publishedAboutImage,
+        heroBackgroundUrl: localDraft.heroBackgroundUrl || cachedFields.heroBackgroundUrl || formDataFromDraft.heroBackgroundUrl || publishedHeroImage,
       };
 
       if (Object.keys(mergedFormData).length > 0) {

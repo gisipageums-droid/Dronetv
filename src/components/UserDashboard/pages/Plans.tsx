@@ -239,10 +239,18 @@ const RechargePlans: React.FC = () => {
                     ))}
                   </div>
                   <button
-                    onClick={() => navigate('/user-buy')}
-                    className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-black transition-all ${c.btn}`}
+                    onClick={() => handleSelectPlan({ id: pkg.id, name: pkg.name, price: pkg.price, tokens: pkg.tokens, type: 'annual', discount: 0, features: pkg.features })}
+                    disabled={processingPlanId === pkg.id}
+                    className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed ${c.btn}`}
                   >
-                    Get {pkg.name} <ArrowRight size={14} />
+                    {processingPlanId === pkg.id ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>Get {pkg.name} <ArrowRight size={14} /></>
+                    )}
                   </button>
                 </div>
               );
