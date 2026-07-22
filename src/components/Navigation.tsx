@@ -150,6 +150,7 @@ const Navigation = () => {
     { path: "/professionals/pilot-directory", label: "Pilot Directory" },
     { path: "/professionals/certifications", label: "Certifications" },
     { path: "/professionals/training", label: "Training" },
+    { path: "/professionals/career-path", label: "Career Path" },
     { path: "/professionals/networking", label: "Networking" },
     { path: "/professionals/community", label: "Community" },
   ];

@@ -164,7 +164,9 @@ const Sidebar: React.FC = () => {
 
   const getInitialOpen = () => {
     const open: Record<string, boolean> = {};
-    NAV_GROUPS.forEach(g => { open[g.id] = false; });
+    NAV_GROUPS.forEach(g => {
+      open[g.id] = g.paths.some(p => location.pathname.startsWith(p));
+    });
     open["listings"] = true;
     open["tokens"] = true;
     open["account"] = true;
@@ -172,6 +174,16 @@ const Sidebar: React.FC = () => {
   };
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(getInitialOpen);
+
+  // Auto-expand whichever group the user navigates into (e.g. via a link elsewhere in the app),
+  // so its sub-items are never hidden behind a collapsed accordion the user doesn't know to click.
+  React.useEffect(() => {
+    const activeGroup = NAV_GROUPS.find(g => g.paths.some(p => location.pathname.startsWith(p)));
+    if (activeGroup && !openGroups[activeGroup.id]) {
+      setOpenGroups(prev => ({ ...prev, [activeGroup.id]: true }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   React.useEffect(() => {
     if (!userId) return;
