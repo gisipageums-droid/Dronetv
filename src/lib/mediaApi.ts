@@ -20,6 +20,7 @@ export interface MediaItem {
   company?: string;
   platform?: string;
   readTime?: string;
+  applicationDeadline?: string;
   isPublished: boolean;
   publishedAt?: string;
   createdAt: string;

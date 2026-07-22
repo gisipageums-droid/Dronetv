@@ -3,10 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 import { MapPin, Search, X, Briefcase, Plus } from 'lucide-react';
 import { fetchContent, fetchAdminContent, createContent, MediaItem } from '../../lib/mediaApi';
 import { useUserAuth } from '../../components/context/context';
+import { COMPANY_API, LAMBDA } from '../../lib/apiConfig';
 
 interface ApplyForm { name: string; email: string; phone: string; message: string; }
-interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; imageUrl: string; }
-const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '', imageUrl: '' };
+interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; imageUrl: string; applicationDeadline: string; }
+const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '', imageUrl: '', applicationDeadline: '' };
 const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence', 'Manufacturing', 'R&D', 'Operations'];
 
 const staticJobs = [
@@ -46,7 +47,19 @@ export default function JobBoardPage() {
   const [postSubmitted, setPostSubmitted] = useState(false);
   const [postSubmitError, setPostSubmitError] = useState(false);
   const [myJobs, setMyJobs] = useState<MediaItem[]>([]);
+  const [companies, setCompanies] = useState<{ publishedId: string; companyName: string }[]>([]);
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (!userId) { setCompanies([]); return; }
+    const controller = new AbortController();
+    const url = COMPANY_API ? `${COMPANY_API}/dashboard-cards?userId=${userId}` : `${LAMBDA.company}/dashboard-cards?userId=${userId}`;
+    fetch(url, { signal: controller.signal })
+      .then(res => res.json())
+      .then(data => setCompanies((data.cards || []).map((c: any) => ({ publishedId: c.publishedId || '', companyName: c.companyName || 'Unnamed Company' }))))
+      .catch(() => {});
+    return () => controller.abort();
+  }, [userId]);
 
   const loadMyJobs = useCallback(() => {
     if (!userId) { setMyJobs([]); return; }
@@ -114,6 +127,7 @@ export default function JobBoardPage() {
         author: userId,
         source: userId,
         imageUrl: postJobForm.imageUrl || undefined,
+        applicationDeadline: postJobForm.applicationDeadline,
         isPublished: false,
       });
       if (userId && created?.contentId) {
@@ -307,7 +321,7 @@ export default function JobBoardPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0">
             {userId ? (
-              <button onClick={() => { setPostJobForm(EMPTY_POST); setPostSubmitted(false); setPostSubmitError(false); setPostJobModal(true); }}
+              <button onClick={() => { setPostJobForm({ ...EMPTY_POST, company: companies[0]?.companyName || '' }); setPostSubmitted(false); setPostSubmitError(false); setPostJobModal(true); }}
                 className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
                 <Plus className="w-4 h-4" /> Post a Job
               </button>
@@ -344,9 +358,17 @@ export default function JobBoardPage() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-gray-700 mb-1">Company Name *</label>
-                      <input type="text" required value={postJobForm.company} onChange={e => setPostJobForm(f => ({ ...f, company: e.target.value }))}
-                        placeholder="Your company"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                      {companies.length > 0 ? (
+                        <select required value={postJobForm.company} onChange={e => setPostJobForm(f => ({ ...f, company: e.target.value }))}
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400">
+                          <option value="">Select your company</option>
+                          {companies.map(c => <option key={c.publishedId} value={c.companyName}>{c.companyName}</option>)}
+                        </select>
+                      ) : (
+                        <input type="text" required value={postJobForm.company} onChange={e => setPostJobForm(f => ({ ...f, company: e.target.value }))}
+                          placeholder="Your company"
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-gray-700 mb-1">Location</label>
@@ -368,7 +390,7 @@ export default function JobBoardPage() {
                       <label className="block text-xs font-semibold text-gray-700 mb-1">Job Type</label>
                       <select value={postJobForm.jobType} onChange={e => setPostJobForm(f => ({ ...f, jobType: e.target.value }))}
                         className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400">
-                        {['Full-Time', 'Part-Time', 'Contract', 'Freelance'].map(t => <option key={t} value={t}>{t}</option>)}
+                        {['Full-Time', 'Part-Time', 'Contract', 'Internship'].map(t => <option key={t} value={t}>{t}</option>)}
                       </select>
                     </div>
                   </div>
@@ -384,11 +406,18 @@ export default function JobBoardPage() {
                       placeholder="Describe the role, requirements, and responsibilities..."
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
                   </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Company Logo / Banner Image URL <span className="text-gray-400 font-normal">(optional)</span></label>
-                    <input type="url" value={postJobForm.imageUrl} onChange={e => setPostJobForm(f => ({ ...f, imageUrl: e.target.value }))}
-                      placeholder="https://example.com/image.jpg"
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Job Image URL <span className="text-gray-400 font-normal">(optional)</span></label>
+                      <input type="url" value={postJobForm.imageUrl} onChange={e => setPostJobForm(f => ({ ...f, imageUrl: e.target.value }))}
+                        placeholder="https://example.com/image.jpg"
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Application Deadline</label>
+                      <input type="date" value={postJobForm.applicationDeadline} onChange={e => setPostJobForm(f => ({ ...f, applicationDeadline: e.target.value }))}
+                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                    </div>
                   </div>
                   <p className="text-xs text-gray-400">Your job will be reviewed by DroneTv team before going live on the job board.</p>
                   {postSubmitError && (
