@@ -62,6 +62,7 @@ const RechargePlans: React.FC = () => {
   const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [tokenBalance, setTokenBalance] = useState<number>(0);
+  const [packageType, setPackageType] = useState<string>('reach');
   const [activeTab, setActiveTab] = useState<'subscription' | 'topup'>('subscription');
   const [confirmPkg, setConfirmPkg] = useState<(typeof SUBSCRIPTION_PLANS)[number] | null>(null);
   const [upgrading, setUpgrading] = useState(false);
@@ -76,7 +77,10 @@ const RechargePlans: React.FC = () => {
   useEffect(() => {
     if (userId) {
       axios.get(`${PROFILE_API}?userId=${userId}`)
-        .then(r => setTokenBalance(r.data?.profile?.tokenBalance ?? 0))
+        .then(r => {
+          setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
+          setPackageType((r.data?.profile?.packageType ?? 'reach').toLowerCase());
+        })
         .catch(() => {});
     }
   }, [userId]);
@@ -147,6 +151,7 @@ const RechargePlans: React.FC = () => {
       const res = await axios.post(UPGRADE_API, { userId, packageId: confirmPkg.id });
       if (res.data?.success) {
         setTokenBalance(res.data.tokenBalance);
+        setPackageType((res.data.packageType ?? confirmPkg.id).toLowerCase());
         toast.success(`Upgraded to ${confirmPkg.name}!`);
         setConfirmPkg(null);
       } else {
@@ -232,12 +237,17 @@ const RechargePlans: React.FC = () => {
             {SUBSCRIPTION_PLANS.map(pkg => {
               const c = colorMap[pkg.color];
               const Icon = pkg.icon;
+              const isCurrent = pkg.id === packageType;
               return (
                 <div
                   key={pkg.id}
-                  className={`relative rounded-2xl border p-5 flex flex-col ${c.bg} ${c.border}`}
+                  className={`relative rounded-2xl border p-5 flex flex-col ${c.bg} ${isCurrent ? 'border-green-400/60' : c.border}`}
                 >
-                  {pkg.popular && (
+                  {isCurrent ? (
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-black bg-green-400 text-black px-3 py-1 rounded-full whitespace-nowrap">
+                      Current Plan
+                    </span>
+                  ) : pkg.popular && (
                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-black bg-yellow-400 text-black px-3 py-1 rounded-full whitespace-nowrap">
                       Most Popular
                     </span>
@@ -263,9 +273,16 @@ const RechargePlans: React.FC = () => {
                   </div>
                   <button
                     onClick={() => setConfirmPkg(pkg)}
-                    className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed ${c.btn}`}
+                    disabled={isCurrent}
+                    className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      isCurrent ? 'bg-green-400/20 border border-green-400/40 text-green-300' : c.btn
+                    }`}
                   >
-                    Get {pkg.name} <ArrowRight size={14} />
+                    {isCurrent ? (
+                      <><CheckCircle size={14} /> Current Plan</>
+                    ) : (
+                      <>Get {pkg.name} <ArrowRight size={14} /></>
+                    )}
                   </button>
                 </div>
               );

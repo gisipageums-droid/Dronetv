@@ -107,6 +107,17 @@ const CompanyWebsite: React.FC = () => {
 
 
 
+  const mergeItemsByTitle = (existing: any[] = [], incoming: any[] = []) => {
+    return incoming.map((item) => {
+      const match = existing.find(
+        (e) => e?.title?.trim().toLowerCase() === item?.title?.trim().toLowerCase()
+      );
+      // Preserve richer AI-generated fields (image, features, benefits, pricing, etc.)
+      // for items the user kept — only title/description come from the quick-edit form.
+      return match ? { ...match, title: item.title, description: item.description } : item;
+    });
+  };
+
   const handleFormSubmit = useCallback(async (aiGenData: any) => {
     if (!company) return;
     setSubmitting(true);
@@ -127,13 +138,20 @@ const CompanyWebsite: React.FC = () => {
       // Selectively merge: preserve scraped text, update only what the 5 steps provide
       const mergedContent = hasExisting ? {
         ...existingContent,
-        // Services from step 3 (Products & Services)
+        // Services from step 3 (Products & Services) — merge by title so existing
+        // images/features/benefits/pricing survive; only title/description come from the form
         ...(newContent.services?.services?.length > 0 ? {
-          services: { ...existingContent.services, services: newContent.services.services },
+          services: {
+            ...existingContent.services,
+            services: mergeItemsByTitle(existingContent.services?.services, newContent.services.services),
+          },
         } : {}),
-        // Products from step 3
+        // Products from step 3 — same per-item merge as services
         ...(newContent.products?.products?.length > 0 ? {
-          products: { ...existingContent.products, products: newContent.products.products },
+          products: {
+            ...existingContent.products,
+            products: mergeItemsByTitle(existingContent.products?.products, newContent.products.products),
+          },
         } : {}),
         // Logo from step 5 (Media Uploads)
         ...(newContent.company?.logo ? {
