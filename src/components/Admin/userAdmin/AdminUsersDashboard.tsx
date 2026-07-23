@@ -63,7 +63,7 @@ function ReviewBadge({ status }: { status?: string }) {
   );
 }
 
-function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: UserRecord; onClose: () => void; onDeleted: (email: string) => void; onStatusChanged: (email: string, status: string) => void }) {
+function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: UserRecord; onClose: () => void; onDeleted: (email: string, type: "company" | "professional") => void; onStatusChanged: (email: string, type: "company" | "professional", status: string) => void }) {
   const navigate = useNavigate();
   const image = user.headerLogo || user.previewImage;
   const [showConfirm, setShowConfirm] = useState(false);
@@ -84,7 +84,7 @@ function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: Use
       const newStatus = action === "approve" ? "approved" : "rejected";
       toast.success(`Company ${action === "approve" ? "approved" : "rejected"} successfully`);
       setCurrentReviewStatus(newStatus);
-      onStatusChanged(user.email, newStatus);
+      onStatusChanged(user.email, user.type, newStatus);
     } catch {
       toast.error(`Failed to ${action} company`);
     } finally {
@@ -115,7 +115,7 @@ function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: Use
       }
       if (!res.ok) throw new Error("Delete failed");
       toast.success(`${user.displayName} deleted successfully`);
-      onDeleted(user.email);
+      onDeleted(user.email, user.type);
       onClose();
     } catch {
       toast.error("Failed to delete user");
@@ -424,13 +424,14 @@ export default function AdminUsersDashboard() {
       const compData = compRes.ok ? await compRes.json() : { cards: [] };
       const proData = proRes.ok ? await proRes.json() : { cards: [] };
 
-      const seen = new Set<string>();
+      const seenCompany = new Set<string>();
+      const seenProfessional = new Set<string>();
       const combined: UserRecord[] = [];
 
       for (const c of (compData.cards ?? [])) {
         const email: string = c.userId ?? "";
-        if (!email || seen.has(email)) continue;
-        seen.add(email);
+        if (!email || seenCompany.has(email)) continue;
+        seenCompany.add(email);
         combined.push({
           email,
           displayName: c.companyName ?? email,
@@ -459,8 +460,8 @@ export default function AdminUsersDashboard() {
 
       for (const p of (proData.cards ?? [])) {
         const email: string = p.userId ?? "";
-        if (!email || seen.has(email)) continue;
-        seen.add(email);
+        if (!email || seenProfessional.has(email)) continue;
+        seenProfessional.add(email);
         combined.push({
           email,
           displayName: p.fullName ?? p.professionalName ?? email,
@@ -631,7 +632,7 @@ export default function AdminUsersDashboard() {
                   <tbody className="divide-y divide-gray-100">
                     {paginated.map((u, i) => (
                       <tr
-                        key={u.email}
+                        key={`${u.type}-${u.email}`}
                         onClick={() => setSelected(u)}
                         className="hover:bg-gray-50 cursor-pointer transition-colors"
                       >
@@ -707,12 +708,12 @@ export default function AdminUsersDashboard() {
         <DetailDrawer
           user={selected}
           onClose={() => setSelected(null)}
-          onDeleted={(email) => {
-            setUsers(prev => prev.filter(u => u.email !== email));
+          onDeleted={(email, type) => {
+            setUsers(prev => prev.filter(u => !(u.email === email && u.type === type)));
             setSelected(null);
           }}
-          onStatusChanged={(email, status) => {
-            setUsers(prev => prev.map(u => u.email === email ? { ...u, reviewStatus: status } : u));
+          onStatusChanged={(email, type, status) => {
+            setUsers(prev => prev.map(u => (u.email === email && u.type === type) ? { ...u, reviewStatus: status } : u));
           }}
         />
       )}
