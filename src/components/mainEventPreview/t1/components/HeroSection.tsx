@@ -206,27 +206,29 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* YouTube Video BG */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-        <iframe
-          id="hero-video"
-          key={heroContent.videoUrl}
-          className="w-full h-full object-cover"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            minHeight: "100vh",
-          }}
-          src={`${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1`}
-          title="Event Background Video"
-          frameBorder="0"
-          allow="autoplay; encrypted-media; fullscreen"
-          allowFullScreen
-        />
-        <div className="absolute inset-0 bg-black/60 z-10"></div>
-      </div>
+      {convertToEmbedUrl(heroContent.videoUrl) && (
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+          <iframe
+            id="hero-video"
+            key={heroContent.videoUrl}
+            className="w-full h-full object-cover"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              minHeight: "100vh",
+            }}
+            src={`${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1`}
+            title="Event Background Video"
+            frameBorder="0"
+            allow="autoplay; encrypted-media; fullscreen"
+            allowFullScreen
+          />
+          <div className="absolute inset-0 bg-black/60 z-10"></div>
+        </div>
+      )}
 {/* Mute / Unmute Button */}
 <button
   onClick={toggleMute}

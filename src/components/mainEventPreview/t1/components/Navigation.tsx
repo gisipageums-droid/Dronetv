@@ -89,10 +89,10 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
           </div>
 
           {/* CTA Button (Desktop) */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:block flex-shrink-0">
             <a
               href={"#contact"}
-              className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-4 py-2 xl:px-6 xl:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 text-sm xl:text-base"
+              className="whitespace-nowrap bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-4 py-2 xl:px-6 xl:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 text-sm xl:text-base"
             >
               {navContent.ctaText}
             </a>

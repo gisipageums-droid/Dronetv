@@ -15,13 +15,18 @@ interface RawEvent {
   cleanUrl?: string;
   previewImage?: string;
   thumbnailUrl?: string;
+  heroBannerImage?: string;
 }
 
 const EVENTS_DASHBOARD_URL = EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=main` : `${LAMBDA.events}/events-dashboard?viewType=main`;
 
-function getEventImage(previewImage?: string, thumbnailUrl?: string): string | null {
-  for (const url of [previewImage, thumbnailUrl]) {
+function getEventImage(previewImage?: string, thumbnailUrl?: string, heroBannerImage?: string): string | null {
+  for (const url of [previewImage, thumbnailUrl, heroBannerImage]) {
     if (!url) continue;
+    // The event-publish backend sometimes stores a relative placeholder path here
+    // instead of the real uploaded image URL — that path 404s to the SPA's own
+    // index.html, not an image, so skip it and fall through to heroBannerImage.
+    if (!url.startsWith('http')) continue;
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
       const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
       if (m) return `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
@@ -114,8 +119,8 @@ export default function EventCalendarPage() {
                 navigate(`/event/${slug}`);
               }}
                 className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
-                {getEventImage(event.previewImage, event.thumbnailUrl) ? (
-                  <img src={getEventImage(event.previewImage, event.thumbnailUrl)!} alt={event.eventName} className="w-full h-40 object-cover" />
+                {getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage) ? (
+                  <img src={getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage)!} alt={event.eventName} className="w-full h-40 object-cover" />
                 ) : (
                   <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
                     <span className="text-yellow-400 text-4xl">🗓️</span>
