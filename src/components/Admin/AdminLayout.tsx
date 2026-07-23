@@ -41,7 +41,6 @@ import {
   Gavel,
   BarChart,
   ShieldCheck,
-  Zap,
 } from "lucide-react";
 import { COMPANY_API, EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 
@@ -105,9 +104,7 @@ const NAV: Section[] = [
           { label: "Job Board",        path: "/admin/media/dashboard?type=job",           icon: <Briefcase size={14} /> },
           { label: "Pilot Directory", path: "/admin/professional/dashboard",             icon: <UserCircle size={14} /> },
           { label: "Certifications",  path: "/admin/media/dashboard?type=certification", icon: <Award size={14} /> },
-          { label: "Portfolio",       path: "/admin/media/dashboard?type=portfolio",     icon: <Layers size={14} /> },
           { label: "Training / RPTOs",path: "/admin/media/dashboard?type=training",      icon: <GraduationCap size={14} /> },
-          { label: "Career Path",     path: "/professionals/career-path",                icon: <Zap size={14} /> },
           { label: "Networking",      path: "/admin/media/dashboard?type=networking",    icon: <Users2 size={14} /> },
           { label: "Community",       path: "/admin/media/dashboard?type=community",     icon: <Users size={14} /> },
         ],
@@ -140,7 +137,6 @@ const NAV: Section[] = [
           { label: "Competitions",   path: "/admin/media/dashboard?type=competition",        icon: <Award size={14} /> },
           { label: "Webinars",       path: "/admin/media/dashboard?type=webinar",            icon: <Video size={14} /> },
           { label: "Meetups",        path: "/admin/media/dashboard?type=meetup",             icon: <Users2 size={14} /> },
-          { label: "Registrations",  path: "/admin/company/dashboard?view=leads",            icon: <Users2 size={14} /> },
         ],
       },
       {
@@ -239,7 +235,7 @@ const BREADCRUMBS: Record<string, string> = {
 
 const PARTNERSHIPS_CMS = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
 const EVENTS_CMS = new Set(["competition","webinar","meetup"]);
-const PROFESSIONALS_CMS = new Set(["job","training","certification","portfolio","networking","community"]);
+const PROFESSIONALS_CMS = new Set(["job","training","certification","networking","community"]);
 
 function computeGroupId(pathname: string, search: string): string {
   const sp = new URLSearchParams(search);
