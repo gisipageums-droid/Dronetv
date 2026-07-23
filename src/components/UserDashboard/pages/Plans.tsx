@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+const UPGRADE_API = AUTH_API ? `${AUTH_API}/upgrade-package` : `${LAMBDA.profile}/upgrade-package`;
+const TOKEN_RATE = 10; // ₹10 = 1 token, must match backend
 
 interface Plan {
   features: string[];
@@ -61,6 +63,8 @@ const RechargePlans: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [tokenBalance, setTokenBalance] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'subscription' | 'topup'>('subscription');
+  const [confirmPkg, setConfirmPkg] = useState<(typeof SUBSCRIPTION_PLANS)[number] | null>(null);
+  const [upgrading, setUpgrading] = useState(false);
 
   const navigate = useNavigate();
   const { user } = useUserAuth();
@@ -133,6 +137,25 @@ const RechargePlans: React.FC = () => {
       toast.error(e.message || 'Failed to initiate payment');
     } finally {
       setProcessingPlanId(null);
+    }
+  };
+
+  const handleUpgrade = async () => {
+    if (!confirmPkg || !userId) return;
+    setUpgrading(true);
+    try {
+      const res = await axios.post(UPGRADE_API, { userId, packageId: confirmPkg.id });
+      if (res.data?.success) {
+        setTokenBalance(res.data.tokenBalance);
+        toast.success(`Upgraded to ${confirmPkg.name}!`);
+        setConfirmPkg(null);
+      } else {
+        toast.error(res.data?.message || 'Upgrade failed');
+      }
+    } catch (e: any) {
+      toast.error(e.response?.data?.message || 'Upgrade failed. Please try again.');
+    } finally {
+      setUpgrading(false);
     }
   };
 
@@ -239,18 +262,10 @@ const RechargePlans: React.FC = () => {
                     ))}
                   </div>
                   <button
-                    onClick={() => handleSelectPlan({ id: pkg.id, name: pkg.name, price: pkg.price, tokens: pkg.tokens, type: 'annual', discount: 0, features: pkg.features })}
-                    disabled={processingPlanId === pkg.id}
+                    onClick={() => setConfirmPkg(pkg)}
                     className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed ${c.btn}`}
                   >
-                    {processingPlanId === pkg.id ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>Get {pkg.name} <ArrowRight size={14} /></>
-                    )}
+                    Get {pkg.name} <ArrowRight size={14} />
                   </button>
                 </div>
               );
@@ -356,6 +371,75 @@ const RechargePlans: React.FC = () => {
           </>
         )}
       </div>
+
+      {/* Upgrade confirmation modal (token deduction, no Razorpay) */}
+      {confirmPkg && (() => {
+        const c = colorMap[confirmPkg.color];
+        const tokenCost = Math.round(confirmPkg.price / TOKEN_RATE);
+        const insufficient = tokenBalance < tokenCost;
+        return (
+          <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4" onClick={() => !upgrading && setConfirmPkg(null)}>
+            <div className={`bg-gray-900 border rounded-2xl p-6 max-w-md w-full ${c.border}`} onClick={(e) => e.stopPropagation()}>
+              <h3 className="text-lg font-black text-white mb-1">Upgrade to {confirmPkg.name}</h3>
+              <p className="text-xs text-white/50 mb-4">
+                ₹{(confirmPkg.price / 1000).toFixed(0)}K/year · {confirmPkg.tokens.toLocaleString()} tokens included
+              </p>
+
+              <div className="space-y-1.5 mb-4">
+                {confirmPkg.features.map((f) => (
+                  <div key={f} className="flex items-center gap-2">
+                    <CheckCircle size={13} className="text-green-400 flex-shrink-0" />
+                    <span className="text-xs text-gray-200">{f}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-xl bg-white/5 border border-white/10 p-3 mb-4">
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span className="text-white/60">Cost</span>
+                  <span className="font-black text-yellow-400">{tokenCost.toLocaleString()} ₮</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60">Your balance</span>
+                  <span className={`font-black ${insufficient ? 'text-red-400' : 'text-white'}`}>{tokenBalance.toLocaleString()} ₮</span>
+                </div>
+              </div>
+
+              {insufficient && (
+                <p className="text-xs text-red-400 mb-4">
+                  Not enough tokens for this upgrade. You need {(tokenCost - tokenBalance).toLocaleString()} more — top up first.
+                </p>
+              )}
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setConfirmPkg(null)}
+                  disabled={upgrading}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white/70 border border-white/15 hover:bg-white/5 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                {insufficient ? (
+                  <button
+                    onClick={() => { setConfirmPkg(null); setActiveTab('topup'); }}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-black transition-colors border ${c.bg} ${c.border} ${c.text} hover:opacity-80`}
+                  >
+                    Top Up Tokens
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleUpgrade}
+                    disabled={upgrading}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed border ${c.bg} ${c.border} ${c.text} hover:opacity-80`}
+                  >
+                    {upgrading ? 'Upgrading...' : `Confirm — Deduct ${tokenCost.toLocaleString()} ₮`}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
