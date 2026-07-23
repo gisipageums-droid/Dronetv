@@ -17,6 +17,7 @@ interface HeroSectionProps {
     highlights: string[];
     btn1: string;
     btn2: string;
+    countdownEnabled?: boolean;
   };
 }
 
@@ -275,7 +276,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
             </div>
           </div>
 
-          {/* Countdown Timer */}
+          {/* Countdown Timer — only shown if the organizer enabled it in the event form.
+              Older events published before this flag existed have no value here,
+              so they default to showing (preserves their existing appearance). */}
+          {heroContent.countdownEnabled !== false && (
           <div className="mb-8">
             {countdown.isEventExpired ? (
               <div className="text-center">
@@ -337,6 +341,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
               </div>
             )}
           </div>
+          )}
 
           {/* Highlights */}
           <div className="text-white text-lg max-w-3xl mx-auto mb-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-left">
