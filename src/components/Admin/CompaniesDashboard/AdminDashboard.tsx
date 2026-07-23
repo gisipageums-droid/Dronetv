@@ -21,7 +21,17 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop";
 import { motion, AnimatePresence } from "motion/react";
-import { COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
+import { COMPANY_API, AUTH_API, LAMBDA } from '../../../lib/apiConfig';
+
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+
+interface CompanySubscription {
+  userId: string;
+  companyName: string;
+  packageType: string;
+  packageExpiry: string;
+  tokenBalance: number;
+}
 
 // -------------------- Types --------------------
 interface Company {
@@ -944,6 +954,11 @@ const AdminDashboard: React.FC = () => {
   const [leadsSearchTerm, setLeadsSearchTerm] = useState<string>("");
   const [leadsRefreshKey, setLeadsRefreshKey] = useState<number>(0);
 
+  // subscriptions (each company owner's package/token status)
+  const [subscriptions, setSubscriptions] = useState<CompanySubscription[]>([]);
+  const [subscriptionsLoading, setSubscriptionsLoading] = useState<boolean>(false);
+  const [subscriptionsSearchTerm, setSubscriptionsSearchTerm] = useState<string>("");
+
   // Confirmation modals state
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
@@ -1031,6 +1046,41 @@ const AdminDashboard: React.FC = () => {
       .finally(() => setLeadsLoading(false));
     return () => controller.abort();
   }, [viewFilter, leadsRefreshKey]);
+
+  // Fetch real package/subscription status for each company owner when the tab is opened
+  useEffect(() => {
+    if (viewFilter !== "subscriptions" || companies.length === 0) return;
+    const controller = new AbortController();
+    setSubscriptionsLoading(true);
+
+    const uniqueByUser = new Map<string, Company>();
+    companies.forEach((c) => {
+      if (c.userId && !uniqueByUser.has(c.userId)) uniqueByUser.set(c.userId, c);
+    });
+
+    Promise.all(
+      Array.from(uniqueByUser.values()).map(async (company) => {
+        try {
+          const res = await fetch(`${PROFILE_API}?userId=${company.userId}`, { signal: controller.signal });
+          if (!res.ok) return null;
+          const data = await res.json();
+          return {
+            userId: company.userId,
+            companyName: company.companyName,
+            packageType: data?.profile?.packageType || "reach",
+            packageExpiry: data?.profile?.packageExpiry || "",
+            tokenBalance: data?.profile?.tokenBalance ?? 0,
+          } as CompanySubscription;
+        } catch {
+          return null;
+        }
+      })
+    )
+      .then((results) => setSubscriptions(results.filter((r): r is CompanySubscription => r !== null)))
+      .finally(() => setSubscriptionsLoading(false));
+
+    return () => controller.abort();
+  }, [viewFilter, companies]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -1422,13 +1472,81 @@ const AdminDashboard: React.FC = () => {
         ))}
       </div>
 
-      {viewFilter === "subscriptions" && (
-        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center mb-4 shadow-sm">
-          <Building2 className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-gray-700 mb-1">Subscriptions</h3>
-          <p className="text-sm text-gray-400">Company subscription plans, billing status and renewal tracking will appear here. Coming soon.</p>
-        </div>
-      )}
+      {viewFilter === "subscriptions" && (() => {
+        const q = subscriptionsSearchTerm.trim().toLowerCase();
+        const filteredSubs = subscriptions.filter(
+          s => !q || s.companyName.toLowerCase().includes(q) || s.userId.toLowerCase().includes(q)
+        );
+        const fmtExpiry = (raw: string) => {
+          if (!raw) return "—";
+          try { return new Date(raw).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }); }
+          catch { return "—"; }
+        };
+        const tierBadge: Record<string, string> = {
+          reach: "bg-blue-100 text-blue-700",
+          scale: "bg-yellow-100 text-yellow-700",
+          brand: "bg-purple-100 text-purple-700",
+        };
+        return (
+          <div>
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
+                <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Search by company or email…"
+                  value={subscriptionsSearchTerm}
+                  onChange={e => setSubscriptionsSearchTerm(e.target.value)}
+                  className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
+                />
+              </div>
+              <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+                {filteredSubs.length} {filteredSubs.length === 1 ? "subscription" : "subscriptions"}
+              </span>
+            </div>
+
+            {subscriptionsLoading ? (
+              <LoadingSpinner />
+            ) : filteredSubs.length === 0 ? (
+              <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
+                <Building2 className="w-24 h-24 text-gray-400" />
+                <p className="text-sm font-semibold text-gray-400">No subscriptions found.</p>
+              </div>
+            ) : (
+              <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-200 bg-gray-50">
+                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Company</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Owner</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Package</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Token Balance</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide whitespace-nowrap">Renews</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredSubs.map(sub => (
+                        <tr key={sub.userId} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                          <td className="px-4 py-3 font-semibold text-gray-900 align-top whitespace-nowrap">{sub.companyName}</td>
+                          <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">{sub.userId}</td>
+                          <td className="px-4 py-3 align-top">
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded capitalize ${tierBadge[sub.packageType] || "bg-gray-100 text-gray-700"}`}>
+                              {sub.packageType}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">{sub.tokenBalance.toLocaleString()} ₮</td>
+                          <td className="px-4 py-3 text-gray-500 align-top whitespace-nowrap">{fmtExpiry(sub.packageExpiry)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {viewFilter === "leads" && (
         <div>

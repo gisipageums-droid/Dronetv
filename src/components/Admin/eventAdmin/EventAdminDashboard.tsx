@@ -15,6 +15,7 @@ import {
   Clock,
   Pen,
   Edit,
+  Plus,
 } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -610,12 +611,22 @@ const SORT_OPTIONS = [
 
 // -------------------- Header --------------------
 const Header: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div className="bg-gray-900 px-6 py-5">
-      <div className="max-w-7xl mx-auto">
-        <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">Admin</p>
-        <h1 className="text-xl font-extrabold text-white mb-0.5">Event Management</h1>
-        <p className="text-sm text-gray-400">Review and manage all event listings, credentials, and approvals</p>
+      <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">Admin</p>
+          <h1 className="text-xl font-extrabold text-white mb-0.5">Event Management</h1>
+          <p className="text-sm text-gray-400">Review and manage all event listings, credentials, and approvals</p>
+        </div>
+        <button
+          onClick={() => navigate("/event/select")}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black text-sm font-bold transition-all"
+        >
+          <Plus size={16} />
+          Add New Event
+        </button>
       </div>
     </div>
   );
@@ -1464,9 +1475,18 @@ const EventAdminDashboard: React.FC = () => {
       />
 
       {/* Page title */}
-      <div className="mb-4">
-        <h1 className="text-xl font-extrabold text-gray-900">Event Management</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Review and manage all event listings, credentials, and approvals.</p>
+      <div className="mb-4 flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-xl font-extrabold text-gray-900">Event Management</h1>
+          <p className="text-sm text-gray-500 mt-0.5">Review and manage all event listings, credentials, and approvals.</p>
+        </div>
+        <button
+          onClick={() => navigate("/event/select")}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black text-sm font-bold transition-all"
+        >
+          <Plus size={16} />
+          Add New Event
+        </button>
       </div>
 
       {/* Stats row */}

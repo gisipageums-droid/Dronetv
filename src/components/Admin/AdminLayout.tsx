@@ -507,7 +507,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <SidebarContent />
       </aside>
 
-      <div className="flex flex-col flex-1 min-h-screen lg:ml-64">
+      <div className="flex flex-col flex-1 min-h-screen min-w-0 lg:ml-64">
 
         <header className="fixed top-0 right-0 left-0 lg:left-64 z-30 flex items-center h-14 px-4 gap-3 bg-yellow-400 shadow-md">
 
@@ -613,7 +613,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        <main className="flex-1 mt-14 p-4 sm:p-6 overflow-x-hidden bg-gray-100">
+        <main className="flex-1 min-w-0 mt-14 p-4 sm:p-6 overflow-x-hidden bg-gray-100">
           {children}
         </main>
       </div>
