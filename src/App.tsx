@@ -646,7 +646,7 @@ const AppContent = () => {
             }
           />
           <Route
-            path="/user-professional/leads/:ProfessionalName/:professionalId"
+            path="/user-professional/leads/:professionalName/:professionalId"
             element={
               <ProtectedRoute>
                 <UserDashboardLayout>
