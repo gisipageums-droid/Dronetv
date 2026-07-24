@@ -1480,11 +1480,11 @@ const EventAdminDashboard: React.FC = () => {
           <p className="text-sm text-gray-500 mt-0.5">Review and manage all event listings, credentials, and approvals.</p>
         </div>
         <button
-          onClick={() => navigate("/event/select")}
+          onClick={() => navigate("/event/select", viewFilter !== "all" ? { state: { eventType: viewFilter.slice(0, -1) } } : undefined)}
           className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black text-sm font-bold transition-all"
         >
           <Plus size={16} />
-          Add New Event
+          {viewFilter === "expos" ? "Add New Expo" : viewFilter === "conferences" ? "Add New Conference" : viewFilter === "workshops" ? "Add New Workshop" : "Add New Event"}
         </button>
       </div>
 

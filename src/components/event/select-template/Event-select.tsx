@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 import { FiArrowLeft, FiArrowRight, FiCheck, FiExternalLink, FiEye, FiStar } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TPL1 from "/images/event t1.png";
 
 const TPL2 =
@@ -51,7 +51,9 @@ const EVENT_TYPES: { id: string; label: string; description: string }[] = [
 const EventSelect: React.FC = () => {
     const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
     const [hoveredTemplate, setHoveredTemplate] = useState<number | null>(null);
-    const [eventType, setEventType] = useState<string>("");
+    const location = useLocation();
+    const preselectedType = (location.state as { eventType?: string } | null)?.eventType || "";
+    const [eventType, setEventType] = useState<string>(preselectedType);
     const navigate = useNavigate();
 
     const handleSelect = (id: number) => {
