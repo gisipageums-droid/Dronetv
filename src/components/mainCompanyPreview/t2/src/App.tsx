@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import Profile from "./components/Profile";
 import Gallery from "./components/Gallery";
+import Documents from "./components/Documents";
 import Back from "./components/Back";
 import { COMPANY_API, LAMBDA } from '../../../../lib/apiConfig';
 export default function App() {
@@ -131,6 +132,9 @@ export default function App() {
           />
           <Gallery
             galleryData={finaleDataReview.content.gallery}
+          />
+          <Documents
+            documents={finaleDataReview.content.documents}
           />
           <Blog
             blogData={finaleDataReview.content.blog}
