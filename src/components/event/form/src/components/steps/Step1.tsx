@@ -90,6 +90,19 @@ const ScrollDatePicker: React.FC<{
   const [selectedDate, setSelectedDate] = useState(() => parseDate(value));
   const [isScrolling, setIsScrolling] = useState(false);
 
+  // The picker always shows a default (today's date) as "selected" even when
+  // no value has been chosen yet, but onChange only ever fired from actual
+  // user scroll interaction — so the form's required startDate/endDate field
+  // stayed an empty string forever unless the user re-picked the date that
+  // was already showing, permanently blocking the Next button. Commit the
+  // shown default once on mount so form state matches what's displayed.
+  useEffect(() => {
+    if (!value) {
+      onChange(`${selectedDate.year}-${selectedDate.month}-${selectedDate.day}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const days = Array.from({ length: 31 }, (_, i) =>
     (i + 1).toString().padStart(2, "0")
   );
