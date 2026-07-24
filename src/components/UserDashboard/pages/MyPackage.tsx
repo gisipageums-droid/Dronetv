@@ -143,17 +143,17 @@ const MyPackage: React.FC = () => {
     }
   };
 
-  const currentTier = (profile?.packageType ?? "reach").toLowerCase();
-  const currentPkg = PACKAGES.find((p) => p.id === currentTier) ?? PACKAGES[0];
-  const colors = colorMap[currentPkg.color];
-  const PkgIcon = currentPkg.icon;
+  const currentTier = (profile?.packageType ?? "").toLowerCase();
+  const currentPkg = PACKAGES.find((p) => p.id === currentTier) ?? null;
+  const colors = currentPkg ? colorMap[currentPkg.color] : colorMap.blue;
+  const PkgIcon = currentPkg?.icon ?? Package;
 
   const formatINR = (n: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
 
   const expiryLabel = profile?.packageExpiry
     ? new Date(profile.packageExpiry).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
-    : "Dec 2026";
+    : "—";
 
   if (loading) {
     return (
@@ -172,64 +172,86 @@ const MyPackage: React.FC = () => {
       </div>
 
       {/* Current package card */}
-      <div className={`rounded-2xl border p-5 mb-6 ${colors.bg} ${colors.border}`}>
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${colors.bg} border ${colors.border}`}>
-              <PkgIcon size={20} className={colors.text} />
+      {currentPkg ? (
+        <div className={`rounded-2xl border p-5 mb-6 ${colors.bg} ${colors.border}`}>
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${colors.bg} border ${colors.border}`}>
+                <PkgIcon size={20} className={colors.text} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-lg font-black ${colors.text}`}>{currentPkg.name} Package</span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${colors.badge}`}>Active</span>
+                </div>
+                <span className="text-xs text-white/50">
+                  Renews {expiryLabel} · {formatINR(currentPkg.price)}/year
+                </span>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Coins size={14} className="text-yellow-400" />
+                <span className="text-sm font-black text-yellow-400">
+                  {(profile?.tokenBalance ?? 0).toLocaleString()} ₮
+                </span>
+              </div>
+              <span className="text-xs text-white/40">tokens available</span>
+            </div>
+          </div>
+
+          {/* Package benefits */}
+          <div className="grid sm:grid-cols-2 gap-1.5">
+            {currentPkg.benefits.map((b) => (
+              <div key={b} className="flex items-center gap-2">
+                <CheckCircle size={13} className="text-green-400 flex-shrink-0" />
+                <span className="text-xs text-gray-200">{b}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Renewal & usage */}
+          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Calendar size={13} className="text-white/40" />
+              <span className="text-xs text-white/50">Renewal: {expiryLabel}</span>
+            </div>
+            <button
+              onClick={() => navigate('/user-recharge')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${colors.bg} ${colors.border} ${colors.text} hover:opacity-80`}
+            >
+              Renew Now
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-white/15 bg-white/5 p-5 mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-white/10 border border-white/15">
+              <Package size={20} className="text-white/50" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className={`text-lg font-black ${colors.text}`}>{currentPkg.name} Package</span>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${colors.badge}`}>Active</span>
+                <span className="text-lg font-black text-white">No Active Package</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/50">Free</span>
               </div>
               <span className="text-xs text-white/50">
-                Renews {expiryLabel} · {formatINR(currentPkg.price)}/year
+                {(profile?.tokenBalance ?? 0).toLocaleString()} ₮ available · choose a plan below to unlock listings and benefits
               </span>
             </div>
           </div>
-          <div className="text-right">
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <Coins size={14} className="text-yellow-400" />
-              <span className="text-sm font-black text-yellow-400">
-                {(profile?.tokenBalance ?? 0).toLocaleString()} ₮
-              </span>
-            </div>
-            <span className="text-xs text-white/40">tokens available</span>
-          </div>
         </div>
-
-        {/* Package benefits */}
-        <div className="grid sm:grid-cols-2 gap-1.5">
-          {currentPkg.benefits.map((b) => (
-            <div key={b} className="flex items-center gap-2">
-              <CheckCircle size={13} className="text-green-400 flex-shrink-0" />
-              <span className="text-xs text-gray-200">{b}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Renewal & usage */}
-        <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <Calendar size={13} className="text-white/40" />
-            <span className="text-xs text-white/50">Renewal: {expiryLabel}</span>
-          </div>
-          <button
-            onClick={() => navigate('/user-recharge')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${colors.bg} ${colors.border} ${colors.text} hover:opacity-80`}
-          >
-            Renew Now
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Upgrade options */}
       {currentTier !== "brand" && (
         <div>
-          <h2 className="text-sm font-bold text-white/70 mb-3 uppercase tracking-wider">Upgrade Your Plan</h2>
+          <h2 className="text-sm font-bold text-white/70 mb-3 uppercase tracking-wider">
+            {currentPkg ? "Upgrade Your Plan" : "Choose a Plan"}
+          </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {PACKAGES.filter((p) => {
+              if (!currentPkg) return true;
               const order = ["reach", "scale", "brand"];
               return order.indexOf(p.id) > order.indexOf(currentTier);
             }).map((pkg) => {
@@ -268,7 +290,7 @@ const MyPackage: React.FC = () => {
                     onClick={() => setConfirmPkg(pkg)}
                     className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-black transition-colors border ${c.bg} ${c.border} ${c.text} hover:opacity-80`}
                   >
-                    Upgrade to {pkg.name}
+                    {currentPkg ? `Upgrade to ${pkg.name}` : `Get ${pkg.name}`}
                     <ArrowRight size={12} />
                   </button>
                 </div>
@@ -283,8 +305,8 @@ const MyPackage: React.FC = () => {
         {[
           { label: "Active Listings", value: profile?.publishedCompanies ?? 0, icon: Building2 },
           { label: "Token Balance", value: `${(profile?.tokenBalance ?? 0).toLocaleString()} ₮`, icon: Coins },
-          { label: "Package Tier", value: currentPkg.name, icon: Star },
-          { label: "Renews", value: expiryLabel.split(" ").slice(-2).join(" "), icon: Calendar },
+          { label: "Package Tier", value: currentPkg?.name ?? "Free", icon: Star },
+          { label: "Renews", value: currentPkg ? expiryLabel.split(" ").slice(-2).join(" ") : "—", icon: Calendar },
         ].map((stat) => {
           const Icon = stat.icon;
           return (
