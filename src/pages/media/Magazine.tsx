@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MEDIA_API, LAMBDA } from '../../lib/apiConfig';
+import CompactHero from '../../components/common/CompactHero';
 
 const MEDIA_BASE = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
 
@@ -76,30 +77,13 @@ export default function MagazinePage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media Hub</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              DroneTv <span className="text-yellow-400 not-italic">Magazine</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              In-depth quarterly analysis of India's drone industry — market data, policy, technology, and company profiles.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{articles.length || issues.length}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Issues Published</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Qtrly</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Publication</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>DroneTv <span>Magazine</span></>}
+        stats={[
+          { n: articles.length || issues.length, l: 'Issues Published' },
+          { n: 'Qtrly', l: 'Publication' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-10">
 

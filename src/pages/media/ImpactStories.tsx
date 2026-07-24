@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import CompactHero from '../../components/common/CompactHero';
 
 const staticStories = [
   { id: 's1', category: 'Survey and GIS', title: 'GIS Company Reduces Survey Time by 80% Using Drone Photogrammetry', text: 'A Hyderabad-based survey company replaced manned aircraft with drone photogrammetry for a 500-hectare boundary mapping project, completing in 3 days what previously took 2 weeks — at 60% lower cost.', metric: '80%', metricLabel: 'Reduction in survey time', location: 'Hyderabad, Telangana' },
@@ -26,26 +27,13 @@ export default function ImpactStoriesPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media Hub</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Drone <span className="text-yellow-400">Impact Stories</span></h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">Real-world stories of drones transforming agriculture, disaster relief, infrastructure and healthcare across India.</p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || staticStories.length}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Stories</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">India</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Focused</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Drone <span>Impact Stories</span></>}
+        stats={[
+          { n: items.length || staticStories.length, l: 'Stories' },
+          { n: 'India', l: 'Focused' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-5">
         <div className="flex gap-2 flex-wrap">

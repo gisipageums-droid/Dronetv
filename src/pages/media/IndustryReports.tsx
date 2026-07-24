@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, BarChart2 } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import CompactHero from '../../components/common/CompactHero';
 
 const staticReports = [
   {
@@ -81,30 +82,13 @@ export default function IndustryReportsPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media Hub</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Industry <span className="text-yellow-400">Reports</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              Comprehensive reports from IBEF, DGCA, Drone Industry Insights, and leading consultancies on India's drone ecosystem.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || staticReports.length}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Key Reports</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Expert</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Analysis</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Industry <span>Reports</span></>}
+        stats={[
+          { n: items.length || staticReports.length, l: 'Key Reports' },
+          { n: 'Expert', l: 'Analysis' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12 space-y-5">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">

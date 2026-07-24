@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, ExternalLink, Search } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import CompactHero from '../../components/common/CompactHero';
 
 export default function PressReleasesPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -21,26 +22,13 @@ export default function PressReleasesPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media Hub</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Press <span className="text-yellow-400">Releases</span></h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">Official announcements from drone companies, government bodies, and industry associations in India.</p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || '0'}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Releases</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Official</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Sources Only</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Press <span>Releases</span></>}
+        stats={[
+          { n: items.length || '0', l: 'Releases' },
+          { n: 'Official', l: 'Sources Only' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-5">
         <div className="relative w-full sm:w-64">

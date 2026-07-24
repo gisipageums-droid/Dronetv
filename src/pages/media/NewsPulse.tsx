@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import CompactHero from '../../components/common/CompactHero';
 
 
 const filters = ['All News', 'Market', 'Defence', 'Policy', 'Agriculture', 'Technology', 'Training'];
@@ -44,30 +45,13 @@ export default function NewsPulsePage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media Hub — India 2026</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Drone Industry <span className="text-yellow-400 not-italic">News Pulse</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              Latest from India's drone sector — policy updates, market movements, defence procurement, agriculture deployments.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Daily</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Updated</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">6</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Categories Covered</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Drone Industry <span>News Pulse</span></>}
+        stats={[
+          { n: 'Daily', l: 'Updated' },
+          { n: 6, l: 'Categories Covered' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">

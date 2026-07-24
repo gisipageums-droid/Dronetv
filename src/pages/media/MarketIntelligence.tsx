@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import CompactHero from '../../components/common/CompactHero';
 
 const indiaStats = [
   { num: 'Rs.10,977Cr', label: 'India Market Size 2025', note: 'US$ 1,219.7 million' },
@@ -40,30 +41,13 @@ export default function MarketIntelligencePage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Media Hub</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Market <span className="text-yellow-400">Intelligence</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              Verified market data, growth projections, sector analysis, and competitive intelligence for India's drone, GIS & AI industry. Sourced from IBEF, Drone Industry Insights, and government publications.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">21.51%</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">India Market CAGR</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">7.3%</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Global Market CAGR</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Market <span>Intelligence</span></>}
+        stats={[
+          { n: '21.51%', l: 'India Market CAGR' },
+          { n: '7.3%', l: 'Global Market CAGR' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12 space-y-8">
         <div>
