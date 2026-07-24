@@ -575,7 +575,8 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
               {/* 7. Metadata */}
               <div className="mb-4">
                 <SectionTitle>System Metadata</SectionTitle>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                  <InfoField label="Posted By" value={metadata.userId} />
                   <InfoField label="Created At" value={formatDate(metadata.createdAt)} />
                   <InfoField label="Updated At" value={formatDate(metadata.updatedAt)} />
                   <InfoField label="Status" value={metadata.status} />
