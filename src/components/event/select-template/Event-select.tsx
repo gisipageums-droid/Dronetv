@@ -42,15 +42,23 @@ const templates: Template[] = [
     // },
 ];
 
+const EVENT_TYPES: { id: string; label: string; description: string }[] = [
+    { id: "expo", label: "Expo", description: "Exhibitions, trade shows, product showcases" },
+    { id: "conference", label: "Conference", description: "Talks, summits, industry conferences" },
+    { id: "workshop", label: "Workshop", description: "Hands-on training and skill-building sessions" },
+];
+
 const EventSelect: React.FC = () => {
     const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
     const [hoveredTemplate, setHoveredTemplate] = useState<number | null>(null);
+    const [eventType, setEventType] = useState<string>("");
     const navigate = useNavigate();
 
     const handleSelect = (id: number) => {
+        if (!eventType) return;
         setSelectedTemplate(id);
         // Static flow: send to your event form with selected id in state
-        navigate("/events/form", { state: { templateId: id } });
+        navigate("/events/form", { state: { templateId: id, eventType } });
         // navigate("/user/event/t2", { state: { templateId: id } });
     };
 
@@ -88,8 +96,43 @@ const EventSelect: React.FC = () => {
                 </p>
             </motion.div>
 
+            {/* What are you creating? */}
+            <motion.div
+                className="mb-10"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+            >
+                <h2 className="text-lg font-semibold text-gray-900 mb-1">What are you creating?</h2>
+                <p className="text-sm text-gray-500 mb-4">Choose a category — this decides where your listing shows up (Expos, Conferences or Workshops).</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {EVENT_TYPES.map((t) => (
+                        <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => setEventType(t.id)}
+                            className={`text-left p-4 rounded-xl border-2 transition-all duration-200 ${eventType === t.id
+                                ? "border-yellow-400 bg-yellow-50 shadow-md"
+                                : "border-gray-200 hover:border-yellow-300"
+                                }`}
+                        >
+                            <div className="flex items-center justify-between mb-1">
+                                <span className="font-semibold text-gray-900">{t.label}</span>
+                                {eventType === t.id && <FiCheck className="w-4 h-4 text-yellow-600" />}
+                            </div>
+                            <p className="text-xs text-gray-500">{t.description}</p>
+                        </button>
+                    ))}
+                </div>
+            </motion.div>
+
             {/* Grid (single card) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity ${!eventType ? "opacity-50 pointer-events-none" : ""}`}>
+                {!eventType && (
+                    <p className="col-span-full text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 -mt-2 mb-2">
+                        Pick a category above to continue.
+                    </p>
+                )}
                 {templates.map((tpl) => {
                     const isActive = selectedTemplate === tpl.id;
                     const isHovered = hoveredTemplate === tpl.id;

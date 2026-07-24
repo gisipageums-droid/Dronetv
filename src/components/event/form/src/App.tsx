@@ -2002,7 +2002,7 @@ function EventsForm() {
         updatedAt: Date.now(),
         templateSelection: location.state?.templateId,
         version: "1.0",
-        eventType: "conference",
+        eventType: location.state?.eventType || "conference",
       };
 
 
