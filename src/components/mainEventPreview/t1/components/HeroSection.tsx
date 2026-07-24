@@ -204,7 +204,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-900 via-black to-gray-900"
     >
       {/* YouTube Video BG */}
       {convertToEmbedUrl(heroContent.videoUrl) && (
