@@ -86,7 +86,7 @@ export const Step4 = ({ step }: { step: any }) => {
                         onChange={(e) =>
                           handleChange(key, idx, f.id, e.target.value)
                         }
-                        className={`border p-2 w-full rounded focus:ring-2 focus:ring-yellow-400 ${
+                        className={`border p-2 w-full rounded focus:ring-2 focus:ring-yellow-400 text-gray-900 bg-white ${
                           errorMsg ? "border-red-500" : ""
                         }`}
                         rows={2}
@@ -99,7 +99,7 @@ export const Step4 = ({ step }: { step: any }) => {
                         onChange={(e) =>
                           handleChange(key, idx, f.id, e.target.value)
                         }
-                        className="border p-2 w-full rounded focus:ring-2 focus:ring-yellow-400"
+                        className="border p-2 w-full rounded focus:ring-2 focus:ring-yellow-400 text-gray-900 bg-white"
                       />
                     )}
                     {f.type === "textarea" && (
