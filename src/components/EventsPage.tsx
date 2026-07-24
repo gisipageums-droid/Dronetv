@@ -3,6 +3,7 @@ import { Search, ChevronDown, Calendar, MapPin, Clock, Users, SlidersHorizontal,
 import { useNavigate } from "react-router-dom";
 import { EVENTS_API, LAMBDA } from '../lib/apiConfig';
 import CompactHero from './common/CompactHero';
+import { useUserAuth } from './context/context';
 
 const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime: string }) => {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isEventStarted: false, isEventExpired: false });
@@ -93,6 +94,7 @@ const EventsPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const eventsPerPage = 12;
   const navigate = useNavigate();
+  const { isLogin } = useUserAuth();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -223,7 +225,7 @@ const EventsPage = () => {
         title={<>Events <span>Calendar</span> · {allEvents.length || '0'} Events</>}
         action={
           <button
-            onClick={() => navigate("/event/select")}
+            onClick={() => navigate(isLogin ? "/event/select" : "/login")}
             className="px-3 py-1.5 text-xs font-semibold text-black bg-yellow-400 rounded-lg hover:bg-yellow-300 transition flex-shrink-0"
           >
             List your Event
