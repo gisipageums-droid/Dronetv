@@ -2085,7 +2085,7 @@ function EventsForm() {
       {loading && <Loader />}
 
       <div className="bg-yellow-100 w-full py-4 ">
-        <div className="bg-yellow-100 max-w-4xl mx-auto">
+        <div className="bg-yellow-100 max-w-4xl mx-auto px-4">
           {/* Step Navigation Chips */}
           <div className="flex flex-wrap items-center gap-2 mb-4 justify-center">
             {steps.slice(0, 6).map((s: any, index: number) => (
