@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, ExternalLink, Search, Cpu } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import CompactHero from '../../components/common/CompactHero';
 
 const staticAISectors = [
   { icon: '🧠', name: 'Autonomous Flight and AI Stack Companies', hq: 'Computer Vision · Path Planning · Edge AI', desc: 'Companies developing AI for object detection, autonomous path planning, real-time anomaly identification, and adaptive mission execution. Applications in agriculture (crop disease identification), infrastructure (crack detection), and surveillance (autonomous perimeter monitoring).', tags: ['Autonomy', 'Computer Vision', 'Edge AI'], sector: 'AI / Autonomy' },
@@ -33,26 +34,13 @@ export default function AITechCompaniesPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Partnerships</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">AI Tech <span className="text-yellow-400">Companies</span></h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">AI software platforms, computer vision companies, and deep-tech enablers powering India's autonomous drone ecosystem.</p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || '0'}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Companies</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Deep</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Tech</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>AI Tech <span>Companies</span></>}
+        stats={[
+          { n: items.length || '0', l: 'Companies' },
+          { n: 'Deep', l: 'Tech' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row gap-3 flex-wrap">
         <div className="relative w-full sm:w-64">

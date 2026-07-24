@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, ChevronDown, Play, Eye, Clock, Building2, Calendar, MapPin, Users, Package, Star, BookOpen } from 'lucide-react';
+import CompactHero from './common/CompactHero';
 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('drone AI');
@@ -436,42 +437,37 @@ const SearchPage = () => {
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       {/* Hero / Search */}
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-          <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Search</p>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-            Search <span className="text-yellow-400">Results</span>
-          </h1>
-          <p className="text-sm text-white/60 mb-6">Showing results for "<span className="text-white font-semibold">{searchTerm}</span>"</p>
+      <CompactHero title={<>Search <span>Results</span></>} />
 
-          <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search for videos, companies, products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-900 placeholder-gray-400 text-sm"
-              />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
+        <p className="text-sm text-gray-500 mb-3">Showing results for "<span className="text-gray-900 font-semibold">{searchTerm}</span>"</p>
+
+        <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400" />
             </div>
-            <div className="relative">
-              <select
-                value={selectedFilter}
-                onChange={(e) => setSelectedFilter(e.target.value)}
-                className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-9 text-gray-700 text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
-              >
-                {filterOptions.map(option => (
-                  <option key={option} value={option}>
-                    {option === 'All' ? 'All Content' : option}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
+            <input
+              type="text"
+              placeholder="Search for videos, companies, products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-900 placeholder-gray-400 text-sm"
+            />
+          </div>
+          <div className="relative">
+            <select
+              value={selectedFilter}
+              onChange={(e) => setSelectedFilter(e.target.value)}
+              className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-9 text-gray-700 text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
+            >
+              {filterOptions.map(option => (
+                <option key={option} value={option}>
+                  {option === 'All' ? 'All Content' : option}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { TrendingUp, Award, Briefcase, GraduationCap, IndianRupee, ArrowRight, CheckCircle } from 'lucide-react';
+import CompactHero from '../../components/common/CompactHero';
 
 const CAREER_STAGES = [
   {
@@ -76,18 +77,7 @@ export default function CareerPathPage() {
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-5xl mx-auto px-6 py-12">
-          <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Professionals</p>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-            Drone Industry <span className="text-yellow-400">Career Path</span>
-          </h1>
-          <p className="text-sm text-white/60 max-w-xl">
-            From DGCA certification to senior leadership — a guide to building a career in India's drone, GIS, and AI industry.
-          </p>
-        </div>
-      </div>
+      <CompactHero title={<>Drone Industry <span>Career Path</span></>} />
 
       <div className="max-w-5xl mx-auto px-6 py-10 space-y-10">
 

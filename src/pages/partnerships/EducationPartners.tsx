@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, ExternalLink, GraduationCap } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import CompactHero from '../../components/common/CompactHero';
 
 const eduStats = [
   { num: '240+', label: 'DGCA-Approved\nRPTOs' },
@@ -32,26 +33,13 @@ export default function EducationPartnersPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Partnerships</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Education <span className="text-yellow-400">Partners</span></h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">DGCA approved RPTOs, universities, and training institutes developing India's next generation of drone professionals.</p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || '0'}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Partners</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">DGCA</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Approved</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Education <span>Partners</span></>}
+        stats={[
+          { n: items.length || '0', l: 'Partners' },
+          { n: 'DGCA', l: 'Approved' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-5">
         <div className="flex gap-2 flex-wrap">

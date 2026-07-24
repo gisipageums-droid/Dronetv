@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import CompactHero from '../../components/common/CompactHero';
 
 const stats = [
   { value: '515+', label: 'Companies Listed' },
@@ -44,30 +45,13 @@ export default function BecomePartnerPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Partnerships</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Become a Partner <span className="text-yellow-400 not-italic">on DroneTv.in</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              Join India's drone industry platform. Get your company verified, listed, and in front of buyers, pilots, and decision-makers across India.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">2 wks</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">To Go Live</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">48hr</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Response</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Become a Partner <span>on DroneTv.in</span></>}
+        stats={[
+          { n: '2 wks', l: 'To Go Live' },
+          { n: '48hr', l: 'Response' },
+        ]}
+      />
 
       <div className="bg-black/5 border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-6 py-3 flex flex-wrap gap-6 justify-center">

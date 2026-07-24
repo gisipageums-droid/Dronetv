@@ -5,7 +5,8 @@ export const COMPACT_HERO_CSS = `
 .ch-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .ch-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; }
 .ch-hero h1 span { color: #F5C518; }
-.ch-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; }
+.ch-right { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+.ch-stats { display: flex; gap: 18px; flex-wrap: wrap; }
 .ch-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
 .ch-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
 @media (max-width: 640px) {
@@ -22,23 +23,30 @@ export interface CompactHeroStat {
 interface CompactHeroProps {
   title: React.ReactNode;
   stats?: CompactHeroStat[];
+  action?: React.ReactNode;
 }
 
-export default function CompactHero({ title, stats }: CompactHeroProps) {
+export default function CompactHero({ title, stats, action }: CompactHeroProps) {
+  const hasRight = (stats && stats.length > 0) || action;
   return (
     <>
       <style>{COMPACT_HERO_CSS}</style>
       <section className="ch-hero">
         <div className="ch-hero-i">
           <h1>{title}</h1>
-          {stats && stats.length > 0 && (
-            <div className="ch-stats">
-              {stats.map((st, i) => (
-                <div key={i}>
-                  <div className="ch-stat-n">{st.n}</div>
-                  <div className="ch-stat-l">{st.l}</div>
+          {hasRight && (
+            <div className="ch-right">
+              {stats && stats.length > 0 && (
+                <div className="ch-stats">
+                  {stats.map((st, i) => (
+                    <div key={i}>
+                      <div className="ch-stat-n">{st.n}</div>
+                      <div className="ch-stat-l">{st.l}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
+              {action}
             </div>
           )}
         </div>

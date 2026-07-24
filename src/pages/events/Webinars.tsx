@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Monitor, X } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
+import CompactHero from '../../components/common/CompactHero';
 
 const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
 
@@ -77,26 +78,12 @@ export default function WebinarsPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Events &amp; Programs</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Drone Industry <span className="text-yellow-400">Webinars</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              Online sessions on DGCA regulations, GIS workflows, AI analytics, drone business models, and career pathways across drones, geospatial, and AI.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Free</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">To List Your Webinar</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Drone Industry <span>Webinars</span></>}
+        stats={[
+          { n: 'Free', l: 'To List Your Webinar' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12 space-y-8">
         <div>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import CompactHero from '../../components/common/CompactHero';
 
 const whyPartner = [
   { icon: '🎯', title: '100% Drone, GIS & AI Audience', desc: 'Every visitor, viewer, and lead on DroneTv.in is from the drone, GIS & AI ecosystem. No dilution across unrelated industries. Agriculture drones, defence UAVs, GIS & mapping technology, AI and computer-vision platforms — your content reaches exactly the right people.' },
@@ -68,30 +69,13 @@ const packages = [
 export default function PartnershipsHubPage() {
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">DroneTv.in</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Partner with <span className="text-yellow-400 not-italic">DroneTv.in</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              India's drone industry platform — connect your company with pilots, buyers, government officials, and decision-makers across the ecosystem.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">515+</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Companies</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">5M+</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Views</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Partner with <span>DroneTv.in</span></>}
+        stats={[
+          { n: '515+', l: 'Companies' },
+          { n: '5M+', l: 'Views' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
         <div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Target, Eye, Heart, Users, Calendar, Award, Lightbulb, Globe, ArrowRight, Mail, Phone, MapPin, Rocket, Star, Video } from 'lucide-react';
+import CompactHero from './common/CompactHero';
 
 const AboutPage = () => {
   const navigate = useNavigate();
@@ -68,26 +69,13 @@ const AboutPage = () => {
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">About</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">About <span className="text-yellow-400">Drone TV</span></h1>
-            <p className="text-sm text-white/60 max-w-lg">Driving the future of drones through education and innovation.</p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">2024</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Founded</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">India</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Wide</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>About <span>Drone TV</span></>}
+        stats={[
+          { n: '2024', l: 'Founded' },
+          { n: 'India', l: 'Wide' },
+        ]}
+      />
 
       {/* Mission and Vision */}
       <div className="bg-white border-b border-gray-200">

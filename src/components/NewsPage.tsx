@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Calendar, User, Clock, ExternalLink, SlidersHorizontal, X } from 'lucide-react';
 import { fetchContent, MediaItem } from '../lib/mediaApi';
+import CompactHero from './common/CompactHero';
 
 export default function NewsPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -34,12 +35,7 @@ export default function NewsPage() {
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-3">
-          <h1 className="text-base font-extrabold text-white m-0">News <span className="text-yellow-400">&amp; Insights</span> <span className="text-xs font-semibold text-white/50 ml-2">{items.length || '0'} Articles</span></h1>
-        </div>
-      </div>
+      <CompactHero title={<>News <span>&amp; Insights</span> · {items.length || '0'} Articles</>} />
 
       <style>{`
 .nw-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}

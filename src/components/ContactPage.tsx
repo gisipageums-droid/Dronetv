@@ -11,6 +11,7 @@ import {
   Twitter,
 } from "lucide-react";
 import { ADMIN_API, LAMBDA } from '../lib/apiConfig';
+import CompactHero from './common/CompactHero';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -61,26 +62,13 @@ const ContactPage = () => {
   return (
     <div className="pt-20 min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Contact</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Get In <span className="text-yellow-400">Touch</span></h1>
-            <p className="text-sm text-white/60 max-w-lg">Contact us — we're here to help and answer your questions.</p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">24h</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Response</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">bd@</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">dronetv.in</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Get In <span>Touch</span></>}
+        stats={[
+          { n: '24h', l: 'Response' },
+          { n: 'bd@', l: 'dronetv.in' },
+        ]}
+      />
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 pb-16">
