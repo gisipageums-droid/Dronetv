@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, Search, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
+import CompactHero from '../../components/common/CompactHero';
 
 const samplePilots = [
   { icon: '👨‍✈️', name: 'Rajesh K.', badge: 'RPC — Small & Medium Category', location: 'Hyderabad, Telangana', categories: ['Agriculture', 'GIS Mapping'], experience: '4 Years | 800+ Hours', tags: ['Agriculture Spraying', 'NDVI Mapping', 'AP Missions'] },
@@ -65,26 +66,13 @@ export default function PilotDirectoryPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Professionals</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">Pilot <span className="text-yellow-400">Directory</span></h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">Find DGCA certified drone pilots across India — agriculture, survey, inspection, and cinematography specialists.</p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">39,890</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Certified Pilots India</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Free</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">To Create Profile</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Pilot <span>Directory</span></>}
+        stats={[
+          { n: '39,890', l: 'Certified Pilots India' },
+          { n: 'Free', l: 'To Create Profile' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col gap-3">
         <div className="flex flex-col sm:flex-row gap-3 flex-wrap">

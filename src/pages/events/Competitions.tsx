@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Calendar, Trophy, ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import CompactHero from '../../components/common/CompactHero';
 
 const staticCompetitions = [
   {
@@ -88,30 +89,13 @@ export default function CompetitionsPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Events &amp; Programs</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Drone Competitions and <span className="text-yellow-400">UAV Challenges</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              India's drone competition circuit is growing across colleges, defence institutions, and industry bodies — from collegiate UAV design challenges to global autonomous flight competitions.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">5</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Active Series</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">#1</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">India Team SUAS 2025</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Drone Competitions and <span>UAV Challenges</span></>}
+        stats={[
+          { n: '5', l: 'Active Series' },
+          { n: '#1', l: 'India Team SUAS 2025' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12 space-y-8">
         {!loading && cmsItems.length > 0 && (

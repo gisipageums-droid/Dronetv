@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import CompactHero from '../../components/common/CompactHero';
 
 const certCategories = [
   {
@@ -111,34 +112,14 @@ export default function CertificationsPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Professionals</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              DGCA Drone <span className="text-yellow-400">Certifications</span> India 2026
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              The complete guide to becoming a DGCA-certified remote pilot in India. Eligibility, course types, costs, timelines, and career outcomes — everything in one place.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">5</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Days Small Training</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">39,890</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Certified Pilots</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">240+</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">RPTOs Approved</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>DGCA Drone <span>Certifications</span> India 2026</>}
+        stats={[
+          { n: '5', l: 'Days Small Training' },
+          { n: '39,890', l: 'Certified Pilots' },
+          { n: '240+', l: 'RPTOs Approved' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-10">
         <div>

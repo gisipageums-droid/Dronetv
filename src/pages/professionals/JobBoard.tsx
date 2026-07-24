@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { MapPin, Search, X, Briefcase, Plus } from 'lucide-react';
 import { fetchContent, fetchAdminContent, createContent, MediaItem } from '../../lib/mediaApi';
 import { useUserAuth } from '../../components/context/context';
+import CompactHero from '../../components/common/CompactHero';
 import { COMPANY_API, LAMBDA } from '../../lib/apiConfig';
 
 interface ApplyForm { name: string; email: string; phone: string; message: string; }
@@ -165,30 +166,13 @@ export default function JobBoardPage() {
 
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Professionals</p>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-              Drone, GIS &amp; AI <span className="text-yellow-400">Job Board</span>
-            </h1>
-            <p className="text-sm text-white/60 leading-relaxed max-w-lg">
-              Verified drone pilot, GIS analyst, geospatial engineer, survey/mapping specialist, AI/computer-vision engineer, UAV instructor, and operations roles from companies across India.
-            </p>
-          </div>
-          <div className="flex gap-8 flex-shrink-0">
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">{items.length || staticJobs.length}</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Active Listings</span>
-            </div>
-            <div>
-              <span className="text-4xl font-extrabold text-yellow-400 block leading-none">Rs.25K–1L</span>
-              <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-1 block">Monthly Salary Range</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Drone, GIS &amp; AI <span>Job Board</span></>}
+        stats={[
+          { n: items.length || staticJobs.length, l: 'Active Listings' },
+          { n: 'Rs.25K–1L', l: 'Monthly Salary Range' },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row gap-3 flex-wrap">
         <div className="relative w-full sm:w-64">

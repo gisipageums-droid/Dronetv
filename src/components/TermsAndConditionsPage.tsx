@@ -1,5 +1,6 @@
 import React from 'react';
 import { FileText, Shield, Users, AlertCircle, Mail, Scale } from 'lucide-react';
+import CompactHero from './common/CompactHero';
 
 const TermsAndConditionsPage = () => {
   const sections = [
@@ -80,17 +81,10 @@ const TermsAndConditionsPage = () => {
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-black text-white relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-          <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-2">Legal</p>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-3">
-            Terms &amp; <span className="text-yellow-400">Conditions</span>
-          </h1>
-          <p className="text-sm text-white/60 max-w-lg">Please read these terms carefully before using Drone TV.</p>
-          <p className="text-xs text-white/40 mt-2">Last Updated: November 2024</p>
-        </div>
-      </div>
+      <CompactHero
+        title={<>Terms &amp; <span>Conditions</span></>}
+        stats={[{ n: 'Nov 2024', l: 'Last Updated' }]}
+      />
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
