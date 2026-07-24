@@ -1133,7 +1133,6 @@ const EventAdminDashboard: React.FC = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] =
     useState<boolean>(false);
   const [events, setEvents] = useState<Event[]>([]);
-  const [recentEvents, setRecentEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(12);
@@ -1252,10 +1251,6 @@ const EventAdminDashboard: React.FC = () => {
       const data = await response.json();
       const fetchedEvents = data?.cards || [];
       setEvents(fetchedEvents);
-      const sortedByDate = [...fetchedEvents].sort((a: Event, b: Event) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      setRecentEvents(sortedByDate.slice(0, 6));
     } catch (error: any) {
       if (error?.name === "AbortError") return;
       toast.error("Failed to load events");
@@ -1450,6 +1445,9 @@ const EventAdminDashboard: React.FC = () => {
 
   const modalConfig = getModalConfig();
   const viewFilteredEvents = events.filter(e => matchesView(e, viewFilter));
+  const recentViewFilteredEvents = [...viewFilteredEvents]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 6);
 
   return (
     <div className="w-full min-h-screen bg-[#F4F5F7]">
@@ -1562,7 +1560,7 @@ const EventAdminDashboard: React.FC = () => {
               {/* Recent Events Section - Updated condition to hide when status filter is not "all" */}
               {!searchTerm && statusFilter === "all" && (
                 <RecentEventsSection
-                  recentEvents={recentEvents}
+                  recentEvents={recentViewFilteredEvents}
                   onCredentials={handleCredentials}
                   onPreview={handlePreview}
                   onApprove={handleApprove}
