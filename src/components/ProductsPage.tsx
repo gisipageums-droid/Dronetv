@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { Search, Star } from 'lucide-react';
+import { Search, Star, SlidersHorizontal, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -57,16 +57,24 @@ const PRODUCTS_CSS = `
 .pr-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
 .pr-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
 .pr-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
-.pr-toolbar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.08); margin-bottom: 15px; }
-.pr-search { flex: 1; min-width: 180px; display: flex; align-items: center; gap: 6px; background: #F8F8F8; border: 1.5px solid #E5E5E5; border-radius: 8px; padding: 8px 12px; }
-.pr-search input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
-.pr-chip-lbl { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+
+/* Sidebar layout */
+.pr-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
+.pr-sidebar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); position: sticky; top: 120px; }
+.pr-sidebar-title { font-size: 13px; font-weight: 800; color: #0A0A0A; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.pr-filter-grp { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0; }
+.pr-filter-grp:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.pr-fl-label { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
 .pr-chips { display: flex; gap: 5px; flex-wrap: wrap; }
-.pr-chip { padding: 4px 11px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
+.pr-chip { padding: 4px 10px; border-radius: 14px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
+.pr-main { min-width: 0; }
+.pr-search-bar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.pr-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
 .pr-note { background: #FFFBE8; border: 1px solid #C9A010; border-radius: 8px; padding: 7px 12px; font-size: 11.5px; color: #7a5800; margin-bottom: 12px; }
 .pr-resbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 7px; }
 .pr-sort { padding: 6px 10px; border: 1.5px solid #E5E5E5; border-radius: 8px; font-size: 12.5px; color: #444; background: #fff; cursor: pointer; font-family: 'Poppins',sans-serif; }
-.pr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.pr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 13px; }
+.pr-filter-toggle { display: none; }
 .pr-empty { padding: 64px 0; text-align: center; }
 .pr-pages { display: flex; justify-content: center; margin-top: 32px; gap: 6px; flex-wrap: wrap; }
 .pr-page-btn { padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins',sans-serif; }
@@ -82,12 +90,17 @@ const PRODUCTS_CSS = `
 .pr-card-foot { padding: 10px 14px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .pr-btn-out { background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; }
 .pr-btn-red { background: #CC1F1F; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
+@media (max-width: 960px) {
+  .pr-layout { grid-template-columns: 1fr; }
+  .pr-sidebar { position: static; display: none; }
+  .pr-sidebar.open { display: block; }
+  .pr-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #0A0A0A; color: #F5C518; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
+}
 @media (max-width: 600px) {
   .pr-hero-i { padding: 8px 14px; gap: 10px; }
   .pr-hero h1 { font-size: 13px; }
   .pr-stat-n { font-size: 13px; }
   .pr-wrap { padding: 12px 14px; }
-  .pr-toolbar { padding: 12px; }
   .pr-grid { grid-template-columns: 1fr; }
   .pr-card-foot { flex-direction: column; align-items: stretch; }
   .pr-card-foot > div { justify-content: space-between; }
@@ -104,6 +117,7 @@ const ProductsPage: React.FC = () => {
   const [priceFilter, setPriceFilter] = useState('');
   const [sortBy, setSortBy] = useState('timestamp');
   const [page, setPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const perPage = 12;
   const navigate = useNavigate();
 
@@ -196,7 +210,52 @@ const ProductsPage: React.FC = () => {
     border: `1.5px solid ${on ? '#0A0A0A' : '#E5E5E5'}`,
   });
 
+  const priceOptions = [{ v: '', l: 'All Prices' }, { v: 'free', l: 'On Request' }, { v: 'lt1l', l: 'Under ₹1L' }, { v: '1l5l', l: '₹1L – ₹5L' }, { v: 'gt5l', l: 'Above ₹5L' }];
+  const activeFiltersCount = selCats.length + (priceFilter ? 1 : 0);
+
   if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Products..." />;
+
+  const Sidebar = () => (
+    <aside className={`pr-sidebar${sidebarOpen ? ' open' : ''}`}>
+      <div className="pr-sidebar-title">
+        <SlidersHorizontal size={14} /> Filters
+        {activeFiltersCount > 0 && (
+          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#CC1F1F', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
+            {activeFiltersCount}
+          </span>
+        )}
+      </div>
+
+      <div className="pr-filter-grp">
+        <div className="pr-fl-label">Price Range</div>
+        <div className="pr-chips">
+          {priceOptions.map(opt => (
+            <button key={opt.v} className="pr-chip" onClick={() => { setPriceFilter(opt.v); setPage(1); }}
+              style={chipStyle(priceFilter === opt.v)}>{opt.l}</button>
+          ))}
+        </div>
+      </div>
+
+      {categories.length > 1 && (
+        <div className="pr-filter-grp">
+          <div className="pr-fl-label">Category</div>
+          <div className="pr-chips">
+            {categories.slice(0, 12).map(cat => (
+              <button key={cat} className="pr-chip" onClick={() => toggleCat(cat)}
+                style={chipStyle(cat === 'All' ? selCats.length === 0 : selCats.includes(cat))}>{cat}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeFiltersCount > 0 && (
+        <button onClick={() => { setSelCats([]); setPriceFilter(''); setPage(1); }}
+          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#CC1F1F', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          <X size={12} /> Clear all filters
+        </button>
+      )}
+    </aside>
+  );
 
   return (
     <>
@@ -224,58 +283,39 @@ const ProductsPage: React.FC = () => {
 
         <div className="pr-wrap">
 
-          {/* TOOLBAR */}
-          <div className="pr-toolbar">
-            <div style={{ display: 'flex', gap: 9, marginBottom: 12 }}>
-              <div className="pr-search">
-                <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
-                <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-                  placeholder="Search products — drone, LiDAR, RTK GPS, AI..." />
-              </div>
-            </div>
+          <div className="pr-search-bar">
+            <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
+            <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search products — drone, LiDAR, RTK GPS, AI..." />
+          </div>
 
-            <div style={{ marginBottom: 9 }}>
-              <div className="pr-chip-lbl">Price Range</div>
-              <div className="pr-chips">
-                {[{ v: '', l: 'All Prices' }, { v: 'free', l: 'On Request' }, { v: 'lt1l', l: 'Under ₹1L' }, { v: '1l5l', l: '₹1L – ₹5L' }, { v: 'gt5l', l: 'Above ₹5L' }].map(opt => (
-                  <button key={opt.v} className="pr-chip" onClick={() => { setPriceFilter(opt.v); setPage(1); }}
-                    style={chipStyle(priceFilter === opt.v)}>{opt.l}</button>
-                ))}
-              </div>
-            </div>
+          <button className="pr-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+            <SlidersHorizontal size={14} /> Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+          </button>
 
-            {categories.length > 1 && (
-              <div>
-                <div className="pr-chip-lbl">Category</div>
-                <div className="pr-chips">
-                  {categories.slice(0, 12).map(cat => (
-                    <button key={cat} className="pr-chip" onClick={() => toggleCat(cat)}
-                      style={chipStyle(cat === 'All' ? selCats.length === 0 : selCats.includes(cat))}>{cat}</button>
-                  ))}
+          <div className="pr-layout">
+            <Sidebar />
+
+            <div className="pr-main">
+              <div className="pr-note">⭐ Products from verified companies appear first. Each product links to the company's full profile for quotes.</div>
+
+              {/* RESULTS BAR */}
+              <div className="pr-resbar">
+                <div style={{ fontSize: 12.5, color: '#777' }}>
+                  <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> product{filtered.length !== 1 ? 's' : ''}
                 </div>
+                <select className="pr-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
+                  <option value="timestamp">Newest first</option>
+                  <option value="featured">Featured first</option>
+                  <option value="rating">Highest rated</option>
+                  <option value="priceasc">Price: Low to High</option>
+                  <option value="pricedesc">Price: High to Low</option>
+                </select>
               </div>
-            )}
-          </div>
 
-          <div className="pr-note">⭐ Products from verified companies appear first. Each product links to the company's full profile for quotes.</div>
-
-          {/* RESULTS BAR */}
-          <div className="pr-resbar">
-            <div style={{ fontSize: 12.5, color: '#777' }}>
-              <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> product{filtered.length !== 1 ? 's' : ''}
-            </div>
-            <select className="pr-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
-              <option value="timestamp">Newest first</option>
-              <option value="featured">Featured first</option>
-              <option value="rating">Highest rated</option>
-              <option value="priceasc">Price: Low to High</option>
-              <option value="pricedesc">Price: High to Low</option>
-            </select>
-          </div>
-
-          {/* GRID */}
-          {current.length === 0 ? (
-            <div className="pr-empty">
+              {/* GRID */}
+              {current.length === 0 ? (
+                <div className="pr-empty">
               <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
               <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No products found</div>
               <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
@@ -314,6 +354,8 @@ const ProductsPage: React.FC = () => {
               </button>
             </div>
           )}
+            </div>
+          </div>
         </div>
       </div>
     </>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { Search, MapPin, Star, Clock } from 'lucide-react';
+import { Search, MapPin, Star, Clock, SlidersHorizontal, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -77,16 +77,24 @@ const SERVICES_CSS = `
 .sv-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
 .sv-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
 .sv-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
-.sv-toolbar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.08); margin-bottom: 15px; }
-.sv-search { flex: 1; min-width: 180px; display: flex; align-items: center; gap: 6px; background: #F8F8F8; border: 1.5px solid #E5E5E5; border-radius: 8px; padding: 8px 12px; }
-.sv-search input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
-.sv-chip-lbl { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+
+/* Sidebar layout */
+.sv-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
+.sv-sidebar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); position: sticky; top: 120px; }
+.sv-sidebar-title { font-size: 13px; font-weight: 800; color: #0A0A0A; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.sv-filter-grp { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0; }
+.sv-filter-grp:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.sv-fl-label { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
 .sv-chips { display: flex; gap: 5px; flex-wrap: wrap; }
-.sv-chip { padding: 4px 11px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
+.sv-chip { padding: 4px 10px; border-radius: 14px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
+.sv-main { min-width: 0; }
+.sv-search-bar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.sv-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
 .sv-note { background: #FFFBE8; border: 1px solid #C9A010; border-radius: 8px; padding: 7px 12px; font-size: 11.5px; color: #7a5800; margin-bottom: 12px; }
 .sv-resbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 7px; }
 .sv-sort { padding: 6px 10px; border: 1.5px solid #E5E5E5; border-radius: 8px; font-size: 12.5px; color: #444; background: #fff; cursor: pointer; font-family: 'Poppins',sans-serif; }
-.sv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.sv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 13px; }
+.sv-filter-toggle { display: none; }
 .sv-empty { padding: 64px 0; text-align: center; }
 .sv-pages { display: flex; justify-content: center; margin-top: 32px; gap: 6px; flex-wrap: wrap; }
 .sv-page-btn { padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins',sans-serif; }
@@ -107,12 +115,17 @@ const SERVICES_CSS = `
 .sv-btns { display: flex; gap: 6px; }
 .sv-btn-red { flex: 1; background: #CC1F1F; color: #fff; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; text-align: center; font-family: 'Poppins',sans-serif; }
 .sv-btn-out { background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; }
+@media (max-width: 960px) {
+  .sv-layout { grid-template-columns: 1fr; }
+  .sv-sidebar { position: static; display: none; }
+  .sv-sidebar.open { display: block; }
+  .sv-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #0A0A0A; color: #F5C518; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
+}
 @media (max-width: 600px) {
   .sv-hero-i { padding: 8px 14px; gap: 10px; }
   .sv-hero h1 { font-size: 13px; }
   .sv-stat-n { font-size: 13px; }
   .sv-wrap { padding: 12px 14px; }
-  .sv-toolbar { padding: 12px; }
   .sv-grid { grid-template-columns: 1fr; }
   .sv-btns { flex-direction: column; }
   .sv-btn-red, .sv-btn-out { text-align: center; }
@@ -128,6 +141,7 @@ const ServicesPage: React.FC = () => {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [sortBy, setSortBy] = useState('timestamp');
   const [page, setPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const perPage = 12;
   const navigate = useNavigate();
 
@@ -203,7 +217,49 @@ const ServicesPage: React.FC = () => {
     border: `1.5px solid ${on ? '#0A0A0A' : '#E5E5E5'}`,
   });
 
+  const activeFiltersCount = selCats.length + (verifiedOnly ? 1 : 0);
+
   if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Services..." />;
+
+  const Sidebar = () => (
+    <aside className={`sv-sidebar${sidebarOpen ? ' open' : ''}`}>
+      <div className="sv-sidebar-title">
+        <SlidersHorizontal size={14} /> Filters
+        {activeFiltersCount > 0 && (
+          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#CC1F1F', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
+            {activeFiltersCount}
+          </span>
+        )}
+      </div>
+
+      {categories.length > 1 && (
+        <div className="sv-filter-grp">
+          <div className="sv-fl-label">Category</div>
+          <div className="sv-chips">
+            {categories.slice(0, 12).map(cat => (
+              <button key={cat} className="sv-chip" onClick={() => toggleCat(cat)}
+                style={chipStyle(cat === 'All' ? selCats.length === 0 : selCats.includes(cat))}>{cat}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="sv-filter-grp">
+        <div className="sv-fl-label">Trust</div>
+        <div className="sv-chips">
+          <button className="sv-chip" onClick={() => { setVerifiedOnly(!verifiedOnly); setPage(1); }}
+            style={chipStyle(verifiedOnly)}>⭐ Featured only</button>
+        </div>
+      </div>
+
+      {activeFiltersCount > 0 && (
+        <button onClick={() => { setSelCats([]); setVerifiedOnly(false); setPage(1); }}
+          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#CC1F1F', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          <X size={12} /> Clear all filters
+        </button>
+      )}
+    </aside>
+  );
 
   return (
     <>
@@ -230,62 +286,46 @@ const ServicesPage: React.FC = () => {
 
         <div className="sv-wrap">
 
-          <div className="sv-toolbar">
-            <div style={{ display: 'flex', gap: 9, marginBottom: 12 }}>
-              <div className="sv-search">
-                <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
-                <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-                  placeholder="Search services — survey, spraying, LiDAR, AI..." />
-              </div>
-            </div>
+          <div className="sv-search-bar">
+            <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
+            <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search services — survey, spraying, LiDAR, AI..." />
+          </div>
 
-            {categories.length > 1 && (
-              <div style={{ marginBottom: 9 }}>
-                <div className="sv-chip-lbl">Category</div>
-                <div className="sv-chips">
-                  {categories.slice(0, 12).map(cat => (
-                    <button key={cat} className="sv-chip" onClick={() => toggleCat(cat)}
-                      style={chipStyle(cat === 'All' ? selCats.length === 0 : selCats.includes(cat))}>{cat}</button>
-                  ))}
+          <button className="sv-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+            <SlidersHorizontal size={14} /> Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+          </button>
+
+          <div className="sv-layout">
+            <Sidebar />
+
+            <div className="sv-main">
+              <div className="sv-note">📦 <b>Book via DroneTv</b> — connect directly with providers. Send enquiries and get quotes.</div>
+
+              <div className="sv-resbar">
+                <div style={{ fontSize: 12.5, color: '#777' }}>
+                  <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> service{filtered.length !== 1 ? 's' : ''}
                 </div>
+                <select className="sv-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
+                  <option value="timestamp">Newest first</option>
+                  <option value="featured">Featured first</option>
+                  <option value="rating">Highest rated</option>
+                </select>
               </div>
-            )}
 
-            <div>
-              <div className="sv-chip-lbl">Trust</div>
-              <div className="sv-chips">
-                <button className="sv-chip" onClick={() => { setVerifiedOnly(!verifiedOnly); setPage(1); }}
-                  style={chipStyle(verifiedOnly)}>⭐ Featured only</button>
-              </div>
-            </div>
-          </div>
+              {current.length === 0 ? (
+                <div className="sv-empty">
+                  <div style={{ fontSize: 48, marginBottom: 12 }}>🔧</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No services found</div>
+                  <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
+                </div>
+              ) : (
+                <div className="sv-grid">
+                  {current.map(s => <ServiceCard key={s.id} service={s} onView={() => navigate(`/service/${s.publishedId}`)} />)}
+                </div>
+              )}
 
-          <div className="sv-note">📦 <b>Book via DroneTv</b> — connect directly with providers. Send enquiries and get quotes.</div>
-
-          <div className="sv-resbar">
-            <div style={{ fontSize: 12.5, color: '#777' }}>
-              <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> service{filtered.length !== 1 ? 's' : ''}
-            </div>
-            <select className="sv-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
-              <option value="timestamp">Newest first</option>
-              <option value="featured">Featured first</option>
-              <option value="rating">Highest rated</option>
-            </select>
-          </div>
-
-          {current.length === 0 ? (
-            <div className="sv-empty">
-              <div style={{ fontSize: 48, marginBottom: 12 }}>🔧</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No services found</div>
-              <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
-            </div>
-          ) : (
-            <div className="sv-grid">
-              {current.map(s => <ServiceCard key={s.id} service={s} onView={() => navigate(`/service/${s.publishedId}`)} />)}
-            </div>
-          )}
-
-          {totalPages > 1 && (
+              {totalPages > 1 && (
             <div className="sv-pages">
               <button className="sv-page-btn"
                 onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
@@ -312,6 +352,8 @@ const ServicesPage: React.FC = () => {
               </button>
             </div>
           )}
+            </div>
+          </div>
         </div>
       </div>
     </>
