@@ -247,7 +247,7 @@
 //                   placeholder="Search countries..."
 //                   value={countrySearchTerm}
 //                   onChange={(e) => setCountrySearchTerm(e.target.value)}
-//                   className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400"
+//                   className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400 text-gray-900 bg-white"
 //                 />
 //               </div>
               
@@ -330,7 +330,7 @@
 //                   placeholder="Search states..."
 //                   value={stateSearchTerm}
 //                   onChange={(e) => setStateSearchTerm(e.target.value)}
-//                   className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400"
+//                   className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400 text-gray-900 bg-white"
 //                 />
 //               </div>
               
@@ -568,7 +568,7 @@ const handleStateSelect = (state: any) => {
                   placeholder="Search countries..."
                   value={countrySearchTerm}
                   onChange={(e) => setCountrySearchTerm(e.target.value)}
-                  className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400"
+                  className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400 text-gray-900 bg-white"
                   autoFocus
                 />
               </div>
@@ -658,7 +658,7 @@ const handleStateSelect = (state: any) => {
                   placeholder="Search states..."
                   value={stateSearchTerm}
                   onChange={(e) => setStateSearchTerm(e.target.value)}
-                  className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400"
+                  className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400 text-gray-900 bg-white"
                   autoFocus
                 />
               </div>

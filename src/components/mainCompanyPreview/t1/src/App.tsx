@@ -108,8 +108,7 @@ export default function App() {
   }
 
   return (
-    // The className here is no longer needed as the useEffect handles the root element
-    <div>
+    <div className="w-full overflow-x-hidden">
       <Header
         headerData={finaleDataReview.content.header}
 

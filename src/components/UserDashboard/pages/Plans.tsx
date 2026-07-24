@@ -62,7 +62,7 @@ const RechargePlans: React.FC = () => {
   const [processingPlanId, setProcessingPlanId] = useState<string | null>(null);
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [tokenBalance, setTokenBalance] = useState<number>(0);
-  const [packageType, setPackageType] = useState<string>('reach');
+  const [packageType, setPackageType] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'subscription' | 'topup'>('subscription');
   const [confirmPkg, setConfirmPkg] = useState<(typeof SUBSCRIPTION_PLANS)[number] | null>(null);
   const [upgrading, setUpgrading] = useState(false);
@@ -79,7 +79,7 @@ const RechargePlans: React.FC = () => {
       axios.get(`${PROFILE_API}?userId=${userId}`)
         .then(r => {
           setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
-          setPackageType((r.data?.profile?.packageType ?? 'reach').toLowerCase());
+          setPackageType((r.data?.profile?.packageType ?? '').toLowerCase());
         })
         .catch(() => {});
     }

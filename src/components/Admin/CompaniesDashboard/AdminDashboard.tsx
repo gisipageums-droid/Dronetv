@@ -1067,7 +1067,7 @@ const AdminDashboard: React.FC = () => {
           return {
             userId: company.userId,
             companyName: company.companyName,
-            packageType: data?.profile?.packageType || "reach",
+            packageType: data?.profile?.packageType || "",
             packageExpiry: data?.profile?.packageExpiry || "",
             tokenBalance: data?.profile?.tokenBalance ?? 0,
           } as CompanySubscription;
@@ -1532,7 +1532,7 @@ const AdminDashboard: React.FC = () => {
                           <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">{sub.userId}</td>
                           <td className="px-4 py-3 align-top">
                             <span className={`text-xs font-bold px-2 py-0.5 rounded capitalize ${tierBadge[sub.packageType] || "bg-gray-100 text-gray-700"}`}>
-                              {sub.packageType}
+                              {sub.packageType || "No Package"}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">{sub.tokenBalance.toLocaleString()} ₮</td>

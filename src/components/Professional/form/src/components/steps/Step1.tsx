@@ -1661,7 +1661,7 @@ export const Step1 = ({
                 <textarea
                   required={true}
                   placeholder="Complete address with building details"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px]"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] text-gray-900 bg-white"
                   value={data.basicInfo?.address || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -1827,7 +1827,7 @@ export const Step1 = ({
               <textarea
                 required={true}
                 placeholder="Complete communication address with building details"
-                className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] `}
+                className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] text-gray-900 bg-white`}
                 value={data.communicationAddress?.address || ""}
                 onChange={(e) =>
                   updateField("communicationAddress", {
@@ -1857,7 +1857,7 @@ export const Step1 = ({
                 <input
                   type="text"
                   placeholder="Your city"
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm `}
+                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white`}
                   value={data.communicationAddress?.city || ""}
                   onChange={(e) =>
                     updateField("communicationAddress", {
@@ -1881,7 +1881,7 @@ export const Step1 = ({
                   required={true}
                   maxLength={6}
                   placeholder="Postal code"
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm`}
+                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white`}
                   value={data.communicationAddress?.postalCode || ""}
                   onChange={(e) => {
                     // Allow only numbers and max 6 digits
@@ -1983,7 +1983,7 @@ export const Step1 = ({
                   type="text"
                   required={true}
                   placeholder="Enter your username"
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm ${usernameAvailable === false
+                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white ${usernameAvailable === false
                     ? "border-red-500 focus:ring-red-300"
                     : ""
                     }`}
@@ -2560,7 +2560,7 @@ export const Step1 = ({
               <textarea
                 required={true}
                 placeholder="Complete address with building details"
-                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px]"
+                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] text-gray-900 bg-white"
                 value={data.basicInfo?.address || ""}
                 onChange={(e) =>
                   updateField("basicInfo", {
