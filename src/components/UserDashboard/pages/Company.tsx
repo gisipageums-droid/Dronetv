@@ -424,6 +424,7 @@ const CompanyPage: React.FC = () => {
 
   const [detailsUpdatedIds, setDetailsUpdatedIds] = useState<Set<string>>(new Set());
   const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const [postJobModal, setPostJobModal] = useState(false);
   const [postJobForm, setPostJobForm] = useState<PostJobForm>(EMPTY_POST);
   const [postSubmitting, setPostSubmitting] = useState(false);
@@ -707,7 +708,8 @@ const CompanyPage: React.FC = () => {
         const p = r.data?.profile ?? {};
         setTotalTokensEarned(p.totalTokensEarned ?? p.tokenBalance ?? 0);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setProfileLoaded(true));
   }, [user]);
 
   useEffect(() => {
@@ -785,7 +787,7 @@ const CompanyPage: React.FC = () => {
         </div>
         {(() => {
           const limit = getCompanyLimit(totalTokensEarned);
-          const atLimit = isFinite(limit) && companies.length >= limit;
+          const atLimit = profileLoaded && isFinite(limit) && companies.length >= limit;
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}

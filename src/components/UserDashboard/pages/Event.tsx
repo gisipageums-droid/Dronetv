@@ -386,6 +386,11 @@ const Events: React.FC = () => {
   const [events, setEvents] = useState<EventCard[]>([]);
   const [loading, setloading] = useState(true);
   const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
+  // Tracks whether the plan/token profile fetch has resolved. Until it has,
+  // totalTokensEarned still holds its 0 default — using it to gate the
+  // "Create New Event" button before then falsely triggers the plan-limit
+  // block (and misroutes to /user-recharge) for users who already have events.
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   useEffect(() => {
     const userId = user?.userData?.email;
@@ -403,7 +408,8 @@ const Events: React.FC = () => {
         const p = d?.profile ?? {};
         setTotalTokensEarned(p.totalTokensEarned ?? p.tokenBalance ?? 0);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setProfileLoaded(true));
   }, [user?.userData?.email]);
 
   const handleEdit = async (eventId: string, templateSelection: string) => {
@@ -508,7 +514,7 @@ const Events: React.FC = () => {
 
         {(() => {
           const limit = getEventLimit(totalTokensEarned);
-          const atLimit = isFinite(limit) && events.length >= limit;
+          const atLimit = profileLoaded && isFinite(limit) && events.length >= limit;
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}

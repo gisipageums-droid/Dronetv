@@ -298,6 +298,7 @@ const Professinal: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const navigate = useNavigate();
 
   const fetchProfessionals = useCallback(async (): Promise<void> => {
@@ -396,7 +397,8 @@ const Professinal: React.FC = () => {
         const p = d?.profile ?? {};
         setTotalTokensEarned(p.totalTokensEarned ?? p.tokenBalance ?? 0);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setProfileLoaded(true));
   }, [user, fetchProfessionals]);
 
   const filteredProfessionals = useMemo(() => {
@@ -474,7 +476,7 @@ const Professinal: React.FC = () => {
 
         {(() => {
           const limit = getProfessionalLimit(totalTokensEarned);
-          const atLimit = isFinite(limit) && (professionals?.cards?.length ?? 0) >= limit;
+          const atLimit = profileLoaded && isFinite(limit) && (professionals?.cards?.length ?? 0) >= limit;
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}
