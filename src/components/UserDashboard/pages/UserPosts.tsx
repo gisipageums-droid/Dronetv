@@ -6,10 +6,11 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useUserAuth } from "../../context/context";
-import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
+import { AUTH_API, PAYMENT_API, MEDIA_API, LAMBDA } from '../../../lib/apiConfig';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const NOTIFY_API  = PAYMENT_API ? `${PAYMENT_API}/spend-tokens` : `${LAMBDA.tokenGateway}/spend-tokens`;
+const CONTENT_API = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
 
 function getTierFromPackage(packageType: string | null | undefined): string {
   if (!packageType) return "free";
@@ -75,6 +76,7 @@ const CONTENT_TYPES: ContentLimit[] = [
 
 interface Post {
   id: string;
+  remoteId?: string;
   type: ContentType;
   title: string;
   content: string;
@@ -82,6 +84,12 @@ interface Post {
   featured: boolean;
   createdAt: string;
   updatedAt?: string;
+}
+
+function backendStatusToLocal(status: string): Post["status"] {
+  if (status === "approved") return "published";
+  if (status === "rejected") return "rejected";
+  return "submitted";
 }
 
 function getLimit(ct: ContentLimit, tier: string): number {
@@ -151,10 +159,30 @@ const UserPosts: React.FC = () => {
     setLoading(false);
   }, [userId]);
 
+  const syncPostStatuses = useCallback(async () => {
+    if (!userId) return;
+    const local = getStoredPosts(userId);
+    const withRemote = local.filter(p => p.remoteId);
+    if (!withRemote.length) return;
+    try {
+      const res = await axios.get(`${CONTENT_API}/admin?type=user-content`);
+      const remoteItems: any[] = res.data?.items || [];
+      const byId = new Map(remoteItems.map(i => [i.contentId, i]));
+      const merged = local.map(p => {
+        const remote = p.remoteId ? byId.get(p.remoteId) : null;
+        if (!remote) return p;
+        return { ...p, status: backendStatusToLocal(remote.status) };
+      });
+      savePosts(userId, merged);
+      setPosts(merged);
+    } catch { /* silent — fall back to local status */ }
+  }, [userId]);
+
   useEffect(() => {
     fetchProfile();
     setPosts(getStoredPosts(userId));
-  }, [fetchProfile, userId]);
+    syncPostStatuses();
+  }, [fetchProfile, syncPostStatuses, userId]);
 
   const ct = CONTENT_TYPES.find(c => c.type === activeType)!;
   const limit = getLimit(ct, tier);
@@ -193,6 +221,15 @@ const UserPosts: React.FC = () => {
     try {
       if (editingPost) {
         // UPDATE existing post
+        if (editingPost.remoteId) {
+          await axios.put(CONTENT_API, {
+            contentType: "user-content",
+            contentId: editingPost.remoteId,
+            title: title.trim(),
+            description: content.trim(),
+            status: "submitted",
+          }).catch(() => {});
+        }
         const updated = posts.map(p =>
           p.id === editingPost.id
             ? { ...p, title: title.trim(), content: content.trim(), status: "submitted" as Post["status"], updatedAt: new Date().toISOString() }
@@ -214,6 +251,20 @@ const UserPosts: React.FC = () => {
           featured: isFeatured,
           createdAt: new Date().toISOString(),
         };
+        try {
+          const res = await axios.post(CONTENT_API, {
+            contentType: "user-content",
+            title: title.trim(),
+            description: content.trim(),
+            userId,
+            postType: activeType,
+            featured: isFeatured,
+            status: "submitted",
+          });
+          newPost.remoteId = res.data?.item?.contentId;
+        } catch {
+          toast.warning("Saved locally — couldn't reach the review queue. It'll sync later.");
+        }
         await axios.post(NOTIFY_API, {
           userId,
           tokenCount: 0,

@@ -125,6 +125,7 @@ import AdminLayout from "./components/Admin/AdminLayout";
 import AdminTokenEconomy from "./components/Admin/AdminTokenEconomy";
 import AdminInvoicesPage from "./pages/admin/AdminInvoicesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import AdminUserContentPage from "./pages/admin/AdminUserContentPage";
 import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
 import ProfessionalsDocumentTextExtractor from "./components/professionalsExcelExtraction/professionalsExcelExtraction/excel";
 
@@ -320,6 +321,12 @@ const AppContent = () => {
             <AdminProtectedRoute>
               <AdminLayout>
                 <AdminSettingsPage />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+          <Route path="/admin/user-content" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminUserContentPage />
               </AdminLayout>
             </AdminProtectedRoute>} />
           <Route path="/admin/company/dashboard" element={
