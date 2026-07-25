@@ -536,6 +536,18 @@ const ScrollDatePicker: React.FC<{
   const [selectedDate, setSelectedDate] = useState(() => parseDate(value));
   const [isScrolling, setIsScrolling] = useState(false);
 
+  // The wheel always visually shows a selected date (defaulting to today when
+  // value is empty) but onChange only ever fired from a user scroll/click —
+  // so a user who accepts the visible default without touching the wheel
+  // left the underlying form field empty forever, making this required field
+  // silently fail validation with no visible cause (Next button looked dead).
+  useEffect(() => {
+    if (!value) {
+      onChange(`${selectedDate.year}-${selectedDate.month}-${selectedDate.day}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const days = Array.from({ length: 31 }, (_, i) =>
     (i + 1).toString().padStart(2, "0")
   );

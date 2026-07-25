@@ -276,6 +276,11 @@ function AppInner() {
   const handleNextWithValidation = () => {
     if (current === 0 && !step1Valid) {
       setShowStep1Error(true);
+      // Required-field errors render inline next to each field, which can be
+      // far above wherever the user is scrolled to (e.g. Social Media Links
+      // at the bottom) — without this, clicking Next looked like a no-op.
+      toast.error("Please fill in all required fields marked above.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     setShowStep1Error(false);

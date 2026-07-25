@@ -11,6 +11,33 @@ import "./step1.css";
 import { toast } from "react-toastify";
 import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
+// Uploads straight to S3 via a presigned URL and returns the hosted URL —
+// storing the raw file as a base64 data URL in formData instead (as this used
+// to do) bloats the drafts payload past DynamoDB's 400KB item-size limit and
+// the whole "list my company" submit fails with a ValidationException.
+const FILE_UPLOAD_API_URL = COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
+
+const uploadImageFile = async (file: File, fieldName: string, userId: string): Promise<string> => {
+  const presignRes = await axios.post(
+    FILE_UPLOAD_API_URL,
+    { userId, fieldName, filename: file.name, contentType: file.type || "application/octet-stream" },
+    { headers: { "Content-Type": "application/json" }, timeout: 30000 }
+  );
+
+  if (!presignRes.data.success) {
+    throw new Error(presignRes.data.error || "Failed to get upload URL");
+  }
+
+  const { uploadUrl, imageUrl } = presignRes.data;
+
+  await axios.put(uploadUrl, file, {
+    headers: { "Content-Type": file.type || "application/octet-stream" },
+    timeout: 60000,
+  });
+
+  return imageUrl;
+};
+
 interface Step1CompanyCategoryProps extends StepProps {
   checkCompanyName: (name: string) => void;
   companyNameStatus: {
@@ -1087,6 +1114,7 @@ const GSTVerificationSection: React.FC<{
     const [showConsentDetails, setShowConsentDetails] = useState(false);
     const [verificationType, setVerificationType] = useState('GST');
     const [isVerifyingCIN, setIsVerifyingCIN] = useState(false);
+    const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
     const formatGSTNumber = (value: string) => {
       // Remove all non-alphanumeric characters
@@ -1727,22 +1755,34 @@ const GSTVerificationSection: React.FC<{
               </div>
             )}
             <div className="flex-1">
-              <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
+              <label className={`cursor-pointer inline-flex items-center gap-2 px-3 py-2 text-sm font-medium border rounded-lg transition-colors ${isUploadingLogo ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-blue-600 border-blue-300 hover:bg-blue-50'}`}>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                {formData.companyLogoUrl ? 'Change Logo' : 'Upload Logo'}
+                {isUploadingLogo ? 'Uploading...' : formData.companyLogoUrl ? 'Change Logo' : 'Upload Logo'}
                 <input
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => {
+                  disabled={isUploadingLogo}
+                  onChange={async (e) => {
                     const file = e.target.files?.[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                      updateFormData({ companyLogoUrl: ev.target?.result as string });
-                    };
-                    reader.readAsDataURL(file);
                     e.target.value = '';
+                    if (!file) return;
+
+                    if (file.size > 5 * 1024 * 1024) {
+                      toast.warn('Logo file must be less than 5MB');
+                      return;
+                    }
+
+                    setIsUploadingLogo(true);
+                    try {
+                      const userId = formData.directorEmail || 'temp-user';
+                      const imageUrl = await uploadImageFile(file, 'companyLogoUrl', userId);
+                      updateFormData({ companyLogoUrl: imageUrl });
+                    } catch (error: any) {
+                      toast.error(`Logo upload failed: ${error.message || 'Please try again.'}`);
+                    } finally {
+                      setIsUploadingLogo(false);
+                    }
                   }}
                 />
               </label>
