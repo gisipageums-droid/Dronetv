@@ -102,54 +102,72 @@ const Step5ProductsServices: React.FC<StepProps> = ({
   const addedServiceTitles = new Set(formData.services.map((s) => s.title));
   const addedProductTitles = new Set(formData.products.map((p) => p.title));
 
+  // All of these use the functional updateFormData form (reading the latest
+  // state at commit time, not the `formData` prop from this render's closure)
+  // because React batches rapid successive clicks — several quick-add clicks
+  // in a row would otherwise all read the same stale `formData.services`/
+  // `.products` snapshot and each overwrite the previous one's addition,
+  // silently keeping only the last click instead of accumulating all of them.
   const addSuggestedService = (title: string) => {
-    if (addedServiceTitles.has(title)) return;
-    updateFormData({ services: [...formData.services, { icon: "service", title }] });
+    updateFormData((prev) => {
+      if (prev.services.some((s) => s.title === title)) return {};
+      return { services: [...prev.services, { icon: "service", title }] };
+    });
   };
 
   const addSuggestedProduct = (title: string) => {
-    if (addedProductTitles.has(title)) return;
-    updateFormData({ products: [...formData.products, { title }] });
+    updateFormData((prev) => {
+      if (prev.products.some((p) => p.title === title)) return {};
+      return { products: [...prev.products, { title }] };
+    });
   };
 
   const addService = () => {
-    updateFormData({ services: [...formData.services, { icon: "service", title: "" }] });
+    updateFormData((prev) => ({ services: [...prev.services, { icon: "service", title: "" }] }));
   };
 
   const removeService = (index: number) => {
-    updateFormData({ services: formData.services.filter((_, i) => i !== index) });
+    updateFormData((prev) => ({ services: prev.services.filter((_, i) => i !== index) }));
   };
 
   const updateService = (index: number, value: string) => {
-    const updated = [...formData.services];
-    updated[index] = { ...updated[index], title: value, icon: "service" };
-    updateFormData({ services: updated });
+    updateFormData((prev) => {
+      const updated = [...prev.services];
+      updated[index] = { ...updated[index], title: value, icon: "service" };
+      return { services: updated };
+    });
   };
 
   const updateServiceDescription = (index: number, value: string) => {
-    const updated = [...formData.services];
-    updated[index] = { ...updated[index], description: value };
-    updateFormData({ services: updated });
+    updateFormData((prev) => {
+      const updated = [...prev.services];
+      updated[index] = { ...updated[index], description: value };
+      return { services: updated };
+    });
   };
 
   const addProduct = () => {
-    updateFormData({ products: [...formData.products, { title: "" }] });
+    updateFormData((prev) => ({ products: [...prev.products, { title: "" }] }));
   };
 
   const removeProduct = (index: number) => {
-    updateFormData({ products: formData.products.filter((_, i) => i !== index) });
+    updateFormData((prev) => ({ products: prev.products.filter((_, i) => i !== index) }));
   };
 
   const updateProduct = (index: number, value: string) => {
-    const updated = [...formData.products];
-    updated[index] = { ...updated[index], title: value };
-    updateFormData({ products: updated });
+    updateFormData((prev) => {
+      const updated = [...prev.products];
+      updated[index] = { ...updated[index], title: value };
+      return { products: updated };
+    });
   };
 
   const updateProductDescription = (index: number, value: string) => {
-    const updated = [...formData.products];
-    updated[index] = { ...updated[index], description: value };
-    updateFormData({ products: updated });
+    updateFormData((prev) => {
+      const updated = [...prev.products];
+      updated[index] = { ...updated[index], description: value };
+      return { products: updated };
+    });
   };
 
   return (

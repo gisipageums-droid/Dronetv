@@ -739,8 +739,8 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     useState<string>(templateId);
   const [userId] = useState<string>("user-123");
 
-  const updateFormData = useCallback((data: Partial<FormData>) => {
-    setFormData((prev) => ({ ...prev, ...data }));
+  const updateFormData = useCallback((data: Partial<FormData> | ((prev: FormData) => Partial<FormData>)) => {
+    setFormData((prev) => ({ ...prev, ...(typeof data === "function" ? data(prev) : data) }));
   }, []);
 
   // Step 1 validation logic
