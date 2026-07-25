@@ -3,6 +3,7 @@ import { Monitor, X } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
 
@@ -108,44 +109,40 @@ export default function WebinarsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
               {items.map(item => (
-                <div key={item.contentId} className="flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.title} className="w-full h-44 object-cover" />
-                  ) : (
-                    <div className="w-full h-44 bg-zinc-900 flex items-center justify-center">
-                      <Monitor className="w-10 h-10 text-yellow-400" />
+                <ContentCard
+                  key={item.contentId}
+                  image={item.imageUrl}
+                  imageAlt={item.title}
+                  imageFallback={<Monitor className="w-10 h-10 text-yellow-400" />}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    {item.price ? (
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.price.toLowerCase() === 'free' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{item.price}</span>
+                    ) : <span />}
+                    {item.date && <span className="text-xs font-bold text-gray-500">{item.date}</span>}
+                  </div>
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{item.title}</h3>
+                  {item.platform && <p className="text-xs text-gray-400 mb-3">{item.platform}</p>}
+                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                  {item.source && (
+                    <div className="mb-3">
+                      <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Speaker</p>
+                      <p className="text-xs text-gray-500">— {item.source}</p>
                     </div>
                   )}
-                  <div className="p-5 flex-1 flex flex-col">
-                    <div className="flex items-center justify-between mb-3">
-                      {item.price ? (
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.price.toLowerCase() === 'free' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{item.price}</span>
-                      ) : <span />}
-                      {item.date && <span className="text-xs font-bold text-gray-500">{item.date}</span>}
-                    </div>
-                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1">{item.title}</h3>
-                    {item.platform && <p className="text-xs text-gray-400 mb-3">{item.platform}</p>}
-                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-4">{item.description}</p>}
-                    {item.source && (
-                      <div className="mb-3">
-                        <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Speaker</p>
-                        <p className="text-xs text-gray-500">— {item.source}</p>
-                      </div>
-                    )}
-                    {item.tags && item.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-auto pt-1">
-                        {item.tags.map(tag => (
+                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                    {item.tags && item.tags.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {item.tags.slice(0, 2).map(tag => (
                           <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>
                         ))}
                       </div>
-                    )}
-                  </div>
-                  <div className="border-t border-gray-100 px-5 py-3 bg-gray-50">
-                    <button onClick={() => openModal(item)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                    ) : <span />}
+                    <button onClick={() => openModal(item)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">
                       Register to Attend →
                     </button>
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
           )}

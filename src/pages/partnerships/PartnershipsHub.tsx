@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const whyPartner = [
   { icon: '🎯', title: '100% Drone, GIS & AI Audience', desc: 'Every visitor, viewer, and lead on DroneTv.in is from the drone, GIS & AI ecosystem. No dilution across unrelated industries. Agriculture drones, defence UAVs, GIS & mapping technology, AI and computer-vision platforms — your content reaches exactly the right people.' },
@@ -148,11 +149,11 @@ export default function PartnershipsHubPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {whyPartner.map((item, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <ContentCard key={i}>
                 <div className="text-2xl mb-3">{item.icon}</div>
                 <h3 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h3>
                 <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
-              </div>
+              </ContentCard>
             ))}
           </div>
         </div>
@@ -164,13 +165,13 @@ export default function PartnershipsHubPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {testimonials.map((t, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <ContentCard key={i}>
                 <p className="text-sm text-gray-600 leading-relaxed mb-4 italic">"{t.quote}"</p>
-                <div>
+                <div className="mt-auto">
                   <p className="text-sm font-bold text-gray-900">{t.name}</p>
                   <p className="text-xs text-gray-400">{t.role}</p>
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         </div>

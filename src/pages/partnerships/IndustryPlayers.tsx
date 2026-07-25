@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, ExternalLink, Search, Layers } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const playerTypes = [
   { icon: '🚁', title: 'Drone Service Operators', desc: "Companies providing drone-as-a-service across agriculture, infrastructure inspection, logistics, and surveillance. India's fastest-growing segment as commercial fleet sizes expand post-PLI scheme.", tags: ['DaaS', 'Commercial Ops', 'B2B Service'] },
@@ -70,28 +71,24 @@ export default function IndustryPlayersPage() {
             ? <div className="text-center py-8 text-gray-400">No players match your search.</div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filtered.map(item => (
-                  <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />
-                    ) : (
-                      <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
-                        <Layers className="w-10 h-10 text-yellow-400" />
-                      </div>
-                    )}
-                    <div className="p-4">
-                      {item.category && <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
-                      <h3 className="text-sm font-bold text-gray-900 mb-2">{item.title}</h3>
-                      {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3">{item.description}</p>}
-                      <div className="flex items-center justify-between">
-                        {item.location && <span className="flex items-center gap-1 text-xs text-gray-400"><MapPin className="w-3 h-3" />{item.location}</span>}
-                        {item.externalLink && (
-                          <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
-                            Visit <ExternalLink className="w-3 h-3" />
-                          </a>
-                        )}
-                      </div>
+                  <ContentCard
+                    key={item.contentId}
+                    image={item.imageUrl}
+                    imageAlt={item.title}
+                    imageFallback={<Layers className="w-10 h-10 text-yellow-400" />}
+                  >
+                    {item.category && <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                    <h3 className="text-sm font-bold text-gray-900 mb-2 line-clamp-2">{item.title}</h3>
+                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                    <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                      {item.location && <span className="flex items-center gap-1 text-xs text-gray-400"><MapPin className="w-3 h-3" />{item.location}</span>}
+                      {item.externalLink && (
+                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1 whitespace-nowrap">
+                          Visit <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
                     </div>
-                  </div>
+                  </ContentCard>
                 ))}
               </div>
         ) : (
@@ -99,17 +96,17 @@ export default function IndustryPlayersPage() {
             <p className="text-xs text-gray-400 mb-4">Types of industry players that partner with DroneTv.in — from service operators to defence contractors.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {playerTypes.map((p, i) => (
-                <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+                <ContentCard key={i}>
                   <div className="text-3xl mb-3">{p.icon}</div>
                   <h3 className="font-bold text-gray-900 text-sm mb-2">{p.title}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3">{p.desc}</p>
+                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{p.desc}</p>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {p.tags.map(tag => <span key={tag} className="bg-orange-50 text-orange-700 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>
-                  <div className="pt-3 border-t border-gray-100">
+                  <div className="mt-auto pt-3 border-t border-gray-100">
                     <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Partner with DroneTv →</a>
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
             <div className="mt-6 bg-zinc-900 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

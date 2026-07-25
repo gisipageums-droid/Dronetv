@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const communitySpaces = [
   { icon: '💬', title: 'Discussion Forum', desc: 'Ask technical questions, share experiences, discuss regulations, and get peer feedback from verified drone professionals.', stat: 'Active Discussions Ongoing', cta: 'Join Forum', link: 'mailto:bd@dronetv.in' },
@@ -92,31 +93,28 @@ export default function CommunityPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {cmsItems.map(item => (
-                <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-36 object-cover" />}
-                  <div className="p-4">
-                    {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
-                    <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
-                    {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
-                    {item.location && <p className="text-xs text-gray-400 mb-2">{item.location}</p>}
-                    {item.description && (
-                      <div className="mb-3">
-                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-5'}`}>{item.description}</p>
-                        {item.description.length > 220 && (
-                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
-                            {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                    {item.externalLink && (
-                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
-                        className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
-                        Join Now <ExternalLink className="w-3 h-3" />
-                      </a>
-                    )}
-                  </div>
-                </div>
+                <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title} imgHeight="h-36">
+                  {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                  <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h3>
+                  {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
+                  {item.location && <p className="text-xs text-gray-400 mb-2">{item.location}</p>}
+                  {item.description && (
+                    <div className="mb-3">
+                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      {item.description.length > 220 && (
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  {item.externalLink && (
+                    <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
+                      className="mt-auto pt-3 border-t border-gray-100 text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                      Join Now <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </ContentCard>
               ))}
             </div>
           </div>
@@ -129,7 +127,7 @@ export default function CommunityPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {communitySpaces.map((space, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+              <ContentCard key={i}>
                 <div className="flex items-start justify-between mb-3">
                   <span className="text-2xl">{space.icon}</span>
                   <span className="text-xs font-bold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded">{space.stat}</span>
@@ -137,10 +135,10 @@ export default function CommunityPage() {
                 <h3 className="font-bold text-gray-900 text-sm mb-2">{space.title}</h3>
                 <p className="text-xs text-gray-500 leading-relaxed mb-3">{space.desc}</p>
                 <a href={space.link} target={space.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
-                  className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                  className="mt-auto text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
                   {space.cta} →
                 </a>
-              </div>
+              </ContentCard>
             ))}
           </div>
         </div>

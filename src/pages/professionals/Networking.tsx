@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const networkingChannels = [
   {
@@ -139,7 +140,7 @@ export default function NetworkingPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {networkingChannels.map((ch, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+              <ContentCard key={i}>
                 <div className="flex items-start gap-3 mb-3">
                   <span className="text-2xl">{ch.icon}</span>
                   <h3 className="font-bold text-gray-900 text-sm leading-snug">{ch.title}</h3>
@@ -147,10 +148,10 @@ export default function NetworkingPage() {
                 <p className="text-sm text-gray-600 leading-relaxed mb-2">{ch.desc}</p>
                 <p className="text-xs text-gray-400 italic mb-3">{ch.stat}</p>
                 <a href={ch.link} target={ch.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
-                  className="text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                  className="mt-auto text-xs font-bold text-yellow-600 hover:text-yellow-700">
                   {ch.cta} →
                 </a>
-              </div>
+              </ContentCard>
             ))}
           </div>
         </div>
@@ -186,32 +187,29 @@ export default function NetworkingPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {cmsItems.map(item => (
-                  <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                    {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-32 object-cover" />}
-                    <div className="p-4">
-                      {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
-                      <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
-                      {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
-                      {item.location && <p className="text-xs text-gray-400 mb-2">📍 {item.location}</p>}
-                      {item.date && <p className="text-xs text-gray-400 mb-2">📅 {item.date}</p>}
-                      {item.description && (
-                        <div className="mb-3">
-                          <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-5'}`}>{item.description}</p>
-                          {item.description.length > 220 && (
-                            <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
-                              {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
-                            </button>
-                          )}
-                        </div>
-                      )}
-                      {item.externalLink && (
-                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
-                          className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
-                          Join Group <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
+                  <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title} imgHeight="h-32">
+                    {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                    <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h3>
+                    {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
+                    {item.location && <p className="text-xs text-gray-400 mb-2">📍 {item.location}</p>}
+                    {item.date && <p className="text-xs text-gray-400 mb-2">📅 {item.date}</p>}
+                    {item.description && (
+                      <div className="mb-3">
+                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                        {item.description.length > 220 && (
+                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                            {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    {item.externalLink && (
+                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
+                        className="mt-auto text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                        Join Group <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </ContentCard>
                 ))}
               </div>
             </div>

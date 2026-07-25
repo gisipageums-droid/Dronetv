@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, ExternalLink, Search, Cpu } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const staticAISectors = [
   { icon: '🧠', name: 'Autonomous Flight and AI Stack Companies', hq: 'Computer Vision · Path Planning · Edge AI', desc: 'Companies developing AI for object detection, autonomous path planning, real-time anomaly identification, and adaptive mission execution. Applications in agriculture (crop disease identification), infrastructure (crack detection), and surveillance (autonomous perimeter monitoring).', tags: ['Autonomy', 'Computer Vision', 'Edge AI'], sector: 'AI / Autonomy' },
@@ -70,33 +71,29 @@ export default function AITechCompaniesPage() {
             ? <div className="text-center py-8 text-gray-400">No companies match your search.</div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filtered.map(item => (
-                  <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />
-                    ) : (
-                      <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
-                        <Cpu className="w-10 h-10 text-yellow-400" />
+                  <ContentCard
+                    key={item.contentId}
+                    image={item.imageUrl}
+                    imageAlt={item.title}
+                    imageFallback={<Cpu className="w-10 h-10 text-yellow-400" />}
+                  >
+                    {item.category && <span className="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                    {item.tags && item.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {item.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
                       </div>
                     )}
-                    <div className="p-4">
-                      {item.category && <span className="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
-                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
-                      {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3">{item.description}</p>}
-                      {item.tags && item.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {item.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
-                        </div>
+                    <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                      {item.location && <span className="flex items-center gap-1 text-xs text-gray-400"><MapPin className="w-3 h-3" />{item.location}</span>}
+                      {item.externalLink && (
+                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1 whitespace-nowrap">
+                          Visit <ExternalLink className="w-3 h-3" />
+                        </a>
                       )}
-                      <div className="flex items-center justify-between">
-                        {item.location && <span className="flex items-center gap-1 text-xs text-gray-400"><MapPin className="w-3 h-3" />{item.location}</span>}
-                        {item.externalLink && (
-                          <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
-                            Visit <ExternalLink className="w-3 h-3" />
-                          </a>
-                        )}
-                      </div>
                     </div>
-                  </div>
+                  </ContentCard>
                 ))}
               </div>
         ) : (
@@ -104,7 +101,7 @@ export default function AITechCompaniesPage() {
             <p className="text-xs text-gray-400 mb-4">AI technology sectors DroneTv.in covers — from autonomous flight to counter-drone systems.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {staticAISectors.map((s, i) => (
-                <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+                <ContentCard key={i}>
                   <div className="flex items-start gap-3 mb-3">
                     <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-xl flex-shrink-0">{s.icon}</div>
                     <div>
@@ -112,15 +109,15 @@ export default function AITechCompaniesPage() {
                       <p className="text-xs text-gray-400">{s.hq}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3">{s.desc}</p>
+                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{s.desc}</p>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {s.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
                     <span className="text-xs text-purple-700 font-bold">{s.sector}</span>
-                    <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Partner with DroneTv →</a>
+                    <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">Partner with DroneTv →</a>
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
             <div className="mt-6 bg-zinc-900 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

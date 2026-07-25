@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, ExternalLink, Search, Building2 } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const staticManufacturers = [
   { icon: '✈️', name: 'ideaForge Technology', hq: 'Mumbai, Maharashtra | BSE: IDEAFORGE', desc: "India's market leader in unmanned aerial systems with approximately 50% market share. SWITCH UAV is standard equipment for high-altitude border surveillance in Ladakh and Arunachal Pradesh. The only Type Approved manufacturer in multiple military categories.", tags: ['Defence', 'Surveillance', 'Type Approved', 'BSE Listed'], sector: 'Defence UAV' },
@@ -79,44 +80,38 @@ export default function DroneManufacturersPage() {
             ? <div className="text-center py-8 text-gray-400">No manufacturers match your search.</div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filtered.map(item => (
-                  <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                    {item.imageUrl ? (
-                      <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
-                        <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain" />
-                      </div>
-                    ) : (
-                      <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
-                        <Building2 className="w-10 h-10 text-yellow-400" />
-                      </div>
-                    )}
-                    <div className="p-4">
-                      {item.category && <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
-                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
-                      {item.description && (
-                        <div className="mb-3">
-                          <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-4'}`}>{item.description}</p>
-                          {item.description.length > 180 && (
-                            <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
-                              {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
-                            </button>
-                          )}
-                        </div>
-                      )}
-                      {item.tags && item.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {item.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between">
-                        {item.location && <span className="flex items-center gap-1 text-xs text-gray-400"><MapPin className="w-3 h-3" />{item.location}</span>}
-                        {item.externalLink && (
-                          <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
-                            Visit <ExternalLink className="w-3 h-3" />
-                          </a>
+                  <ContentCard
+                    key={item.contentId}
+                    image={item.imageUrl}
+                    imageAlt={item.title}
+                    imageFallback={<Building2 className="w-10 h-10 text-yellow-400" />}
+                  >
+                    {item.category && <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                    {item.description && (
+                      <div className="mb-3">
+                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                        {item.description.length > 180 && (
+                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                            {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                          </button>
                         )}
                       </div>
+                    )}
+                    {item.tags && item.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {item.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
+                      </div>
+                    )}
+                    <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                      {item.location && <span className="flex items-center gap-1 text-xs text-gray-400"><MapPin className="w-3 h-3" />{item.location}</span>}
+                      {item.externalLink && (
+                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1 whitespace-nowrap">
+                          Visit <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
                     </div>
-                  </div>
+                  </ContentCard>
                 ))}
               </div>
         ) : (
@@ -124,7 +119,7 @@ export default function DroneManufacturersPage() {
             <p className="text-xs text-gray-400 mb-4">India has 180+ active drone manufacturers. Featured companies below.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {staticManufacturers.map((m, i) => (
-                <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+                <ContentCard key={i}>
                   <div className="flex items-start gap-3 mb-3">
                     <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-xl flex-shrink-0">{m.icon}</div>
                     <div>
@@ -132,15 +127,15 @@ export default function DroneManufacturersPage() {
                       <p className="text-xs text-gray-400">{m.hq}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3">{m.desc}</p>
+                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{m.desc}</p>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {m.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
                     <span className="text-xs text-yellow-700 font-bold">{m.sector}</span>
-                    <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Partner with DroneTv →</a>
+                    <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">Partner with DroneTv →</a>
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
             <div className="mt-6 bg-zinc-900 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

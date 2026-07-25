@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MapPin, Calendar, Search } from 'lucide-react';
 import { EVENTS_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 interface RawEvent {
   eventId: string;
@@ -101,29 +102,25 @@ export default function EventCalendarPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(event => (
-              <div key={event.eventId} onClick={() => {
-                let slug = event.cleanUrl || event.urlSlug || '';
-                if (slug.startsWith('http')) slug = slug.split('/').pop() || slug;
-                navigate(`/event/${slug}`);
-              }}
-                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
-                {getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage) ? (
-                  <img src={getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage)!} alt={event.eventName} className="w-full h-40 object-cover" />
-                ) : (
-                  <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
-                    <span className="text-yellow-400 text-4xl">🗓️</span>
-                  </div>
-                )}
-                <div className="p-4">
-                  <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block capitalize">{event.category || 'Event'}</span>
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{event.eventName}</h3>
-                  {event.shortDescription && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.shortDescription}</p>}
-                  <div className="space-y-1">
-                    {event.eventDate && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{event.eventDate}</div>}
-                    {event.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{event.location}</div>}
-                  </div>
+              <ContentCard
+                key={event.eventId}
+                image={getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage) || undefined}
+                imageAlt={event.eventName}
+                imageFallback={<span className="text-yellow-400 text-4xl">🗓️</span>}
+                onClick={() => {
+                  let slug = event.cleanUrl || event.urlSlug || '';
+                  if (slug.startsWith('http')) slug = slug.split('/').pop() || slug;
+                  navigate(`/event/${slug}`);
+                }}
+              >
+                <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block capitalize self-start">{event.category || 'Event'}</span>
+                <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{event.eventName}</h3>
+                {event.shortDescription && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.shortDescription}</p>}
+                <div className="mt-auto pt-3 border-t border-gray-100 space-y-1">
+                  {event.eventDate && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{event.eventDate}</div>}
+                  {event.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{event.location}</div>}
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         )}

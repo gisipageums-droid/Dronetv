@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, Calendar, Trophy, ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const staticCompetitions = [
   {
@@ -106,39 +107,37 @@ export default function CompetitionsPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {cmsItems.map(item => (
-                <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />
-                  ) : (
-                    <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
-                      <Trophy className="w-10 h-10 text-yellow-400" />
+                <ContentCard
+                  key={item.contentId}
+                  image={item.imageUrl}
+                  imageAlt={item.title}
+                  imageFallback={<Trophy className="w-10 h-10 text-yellow-400" />}
+                >
+                  {item.category && <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                  {item.description && (
+                    <div className="mb-3">
+                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      {item.description.length > 180 && (
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                        </button>
+                      )}
                     </div>
                   )}
-                  <div className="p-4">
-                    {item.category && <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
-                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
-                    {item.description && (
-                      <div className="mb-3">
-                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-4'}`}>{item.description}</p>
-                        {item.description.length > 180 && (
-                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
-                            {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                    {item.price && <div className="text-xs font-bold text-green-700 mb-2">{item.price}</div>}
+                  {item.price && <div className="text-xs font-bold text-green-700 mb-2">{item.price}</div>}
+                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
                     <div className="space-y-1">
                       {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}
                       {item.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{item.location}</div>}
                     </div>
                     {item.externalLink && (
-                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">
                         Register <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
           </div>

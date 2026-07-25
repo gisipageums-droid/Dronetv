@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, ExternalLink, BookOpen } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const pathways = [
   {
@@ -131,7 +132,7 @@ export default function TrainingPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {pathways.map((p, i) => (
-              <div key={i} className={`bg-white rounded-xl border border-gray-200 border-l-4 ${p.colorClass} shadow-sm p-5`}>
+              <ContentCard key={i} className={`border-l-4 ${p.colorClass}`}>
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-2xl">{p.icon}</span>
                   <div>
@@ -148,11 +149,11 @@ export default function TrainingPage() {
                     </li>
                   ))}
                 </ul>
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
                   <span className="text-xs font-bold text-yellow-700">{p.cost}</span>
                   <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{p.duration}</span>
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         </div>
@@ -173,36 +174,34 @@ export default function TrainingPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filtered.map(item => (
-                <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />
-                  ) : (
-                    <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
-                      <BookOpen className="w-10 h-10 text-yellow-400" />
+                <ContentCard
+                  key={item.contentId}
+                  image={item.imageUrl}
+                  imageAlt={item.title}
+                  imageFallback={<BookOpen className="w-10 h-10 text-yellow-400" />}
+                >
+                  {item.category && <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                  {item.description && (
+                    <div className="mb-3">
+                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      {item.description.length > 180 && (
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                        </button>
+                      )}
                     </div>
                   )}
-                  <div className="p-4">
-                    {item.category && <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
-                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{item.title}</h3>
-                    {item.description && (
-                      <div className="mb-3">
-                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-4'}`}>{item.description}</p>
-                        {item.description.length > 180 && (
-                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
-                            {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                    {item.price && <div className="text-xs font-bold text-yellow-700 mb-2">{item.price}</div>}
+                  {item.price && <div className="text-xs font-bold text-yellow-700 mb-2">{item.price}</div>}
+                  <div className="mt-auto pt-3 border-t border-gray-100">
                     {item.location && <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1"><MapPin className="w-3 h-3" />{item.location}</div>}
                     {item.externalLink && (
-                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700">
                         Enroll <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
           </div>
@@ -216,7 +215,7 @@ export default function TrainingPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {featuredRPTOs.map((rpto, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+              <ContentCard key={i}>
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-10 h-10 bg-zinc-900 rounded-lg flex items-center justify-center text-xl flex-shrink-0">{rpto.icon}</div>
                   <div>
@@ -230,12 +229,12 @@ export default function TrainingPage() {
                   </div>
                 </div>
                 <p className="text-xs text-gray-500 leading-relaxed mb-3">{rpto.desc}</p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 mt-auto pt-2">
                   {rpto.tags.map((tag, j) => (
                     <span key={j} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{tag}</span>
                   ))}
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         </div>

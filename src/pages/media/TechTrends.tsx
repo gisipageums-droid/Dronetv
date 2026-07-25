@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const staticTrends = [
   {
@@ -81,7 +82,7 @@ export default function TechTrendsPage() {
         ) : displayItems ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {displayItems.map((trend) => (
-              <div key={trend.num} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+              <ContentCard key={trend.num}>
                 <div className="flex items-start gap-4 mb-3">
                   <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0 text-xl">
                     {trend.icon}
@@ -96,27 +97,26 @@ export default function TechTrendsPage() {
                   <span className="text-xs font-bold text-amber-700 block mb-1">India Context</span>
                   <p className="text-xs text-amber-800 leading-relaxed">{trend.india}</p>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-gray-100">
                   {trend.tags.map(tag => (
                     <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>
                   ))}
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {items.map((item, i) => (
-              <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover" />}
-                <div className="p-5 flex items-start gap-4">
+              <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title}>
+                <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span className="text-black font-extrabold text-xs">{String(i + 1).padStart(2, '0')}</span>
                   </div>
-                  <div className="flex-1">
-                    {item.category && <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>}
-                    <h3 className="text-sm font-bold text-gray-900 mb-2">{item.title}</h3>
-                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3">{item.description}</p>}
+                  <div className="flex-1 flex flex-col">
+                    {item.category && <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                    <h3 className="text-sm font-bold text-gray-900 mb-2 line-clamp-2">{item.title}</h3>
+                    {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
                     {item.tags && item.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mb-3">
                         {item.tags.map(tag => (
@@ -125,13 +125,13 @@ export default function TechTrendsPage() {
                       </div>
                     )}
                     {item.externalLink && (
-                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1 mt-auto pt-3 border-t border-gray-100">
                         Learn More <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
                   </div>
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         )}

@@ -3,6 +3,7 @@ import { MapPin, Search, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const samplePilots = [
   { icon: '👨‍✈️', name: 'Rajesh K.', badge: 'RPC — Small & Medium Category', location: 'Hyderabad, Telangana', categories: ['Agriculture', 'GIS Mapping'], experience: '4 Years | 800+ Hours', tags: ['Agriculture Spraying', 'NDVI Mapping', 'AP Missions'] },
@@ -123,7 +124,7 @@ export default function PilotDirectoryPage() {
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">Sample Pilot Profiles</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {samplePilots.map((pilot, i) => (
-                <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 opacity-80">
+                <ContentCard key={i} className="opacity-80">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center text-xl flex-shrink-0">{pilot.icon}</div>
                     <div>
@@ -136,11 +137,11 @@ export default function PilotDirectoryPage() {
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-2"><MapPin className="w-3 h-3" />{pilot.location}</div>
                   <p className="text-xs text-gray-500 mb-2">{pilot.experience}</p>
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-1 mt-auto pt-2">
                     {pilot.tags.map((tag, j) => <span key={j} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>
-                  <button className="mt-3 text-xs font-bold text-yellow-600 hover:text-yellow-700">Contact →</button>
-                </div>
+                  <button className="mt-3 text-xs font-bold text-yellow-600 hover:text-yellow-700 self-start">Contact →</button>
+                </ContentCard>
               ))}
             </div>
           </div>
@@ -149,12 +150,12 @@ export default function PilotDirectoryPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(item => (
-              <div key={item.professionalId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+              <ContentCard key={item.professionalId}>
                 <div className="flex items-center gap-3 mb-3">
                   {item.previewImage ? (
-                    <img src={item.previewImage} alt={item.professionalName || item.fullName} className="w-12 h-12 rounded-full object-cover" />
+                    <img src={item.previewImage} alt={item.professionalName || item.fullName} className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center flex-shrink-0">
                       <User className="w-6 h-6 text-yellow-400" />
                     </div>
                   )}
@@ -168,20 +169,20 @@ export default function PilotDirectoryPage() {
                 {item.professionalDescription && (
                   <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{item.professionalDescription}</p>
                 )}
-                <div className="space-y-1">
+                <div className="mt-auto pt-2 space-y-1">
                   {item.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3" />{item.location}</div>}
                   {item.categories && item.categories.length > 1 && (
                     <div className="flex flex-wrap gap-1 mt-2">
                       {item.categories.slice(1).map(cat => <span key={cat} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{cat}</span>)}
                     </div>
                   )}
+                  {item.cleanUrl && (
+                    <a href={item.cleanUrl} target="_blank" rel="noopener noreferrer" className="block text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                      View Profile →
+                    </a>
+                  )}
                 </div>
-                {item.cleanUrl && (
-                  <a href={item.cleanUrl} target="_blank" rel="noopener noreferrer" className="mt-3 block text-xs font-bold text-yellow-600 hover:text-yellow-700">
-                    View Profile →
-                  </a>
-                )}
-              </div>
+              </ContentCard>
             ))}
           </div>
         )}

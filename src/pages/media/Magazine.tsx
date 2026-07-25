@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MEDIA_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 const MEDIA_BASE = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
 
@@ -96,34 +97,29 @@ export default function MagazinePage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.map(article => (
-                <div key={article.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  {article.imageUrl && (
-                    <img src={article.imageUrl} alt={article.title} className="w-full h-40 object-cover" />
+                <ContentCard key={article.contentId} image={article.imageUrl} imageAlt={article.title}>
+                  {article.category && (
+                    <span className="text-xs font-bold text-yellow-600 uppercase tracking-wider self-start">{article.category}</span>
                   )}
-                  <div className="p-5">
-                    {article.category && (
-                      <span className="text-xs font-bold text-yellow-600 uppercase tracking-wider">{article.category}</span>
-                    )}
-                    <h3 className="font-bold text-gray-900 text-sm mt-1 mb-2 line-clamp-2">{article.title}</h3>
-                    {article.description && (
-                      <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{article.description}</p>
-                    )}
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                      <div className="text-xs text-gray-400">
-                        {article.author && <span>{article.author}</span>}
-                        {article.author && article.date && <span> · </span>}
-                        {article.date && <span>{article.date}</span>}
-                      </div>
-                      <Link
-                        to={`/media/magazine/${article.contentId}`}
-                        state={{ item: article }}
-                        className="text-xs font-bold text-gray-900 hover:text-yellow-600 transition-colors"
-                      >
-                        Read →
-                      </Link>
+                  <h3 className="font-bold text-gray-900 text-sm mt-1 mb-2 line-clamp-2">{article.title}</h3>
+                  {article.description && (
+                    <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{article.description}</p>
+                  )}
+                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
+                    <div className="text-xs text-gray-400">
+                      {article.author && <span>{article.author}</span>}
+                      {article.author && article.date && <span> · </span>}
+                      {article.date && <span>{article.date}</span>}
                     </div>
+                    <Link
+                      to={`/media/magazine/${article.contentId}`}
+                      state={{ item: article }}
+                      className="text-xs font-bold text-gray-900 hover:text-yellow-600 transition-colors whitespace-nowrap"
+                    >
+                      Read →
+                    </Link>
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
           </div>
@@ -185,16 +181,16 @@ export default function MagazinePage() {
               { icon: '📑', title: 'Full-Page Advertisement', desc: 'Full-page advertisement in all 4 quarterly issues plus 1 full editorial article (2–3 pages) in one selected issue. Cover page eligibility included.', badge: 'Brand Package', badgeColor: 'bg-yellow-100 text-yellow-700', note: '4 issues + editorial article' },
               { icon: '🏆', title: 'Cover Page Feature', desc: 'Cover page feature photo eligibility for Brand package subscribers, subject to editorial schedule. The highest-visibility placement in the DroneTv media ecosystem.', badge: 'Brand Package Only', badgeColor: 'bg-orange-100 text-orange-700', note: 'Subject to editorial calendar' },
             ].map((item, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+              <ContentCard key={i}>
                 <div className="text-2xl mb-3">{item.icon}</div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed mb-3">{item.desc}</p>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded inline-block mb-3 ${item.badgeColor}`}>{item.badge}</span>
-                <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+                <h3 className="font-bold text-gray-900 text-sm mb-2 line-clamp-2">{item.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.desc}</p>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded inline-block mb-3 self-start ${item.badgeColor}`}>{item.badge}</span>
+                <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
                   <span className="text-xs text-gray-400">{item.note}</span>
-                  <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Packages →</a>
+                  <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">Packages →</a>
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         </div>

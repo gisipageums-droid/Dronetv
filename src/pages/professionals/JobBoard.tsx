@@ -4,6 +4,7 @@ import { MapPin, Search, X, Briefcase, Plus } from 'lucide-react';
 import { fetchContent, fetchAdminContent, createContent, MediaItem } from '../../lib/mediaApi';
 import { useUserAuth } from '../../components/context/context';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 import { COMPANY_API, LAMBDA } from '../../lib/apiConfig';
 
 interface ApplyForm { name: string; email: string; phone: string; message: string; }
@@ -258,11 +259,11 @@ export default function JobBoardPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {salaryGuide.map((g, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <ContentCard key={i}>
                 <div className="text-xl font-extrabold text-yellow-500 mb-1">{g.range}</div>
                 <div className="text-sm font-bold text-gray-900 mb-2">{g.level}</div>
                 <p className="text-xs text-gray-500 leading-relaxed">{g.desc}</p>
-              </div>
+              </ContentCard>
             ))}
           </div>
         </div>

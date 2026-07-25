@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MapPin, Calendar, Search } from 'lucide-react';
 import { EVENTS_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
+import ContentCard from '../../components/common/ContentCard';
 
 interface RawEvent {
   eventId: string;
@@ -95,26 +96,23 @@ export default function ConferencesPage() {
           <div className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {staticConferences.map(conf => (
-                <div key={conf.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
-                    <span className="text-yellow-400 text-4xl">🎤</span>
+                <ContentCard key={conf.id} imageFallback={<span className="text-yellow-400 text-4xl">🎤</span>}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded">Conference</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${conf.type === 'India' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{conf.badge}</span>
                   </div>
-                  <div className="p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded">Conference</span>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${conf.type === 'India' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{conf.badge}</span>
-                    </div>
-                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{conf.title}</h3>
-                    <p className="text-xs text-gray-500 leading-relaxed mb-3">{conf.desc}</p>
-                    <div className="space-y-1">
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{conf.title}</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{conf.desc}</p>
+                  <div className="mt-auto pt-3 border-t border-gray-100">
+                    <div className="space-y-1 mb-2">
                       <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{conf.date}</div>
                       <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{conf.location}</div>
                     </div>
-                    <div className="flex flex-wrap gap-1 mt-2">
+                    <div className="flex flex-wrap gap-1">
                       {conf.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
                     </div>
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
             <div className="bg-zinc-900 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -130,29 +128,25 @@ export default function ConferencesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map(event => (
-              <div key={event.eventId} onClick={() => {
-                let slug = event.cleanUrl || event.urlSlug || '';
-                if (slug.startsWith('http')) slug = slug.split('/').pop() || slug;
-                navigate(`/event/${slug}`);
-              }}
-                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden">
-                {getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage) ? (
-                  <img src={getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage)!} alt={event.eventName} className="w-full h-40 object-cover" />
-                ) : (
-                  <div className="w-full h-40 bg-zinc-900 flex items-center justify-center">
-                    <span className="text-yellow-400 text-4xl">🎤</span>
-                  </div>
-                )}
-                <div className="p-4">
-                  <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">Conference</span>
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2">{event.eventName}</h3>
-                  {event.shortDescription && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.shortDescription}</p>}
-                  <div className="space-y-1">
-                    {event.eventDate && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{event.eventDate}</div>}
-                    {event.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{event.location}</div>}
-                  </div>
+              <ContentCard
+                key={event.eventId}
+                image={getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage) || undefined}
+                imageAlt={event.eventName}
+                imageFallback={<span className="text-yellow-400 text-4xl">🎤</span>}
+                onClick={() => {
+                  let slug = event.cleanUrl || event.urlSlug || '';
+                  if (slug.startsWith('http')) slug = slug.split('/').pop() || slug;
+                  navigate(`/event/${slug}`);
+                }}
+              >
+                <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">Conference</span>
+                <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{event.eventName}</h3>
+                {event.shortDescription && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.shortDescription}</p>}
+                <div className="mt-auto pt-3 border-t border-gray-100 space-y-1">
+                  {event.eventDate && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{event.eventDate}</div>}
+                  {event.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{event.location}</div>}
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         )}
