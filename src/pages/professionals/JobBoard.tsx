@@ -200,53 +200,47 @@ export default function JobBoardPage() {
           {loading ? (
             <div className="text-center py-10 text-gray-400">Loading jobs...</div>
           ) : items.length > 0 ? (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredCms.map(item => (
-                <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4 border-l-4 border-l-yellow-400">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <div className="flex items-start gap-3 flex-1 min-w-0">
-                      {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-gray-100" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
-                      <div className="min-w-0">
-                        {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-1 inline-block">{item.category}</span>}
-                        <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
-                        {item.company && <p className="text-xs text-gray-500">{item.company}{item.location ? ` · ${item.location}` : ''}</p>}
-                        {item.description && <p className="text-xs text-gray-400 mt-1">{item.description}</p>}
-                      </div>
+                <ContentCard
+                  key={item.contentId}
+                  image={item.imageUrl}
+                  imageAlt={item.title}
+                  imageFallback={<Briefcase className="w-10 h-10 text-yellow-400" />}
+                  className="border-l-4 border-l-yellow-400"
+                >
+                  {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{item.title}</h3>
+                  {item.company && <p className="text-xs text-gray-500 mb-2">{item.company}{item.location ? ` · ${item.location}` : ''}</p>}
+                  {item.description && <p className="text-xs text-gray-400 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      {item.salary && <span className="text-sm font-bold text-gray-700 truncate">{item.salary}</span>}
+                      {item.platform && <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded flex-shrink-0">{item.platform}</span>}
                     </div>
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                      {item.salary && <span className="text-sm font-bold text-gray-700">{item.salary}</span>}
-                      {item.platform && <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{item.platform}</span>}
-                      <button onClick={() => openApply(item)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Apply →</button>
-                    </div>
+                    <button onClick={() => openApply(item)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex-shrink-0">Apply →</button>
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredStatic.map((job, i) => (
-                <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4 border-l-4 border-l-yellow-400">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <div className="w-10 h-10 bg-zinc-100 rounded-lg flex items-center justify-center text-lg flex-shrink-0">{job.icon}</div>
-                      <div className="min-w-0">
-                        <div className="flex flex-wrap gap-1.5 mb-1">
-                          <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">{job.category}</span>
-                          <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{job.type}</span>
-                        </div>
-                        <h3 className="text-sm font-bold text-gray-900">{job.title}</h3>
-                        <p className="text-xs text-gray-500">{job.company}</p>
-                        <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
-                          <MapPin className="w-3 h-3 flex-shrink-0" />{job.location}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                      <span className="text-sm font-bold text-gray-700">{job.salary}</span>
-                      <a href="mailto:bd@dronetv.in?subject=Job Application" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Apply →</a>
-                    </div>
+                <ContentCard key={i} imageFallback={<span className="text-4xl">{job.icon}</span>} className="border-l-4 border-l-yellow-400">
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">{job.category}</span>
+                    <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{job.type}</span>
                   </div>
-                </div>
+                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{job.title}</h3>
+                  <p className="text-xs text-gray-500 mb-2">{job.company}</p>
+                  <div className="flex items-center gap-1 text-xs text-gray-400">
+                    <MapPin className="w-3 h-3 flex-shrink-0" />{job.location}
+                  </div>
+                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                    <span className="text-sm font-bold text-gray-700">{job.salary}</span>
+                    <a href="mailto:bd@dronetv.in?subject=Job Application" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Apply →</a>
+                  </div>
+                </ContentCard>
               ))}
             </div>
           )}

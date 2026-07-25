@@ -136,18 +136,18 @@ export default function IndustryReportsPage() {
             </div>
           </>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {staticReports.map(report => (
-              <div key={report.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
-                <div className="flex items-start gap-4 mb-3">
+              <ContentCard key={report.id}>
+                <div className="flex items-start gap-3 mb-3">
                   <div className={`w-10 h-10 rounded-xl ${report.iconColor} flex items-center justify-center text-xl flex-shrink-0`}>{report.icon}</div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <p className="text-xs text-gray-400 font-semibold mb-0.5">{report.publisher}</p>
-                    <h3 className="font-bold text-gray-900 text-base leading-snug mb-0.5">{report.title}</h3>
+                    <h3 className="font-bold text-gray-900 text-base leading-snug mb-0.5 line-clamp-2">{report.title}</h3>
                     <p className="text-xs text-gray-400">{report.date}</p>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4">{report.desc}</p>
+                <p className="text-sm text-gray-600 leading-relaxed mb-4 line-clamp-3">{report.desc}</p>
                 <div className="flex gap-4 mb-4">
                   {report.highlights.map((h, i) => (
                     <div key={i} className="text-center">
@@ -156,17 +156,17 @@ export default function IndustryReportsPage() {
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400">{report.access}</span>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${report.badgeColor}`}>{report.badge}</span>
+                <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-xs text-gray-400 truncate">{report.access}</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded flex-shrink-0 ${report.badgeColor}`}>{report.badge}</span>
                   </div>
                   <a href={report.link} target={report.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
-                    className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                    className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1 flex-shrink-0">
                     {report.linkLabel} {report.link.startsWith('http') && <ExternalLink className="w-3 h-3" />}
                   </a>
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         )}

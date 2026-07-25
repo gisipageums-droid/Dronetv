@@ -18,8 +18,8 @@ function VideoCard({ item }: { item: MediaItem }) {
   const thumb = item.imageUrl || (item.videoUrl ? getYoutubeThumbnail(item.videoUrl) : null);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-      <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+    <div className="flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      <div className="relative w-full flex-shrink-0" style={{ paddingTop: '56.25%' }}>
         {playing && embedUrl ? (
           <iframe
             src={`${embedUrl}?autoplay=1`}
@@ -55,15 +55,15 @@ function VideoCard({ item }: { item: MediaItem }) {
           </div>
         )}
       </div>
-      <div className="p-4">
+      <div className="p-4 flex-1 flex flex-col">
         {item.category && (
-          <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{item.category}</span>
+          <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>
         )}
-        <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1">{item.title}</h3>
-        {item.description && <p className="text-xs text-gray-500 mb-3">{item.description}</p>}
+        <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{item.title}</h3>
+        {item.description && <p className="text-xs text-gray-500 mb-3 line-clamp-3">{item.description}</p>}
         {item.externalLink && (
           <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
-            className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors">
+            className="mt-auto pt-2 text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors">
             Watch on YouTube →
           </a>
         )}
@@ -137,20 +137,20 @@ export default function VideoSpotlightPage() {
               <p className="text-sm text-gray-500">Drone Expo 2025 — Mumbai Interviews <span className="font-bold text-yellow-600">40+ Videos</span></p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {staticVideos.map(v => (
-                  <div key={v.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                    <div className="bg-zinc-900 aspect-video flex items-center justify-center relative">
+                  <div key={v.id} className="flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <div className="bg-zinc-900 aspect-video flex items-center justify-center relative flex-shrink-0">
                       <span className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">{v.ep}</span>
                       <a href={v.link} target="_blank" rel="noopener noreferrer"
                         className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center hover:bg-yellow-300 transition-colors">
                         <svg className="w-5 h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                       </a>
                     </div>
-                    <div className="p-4">
-                      <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">{v.tag}</span>
-                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1">{v.title}</h3>
+                    <div className="p-4 flex-1 flex flex-col">
+                      <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{v.tag}</span>
+                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{v.title}</h3>
                       <p className="text-xs text-gray-500">{v.person} — {v.company}</p>
                       <a href={v.link} target="_blank" rel="noopener noreferrer"
-                        className="mt-3 text-xs font-bold text-yellow-600 hover:text-yellow-700 block">
+                        className="mt-auto pt-2 text-xs font-bold text-yellow-600 hover:text-yellow-700 block">
                         Watch on YouTube →
                       </a>
                     </div>

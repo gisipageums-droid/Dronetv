@@ -57,27 +57,27 @@ export default function EventOrganizersPage() {
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Partners</span>
             Current Media Partnerships
           </h2>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {confirmedPartners.map((partner, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
-                <div className="flex items-start gap-4 mb-3">
+              <ContentCard key={i}>
+                <div className="flex items-start gap-3 mb-3">
                   <div className="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">{partner.icon}</div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-gray-900 text-base mb-0.5">{partner.name}</h3>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-gray-900 text-base mb-0.5 leading-snug">{partner.name}</h3>
                     <p className="text-xs text-gray-400">{partner.hq}</p>
                   </div>
-                  <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded flex-shrink-0">{partner.type}</span>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed mb-3">{partner.desc}</p>
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded self-start mb-3 inline-block">{partner.type}</span>
+                <p className="text-sm text-gray-600 leading-relaxed mb-3 line-clamp-4">{partner.desc}</p>
+                <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
                   <div className="flex gap-2 flex-wrap">
                     {partner.tags.map(tag => (
                       <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{tag}</span>
                     ))}
                   </div>
-                  <a href={partner.link} className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Expo Details →</a>
+                  <a href={partner.link} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">Expo Details →</a>
                 </div>
-              </div>
+              </ContentCard>
             ))}
           </div>
         </div>
