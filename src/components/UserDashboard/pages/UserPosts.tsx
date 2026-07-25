@@ -348,7 +348,7 @@ const UserPosts: React.FC = () => {
               placeholder="Title"
               value={title}
               onChange={e => setTitle(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-3 focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
             />
             <textarea
               placeholder={currentCt.placeholder}
@@ -356,7 +356,7 @@ const UserPosts: React.FC = () => {
               onChange={e => setContent(e.target.value)}
               maxLength={currentCt.maxChars}
               rows={5}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm resize-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm resize-none text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
             />
             <div className="flex items-center justify-between mt-1 mb-4">
               <span className="text-xs text-gray-400">{content.length}/{currentCt.maxChars} characters</span>

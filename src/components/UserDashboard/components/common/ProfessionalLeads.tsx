@@ -37,6 +37,8 @@ const ProfessionalLeads: React.FC = () => {
 
   const [leads, setLeads] = useState<Lead[]>([]);
   const [totalTokens, setTotalTokens] = useState(0);
+  const [packageType, setPackageType] = useState("");
+  const hasFreeLeads = packageType === "brand";
   const [showTokenModal, setShowTokenModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -60,6 +62,7 @@ const ProfessionalLeads: React.FC = () => {
       );
       const data = await res.json();
       setTotalTokens(data.profile?.tokenBalance || 0);
+      setPackageType((data.profile?.packageType || "").toLowerCase());
     } catch (error) {
     }
   }, [userId]);
@@ -113,7 +116,7 @@ const ProfessionalLeads: React.FC = () => {
 
   // handle view lead click to cut 10 token
   const handleViewClick = async (leadId: string) => {
-    if (totalTokens < 10) {
+    if (!hasFreeLeads && totalTokens < 10) {
       setShowTokenModal(true);
       return;
     }
@@ -458,7 +461,7 @@ const ProfessionalLeads: React.FC = () => {
                             onClick={() => handleViewClick(lead.leadId)}
                             className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm flex items-center"
                           >
-                            <Eye size={14} className="mr-2" /> View (10 tokens)
+                            <Eye size={14} className="mr-2" /> {hasFreeLeads ? "View (Free)" : "View (10 tokens)"}
                           </button>
                         )}
                       </td>

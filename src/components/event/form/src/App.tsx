@@ -1838,8 +1838,26 @@ function EventsForm() {
   const [formLoader, setFormLoader] = useState(true);
   const submissionResultRef = useRef<any>(null);
 
+  // Router state (location.state) doesn't survive a page refresh — persist the
+  // selected event type/template to sessionStorage so a mid-form refresh doesn't
+  // silently fall back to the wrong event category.
+  const persistedEventType = (() => {
+    if (location.state?.eventType) {
+      try { sessionStorage.setItem("eventFormType", location.state.eventType); } catch {}
+      return location.state.eventType;
+    }
+    try { return sessionStorage.getItem("eventFormType") || undefined; } catch { return undefined; }
+  })();
+  const persistedTemplateId = (() => {
+    if (location.state?.templateId) {
+      try { sessionStorage.setItem("eventFormTemplateId", String(location.state.templateId)); } catch {}
+      return location.state.templateId;
+    }
+    try { return sessionStorage.getItem("eventFormTemplateId") || undefined; } catch { return undefined; }
+  })();
+
   const eventTypeLabel = (() => {
-    const t = location.state?.eventType;
+    const t = persistedEventType;
     if (t === "expo") return "Expo";
     if (t === "conference") return "Conference";
     if (t === "workshop") return "Workshop";
@@ -2022,9 +2040,9 @@ function EventsForm() {
         processingMethod: "separate_upload",
         status: "ai_processing",
         updatedAt: Date.now(),
-        templateSelection: location.state?.templateId,
+        templateSelection: persistedTemplateId,
         version: "1.0",
-        eventType: location.state?.eventType || "conference",
+        eventType: persistedEventType || "conference",
       };
 
 
