@@ -1667,7 +1667,7 @@
 
 
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fetchFormStructure, submitForm } from "./api/formApi";
 import { Step1 } from "./components/steps/Step1";
@@ -1836,6 +1836,28 @@ function EventsForm() {
 
   const navigate = useNavigate();
   const [formLoader, setFormLoader] = useState(true);
+  const submissionResultRef = useRef<any>(null);
+
+  const eventTypeLabel = (() => {
+    const t = location.state?.eventType;
+    if (t === "expo") return "Expo";
+    if (t === "conference") return "Conference";
+    if (t === "workshop") return "Workshop";
+    return "Event";
+  })();
+
+  // The AI generation Lambda is triggered fire-and-forget on submit and takes
+  // a while to finish, so we can't navigate to the generated page immediately.
+  // Kept as a single timer owned by the Loader itself (instead of a second,
+  // uncoordinated setTimeout) so the progress UI and the actual navigation
+  // always finish together rather than the screen going blank mid-animation.
+  const handleLoaderComplete = useCallback(() => {
+    setLoading(false);
+    const response = submissionResultRef.current;
+    if (response) {
+      navigate(`/edit/event/${response.details?.templateSelection == 1 ? "t1" : "t2"}/AIgen/${response.draftId}/${response.userId}`);
+    }
+  }, [navigate]);
 
   // Load form structure and prefill data if editing
   useEffect(() => {
@@ -2021,6 +2043,7 @@ function EventsForm() {
       }
 
       setSuccess(true);
+      submissionResultRef.current = response;
 
       // Clear localStorage draft after successful submission
       try {
@@ -2029,17 +2052,12 @@ function EventsForm() {
         console.error("Failed to clear local draft after submit", e);
       }
 
-      setTimeout(() => setLoading(false), 30000);
-
-      // Navigate to event preview/edit page
-      setTimeout(() => {
-        // navigate(`/event/edit/${finalSubmissionId}/${emil}`);
-        navigate(`/edit/event/${response.details.templateSelection == 1 ? "t1" : "t2"}/AIgen/${response.draftId}/${response.userId}`);
-      }, 30000);
+      // Navigation happens from the Loader's onComplete once its progress
+      // animation finishes — see handleLoaderComplete.
     } catch (err) {
       console.error(err);
       setLoading(false);
-      alert("Event submission failed");
+      toast.error("Event submission failed. Please try again.");
     }
   };
 
@@ -2072,17 +2090,17 @@ function EventsForm() {
           <div>
             <h1 className="text-xl font-bold text-black">EventPro</h1>
             <p className="text-sm text-gray-800">
-              AI-Powered Event Website Generator
+              AI-Powered {eventTypeLabel} Website Generator
             </p>
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-700">Conferences • Seminars • Exhibitions</p>
-            <p className="text-xs text-gray-600">Create stunning event websites instantly</p>
+            <p className="text-xs text-gray-600">Create stunning {eventTypeLabel.toLowerCase()} websites instantly</p>
           </div>
         </div>
       </div>
 
-      {loading && <Loader />}
+      {loading && <Loader duration={30000} onComplete={handleLoaderComplete} />}
 
       <div className="bg-yellow-100 w-full py-4 ">
         <div className="bg-yellow-100 max-w-4xl mx-auto px-4">
@@ -2181,7 +2199,7 @@ function EventsForm() {
               onClick={handleSubmit}
               className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded"
             >
-              Create Event Website
+              Create {eventTypeLabel} Website
             </button>
           )}
         </div>
