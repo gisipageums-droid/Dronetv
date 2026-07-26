@@ -1,11 +1,31 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MapPin, Search, X, Briefcase, Plus } from 'lucide-react';
 import { fetchContent, fetchAdminContent, createContent, MediaItem } from '../../lib/mediaApi';
 import { useUserAuth } from '../../components/context/context';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import AdSlot from '../../components/common/AdSlot';
 import { COMPANY_API, LAMBDA } from '../../lib/apiConfig';
+
+// Category that currently has an exclusive Zone 6 sponsor badge (see ad placement plan in memory)
+const SPONSORED_CATEGORY = 'Agriculture';
+
+// Zone 3: inserts a full-width inline ad card after every 3rd job card in a grid
+function withInlineAds<T>(arr: T[], render: (item: T, i: number) => ReactNode): ReactNode[] {
+  const out: ReactNode[] = [];
+  arr.forEach((item, i) => {
+    out.push(render(item, i));
+    if ((i + 1) % 3 === 0 && i !== arr.length - 1) {
+      out.push(
+        <div key={`ad-${i}`} className="col-span-full">
+          <AdSlot height={100} className="w-full" />
+        </div>
+      );
+    }
+  });
+  return out;
+}
 
 interface ApplyForm { name: string; email: string; phone: string; message: string; }
 interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; imageUrl: string; applicationDeadline: string; }
@@ -32,6 +52,7 @@ const salaryGuide = [
 const allCategories = ['All', 'Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence'];
 
 export default function JobBoardPage() {
+  const [adStripDismissed, setAdStripDismissed] = useState(false);
   const { user } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || '';
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -184,14 +205,20 @@ export default function JobBoardPage() {
         <div className="flex gap-2 flex-wrap">
           {categories.map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
+              className={`relative px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
               {cat}
+              {cat === SPONSORED_CATEGORY && (
+                <span className="absolute -top-2 -right-1 bg-white text-red-600 border border-red-600 text-[8px] font-bold px-1 rounded leading-tight">
+                  Sponsored
+                </span>
+              )}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-12 space-y-8">
+      <div className="max-w-6xl mx-auto px-6 mb-8 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0 space-y-8">
         <div>
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Open</span>
@@ -201,7 +228,7 @@ export default function JobBoardPage() {
             <div className="text-center py-10 text-gray-400">Loading jobs...</div>
           ) : items.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredCms.map(item => (
+              {withInlineAds(filteredCms, item => (
                 <ContentCard
                   key={item.contentId}
                   image={item.imageUrl}
@@ -225,7 +252,7 @@ export default function JobBoardPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredStatic.map((job, i) => (
+              {withInlineAds(filteredStatic, (job, i) => (
                 <ContentCard key={i} imageFallback={<span className="text-4xl">{job.icon}</span>} className="border-l-4 border-l-yellow-400">
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">{job.category}</span>
@@ -246,6 +273,9 @@ export default function JobBoardPage() {
           )}
         </div>
 
+        {/* Zone 4: Job Detail Panel Ad — real page has no separate job-detail view, so this sits right after the primary listings content instead */}
+        <AdSlot height={90} className="w-full" />
+
         <div>
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Salary</span>
@@ -261,7 +291,20 @@ export default function JobBoardPage() {
             ))}
           </div>
         </div>
+        </div>
 
+        {/* Zone 2A/2B: sidebar ad rail — hidden below lg so it never disturbs the mobile/tablet single-column layout */}
+        <aside className="hidden lg:flex lg:flex-col lg:w-[300px] lg:flex-shrink-0 gap-4">
+          <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
+          <AdSlot width={300} height={250} />
+          <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
+          <AdSlot width={300} height={600} />
+          <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
+          <AdSlot width={300} height={250} />
+        </aside>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 pb-12 space-y-8">
         {myJobs.length > 0 && (
           <div>
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-4 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
@@ -485,6 +528,22 @@ export default function JobBoardPage() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Zone 5: Bottom Sticky Strip — fixed overlay, doesn't affect page layout/flow */}
+      {!adStripDismissed && (
+        <div className="fixed bottom-0 left-0 right-0 z-[9999998] border-t-2 border-yellow-400 bg-white/95 backdrop-blur-sm">
+          <div className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-4">
+            <AdSlot height={64} className="flex-1 min-w-0" />
+            <button
+              onClick={() => setAdStripDismissed(true)}
+              aria-label="Close advertisement"
+              className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-900 text-white flex items-center justify-center hover:bg-gray-700 transition-colors"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
       )}
