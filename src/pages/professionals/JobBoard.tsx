@@ -11,11 +11,10 @@ import { COMPANY_API, LAMBDA } from '../../lib/apiConfig';
 // Category that currently has an exclusive Zone 6 sponsor badge (see ad placement plan in memory)
 const SPONSORED_CATEGORY = 'Agriculture';
 
-// Sample dummy ad creatives (drone-related + expo-related) — built as inline CSS/SVG
-// graphics rather than downloaded stock images, so there's no copyright/licensing
-// question and no external file to review before shipping. Just fills 2 of the
-// zones so the placement plan doesn't look like empty boxes; the rest stay as
-// plain "Advertise Here" placeholders until real ads are sold.
+// Sample dummy ad creatives — built as inline CSS/emoji graphics rather than
+// downloaded stock images, so there's no copyright/licensing question and no
+// external file to review before shipping. Every zone gets one of these so
+// nothing on the page reads as an obviously-empty placeholder box.
 const DroneAdCreative = () => (
   <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-black flex flex-col items-center justify-center text-center p-4 gap-1">
     <span className="text-4xl">🚁</span>
@@ -36,9 +35,30 @@ const ExpoAdCreative = () => (
   </div>
 );
 
-// Zone 3: inserts a full-width inline ad card after every 3rd job card in a grid.
-// Only the first inline slot gets the sample drone creative — the rest stay blank
-// placeholders, matching the "just 2 sample ads" scope.
+// Thin horizontal banner — fits the 90/64px strip zones (Zone 4, Zone 5)
+const TrainingAdCreative = () => (
+  <div className="w-full h-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 flex items-center justify-center gap-3 px-4">
+    <span className="text-2xl flex-shrink-0">🎓</span>
+    <div className="text-center min-w-0">
+      <span className="block text-white font-extrabold text-sm truncate">DGCA RPTO Certification — Enroll Today</span>
+      <span className="block text-white/70 text-[11px] truncate">5-day Small Category course · Job placement support</span>
+    </div>
+    <span className="bg-yellow-400 text-black text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">Enroll →</span>
+  </div>
+);
+
+// Tall vertical creative — fits the 300x600 premium sidebar slot
+const PartnerAdCreative = () => (
+  <div className="w-full h-full bg-gradient-to-b from-amber-500 via-yellow-400 to-amber-500 flex flex-col items-center justify-center text-center p-5 gap-2">
+    <span className="text-5xl">🤝</span>
+    <span className="text-black font-extrabold text-base leading-snug">Partner With DroneTv.in</span>
+    <span className="text-black/70 text-xs leading-relaxed">Reach 39,890+ certified drone pilots and 500+ verified companies across India</span>
+    <span className="mt-2 bg-black text-yellow-400 text-xs font-bold px-4 py-2 rounded-full">Get Started →</span>
+  </div>
+);
+
+// Zone 3: inserts a full-width inline ad card after every 3rd job card in a grid,
+// alternating between the two sample creatives so repeated slots don't look identical.
 function withInlineAds<T>(arr: T[], render: (item: T, i: number) => ReactNode): ReactNode[] {
   const out: ReactNode[] = [];
   let adCount = 0;
@@ -49,7 +69,7 @@ function withInlineAds<T>(arr: T[], render: (item: T, i: number) => ReactNode): 
       out.push(
         <div key={`ad-${i}`} className="col-span-full">
           <AdSlot height={100} className="w-full">
-            {adCount === 1 ? <DroneAdCreative /> : undefined}
+            {adCount % 2 === 1 ? <DroneAdCreative /> : <ExpoAdCreative />}
           </AdSlot>
         </div>
       );
@@ -305,7 +325,7 @@ export default function JobBoardPage() {
         </div>
 
         {/* Zone 4: Job Detail Panel Ad — real page has no separate job-detail view, so this sits right after the primary listings content instead */}
-        <AdSlot height={90} className="w-full" />
+        <AdSlot height={90} className="w-full"><TrainingAdCreative /></AdSlot>
 
         <div>
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
@@ -329,9 +349,9 @@ export default function JobBoardPage() {
           <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
           <AdSlot width={300} height={250}><ExpoAdCreative /></AdSlot>
           <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
-          <AdSlot width={300} height={600} />
+          <AdSlot width={300} height={600}><PartnerAdCreative /></AdSlot>
           <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
-          <AdSlot width={300} height={250} />
+          <AdSlot width={300} height={250}><DroneAdCreative /></AdSlot>
         </aside>
       </div>
 
@@ -567,7 +587,7 @@ export default function JobBoardPage() {
       {!adStripDismissed && (
         <div className="fixed bottom-0 left-0 right-0 z-[9999998] border-t-2 border-yellow-400 bg-white/95 backdrop-blur-sm">
           <div className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-4">
-            <AdSlot height={64} className="flex-1 min-w-0" />
+            <AdSlot height={64} className="flex-1 min-w-0"><ExpoAdCreative /></AdSlot>
             <button
               onClick={() => setAdStripDismissed(true)}
               aria-label="Close advertisement"
