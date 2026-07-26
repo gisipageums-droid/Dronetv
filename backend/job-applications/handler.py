@@ -7,7 +7,7 @@ from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
 table = dynamodb.Table('dronetv-job-applications')
-s3 = boto3.client('s3', region_name='ap-south-1')
+s3 = boto3.client('s3', region_name='ap-south-1', endpoint_url='https://s3.ap-south-1.amazonaws.com')
 RESUME_BUCKET = 'dronetv-job-applications-store'
 
 CORS = {
