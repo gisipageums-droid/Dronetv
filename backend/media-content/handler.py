@@ -23,7 +23,6 @@ VALID_TYPES = {
     'education-partner', 'industry-player',
     'gallery', 'community', 'networking',
     'user-content',
-    'portfolio', 'career-path',
 }
 
 
