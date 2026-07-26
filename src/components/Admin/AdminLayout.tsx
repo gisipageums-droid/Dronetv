@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useUserAuth } from "../context/context";
 import {
   LayoutDashboard,
   Building2,
@@ -277,6 +278,15 @@ function computeBreadcrumb(groupId: string, pathname: string): string {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { admin } = useUserAuth();
+  const adminDisplayName = admin?.adminData?.userName || admin?.name || "Admin";
+  const adminDisplayRole = admin?.adminData?.role || "Admin";
+  const adminInitials = adminDisplayName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(w => w[0]?.toUpperCase())
+    .join("") || "A";
 
   // Which group the current route belongs to
   const currentGroupId = computeGroupId(location.pathname, location.search);
@@ -480,11 +490,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-shrink-0 border-t border-white/10 p-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-[11px] font-black text-black flex-shrink-0">
-            DR
+            {adminInitials}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold text-white truncate">Dev R</div>
-            <div className="text-[10px] text-white/40">Super Admin</div>
+            <div className="text-sm font-semibold text-white truncate">{adminDisplayName}</div>
+            <div className="text-[10px] text-white/40">{adminDisplayRole}</div>
           </div>
           <button
             onClick={handleLogout}
@@ -597,17 +607,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-yellow-300 transition-colors"
               >
                 <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-[10px] font-black text-yellow-400">
-                  DR
+                  {adminInitials}
                 </div>
-                <span className="hidden sm:block text-xs font-bold text-black">Dev R</span>
+                <span className="hidden sm:block text-xs font-bold text-black">{adminDisplayName}</span>
                 <ChevronDown size={13} className={`text-black hidden sm:block transition-transform ${userOpen ? "rotate-180" : ""}`} />
               </button>
 
               {userOpen && (
                 <div className="absolute right-0 top-full mt-2 w-44 bg-white rounded-xl border border-gray-200 shadow-xl z-50 overflow-hidden">
                   <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="font-bold text-sm text-gray-900">Dev R</p>
-                    <p className="text-xs text-gray-500">Super Admin</p>
+                    <p className="font-bold text-sm text-gray-900">{adminDisplayName}</p>
+                    <p className="text-xs text-gray-500">{adminDisplayRole}</p>
                   </div>
                   <button
                     onClick={handleLogout}
