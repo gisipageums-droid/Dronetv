@@ -11,15 +11,46 @@ import { COMPANY_API, LAMBDA } from '../../lib/apiConfig';
 // Category that currently has an exclusive Zone 6 sponsor badge (see ad placement plan in memory)
 const SPONSORED_CATEGORY = 'Agriculture';
 
-// Zone 3: inserts a full-width inline ad card after every 3rd job card in a grid
+// Sample dummy ad creatives (drone-related + expo-related) — built as inline CSS/SVG
+// graphics rather than downloaded stock images, so there's no copyright/licensing
+// question and no external file to review before shipping. Just fills 2 of the
+// zones so the placement plan doesn't look like empty boxes; the rest stay as
+// plain "Advertise Here" placeholders until real ads are sold.
+const DroneAdCreative = () => (
+  <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-black flex flex-col items-center justify-center text-center p-4 gap-1">
+    <span className="text-4xl">🚁</span>
+    <span className="text-yellow-400 font-extrabold text-sm">DroneTech Pro Series</span>
+    <span className="text-white/60 text-[11px]">Precision UAVs for Agriculture &amp; Survey</span>
+    <span className="mt-1 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded-full">Shop Now →</span>
+  </div>
+);
+
+const ExpoAdCreative = () => (
+  <div className="w-full h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 flex items-center justify-center gap-3 px-4">
+    <span className="text-2xl flex-shrink-0">🏛️</span>
+    <div className="text-center min-w-0">
+      <span className="block text-black font-extrabold text-sm truncate">Drone Expo 2026 — Bengaluru</span>
+      <span className="block text-black/70 text-[11px] truncate">Register now — Early Bird Pricing Ends Soon</span>
+    </div>
+    <span className="bg-black text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">Register →</span>
+  </div>
+);
+
+// Zone 3: inserts a full-width inline ad card after every 3rd job card in a grid.
+// Only the first inline slot gets the sample drone creative — the rest stay blank
+// placeholders, matching the "just 2 sample ads" scope.
 function withInlineAds<T>(arr: T[], render: (item: T, i: number) => ReactNode): ReactNode[] {
   const out: ReactNode[] = [];
+  let adCount = 0;
   arr.forEach((item, i) => {
     out.push(render(item, i));
     if ((i + 1) % 3 === 0 && i !== arr.length - 1) {
+      adCount++;
       out.push(
         <div key={`ad-${i}`} className="col-span-full">
-          <AdSlot height={100} className="w-full" />
+          <AdSlot height={100} className="w-full">
+            {adCount === 1 ? <DroneAdCreative /> : undefined}
+          </AdSlot>
         </div>
       );
     }
@@ -296,7 +327,7 @@ export default function JobBoardPage() {
         {/* Zone 2A/2B: sidebar ad rail — hidden below lg so it never disturbs the mobile/tablet single-column layout */}
         <aside className="hidden lg:flex lg:flex-col lg:w-[300px] lg:flex-shrink-0 gap-4">
           <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
-          <AdSlot width={300} height={250} />
+          <AdSlot width={300} height={250}><ExpoAdCreative /></AdSlot>
           <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
           <AdSlot width={300} height={600} />
           <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
