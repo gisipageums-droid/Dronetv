@@ -36,6 +36,8 @@ const PROFESSIONALS_TYPES: { value: ContentType; label: string }[] = [
   { value: 'job', label: 'Job Listing' },
   { value: 'training', label: 'Training Program' },
   { value: 'certification', label: 'Certification' },
+  { value: 'portfolio', label: 'Portfolio' },
+  { value: 'career-path', label: 'Career Path' },
   { value: 'networking', label: 'Networking' },
   { value: 'community', label: 'Community' },
 ];

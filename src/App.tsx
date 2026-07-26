@@ -121,6 +121,7 @@ import ActiveCampaigns from "./components/UserDashboard/pages/ActiveCampaigns";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
 import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
+import AdminJobBoardDashboard from "./components/Admin/jobBoardAdmin/AdminJobBoardDashboard";
 import AdminLayout from "./components/Admin/AdminLayout";
 import AdminTokenEconomy from "./components/Admin/AdminTokenEconomy";
 import AdminInvoicesPage from "./pages/admin/AdminInvoicesPage";
@@ -414,6 +415,13 @@ const AppContent = () => {
             <AdminProtectedRoute>
               <AdminLayout>
                 <AdminMediaDashboard />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+
+          <Route path="/admin/jobboard/dashboard" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminJobBoardDashboard />
               </AdminLayout>
             </AdminProtectedRoute>} />
 

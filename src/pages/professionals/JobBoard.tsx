@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { MapPin, Search, X, Briefcase, Plus } from 'lucide-react';
+import { MapPin, Search, X, Briefcase, Plus, Paperclip } from 'lucide-react';
 import { fetchContent, fetchAdminContent, createContent, MediaItem } from '../../lib/mediaApi';
+import { submitApplication, uploadResumeFile } from '../../lib/jobApplicationsApi';
 import { useUserAuth } from '../../components/context/context';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
@@ -78,7 +79,7 @@ function withInlineAds<T>(arr: T[], render: (item: T, i: number) => ReactNode): 
   return out;
 }
 
-interface ApplyForm { name: string; email: string; phone: string; message: string; }
+interface ApplyForm { name: string; email: string; phone: string; message: string; resume: File | null; }
 interface PostJobForm { title: string; company: string; location: string; salary: string; category: string; jobType: string; description: string; imageUrl: string; applicationDeadline: string; }
 const EMPTY_POST: PostJobForm = { title: '', company: '', location: '', salary: '', category: '', jobType: 'Full-Time', description: '', imageUrl: '', applicationDeadline: '' };
 const JOB_CATEGORIES = ['Agriculture', 'Survey & GIS', 'Inspection', 'Cinematography', 'Instructor', 'Defence', 'Manufacturing', 'R&D', 'Operations'];
@@ -111,7 +112,7 @@ export default function JobBoardPage() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [applyModal, setApplyModal] = useState<{ open: boolean; item: MediaItem | null }>({ open: false, item: null });
-  const [applyForm, setApplyForm] = useState<ApplyForm>({ name: '', email: '', phone: '', message: '' });
+  const [applyForm, setApplyForm] = useState<ApplyForm>({ name: '', email: '', phone: '', message: '', resume: null });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
@@ -153,7 +154,7 @@ export default function JobBoardPage() {
 
   const openApply = (item: MediaItem) => {
     setApplyModal({ open: true, item });
-    setApplyForm({ name: '', email: '', phone: '', message: '' });
+    setApplyForm({ name: '', email: '', phone: '', message: '', resume: null });
     setSubmitted(false);
     setSubmitError(false);
   };
@@ -162,18 +163,23 @@ export default function JobBoardPage() {
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!applyModal.item?.contentId) return;
     setSubmitting(true);
     setSubmitError(false);
     try {
-      await createContent({
-        contentType: 'job',
-        title: `[Application] ${applyModal.item?.title ?? 'Job Application'}`,
-        description: applyForm.message,
-        company: applyForm.name,
-        source: applyForm.email,
-        author: applyForm.phone,
-        category: applyModal.item?.company ?? '',
-        isPublished: false,
+      let resumeKey = '';
+      if (applyForm.resume) {
+        resumeKey = await uploadResumeFile(applyForm.resume);
+      }
+      await submitApplication({
+        jobId: applyModal.item.contentId,
+        jobTitle: applyModal.item.title,
+        company: applyModal.item.company || '',
+        fullName: applyForm.name,
+        email: applyForm.email,
+        phone: applyForm.phone,
+        professionalSummary: applyForm.message,
+        resumeKey,
       });
       setSubmitted(true);
     } catch {
@@ -557,6 +563,15 @@ export default function JobBoardPage() {
                       <textarea rows={3} value={applyForm.message} onChange={e => setApplyForm(f => ({ ...f, message: e.target.value }))}
                         placeholder="Tell us briefly about your experience..."
                         className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">Resume <span className="text-gray-400 font-normal">(optional, PDF)</span></label>
+                      <label className="flex items-center gap-2 px-3 py-2.5 border border-dashed border-gray-300 rounded-lg text-sm text-gray-500 cursor-pointer hover:border-yellow-400">
+                        <Paperclip className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{applyForm.resume ? applyForm.resume.name : 'Upload your resume'}</span>
+                        <input type="file" accept=".pdf,.doc,.docx" className="hidden"
+                          onChange={e => setApplyForm(f => ({ ...f, resume: e.target.files?.[0] || null }))} />
+                      </label>
                     </div>
                     {submitError && (
                       <p className="text-xs text-red-600 font-medium">

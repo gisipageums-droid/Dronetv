@@ -21,6 +21,9 @@ VALID_TYPES = {
     'job', 'training', 'certification',
     'manufacturer', 'ai-company', 'event-organizer',
     'education-partner', 'industry-player',
+    'gallery', 'community', 'networking',
+    'user-content',
+    'portfolio', 'career-path',
 }
 
 
@@ -108,6 +111,10 @@ def handler(event, context):
             'company': body.get('company', ''),
             'platform': body.get('platform', ''),
             'readTime': body.get('readTime', ''),
+            'userId': body.get('userId', ''),
+            'postType': body.get('postType', ''),
+            'status': body.get('status', 'submitted'),
+            'featured': body.get('featured', False),
             'isPublished': body.get('isPublished', False),
             'publishedAt': now if body.get('isPublished') else '',
             'createdAt': now,

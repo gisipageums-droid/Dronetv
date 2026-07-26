@@ -33,6 +33,7 @@ export type ContentType =
   | 'gallery'
   | 'competition' | 'webinar' | 'meetup'
   | 'job' | 'training' | 'certification' | 'networking' | 'community'
+  | 'portfolio' | 'career-path'
   | 'applications' | 'manufacturer' | 'ai-company' | 'event-organizer'
   | 'education-partner' | 'industry-player';
 

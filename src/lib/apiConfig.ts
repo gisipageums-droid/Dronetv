@@ -140,4 +140,12 @@ export const LAMBDA = {
   webbuilderGet:      'https://80lbhj32ja.execute-api.ap-south-1.amazonaws.com/singlecompany',
   webbuilderPortfolio:'https://ginc7xsgw8.execute-api.ap-south-1.amazonaws.com/portfolio',
   webbuilderS3Presign:'https://oljot50ikk.execute-api.ap-south-1.amazonaws.com/presign-upload',
+
+  // Job Board ATS — applications/candidates
+  jobApplications: 'https://kx8od78c4c.execute-api.ap-south-1.amazonaws.com/prod',
 };
+
+// Job Board ATS (applications) service
+export const JOB_APPLICATIONS_API = BACKEND
+  ? `${BACKEND}/api/v1/job-applications`
+  : null;
