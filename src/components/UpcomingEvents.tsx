@@ -43,6 +43,18 @@ const staticEvents: EventCard[] = [
   },
 ];
 
+// event.date comes as "YYYY-MM-DD to YYYY-MM-DD" — an event is ended once its
+// end date has fully passed. Unparseable dates are kept (can't confirm ended).
+function isEventEnded(dateStr: string): boolean {
+  if (!dateStr) return false;
+  const parts = dateStr.split(' to ').map((s) => s.trim());
+  const endStr = parts[1] || parts[0];
+  const endDate = new Date(endStr);
+  if (isNaN(endDate.getTime())) return false;
+  endDate.setHours(23, 59, 59, 999);
+  return endDate.getTime() < Date.now();
+}
+
 const UpcomingEvents = () => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const navigate = useNavigate();
@@ -78,8 +90,8 @@ const UpcomingEvents = () => {
             urlSlug: card.urlSlug,
           }));
 
-          // 🟡 Ab state me API se aaya data set kar rahe
-          setEvents(apiEvents);
+          // 🟡 Ab state me API se aaya data set kar rahe (ended events hide out)
+          setEvents(apiEvents.filter((e) => !isEventEnded(e.date)));
         }
       })
       .catch((err) => {
