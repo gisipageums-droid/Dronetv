@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const samplePilots = [
   { icon: '👨‍✈️', name: 'Rajesh K.', badge: 'RPC — Small & Medium Category', location: 'Hyderabad, Telangana', categories: ['Agriculture', 'GIS Mapping'], experience: '4 Years | 800+ Hours', tags: ['Agriculture Spraying', 'NDVI Mapping', 'AP Missions'] },
@@ -103,7 +104,8 @@ export default function PilotDirectoryPage() {
         )}
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-12">
+      <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Certified</span>
           Drone Pilots
@@ -123,7 +125,7 @@ export default function PilotDirectoryPage() {
             </div>
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">Sample Pilot Profiles</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {samplePilots.map((pilot, i) => (
+              {withInlineAds(samplePilots, (pilot, i) => (
                 <ContentCard key={i} className="opacity-80">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center text-xl flex-shrink-0">{pilot.icon}</div>
@@ -149,7 +151,7 @@ export default function PilotDirectoryPage() {
           <div className="text-center py-10 text-gray-400">No pilots match your search.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map(item => (
+            {withInlineAds(filtered, item => (
               <ContentCard key={item.professionalId}>
                 <div className="flex items-center gap-3 mb-3">
                   {item.previewImage ? (
@@ -186,6 +188,8 @@ export default function PilotDirectoryPage() {
             ))}
           </div>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

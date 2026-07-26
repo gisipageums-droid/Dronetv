@@ -1,0 +1,105 @@
+import { ReactNode } from 'react';
+import AdSlot from './AdSlot';
+
+// Shared sample dummy ad creatives — built as inline CSS/emoji graphics rather
+// than downloaded stock images, so there's no copyright/licensing question and
+// no external file to review before shipping. Reused across every page that
+// carries ad placements so the same few creatives rotate consistently instead
+// of every page inventing its own.
+export const DroneAdCreative = () => (
+  <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-black flex flex-col items-center justify-center text-center p-4 gap-1">
+    <span className="text-4xl">🚁</span>
+    <span className="text-yellow-400 font-extrabold text-sm">DroneTech Pro Series</span>
+    <span className="text-white/60 text-[11px]">Precision UAVs for Agriculture &amp; Survey</span>
+    <span className="mt-1 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded-full">Shop Now →</span>
+  </div>
+);
+
+export const ExpoAdCreative = () => (
+  <div className="w-full h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 flex items-center justify-center gap-3 px-4">
+    <span className="text-2xl flex-shrink-0">🏛️</span>
+    <div className="text-center min-w-0">
+      <span className="block text-black font-extrabold text-sm truncate">Drone Expo 2026 — Bengaluru</span>
+      <span className="block text-black/70 text-[11px] truncate">Register now — Early Bird Pricing Ends Soon</span>
+    </div>
+    <span className="bg-black text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">Register →</span>
+  </div>
+);
+
+// Thin horizontal banner — fits short strip zones (~64-100px tall)
+export const TrainingAdCreative = () => (
+  <div className="w-full h-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 flex items-center justify-center gap-3 px-4">
+    <span className="text-2xl flex-shrink-0">🎓</span>
+    <div className="text-center min-w-0">
+      <span className="block text-white font-extrabold text-sm truncate">DGCA RPTO Certification — Enroll Today</span>
+      <span className="block text-white/70 text-[11px] truncate">5-day Small Category course · Job placement support</span>
+    </div>
+    <span className="bg-yellow-400 text-black text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">Enroll →</span>
+  </div>
+);
+
+// Tall vertical creative — fits a 300x600 premium sidebar slot
+export const PartnerAdCreative = () => (
+  <div className="w-full h-full bg-gradient-to-b from-amber-500 via-yellow-400 to-amber-500 flex flex-col items-center justify-center text-center p-5 gap-2">
+    <span className="text-5xl">🤝</span>
+    <span className="text-black font-extrabold text-base leading-snug">Partner With DroneTv.in</span>
+    <span className="text-black/70 text-xs leading-relaxed">Reach 39,890+ certified drone pilots and 500+ verified companies across India</span>
+    <span className="mt-2 bg-black text-yellow-400 text-xs font-bold px-4 py-2 rounded-full">Get Started →</span>
+  </div>
+);
+
+const INLINE_CREATIVES = [DroneAdCreative, ExpoAdCreative, TrainingAdCreative];
+
+// Inserts a full-width inline ad card after every 3rd item in a listing grid,
+// cycling through the sample creatives so repeated slots don't look identical.
+// Caller's grid must be a CSS grid (col-span-full spans every column).
+export function withInlineAds<T>(arr: T[], render: (item: T, i: number) => ReactNode): ReactNode[] {
+  const out: ReactNode[] = [];
+  let adCount = 0;
+  arr.forEach((item, i) => {
+    out.push(render(item, i));
+    if ((i + 1) % 3 === 0 && i !== arr.length - 1) {
+      const Creative = INLINE_CREATIVES[adCount % INLINE_CREATIVES.length];
+      adCount++;
+      out.push(
+        <div key={`ad-${i}`} className="col-span-full">
+          <AdSlot height={100} className="w-full"><Creative /></AdSlot>
+        </div>
+      );
+    }
+  });
+  return out;
+}
+
+// Zone 2A/2B: a 3-slot sidebar ad rail (standard/premium/standard), hidden below
+// `lg` so it never disturbs mobile/tablet single-column layouts. Drop this as a
+// sibling of the main content column inside an `lg:flex lg:items-start lg:gap-6` row.
+export function AdSidebarRail() {
+  return (
+    <aside className="hidden lg:flex lg:flex-col lg:w-[300px] lg:flex-shrink-0 gap-4">
+      <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
+      <AdSlot width={300} height={250}><ExpoAdCreative /></AdSlot>
+      <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
+      <AdSlot width={300} height={600}><PartnerAdCreative /></AdSlot>
+      <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
+      <AdSlot width={300} height={250}><DroneAdCreative /></AdSlot>
+    </aside>
+  );
+}
+
+// Zone 6: small "Sponsored" tag for one exclusive category on a filter-pill row.
+// Usage: wrap the pill button's className with `relative` and render this as a child.
+export function SponsorBadge() {
+  return (
+    <span className="absolute -top-2 -right-1 bg-white text-red-600 border border-red-600 text-[8px] font-bold px-1 rounded leading-tight">
+      Sponsored
+    </span>
+  );
+}
+
+// Zone 4: full-width thin banner for a natural content break between sections
+export function AdDetailBanner() {
+  return (
+    <AdSlot height={90} className="w-full"><TrainingAdCreative /></AdSlot>
+  );
+}

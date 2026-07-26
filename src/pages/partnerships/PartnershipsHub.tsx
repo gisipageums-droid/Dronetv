@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const whyPartner = [
   { icon: '🎯', title: '100% Drone, GIS & AI Audience', desc: 'Every visitor, viewer, and lead on DroneTv.in is from the drone, GIS & AI ecosystem. No dilution across unrelated industries. Agriculture drones, defence UAVs, GIS & mapping technology, AI and computer-vision platforms — your content reaches exactly the right people.' },
@@ -78,14 +79,15 @@ export default function PartnershipsHubPage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-6xl mx-auto px-6 py-8 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0 space-y-8">
         <div>
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Explore</span>
             Partner Categories
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {categories.map((c) => (
+            {withInlineAds(categories, (c) => (
               <Link
                 key={c.to}
                 to={c.to}
@@ -188,6 +190,8 @@ export default function PartnershipsHubPage() {
             Become a Partner →
           </Link>
         </div>
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

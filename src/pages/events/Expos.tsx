@@ -4,6 +4,7 @@ import { MapPin, Calendar, Search } from 'lucide-react';
 import { EVENTS_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 interface RawEvent {
   eventId: string;
@@ -83,14 +84,15 @@ export default function ExposPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-12">
+      <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         {loading ? (
           <div className="text-center py-16 text-gray-400">Loading expos...</div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">No expos found.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map(event => (
+            {withInlineAds(filtered, event => (
               <ContentCard
                 key={event.eventId}
                 image={getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage) || undefined}
@@ -113,6 +115,8 @@ export default function ExposPage() {
             ))}
           </div>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

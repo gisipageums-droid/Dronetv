@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { EVENTS_API, LAMBDA } from '../lib/apiConfig';
 import CompactHero from './common/CompactHero';
 import { useUserAuth } from './context/context';
+import { withInlineAds } from './common/adCreatives';
 
 const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime: string }) => {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isEventStarted: false, isEventExpired: false });
@@ -345,7 +346,7 @@ const EventsPage = () => {
               </div>
             ) : (
               <div className="ev-grid">
-                {currentEvents.map((event) => (
+                {withInlineAds(currentEvents, (event) => (
                   <div
                     key={event.id}
                     onClick={() => handleCardClick(event)}

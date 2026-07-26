@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { MEDIA_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const MEDIA_BASE = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
 
@@ -86,7 +87,8 @@ export default function MagazinePage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      <div className="max-w-6xl mx-auto px-6 py-10 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
 
         {/* Articles from CMS */}
         {articles.length > 0 && (
@@ -96,7 +98,7 @@ export default function MagazinePage() {
               Latest Articles
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {articles.map(article => (
+              {withInlineAds(articles, article => (
                 <ContentCard key={article.contentId} image={article.imageUrl} imageAlt={article.title}>
                   {article.category && (
                     <span className="text-xs font-bold text-yellow-600 uppercase tracking-wider self-start">{article.category}</span>
@@ -225,6 +227,8 @@ export default function MagazinePage() {
             )}
           </div>
         </div>
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

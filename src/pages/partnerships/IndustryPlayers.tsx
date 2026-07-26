@@ -3,6 +3,7 @@ import { MapPin, ExternalLink, Search, Layers } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const playerTypes = [
   { icon: '🚁', title: 'Drone Service Operators', desc: "Companies providing drone-as-a-service across agriculture, infrastructure inspection, logistics, and surveillance. India's fastest-growing segment as commercial fleet sizes expand post-PLI scheme.", tags: ['DaaS', 'Commercial Ops', 'B2B Service'] },
@@ -59,7 +60,8 @@ export default function IndustryPlayersPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-12">
+      <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Key</span>
           Industry Players
@@ -70,7 +72,7 @@ export default function IndustryPlayersPage() {
           filtered.length === 0
             ? <div className="text-center py-8 text-gray-400">No players match your search.</div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {filtered.map(item => (
+                {withInlineAds(filtered, item => (
                   <ContentCard
                     key={item.contentId}
                     image={item.imageUrl}
@@ -95,7 +97,7 @@ export default function IndustryPlayersPage() {
           <>
             <p className="text-xs text-gray-400 mb-4">Types of industry players that partner with DroneTv.in — from service operators to defence contractors.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {playerTypes.map((p, i) => (
+              {withInlineAds(playerTypes, (p, i) => (
                 <ContentCard key={i}>
                   <div className="text-3xl mb-3">{p.icon}</div>
                   <h3 className="font-bold text-gray-900 text-sm mb-2">{p.title}</h3>
@@ -121,6 +123,8 @@ export default function IndustryPlayersPage() {
             </div>
           </>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

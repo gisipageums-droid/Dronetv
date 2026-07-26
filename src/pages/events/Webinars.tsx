@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
 
@@ -86,7 +87,8 @@ export default function WebinarsPage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-8 pb-12 space-y-8">
+      <div className="max-w-6xl mx-auto px-6 py-8 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0 space-y-8">
         <div>
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Upcoming</span>
@@ -108,7 +110,7 @@ export default function WebinarsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
-              {items.map(item => (
+              {withInlineAds(items, item => (
                 <ContentCard
                   key={item.contentId}
                   image={item.imageUrl}
@@ -199,6 +201,8 @@ export default function WebinarsPage() {
             </a>
           </div>
         </div>
+        </div>
+        <AdSidebarRail />
       </div>
 
       {/* Registration Modal */}

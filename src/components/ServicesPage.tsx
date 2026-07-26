@@ -4,6 +4,7 @@ import { Search, MapPin, Star, Clock, SlidersHorizontal, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
+import { withInlineAds } from './common/adCreatives';
 
 interface Service {
   id: string;
@@ -321,7 +322,7 @@ const ServicesPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="sv-grid">
-                  {current.map(s => <ServiceCard key={s.id} service={s} onView={() => navigate(`/service/${s.publishedId}`)} />)}
+                  {withInlineAds(current, s => <ServiceCard key={s.id} service={s} onView={() => navigate(`/service/${s.publishedId}`)} />)}
                 </div>
               )}
 

@@ -4,6 +4,7 @@ import { Search, Star, SlidersHorizontal, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
+import { withInlineAds } from './common/adCreatives';
 
 interface Product {
   id: string;
@@ -322,7 +323,7 @@ const ProductsPage: React.FC = () => {
             </div>
           ) : (
             <div className="pr-grid">
-              {current.map(p => <ProductCard key={p.id} product={p} onView={() => navigate(`/product/${p.publishedId}`)} />)}
+              {withInlineAds(current, p => <ProductCard key={p.id} product={p} onView={() => navigate(`/product/${p.publishedId}`)} />)}
             </div>
           )}
 

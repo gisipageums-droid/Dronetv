@@ -3,6 +3,7 @@ import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const communitySpaces = [
   { icon: '💬', title: 'Discussion Forum', desc: 'Ask technical questions, share experiences, discuss regulations, and get peer feedback from verified drone professionals.', stat: 'Active Discussions Ongoing', cta: 'Join Forum', link: 'mailto:bd@dronetv.in' },
@@ -84,7 +85,8 @@ export default function CommunityPage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-6xl mx-auto px-6 py-8 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0 space-y-8">
         {cmsItems.length > 0 && (
           <div>
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
@@ -92,7 +94,7 @@ export default function CommunityPage() {
               Community Highlights
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {cmsItems.map(item => (
+              {withInlineAds(cmsItems, item => (
                 <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title} imgHeight="h-36">
                   {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
                   <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h3>
@@ -126,7 +128,7 @@ export default function CommunityPage() {
             Community Spaces
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {communitySpaces.map((space, i) => (
+            {withInlineAds(communitySpaces, (space, i) => (
               <ContentCard key={i}>
                 <div className="flex items-start justify-between mb-3">
                   <span className="text-2xl">{space.icon}</span>
@@ -215,6 +217,8 @@ export default function CommunityPage() {
             </a>
           </div>
         </div>
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

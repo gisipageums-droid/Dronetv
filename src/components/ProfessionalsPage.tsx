@@ -5,6 +5,7 @@ import LoadingScreen from "./loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
 import { fetchContent } from '../lib/mediaApi';
 import CompactHero from './common/CompactHero';
+import { withInlineAds, AdSidebarRail } from './common/adCreatives';
 import { useUserAuth } from './context/context';
 
 interface Professional {
@@ -293,13 +294,14 @@ const ProfessionalsPage: React.FC = () => {
       </div>
 
       {/* Hub Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Hub</span>
           Everything You Need as a Drone, GIS & AI Professional
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-          {[
+          {withInlineAds([
             { to: '/professionals/job-board', icon: '💼', count: jobCount === null ? '…' : String(jobCount), unit: 'Jobs Listed', title: 'Job Board', desc: 'Drone pilot, GIS analyst, AI engineer, instructor, and UAV operator jobs across India.' },
             { to: '/professionals/pilot-directory', icon: '🧑‍✈️', count: '100', unit: 'Tokens To List', title: 'Pilot Directory', desc: 'Create your verified pilot profile. Get discovered by drone companies hiring or contracting.' },
             { to: '/professionals/certifications', icon: '🏅', count: '3', unit: 'Categories', title: 'Certifications', desc: 'Complete DGCA RPC certification guide — Small, Medium, and Large drone categories.' },
@@ -308,7 +310,7 @@ const ProfessionalsPage: React.FC = () => {
             { to: '/professionals/networking', icon: '🔗', count: 'Events', unit: 'Meetups', title: 'Networking', desc: 'Connect with drone companies, fellow pilots, and industry professionals at events.' },
             { to: '/professionals/community', icon: '👥', count: 'Active', unit: 'Community', title: 'Community', desc: 'Discussion forums, WhatsApp groups, flyins, and peer support across India.' },
             { to: '/professionals/certifications', icon: '⚡', count: 'Rs.50K', unit: 'Starting Cost', title: 'Start Here', desc: 'New to drones? Complete 5-day DGCA Small category certification. Start earning from month one.', highlight: true },
-          ].map(card => (
+          ], card => (
             <a key={card.to} href={card.to}
               className={`rounded-xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col ${card.highlight ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 bg-white'}`}>
               <div className={`px-4 py-3 flex items-center gap-3 ${card.highlight ? 'bg-yellow-400' : 'bg-black'}`}>
@@ -349,6 +351,8 @@ const ProfessionalsPage: React.FC = () => {
             </div>
           ))}
         </div>
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

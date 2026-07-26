@@ -3,6 +3,7 @@ import { MapPin, ExternalLink, GraduationCap } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const eduStats = [
   { num: '240+', label: 'DGCA-Approved\nRPTOs' },
@@ -53,7 +54,8 @@ export default function EducationPartnersPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-12">
+      <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">RPTO</span>
           Education Partners
@@ -62,7 +64,7 @@ export default function EducationPartnersPage() {
           <div className="text-center py-16 text-gray-400">Loading education partners...</div>
         ) : filtered.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map(item => (
+            {withInlineAds(filtered, item => (
               <ContentCard
                 key={item.contentId}
                 image={item.imageUrl}
@@ -124,6 +126,8 @@ export default function EducationPartnersPage() {
             </div>
           </div>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

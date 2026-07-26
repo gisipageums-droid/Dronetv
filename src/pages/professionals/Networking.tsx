@@ -4,6 +4,8 @@ import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import AdSlot from '../../components/common/AdSlot';
+import { withInlineAds, ExpoAdCreative, DroneAdCreative } from '../../components/common/adCreatives';
 
 const networkingChannels = [
   {
@@ -139,7 +141,7 @@ export default function NetworkingPage() {
             Networking Channels
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {networkingChannels.map((ch, i) => (
+            {withInlineAds(networkingChannels, (ch, i) => (
               <ContentCard key={i}>
                 <div className="flex items-start gap-3 mb-3">
                   <span className="text-2xl">{ch.icon}</span>
@@ -186,7 +188,7 @@ export default function NetworkingPage() {
                 Networking Groups
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {cmsItems.map(item => (
+                {withInlineAds(cmsItems, item => (
                   <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title} imgHeight="h-32">
                     {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
                     <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h3>
@@ -303,6 +305,15 @@ export default function NetworkingPage() {
                 </Link>
               ))}
             </div>
+          </div>
+
+          <div>
+            <span className="text-xs text-gray-400 font-semibold block mb-2">Advertisement</span>
+            <AdSlot width={300} height={250}><ExpoAdCreative /></AdSlot>
+          </div>
+          <div>
+            <span className="text-xs text-gray-400 font-semibold block mb-2">Advertisement</span>
+            <AdSlot width={300} height={250}><DroneAdCreative /></AdSlot>
           </div>
         </div>
         </div>

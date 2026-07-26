@@ -3,6 +3,7 @@ import { MapPin, ExternalLink, Search, Building2 } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const staticManufacturers = [
   { icon: '✈️', name: 'ideaForge Technology', hq: 'Mumbai, Maharashtra | BSE: IDEAFORGE', desc: "India's market leader in unmanned aerial systems with approximately 50% market share. SWITCH UAV is standard equipment for high-altitude border surveillance in Ladakh and Arunachal Pradesh. The only Type Approved manufacturer in multiple military categories.", tags: ['Defence', 'Surveillance', 'Type Approved', 'BSE Listed'], sector: 'Defence UAV' },
@@ -68,7 +69,8 @@ export default function DroneManufacturersPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-12">
+      <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Listed</span>
           Drone Manufacturers
@@ -79,7 +81,7 @@ export default function DroneManufacturersPage() {
           filtered.length === 0
             ? <div className="text-center py-8 text-gray-400">No manufacturers match your search.</div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {filtered.map(item => (
+                {withInlineAds(filtered, item => (
                   <ContentCard
                     key={item.contentId}
                     image={item.imageUrl}
@@ -118,7 +120,7 @@ export default function DroneManufacturersPage() {
           <>
             <p className="text-xs text-gray-400 mb-4">India has 180+ active drone manufacturers. Featured companies below.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {staticManufacturers.map((m, i) => (
+              {withInlineAds(staticManufacturers, (m, i) => (
                 <ContentCard key={i}>
                   <div className="flex items-start gap-3 mb-3">
                     <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-xl flex-shrink-0">{m.icon}</div>
@@ -147,6 +149,8 @@ export default function DroneManufacturersPage() {
             </div>
           </>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

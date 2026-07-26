@@ -1,5 +1,6 @@
 import { TrendingUp, Award, Briefcase, GraduationCap, IndianRupee, ArrowRight, CheckCircle } from 'lucide-react';
 import CompactHero from '../../components/common/CompactHero';
+import { AdSidebarRail } from '../../components/common/adCreatives';
 
 const CAREER_STAGES = [
   {
@@ -79,7 +80,8 @@ export default function CareerPathPage() {
       {/* Hero */}
       <CompactHero title={<>Drone Industry <span>Career Path</span></>} />
 
-      <div className="max-w-5xl mx-auto px-6 py-10 space-y-10">
+      <div className="max-w-5xl mx-auto px-6 py-10 lg:flex lg:items-start lg:gap-6">
+      <div className="flex-1 min-w-0 space-y-10">
 
         {/* Career stages */}
         <section>
@@ -196,6 +198,8 @@ export default function CareerPathPage() {
             );
           })}
         </section>
+      </div>
+      <AdSidebarRail />
       </div>
     </div>
   );

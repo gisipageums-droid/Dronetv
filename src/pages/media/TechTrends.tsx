@@ -3,6 +3,7 @@ import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const staticTrends = [
   {
@@ -71,7 +72,8 @@ export default function TechTrendsPage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-8 pb-12 space-y-6">
+      <div className="max-w-6xl mx-auto px-6 py-8 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0 space-y-6">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Emerging</span>
           Technology Trends Shaping India's Drone Industry
@@ -81,7 +83,7 @@ export default function TechTrendsPage() {
           <div className="text-center py-16 text-gray-400">Loading tech trends...</div>
         ) : displayItems ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {displayItems.map((trend) => (
+            {withInlineAds(displayItems, (trend) => (
               <ContentCard key={trend.num}>
                 <div className="flex items-start gap-4 mb-3">
                   <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0 text-xl">
@@ -107,7 +109,7 @@ export default function TechTrendsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {items.map((item, i) => (
+            {withInlineAds(items, (item, i) => (
               <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title}>
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -135,6 +137,8 @@ export default function TechTrendsPage() {
             ))}
           </div>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

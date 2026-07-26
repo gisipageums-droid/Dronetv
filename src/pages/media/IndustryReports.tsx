@@ -3,6 +3,7 @@ import { ExternalLink, BarChart2 } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const staticReports = [
   {
@@ -91,7 +92,8 @@ export default function IndustryReportsPage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-8 pb-12 space-y-5">
+      <div className="max-w-6xl mx-auto px-6 py-8 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0 space-y-5">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">2025–2026</span>
           Featured Reports
@@ -110,7 +112,7 @@ export default function IndustryReportsPage() {
               ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filtered.map(item => (
+              {withInlineAds(filtered, item => (
                 <ContentCard
                   key={item.contentId}
                   image={item.imageUrl}
@@ -137,7 +139,7 @@ export default function IndustryReportsPage() {
           </>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {staticReports.map(report => (
+            {withInlineAds(staticReports, report => (
               <ContentCard key={report.id}>
                 <div className="flex items-start gap-3 mb-3">
                   <div className={`w-10 h-10 rounded-xl ${report.iconColor} flex items-center justify-center text-xl flex-shrink-0`}>{report.icon}</div>
@@ -170,6 +172,8 @@ export default function IndustryReportsPage() {
             ))}
           </div>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

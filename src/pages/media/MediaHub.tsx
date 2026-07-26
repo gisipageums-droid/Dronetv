@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchContent, ContentType } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const hubs: {
   to: string; icon: string; title: string; desc: string; tags: string[];
@@ -108,14 +109,15 @@ export default function MediaHubPage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-6 py-8 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-6 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Explore</span>
           All Sections
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {hubs.map((h) => (
+          {withInlineAds(hubs, (h) => (
             <Link
               key={h.to}
               to={h.to}
@@ -147,6 +149,8 @@ export default function MediaHubPage() {
             </Link>
           ))}
         </div>
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

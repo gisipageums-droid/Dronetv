@@ -3,6 +3,7 @@ import { Calendar, ExternalLink, Search } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 export default function PressReleasesPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -39,7 +40,8 @@ export default function PressReleasesPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-12">
+      <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Latest</span>
           Press Releases
@@ -50,7 +52,7 @@ export default function PressReleasesPage() {
           <div className="text-center py-16 text-gray-400">No press releases yet.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map(item => (
+            {withInlineAds(filtered, item => (
               <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title}>
                 {item.category && <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
                 <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2">{item.title}</h3>
@@ -71,6 +73,8 @@ export default function PressReleasesPage() {
             ))}
           </div>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

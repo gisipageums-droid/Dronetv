@@ -3,6 +3,7 @@ import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const certCategories = [
   {
@@ -122,7 +123,8 @@ export default function CertificationsPage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-10">
+      <div className="max-w-6xl mx-auto px-6 py-8 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0 space-y-10">
         <div>
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Categories</span>
@@ -189,7 +191,7 @@ export default function CertificationsPage() {
           </h2>
           {cmsItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {cmsItems.map(item => (
+              {withInlineAds(cmsItems, item => (
                 <ContentCard key={item.contentId}>
                   {item.imageUrl && (
                     <div className="w-full h-32 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
@@ -263,6 +265,8 @@ export default function CertificationsPage() {
             </a>
           </div>
         </div>
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

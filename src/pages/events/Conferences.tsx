@@ -4,6 +4,7 @@ import { MapPin, Calendar, Search } from 'lucide-react';
 import { EVENTS_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 interface RawEvent {
   eventId: string;
@@ -89,13 +90,14 @@ export default function ConferencesPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-12">
+      <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         {loading ? (
           <div className="text-center py-16 text-gray-400">Loading conferences...</div>
         ) : events.length === 0 ? (
           <div className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {staticConferences.map(conf => (
+              {withInlineAds(staticConferences, conf => (
                 <ContentCard key={conf.id} imageFallback={<span className="text-yellow-400 text-4xl">🎤</span>}>
                   <div className="flex items-center gap-2 mb-2">
                     <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded">Conference</span>
@@ -127,7 +129,7 @@ export default function ConferencesPage() {
           <div className="text-center py-8 text-gray-400">No conferences match your search.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map(event => (
+            {withInlineAds(filtered, event => (
               <ContentCard
                 key={event.eventId}
                 image={getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage) || undefined}
@@ -150,6 +152,8 @@ export default function ConferencesPage() {
             ))}
           </div>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

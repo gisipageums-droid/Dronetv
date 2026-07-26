@@ -4,6 +4,7 @@ import { MapPin } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const staticStories = [
   { id: 's1', category: 'Survey and GIS', title: 'GIS Company Reduces Survey Time by 80% Using Drone Photogrammetry', text: 'A Hyderabad-based survey company replaced manned aircraft with drone photogrammetry for a 500-hectare boundary mapping project, completing in 3 days what previously took 2 weeks — at 60% lower cost.', metric: '80%', metricLabel: 'Reduction in survey time', location: 'Hyderabad, Telangana' },
@@ -47,7 +48,8 @@ export default function ImpactStoriesPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 pb-12">
+      <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
           <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Stories</span>
           Real-World Impact
@@ -56,7 +58,7 @@ export default function ImpactStoriesPage() {
           <div className="text-center py-16 text-gray-400">Loading stories...</div>
         ) : items.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {filtered.map(item => (
+            {withInlineAds(filtered, item => (
               <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title}>
                 {item.category && <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
                 <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
@@ -95,7 +97,7 @@ export default function ImpactStoriesPage() {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {staticStories.map(story => (
+              {withInlineAds(staticStories, story => (
                 <ContentCard key={story.id}>
                   <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-3 inline-block self-start">{story.category}</span>
                   <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{story.title}</h3>
@@ -124,6 +126,8 @@ export default function ImpactStoriesPage() {
             </div>
           </div>
         )}
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

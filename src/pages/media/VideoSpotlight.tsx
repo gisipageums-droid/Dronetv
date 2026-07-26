@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 function getYoutubeEmbed(url: string): string | null {
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
@@ -105,7 +106,8 @@ export default function VideoSpotlightPage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-6xl mx-auto px-6 py-8 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0 space-y-8">
         <div className="flex flex-wrap gap-2">
           {categories.map(f => (
             <button key={f} onClick={() => setActiveFilter(f)}
@@ -130,13 +132,13 @@ export default function VideoSpotlightPage() {
             filtered.length === 0
               ? <div className="text-center py-8 text-gray-400">No videos in this category.</div>
               : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filtered.map(item => <VideoCard key={item.contentId} item={item} />)}
+                  {withInlineAds(filtered, item => <VideoCard key={item.contentId} item={item} />)}
                 </div>
           ) : (
             <div className="space-y-6">
               <p className="text-sm text-gray-500">Drone Expo 2025 — Mumbai Interviews <span className="font-bold text-yellow-600">40+ Videos</span></p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {staticVideos.map(v => (
+                {withInlineAds(staticVideos, v => (
                   <div key={v.id} className="flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                     <div className="bg-zinc-900 aspect-video flex items-center justify-center relative flex-shrink-0">
                       <span className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">{v.ep}</span>
@@ -171,6 +173,8 @@ export default function VideoSpotlightPage() {
             Visit Channel →
           </a>
         </div>
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

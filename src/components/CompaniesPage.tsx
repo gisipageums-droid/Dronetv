@@ -3,6 +3,7 @@ import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X } from '
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
+import { withInlineAds } from './common/adCreatives';
 
 interface Company {
   companyName: string;
@@ -393,7 +394,7 @@ const CompaniesPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="co-grid">
-                  {current.map((c, i) => <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} />)}
+                  {withInlineAds(current, (c, i) => <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} />)}
                 </div>
               )}
 

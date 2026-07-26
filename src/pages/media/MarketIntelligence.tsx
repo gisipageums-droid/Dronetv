@@ -4,6 +4,7 @@ import { TrendingUp } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 
 const indiaStats = [
   { num: 'Rs.10,977Cr', label: 'India Market Size 2025', note: 'US$ 1,219.7 million' },
@@ -50,7 +51,8 @@ export default function MarketIntelligencePage() {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-6 py-8 pb-12 space-y-8">
+      <div className="max-w-6xl mx-auto px-6 py-8 pb-12 lg:flex lg:items-start lg:gap-6">
+        <div className="flex-1 min-w-0 space-y-8">
         <div>
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">India</span>
@@ -101,7 +103,7 @@ export default function MarketIntelligencePage() {
               ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filtered.map(item => (
+              {withInlineAds(filtered, item => (
                 <ContentCard
                   key={item.contentId}
                   image={item.imageUrl}
@@ -149,6 +151,8 @@ export default function MarketIntelligencePage() {
             <a href="/media/tech-trends" className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">Tech Trends →</a>
           </div>
         </div>
+        </div>
+        <AdSidebarRail />
       </div>
     </div>
   );

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import AdSlot from '../../components/common/AdSlot';
+import { withInlineAds, ExpoAdCreative, DroneAdCreative } from '../../components/common/adCreatives';
 
 
 const filters = ['All News', 'Market', 'Defence', 'Policy', 'Agriculture', 'Technology', 'Training'];
@@ -112,7 +114,7 @@ export default function NewsPulsePage() {
                 if (filtered.length === 0) return <p className="text-sm text-gray-400 text-center py-8">No {active} articles found.</p>;
                 return (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filtered.map(item => (
+                    {withInlineAds(filtered, item => (
                       <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title}>
                         <div className="flex items-center justify-between mb-3">
                           <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category || 'News'}</span>
@@ -132,7 +134,7 @@ export default function NewsPulsePage() {
               const displayed = filtered.length > 0 ? filtered : staticNews;
               return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {displayed.map(item => (
+                  {withInlineAds(displayed, item => (
                     <ContentCard key={item.id}>
                       <div className="flex items-center justify-between mb-3">
                         <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category}</span>
@@ -214,6 +216,15 @@ export default function NewsPulsePage() {
                 </Link>
               ))}
             </div>
+          </div>
+
+          <div>
+            <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
+            <AdSlot width={300} height={250} className="mx-auto"><ExpoAdCreative /></AdSlot>
+          </div>
+          <div>
+            <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
+            <AdSlot width={300} height={250} className="mx-auto"><DroneAdCreative /></AdSlot>
           </div>
         </div>
       </div>
