@@ -465,12 +465,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     }`}
                   >
                     <div className="ml-4 mt-0.5 border-l border-white/10 pl-3 pb-1">
-                      {item.sub!.map(sub => {
+                      {(() => {
                         const fullCurrent = location.pathname + location.search;
+                        const hasExactPathMatch = item.sub!.some(s => s.path === fullCurrent);
+                        return item.sub!.map(sub => {
                         const isSubActive = isGroupActive && (
-                          activeSub === sub.label ||
                           fullCurrent === sub.path ||
-                          (activeSub === null && !location.search && item.sub![0].label === sub.label)
+                          (!hasExactPathMatch && (
+                            activeSub === sub.label ||
+                            (activeSub === null && !location.search && item.sub![0].label === sub.label)
+                          ))
                         );
                         return (
                           <button
@@ -486,7 +490,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             <span className="truncate">{sub.label}</span>
                           </button>
                         );
-                      })}
+                        });
+                      })()}
                     </div>
                   </div>
                 </div>
