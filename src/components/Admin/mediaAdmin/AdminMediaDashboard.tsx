@@ -4,6 +4,7 @@ import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle } from
 import { toast } from 'react-toastify';
 import { fetchAdminContent, createContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
 import { ADMIN_API, LAMBDA } from '../../../lib/apiConfig';
+import AdminJobBoardDashboard from '../jobBoardAdmin/AdminJobBoardDashboard';
 
 interface AppSubmission {
   id: string;
@@ -373,15 +374,19 @@ export default function AdminMediaDashboard() {
           })}
         </div>
 
-        <div className="relative w-full max-w-xs mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" placeholder={activeType === 'applications' ? 'Search applications...' : 'Search content...'}
-            value={activeType === 'applications' ? appSearch : search}
-            onChange={e => activeType === 'applications' ? setAppSearch(e.target.value) : setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
-        </div>
+        {activeType !== 'job' && (
+          <div className="relative w-full max-w-xs mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input type="text" placeholder={activeType === 'applications' ? 'Search applications...' : 'Search content...'}
+              value={activeType === 'applications' ? appSearch : search}
+              onChange={e => activeType === 'applications' ? setAppSearch(e.target.value) : setSearch(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+          </div>
+        )}
 
-        {activeType === 'applications' ? (
+        {activeType === 'job' ? (
+          <AdminJobBoardDashboard />
+        ) : activeType === 'applications' ? (
           appLoading ? (
             <div className="text-center py-16 text-gray-400">Loading...</div>
           ) : appError ? (

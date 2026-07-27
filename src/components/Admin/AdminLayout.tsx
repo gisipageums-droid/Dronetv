@@ -103,7 +103,7 @@ const NAV: Section[] = [
         label: "Professionals",
         icon: <Users size={17} />,
         sub: [
-          { label: "Job Board",        path: "/admin/jobboard/dashboard",                 icon: <Briefcase size={14} /> },
+          { label: "Job Board",        path: "/admin/media/dashboard?type=job",           icon: <Briefcase size={14} /> },
           { label: "Pilot Directory", path: "/admin/professional/dashboard",             icon: <UserCircle size={14} /> },
           { label: "Certifications",  path: "/admin/media/dashboard?type=certification", icon: <Award size={14} /> },
           { label: "Training / RPTOs",path: "/admin/media/dashboard?type=training",      icon: <GraduationCap size={14} /> },
@@ -213,7 +213,6 @@ const NAV: Section[] = [
 const PATH_TO_ID: Record<string, string> = {
   "/admin/users": "users",
   "/admin/professional/dashboard": "professionals",
-  "/admin/jobboard/dashboard": "professionals",
   "/admin/media/dashboard": "media",
   "/admin/event/dashboard": "events",
   "/admin/user-content": "content-review",

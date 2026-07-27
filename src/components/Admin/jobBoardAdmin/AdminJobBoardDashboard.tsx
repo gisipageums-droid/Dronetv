@@ -115,22 +115,12 @@ export default function AdminJobBoardDashboard() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-gray-50">
-      <div className="px-6 py-4 border-b border-gray-200 bg-white flex items-center justify-between flex-shrink-0">
-        <div>
-          <h1 className="text-lg font-bold text-gray-900">Job Board</h1>
-          <p className="text-xs text-gray-500">Manage job listings and track candidate applications</p>
-        </div>
-      </div>
-
+    <div className="flex flex-col h-[70vh] min-h-[500px] bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
       <div className="flex flex-1 min-h-0">
         {/* Jobs pane */}
         <div className="w-[300px] flex-shrink-0 border-r border-gray-200 bg-white flex flex-col">
           <div className="p-3 border-b border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Jobs ({jobs.length})</div>
-              <a href="/admin/media/dashboard?type=job" className="text-[10px] font-semibold text-yellow-700 hover:underline">+ Manage listings</a>
-            </div>
+            <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Jobs ({jobs.length})</div>
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
               <input value={jobSearch} onChange={e => setJobSearch(e.target.value)} placeholder="Search jobs..."
