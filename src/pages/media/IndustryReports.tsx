@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const staticReports = [
   {
@@ -197,6 +198,9 @@ export default function IndustryReportsPage() {
             ))}
           </div>
         )}
+
+          <PostContentCTA contentType="industry-report" typeLabel="Industry Report"
+            ctaDescription="Published a research report on the drone/GIS/AI industry? Submit it for wider distribution." />
         </div>
         <AdSidebarRail />
       </div>

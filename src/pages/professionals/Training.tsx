@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const pathways = [
   {
@@ -260,6 +261,10 @@ export default function TrainingPage() {
             </a>
           </div>
         </div>
+
+        <PostContentCTA contentType="training" typeLabel="Training Program"
+          ctaTitle="Quick Self-List a Program"
+          ctaDescription="Want to list instantly instead of waiting on manual verification? Post your training program directly." />
         </div>
         <AdSidebarRail />
       </div>

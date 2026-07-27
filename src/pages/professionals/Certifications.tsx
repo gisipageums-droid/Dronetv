@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const certCategories = [
   {
@@ -265,6 +266,9 @@ export default function CertificationsPage() {
             </a>
           </div>
         </div>
+
+        <PostContentCTA contentType="certification" typeLabel="Certification"
+          ctaDescription="Run a DGCA-approved RPTO or offer a drone certification course? List it for pilots to discover." />
         </div>
         <AdSidebarRail />
       </div>

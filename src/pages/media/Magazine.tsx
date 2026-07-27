@@ -4,6 +4,7 @@ import { MEDIA_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const MEDIA_BASE = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
 
@@ -227,6 +228,9 @@ export default function MagazinePage() {
             )}
           </div>
         </div>
+
+          <PostContentCTA contentType="magazine" typeLabel="Magazine Feature"
+            ctaDescription="Want your company or product featured in an upcoming DroneTv magazine issue? Submit it here." />
         </div>
         <AdSidebarRail />
       </div>

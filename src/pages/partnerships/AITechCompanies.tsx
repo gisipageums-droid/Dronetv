@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const staticAISectors = [
   { icon: '🧠', name: 'Autonomous Flight and AI Stack Companies', hq: 'Computer Vision · Path Planning · Edge AI', desc: 'Companies developing AI for object detection, autonomous path planning, real-time anomaly identification, and adaptive mission execution. Applications in agriculture (crop disease identification), infrastructure (crack detection), and surveillance (autonomous perimeter monitoring).', tags: ['Autonomy', 'Computer Vision', 'Edge AI'], sector: 'AI / Autonomy' },
@@ -159,6 +160,9 @@ export default function AITechCompaniesPage() {
             </div>
           </>
         )}
+
+          <PostContentCTA contentType="ai-company" typeLabel="AI/Tech Company Listing"
+            ctaDescription="Build AI or tech solutions for the drone industry? List your company directly." />
         </div>
         <AdSidebarRail />
       </div>

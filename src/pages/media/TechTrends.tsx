@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const staticTrends = [
   {
@@ -155,6 +156,9 @@ export default function TechTrendsPage() {
             ))}
           </div>
         )}
+
+          <PostContentCTA contentType="tech-trends" typeLabel="Tech Trend"
+            ctaDescription="Spotted an emerging drone/GIS/AI technology trend worth covering? Submit it here." />
         </div>
         <AdSidebarRail />
       </div>

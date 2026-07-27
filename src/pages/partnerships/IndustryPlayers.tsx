@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const playerTypes = [
   { icon: '🚁', title: 'Drone Service Operators', desc: "Companies providing drone-as-a-service across agriculture, infrastructure inspection, logistics, and surveillance. India's fastest-growing segment as commercial fleet sizes expand post-PLI scheme.", tags: ['DaaS', 'Commercial Ops', 'B2B Service'] },
@@ -148,6 +149,9 @@ export default function IndustryPlayersPage() {
             </div>
           </>
         )}
+
+          <PostContentCTA contentType="industry-player" typeLabel="Industry Player Listing"
+            ctaDescription="Offer drone-related services or solutions? List your company directly." />
         </div>
         <AdSidebarRail />
       </div>

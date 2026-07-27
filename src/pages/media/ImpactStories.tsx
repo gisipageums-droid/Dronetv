@@ -5,6 +5,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const staticStories = [
   { id: 's1', category: 'Survey and GIS', title: 'GIS Company Reduces Survey Time by 80% Using Drone Photogrammetry', text: 'A Hyderabad-based survey company replaced manned aircraft with drone photogrammetry for a 500-hectare boundary mapping project, completing in 3 days what previously took 2 weeks — at 60% lower cost.', metric: '80%', metricLabel: 'Reduction in survey time', location: 'Hyderabad, Telangana' },
@@ -142,6 +143,10 @@ export default function ImpactStoriesPage() {
             </div>
           </div>
         )}
+
+        <PostContentCTA contentType="impact-story" typeLabel="Impact Story"
+          ctaTitle="Submit Instantly"
+          ctaDescription="Prefer to self-submit instead of waiting on manual review? Post your impact story directly." />
         </div>
         <AdSidebarRail />
       </div>

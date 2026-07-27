@@ -5,6 +5,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const indiaStats = [
   { num: 'Rs.10,977Cr', label: 'India Market Size 2025', note: 'US$ 1,219.7 million' },
@@ -151,6 +152,9 @@ export default function MarketIntelligencePage() {
             <a href="/media/tech-trends" className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">Tech Trends →</a>
           </div>
         </div>
+
+          <PostContentCTA contentType="market-intelligence" typeLabel="Market Report"
+            ctaDescription="Have original market data or research on the drone/GIS/AI industry? Submit it for publication." />
         </div>
         <AdSidebarRail />
       </div>

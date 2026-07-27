@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const meetupTypes = [
   { icon: '🏙️', title: 'City-Level Industry Networking', desc: 'Drone professionals and entrepreneurs meeting in Hyderabad, Bengaluru, Mumbai, Delhi, Pune, and Chennai. Hosted by associations, incubators, and community groups. Typically 30–100 attendees.' },
@@ -159,6 +160,10 @@ export default function MeetupsPage() {
             </a>
           </div>
         </div>
+
+        <PostContentCTA contentType="meetup" typeLabel="Meetup"
+          ctaTitle="Submit Instantly"
+          ctaDescription="Prefer instant self-listing over manual review? Post your meetup directly." />
         </div>
         <AdSidebarRail />
       </div>

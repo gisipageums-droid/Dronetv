@@ -6,6 +6,7 @@ import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import AdSlot from '../../components/common/AdSlot';
 import { withInlineAds, ExpoAdCreative, DroneAdCreative, getAdsFor } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const networkingChannels = [
   {
@@ -267,6 +268,9 @@ export default function NetworkingPage() {
               ))}
             </div>
           </div>
+
+          <PostContentCTA contentType="networking" typeLabel="Networking Post"
+            ctaDescription="Have a networking event, association, or professional group to promote? List it here." />
         </div>
 
         <div className="space-y-4">

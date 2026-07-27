@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const staticManufacturers = [
   { icon: '✈️', name: 'ideaForge Technology', hq: 'Mumbai, Maharashtra | BSE: IDEAFORGE', desc: "India's market leader in unmanned aerial systems with approximately 50% market share. SWITCH UAV is standard equipment for high-altitude border surveillance in Ladakh and Arunachal Pradesh. The only Type Approved manufacturer in multiple military categories.", tags: ['Defence', 'Surveillance', 'Type Approved', 'BSE Listed'], sector: 'Defence UAV' },
@@ -156,6 +157,9 @@ export default function DroneManufacturersPage() {
             </div>
           </>
         )}
+
+          <PostContentCTA contentType="manufacturer" typeLabel="Manufacturer Listing"
+            ctaDescription="Manufacture drones or drone components? List your company directly." />
         </div>
         <AdSidebarRail />
       </div>

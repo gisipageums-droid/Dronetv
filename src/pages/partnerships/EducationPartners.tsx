@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const eduStats = [
   { num: '240+', label: 'DGCA-Approved\nRPTOs' },
@@ -144,6 +145,9 @@ export default function EducationPartnersPage() {
             </div>
           </div>
         )}
+
+          <PostContentCTA contentType="education-partner" typeLabel="Education Partner Listing"
+            ctaDescription="Run a drone education institute or program? List it directly." />
         </div>
         <AdSidebarRail />
       </div>

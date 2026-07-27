@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const communitySpaces = [
   { icon: '💬', title: 'Discussion Forum', desc: 'Ask technical questions, share experiences, discuss regulations, and get peer feedback from verified drone professionals.', stat: 'Active Discussions Ongoing', cta: 'Join Forum', link: 'mailto:bd@dronetv.in' },
@@ -217,6 +218,9 @@ export default function CommunityPage() {
             </a>
           </div>
         </div>
+
+        <PostContentCTA contentType="community" typeLabel="Community Post"
+          ctaDescription="Running a group, forum, or community initiative for drone professionals? List it here." />
         </div>
         <AdSidebarRail />
       </div>

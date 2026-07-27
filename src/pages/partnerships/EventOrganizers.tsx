@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const confirmedPartners = [
   {
@@ -166,6 +167,9 @@ export default function EventOrganizersPage() {
             <a href="/events" className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">View Events Calendar →</a>
           </div>
         </div>
+
+        <PostContentCTA contentType="event-organizer" typeLabel="Event Organizer Listing"
+          ctaDescription="Organize drone industry events? List your company directly." />
         </div>
         <AdSidebarRail />
       </div>

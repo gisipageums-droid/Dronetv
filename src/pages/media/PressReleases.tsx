@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 export default function PressReleasesPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -91,6 +92,9 @@ export default function PressReleasesPage() {
             ))}
           </div>
         )}
+
+          <PostContentCTA contentType="press-release" typeLabel="Press Release"
+            ctaDescription="Have company news or an announcement to distribute? Publish your press release here." />
         </div>
         <AdSidebarRail />
       </div>

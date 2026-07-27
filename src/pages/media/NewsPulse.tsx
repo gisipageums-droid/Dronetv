@@ -5,6 +5,7 @@ import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import AdSlot from '../../components/common/AdSlot';
 import { withInlineAds, ExpoAdCreative, DroneAdCreative, getAdsFor } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 
 const filters = ['All News', 'Market', 'Defence', 'Policy', 'Agriculture', 'Technology', 'Training'];
@@ -252,6 +253,11 @@ export default function NewsPulsePage() {
               <AdSlot width={300} height={250} className="mx-auto"><DroneAdCreative /></AdSlot>
             )}
           </div>
+        </div>
+
+        <div className="lg:col-span-3">
+          <PostContentCTA contentType="news" typeLabel="News Article"
+            ctaDescription="Have drone/GIS/AI industry news to share? Submit your article for the News Pulse." />
         </div>
       </div>
     </div>

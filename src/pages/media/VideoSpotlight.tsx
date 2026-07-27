@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 function getYoutubeEmbed(url: string): string | null {
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
@@ -173,6 +174,9 @@ export default function VideoSpotlightPage() {
             Visit Channel →
           </a>
         </div>
+
+          <PostContentCTA contentType="video" typeLabel="Video"
+            ctaDescription="Have a drone demo, interview, or event recap video to share? Submit it for the Video Spotlight." />
         </div>
         <AdSidebarRail />
       </div>

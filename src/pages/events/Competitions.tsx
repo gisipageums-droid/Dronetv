@@ -3,6 +3,7 @@ import { MapPin, Calendar, Trophy, ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
+import PostContentCTA from '../../components/common/PostContentCTA';
 
 const staticCompetitions = [
   {
@@ -211,6 +212,10 @@ export default function CompetitionsPage() {
             </a>
           </div>
         </div>
+
+        <PostContentCTA contentType="competition" typeLabel="Competition"
+          ctaTitle="Submit Instantly"
+          ctaDescription="Prefer instant self-listing over manual review? Post your competition directly." />
       </div>
     </div>
   );
