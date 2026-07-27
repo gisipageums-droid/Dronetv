@@ -72,6 +72,15 @@ export default function IndustryReportsPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('All');
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -124,7 +133,16 @@ export default function IndustryReportsPage() {
                     {item.date && <span className="text-xs text-gray-400">{item.date}</span>}
                   </div>
                   <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
-                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                  {item.description && (
+                    <div className="mb-3">
+                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      {item.description.length > 140 && (
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                        </button>
+                      )}
+                    </div>
+                  )}
                   <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
                     <span className="text-xs font-semibold text-gray-600">{item.source}</span>
                     {item.externalLink && (
@@ -149,7 +167,14 @@ export default function IndustryReportsPage() {
                     <p className="text-xs text-gray-400">{report.date}</p>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4 line-clamp-3">{report.desc}</p>
+                <div className="mb-4">
+                  <p className={`text-sm text-gray-600 leading-relaxed ${expandedIds.has(report.id) ? '' : 'line-clamp-3'}`}>{report.desc}</p>
+                  {report.desc.length > 140 && (
+                    <button onClick={() => toggleExpanded(report.id)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                      {expandedIds.has(report.id) ? 'Show less' : 'Read more'}
+                    </button>
+                  )}
+                </div>
                 <div className="flex gap-4 mb-4">
                   {report.highlights.map((h, i) => (
                     <div key={i} className="text-center">

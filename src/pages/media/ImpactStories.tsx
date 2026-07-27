@@ -17,6 +17,15 @@ export default function ImpactStoriesPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('All');
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -101,7 +110,14 @@ export default function ImpactStoriesPage() {
                 <ContentCard key={story.id}>
                   <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-3 inline-block self-start">{story.category}</span>
                   <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{story.title}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{story.text}</p>
+                  <div className="mb-3">
+                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(story.id) ? '' : 'line-clamp-3'}`}>{story.text}</p>
+                    {story.text.length > 140 && (
+                      <button onClick={() => toggleExpanded(story.id)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        {expandedIds.has(story.id) ? 'Show less' : 'Read more'}
+                      </button>
+                    )}
+                  </div>
                   <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
                     <div>
                       <span className="text-2xl font-extrabold text-yellow-500 block leading-none">{story.metric}</span>

@@ -129,7 +129,14 @@ export default function DroneManufacturersPage() {
                       <p className="text-xs text-gray-400">{m.hq}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{m.desc}</p>
+                  <div className="mb-3">
+                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(String(i)) ? '' : 'line-clamp-3'}`}>{m.desc}</p>
+                    {m.desc.length > 140 && (
+                      <button onClick={() => toggleExpanded(String(i))} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        {expandedIds.has(String(i)) ? 'Show less' : 'Read more'}
+                      </button>
+                    )}
+                  </div>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {m.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>

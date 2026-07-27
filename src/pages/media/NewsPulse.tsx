@@ -39,6 +39,15 @@ export default function NewsPulsePage() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [news, setNews] = useState<MediaItem[]>([]);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -141,7 +150,14 @@ export default function NewsPulsePage() {
                         <span className="text-xs text-gray-400">{item.date}</span>
                       </div>
                       <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
-                      <p className="text-xs text-gray-500 leading-relaxed mb-2 line-clamp-3">{item.excerpt}</p>
+                      <div className="mb-2">
+                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.id) ? '' : 'line-clamp-3'}`}>{item.excerpt}</p>
+                        {item.excerpt.length > 140 && (
+                          <button onClick={() => toggleExpanded(item.id)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                            {expandedIds.has(item.id) ? 'Show less' : 'Read more'}
+                          </button>
+                        )}
+                      </div>
                       <p className="text-xs text-gray-500 font-semibold mt-auto pt-3 border-t border-gray-100">Source: {item.source}</p>
                     </ContentCard>
                   ))}
