@@ -1814,6 +1814,7 @@ function EventsForm() {
   const [stepValid, setStepValid] = useState(true);
   const { data, setData, updateField } = useForm();
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [showTokenModal, setShowTokenModal] = useState(false);
@@ -1978,8 +1979,15 @@ function EventsForm() {
 
   // Submit event form
   const handleSubmit = async () => {
+    // Give instant feedback on click — validateBeforeSubmit() makes a real
+    // network call (token check) for non-admin users, which was previously
+    // silent for a few seconds before the loader appeared, making the button
+    // look completely unresponsive.
+    setSubmitting(true);
+
     // First validate tokens only if we have an email to validate with
     const canProceed = await validateBeforeSubmit();
+    setSubmitting(false);
     if (!canProceed) {
       return;
     }
@@ -2215,9 +2223,10 @@ function EventsForm() {
           ) : (
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded"
+              disabled={submitting}
+              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create {eventTypeLabel} Website
+              {submitting ? "Please wait..." : `Create ${eventTypeLabel} Website`}
             </button>
           )}
         </div>
