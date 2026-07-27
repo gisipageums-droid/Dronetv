@@ -54,6 +54,71 @@ const ADS_TYPES: { value: ContentType; label: string }[] = [
   { value: 'ad', label: 'Advertisement' },
 ];
 
+// Real site screens that carry ad zones, grouped exactly like the public nav —
+// used to build the Target Pages checklist so admins pick a screen instead of
+// typing a raw URL path.
+const SITE_PAGES: { section: string; pages: { path: string; label: string }[] }[] = [
+  {
+    section: 'Events',
+    pages: [
+      { path: '/events', label: 'Events Hub' },
+      { path: '/events/calendar', label: 'Event Calendar' },
+      { path: '/events/expos', label: 'Expos' },
+      { path: '/events/conferences', label: 'Conferences' },
+      { path: '/events/workshops', label: 'Workshops' },
+      { path: '/events/webinars', label: 'Webinars' },
+      { path: '/events/meetups', label: 'Meetups' },
+    ],
+  },
+  {
+    section: 'Media',
+    pages: [
+      { path: '/media', label: 'Media Hub' },
+      { path: '/media/news-pulse', label: 'News Pulse' },
+      { path: '/media/magazine', label: 'Magazine' },
+      { path: '/media/video-spotlight', label: 'Video Spotlight' },
+      { path: '/media/gallery', label: 'Gallery' },
+      { path: '/media/impact-stories', label: 'Impact Stories' },
+      { path: '/media/market-intelligence', label: 'Market Intelligence' },
+      { path: '/media/tech-trends', label: 'Tech Trends' },
+      { path: '/media/press-releases', label: 'Press Releases' },
+      { path: '/media/industry-reports', label: 'Industry Reports' },
+    ],
+  },
+  {
+    section: 'Partnerships',
+    pages: [
+      { path: '/partnerships', label: 'Partnerships Hub' },
+      { path: '/partnerships/drone-manufacturers', label: 'Drone Manufacturers' },
+      { path: '/partnerships/ai-tech', label: 'AI & Tech Companies' },
+      { path: '/partnerships/event-organizers', label: 'Event Organizers' },
+      { path: '/partnerships/education-partners', label: 'Education Partners' },
+      { path: '/partnerships/industry-players', label: 'Industry Players' },
+    ],
+  },
+  {
+    section: 'Professionals',
+    pages: [
+      { path: '/professionals', label: 'Professionals Hub' },
+      { path: '/professionals/job-board', label: 'Job Board' },
+      { path: '/professionals/pilot-directory', label: 'Pilot Directory' },
+      { path: '/professionals/certifications', label: 'Certifications' },
+      { path: '/professionals/training', label: 'Training' },
+      { path: '/professionals/networking', label: 'Networking' },
+      { path: '/professionals/community', label: 'Community' },
+      { path: '/professionals/career-path', label: 'Career Path' },
+    ],
+  },
+  {
+    section: 'Companies & Marketplace',
+    pages: [
+      { path: '/listed-companies', label: 'Listed Companies' },
+      { path: '/products', label: 'Products' },
+      { path: '/services', label: 'Services' },
+    ],
+  },
+];
+
 const ALL_TYPE_DEFS = [...MEDIA_TYPES, ...EVENTS_TYPES, ...PROFESSIONALS_TYPES, ...PARTNERSHIPS_TYPES, ...ADS_TYPES];
 
 const EVENTS_VALS = new Set(EVENTS_TYPES.map(t => t.value));
@@ -748,9 +813,18 @@ export default function AdminMediaDashboard() {
                   );
                 }
 
-                // Target Pages — ads only
+                // Target Pages — ads only. A checklist of real screens instead of
+                // free-typed URL paths, grouped the same way as the public nav.
                 if (has('targetPages')) {
                   const isAllPages = form.targetPages.includes('all');
+                  const togglePage = (path: string) => {
+                    setForm(f => ({
+                      ...f,
+                      targetPages: f.targetPages.includes(path)
+                        ? f.targetPages.filter(p => p !== path)
+                        : [...f.targetPages, path],
+                    }));
+                  };
                   rows.push(
                     <div key="targetPages">
                       <div className="flex items-center justify-between mb-1">
@@ -761,12 +835,25 @@ export default function AdminMediaDashboard() {
                           All Pages
                         </label>
                       </div>
-                      <textarea
-                        value={isAllPages ? '' : form.targetPages.join('\n')}
-                        onChange={e => setForm(f => ({ ...f, targetPages: e.target.value.split('\n').map(p => p.trim()).filter(Boolean) }))}
-                        disabled={isAllPages} rows={3}
-                        className={`${inp} resize-none disabled:bg-gray-100 disabled:text-gray-400`}
-                        placeholder={'One page path per line, e.g.\n/media/tech-trends\n/partnerships/ai-tech'} />
+                      <div className={`border border-gray-200 rounded-lg max-h-56 overflow-y-auto p-3 space-y-3 ${isAllPages ? 'opacity-50 pointer-events-none bg-gray-50' : 'bg-white'}`}>
+                        {SITE_PAGES.map(group => (
+                          <div key={group.section}>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">{group.section}</p>
+                            <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+                              {group.pages.map(p => (
+                                <label key={p.path} className="flex items-center gap-1.5 text-xs text-gray-700 cursor-pointer">
+                                  <input type="checkbox" checked={form.targetPages.includes(p.path)}
+                                    onChange={() => togglePage(p.path)} disabled={isAllPages} />
+                                  {p.label}
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {!isAllPages && (
+                        <p className="text-[11px] text-gray-400 mt-1">{form.targetPages.length} page(s) selected</p>
+                      )}
                     </div>
                   );
                 }
