@@ -21,6 +21,11 @@ export interface MediaItem {
   platform?: string;
   readTime?: string;
   applicationDeadline?: string;
+  zone?: string;
+  targetPages?: string[];
+  startDate?: string;
+  endDate?: string;
+  packageType?: string;
   isPublished: boolean;
   publishedAt?: string;
   createdAt: string;
@@ -34,7 +39,8 @@ export type ContentType =
   | 'competition' | 'webinar' | 'meetup'
   | 'job' | 'training' | 'certification' | 'networking' | 'community'
   | 'applications' | 'manufacturer' | 'ai-company' | 'event-organizer'
-  | 'education-partner' | 'industry-player';
+  | 'education-partner' | 'industry-player'
+  | 'ad';
 
 export async function fetchContent(type: ContentType, signal?: AbortSignal): Promise<MediaItem[]> {
   const res = await fetch(`${BASE}?type=${type}&isPublished=true`, { signal });

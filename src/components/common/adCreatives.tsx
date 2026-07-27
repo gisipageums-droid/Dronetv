@@ -1,5 +1,31 @@
 import { ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import AdSlot from './AdSlot';
+import { MediaItem } from '../../lib/mediaApi';
+
+// Populated once by AdsLoader on app mount. Plain module-level cache (not React
+// state/context) since nothing here needs mid-session reactivity — ads don't
+// change while a tab is open, and every consumer below reads this synchronously
+// during its own render, so no call site across the ~33 pages using these
+// helpers needs to change to start receiving real ads instead of dummies.
+let realAdsCache: MediaItem[] = [];
+
+export function setRealAdsCache(ads: MediaItem[]) {
+  realAdsCache = ads;
+}
+
+export function getAdsFor(zone: string, pathname: string): MediaItem[] {
+  const today = new Date().toISOString().slice(0, 10);
+  return realAdsCache.filter(ad => {
+    if (ad.zone !== zone) return false;
+    const pages = ad.targetPages || [];
+    if (!pages.includes('all') && !pages.includes(pathname)) return false;
+    if (ad.startDate && ad.startDate > today) return false;
+    if (ad.endDate && ad.endDate < today) return false;
+    return true;
+  });
+}
+
 
 // Shared sample dummy ad creatives — built as inline CSS/emoji graphics rather
 // than downloaded stock images, so there's no copyright/licensing question and
@@ -54,16 +80,22 @@ const INLINE_CREATIVES = [DroneAdCreative, ExpoAdCreative, TrainingAdCreative];
 // cycling through the sample creatives so repeated slots don't look identical.
 // Caller's grid must be a CSS grid (col-span-full spans every column).
 export function withInlineAds<T>(arr: T[], render: (item: T, i: number) => ReactNode): ReactNode[] {
+  const realAds = getAdsFor('inline', window.location.pathname);
   const out: ReactNode[] = [];
   let adCount = 0;
   arr.forEach((item, i) => {
     out.push(render(item, i));
     if ((i + 1) % 3 === 0 && i !== arr.length - 1) {
+      const realAd = realAds.length > 0 ? realAds[adCount % realAds.length] : null;
       const Creative = INLINE_CREATIVES[adCount % INLINE_CREATIVES.length];
       adCount++;
       out.push(
         <div key={`ad-${i}`} className="col-span-full">
-          <AdSlot height={100} className="w-full"><Creative /></AdSlot>
+          {realAd ? (
+            <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} height={100} className="w-full" />
+          ) : (
+            <AdSlot height={100} className="w-full"><Creative /></AdSlot>
+          )}
         </div>
       );
     }
@@ -75,14 +107,29 @@ export function withInlineAds<T>(arr: T[], render: (item: T, i: number) => React
 // `lg` so it never disturbs mobile/tablet single-column layouts. Drop this as a
 // sibling of the main content column inside an `lg:flex lg:items-start lg:gap-6` row.
 export function AdSidebarRail() {
+  const { pathname } = useLocation();
+  const realAds = getAdsFor('sidebar', pathname);
+  const slots = [
+    { height: 250, dummy: ExpoAdCreative },
+    { height: 600, dummy: PartnerAdCreative },
+    { height: 250, dummy: DroneAdCreative },
+  ];
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-[300px] lg:flex-shrink-0 gap-4">
-      <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
-      <AdSlot width={300} height={250}><ExpoAdCreative /></AdSlot>
-      <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
-      <AdSlot width={300} height={600}><PartnerAdCreative /></AdSlot>
-      <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Advertisement</span>
-      <AdSlot width={300} height={250}><DroneAdCreative /></AdSlot>
+      {slots.map((slot, i) => {
+        const realAd = realAds[i];
+        const Dummy = slot.dummy;
+        return (
+          <div key={i}>
+            <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest block mb-1">Advertisement</span>
+            {realAd ? (
+              <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} width={300} height={slot.height} />
+            ) : (
+              <AdSlot width={300} height={slot.height}><Dummy /></AdSlot>
+            )}
+          </div>
+        );
+      })}
     </aside>
   );
 }
@@ -90,16 +137,22 @@ export function AdSidebarRail() {
 // Zone 6: small "Sponsored" tag for one exclusive category on a filter-pill row.
 // Usage: wrap the pill button's className with `relative` and render this as a child.
 export function SponsorBadge() {
+  const { pathname } = useLocation();
+  const realAd = getAdsFor('sponsor-badge', pathname)[0];
   return (
     <span className="absolute -top-2 -right-1 bg-white text-red-600 border border-red-600 text-[8px] font-bold px-1 rounded leading-tight">
-      Sponsored
+      {realAd ? `Sponsored by ${realAd.company || realAd.title}` : 'Sponsored'}
     </span>
   );
 }
 
 // Zone 4: full-width thin banner for a natural content break between sections
 export function AdDetailBanner() {
-  return (
+  const { pathname } = useLocation();
+  const realAd = getAdsFor('detail-banner', pathname)[0];
+  return realAd ? (
+    <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} height={90} className="w-full" />
+  ) : (
     <AdSlot height={90} className="w-full"><TrainingAdCreative /></AdSlot>
   );
 }

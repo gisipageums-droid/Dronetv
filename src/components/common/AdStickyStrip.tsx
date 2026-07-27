@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
 import AdSlot from './AdSlot';
-import { ExpoAdCreative } from './adCreatives';
+import { ExpoAdCreative, getAdsFor } from './adCreatives';
 
 // Pages excluded from ad placements entirely (per explicit user instruction):
 // Home, About Us, Contact, Purchase (which is /partnerships/benefits) — plus
@@ -23,10 +23,16 @@ export default function AdStickyStrip() {
   const isExcluded = EXCLUDED_EXACT_PATHS.includes(pathname) || EXCLUDED_PREFIXES.some(p => pathname.startsWith(p));
   if (dismissed || isExcluded) return null;
 
+  const realAd = getAdsFor('sticky', pathname)[0];
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[9999998] border-t-2 border-yellow-400 bg-white/95 backdrop-blur-sm">
       <div className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-4">
-        <AdSlot height={64} className="flex-1 min-w-0"><ExpoAdCreative /></AdSlot>
+        {realAd ? (
+          <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} height={64} className="flex-1 min-w-0" />
+        ) : (
+          <AdSlot height={64} className="flex-1 min-w-0"><ExpoAdCreative /></AdSlot>
+        )}
         <button
           onClick={() => setDismissed(true)}
           aria-label="Close advertisement"

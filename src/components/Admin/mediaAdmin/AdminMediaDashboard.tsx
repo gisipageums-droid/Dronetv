@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle, Upload } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, createContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
 import { ADMIN_API, LAMBDA } from '../../../lib/apiConfig';
+import { uploadImageToS3 } from '../../webbuilder/src/pages/create-company/src/utils/s3Upload';
 import AdminJobBoardDashboard from '../jobBoardAdmin/AdminJobBoardDashboard';
 
 interface AppSubmission {
@@ -49,13 +50,18 @@ const PARTNERSHIPS_TYPES: { value: ContentType; label: string }[] = [
   { value: 'industry-player', label: 'Industry Player' },
 ];
 
-const ALL_TYPE_DEFS = [...MEDIA_TYPES, ...EVENTS_TYPES, ...PROFESSIONALS_TYPES, ...PARTNERSHIPS_TYPES];
+const ADS_TYPES: { value: ContentType; label: string }[] = [
+  { value: 'ad', label: 'Advertisement' },
+];
+
+const ALL_TYPE_DEFS = [...MEDIA_TYPES, ...EVENTS_TYPES, ...PROFESSIONALS_TYPES, ...PARTNERSHIPS_TYPES, ...ADS_TYPES];
 
 const EVENTS_VALS = new Set(EVENTS_TYPES.map(t => t.value));
 const PROFESSIONALS_VALS = new Set(PROFESSIONALS_TYPES.map(t => t.value));
 const PARTNERSHIPS_VALS = new Set([...PARTNERSHIPS_TYPES.map(t => t.value), 'applications' as ContentType]);
+const ADS_VALS = new Set(ADS_TYPES.map(t => t.value));
 
-type SectionMode = 'media' | 'events' | 'professionals' | 'partnerships';
+type SectionMode = 'media' | 'events' | 'professionals' | 'partnerships' | 'ads';
 
 const MODE_CONFIG: Record<SectionMode, { title: string; subtitle: string; types: { value: ContentType; label: string }[]; sectionParam: string }> = {
   media: {
@@ -82,12 +88,20 @@ const MODE_CONFIG: Record<SectionMode, { title: string; subtitle: string; types:
     types: PARTNERSHIPS_TYPES,
     sectionParam: 'partnerships',
   },
+  ads: {
+    title: 'Ads Manager',
+    subtitle: 'Post and manage paid ad placements across site zones and pages',
+    types: ADS_TYPES,
+    sectionParam: 'ads-cms',
+  },
 };
 
 function getMode(urlType: string | null, urlSection: string): SectionMode {
+  if (urlType && ADS_VALS.has(urlType as ContentType)) return 'ads';
   if (urlType && PARTNERSHIPS_VALS.has(urlType as ContentType)) return 'partnerships';
   if (urlType && EVENTS_VALS.has(urlType as ContentType)) return 'events';
   if (urlType && PROFESSIONALS_VALS.has(urlType as ContentType)) return 'professionals';
+  if (urlSection === 'ads-cms') return 'ads';
   if (urlSection === 'partnerships') return 'partnerships';
   if (urlSection === 'events-cms') return 'events';
   if (urlSection === 'professionals-cms') return 'professionals';
@@ -95,7 +109,8 @@ function getMode(urlType: string | null, urlSection: string): SectionMode {
 }
 
 type FieldKey = 'category' | 'source' | 'author' | 'date' | 'readTime' | 'videoUrl'
-  | 'company' | 'location' | 'price' | 'salary' | 'platform';
+  | 'company' | 'location' | 'price' | 'salary' | 'platform'
+  | 'zone' | 'targetPages' | 'startDate' | 'endDate' | 'packageType';
 
 const FIELD_CONFIG: Record<ContentType, FieldKey[]> = {
   'news':                ['category', 'source', 'date', 'readTime'],
@@ -121,6 +136,7 @@ const FIELD_CONFIG: Record<ContentType, FieldKey[]> = {
   'education-partner':   ['company', 'location', 'category'],
   'industry-player':     ['company', 'location', 'category'],
   'applications':        ['company', 'location', 'category'],
+  'ad':                  ['zone', 'targetPages', 'startDate', 'endDate', 'packageType', 'company'],
 };
 
 const FIELD_LABELS: Partial<Record<ContentType, Partial<Record<FieldKey, string>>>> = {
@@ -146,6 +162,11 @@ const EMPTY_FORM = {
   company: '',
   platform: '',
   readTime: '',
+  zone: '',
+  targetPages: [] as string[],
+  startDate: '',
+  endDate: '',
+  packageType: '',
   tags: [] as string[],
   isPublished: false,
 };
@@ -170,6 +191,7 @@ export default function AdminMediaDashboard() {
   const [saving, setSaving] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<MediaItem | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Applications received to DroneTv.in (webinar registrations, job applications, contact-us, partner sign-ups)
   const [appSubmissions, setAppSubmissions] = useState<AppSubmission[]>([]);
@@ -272,6 +294,11 @@ export default function AdminMediaDashboard() {
       company: item.company || '',
       platform: item.platform || '',
       readTime: item.readTime || '',
+      zone: item.zone || '',
+      targetPages: item.targetPages || [],
+      startDate: item.startDate || '',
+      endDate: item.endDate || '',
+      packageType: item.packageType || '',
       tags: item.tags || [],
       isPublished: item.isPublished,
     });
@@ -372,6 +399,12 @@ export default function AdminMediaDashboard() {
               </button>
             );
           })}
+          {mode === 'professionals' && (
+            <button onClick={() => navigate('/admin/professional/dashboard')}
+              className="px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] border-transparent text-gray-500 hover:text-gray-700 transition-all">
+              Pilot Directory
+            </button>
+          )}
         </div>
 
         {activeType !== 'job' && (
@@ -687,16 +720,112 @@ export default function AdminMediaDashboard() {
                   );
                 }
 
+                // Zone + Package Tier (paired) — ads only
+                if (has('zone') && has('packageType')) {
+                  rows.push(
+                    <div key="zone-packageType" className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={lbl}>Ad Zone</label>
+                        <select value={form.zone} onChange={e => setForm(f => ({ ...f, zone: e.target.value }))} className={inp}>
+                          <option value="">Select zone...</option>
+                          <option value="sidebar">Sidebar Rail (300×250 / 300×600)</option>
+                          <option value="inline">Inline Feed Ad</option>
+                          <option value="sticky">Bottom Sticky Strip</option>
+                          <option value="detail-banner">Detail Banner</option>
+                          <option value="sponsor-badge">Sponsor Badge</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className={lbl}>Package Tier</label>
+                        <select value={form.packageType} onChange={e => setForm(f => ({ ...f, packageType: e.target.value }))} className={inp}>
+                          <option value="">Select tier...</option>
+                          <option value="reach">Reach</option>
+                          <option value="scale">Scale</option>
+                          <option value="brand">Brand</option>
+                        </select>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Target Pages — ads only
+                if (has('targetPages')) {
+                  const isAllPages = form.targetPages.includes('all');
+                  rows.push(
+                    <div key="targetPages">
+                      <div className="flex items-center justify-between mb-1">
+                        <label className={lbl}>Target Pages</label>
+                        <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 cursor-pointer">
+                          <input type="checkbox" checked={isAllPages}
+                            onChange={e => setForm(f => ({ ...f, targetPages: e.target.checked ? ['all'] : [] }))} />
+                          All Pages
+                        </label>
+                      </div>
+                      <textarea
+                        value={isAllPages ? '' : form.targetPages.join('\n')}
+                        onChange={e => setForm(f => ({ ...f, targetPages: e.target.value.split('\n').map(p => p.trim()).filter(Boolean) }))}
+                        disabled={isAllPages} rows={3}
+                        className={`${inp} resize-none disabled:bg-gray-100 disabled:text-gray-400`}
+                        placeholder={'One page path per line, e.g.\n/media/tech-trends\n/partnerships/ai-tech'} />
+                    </div>
+                  );
+                }
+
+                // Start Date + End Date (paired) — ads only
+                if (has('startDate') && has('endDate')) {
+                  rows.push(
+                    <div key="startDate-endDate" className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={lbl}>Start Date</label>
+                        <input type="date" value={form.startDate} onChange={e => setForm(f => ({ ...f, startDate: e.target.value }))}
+                          className={inp} />
+                      </div>
+                      <div>
+                        <label className={lbl}>End Date</label>
+                        <input type="date" value={form.endDate} onChange={e => setForm(f => ({ ...f, endDate: e.target.value }))}
+                          className={inp} />
+                      </div>
+                    </div>
+                  );
+                }
+
                 return rows;
               })()}
 
-              {/* Image URL — always shown */}
-              <div>
-                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Image URL</label>
-                <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
-                  placeholder="https://..." />
-              </div>
+              {/* Image — real upload for ads, plain URL for every other content type */}
+              {form.contentType === 'ad' ? (
+                <div>
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Ad Creative Image</label>
+                  {form.imageUrl && (
+                    <img src={form.imageUrl} alt="Ad creative preview" className="w-full max-h-40 object-contain rounded-lg border border-gray-200 mb-2 bg-gray-50" />
+                  )}
+                  <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-lg py-3 cursor-pointer hover:border-yellow-400 transition-colors text-sm font-semibold text-gray-500">
+                    <Upload className="w-4 h-4" />
+                    {uploadingImage ? 'Uploading...' : form.imageUrl ? 'Replace Image' : 'Upload Image'}
+                    <input type="file" accept="image/*" className="hidden" disabled={uploadingImage}
+                      onChange={async e => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setUploadingImage(true);
+                        try {
+                          const url = await uploadImageToS3(file);
+                          setForm(f => ({ ...f, imageUrl: url }));
+                        } catch {
+                          toast.error('Image upload failed');
+                        } finally {
+                          setUploadingImage(false);
+                        }
+                      }} />
+                  </label>
+                </div>
+              ) : (
+                <div>
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Image URL</label>
+                  <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                    placeholder="https://..." />
+                </div>
+              )}
 
               {/* External Link + Video URL (video URL only for types that need it) */}
               {(FIELD_CONFIG[form.contentType] ?? []).includes('videoUrl') ? (

@@ -22,7 +22,7 @@ VALID_TYPES = {
     'manufacturer', 'ai-company', 'event-organizer',
     'education-partner', 'industry-player',
     'gallery', 'community', 'networking',
-    'user-content',
+    'user-content', 'ad',
 }
 
 
@@ -110,6 +110,11 @@ def handler(event, context):
             'company': body.get('company', ''),
             'platform': body.get('platform', ''),
             'readTime': body.get('readTime', ''),
+            'zone': body.get('zone', ''),
+            'targetPages': body.get('targetPages', []),
+            'startDate': body.get('startDate', ''),
+            'endDate': body.get('endDate', ''),
+            'packageType': body.get('packageType', ''),
             'userId': body.get('userId', ''),
             'postType': body.get('postType', ''),
             'status': body.get('status', 'submitted'),

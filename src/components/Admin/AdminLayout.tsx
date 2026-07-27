@@ -43,6 +43,7 @@ import {
   BarChart,
   ShieldCheck,
   Share2,
+  Megaphone,
 } from "lucide-react";
 import { COMPANY_API, EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 
@@ -116,6 +117,12 @@ const NAV: Section[] = [
         label: "Content Review",
         icon: <Share2 size={17} />,
         path: "/admin/user-content",
+      },
+      {
+        id: "ads",
+        label: "Ads",
+        icon: <Megaphone size={17} />,
+        path: "/admin/media/dashboard?type=ad",
       },
       {
         id: "media",
@@ -246,6 +253,7 @@ const BREADCRUMBS: Record<string, string> = {
 const PARTNERSHIPS_CMS = new Set(["manufacturer","ai-company","event-organizer","education-partner","industry-player","applications"]);
 const EVENTS_CMS = new Set(["competition","webinar","meetup"]);
 const PROFESSIONALS_CMS = new Set(["job","training","certification","networking","community"]);
+const ADS_CMS = new Set(["ad"]);
 
 function computeGroupId(pathname: string, search: string): string {
   const sp = new URLSearchParams(search);
@@ -255,6 +263,7 @@ function computeGroupId(pathname: string, search: string): string {
   const tab  = sp.get("tab") ?? "";
 
   if (pathname === "/admin/media/dashboard") {
+    if (ADS_CMS.has(type) || section === "ads-cms") return "ads";
     if (PARTNERSHIPS_CMS.has(type) || section === "partnerships") return "partnerships";
     if (EVENTS_CMS.has(type) || section === "events-cms") return "events";
     if (PROFESSIONALS_CMS.has(type) || section === "professionals-cms") return "professionals";
@@ -266,6 +275,7 @@ function computeGroupId(pathname: string, search: string): string {
 
 function computeBreadcrumb(groupId: string, pathname: string): string {
   if (groupId === "dashboard") return "Dashboard";
+  if (groupId === "ads") return "Ads";
   if (groupId === "partnerships") return "Partnerships";
   if (groupId === "invoices") return "Invoices";
   if (groupId === "events") return "Events";
