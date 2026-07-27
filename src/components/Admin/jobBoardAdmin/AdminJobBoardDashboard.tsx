@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Briefcase, Search, FileText, User, Award, FolderKanban, Paperclip, Activity, ExternalLink, GraduationCap, Code2, MessageSquare, X } from 'lucide-react';
+import { Briefcase, Search, FileText, User, Award, FolderKanban, Paperclip, Activity, ExternalLink, GraduationCap, Code2, MessageSquare, X, SlidersHorizontal, Clock, MapPin } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, MediaItem } from '../../../lib/mediaApi';
 import { fetchApplications, updateApplication, getResumeViewUrl, sendCandidateMessage, JobApplication } from '../../../lib/jobApplicationsApi';
@@ -13,6 +13,26 @@ const STATUS_COLORS: Record<string, string> = {
   Hired: 'bg-green-100 text-green-700',
   Rejected: 'bg-red-100 text-red-700',
 };
+
+const STATUS_DOT: Record<string, string> = {
+  Applied: 'bg-gray-400',
+  Shortlisted: 'bg-blue-400',
+  Interviewing: 'bg-amber-400',
+  Hired: 'bg-green-500',
+  Rejected: 'bg-red-400',
+};
+
+const AVATAR_PALETTE = ['bg-blue-100 text-blue-700', 'bg-purple-100 text-purple-700', 'bg-pink-100 text-pink-700', 'bg-emerald-100 text-emerald-700', 'bg-amber-100 text-amber-700', 'bg-cyan-100 text-cyan-700'];
+
+function initials(name: string): string {
+  return name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]?.toUpperCase()).join('') || '?';
+}
+
+function colorFor(seed: string): string {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) | 0;
+  return AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length];
+}
 
 type TabKey = 'overview' | 'resume' | 'education' | 'experience' | 'skills' | 'projects' | 'documents' | 'activity';
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
@@ -30,6 +50,7 @@ export default function AdminJobBoardDashboard() {
   const [jobs, setJobs] = useState<MediaItem[]>([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
   const [jobSearch, setJobSearch] = useState('');
+  const [jobSort, setJobSort] = useState<'newest' | 'oldest'>('newest');
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
   const [applications, setApplications] = useState<JobApplication[]>([]);
@@ -81,8 +102,10 @@ export default function AdminJobBoardDashboard() {
 
   const filteredJobs = useMemo(() => {
     const q = jobSearch.toLowerCase();
-    return jobs.filter(j => !q || j.title.toLowerCase().includes(q) || (j.company || '').toLowerCase().includes(q));
-  }, [jobs, jobSearch]);
+    const list = jobs.filter(j => !q || j.title.toLowerCase().includes(q) || (j.company || '').toLowerCase().includes(q));
+    const sorted = [...list].sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
+    return jobSort === 'newest' ? sorted.reverse() : sorted;
+  }, [jobs, jobSearch, jobSort]);
 
   const filteredCandidates = useMemo(() => {
     const q = candidateSearch.toLowerCase();
@@ -146,10 +169,20 @@ export default function AdminJobBoardDashboard() {
         <div className="w-[300px] flex-shrink-0 border-r border-gray-200 bg-white flex flex-col">
           <div className="p-3 border-b border-gray-100">
             <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Jobs ({jobs.length})</div>
-            <div className="relative">
+            <div className="relative mb-2">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
               <input value={jobSearch} onChange={e => setJobSearch(e.target.value)} placeholder="Search jobs..."
                 className="w-full pl-8 pr-2 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:border-yellow-400" />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1 text-xs font-semibold text-gray-500">
+                <SlidersHorizontal size={12} /> Filter
+              </span>
+              <select value={jobSort} onChange={e => setJobSort(e.target.value as 'newest' | 'oldest')}
+                className="text-xs font-semibold text-gray-600 border border-gray-200 rounded-md px-1.5 py-1 focus:outline-none focus:border-yellow-400">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+              </select>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto">
@@ -159,16 +192,21 @@ export default function AdminJobBoardDashboard() {
               <div className="p-4 text-xs text-gray-400 text-center">No job listings yet</div>
             ) : filteredJobs.map(job => (
               <button key={job.contentId} onClick={() => setSelectedJobId(job.contentId)}
-                className={`w-full text-left px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${selectedJobId === job.contentId ? 'bg-yellow-50 border-l-2 border-l-yellow-400' : ''}`}>
-                <p className="text-sm font-semibold text-gray-900 truncate">{job.title}</p>
-                <p className="text-xs text-gray-400 truncate">{job.company}{job.location ? ` · ${job.location}` : ''}</p>
-                <div className="flex items-center justify-between mt-1.5">
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.isPublished ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                    {job.isPublished ? 'Active' : 'Draft'}
-                  </span>
-                  {applicantCount(job.contentId) !== undefined && (
-                    <span className="text-[10px] text-gray-400">{applicantCount(job.contentId)} applicants</span>
-                  )}
+                className={`w-full text-left px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors flex gap-2.5 ${selectedJobId === job.contentId ? 'bg-yellow-50 border-l-2 border-l-yellow-400' : ''}`}>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold ${colorFor(job.contentId)}`}>
+                  <Briefcase size={14} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-gray-900 truncate">{job.title}</p>
+                  <p className="text-xs text-gray-400 truncate">{job.company}{job.location ? ` · ${job.location}` : ''}</p>
+                  <div className="flex items-center justify-between mt-1.5">
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.isPublished ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                      {job.isPublished ? 'Active' : 'Draft'}
+                    </span>
+                    {applicantCount(job.contentId) !== undefined && (
+                      <span className="text-[10px] text-gray-400">{applicantCount(job.contentId)} applicants</span>
+                    )}
+                  </div>
                 </div>
               </button>
             ))}
@@ -194,12 +232,22 @@ export default function AdminJobBoardDashboard() {
               <div className="p-4 text-xs text-gray-400 text-center">No applications yet</div>
             ) : filteredCandidates.map(app => (
               <button key={app.applicationId} onClick={() => setSelectedApplicationId(app.applicationId)}
-                className={`w-full text-left px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${selectedApplicationId === app.applicationId ? 'bg-yellow-50 border-l-2 border-l-yellow-400' : ''}`}>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{app.fullName || 'Unnamed'}</p>
+                className={`w-full text-left px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors flex gap-2.5 ${selectedApplicationId === app.applicationId ? 'bg-yellow-50 border-l-2 border-l-yellow-400' : ''}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[11px] font-bold ${colorFor(app.applicationId)}`}>
+                  {initials(app.fullName || '?')}
                 </div>
-                <p className="text-xs text-gray-400 truncate">{app.currentRole || 'Applicant'}{app.currentCompany ? ` · ${app.currentCompany}` : ''}</p>
-                <span className={`inline-block mt-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded ${STATUS_COLORS[app.status]}`}>{app.status}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{app.fullName || 'Unnamed'}</p>
+                    <span className="flex items-center gap-1 flex-shrink-0">
+                      <span className={`w-1.5 h-1.5 rounded-full ${STATUS_DOT[app.status]}`} />
+                      <span className={`text-[10px] font-semibold ${STATUS_COLORS[app.status].split(' ')[1]}`}>{app.status}</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-400 truncate">
+                    {app.experienceYears ? `${app.experienceYears} yrs` : app.currentRole || 'Applicant'}{app.location ? ` · ${app.location.split(',')[0]}` : ''}
+                  </p>
+                </div>
               </button>
             ))}
           </div>
@@ -213,23 +261,42 @@ export default function AdminJobBoardDashboard() {
             </div>
           ) : (
             <>
-              <div className="px-6 py-4 border-b border-gray-200 bg-white flex items-center justify-between flex-shrink-0">
-                <div>
-                  <h2 className="text-base font-bold text-gray-900">{selectedApplication.fullName}</h2>
-                  <p className="text-xs text-gray-500">
-                    {selectedApplication.currentRole || 'Applicant'}{selectedApplication.currentCompany ? ` · ${selectedApplication.currentCompany}` : ''}
-                    {selectedApplication.location ? ` · ${selectedApplication.location}` : ''}
-                  </p>
+              <div className="px-6 py-4 border-b border-gray-200 bg-white flex-shrink-0">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold ${colorFor(selectedApplication.applicationId)}`}>
+                      {initials(selectedApplication.fullName || '?')}
+                    </div>
+                    <div className="min-w-0">
+                      <h2 className="text-base font-bold text-gray-900">{selectedApplication.fullName}</h2>
+                      <p className="text-xs text-gray-500 truncate">
+                        {selectedApplication.currentRole || 'Applicant'}{selectedApplication.currentCompany ? ` · ${selectedApplication.currentCompany}` : ''}
+                        {selectedApplication.education ? ` · ${selectedApplication.education.split(',')[0]}` : ''}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <select value={selectedApplication.status} onChange={e => handleStatusChange(e.target.value as JobApplication['status'])}
+                      className="text-xs font-semibold border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-yellow-400">
+                      {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <button onClick={openMessage}
+                      className="flex items-center gap-1.5 text-xs font-bold bg-yellow-400 text-black px-3 py-1.5 rounded-lg hover:bg-yellow-300 transition-colors">
+                      <MessageSquare size={14} /> Message
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <select value={selectedApplication.status} onChange={e => handleStatusChange(e.target.value as JobApplication['status'])}
-                    className="text-xs font-semibold border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-yellow-400">
-                    {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  <button onClick={openMessage}
-                    className="flex items-center gap-1.5 text-xs font-bold bg-yellow-400 text-black px-3 py-1.5 rounded-lg hover:bg-yellow-300 transition-colors">
-                    <MessageSquare size={14} /> Message
-                  </button>
+                <div className="flex items-center gap-2 mt-3 ml-[60px]">
+                  {selectedApplication.experienceYears && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-yellow-50 text-yellow-800 border border-yellow-200 px-2.5 py-1 rounded-full">
+                      <Clock size={12} /> {selectedApplication.experienceYears} Years Experience
+                    </span>
+                  )}
+                  {selectedApplication.location && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
+                      <MapPin size={12} /> {selectedApplication.location}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -244,18 +311,56 @@ export default function AdminJobBoardDashboard() {
 
               <div className="flex-1 overflow-y-auto p-6">
                 {activeTab === 'overview' && (
-                  <div className="space-y-5 max-w-2xl">
-                    <div>
-                      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Professional Summary</h3>
-                      <p className="text-sm text-gray-700 leading-relaxed">{selectedApplication.professionalSummary || 'No summary provided.'}</p>
+                  <div className="flex gap-8">
+                    <div className="flex-1 min-w-0 space-y-6">
+                      <div>
+                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Professional Summary</h3>
+                        <p className="text-sm text-gray-700 leading-relaxed">{selectedApplication.professionalSummary || 'No summary provided.'}</p>
+                      </div>
+                      {(selectedApplication.skills || []).length > 0 && (
+                        <div>
+                          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Skills</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedApplication.skills!.map((s, i) => (
+                              <span key={i} className="text-xs font-semibold bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg">{s}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {(selectedApplication.experienceHighlights || []).length > 0 && (
+                        <div>
+                          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Experience Highlights</h3>
+                          <div className="space-y-4">
+                            {selectedApplication.experienceHighlights!.map((exp, i) => (
+                              <div key={i} className="flex gap-3">
+                                <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                                <div>
+                                  <p className="text-sm font-bold text-gray-900">{exp.title}</p>
+                                  <p className="text-xs text-gray-500">{exp.company}</p>
+                                  <p className="text-xs text-gray-400">{exp.period}</p>
+                                  <ul className="list-disc list-inside text-sm text-gray-600 mt-1 space-y-0.5">
+                                    {exp.bullets?.map((b, bi) => <li key={bi}>{b}</li>)}
+                                  </ul>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="grid grid-cols-2 gap-4 bg-white border border-gray-200 rounded-xl p-4">
-                      <div><p className="text-[10px] text-gray-400 uppercase font-bold">Email</p><p className="text-sm text-gray-800">{selectedApplication.email}</p></div>
-                      <div><p className="text-[10px] text-gray-400 uppercase font-bold">Phone</p><p className="text-sm text-gray-800">{selectedApplication.phone || '—'}</p></div>
-                      <div><p className="text-[10px] text-gray-400 uppercase font-bold">Education</p><p className="text-sm text-gray-800">{selectedApplication.education || '—'}</p></div>
-                      <div><p className="text-[10px] text-gray-400 uppercase font-bold">Expected Salary</p><p className="text-sm text-gray-800">{selectedApplication.expectedSalary || '—'}</p></div>
-                      <div><p className="text-[10px] text-gray-400 uppercase font-bold">Notice Period</p><p className="text-sm text-gray-800">{selectedApplication.noticePeriod || '—'}</p></div>
-                      <div><p className="text-[10px] text-gray-400 uppercase font-bold">Applied On</p><p className="text-sm text-gray-800">{new Date(selectedApplication.appliedAt).toLocaleDateString('en-IN')}</p></div>
+                    <div className="w-[260px] flex-shrink-0">
+                      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Personal Details</h3>
+                      <div className="space-y-4">
+                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Email</p><p className="text-sm text-gray-800 break-words">{selectedApplication.email}</p></div>
+                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Phone</p><p className="text-sm text-gray-800">{selectedApplication.phone || '—'}</p></div>
+                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Location</p><p className="text-sm text-gray-800">{selectedApplication.location || '—'}</p></div>
+                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Current Company</p><p className="text-sm text-gray-800">{selectedApplication.currentCompany || '—'}</p></div>
+                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Education</p><p className="text-sm text-gray-800">{selectedApplication.education || '—'}</p></div>
+                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Expected Salary</p><p className="text-sm text-gray-800">{selectedApplication.expectedSalary || '—'}</p></div>
+                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Notice Period</p><p className="text-sm text-gray-800">{selectedApplication.noticePeriod || '—'}</p></div>
+                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Date of Birth</p><p className="text-sm text-gray-800">{selectedApplication.dateOfBirth || '—'}</p></div>
+                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Gender</p><p className="text-sm text-gray-800">{selectedApplication.gender || '—'}</p></div>
+                      </div>
                     </div>
                   </div>
                 )}
