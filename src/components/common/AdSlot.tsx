@@ -27,7 +27,10 @@ export default function AdSlot({ image, href, alt = 'Advertisement', width, heig
         Ad
       </span>
       {image ? (
-        <img src={image} alt={alt} className="w-full h-full object-cover" />
+        // object-contain (not cover) — real uploaded creatives can be any aspect
+        // ratio and shouldn't get aggressively cropped into an unrecognizable
+        // sliver just to fill a slot with a different shape.
+        <img src={image} alt={alt} className="w-full h-full object-contain bg-white" />
       ) : children ? (
         children
       ) : (

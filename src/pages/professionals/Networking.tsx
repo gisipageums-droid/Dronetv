@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import AdSlot from '../../components/common/AdSlot';
-import { withInlineAds, ExpoAdCreative, DroneAdCreative } from '../../components/common/adCreatives';
+import { withInlineAds, ExpoAdCreative, DroneAdCreative, getAdsFor } from '../../components/common/adCreatives';
 
 const networkingChannels = [
   {
@@ -107,6 +107,8 @@ const threads = [
 ];
 
 export default function NetworkingPage() {
+  const { pathname } = useLocation();
+  const sidebarAds = getAdsFor('sidebar', pathname);
   const [cmsItems, setCmsItems] = useState<MediaItem[]>([]);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
@@ -309,11 +311,19 @@ export default function NetworkingPage() {
 
           <div>
             <span className="text-xs text-gray-400 font-semibold block mb-2">Advertisement</span>
-            <AdSlot width={300} height={250}><ExpoAdCreative /></AdSlot>
+            {sidebarAds[0] ? (
+              <AdSlot image={sidebarAds[0].imageUrl} href={sidebarAds[0].externalLink} alt={sidebarAds[0].title} width={300} height={250} />
+            ) : (
+              <AdSlot width={300} height={250}><ExpoAdCreative /></AdSlot>
+            )}
           </div>
           <div>
             <span className="text-xs text-gray-400 font-semibold block mb-2">Advertisement</span>
-            <AdSlot width={300} height={250}><DroneAdCreative /></AdSlot>
+            {sidebarAds[1] ? (
+              <AdSlot image={sidebarAds[1].imageUrl} href={sidebarAds[1].externalLink} alt={sidebarAds[1].title} width={300} height={250} />
+            ) : (
+              <AdSlot width={300} height={250}><DroneAdCreative /></AdSlot>
+            )}
           </div>
         </div>
         </div>

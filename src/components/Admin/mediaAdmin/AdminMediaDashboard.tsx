@@ -121,6 +121,17 @@ const SITE_PAGES: { section: string; pages: { path: string; label: string }[] }[
 
 const ALL_TYPE_DEFS = [...MEDIA_TYPES, ...EVENTS_TYPES, ...PROFESSIONALS_TYPES, ...PARTNERSHIPS_TYPES, ...ADS_TYPES];
 
+// Recommended creative dimensions per zone — shown as a hint on the ad form.
+// The public site renders images with object-contain (never cropped), so a
+// wrong-shaped upload just shows letterbox padding instead of looking broken,
+// but matching these sizes gives the cleanest result.
+const ZONE_IMAGE_HINT: Record<string, string> = {
+  sidebar: '300×250px (or 300×600px for a tall creative)',
+  inline: '1200×100px (wide thin banner)',
+  sticky: '1200×64px (wide thin banner)',
+  'detail-banner': '1200×90px (wide thin banner)',
+};
+
 const EVENTS_VALS = new Set(EVENTS_TYPES.map(t => t.value));
 const PROFESSIONALS_VALS = new Set(PROFESSIONALS_TYPES.map(t => t.value));
 const PARTNERSHIPS_VALS = new Set([...PARTNERSHIPS_TYPES.map(t => t.value), 'applications' as ContentType]);
@@ -794,11 +805,14 @@ export default function AdminMediaDashboard() {
                         <select value={form.zone} onChange={e => setForm(f => ({ ...f, zone: e.target.value }))} className={inp}>
                           <option value="">Select zone...</option>
                           <option value="sidebar">Sidebar Rail (300×250 / 300×600)</option>
-                          <option value="inline">Inline Feed Ad</option>
-                          <option value="sticky">Bottom Sticky Strip</option>
-                          <option value="detail-banner">Detail Banner</option>
-                          <option value="sponsor-badge">Sponsor Badge</option>
+                          <option value="inline">Inline Feed Ad (1200×100)</option>
+                          <option value="sticky">Bottom Sticky Strip (1200×64)</option>
+                          <option value="detail-banner">Detail Banner (1200×90)</option>
+                          <option value="sponsor-badge">Sponsor Badge (no image)</option>
                         </select>
+                        {form.zone && ZONE_IMAGE_HINT[form.zone] && (
+                          <p className="text-[11px] text-gray-400 mt-1">Upload an image close to {ZONE_IMAGE_HINT[form.zone]} — the full image is shown (not cropped), so a mismatched shape leaves visible padding.</p>
+                        )}
                       </div>
                       <div>
                         <label className={lbl}>Package Tier</label>

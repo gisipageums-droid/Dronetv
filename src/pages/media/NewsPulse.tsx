@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import AdSlot from '../../components/common/AdSlot';
-import { withInlineAds, ExpoAdCreative, DroneAdCreative } from '../../components/common/adCreatives';
+import { withInlineAds, ExpoAdCreative, DroneAdCreative, getAdsFor } from '../../components/common/adCreatives';
 
 
 const filters = ['All News', 'Market', 'Defence', 'Policy', 'Agriculture', 'Technology', 'Training'];
@@ -35,6 +35,8 @@ function badgeClass(category?: string): string {
 }
 
 export default function NewsPulsePage() {
+  const { pathname } = useLocation();
+  const sidebarAds = getAdsFor('sidebar', pathname);
   const [active, setActive] = useState('All News');
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -236,11 +238,19 @@ export default function NewsPulsePage() {
 
           <div>
             <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
-            <AdSlot width={300} height={250} className="mx-auto"><ExpoAdCreative /></AdSlot>
+            {sidebarAds[0] ? (
+              <AdSlot image={sidebarAds[0].imageUrl} href={sidebarAds[0].externalLink} alt={sidebarAds[0].title} width={300} height={250} className="mx-auto" />
+            ) : (
+              <AdSlot width={300} height={250} className="mx-auto"><ExpoAdCreative /></AdSlot>
+            )}
           </div>
           <div>
             <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
-            <AdSlot width={300} height={250} className="mx-auto"><DroneAdCreative /></AdSlot>
+            {sidebarAds[1] ? (
+              <AdSlot image={sidebarAds[1].imageUrl} href={sidebarAds[1].externalLink} alt={sidebarAds[1].title} width={300} height={250} className="mx-auto" />
+            ) : (
+              <AdSlot width={300} height={250} className="mx-auto"><DroneAdCreative /></AdSlot>
+            )}
           </div>
         </div>
       </div>
