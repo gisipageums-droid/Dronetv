@@ -19,6 +19,15 @@ export default function IndustryPlayersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -101,7 +110,14 @@ export default function IndustryPlayersPage() {
                 <ContentCard key={i}>
                   <div className="text-3xl mb-3">{p.icon}</div>
                   <h3 className="font-bold text-gray-900 text-sm mb-2">{p.title}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{p.desc}</p>
+                  <div className="mb-3">
+                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(String(i)) ? '' : 'line-clamp-3'}`}>{p.desc}</p>
+                    {p.desc.length > 140 && (
+                      <button onClick={() => toggleExpanded(String(i))} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        {expandedIds.has(String(i)) ? 'Show less' : 'Read more'}
+                      </button>
+                    )}
+                  </div>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {p.tags.map(tag => <span key={tag} className="bg-orange-50 text-orange-700 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>

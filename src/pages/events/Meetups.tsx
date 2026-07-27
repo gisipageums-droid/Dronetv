@@ -24,6 +24,15 @@ const whyAttend = [
 export default function MeetupsPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -72,7 +81,16 @@ export default function MeetupsPage() {
                 >
                   {item.price && <span className={`text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start ${item.price.toLowerCase() === 'free' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{item.price}</span>}
                   <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
-                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                  {item.description && (
+                    <div className="mb-3">
+                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      {item.description.length > 140 && (
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                        </button>
+                      )}
+                    </div>
+                  )}
                   <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
                     <div className="space-y-1">
                       {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}

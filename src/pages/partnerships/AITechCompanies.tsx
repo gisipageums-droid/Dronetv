@@ -19,6 +19,15 @@ export default function AITechCompaniesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -111,7 +120,14 @@ export default function AITechCompaniesPage() {
                       <p className="text-xs text-gray-400">{s.hq}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{s.desc}</p>
+                  <div className="mb-3">
+                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(String(i)) ? '' : 'line-clamp-3'}`}>{s.desc}</p>
+                    {s.desc.length > 140 && (
+                      <button onClick={() => toggleExpanded(String(i))} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        {expandedIds.has(String(i)) ? 'Show less' : 'Read more'}
+                      </button>
+                    )}
+                  </div>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {s.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>

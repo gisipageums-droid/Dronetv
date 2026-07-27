@@ -9,6 +9,15 @@ export default function PressReleasesPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -56,7 +65,16 @@ export default function PressReleasesPage() {
               <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title}>
                 {item.category && <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
                 <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2">{item.title}</h3>
-                {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                {item.description && (
+                  <div className="mb-3">
+                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                    {item.description.length > 140 && (
+                      <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
+                      </button>
+                    )}
+                  </div>
+                )}
                 <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
                   <div className="flex flex-wrap items-center gap-x-2 text-xs text-gray-400 min-w-0">
                     {item.company && <span className="font-semibold text-gray-700 truncate">{item.company}</span>}

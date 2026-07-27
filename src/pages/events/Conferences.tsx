@@ -48,7 +48,16 @@ export default function ConferencesPage() {
   const [events, setEvents] = useState<RawEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -104,7 +113,14 @@ export default function ConferencesPage() {
                     <span className={`text-xs font-bold px-2 py-0.5 rounded ${conf.type === 'India' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{conf.badge}</span>
                   </div>
                   <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{conf.title}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{conf.desc}</p>
+                  <div className="mb-3">
+                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(conf.id) ? '' : 'line-clamp-3'}`}>{conf.desc}</p>
+                    {conf.desc.length > 140 && (
+                      <button onClick={() => toggleExpanded(conf.id)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        {expandedIds.has(conf.id) ? 'Show less' : 'Read more'}
+                      </button>
+                    )}
+                  </div>
                   <div className="mt-auto pt-3 border-t border-gray-100">
                     <div className="space-y-1 mb-2">
                       <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{conf.date}</div>
