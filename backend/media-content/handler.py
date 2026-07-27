@@ -7,6 +7,14 @@ from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
 table = dynamodb.Table('dronetv-media-content')
+users_table = dynamodb.Table('users_signIn_data')
+
+# Tokens deducted from a user's balance when THEY self-post content (not admin).
+# Admin CMS posts (created via /admin path) are always free — no deduction.
+DEFAULT_POST_COST = 50
+TOKEN_COST_BY_TYPE = {
+    'job': 100,
+}
 
 CORS = {
     'Access-Control-Allow-Origin': '*',
@@ -42,6 +50,27 @@ def _clean(item):
     if isinstance(item, Decimal):
         return int(item) if item % 1 == 0 else float(item)
     return item
+
+
+class InsufficientTokens(Exception):
+    pass
+
+
+def deduct_tokens(user_email, amount):
+    result = users_table.get_item(Key={'email': user_email})
+    user = result.get('Item')
+    if not user:
+        raise InsufficientTokens('User not found')
+    current = int(user.get('tokenBalance', 0))
+    if current < amount:
+        raise InsufficientTokens(f'Insufficient tokens. Have {current}, need {amount}')
+    now = datetime.now(timezone.utc).isoformat()
+    users_table.update_item(
+        Key={'email': user_email},
+        UpdateExpression='SET tokenBalance = tokenBalance - :amt, totalTokensSpent = if_not_exists(totalTokensSpent, :zero) + :amt, updatedAt = :now',
+        ExpressionAttributeValues={':amt': amount, ':zero': 0, ':now': now},
+    )
+    return current - amount
 
 
 def handler(event, context):
@@ -90,6 +119,18 @@ def handler(event, context):
         if not content_type or content_type not in VALID_TYPES:
             return resp(400, {'error': f'Invalid contentType. Must be one of: {", ".join(sorted(VALID_TYPES))}'})
 
+        user_id = body.get('userId')
+        is_self_post = bool(user_id) and not admin_path
+        tokens_charged = 0
+        new_balance = None
+        if is_self_post:
+            cost = TOKEN_COST_BY_TYPE.get(content_type, DEFAULT_POST_COST)
+            try:
+                new_balance = deduct_tokens(user_id, cost)
+                tokens_charged = cost
+            except InsufficientTokens as e:
+                return resp(402, {'error': str(e)})
+
         now = datetime.now(timezone.utc).isoformat()
         item = {
             'contentType': content_type,
@@ -119,13 +160,17 @@ def handler(event, context):
             'postType': body.get('postType', ''),
             'status': body.get('status', 'submitted'),
             'featured': body.get('featured', False),
-            'isPublished': body.get('isPublished', False),
-            'publishedAt': now if body.get('isPublished') else '',
+            'isPublished': False if is_self_post else body.get('isPublished', False),
+            'publishedAt': now if (not is_self_post and body.get('isPublished')) else '',
             'createdAt': now,
             'updatedAt': now,
         }
         table.put_item(Item=item)
-        return resp(201, {'message': 'Created', 'item': item})
+        response_body = {'message': 'Created', 'item': item}
+        if is_self_post:
+            response_body['tokensCharged'] = tokens_charged
+            response_body['newTokenBalance'] = new_balance
+        return resp(201, response_body)
 
     if method == 'PUT':
         body = json.loads(event.get('body') or '{}')
