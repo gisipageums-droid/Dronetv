@@ -207,7 +207,7 @@ const Navigation = () => {
               onMouseLeave={() => setIsMediaOpen(false)}
             >
               <motion.button
-                onClick={() => { closeAllDropdowns(); setIsMediaOpen(s => !s); }}
+                onClick={() => { closeAllDropdowns(); handleNavigation("/media"); }}
                 className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-black flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${mediaItems.some(i => location.pathname === i.path) ? "bg-black/10" : ""}`}
               >
                 <span className="relative z-10">Media Hub</span>
@@ -230,7 +230,7 @@ const Navigation = () => {
               onMouseLeave={() => setIsEventsOpen(false)}
             >
               <motion.button
-                onClick={() => { closeAllDropdowns(); setIsEventsOpen(s => !s); }}
+                onClick={() => { closeAllDropdowns(); handleNavigation("/events"); }}
                 className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-black flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${eventsItems.some(i => location.pathname === i.path) || location.pathname === "/events" ? "bg-black/10" : ""}`}
               >
                 <span className="relative z-10">Events</span>
@@ -259,7 +259,7 @@ const Navigation = () => {
               onMouseLeave={() => setIsProfessionalsOpen(false)}
             >
               <motion.button
-                onClick={() => { closeAllDropdowns(); setIsProfessionalsOpen(s => !s); }}
+                onClick={() => { closeAllDropdowns(); handleNavigation("/professionals"); }}
                 className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-black flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${professionalsItems.some(i => location.pathname === i.path) || location.pathname === "/professionals" ? "bg-black/10" : ""}`}
               >
                 <span className="relative z-10">Professionals</span>
@@ -282,7 +282,7 @@ const Navigation = () => {
               onMouseLeave={() => setIsPartnershipsOpen(false)}
             >
               <motion.button
-                onClick={() => { closeAllDropdowns(); setIsPartnershipsOpen(s => !s); }}
+                onClick={() => { closeAllDropdowns(); handleNavigation("/partnerships"); }}
                 className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-black flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${(partnershipsItems.some(i => location.pathname === i.path) || location.pathname === "/partner") ? "bg-black/10" : ""}`}
               >
                 <span className="relative z-10">Partnerships</span>
