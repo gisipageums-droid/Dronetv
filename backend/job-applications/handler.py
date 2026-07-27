@@ -1,9 +1,16 @@
 import json
 import boto3
 import uuid
+import smtplib
+from email.mime.text import MIMEText
 from datetime import datetime, timezone
 from decimal import Decimal
 from boto3.dynamodb.conditions import Key
+
+SMTP_HOST = 's1303.sgp1.mysecurecloudhost.com'
+SMTP_PORT = 587
+SMTP_USER = 'support@dronetv.in'
+SMTP_PASS = 'IPage@4733'
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
 table = dynamodb.Table('dronetv-job-applications')
@@ -47,6 +54,9 @@ def handler(event, context):
 
     if path.endswith('/upload-url') and method == 'POST':
         return handle_upload_url(event)
+
+    if path.endswith('/message') and method == 'POST':
+        return handle_message(event)
 
     if path.endswith('/resume-url') and method == 'GET':
         return handle_resume_url(params)
@@ -184,3 +194,54 @@ def handle_resume_url(params):
         ExpiresIn=600,
     )
     return resp(200, {'url': url})
+
+
+def handle_message(event):
+    body = json.loads(event.get('body') or '{}')
+    job_id = body.get('jobId')
+    application_id = body.get('applicationId')
+    message = (body.get('message') or '').strip()
+    if not job_id or not application_id or not message:
+        return resp(400, {'error': 'jobId, applicationId and message are required'})
+
+    existing = table.get_item(Key={'jobId': job_id, 'applicationId': application_id})
+    item = existing.get('Item')
+    if not item:
+        return resp(404, {'error': 'Not found'})
+
+    candidate_email = item.get('email')
+    candidate_name = item.get('fullName', 'Candidate')
+    now = datetime.now(timezone.utc).isoformat()
+
+    email_sent = False
+    email_error = None
+    if candidate_email:
+        try:
+            msg = MIMEText(message)
+            msg['Subject'] = f"Regarding your application for {item.get('jobTitle', 'the role')}"
+            msg['From'] = SMTP_USER
+            msg['To'] = candidate_email
+            with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=10) as server:
+                server.starttls()
+                server.login(SMTP_USER, SMTP_PASS)
+                server.sendmail(SMTP_USER, [candidate_email], msg.as_string())
+            email_sent = True
+        except Exception as e:
+            email_error = str(e)
+
+    activity = list(item.get('activity', []))
+    activity.append({
+        'action': 'Message sent' if email_sent else 'Message send failed',
+        'timestamp': now,
+        'note': message if email_sent else f'{message} (email error: {email_error})',
+    })
+
+    table.update_item(
+        Key={'jobId': job_id, 'applicationId': application_id},
+        UpdateExpression='SET activity = :a, updatedAt = :u',
+        ExpressionAttributeValues={':a': activity, ':u': now},
+    )
+
+    if not email_sent:
+        return resp(502, {'error': f'Message logged but email failed to send: {email_error}'})
+    return resp(200, {'message': f'Message sent to {candidate_name}'})

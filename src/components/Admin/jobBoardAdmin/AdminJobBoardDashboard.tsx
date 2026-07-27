@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Briefcase, Search, FileText, User, Award, FolderKanban, Paperclip, Activity, ExternalLink, GraduationCap, Code2 } from 'lucide-react';
+import { Briefcase, Search, FileText, User, Award, FolderKanban, Paperclip, Activity, ExternalLink, GraduationCap, Code2, MessageSquare, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, MediaItem } from '../../../lib/mediaApi';
-import { fetchApplications, updateApplication, getResumeViewUrl, JobApplication } from '../../../lib/jobApplicationsApi';
+import { fetchApplications, updateApplication, getResumeViewUrl, sendCandidateMessage, JobApplication } from '../../../lib/jobApplicationsApi';
 
 const STATUS_OPTIONS: JobApplication['status'][] = ['Applied', 'Shortlisted', 'Interviewing', 'Hired', 'Rejected'];
 
@@ -40,6 +40,10 @@ export default function AdminJobBoardDashboard() {
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
   const [resumeLoading, setResumeLoading] = useState(false);
+
+  const [messageOpen, setMessageOpen] = useState(false);
+  const [messageText, setMessageText] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   useEffect(() => {
     fetchAdminContent(undefined, 'job')
@@ -111,6 +115,27 @@ export default function AdminJobBoardDashboard() {
       toast.error('Failed to load resume');
     } finally {
       setResumeLoading(false);
+    }
+  };
+
+  const openMessage = () => {
+    if (!selectedApplication) return;
+    setMessageText(`Hi ${selectedApplication.fullName}, we reviewed your profile for ${selectedApplication.jobTitle || 'the role'} and would love to schedule an interview...`);
+    setMessageOpen(true);
+  };
+
+  const handleSendMessage = async () => {
+    if (!selectedApplication || !messageText.trim()) return;
+    setSendingMessage(true);
+    try {
+      await sendCandidateMessage(selectedApplication.jobId, selectedApplication.applicationId, messageText.trim());
+      toast.success(`Message sent to ${selectedApplication.fullName}`);
+      setMessageOpen(false);
+      loadApplications(selectedApplication.jobId);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to send message');
+    } finally {
+      setSendingMessage(false);
     }
   };
 
@@ -201,6 +226,10 @@ export default function AdminJobBoardDashboard() {
                     className="text-xs font-semibold border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-yellow-400">
                     {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
+                  <button onClick={openMessage}
+                    className="flex items-center gap-1.5 text-xs font-bold bg-yellow-400 text-black px-3 py-1.5 rounded-lg hover:bg-yellow-300 transition-colors">
+                    <MessageSquare size={14} /> Message
+                  </button>
                 </div>
               </div>
 
@@ -342,6 +371,41 @@ export default function AdminJobBoardDashboard() {
           )}
         </div>
       </div>
+
+      {messageOpen && selectedApplication && (
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 bg-gray-900">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <MessageSquare size={16} className="text-yellow-400" /> Message {selectedApplication.fullName}
+              </h2>
+              <button onClick={() => setMessageOpen(false)} className="p-1 rounded hover:bg-white/10">
+                <X size={16} className="text-white" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Recipient</p>
+                <p className="text-sm font-semibold text-gray-800">{selectedApplication.fullName} ({selectedApplication.email})</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Message Content</p>
+                <textarea rows={5} value={messageText} onChange={e => setMessageText(e.target.value)}
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-100">
+              <button onClick={() => setMessageOpen(false)} className="text-sm font-semibold text-gray-500 hover:text-gray-700">
+                Cancel
+              </button>
+              <button onClick={handleSendMessage} disabled={sendingMessage || !messageText.trim()}
+                className="bg-yellow-400 hover:bg-yellow-300 text-black text-sm font-bold px-4 py-2 rounded-lg disabled:opacity-50 transition-colors">
+                {sendingMessage ? 'Sending...' : 'Send Message'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

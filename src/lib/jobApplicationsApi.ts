@@ -116,3 +116,15 @@ export async function getResumeViewUrl(key: string): Promise<string> {
   const data = await res.json();
   return data.url;
 }
+
+export async function sendCandidateMessage(jobId: string, applicationId: string, message: string): Promise<void> {
+  const res = await fetch(`${BASE}/message`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jobId, applicationId, message }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Failed to send message');
+  }
+}
