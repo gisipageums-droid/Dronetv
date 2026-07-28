@@ -7,6 +7,9 @@ interface AdSlotProps {
   width?: number;
   height?: number;
   aspect?: string;
+  /** Floor for `aspect`-sized slots so a fluid-width banner doesn't shrink its
+   * text/emoji creative into illegibility on narrow mobile viewports. */
+  minHeight?: number;
   className?: string;
   children?: ReactNode;
 }
@@ -15,8 +18,8 @@ interface AdSlotProps {
 // Renders a real creative when `image` is supplied, otherwise a clean
 // "Advertise Here" placeholder sized to the same slot so empty zones don't
 // collapse or look broken before they're sold.
-export default function AdSlot({ image, href, alt = 'Advertisement', width, height, aspect, className = '', children }: AdSlotProps) {
-  const style = aspect ? { aspectRatio: aspect } : { width, height };
+export default function AdSlot({ image, href, alt = 'Advertisement', width, height, aspect, minHeight, className = '', children }: AdSlotProps) {
+  const style = aspect ? { aspectRatio: aspect, minHeight } : { width, height };
 
   const inner = (
     <div

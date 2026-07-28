@@ -92,9 +92,9 @@ export function withInlineAds<T>(arr: T[], render: (item: T, i: number) => React
       out.push(
         <div key={`ad-${i}`} className="col-span-full">
           {realAd ? (
-            <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} height={100} className="w-full" />
+            <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} aspect="1200/100" minHeight={56} className="w-full" />
           ) : (
-            <AdSlot height={100} className="w-full"><Creative /></AdSlot>
+            <AdSlot aspect="1200/100" minHeight={56} className="w-full"><Creative /></AdSlot>
           )}
         </div>
       );
@@ -151,8 +151,8 @@ export function AdDetailBanner() {
   const { pathname } = useLocation();
   const realAd = getAdsFor('detail-banner', pathname)[0];
   return realAd ? (
-    <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} height={90} className="w-full" />
+    <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} aspect="1200/90" minHeight={50} className="w-full" />
   ) : (
-    <AdSlot height={90} className="w-full"><TrainingAdCreative /></AdSlot>
+    <AdSlot aspect="1200/90" minHeight={50} className="w-full"><TrainingAdCreative /></AdSlot>
   );
 }

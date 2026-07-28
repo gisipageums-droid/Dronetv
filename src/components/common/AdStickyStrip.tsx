@@ -29,9 +29,9 @@ export default function AdStickyStrip() {
     <div className="fixed bottom-0 left-0 right-0 z-[9999998] border-t-2 border-yellow-400 bg-white/95 backdrop-blur-sm">
       <div className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-4">
         {realAd ? (
-          <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} height={64} className="flex-1 min-w-0" />
+          <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} aspect="1200/64" minHeight={40} className="flex-1 min-w-0" />
         ) : (
-          <AdSlot height={64} className="flex-1 min-w-0"><ExpoAdCreative /></AdSlot>
+          <AdSlot aspect="1200/64" minHeight={40} className="flex-1 min-w-0"><ExpoAdCreative /></AdSlot>
         )}
         <button
           onClick={() => setDismissed(true)}
