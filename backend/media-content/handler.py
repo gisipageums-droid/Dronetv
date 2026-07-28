@@ -160,8 +160,8 @@ def handler(event, context):
             'postType': body.get('postType', ''),
             'status': body.get('status', 'submitted'),
             'featured': body.get('featured', False),
-            'isPublished': False if is_self_post else body.get('isPublished', False),
-            'publishedAt': now if (not is_self_post and body.get('isPublished')) else '',
+            'isPublished': body.get('isPublished', False),
+            'publishedAt': now if body.get('isPublished') else '',
             'createdAt': now,
             'updatedAt': now,
         }
