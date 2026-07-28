@@ -35,9 +35,10 @@ interface PostContentCTAProps {
   typeLabel: string;
   ctaTitle?: string;
   ctaDescription?: string;
+  onSuccess?: () => void;
 }
 
-export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDescription }: PostContentCTAProps) {
+export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDescription, onSuccess }: PostContentCTAProps) {
   const { user } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || '';
   const cost = TOKEN_COST_BY_TYPE[contentType] ?? DEFAULT_POST_COST;
@@ -87,6 +88,7 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
       extraFields.forEach(key => { payload[key] = form[key] || ''; });
       await createContent(payload);
       setSubmitted(true);
+      onSuccess?.();
     } catch (err: any) {
       setErrorMsg(err?.message || 'Submission failed. Please try again.');
       toast.error(err?.message || 'Submission failed');

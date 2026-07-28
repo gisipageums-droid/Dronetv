@@ -66,7 +66,7 @@ export default function MyContentManager() {
         <p className="text-sm text-gray-500 mt-0.5">Manage what you've posted — create new, publish, or remove.</p>
       </div>
 
-      <PostContentCTA contentType={contentType} typeLabel={typeLabel} />
+      <PostContentCTA contentType={contentType} typeLabel={typeLabel} onSuccess={load} />
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         {loading ? (
