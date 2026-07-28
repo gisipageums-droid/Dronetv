@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, X, Coins } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { createContent, ContentType } from '../../lib/mediaApi';
+import { FIELD_CONFIG, FIELD_LABELS, FIELD_PLACEHOLDER, FIELD_TYPE, FieldKey } from '../../lib/contentFieldConfig';
 import { useUserAuth } from '../context/context';
 import { AUTH_API, LAMBDA } from '../../lib/apiConfig';
 
@@ -12,15 +13,22 @@ const TOKEN_COST_BY_TYPE: Partial<Record<ContentType, number>> = {
 };
 const DEFAULT_POST_COST = 50;
 
+const DEFAULT_LABEL: Record<FieldKey, string> = {
+  category: 'Category', source: 'Source', author: 'Author', date: 'Date', readTime: 'Read Time',
+  videoUrl: 'Video URL', company: 'Company', location: 'Location', price: 'Price', salary: 'Salary',
+  platform: 'Platform', zone: 'Zone', targetPages: 'Target Pages', startDate: 'Start Date',
+  endDate: 'End Date', packageType: 'Package Type',
+};
+
 interface PostForm {
   title: string;
   description: string;
-  category: string;
-  location: string;
-  externalLink: string;
   imageUrl: string;
+  externalLink: string;
+  isPublished: boolean;
+  [key: string]: any;
 }
-const EMPTY_FORM: PostForm = { title: '', description: '', category: '', location: '', externalLink: '', imageUrl: '' };
+const BASE_FORM: PostForm = { title: '', description: '', imageUrl: '', externalLink: '', isPublished: false };
 
 interface PostContentCTAProps {
   contentType: ContentType;
@@ -33,9 +41,10 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
   const { user } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || '';
   const cost = TOKEN_COST_BY_TYPE[contentType] ?? DEFAULT_POST_COST;
+  const extraFields = FIELD_CONFIG[contentType] || [];
 
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<PostForm>(EMPTY_FORM);
+  const [form, setForm] = useState<PostForm>(BASE_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -50,11 +59,13 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
   }, [open, userId]);
 
   const openModal = () => {
-    setForm(EMPTY_FORM);
+    setForm(BASE_FORM);
     setSubmitted(false);
     setErrorMsg('');
     setOpen(true);
   };
+
+  const fieldLabel = (key: FieldKey) => FIELD_LABELS[contentType]?.[key] || DEFAULT_LABEL[key];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,19 +73,19 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
     setSubmitting(true);
     setErrorMsg('');
     try {
-      await createContent({
+      const payload: any = {
         contentType,
         title: form.title,
         description: form.description,
-        category: form.category,
-        location: form.location,
-        externalLink: form.externalLink,
         imageUrl: form.imageUrl,
+        externalLink: form.externalLink,
         author: userId,
         source: userId,
         userId,
-        isPublished: false,
-      });
+        isPublished: form.isPublished,
+      };
+      extraFields.forEach(key => { payload[key] = form[key] || ''; });
+      await createContent(payload);
       setSubmitted(true);
     } catch (err: any) {
       setErrorMsg(err?.message || 'Submission failed. Please try again.');
@@ -93,7 +104,7 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
             {ctaDescription || `Post your ${typeLabel.toLowerCase()} on DroneTv.in and reach thousands of drone professionals.`}
           </p>
           <p className="text-xs text-yellow-400/80 mt-1 flex items-center gap-1">
-            <Coins className="w-3 h-3" /> Costs {cost} tokens per submission &middot; reviewed before going live
+            <Coins className="w-3 h-3" /> Costs {cost} tokens per submission
           </p>
         </div>
         <div className="flex-shrink-0">
@@ -117,7 +128,7 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
               <h2 className="text-base font-bold text-gray-900">Post Your {typeLabel}</h2>
               <button onClick={() => setOpen(false)} className="p-1.5 rounded hover:bg-gray-100"><X className="w-5 h-5 text-gray-500" /></button>
             </div>
-            <div className="px-6 py-5">
+            <div className="px-6 py-5 max-h-[70vh] overflow-y-auto">
               {!submitted ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="flex items-center justify-between bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
@@ -142,18 +153,23 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
                       placeholder="Describe it..."
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Category</label>
-                      <input type="text" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+
+                  {extraFields.length > 0 && (
+                    <div className="grid grid-cols-2 gap-3">
+                      {extraFields.filter(k => k !== 'targetPages').map(key => (
+                        <div key={key}>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1">{fieldLabel(key)}</label>
+                          <input
+                            type={FIELD_TYPE[key] === 'date' ? 'date' : 'text'}
+                            value={form[key] || ''}
+                            onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                            placeholder={FIELD_PLACEHOLDER[key]}
+                            className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        </div>
+                      ))}
                     </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Location</label>
-                      <input type="text" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
-                    </div>
-                  </div>
+                  )}
+
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Image URL <span className="text-gray-400 font-normal">(optional)</span></label>
                     <input type="url" value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
@@ -166,6 +182,15 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
                       placeholder="https://..."
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
                   </div>
+
+                  <label className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 cursor-pointer">
+                    <input type="checkbox" checked={form.isPublished}
+                      onChange={e => setForm(f => ({ ...f, isPublished: e.target.checked }))}
+                      className="w-4 h-4 accent-yellow-400" />
+                    <span className="text-sm font-semibold text-gray-700">Publish immediately</span>
+                    <span className="text-xs text-gray-400">(leave unchecked to save as draft)</span>
+                  </label>
+
                   {errorMsg && <p className="text-xs text-red-600 font-medium">{errorMsg}</p>}
                   <button type="submit" disabled={submitting}
                     className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
@@ -178,7 +203,9 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
                     <span className="text-2xl">✓</span>
                   </div>
                   <h3 className="font-bold text-gray-900 mb-2">Submitted!</h3>
-                  <p className="text-sm text-gray-500 mb-4">{cost} tokens deducted. Your {typeLabel.toLowerCase()} is pending review and will appear once approved.</p>
+                  <p className="text-sm text-gray-500 mb-4">
+                    {cost} tokens deducted. {form.isPublished ? 'Your post is live now.' : `Saved as draft — publish it anytime from your dashboard.`}
+                  </p>
                   <button onClick={() => setOpen(false)}
                     className="px-6 py-2 bg-yellow-400 text-black font-bold rounded-lg text-sm hover:bg-yellow-500">
                     Close

@@ -114,6 +114,7 @@ import BuyTokenPage from "./components/UserDashboard/pages/Buy";
 import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";
 import MediaHub from "./components/UserDashboard/pages/MediaHub";
+import MyContentManager from "./components/UserDashboard/pages/MyContentManager";
 import Addons from "./components/UserDashboard/pages/Addons";
 import UserPosts from "./components/UserDashboard/pages/UserPosts";
 import BidKeywords from "./components/UserDashboard/pages/BidKeywords";
@@ -561,6 +562,17 @@ const AppContent = () => {
               <ProtectedRoute>
                 <UserDashboardLayout>
                   <MediaHub />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-content/:type"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <MyContentManager />
                 </UserDashboardLayout>
               </ProtectedRoute>
             }
