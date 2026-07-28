@@ -7,6 +7,7 @@ import DirectorInformationSection from './DirectorInformation';
 import AlternativeContactSection from './AlternativeContact';
 import AddressInformationSection from './AddressInformation';
 import SocialMediaInformationSection from './SocialMediaInformation';
+import { ADMIN_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 export default function Step1CompanyCategory({
   formData,
@@ -80,7 +81,7 @@ export default function Step1CompanyCategory({
 
     try {
       // Load data from details API
-      const response = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/details/123456789', {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/details/123456789` : `${LAMBDA.adminForm}/details/123456789`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -307,7 +308,6 @@ export default function Step1CompanyCategory({
 
           // Also handle fieldData structure for custom fields
           if (apiData.fieldData) {
-            console.log('🔍 FieldData found for custom field:', apiData.fieldData);
             // This is a custom field, add it to custom fields
             const customField = {
               id: apiData.fieldData.id || Date.now().toString(),
@@ -352,7 +352,7 @@ export default function Step1CompanyCategory({
     // Load data from view API
     const loadViewData = async () => {
       try {
-        const response = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/view', {
+        const response = await fetch(ADMIN_API ? `${ADMIN_API}/view` : `${LAMBDA.adminForm}/view`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -410,7 +410,6 @@ export default function Step1CompanyCategory({
               if (hasValidLabels) {
                 // Update company labels with processed API data
                 setEditingCompanyLabels(processedLabels);
-                console.log('✅ Company Labels loaded from API:', processedLabels);
 
                 // Also update form data with existing values if available
                 const formDataUpdate: Record<string, any> = {};
@@ -425,16 +424,12 @@ export default function Step1CompanyCategory({
                   updateFormData(formDataUpdate);
                 }
               } else {
-                console.log('⚠️ Company labels are empty, will use details API data');
               }
             } else {
-              console.log('⚠️ No company labels found in API response');
-              console.log('🔍 Available keys in item.data:', item.data ? Object.keys(item.data) : 'No data');
             }
 
             // Handle fieldData structure for custom fields
             if (fieldData && fieldData.id) {
-              console.log('🔍 FieldData found for custom field:', fieldData);
               // This is a custom field, add it to custom fields
               const customField = {
                 id: fieldData.id || Date.now().toString(),
@@ -470,7 +465,7 @@ export default function Step1CompanyCategory({
     // Load data from details API
     const loadDetailsData = async () => {
       try {
-        const response = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/details/123456789', {
+        const response = await fetch(ADMIN_API ? `${ADMIN_API}/details/123456789` : `${LAMBDA.adminForm}/details/123456789`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -514,22 +509,17 @@ export default function Step1CompanyCategory({
             // Update labels and placeholders if found
             if (labels) {
               setEditingCompanyLabels(labels);
-              console.log('✅ Labels set:', labels);
             }
 
             if (placeholders) {
               setEditingCompanyPlaceholders(placeholders);
-              console.log('✅ Placeholders set:', placeholders);
             }
 
             // Update form data if found
             if (Object.keys(formDataUpdate).length > 0) {
               updateFormData(formDataUpdate);
-              console.log('✅ Form data updated:', formDataUpdate);
-              console.log('🔍 Form data update completed');
             }
 
-            console.log('✅ Form data loaded from details API on refresh');
           } else {
             // console.log('⚠️ No item found in details API response');
           }
@@ -571,7 +561,6 @@ export default function Step1CompanyCategory({
     (async () => {
       try {
         await refreshDataFromAPI(); // re-use existing function that sets editingCompanyLabels/placeholders and updateFormData
-        console.log('✅ Initial refreshDataFromAPI completed on mount');
       } catch (e) {
         console.warn('Initial refresh failed', e);
       }
@@ -729,7 +718,7 @@ export default function Step1CompanyCategory({
 
       try {
         // API call to save the new field using new endpoint
-        const response = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/add-field', {
+        const response = await fetch(ADMIN_API ? `${ADMIN_API}/add-field` : `${LAMBDA.adminForm}/add-field`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -754,7 +743,6 @@ export default function Step1CompanyCategory({
           setNewFieldRequired(false);
           setShowAddFieldModal(false);
 
-          console.log('✅ Custom field added successfully');
         } else {
           console.error('Failed to save field:', response.statusText);
           alert('Failed to save field. Please try again.');
@@ -783,7 +771,7 @@ export default function Step1CompanyCategory({
     const optimistic = customFields.filter(field => field.id !== id);
     setCustomFields(optimistic);
 
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, {
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
@@ -805,7 +793,7 @@ export default function Step1CompanyCategory({
   const deleteCoreField = async (key: 'companyName' | 'yearEstablished' | 'websiteUrl' | 'promoCode') => {
     try {
       const apiKey = key === 'yearEstablished' ? 'dateOfIncorporation' : key;
-      const res = await fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete-core-field/${apiKey}`, {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/delete-core-field/${apiKey}` : `${LAMBDA.adminForm}/delete-core-field/${apiKey}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -831,7 +819,7 @@ export default function Step1CompanyCategory({
   // Delete a core Legal field by key using backend API; hide on UI as fallback
   const deleteLegalCoreField = async (key: string) => {
     try {
-      const res = await fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete-core-field/${key}`, {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/delete-core-field/${key}` : `${LAMBDA.adminForm}/delete-core-field/${key}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -887,7 +875,7 @@ export default function Step1CompanyCategory({
     setEditingCustomFields(optimisticEditing);
     setCustomFields(optimisticMain);
 
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, {
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
@@ -929,7 +917,7 @@ export default function Step1CompanyCategory({
     setEditingLegalCustomFields(optimisticEditing);
     setLegalCustomFields(optimisticMain);
 
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, {
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
@@ -970,13 +958,13 @@ export default function Step1CompanyCategory({
     setEditingDirectorCustomFields(optimisticEditing);
     setDirectorCustomFields(optimisticMain);
 
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, {
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
       .then(async (res) => {
         if (!res.ok) {
-          await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+          await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fieldPath: `directorInfo.directorCustomFields.${id}`, label: null })
           }).catch(() => { });
         }
@@ -1011,13 +999,13 @@ export default function Step1CompanyCategory({
     setEditingAltContactCustomFields(optimisticEditing);
     setAltContactCustomFields(optimisticMain);
 
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, {
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
       .then(async (res) => {
         if (!res.ok) {
-          await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+          await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fieldPath: `altContact.altContactCustomFields.${id}`, label: null })
           }).catch(() => { });
         }
@@ -1052,13 +1040,13 @@ export default function Step1CompanyCategory({
     setEditingAddressCustomFields(optimisticEditing);
     setAddressCustomFields(optimisticMain);
 
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, {
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
       .then(async (res) => {
         if (!res.ok) {
-          await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+          await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fieldPath: `address.addressCustomFields.${id}`, label: null })
           }).catch(() => { });
         }
@@ -1093,13 +1081,13 @@ export default function Step1CompanyCategory({
     setEditingSocialMediaCustomFields(optimisticEditing);
     setSocialMediaCustomFields(optimisticMain);
 
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, {
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
       .then(async (res) => {
         if (!res.ok) {
-          await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+          await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fieldPath: `socialMedia.socialMediaCustomFields.${id}`, label: null })
           }).catch(() => { });
         }
@@ -1124,7 +1112,7 @@ export default function Step1CompanyCategory({
 
     try {
       // API call to get company details
-      const response = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/details/123456789', {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/details/123456789` : `${LAMBDA.adminForm}/details/123456789`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -1133,11 +1121,9 @@ export default function Step1CompanyCategory({
 
       if (response.ok) {
         const data = await response.json();
-        console.log('🔍 API Response for edit modal:', data);
 
         if (data.success && data.item && data.item.data) {
           const apiData = data.item.data;
-          console.log('🔍 API Data structure:', apiData);
 
           // Set company data from API using companyInfo structure
           if (apiData.companyInfo) {
@@ -1191,7 +1177,6 @@ export default function Step1CompanyCategory({
             updateFormData(valuesUpdate);
           }
         } else {
-          console.log('No API data found, using default values');
         }
       } else {
         console.error('Failed to fetch company details:', response.statusText);
@@ -1268,7 +1253,7 @@ export default function Step1CompanyCategory({
         if (update.label !== undefined) body.label = update.label;
         if (update.placeholder !== undefined) body.placeholder = update.placeholder;
 
-        const res = await fetch("https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789", {
+        const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -1284,7 +1269,7 @@ export default function Step1CompanyCategory({
           // label
           {
             const body: any = { fieldPath: `companyInfo.customFields.${f.id}`, label: f.label };
-            const res = await fetch("https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789", {
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(body),
@@ -1295,7 +1280,7 @@ export default function Step1CompanyCategory({
           // placeholder
           {
             const body: any = { fieldPath: `companyInfo.customFields.${f.id}`, placeholder: f.placeholder };
-            const res = await fetch("https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789", {
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(body),
@@ -1354,7 +1339,7 @@ export default function Step1CompanyCategory({
         if (update.value !== undefined) body.value = update.value;
         if (update.required !== undefined) body.required = update.required;
 
-        const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+        const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
@@ -1369,7 +1354,7 @@ export default function Step1CompanyCategory({
           // label
           {
             const body: any = { fieldPath: `legalInfo.legalCustomFields.${f.id}`, label: f.label };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
               method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
             });
             const json = await res.json();
@@ -1378,7 +1363,7 @@ export default function Step1CompanyCategory({
           // placeholder
           {
             const body: any = { fieldPath: `legalInfo.legalCustomFields.${f.id}`, placeholder: f.placeholder };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
               method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
             });
             const json = await res.json();
@@ -1387,7 +1372,7 @@ export default function Step1CompanyCategory({
           // required
           {
             const body: any = { fieldPath: `legalInfo.legalCustomFields.${f.id}`, required: !!f.required };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
               method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
             });
             const json = await res.json();
@@ -1436,7 +1421,7 @@ export default function Step1CompanyCategory({
         if (update.placeholder !== undefined) body.placeholder = update.placeholder;
         if (update.value !== undefined) body.value = update.value;
         if (update.required !== undefined) body.required = update.required;
-        const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+        const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
         });
         const json = await res.json();
@@ -1448,21 +1433,21 @@ export default function Step1CompanyCategory({
           // label
           {
             const body: any = { fieldPath: `directorInfo.directorCustomFields.${f.id}`, label: f.label };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const json = await res.json();
             if (!res.ok) throw new Error(json?.message || 'Update failed');
           }
           // placeholder
           {
             const body: any = { fieldPath: `directorInfo.directorCustomFields.${f.id}`, placeholder: f.placeholder };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const json = await res.json();
             if (!res.ok) throw new Error(json?.message || 'Update failed');
           }
           // required
           {
             const body: any = { fieldPath: `directorInfo.directorCustomFields.${f.id}`, required: !!f.required };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const json = await res.json();
             if (!res.ok) throw new Error(json?.message || 'Update failed');
           }
@@ -1508,7 +1493,7 @@ export default function Step1CompanyCategory({
         if (update.label !== undefined) body.label = update.label;
         if (update.placeholder !== undefined) body.placeholder = update.placeholder;
         if (update.required !== undefined) body.required = update.required;
-        const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+        const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
         });
         const json = await res.json();
@@ -1521,7 +1506,7 @@ export default function Step1CompanyCategory({
           // label
           {
             const body: any = { fieldPath: `altContact.altContactCustomFields.${f.id}`, label: f.label };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
               method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
             });
             const json = await res.json();
@@ -1530,7 +1515,7 @@ export default function Step1CompanyCategory({
           // placeholder
           {
             const body: any = { fieldPath: `altContact.altContactCustomFields.${f.id}`, placeholder: f.placeholder };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
               method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
             });
             const json = await res.json();
@@ -1539,7 +1524,7 @@ export default function Step1CompanyCategory({
           // required
           {
             const body: any = { fieldPath: `altContact.altContactCustomFields.${f.id}`, required: !!f.required };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
               method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
             });
             const json = await res.json();
@@ -1588,7 +1573,7 @@ export default function Step1CompanyCategory({
         if (update.placeholder !== undefined) body.placeholder = update.placeholder;
         if (update.value !== undefined) body.value = update.value;
         if (update.required !== undefined) body.required = update.required;
-        const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+        const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
         });
         const json = await res.json();
@@ -1600,21 +1585,21 @@ export default function Step1CompanyCategory({
           // label
           {
             const body: any = { fieldPath: `address.addressCustomFields.${f.id}`, label: f.label };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const json = await res.json();
             if (!res.ok) throw new Error(json?.message || 'Update failed');
           }
           // placeholder
           {
             const body: any = { fieldPath: `address.addressCustomFields.${f.id}`, placeholder: f.placeholder };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const json = await res.json();
             if (!res.ok) throw new Error(json?.message || 'Update failed');
           }
           // required
           {
             const body: any = { fieldPath: `address.addressCustomFields.${f.id}`, required: !!f.required };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const json = await res.json();
             if (!res.ok) throw new Error(json?.message || 'Update failed');
           }
@@ -1662,7 +1647,7 @@ export default function Step1CompanyCategory({
         if (update.placeholder !== undefined) body.placeholder = update.placeholder;
         if (update.value !== undefined) body.value = update.value;
         if (update.required !== undefined) body.required = update.required;
-        const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+        const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
         });
         const json = await res.json();
@@ -1674,21 +1659,21 @@ export default function Step1CompanyCategory({
           // label
           {
             const body: any = { fieldPath: `socialMedia.socialMediaCustomFields.${f.id}`, label: f.label };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const json = await res.json();
             if (!res.ok) throw new Error(json?.message || 'Update failed');
           }
           // placeholder
           {
             const body: any = { fieldPath: `socialMedia.socialMediaCustomFields.${f.id}`, placeholder: f.placeholder };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const json = await res.json();
             if (!res.ok) throw new Error(json?.message || 'Update failed');
           }
           // required
           {
             const body: any = { fieldPath: `socialMedia.socialMediaCustomFields.${f.id}`, required: !!f.required };
-            const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const res = await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
             const json = await res.json();
             if (!res.ok) throw new Error(json?.message || 'Update failed');
           }
@@ -1722,7 +1707,7 @@ export default function Step1CompanyCategory({
     setLegalCustomFields(optimistic);
 
     try {
-      const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/add-field', {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/add-field` : `${LAMBDA.adminForm}/add-field`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1752,7 +1737,7 @@ export default function Step1CompanyCategory({
     const optimistic = legalCustomFields.filter(field => field.id !== id);
     setLegalCustomFields(optimistic);
 
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, {
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })
@@ -1795,7 +1780,7 @@ export default function Step1CompanyCategory({
     const optimistic = [...directorCustomFields, newField];
     setDirectorCustomFields(optimistic);
     try {
-      const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/add-field', {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/add-field` : `${LAMBDA.adminForm}/add-field`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
           sectionKey: 'directorInfo', customFieldsKey: 'directorCustomFields', newField
         })
@@ -1817,11 +1802,11 @@ export default function Step1CompanyCategory({
     const previous = directorCustomFields;
     const optimistic = directorCustomFields.filter(field => field.id !== id);
     setDirectorCustomFields(optimistic);
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
       .then(async (res) => {
         if (!res.ok) {
           // fallback: try to null-out path via update
-          await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+          await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
               fieldPath: `directorInfo.directorCustomFields.${id}`, label: null
             })
@@ -1838,7 +1823,7 @@ export default function Step1CompanyCategory({
 
   const deleteDirectorCoreField = async (key: 'directorName' | 'directorPhone' | 'directorEmail') => {
     try {
-      const res = await fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete-core-field/${key}`, {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/delete-core-field/${key}` : `${LAMBDA.adminForm}/delete-core-field/${key}`, {
         method: 'DELETE', headers: { 'Content-Type': 'application/json' }
       });
       if (!res.ok) {
@@ -1876,7 +1861,7 @@ export default function Step1CompanyCategory({
     const optimistic = [...altContactCustomFields, newField];
     setAltContactCustomFields(optimistic);
     try {
-      const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/add-field', {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/add-field` : `${LAMBDA.adminForm}/add-field`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
           sectionKey: 'altContact', customFieldsKey: 'altContactCustomFields', newField
         })
@@ -1898,11 +1883,11 @@ export default function Step1CompanyCategory({
     const previous = altContactCustomFields;
     const optimistic = altContactCustomFields.filter(field => field.id !== id);
     setAltContactCustomFields(optimistic);
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
       .then(async (res) => {
         if (!res.ok) {
           // fallback: try to null via update
-          await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+          await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fieldPath: `altContact.altContactCustomFields.${id}`, label: null })
           }).catch(() => { });
         }
@@ -1917,7 +1902,7 @@ export default function Step1CompanyCategory({
 
   const deleteAltContactCoreField = async (key: string) => {
     try {
-      const res = await fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete-core-field/${key}`, {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/delete-core-field/${key}` : `${LAMBDA.adminForm}/delete-core-field/${key}`, {
         method: 'DELETE', headers: { 'Content-Type': 'application/json' }
       });
       if (!res.ok) {
@@ -1955,7 +1940,7 @@ export default function Step1CompanyCategory({
     const prev = addressCustomFields;
     setAddressCustomFields([...addressCustomFields, optimisticNew]);
     try {
-      const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/add-field', {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/add-field` : `${LAMBDA.adminForm}/add-field`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sectionKey: 'address', customFieldsKey: 'addressCustomFields', newField: { ...optimisticNew, id: optimisticNew.id } })
       });
@@ -1976,10 +1961,10 @@ export default function Step1CompanyCategory({
     const previous = addressCustomFields;
     const optimistic = addressCustomFields.filter(field => field.id !== id);
     setAddressCustomFields(optimistic);
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
       .then(async (res) => {
         if (!res.ok) {
-          await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+          await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fieldPath: `address.addressCustomFields.${id}`, label: null })
           }).catch(() => { });
         }
@@ -2003,10 +1988,10 @@ export default function Step1CompanyCategory({
     const previous = socialMediaCustomFields;
     const optimistic = socialMediaCustomFields.filter(field => field.id !== id);
     setSocialMediaCustomFields(optimistic);
-    fetch(`https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/delete/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
+    fetch(ADMIN_API ? `${ADMIN_API}/delete/${id}` : `${LAMBDA.adminForm}/delete/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
       .then(async (res) => {
         if (!res.ok) {
-          await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/update/123456789', {
+          await fetch(ADMIN_API ? `${ADMIN_API}/update/123456789` : `${LAMBDA.adminForm}/update/123456789`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fieldPath: `socialMedia.socialMediaCustomFields.${id}`, label: null })
           }).catch(() => { });
         }
@@ -2039,7 +2024,7 @@ export default function Step1CompanyCategory({
     const prev = socialMediaCustomFields;
     setSocialMediaCustomFields([...socialMediaCustomFields, optimisticNew]);
     try {
-      const res = await fetch('https://8x088l5hce.execute-api.ap-south-1.amazonaws.com/admin-companyform-post/add-field', {
+      const res = await fetch(ADMIN_API ? `${ADMIN_API}/add-field` : `${LAMBDA.adminForm}/add-field`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sectionKey: 'socialMedia', customFieldsKey: 'socialMediaCustomFields', newField: { ...optimisticNew, id: optimisticNew.id } })
       });

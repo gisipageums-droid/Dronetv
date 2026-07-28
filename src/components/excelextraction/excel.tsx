@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Search, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
 
 // Type definitions
 interface ExcelDataItem {
@@ -46,8 +47,6 @@ const ExcelDataProcessor = () => {
   const [postStatusStore, setPostStatusStore] = useState<string | any>({});
 
   // console.log("excelData", excelData);
-  console.log("postStatus", postStatusStore);
-
   // Function to extract Excel data using xlsx library
   const extractExcelData = async (file: File): Promise<ExcelDataItem[]> => {
     return new Promise((resolve, reject) => {
@@ -118,8 +117,6 @@ const ExcelDataProcessor = () => {
           // Log filtering results for debugging
           const totalRowsBeforeFilter = jsonData.length - 1; // Subtract header row
           const filteredRowsCount = totalRowsBeforeFilter - rows.length;
-          console.log(`Excel processing: ${totalRowsBeforeFilter} total rows, ${filteredRowsCount} empty rows filtered out, ${rows.length} rows with data`);
-
           // Set processing info for user feedback
           if (filteredRowsCount > 0) {
             setProcessingInfo(`Processed ${totalRowsBeforeFilter} rows, filtered out ${filteredRowsCount} empty rows. Showing ${rows.length} rows with data.`);
@@ -171,7 +168,6 @@ const ExcelDataProcessor = () => {
         setExcelData(data);
         setPostingStatus({});
       } catch (error) {
-        console.error('Error reading Excel file:', error);
         setExcelData([]);
         setColumns([]);
       }
@@ -182,7 +178,7 @@ const ExcelDataProcessor = () => {
     // Legacy function - posts all data at once
     setPostingStatus({ loading: true });
 
-    const API_ENDPOINT = 'https://3qw4mfji02.execute-api.ap-south-1.amazonaws.com/prod/ingest';
+    const API_ENDPOINT = ADMIN_API ? `${ADMIN_API}/ingest` : `${LAMBDA.adminIngest}/ingest`;
 
     try {
       // Prepare all data for batch posting
@@ -216,8 +212,6 @@ const ExcelDataProcessor = () => {
       }
 
       const result = await response.json();
-      console.log('Successfully posted all data:', result);
-
       // Update all data with posted status
       const updatedData = excelData.map(item => ({
         ...item,
@@ -227,7 +221,6 @@ const ExcelDataProcessor = () => {
       setPostingStatus({ success: true, loading: false });
 
     } catch (error) {
-      console.error('Error posting data:', error);
       alert(`Failed to post data: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setPostingStatus({ loading: false });
     }
@@ -251,7 +244,7 @@ const ExcelDataProcessor = () => {
       }
     }));
 
-    const API_ENDPOINT = 'https://3qw4mfji02.execute-api.ap-south-1.amazonaws.com/prod/ingest';
+    const API_ENDPOINT = ADMIN_API ? `${ADMIN_API}/ingest` : `${LAMBDA.adminIngest}/ingest`;
 
     // 🔑 Stabilize idempotency for the whole run
     const batchUploadedAtIso = new Date().toISOString();
@@ -288,7 +281,6 @@ const ExcelDataProcessor = () => {
         }
 
         const result = await response.json();
-        console.log(`Successfully posted item ${i + 1}:`, result);
         setPostStatusStore((prev: Record<string | number, any>) => ({ ...prev, [item._id]: { uploadId: result.uploadId } }));
 
         // Update data with posted status
@@ -299,8 +291,6 @@ const ExcelDataProcessor = () => {
         );
 
       } catch (error) {
-        console.error(`Error posting item ${i + 1}:`, error);
-
         // Increment error count
         setPostingStatus(prev => ({
           ...prev,
@@ -359,7 +349,7 @@ const ExcelDataProcessor = () => {
         throw new Error('No uploadId found for this item');
       }
 
-      const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev/'; // Replace with your actual API
+      const GENERATE_API_ENDPOINT = ADMIN_API ? `${ADMIN_API}/generate/` : `${LAMBDA.adminGen}/`;
 
       // Prepare payload for generate API
       const payload = {
@@ -385,8 +375,6 @@ const ExcelDataProcessor = () => {
       }
 
       const result = await response.json();
-      console.log('Successfully generated website:', result);
-
       // Update data with generated status
       const updatedData = excelData.map(item =>
         item._id === id ? { ...item, _status: 'generated' } : item
@@ -395,7 +383,6 @@ const ExcelDataProcessor = () => {
       setPostingStatus(prev => ({ ...prev, [numericId]: 'success' }));
 
     } catch (error) {
-      console.error('Error generating website:', error);
       alert(`Failed to generate website: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setPostingStatus(prev => ({ ...prev, [numericId]: undefined }));
     }
@@ -417,7 +404,7 @@ const ExcelDataProcessor = () => {
       }
     }));
 
-    const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev';
+    const GENERATE_API_ENDPOINT = ADMIN_API ? `${ADMIN_API}/generate` : `${LAMBDA.adminGen}`;
 
     // Generate websites one by one with actual API calls
     for (let i = 0; i < postedItems.length; i++) {
@@ -433,7 +420,6 @@ const ExcelDataProcessor = () => {
         const uploadId = postStatusStore[itemId]?.uploadId;
 
         if (!uploadId) {
-          console.warn(`No uploadId found for item ${itemId}, skipping...`);
           continue;
         }
 
@@ -462,8 +448,6 @@ const ExcelDataProcessor = () => {
         }
 
         const result = await response.json();
-        console.log(`Successfully generated website for item ${i + 1}:`, result);
-
         // Update data with generated status
         setExcelData(prevData =>
           prevData.map(dataItem =>
@@ -475,7 +459,6 @@ const ExcelDataProcessor = () => {
         setPostingStatus(prev => ({ ...prev, [numericId]: 'success' }));
 
       } catch (error) {
-        console.error(`Error generating website for item ${i + 1}:`, error);
         // Continue with next item even if one fails
       }
 

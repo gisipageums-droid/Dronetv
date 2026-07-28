@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { EVENTS_API, LAMBDA } from '../lib/apiConfig';
+import ContentCard from './common/ContentCard';
 
 // (optional) Type – aap chahe toh hata bhi sakte ho
 // interface EventCard {
@@ -42,8 +44,19 @@ const staticEvents: EventCard[] = [
   },
 ];
 
+// event.date comes as "YYYY-MM-DD to YYYY-MM-DD" — an event is ended once its
+// end date has fully passed. Unparseable dates are kept (can't confirm ended).
+function isEventEnded(dateStr: string): boolean {
+  if (!dateStr) return false;
+  const parts = dateStr.split(' to ').map((s) => s.trim());
+  const endStr = parts[1] || parts[0];
+  const endDate = new Date(endStr);
+  if (isNaN(endDate.getTime())) return false;
+  endDate.setHours(23, 59, 59, 999);
+  return endDate.getTime() < Date.now();
+}
+
 const UpcomingEvents = () => {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const navigate = useNavigate();
 
   // 🔁 yahan change: events ko state se manage karenge
@@ -52,7 +65,7 @@ const UpcomingEvents = () => {
   useEffect(() => {
     axios
       .get(
-        "https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=main"
+        EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=main` : `${LAMBDA.events}/events-dashboard?viewType=main`
       )
       .then((res) => {
         if (res.data?.success && Array.isArray(res.data.cards)) {
@@ -77,12 +90,11 @@ const UpcomingEvents = () => {
             urlSlug: card.urlSlug,
           }));
 
-          // 🟡 Ab state me API se aaya data set kar rahe
-          setEvents(apiEvents);
+          // 🟡 Ab state me API se aaya data set kar rahe (ended events hide out)
+          setEvents(apiEvents.filter((e) => !isEventEnded(e.date)));
         }
       })
       .catch((err) => {
-        console.error("Error fetching events:", err);
         // yaha aap chahe toh toast / alert de sakte ho
         // staticEvents already state me hai, to UI blank nahi hoga
       });
@@ -117,107 +129,49 @@ const UpcomingEvents = () => {
             : "grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8"
             }`}
         >
-          {events.map((event, index) => {
-            const isHovered = hoveredCard === index; // 🟡 id string hai, isliye index use kar liya
+          {events.map((event) => (
+            <ContentCard
+              key={event.id}
+              image={event.image}
+              imageAlt={event.name}
+              className={events.length === 1 ? 'max-w-xl w-full' : 'w-full'}
+              onClick={() => navigate(`/event/${event.name}`)}
+            >
+              <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">
+                {event.price || 'Premium'}
+              </span>
+              <h3 className="text-lg font-bold text-gray-900 leading-snug mb-3 line-clamp-2">
+                {event.name}
+              </h3>
 
-            return (
-              <div
-                key={event.id}
-                className="group relative bg-[#f1ee8e] rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 opacity-100 translate-y-0 max-w-xl w-full"
-                style={{
-                  transitionDelay: `${index * 200}ms`,
-                  animation: `fadeInUp 0.8s ease-out ${index * 200}ms both`,
-                }}
-                onMouseEnter={() => setHoveredCard(index)}
-                onMouseLeave={() => setHoveredCard(null)}
-                onClick={() =>
-                  navigate(`/event/${event.name}`)
-                }
-                role="button"
-                tabIndex={0}
-              >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={event.image}
-                    alt={event.name}
-                    className="w-full h-48 sm:h-56 object-cover transition-all duration-700 group-hover:scale-110"
-                  />
-
-                  {/* Black Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20 opacity-60 group-hover:opacity-80 transition-all duration-500"></div>
-                  {/* Yellow Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 via-transparent to-yellow-600/10 opacity-60 group-hover:opacity-80 transition-all duration-500"></div>
-                  {/* Price Badge */}
-                  <div className="absolute top-4 right-4 bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-bold shadow-lg  transition-transform duration-500">
-                    {event.price || "Premium"}
-                  </div>
-                  {/* CTA button */}
-                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 pointer-events-auto">
-                    <Link
-                      to={`/event/${event.name}`}
-                      className="inline-flex items-center gap-2 bg-yellow-400 text-black px-6 py-3 rounded-full font-bold shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-yellow-300 border border-yellow-500"
-                      onClick={(e) => e.stopPropagation()} // Prevent parent card click
-                    >
-                      <span>Learn More</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </div>
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Calendar className="h-4 w-4 text-yellow-600 flex-shrink-0" />
+                  <span className="line-clamp-1">{event.date}</span>
                 </div>
-
-                <div className="p-4 sm:p-6 lg:p-8">
-                  <h3 className="text-xl sm:text-2xl font-bold text-black mb-4 sm:mb-6 group-hover:text-gray-800 transition-colors duration-300">
-                    {event.name}
-                  </h3>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Column 1: Date & Location */}
-                    <div className="space-y-3 sm:space-y-4">
-                      <div className="flex items-center text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
-                        <div className="bg-yellow-200 rounded-full p-2 mr-3 sm:mr-4 group-hover:bg-yellow-300 transition-colors duration-300 border border-yellow-300 flex-shrink-0">
-                          <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
-                        </div>
-                        <span className="font-medium text-sm sm:text-base">
-                          {event.date}
-                        </span>
-                      </div>
-                      <div className="flex items-center text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
-                        <div className="bg-yellow-200 rounded-full p-2 mr-3 sm:mr-4 group-hover:bg-yellow-300 transition-colors duration-300 border border-yellow-300 flex-shrink-0">
-                          <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
-                        </div>
-                        <span className="font-medium text-sm sm:text-base">
-                          {event.location}
-                        </span>
-                      </div>
-                    </div>
-                    {/* Column 2: Time & Attendees */}
-                    <div className="space-y-3 sm:space-y-4">
-                      <div className="flex items-center text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
-                        <div className="bg-yellow-200 rounded-full p-2 mr-3 sm:mr-4 group-hover:bg-yellow-300 transition-colors duration-300 border border-yellow-300 flex-shrink-0">
-                          <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
-                        </div>
-                        <span className="font-medium text-sm sm:text-base">
-                          {event.time}
-                        </span>
-                      </div>
-                      <div className="flex items-center text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
-                        <div className="bg-yellow-200 rounded-full p-2 mr-3 sm:mr-4 group-hover:bg-yellow-300 transition-colors duration-300 border border-yellow-300 flex-shrink-0">
-                          <Users className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
-                        </div>
-                        <span className="font-medium text-sm sm:text-base">
-                          {event.attendees
-                            ? `${event.attendees} Expected`
-                            : "Attendees Info Soon"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <MapPin className="h-4 w-4 text-yellow-600 flex-shrink-0" />
+                  <span className="line-clamp-1">{event.location}</span>
                 </div>
-
-                {/* Yellow Glow Border */}
-                <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-yellow-400/30 group-hover:shadow-lg group-hover:shadow-yellow-400/20 transition-all duration-500"></div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Clock className="h-4 w-4 text-yellow-600 flex-shrink-0" />
+                  <span className="line-clamp-1">{event.time}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Users className="h-4 w-4 text-yellow-600 flex-shrink-0" />
+                  <span className="line-clamp-1">{event.attendees ? `${event.attendees} Expected` : 'Attendees Info Soon'}</span>
+                </div>
               </div>
-            );
-          })}
+
+              <Link
+                to={`/event/${event.name}`}
+                onClick={(e) => e.stopPropagation()}
+                className="mt-auto inline-flex items-center justify-center gap-2 bg-yellow-400 text-black px-4 py-2.5 rounded-lg font-bold text-sm hover:bg-yellow-300 transition-colors"
+              >
+                Learn More <ArrowRight className="h-4 w-4" />
+              </Link>
+            </ContentCard>
+          ))}
         </div>
       </div>
     </section>

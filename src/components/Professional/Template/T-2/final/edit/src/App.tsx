@@ -16,6 +16,7 @@ import { Skills } from "./components/Skills";
 import { Toaster } from "./components/ui/sonner";
 import Publish from "./components/Publish";
 import Back from "./components/Back";
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 // Define types for the component states
 interface ComponentStates {
   heroContent?: any;
@@ -102,7 +103,7 @@ export default function FinalEditTemp_2() {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `https://l5fb7y1eij.execute-api.ap-south-1.amazonaws.com/dev/get-teme?userId=${userId}&professionalId=${professionalId}`,
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/get-teme?userId=${userId}&professionalId=${professionalId}` : `${LAMBDA.profTemplateFinalLoad}/get-teme?userId=${userId}&professionalId=${professionalId}`,
           {
             method: "GET",
             headers: {

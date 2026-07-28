@@ -28,6 +28,8 @@ import ProfessionalsPage from "./components/ProfessionalsPage";
 import ServicesPage from "./components/ServicesPage";
 import ServiceDetailPage from "./components/ServiceDetailPage";
 import ScrollingFooter from "./components/ScrollingFooter";
+import AdStickyStrip from "./components/common/AdStickyStrip";
+import AdsLoader from "./components/common/AdsLoader";
 import GalleryPage from "./components/GalleryPage";
 import GalleryGlimpse from "./components/GalleryGlimpse";
 import SubApp from "./components/webbuilder/src/App";
@@ -51,6 +53,7 @@ import ResetPassword from "./components/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminProtectedRoute from "./components/adminProtectedRoute";
 import AiProtectedRoute from "./components/AiProtectedRoute";
+import RoleGuard from "./components/RoleGuard";
 import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
 import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
 import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
@@ -63,9 +66,12 @@ import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App";
 import EditTemp_2 from "./components/Professional/Template/T-2/edit/src/App";
 import EditTemp_1 from "./components/Professional/Template/T-1/edit/src/main";
 import NotFound from "./components/company/src/components/form/src/Notfound";
+import NotFoundPage from "./components/NotFoundPage";
 import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboard";
 import UserEvent from "./components/UserEvent";
 import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard";
+import AdminUsersDashboard from "./components/Admin/userAdmin/AdminUsersDashboard";
+import AdminCompanyEdit from "./components/Admin/userAdmin/AdminCompanyEdit";
 import UserProfessional from "./components/profissionalDirectory";
 
 import ExcelDataProcessor from "./components/excelextraction/excel";
@@ -107,10 +113,66 @@ import MainEvent1 from "./components/mainEventPreview/t1/EventTemplate1"
 import BuyTokenPage from "./components/UserDashboard/pages/Buy";
 import TransactionHistory from "./components/UserDashboard/pages/transaction";
 import RechargePlans from "./components/UserDashboard/pages/Plans";
+import MediaHub from "./components/UserDashboard/pages/MediaHub";
+import MyContentManager from "./components/UserDashboard/pages/MyContentManager";
+import Addons from "./components/UserDashboard/pages/Addons";
+import UserPosts from "./components/UserDashboard/pages/UserPosts";
+import BidKeywords from "./components/UserDashboard/pages/BidKeywords";
+import PagePlacements from "./components/UserDashboard/pages/PagePlacements";
+import MyPackage from "./components/UserDashboard/pages/MyPackage";
+import ActiveCampaigns from "./components/UserDashboard/pages/ActiveCampaigns";
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
 import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
+import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
+import AdminJobBoardDashboard from "./components/Admin/jobBoardAdmin/AdminJobBoardDashboard";
+import AdminLayout from "./components/Admin/AdminLayout";
+import AdminTokenEconomy from "./components/Admin/AdminTokenEconomy";
+import AdminInvoicesPage from "./pages/admin/AdminInvoicesPage";
+import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import AdminUserContentPage from "./pages/admin/AdminUserContentPage";
 import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
 import ProfessionalsDocumentTextExtractor from "./components/professionalsExcelExtraction/professionalsExcelExtraction/excel";
+
+// Media Hub pages
+import NewsPulsePage from "./pages/media/NewsPulse";
+import MagazinePage from "./pages/media/Magazine";
+import VideoSpotlightPage from "./pages/media/VideoSpotlight";
+import ImpactStoriesPage from "./pages/media/ImpactStories";
+import MarketIntelligencePage from "./pages/media/MarketIntelligence";
+import TechTrendsPage from "./pages/media/TechTrends";
+import PressReleasesPage from "./pages/media/PressReleases";
+import IndustryReportsPage from "./pages/media/IndustryReports";
+import MediaHubPage from "./pages/media/MediaHub";
+import MediaDetailPage from "./pages/media/MediaDetailPage";
+
+// Events sub-pages
+import EventCalendarPage from "./pages/events/EventCalendar";
+import ExposPage from "./pages/events/Expos";
+import ConferencesPage from "./pages/events/Conferences";
+import WorkshopsPage from "./pages/events/Workshops";
+import CompetitionsPage from "./pages/events/Competitions";
+import WebinarsPage from "./pages/events/Webinars";
+import MeetupsPage from "./pages/events/Meetups";
+
+// Professionals sub-pages
+import JobBoardPage from "./pages/professionals/JobBoard";
+import PilotDirectoryPage from "./pages/professionals/PilotDirectory";
+import CertificationsPage from "./pages/professionals/Certifications";
+import PortfolioPage from "./pages/professionals/Portfolio";
+import TrainingPage from "./pages/professionals/Training";
+import NetworkingPage from "./pages/professionals/Networking";
+import CommunityPage from "./pages/professionals/Community";
+import CareerPathPage from "./pages/professionals/CareerPath";
+
+// Partnerships pages
+import DroneManufacturersPage from "./pages/partnerships/DroneManufacturers";
+import AITechCompaniesPage from "./pages/partnerships/AITechCompanies";
+import EventOrganizersPage from "./pages/partnerships/EventOrganizers";
+import EducationPartnersPage from "./pages/partnerships/EducationPartners";
+import IndustryPlayersPage from "./pages/partnerships/IndustryPlayers";
+import PartnerBenefitsPage from "./pages/partnerships/PartnerBenefits";
+import BecomePartnerPage from "./pages/partnerships/BecomePartner";
+import PartnershipsHubPage from "./pages/partnerships/PartnershipsHub";
 
 
 const HomePage = () => (
@@ -135,12 +197,13 @@ const AppContent = () => {
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/edit") ||
     location.pathname.startsWith("/professional") ||
-    location.pathname.startsWith("/template");
+    location.pathname.startsWith("/template") ||
+    location.pathname.startsWith("/event/leads");
   const hideNavigation =
+    location.pathname.startsWith("/admin/") ||
     location.pathname.startsWith("/user/companies/edit") ||
-    location.pathname.startsWith("/admin/companies/edit") ||
+    location.pathname.startsWith("/user/companies/preview") ||
     location.pathname.startsWith("/user/professionals/edit") ||
-    location.pathname.startsWith("/admin/professionals/edit") ||
     location.pathname.startsWith("/professional/edit") ||
     location.pathname.startsWith("/professional/form") ||
     location.pathname.startsWith("/edit/event") ||
@@ -153,6 +216,42 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/videos" element={<VideosPage />} />
+
+          {/* Media Hub routes */}
+          <Route path="/media" element={<MediaHubPage />} />
+          <Route path="/media/news-pulse" element={<NewsPulsePage />} />
+          <Route path="/media/news/:contentId" element={<MediaDetailPage contentType="news" backPath="/media/news-pulse" backLabel="News Pulse" externalLinkLabel="Read Original Source" />} />
+          <Route path="/media/magazine" element={<MagazinePage />} />
+          <Route path="/media/magazine/:contentId" element={<MediaDetailPage contentType="magazine" backPath="/media/magazine" backLabel="Magazine" externalLinkLabel="View Full Article" />} />
+          <Route path="/media/video-spotlight" element={<VideoSpotlightPage />} />
+          <Route path="/media/impact-stories" element={<ImpactStoriesPage />} />
+          <Route path="/media/impact-stories/:contentId" element={<MediaDetailPage contentType="impact-story" backPath="/media/impact-stories" backLabel="Impact Stories" externalLinkLabel="Read Full Story" />} />
+          <Route path="/media/market-intelligence" element={<MarketIntelligencePage />} />
+          <Route path="/media/market-intelligence/:contentId" element={<MediaDetailPage contentType="market-intelligence" backPath="/media/market-intelligence" backLabel="Market Intelligence" externalLinkLabel="View Original Source" />} />
+          <Route path="/media/tech-trends" element={<TechTrendsPage />} />
+          <Route path="/media/press-releases" element={<PressReleasesPage />} />
+          <Route path="/media/industry-reports" element={<IndustryReportsPage />} />
+          <Route path="/media/gallery" element={<GalleryPage />} />
+
+          {/* Events sub-routes — must be before dynamic /event/:name */}
+          <Route path="/events/calendar" element={<EventCalendarPage />} />
+          <Route path="/events/expos" element={<ExposPage />} />
+          <Route path="/events/conferences" element={<ConferencesPage />} />
+          <Route path="/events/workshops" element={<WorkshopsPage />} />
+          <Route path="/events/competitions" element={<CompetitionsPage />} />
+          <Route path="/events/webinars" element={<WebinarsPage />} />
+          <Route path="/events/meetups" element={<MeetupsPage />} />
+
+          {/* Partnerships routes */}
+          <Route path="/partnerships" element={<PartnershipsHubPage />} />
+          <Route path="/partnerships/drone-manufacturers" element={<DroneManufacturersPage />} />
+          <Route path="/partnerships/ai-tech" element={<AITechCompaniesPage />} />
+          <Route path="/partnerships/event-organizers" element={<EventOrganizersPage />} />
+          <Route path="/partnerships/education-partners" element={<EducationPartnersPage />} />
+          <Route path="/partnerships/industry-players" element={<IndustryPlayersPage />} />
+          <Route path="/partnerships/benefits" element={<PartnerBenefitsPage />} />
+          <Route path="/partnerships/become-a-partner" element={<BecomePartnerPage />} />
+
           <Route path="/professionals" element={<ProfessionalsPage />} />
           <Route path="/listed-companies" element={<CompaniesPage />} />
 
@@ -212,11 +311,33 @@ const AppContent = () => {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/plans" element={
             <AdminProtectedRoute>
-              <AdminTokenPlan />
+              <AdminLayout>
+                <AdminTokenPlan />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+          <Route path="/admin/invoices" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminInvoicesPage />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+          <Route path="/admin/settings" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminSettingsPage />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+          <Route path="/admin/user-content" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminUserContentPage />
+              </AdminLayout>
             </AdminProtectedRoute>} />
           <Route path="/admin/company/dashboard" element={
             <AdminProtectedRoute>
-              <AdminDashboard />
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
             </AdminProtectedRoute>} />
           <Route
             path="/admin/companies/preview/1/:publishedId/:userId"
@@ -248,6 +369,15 @@ const AppContent = () => {
           />
           <Route path="/professional/t2" element={<ProTemp2 />} />
           <Route path="/professional/t1" element={<ProTemp1 />} />
+          {/* Professionals sub-routes — must be before dynamic /:urlSlug? */}
+          <Route path="/professionals/job-board" element={<JobBoardPage />} />
+          <Route path="/professionals/pilot-directory" element={<PilotDirectoryPage />} />
+          <Route path="/professionals/certifications" element={<CertificationsPage />} />
+          <Route path="/professionals/portfolio" element={<PortfolioPage />} />
+          <Route path="/professionals/training" element={<TrainingPage />} />
+          <Route path="/professionals/networking" element={<NetworkingPage />} />
+          <Route path="/professionals/community" element={<CommunityPage />} />
+          <Route path="/professionals/career-path" element={<CareerPathPage />} />
           <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
           <Route path="/professional/:urlSlug?" element={<FinalT1 />} />
 
@@ -261,7 +391,9 @@ const AppContent = () => {
             element={<EditTemp_1 />}
           />
           <Route path="/user/professional" element={<UserProfessional />} />
-          <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminProfessional /></AdminProtectedRoute>} />
+          <Route path="/admin/users" element={<AdminProtectedRoute><AdminLayout><AdminUsersDashboard /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/companies/details/:publishedId/:userId" element={<AdminProtectedRoute><AdminCompanyEdit /></AdminProtectedRoute>} />
+          <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route
             path="/user/professionals/preview/2/:professionalId/:userId"
             element={<FinaleProfessionalTemp2 />}
@@ -282,12 +414,37 @@ const AppContent = () => {
           />
           {/* <Route path="/professional/:urlSlug" element={<MainProTemp1 />} /> */}
 
+          <Route path="/admin/media/dashboard" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminMediaDashboard />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+
+          <Route path="/admin/jobboard/dashboard" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminJobBoardDashboard />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+
+          {["/admin/tokens/revenue", "/admin/tokens/auctions", "/admin/tokens/ledger", "/admin/tokens/slots", "/admin/tokens/phase-gate"].map(p => (
+            <Route key={p} path={p} element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <AdminTokenEconomy />
+                </AdminLayout>
+              </AdminProtectedRoute>} />
+          ))}
+
           {/* event routes */}
           <Route
             path="/admin/event/dashboard"
             element={
               <AdminProtectedRoute>
-                <EventAdminDashboard />
+                <AdminLayout>
+                  <EventAdminDashboard />
+                </AdminLayout>
               </AdminProtectedRoute>}
           />
           <Route path="/user/event" element={<UserEvent />} />
@@ -319,17 +476,21 @@ const AppContent = () => {
           <Route
             path="/user-professionals"
             element={
-              <UserDashboardLayout>
-                <Professinal />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <Professinal />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/user-events"
             element={
-              <UserDashboardLayout>
-                <Event />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <Event />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
@@ -365,9 +526,11 @@ const AppContent = () => {
           <Route
             path="/user-profile"
             element={
-              <UserDashboardLayout>
-                <ProfilePage />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <ProfilePage />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
 
@@ -392,6 +555,51 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/user-media-hub"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <MediaHub />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-content/:type"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <MyContentManager />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-addons"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <Addons />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-posts"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <UserPosts />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/user-transactions"
             element={
@@ -402,47 +610,109 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/user-bid-keywords"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <BidKeywords />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-page-placements"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <PagePlacements />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-plans"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <MyPackage />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/user-active-campaigns"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <ActiveCampaigns />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/user-company/leads/:companyName"
             element={
-              <UserDashboardLayout>
-                <CompanyLeads />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <CompanyLeads />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
-          <Route path="/user-leads" element={<CompanyLeadsPage />} />
           <Route
-            path="/user-professional/leads/:ProfessionalName/:professionalId"
+            path="/user-leads"
             element={
-              <UserDashboardLayout>
-                <ProfessionalLeads />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <CompanyLeadsPage />
+                </UserDashboardLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-professional/leads/:professionalName/:professionalId"
+            element={
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <ProfessionalLeads />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/user-contacted"
             element={
-              <UserDashboardLayout>
-                <ContactedPeople />
-              </UserDashboardLayout>
+              <ProtectedRoute>
+                <UserDashboardLayout>
+                  <ContactedPeople />
+                </UserDashboardLayout>
+              </ProtectedRoute>
             }
           />
           <Route
             path="/user-ai"
             element={
-              <AiProtectedRoute>
+              <RoleGuard roles={['admin']}>
                 <UserDashboardLayout>
                   <AiDashboard />
                 </UserDashboardLayout>
-              </AiProtectedRoute>
+              </RoleGuard>
             }
           />
         <Route path="/eventsexcel" element={<EventsExcelDataProcessor />} />
         <Route path="/professionalsexcel" element={<ProfessionalsDocumentTextExtractor />} />
+        <Route path="*" element={<NotFoundPage />} />
         </Routes>
 
         {!hideFooter && <Footer />}
         {!hideFooter && <ScrollingFooter />}
+        <AdsLoader />
+        <AdStickyStrip />
       </CombinedProviders>
     </div>
   );

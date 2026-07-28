@@ -197,7 +197,7 @@ const AiDashboard: React.FC = () => {
                             onClick={() => selectLeaf(child.id)}
                             className={`w-full flex items-center gap-2 pl-4 pr-3 py-2 text-left transition-all duration-150 border-l-2 ${
                               isActive
-                                ? "border-amber-500 bg-amber-400 text-white"
+                                ? "border-amber-500 bg-amber-400 text-black"
                                 : "border-transparent text-gray-600 hover:bg-amber-100 hover:text-gray-800"
                             }`}
                           >
@@ -223,7 +223,7 @@ const AiDashboard: React.FC = () => {
                 onClick={() => selectLeaf(item.id)}
                 className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-left transition-all duration-150 border-l-4 ${
                   isLeafActive
-                    ? "bg-amber-400 border-amber-600 text-white"
+                    ? "bg-amber-400 border-amber-600 text-black"
                     : "border-transparent text-gray-700 hover:bg-amber-100 hover:border-amber-300"
                 }`}
               >

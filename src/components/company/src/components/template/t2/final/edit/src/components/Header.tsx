@@ -13,6 +13,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
 import logo from "/images/Drone tv .in.jpg";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function Header({
   headerData,
@@ -73,7 +74,6 @@ export default function Header({
     { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
     { id: 9, label: "Clients", href: "#clients", color: "primary" },
   ];
-  console.log("header data", content);
 
   // Smooth scroll function
   const scrollToSection = (href: string) => {
@@ -167,11 +167,10 @@ export default function Header({
     formData.append("imageField", `${imageField}_${Date.now()}`);
     formData.append("templateSelection", templateSelection);
 
-    console.log(`Uploading ${imageField} to S3:`, file);
 
     try {
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,
@@ -180,7 +179,6 @@ export default function Header({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();

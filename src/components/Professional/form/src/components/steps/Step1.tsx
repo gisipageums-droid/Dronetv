@@ -39,6 +39,7 @@ const RedirectModal = ({ onClose }: { onClose: () => void }) => (
 );
 import { PhoneInput } from "../common/PhoneInput";
 import { CountryStateSelect } from "../common/CountryStateSelect";
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 // Custom Date Picker Component
 interface ScrollColumnProps {
@@ -314,7 +315,7 @@ const OTPVerificationModal = ({
                       setError("Please enter all 6 digits");
                     }
                   }}
-                  className="w-10 h-12 text-center text-xl font-bold border-2 border-amber-300 rounded-lg focus:border-amber-500 focus:ring-1 focus:ring-amber-200 outline-none transition"
+                  className="w-10 h-12 text-center text-xl font-bold border-2 border-amber-300 rounded-lg focus:border-amber-500 focus:ring-1 focus:ring-amber-200 outline-none transition text-gray-900 bg-white"
                 />
               ))}
             </div>
@@ -534,6 +535,18 @@ const ScrollDatePicker: React.FC<{
 
   const [selectedDate, setSelectedDate] = useState(() => parseDate(value));
   const [isScrolling, setIsScrolling] = useState(false);
+
+  // The wheel always visually shows a selected date (defaulting to today when
+  // value is empty) but onChange only ever fired from a user scroll/click —
+  // so a user who accepts the visible default without touching the wheel
+  // left the underlying form field empty forever, making this required field
+  // silently fail validation with no visible cause (Next button looked dead).
+  useEffect(() => {
+    if (!value) {
+      onChange(`${selectedDate.year}-${selectedDate.month}-${selectedDate.day}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const days = Array.from({ length: 31 }, (_, i) =>
     (i + 1).toString().padStart(2, "0")
@@ -1061,7 +1074,7 @@ export const Step1 = ({
       try {
         setChecking(true);
         const res = await fetch(
-          "https://0x1psamlyh.execute-api.ap-south-1.amazonaws.com/dev/professional-username-check",
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-username-check` : `${LAMBDA.profUsernameCheck}/professional-username-check`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1270,7 +1283,7 @@ export const Step1 = ({
   // Render input field based on type
   const renderInputField = (f: any, section: any) => {
     const baseClasses =
-      "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
+      "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white";
 
     // Handle country and state fields
     if (
@@ -1501,7 +1514,7 @@ export const Step1 = ({
                   type="text"
                   required={true}
                   placeholder="Enter your full name"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                   value={data.basicInfo?.fullName || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -1563,7 +1576,7 @@ export const Step1 = ({
                   <span className="text-red-500 ml-1">*</span>
                 </label>
                 <select
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                   value={data.basicInfo?.gender || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -1597,7 +1610,7 @@ export const Step1 = ({
                     <span className="text-red-500 ml-1">*</span>
                   </label>
                   <select
-                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                     value={data.basicInfo?.relationship_type || ""}
                     onChange={(e) =>
                       updateField("basicInfo", {
@@ -1631,7 +1644,7 @@ export const Step1 = ({
                     type="text"
                     required={true}
                     placeholder="Enter relative's name"
-                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                     value={data.basicInfo?.relationship_name || ""}
                     onChange={(e) =>
                       updateField("basicInfo", {
@@ -1660,7 +1673,7 @@ export const Step1 = ({
                 <textarea
                   required={true}
                   placeholder="Complete address with building details"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px]"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] text-gray-900 bg-white"
                   value={data.basicInfo?.address || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -1691,7 +1704,7 @@ export const Step1 = ({
                     type="text"
                     required={true}
                     placeholder="Enter city or district"
-                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                     value={data.basicInfo?.city_district || ""}
                     onChange={(e) =>
                       updateField("basicInfo", {
@@ -1721,7 +1734,7 @@ export const Step1 = ({
                     maxLength={6}
                     required={true}
                     placeholder="Enter 6-digit pin code"
-                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                     value={data.basicInfo?.pincode || ""}
                     onChange={(e) =>
                       updateField("basicInfo", {
@@ -1826,7 +1839,7 @@ export const Step1 = ({
               <textarea
                 required={true}
                 placeholder="Complete communication address with building details"
-                className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] `}
+                className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] text-gray-900 bg-white`}
                 value={data.communicationAddress?.address || ""}
                 onChange={(e) =>
                   updateField("communicationAddress", {
@@ -1856,7 +1869,7 @@ export const Step1 = ({
                 <input
                   type="text"
                   placeholder="Your city"
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm `}
+                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white`}
                   value={data.communicationAddress?.city || ""}
                   onChange={(e) =>
                     updateField("communicationAddress", {
@@ -1880,7 +1893,7 @@ export const Step1 = ({
                   required={true}
                   maxLength={6}
                   placeholder="Postal code"
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm`}
+                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white`}
                   value={data.communicationAddress?.postalCode || ""}
                   onChange={(e) => {
                     // Allow only numbers and max 6 digits
@@ -1982,7 +1995,7 @@ export const Step1 = ({
                   type="text"
                   required={true}
                   placeholder="Enter your username"
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm ${usernameAvailable === false
+                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white ${usernameAvailable === false
                     ? "border-red-500 focus:ring-red-300"
                     : ""
                     }`}
@@ -2030,7 +2043,7 @@ export const Step1 = ({
                   type="email"
                   required={true}
                   placeholder="Enter your email address"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                   value={data.addressInformation?.email || ""}
                   onChange={(e) =>
                     updateField("addressInformation", {
@@ -2072,7 +2085,7 @@ export const Step1 = ({
                 <span className="text-red-500 ml-1">*</span>
               </label>
               <select
-                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                 value={data.addressInformation?.nationality || ""}
                 onChange={(e) =>
                   updateField("addressInformation", {
@@ -2114,7 +2127,7 @@ export const Step1 = ({
                   type="text"
                   required={true}
                   placeholder="e.g., Software Engineer, Marketing Manager, Consultant"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                   value={data.addressInformation?.designation || ""}
                   onChange={(e) =>
                     updateField("addressInformation", {
@@ -2136,7 +2149,7 @@ export const Step1 = ({
                   type="text"
                   required={true}
                   placeholder="A short, catchy phrase that describes your professional expertise"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                   value={data.addressInformation?.tagline || ""}
                   onChange={(e) =>
                     updateField("addressInformation", {
@@ -2457,7 +2470,7 @@ export const Step1 = ({
                 type="text"
                 required={true}
                 placeholder="Enter your full name"
-                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                 value={data.basicInfo?.fullName || ""}
                 onChange={(e) =>
                   updateField("basicInfo", {
@@ -2490,7 +2503,7 @@ export const Step1 = ({
                 <span className="text-red-500 ml-1">*</span>
               </label>
               <select
-                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                 value={data.basicInfo?.gender || ""}
                 onChange={(e) =>
                   updateField("basicInfo", {
@@ -2514,7 +2527,7 @@ export const Step1 = ({
                   <span className="text-red-500 ml-1">*</span>
                 </label>
                 <select
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                   value={data.basicInfo?.relationship_type || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -2539,7 +2552,7 @@ export const Step1 = ({
                   type="text"
                   required={true}
                   placeholder="Enter relative's name"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                   value={data.basicInfo?.relationship_name || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -2559,7 +2572,7 @@ export const Step1 = ({
               <textarea
                 required={true}
                 placeholder="Complete address with building details"
-                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px]"
+                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] text-gray-900 bg-white"
                 value={data.basicInfo?.address || ""}
                 onChange={(e) =>
                   updateField("basicInfo", {
@@ -2580,7 +2593,7 @@ export const Step1 = ({
                   type="text"
                   required={true}
                   placeholder="Enter city or district"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                   value={data.basicInfo?.city_district || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -2601,7 +2614,7 @@ export const Step1 = ({
                   maxLength={6}
                   required={true}
                   placeholder="Enter 6-digit pin code"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
                   value={data.basicInfo?.pincode || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Search, Users, Briefcase, Calendar } from "lucide-react";
+import { Search, Users, Briefcase, Calendar, Coins } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import {
   PieChart,
@@ -17,6 +17,7 @@ import {
   Line,
 } from "recharts";
 import axios from "axios";
+import { ADMIN_API, AUTH_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface Lead {
   leadId: string;
@@ -62,6 +63,7 @@ const AdminDashboard: React.FC = () => {
   const [companyCount, setCompanyCount] = useState(0);
   const [professionalCount, setProfessionalCount] = useState(0);
   const [eventCount, setEventCount] = useState(0);
+  const [tokenBalance, setTokenBalance] = useState<number | null>(null);
 
   // Mock data (keeping other static data as is for now)
   const stats = [
@@ -108,7 +110,7 @@ const AdminDashboard: React.FC = () => {
 
   const getCategory = useCallback(async () => {
     const fetchData = await fetch(
-      `https://kgm0ckp0uf.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+      ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates1}/user-templates/${userDetails.email} `
     );
     const resData = await fetchData.json();
     setCompanyCount(resData.count);
@@ -117,41 +119,42 @@ const AdminDashboard: React.FC = () => {
   const getProfessionalCount = useCallback(() => {
     axios
       .get(
-        `https://5otjcn6oi1.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+        ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates3}/user-templates/${userDetails.email} `
       )
       .then((res) => {
         setProfessionalCount(res.data.count);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }, [userDetails.email]);
 
   const getEventCount = useCallback(() => {
     axios
       .get(
-        `https://zd3q4ewnxe.execute-api.ap-south-1.amazonaws.com/dev/user-templates/${userDetails.email} `
+        ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates2}/user-templates/${userDetails.email} `
       )
       .then((res) => {
         setEventCount(res.data.count);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }, [userDetails.email]);
 
   useEffect(() => {
     getCategory();
     getProfessionalCount();
     getEventCount();
-  }, [getCategory, getProfessionalCount, getEventCount]);
+    if (userDetails?.email) {
+      axios.get(AUTH_API ? `${AUTH_API}/profile?userId=${userDetails.email}` : `${LAMBDA.profile}/profile?userId=${userDetails.email}`)
+        .then(r => setTokenBalance(r.data?.profile?.tokenBalance ?? 0))
+        .catch(() => setTokenBalance(0));
+    }
+  }, [getCategory, getProfessionalCount, getEventCount, userDetails?.email]);
 
   // fetch for company recent leads
   const fetchRecentCompaniesLeads = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
+        AUTH_API ? `${AUTH_API}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0` : `${LAMBDA.profile}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
       );
 
       if (!response.ok) {
@@ -167,7 +170,6 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
-      console.error("Error fetching leads:", err);
     } finally {
       setLoading(false);
     }
@@ -178,7 +180,7 @@ const AdminDashboard: React.FC = () => {
     try {
       setProfessionalLoading(true);
       const response = await fetch(
-        `https://r5mcwn6b10.execute-api.ap-south-1.amazonaws.com/prod/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`
+        LEADS_API ? `${LEADS_API}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7` : `${LAMBDA.profLeadsGet}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`
       );
 
       if (!response.ok) {
@@ -196,7 +198,6 @@ const AdminDashboard: React.FC = () => {
       setProfessionalError(
         err instanceof Error ? err.message : "An error occurred"
       );
-      console.error("Error fetching leads:", err);
     } finally {
       setProfessionalLoading(false);
     }
@@ -207,7 +208,7 @@ const AdminDashboard: React.FC = () => {
     try {
       setEventLoading(true);
       const response = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0`
+        AUTH_API ? `${AUTH_API}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0` : `${LAMBDA.profile}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0`
       );
 
       if (!response.ok) {
@@ -223,7 +224,6 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (err) {
       setEventError(err instanceof Error ? err.message : "An error occurred");
-      console.error("Error fetching leads:", err);
     } finally {
       setEventLoading(false);
     }
@@ -242,7 +242,7 @@ const AdminDashboard: React.FC = () => {
   const getStatusColor = (viewed: boolean) => {
     return viewed
       ? "bg-green-100 text-green-800"
-      : "bg-yellow-100 text-yellow-800";
+      : "bg-gray-100 text-gray-600";
   };
 
   const formatDate = (dateString: string) => {
@@ -259,63 +259,69 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-amber-50 p-8">
+    <div className="min-h-full bg-gray-100 p-6 md:p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          User Dashboard
+        <p className="text-xs font-bold tracking-widest text-yellow-500 uppercase mb-1">Dashboard</p>
+        <h1 className="text-2xl font-extrabold text-gray-900 mb-1">
+          Welcome back, {userDetails?.fullName?.split(" ")[0] || "there"} 👋
         </h1>
-        <p className="text-slate-400">
-          Welcome back! Here's your business overview.
-        </p>
+        <p className="text-sm text-gray-500">Here's your business overview.</p>
       </div>
 
       {/* Search Bar */}
       <div className="mb-8">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-yellow-500 w-5 h-5" />
+        <div className="relative max-w-lg">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input
             type="text"
             placeholder="Search by company name, location, or sector..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-6 py-3 bg-white border-2 border-yellow-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all"
+            className="w-full pl-11 pr-6 py-2.5 bg-white border border-gray-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 transition-all"
           />
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
-            <div
-              key={idx}
-              className="bg-amber-50 border-4 border-yellow-200 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
-            >
+            <div key={idx} className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-800 text-sm mb-2">{stat.label}</p>
-                  <p className="text-4xl font-bold text-gray-800">
-                    {stat.value}
-                  </p>
+                  <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-1">{stat.label}</p>
+                  <p className="text-3xl font-extrabold text-gray-900">{stat.value}</p>
                 </div>
-                <div
-                  className={`bg-yellow-400 border border-orange-200 p-4 rounded-lg animate-bounce`}
-                >
-                  <Icon size={28} className="text-white" />
+                <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center">
+                  <Icon size={22} className="text-black" />
                 </div>
               </div>
             </div>
           );
         })}
+        {/* Token balance card */}
+        <a href="/user-recharge" className="bg-gray-900 border border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow block">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Token Balance</p>
+              <p className="text-3xl font-extrabold text-yellow-400">
+                {tokenBalance === null ? "…" : tokenBalance.toLocaleString()}
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-yellow-400/15 rounded-xl flex items-center justify-center">
+              <Coins size={22} className="text-yellow-400" />
+            </div>
+          </div>
+        </a>
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
         {/* Pie Chart */}
-        <div className="bg-slate-700 rounded-lg p-6 shadow-lg">
-          <h2 className="text-xl font-bold text-white mb-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <h2 className="text-sm font-bold text-gray-900 mb-4">
             Visitors by Source
           </h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -343,8 +349,8 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Bar Chart - Leads */}
-        <div className="bg-slate-700 rounded-lg p-6 shadow-lg">
-          <h2 className="text-xl font-bold text-white mb-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <h2 className="text-sm font-bold text-gray-900 mb-4">
             Leads & Visits by Month
           </h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -354,10 +360,10 @@ const AdminDashboard: React.FC = () => {
               <YAxis stroke="#94a3b8" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1e293b",
-                  border: "none",
+                  backgroundColor: "#fff",
+                  border: "1px solid #e5e7eb",
                   borderRadius: "8px",
-                  color: "#fff",
+                  color: "#111827",
                 }}
               />
               <Legend />
@@ -379,15 +385,15 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Line Chart - Trends */}
-      <div className="bg-slate-700 rounded-lg p-6 shadow-lg mb-8">
-        <h2 className="text-xl font-bold text-white mb-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
+        <h2 className="text-sm font-bold text-gray-900 mb-4">
           Lead & Visit Trends
         </h2>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={leadsData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-            <XAxis dataKey="name" stroke="#94a3b8" />
-            <YAxis stroke="#94a3b8" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+            <XAxis dataKey="name" stroke="#9ca3af" />
+            <YAxis stroke="#9ca3af" />
             <Tooltip
               contentStyle={{
                 backgroundColor: "#1e293b",
@@ -418,14 +424,14 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Recent Companies Leads List */}
-      <div className="bg-slate-700 rounded-lg p-6 shadow-lg mb-8">
-        <h2 className="text-xl font-bold text-white mb-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
+        <h2 className="text-sm font-bold text-gray-900 mb-4">
           Recent Companies Leads ({recentLeads.length})
         </h2>
 
         {loading && (
           <div className="text-center py-4">
-            <p className="text-slate-300">Loading leads...</p>
+            <p className="text-gray-400 text-sm">Loading leads...</p>
           </div>
         )}
 
@@ -439,20 +445,20 @@ const AdminDashboard: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-600">
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                <tr className="border-b border-gray-100">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Name
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Category
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Subject
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Status
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Date
                   </th>
                 </tr>
@@ -461,15 +467,15 @@ const AdminDashboard: React.FC = () => {
                 {recentLeads.map((lead) => (
                   <tr
                     key={lead.leadId}
-                    className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
-                    <td className="py-3 px-4 text-white">
+                    <td className="py-3 px-4 text-gray-900 text-sm">
                       {lead.firstName} {lead.lastName}
                     </td>
-                    <td className="py-3 px-4 text-slate-300">
+                    <td className="py-3 px-4 text-gray-500 text-sm">
                       {lead.category}
                     </td>
-                    <td className="py-3 px-4 text-slate-300">{lead.subject}</td>
+                    <td className="py-3 px-4 text-gray-500 text-sm">{lead.subject}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -479,7 +485,7 @@ const AdminDashboard: React.FC = () => {
                         {getStatusText(lead.viewed)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400">
+                    <td className="py-3 px-4 text-gray-400 text-sm">
                       {formatDate(lead.submittedAt)}
                     </td>
                   </tr>
@@ -491,20 +497,20 @@ const AdminDashboard: React.FC = () => {
 
         {!loading && !error && recentLeads.length === 0 && (
           <div className="text-center py-4">
-            <p className="text-slate-300">No leads found</p>
+            <p className="text-gray-400 text-sm">No leads found</p>
           </div>
         )}
       </div>
 
       {/* Recent Professional Leads List */}
-      <div className="bg-slate-700 rounded-lg p-6 shadow-lg mb-8">
-        <h2 className="text-xl font-bold text-white mb-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
+        <h2 className="text-sm font-bold text-gray-900 mb-4">
           Recent Professional Leads ({recentProfessional.length})
         </h2>
 
         {professionalLoading && (
           <div className="text-center py-4">
-            <p className="text-slate-300">Loading professional leads...</p>
+            <p className="text-gray-400 text-sm">Loading professional leads...</p>
           </div>
         )}
 
@@ -518,20 +524,20 @@ const AdminDashboard: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-600">
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                <tr className="border-b border-gray-100">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Name
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Phone
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Subject
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Status
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Date
                   </th>
                 </tr>
@@ -540,11 +546,11 @@ const AdminDashboard: React.FC = () => {
                 {recentProfessional.map((lead) => (
                   <tr
                     key={lead.leadId}
-                    className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
-                    <td className="py-3 px-4 text-white">{lead.firstName} </td>
-                    <td className="py-3 px-4 text-white">{lead.phone}</td>
-                    <td className="py-3 px-4 text-slate-300">{lead.subject}</td>
+                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.firstName} </td>
+                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.phone}</td>
+                    <td className="py-3 px-4 text-gray-500 text-sm">{lead.subject}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -554,7 +560,7 @@ const AdminDashboard: React.FC = () => {
                         {getStatusText(lead.viewed)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400">
+                    <td className="py-3 px-4 text-gray-400 text-sm">
                       {formatDate(lead.submittedAt)}
                     </td>
                   </tr>
@@ -568,20 +574,20 @@ const AdminDashboard: React.FC = () => {
           !professionalError &&
           recentProfessional.length === 0 && (
             <div className="text-center py-4">
-              <p className="text-slate-300">No professional leads found</p>
+              <p className="text-gray-400 text-sm">No professional leads found</p>
             </div>
           )}
       </div>
 
       {/* Recent Events Leads List */}
-      <div className="bg-slate-700 rounded-lg p-6 shadow-lg mb-8">
-        <h2 className="text-xl font-bold text-white mb-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
+        <h2 className="text-sm font-bold text-gray-900 mb-4">
           Recent Event Leads ({recentEvent.length})
         </h2>
 
         {eventLoading && (
           <div className="text-center py-4">
-            <p className="text-slate-300">Loading event leads...</p>
+            <p className="text-gray-400 text-sm">Loading event leads...</p>
           </div>
         )}
 
@@ -595,20 +601,20 @@ const AdminDashboard: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-600">
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                <tr className="border-b border-gray-100">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Name
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Phone
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Subject
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Status
                   </th>
-                  <th className="text-left py-3 px-4 text-slate-300 font-semibold">
+                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
                     Date
                   </th>
                 </tr>
@@ -617,11 +623,11 @@ const AdminDashboard: React.FC = () => {
                 {recentEvent.map((lead) => (
                   <tr
                     key={lead.leadId}
-                    className="border-b border-slate-600 hover:bg-slate-600 transition-colors"
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
-                    <td className="py-3 px-4 text-white">{lead.firstName} </td>
-                    <td className="py-3 px-4 text-white">{lead.phone}</td>
-                    <td className="py-3 px-4 text-slate-300">{lead.subject}</td>
+                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.firstName} </td>
+                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.phone}</td>
+                    <td className="py-3 px-4 text-gray-500 text-sm">{lead.subject}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -631,7 +637,7 @@ const AdminDashboard: React.FC = () => {
                         {getStatusText(lead.viewed)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400">
+                    <td className="py-3 px-4 text-gray-400 text-sm">
                       {formatDate(lead.submittedAt)}
                     </td>
                   </tr>
@@ -643,7 +649,7 @@ const AdminDashboard: React.FC = () => {
 
         {!eventLoading && !eventError && recentEvent.length === 0 && (
           <div className="text-center py-4">
-            <p className="text-slate-300">No event leads found</p>
+            <p className="text-gray-400 text-sm">No event leads found</p>
           </div>
         )}
       </div>

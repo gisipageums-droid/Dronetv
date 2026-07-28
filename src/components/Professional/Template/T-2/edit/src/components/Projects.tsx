@@ -343,7 +343,7 @@
 //         formData.append('userId', userId);
 //         formData.append('fieldName', `project_${projectId}`);
 
-//         const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+//         const uploadResponse = await fetch(MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`, {
 //           method: 'POST',
 //           body: formData,
 //         });
@@ -1134,6 +1134,7 @@ import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 // Custom Button component
 const Button = ({
@@ -1411,7 +1412,7 @@ export function Projects({
         formData.append("fieldName", `project_${projectId}`);
 
         const uploadResponse = await fetch(
-          `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+          MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`,
           {
             method: "POST",
             body: formData,
@@ -1474,7 +1475,7 @@ export function Projects({
       formData.append("fieldName", `project_${projectId}`);
 
       const uploadResponse = await fetch(
-        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+        MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`,
         {
           method: "POST",
           body: formData,

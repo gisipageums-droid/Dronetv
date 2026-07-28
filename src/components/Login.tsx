@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 import { useUserAuth } from "./context/context";
 import { toast } from "react-toastify";
+import * as authService from "../lib/authService";
 interface LoginData {
   email: string;
   password: string;
@@ -160,128 +161,53 @@ export default function Login() {
     }
 
     setIsRegistering(true);
-    const { confirmPassword, ...userData } = signUpData; // phone included in userData now
+    const { confirmPassword, ...userData } = signUpData;
 
     try {
-      const response = await fetch(
-        "https://rnpcnionle.execute-api.ap-south-1.amazonaws.com/user_register_post",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success(data.message || "Registration successful! Please login.");
-        setHaveAccount(true); // Switch to login view after successful registration
-        // Reset form
-        setSignUpData({
-          email: "",
-          fullName: "",
-          password: "",
-          confirmPassword: "",
-          city: "",
-          state: "",
-          phone: "",
-        });
-        setFormSubmitted(false);
-      } else {
-        toast.error(
-          data.message || `Registration failed: ${response.statusText}`
-        );
-      }
-    } catch (error) {
-      console.error("Error during registration:", error);
-      toast.error(
-        "An error occurred during registration. Please try again later."
-      );
+      const data = await authService.register(userData);
+      toast.success(data.message || "Registration successful! Please login.");
+      setHaveAccount(true);
+      setSignUpData({
+        email: "",
+        fullName: "",
+        password: "",
+        confirmPassword: "",
+        city: "",
+        state: "",
+        phone: "",
+      });
+      setFormSubmitted(false);
+    } catch (error: any) {
+      toast.error(error.message || "Registration failed");
     } finally {
       setIsRegistering(false);
     }
   };
 
-  //handle google sign in-
   const handleGoogleSuccess = async (credentialResponse: any) => {
-    if (credentialResponse.credential) {
-      const decoded = jwtDecode<GoogleUser>(credentialResponse.credential);
-
-      try {
-        // Send Google credential to your backend for verification
-        const response = await fetch(
-          "https://67duf9ey84.execute-api.ap-south-1.amazonaws.com/google_log/Google_login",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token: credentialResponse.credential }),
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          login(data); // Store user data
-          toast("Google login successful!");
-          // alert('Google login successful!');
-          navigate("/user-companies"); // Navigate to dashboard
-        } else {
-          toast.error("Google authentication failed:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error during Google authentication:", error);
-      }
+    if (!credentialResponse.credential) return;
+    try {
+      const data = await authService.googleLogin(credentialResponse.credential);
+      login(data);
+      toast.success("Google login successful!");
+      navigate("/user-companies");
+    } catch (error: any) {
+      toast.error(error.message || "Google authentication failed");
     }
   };
 
-  const handleGoogleError = () => {
-    console.error("Google login failed");
-  };
+  const handleGoogleError = () => {};
 
-  // Handle login form submission
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setIsLoading(true);
-               
     try {
-      const response = await fetch(
-        "https://yxzlfcqwf7.execute-api.ap-south-1.amazonaws.com/prod/login_post",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(loginData),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success(data.message || "Login successful!");
-
-        // Store user data in context and localStorage
-        login(data);
-
-        setLoginData({
-          email: "",
-          password: "",
-        });
-
-        navigate("/user-dashboard"); // Navigate to dashboard
-      } else {
-        toast.error(
-          data.message || "Login failed. Please check your credentials."
-        );
-      }
-    } catch (error) {
-      console.error("Error during login:", error);
-      toast.error("Network error. Please try again later.");
+      const data = await authService.login(loginData);
+      login(data);
+      setLoginData({ email: "", password: "" });
+      navigate("/user-dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Login failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }

@@ -211,7 +211,7 @@ export interface FormData {
 
 export interface StepProps {
   formData: FormData;
-  updateFormData: (data: Partial<FormData>) => void;
+  updateFormData: (data: Partial<FormData> | ((prev: FormData) => Partial<FormData>)) => void;
   onNext?: () => void;
   onPrev?: () => void;
   onSkip?: () => void;

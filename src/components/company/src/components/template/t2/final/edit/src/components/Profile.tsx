@@ -65,7 +65,7 @@
 
 //     try {
 //       const uploadResponse = await fetch(
-//         `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//         MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //         {
 //           method: "POST",
 //           body: formData,
@@ -879,6 +879,7 @@ import Cropper from "react-easy-crop";
 import maleAvatar from "../../../../../../../../../../../public/logos/maleAvatar.png";
 import femaleAvatar from "../../../../../../../../../../../public/logos/femaleAvatar.png";
 import neutralAvatar from "../../../../../../../../../../../public/logos/maleAvatar.png";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 const Profile = ({
   profileData,
@@ -911,14 +912,6 @@ const Profile = ({
 
   // Debug log to see incoming data
   useEffect(() => {
-    console.log("Profile data received:", {
-      directorPrefix: directorPrefix,
-      teamMembers: profileData?.teamMembers?.map(m => ({
-        name: m.name,
-        prefix: m.prefix,
-        image: m.image
-      }))
-    });
   }, [profileData, directorPrefix]);
 
   // Consolidated state
@@ -955,7 +948,6 @@ const Profile = ({
       .replace(/\./g, '')  // Remove all periods
       .trim();
     
-    console.log(`Avatar debug: Original prefix="${prefix}", Cleaned="${cleanPrefix}"`);
     
     if (cleanPrefix === "mr") {
       return maleAvatar;
@@ -968,11 +960,6 @@ const Profile = ({
 
   // Function to get team member image URL with fallback to avatar
   const getTeamMemberImage = (member) => {
-    console.log(`Getting image for ${member.name}:`, {
-      prefix: member.prefix,
-      image: member.image,
-      hasImage: member.image && member.image.trim() !== "" && member.image !== null
-    });
     
     // If member has a valid image URL, use it
     if (member.image && member.image.trim() !== "" && !member.image.includes("data:image")) {
@@ -1018,11 +1005,10 @@ const Profile = ({
     formData.append("imageField", `${imageField}_${Date.now()}`);
     formData.append("templateSelection", templateSelection);
 
-    console.log(`Uploading ${imageField} to S3:`, file);
 
     try {
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,
@@ -1031,7 +1017,6 @@ const Profile = ({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();

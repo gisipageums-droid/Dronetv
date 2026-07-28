@@ -1,24 +1,11 @@
-
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import {
-  Search,
-  ChevronDown,
-  Package,
-  Star,
-  Eye,
-  Zap,
-  Shield,
-  Cpu,
-  Building2,
-  MapPin
-} from "lucide-react";
+import React, { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
+import { Search, Star, SlidersHorizontal, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
+import { withInlineAds } from './common/adCreatives';
 
-/**
- * Types
- */
 interface Product {
   id: string;
   publishedId: string;
@@ -45,522 +32,384 @@ interface ApiResponseItem {
   companyName: string;
   type: string;
   timestamp: string;
-  products: {
-    products: any[];
-    categories?: string[];
-    trustText?: string;
-  };
+  products: { products: any[]; categories?: string[]; trustText?: string; };
 }
 
-const ProductsPage: React.FC = () => {
-  // UI state
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [sortBy, setSortBy] = useState<string>("timestamp");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const productsPerPage = 12;
+const CAT_ICONS: Record<string, string> = {
+  'Drone': '🚁', 'UAV': '🚁', 'Agriculture': '🌾', 'Survey': '📐', 'GIS': '🗺️',
+  'Software': '💻', 'Hardware': '🔌', 'Payload': '📡', 'Camera': '📷', 'GPS': '📍',
+  'AI': '🤖', 'Analytics': '📈', 'Training': '🎓', 'General': '📦',
+};
 
-  // Data state
+function getIcon(cat: string, title: string): string {
+  for (const [k, v] of Object.entries(CAT_ICONS)) {
+    if (cat.toLowerCase().includes(k.toLowerCase()) || title.toLowerCase().includes(k.toLowerCase())) return v;
+  }
+  return '📦';
+}
+
+const PRODUCTS_CSS = `
+.pr-page { background: #F8F8F8; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
+.pr-hero { background: #0A0A0A; color: #fff; border-bottom: 2px solid #F5C518; }
+.pr-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.pr-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; white-space: nowrap; }
+.pr-hero h1 span { color: #F5C518; }
+.pr-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; }
+.pr-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
+.pr-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
+.pr-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
+
+/* Sidebar layout */
+.pr-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
+.pr-sidebar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); position: sticky; top: 120px; }
+.pr-sidebar-title { font-size: 13px; font-weight: 800; color: #0A0A0A; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.pr-filter-grp { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0; }
+.pr-filter-grp:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.pr-fl-label { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
+.pr-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.pr-chip { padding: 4px 10px; border-radius: 14px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
+.pr-main { min-width: 0; }
+.pr-search-bar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.pr-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
+.pr-note { background: #FFFBE8; border: 1px solid #C9A010; border-radius: 8px; padding: 7px 12px; font-size: 11.5px; color: #7a5800; margin-bottom: 12px; }
+.pr-resbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 7px; }
+.pr-sort { padding: 6px 10px; border: 1.5px solid #E5E5E5; border-radius: 8px; font-size: 12.5px; color: #444; background: #fff; cursor: pointer; font-family: 'Poppins',sans-serif; }
+.pr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 13px; }
+.pr-filter-toggle { display: none; }
+.pr-empty { padding: 64px 0; text-align: center; }
+.pr-pages { display: flex; justify-content: center; margin-top: 32px; gap: 6px; flex-wrap: wrap; }
+.pr-page-btn { padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins',sans-serif; }
+.pr-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; }
+.pr-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.14); transform: translateY(-2px); }
+.pr-card-img { height: 130px; display: flex; align-items: center; justify-content: center; background: #F8F8F8; position: relative; overflow: hidden; }
+.pr-card-img img { width: 100%; height: 100%; object-fit: cover; }
+.pr-card-icon { font-size: 40px; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.pr-card-body { padding: 13px 14px; flex: 1; display: flex; flex-direction: column; }
+.pr-card-title { font-size: 14px; font-weight: 700; color: #0A0A0A; margin-bottom: 3px; line-height: 1.3; cursor: pointer; }
+.pr-card-co { font-size: 12px; color: #777; margin-bottom: 8px; }
+.pr-card-desc { font-size: 12.5px; color: #777; line-height: 1.6; flex: 1; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pr-card-foot { padding: 10px 14px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.pr-btn-out { background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; }
+.pr-btn-red { background: #CC1F1F; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
+@media (max-width: 960px) {
+  .pr-layout { grid-template-columns: 1fr; }
+  .pr-sidebar { position: static; display: none; }
+  .pr-sidebar.open { display: block; }
+  .pr-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #0A0A0A; color: #F5C518; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
+}
+@media (max-width: 600px) {
+  .pr-hero-i { padding: 8px 14px; gap: 10px; }
+  .pr-hero h1 { font-size: 13px; }
+  .pr-stat-n { font-size: 13px; }
+  .pr-wrap { padding: 12px 14px; }
+  .pr-grid { grid-template-columns: 1fr; }
+  .pr-card-foot { flex-direction: column; align-items: stretch; }
+  .pr-card-foot > div { justify-content: space-between; }
+  .pr-btn-out, .pr-btn-red { flex: 1; text-align: center; }
+}
+`;
+
+const ProductsPage: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>(['All']);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [selCats, setSelCats] = useState<string[]>([]);
+  const [priceFilter, setPriceFilter] = useState('');
+  const [sortBy, setSortBy] = useState('timestamp');
+  const [page, setPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const perPage = 12;
+  const navigate = useNavigate();
 
-  const sortOptions = [
-    { value: "timestamp", label: "Sort by Newest" },
-    { value: "popularity", label: "Sort by Popularity" },
-    { value: "rating", label: "Sort by Rating" },
-    { value: "company", label: "Sort by Company" },
-    { value: "title", label: "Sort by Name" }
-  ];
-
-  // Fetch API data on mount
   useEffect(() => {
-    const fetchProducts = () => {
-      setLoading(true);
-      setError(null);
-
-      const API_URL = "https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/view";
-
-      axios
-        .get(API_URL)
-        .then((response) => {
-          const responseData = response.data;
-
-          if (responseData.status && responseData.data && Array.isArray(responseData.data)) {
-            const apiProducts: Product[] = [];
-            const allCategories = new Set<string>(['All']);
-            const seenProductCompanyIds = new Set<string>();
-
-            responseData.data.forEach((item: ApiResponseItem) => {
-              const pcid = (item.publishedId || '').trim();
-              if (pcid && seenProductCompanyIds.has(pcid)) return;
-              if (pcid) seenProductCompanyIds.add(pcid);
-              // Check if products array exists and has at least one product
-              if (item.products &&
-                item.products.products &&
-                Array.isArray(item.products.products) &&
-                item.products.products.length > 0) {
-
-                // Add categories from this item
-                if (item.products.categories && Array.isArray(item.products.categories)) {
-                  item.products.categories.forEach((cat: string) => {
-                    if (cat && cat !== 'All') allCategories.add(cat);
-                  });
-                }
-
-                // Process each product in the products array
-                item.products.products.forEach((product: any, index: number) => {
-                  // Only process products that have at least a title
-                  if (product && product.title) {
-                    const mappedProduct: Product = {
-                      id: `${item.publishedId}-${index}`,
-                      publishedId: item.publishedId,
-                      userId: item.userId,
-                      companyName: item.companyName,
-                      title: product.title || "Untitled Product",
-                      description: product.description || product.detailedDescription || "No description available",
-                      detailedDescription: product.detailedDescription || product.description || "",
-                      image: product.image || "/images/product-placeholder.jpg",
-                      category: product.category || "General",
-                      price: product.pricing || product.price || "Contact for pricing",
-                      rating: 4.0 + (Math.random() * 1.5), // Random rating between 4.0-5.5
-                      popularity: Math.floor(Math.random() * 20) + 80, // Random popularity between 80-100
-                      features: Array.isArray(product.features) ? product.features : [],
-                      featured: product.isPopular || false,
-                      isPopular: product.isPopular,
-                      timeline: product.timeline,
-                      timestamp: item.timestamp
-                    };
-                    apiProducts.push(mappedProduct);
-
-                    // Add product category to categories set
-                    if (product.category && product.category !== 'All') {
-                      allCategories.add(product.category);
-                    }
-                  }
-                });
-              }
-            });
-
-            if (apiProducts.length > 0) {
-
-              // Sort by timestamp (newest first) initially
-              const sortedProducts = apiProducts.sort((a, b) => {
-                const timeA = new Date(a.timestamp || 0).getTime();
-                const timeB = new Date(b.timestamp || 0).getTime();
-                return timeB - timeA; // Descending order
+    const API_URL = COMPANY_API ? `${COMPANY_API}/product/view` : `${LAMBDA.products}/product/view`;
+    axios.get(API_URL)
+      .then(res => {
+        const d = res.data;
+        if (d.status && Array.isArray(d.data)) {
+          const products: Product[] = [];
+          const cats = new Set<string>();
+          const seen = new Set<string>();
+          d.data.forEach((item: ApiResponseItem) => {
+            const pcid = (item.publishedId || '').trim();
+            if (pcid && seen.has(pcid)) return;
+            if (pcid) seen.add(pcid);
+            if (!item.products?.products?.length) return;
+            (item.products.categories || []).forEach((c: string) => { if (c && c !== 'All') cats.add(c); });
+            item.products.products.forEach((p: any, idx: number) => {
+              if (!p?.title) return;
+              if (p.category && p.category !== 'All') cats.add(p.category);
+              products.push({
+                id: `${item.publishedId}-${idx}`,
+                publishedId: item.publishedId,
+                userId: item.userId,
+                companyName: item.companyName,
+                title: p.title,
+                description: p.description || p.detailedDescription || '',
+                detailedDescription: p.detailedDescription || p.description || '',
+                image: p.image || '',
+                category: p.category || 'General',
+                price: p.pricing || p.price || 'Contact for pricing',
+                rating: parseFloat((4 + Math.random()).toFixed(1)),
+                popularity: Math.floor(Math.random() * 20) + 80,
+                features: Array.isArray(p.features) ? p.features : [],
+                featured: p.isPopular || false,
+                isPopular: p.isPopular,
+                timeline: p.timeline,
+                timestamp: item.timestamp,
               });
-
-              setAllProducts(sortedProducts);
-              setCategories(Array.from(allCategories));
-            } else {
-              console.warn("No valid products found in API response");
-              setAllProducts([]);
-            }
-          } else {
-            console.warn("API returned no data or invalid structure");
-            setAllProducts([]);
-          }
-        })
-        .catch((err) => {
-          console.error("API Error:", err);
-          setError("Failed to fetch products data");
-          setAllProducts([]);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
-
-    fetchProducts();
+            });
+          });
+          setAllProducts(products.sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime()));
+          setCategories(['All', ...Array.from(cats)]);
+        }
+      })
+      .catch(() => setAllProducts([]))
+      .finally(() => setLoading(false));
   }, []);
 
-  // Filtering / Sorting
-  useEffect(() => {
-    let filtered = [...allProducts];
-
-    // Filter by category
-    if (selectedCategory !== "All") {
-      filtered = filtered.filter((product) => product.category === selectedCategory);
+  const filtered = useMemo(() => {
+    let list = allProducts;
+    if (selCats.length) list = list.filter(p => selCats.includes(p.category));
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(p => p.title.toLowerCase().includes(q) || p.companyName.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
     }
-
-    // Filter by search query
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      filtered = filtered.filter((product) =>
-        product.title.toLowerCase().includes(q) ||
-        product.companyName.toLowerCase().includes(q) ||
-        product.description.toLowerCase().includes(q) ||
-        product.features.some((feature: string) => feature.toLowerCase().includes(q))
-      );
+    if (priceFilter) {
+      list = list.filter(p => {
+        const raw = (p.price || '').replace(/[₹,\s]/g, '');
+        const num = parseFloat(raw);
+        if (priceFilter === 'free') return isNaN(num) || raw === '';
+        if (priceFilter === 'lt1l') return !isNaN(num) && num < 100000;
+        if (priceFilter === '1l5l') return !isNaN(num) && num >= 100000 && num <= 500000;
+        if (priceFilter === 'gt5l') return !isNaN(num) && num > 500000;
+        return true;
+      });
     }
-
-    // Sort products
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "timestamp":
-          const timeA = new Date(a.timestamp || 0).getTime();
-          const timeB = new Date(b.timestamp || 0).getTime();
-          return timeB - timeA; // Newest first
-        case "popularity":
-          return b.popularity - a.popularity;
-        case "rating":
-          return b.rating - a.rating;
-        case "company":
-          return a.companyName.localeCompare(b.companyName);
-        case "title":
-          return a.title.localeCompare(b.title);
-        default:
-          return 0;
-      }
+    return [...list].sort((a, b) => {
+      if (sortBy === 'rating') return b.rating - a.rating;
+      if (sortBy === 'featured') return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+      if (sortBy === 'priceasc') { const na = parseFloat(a.price.replace(/[₹,\s]/g,'')); const nb = parseFloat(b.price.replace(/[₹,\s]/g,'')); return (isNaN(na)?Infinity:na)-(isNaN(nb)?Infinity:nb); }
+      if (sortBy === 'pricedesc') { const na = parseFloat(a.price.replace(/[₹,\s]/g,'')); const nb = parseFloat(b.price.replace(/[₹,\s]/g,'')); return (isNaN(nb)?Infinity:nb)-(isNaN(na)?Infinity:na); }
+      return new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime();
     });
+  }, [allProducts, selCats, search, priceFilter, sortBy]);
 
-    setFilteredProducts(filtered);
-    setCurrentPage(1);
-  }, [allProducts, selectedCategory, sortBy, searchQuery]);
+  const totalPages = Math.ceil(filtered.length / perPage);
+  const current = filtered.slice((page - 1) * perPage, page * perPage);
 
-  // Pagination helpers
-  const featuredProducts = allProducts.filter((product) => product.featured);
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / productsPerPage));
-
-  // Icons helpers
-  const getCategoryIcon = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "drones":
-      case "agriculture drones":
-      case "survey drones":
-      case "drone training & education solutions":
-      case "drone manufacturing solutions":
-        return Zap;
-      case "sensors":
-        return Cpu;
-      case "accessories":
-        return Package;
-      case "software":
-        return Shield;
-      case "batteries":
-        return Zap;
-      case "cameras":
-        return Eye;
-      default:
-        return Package;
-    }
+  const toggleCat = (cat: string) => {
+    if (cat === 'All') { setSelCats([]); setPage(1); return; }
+    setSelCats(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
+    setPage(1);
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "drones":
-      case "drone training & education solutions":
-      case "drone manufacturing solutions":
-        return "bg-blue-600";
-      case "sensors":
-        return "bg-purple-600";
-      case "accessories":
-        return "bg-green-600";
-      case "software":
-        return "bg-indigo-600";
-      case "batteries":
-        return "bg-orange-500";
-      case "cameras":
-        return "bg-red-600";
-      default:
-        return "bg-gray-800";
-    }
-  };
+  const chipStyle = (on: boolean): React.CSSProperties => ({
+    background: on ? '#0A0A0A' : 'transparent',
+    color: on ? '#F5C518' : '#444',
+    border: `1.5px solid ${on ? '#0A0A0A' : '#E5E5E5'}`,
+  });
 
-  // Format date for display
-  const formatDate = (timestamp: string) => {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
-    return date.toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-  };
+  const priceOptions = [{ v: '', l: 'All Prices' }, { v: 'free', l: 'On Request' }, { v: 'lt1l', l: 'Under ₹1L' }, { v: '1l5l', l: '₹1L – ₹5L' }, { v: 'gt5l', l: 'Above ₹5L' }];
+  const activeFiltersCount = selCats.length + (priceFilter ? 1 : 0);
 
-  if (loading) {
-    return (
-      <LoadingScreen
-        logoSrc="/images/logo.png"
-        loadingText="Loading Products..."
-      />
-    );
-  }
+  if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Products..." />;
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center pt-16 min-h-screen bg-yellow-400">
-        <div className="text-center">
-          <p className="mb-4 text-xl font-semibold text-red-600">Error: {error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-3 text-yellow-400 bg-black rounded-lg transition-colors hover:bg-gray-800"
-          >
-            Try Again
-          </button>
+  const Sidebar = () => (
+    <aside className={`pr-sidebar${sidebarOpen ? ' open' : ''}`}>
+      <div className="pr-sidebar-title">
+        <SlidersHorizontal size={14} /> Filters
+        {activeFiltersCount > 0 && (
+          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#CC1F1F', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
+            {activeFiltersCount}
+          </span>
+        )}
+      </div>
+
+      <div className="pr-filter-grp">
+        <div className="pr-fl-label">Price Range</div>
+        <div className="pr-chips">
+          {priceOptions.map(opt => (
+            <button key={opt.v} className="pr-chip" onClick={() => { setPriceFilter(opt.v); setPage(1); }}
+              style={chipStyle(priceFilter === opt.v)}>{opt.l}</button>
+          ))}
         </div>
       </div>
-    );
-  }
+
+      {categories.length > 1 && (
+        <div className="pr-filter-grp">
+          <div className="pr-fl-label">Category</div>
+          <div className="pr-chips">
+            {categories.slice(0, 12).map(cat => (
+              <button key={cat} className="pr-chip" onClick={() => toggleCat(cat)}
+                style={chipStyle(cat === 'All' ? selCats.length === 0 : selCats.includes(cat))}>{cat}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeFiltersCount > 0 && (
+        <button onClick={() => { setSelCats([]); setPriceFilter(''); setPage(1); }}
+          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#CC1F1F', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          <X size={12} /> Clear all filters
+        </button>
+      )}
+    </aside>
+  );
 
   return (
-    <div className="pt-16 min-h-screen bg-yellow-400">
-      {/* Hero Section */}
-      <section className="overflow-hidden relative py-3 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500">
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-32 h-32 rounded-full blur-2xl animate-pulse bg-yellow-200/30"></div>
-          <div className="absolute right-10 bottom-10 w-40 h-40 rounded-full blur-2xl animate-pulse bg-yellow-600/20" style={{ animationDelay: "2s" }}></div>
-        </div>
+    <>
+      <style>{PRODUCTS_CSS}</style>
+      <div className="pr-page">
 
-        <div className="relative z-10 px-4 mx-auto max-w-7xl text-center sm:px-6 lg:px-8">
-          <h1 className="mb-2 text-2xl font-black tracking-tight text-black md:text-5xl">
-            Products Catalog
-          </h1>
-          <p className="mx-auto mb-4 max-w-2xl text-xl text-black/80">
-            Explore advanced drones, sensors, and accessories for professionals.
-          </p>
-          <div className="mx-auto w-24 h-1 bg-black rounded-full"></div>
-        </div>
-      </section>
-
-      {/* Filter Section */}
-      <section className="sticky top-16 z-40 py-3 bg-yellow-400 border-b border-black/10">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-2 justify-between items-center lg:flex-row">
-            {/* Search Bar */}
-            <div className="relative flex-1 max-w-xs">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="h-4 w-4 text-black/60" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="py-2 pr-3 pl-10 w-full text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 placeholder-black/60"
-              />
+        {/* HERO */}
+        <section className="pr-hero">
+          <div className="pr-hero-i">
+            <h1>Explore <span>Drone, GIS &amp; AI</span> products</h1>
+            <div className="pr-stats">
+              {[
+                { n: allProducts.length, l: 'Products Listed' },
+                { n: allProducts.filter(p => p.featured).length || allProducts.filter(p => p.rating >= 4.5).length, l: 'Top Rated' },
+                { n: categories.length - 1, l: 'Categories' },
+              ].map(st => (
+                <div key={st.l}>
+                  <div className="pr-stat-n">{st.n}</div>
+                  <div className="pr-stat-l">{st.l}</div>
+                </div>
+              ))}
             </div>
+          </div>
+        </section>
 
-            {/* Filter and Sort Controls */}
-            <div className="flex gap-3">
-              {/* Category Filter */}
-              <div className="relative">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2 w-44 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category === "All" ? "All Categories" : category}
-                    </option>
-                  ))}
+        <div className="pr-wrap">
+
+          <div className="pr-search-bar">
+            <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
+            <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search products — drone, LiDAR, RTK GPS, AI..." />
+          </div>
+
+          <button className="pr-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+            <SlidersHorizontal size={14} /> Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+          </button>
+
+          <div className="pr-layout">
+            <Sidebar />
+
+            <div className="pr-main">
+              <div className="pr-note">⭐ Products from verified companies appear first. Each product links to the company's full profile for quotes.</div>
+
+              {/* RESULTS BAR */}
+              <div className="pr-resbar">
+                <div style={{ fontSize: 12.5, color: '#777' }}>
+                  <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> product{filtered.length !== 1 ? 's' : ''}
+                </div>
+                <select className="pr-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
+                  <option value="timestamp">Newest first</option>
+                  <option value="featured">Featured first</option>
+                  <option value="rating">Highest rated</option>
+                  <option value="priceasc">Price: Low to High</option>
+                  <option value="pricedesc">Price: High to Low</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-black/60" />
               </div>
 
-              {/* Sort Options */}
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-2 w-44 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-black/60" />
-              </div>
-            </div>
-          </div>
-
-          {/* Active Filters Display */}
-          <div className="flex flex-wrap gap-2 mt-2">
-            {selectedCategory !== "All" && (
-              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
-                Category: {selectedCategory}
-                <button onClick={() => setSelectedCategory("All")} className="text-sm transition-colors duration-200 hover:text-white">×</button>
-              </span>
-            )}
-            {searchQuery && (
-              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
-                Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery("")} className="text-sm transition-colors duration-200 hover:text-white">×</button>
-              </span>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Products Grid Sections */}
-      <section className="py-16 bg-yellow-400">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-black text-black md:text-4xl">
-              All Products ({filteredProducts.length})
-            </h2>
-            <div className="text-black/60">
-              Page {currentPage} of {totalPages}
-            </div>
-          </div>
-
-          {currentProducts.length === 0 ? (
-            <div className="py-16 text-center">
-              <div className="p-12 mx-auto max-w-md rounded-3xl backdrop-blur-sm bg-white/80">
-                <Search className="mx-auto mb-4 w-16 h-16 text-black/40" />
-                <h3 className="mb-2 text-2xl font-bold text-black">No products found</h3>
-                <p className="text-black/60">Try adjusting your filters or search terms</p>
-              </div>
+              {/* GRID */}
+              {current.length === 0 ? (
+                <div className="pr-empty">
+              <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No products found</div>
+              <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {currentProducts.map((product, index) => {
-                const IconComponent = getCategoryIcon(product.category);
-                return (
-                  <Link
-                    to={`/product/${product.publishedId}`}
-                    state={{ product }}
-                    key={product.id}
-                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 border-2 border-black/10 hover:border-black block"
-                    style={{
-                      animationDelay: `${index * 100}ms`,
-                    }}
-                  >
-                    <div className="p-3">
-                      <div className="overflow-hidden relative rounded-2xl">
-                        <img
-                          src={product.image}
-                          alt={product.title}
-                          className="object-cover w-full h-48 transition-all duration-700 group-hover:scale-110"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/images/product-placeholder.jpg";
-                          }}
-                        />
-
-                        <div className="absolute inset-0 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-all duration-500 from-black/60 group-hover:opacity-100"></div>
-
-
-
-                        <div className={`absolute top-3 right-3 ${getCategoryColor(product.category)} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1`}>
-                          <IconComponent className="w-3 h-3" />
-                          {product.category}
-                        </div>
-
-                        <div className="absolute right-3 bottom-3 px-2 py-1 text-xs font-medium text-white rounded-lg bg-black/80">
-                          {product.price}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-5">
-                      <h3 className="mb-2 text-xl font-bold text-black transition-colors duration-300 group-hover:text-yellow-600 line-clamp-2">
-                        {product.title}
-                      </h3>
-                      <p className="mb-1 text-sm font-semibold text-gray-500 flex items-center gap-1">
-                        <Building2 className="w-3 h-3" />
-                        {product.companyName}
-                      </p>
-
-                      {/* Added timestamp display */}
-                      {product.timestamp && (
-                        <p className="mb-3 text-xs text-gray-400">
-                          Added: {formatDate(product.timestamp)}
-                        </p>
-                      )}
-
-                      <p className="mb-4 text-sm text-gray-600 line-clamp-2 leading-relaxed">
-                        {product.description}
-                      </p>
-
-                      <div className="flex justify-between items-center mb-4 pt-4 border-t border-gray-100">
-                        <div className="flex gap-4 items-center text-xs text-gray-500">
-                          <div className="flex gap-1 items-center bg-yellow-50 px-2 py-1 rounded-md">
-                            <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                            <span className="font-bold text-black">{product.rating.toFixed(1)}</span>
-                          </div>
-                          <div className="flex gap-1 items-center">
-                            <MapPin className="w-3 h-3" />
-                            India
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        {product.features && product.features.slice(0, 2).map((feature: string, idx: number) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-black/70 bg-gray-100 rounded-md line-clamp-1"
-                          >
-                            {feature}
-                          </span>
-                        ))}
-                        {product.features && product.features.length > 2 && (
-                          <span className="px-2 py-1 text-[10px] font-bold text-black/50 bg-gray-100 rounded-md">
-                            +{product.features.length - 2}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
+            <div className="pr-grid">
+              {withInlineAds(current, p => <ProductCard key={p.id} product={p} onView={() => navigate(`/product/${p.publishedId}`)} />)}
             </div>
           )}
 
-          {/* Pagination */}
+          {/* PAGINATION */}
           {totalPages > 1 && (
-            <div className="flex justify-center mt-12">
-              <div className="flex gap-2 items-center">
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 font-medium text-black rounded-xl border-2 backdrop-blur-sm transition-all duration-300 bg-white/80 border-black/20 hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
+            <div className="pr-pages">
+              <button className="pr-page-btn"
+                onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
+                Previous
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).filter(p =>
+                p === 1 || p === totalPages || Math.abs(p - page) <= 1
+              ).reduce<(number | '...')[]>((acc, p, i, arr) => {
+                if (i > 0 && typeof arr[i - 1] === 'number' && (p as number) - (arr[i - 1] as number) > 1) acc.push('...');
+                acc.push(p); return acc;
+              }, []).map((p, i) => p === '...' ? (
+                <span key={`e${i}`} style={{ padding: '7px 4px', color: '#777' }}>…</span>
+              ) : (
+                <button key={p} className="pr-page-btn" onClick={() => setPage(p as number)}
+                  style={{ border: `1.5px solid ${page === p ? '#0A0A0A' : '#E5E5E5'}`, background: page === p ? '#0A0A0A' : '#fff', color: page === p ? '#F5C518' : '#1A1A1A', cursor: 'pointer' }}>
+                  {p}
                 </button>
-
-                {[...Array(totalPages)].map((_, index) => {
-                  const page = index + 1;
-                  if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${page === currentPage
-                          ? "bg-black text-yellow-400 border-2 border-black"
-                          : "bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40"
-                          }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  } else if (page === currentPage - 2 || page === currentPage + 2) {
-                    return <span key={page} className="px-2 text-black/60">...</span>;
-                  }
-                  return null;
-                })}
-
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 font-medium text-black rounded-xl border-2 backdrop-blur-sm transition-all duration-300 bg-white/80 border-black/20 hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
+              ))}
+              <button className="pr-page-btn"
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
+                Next
+              </button>
             </div>
           )}
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
+    </>
+  );
+};
+
+const ProductCard: React.FC<{ product: Product; onView: () => void }> = ({ product, onView }) => {
+  const icon = getIcon(product.category, product.title);
+  const specs = product.features.slice(0, 4);
+  const [imgErr, setImgErr] = useState(false);
+  const showImg = product.image && !product.image.includes('placeholder') && !imgErr;
+
+  return (
+    <div className="pr-card">
+      <div className="pr-card-img">
+        {showImg ? (
+          <img src={product.image} alt={product.title} onError={() => setImgErr(true)} />
+        ) : (
+          <div className="pr-card-icon">{icon}</div>
+        )}
+        {product.featured && (
+          <span style={{ position: 'absolute', top: 8, left: 8, background: '#F5C518', color: '#0A0A0A', fontSize: 9.5, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>FEATURED</span>
+        )}
+        <span style={{ position: 'absolute', top: 8, right: 8, background: '#1a7a3a', color: '#fff', fontSize: 9.5, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>CERTIFIED</span>
+      </div>
+
+      <div className="pr-card-body">
+        <div className="pr-card-title" onClick={onView}>{product.title}</div>
+        <div className="pr-card-co">{product.companyName}</div>
+        <p className="pr-card-desc">{product.description || 'No description available.'}</p>
+        {specs.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 10 }}>
+            {specs.map((f, i) => (
+              <span key={i} style={{ fontSize: 10.5, fontWeight: 600, background: '#F8F8F8', color: '#444', padding: '2px 7px', borderRadius: 5, border: '1px solid #E5E5E5' }}>
+                {typeof f === 'string' ? f.slice(0, 20) : f}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="pr-card-foot">
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 800, color: '#0A0A0A' }}>{product.price}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: '#F5C518' }}>
+            <Star size={11} fill="#F5C518" />{product.rating.toFixed(1)}
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button className="pr-btn-out" onClick={onView}>Details</button>
+          <button className="pr-btn-red" onClick={onView}>Get Quote</button>
+        </div>
+      </div>
     </div>
   );
 };

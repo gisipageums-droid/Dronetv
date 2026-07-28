@@ -51,7 +51,7 @@ export default function GallerySection({ galleryData }) {
     const goToNext = () => {
         if (selectedImage !== null) {
             setSelectedImage((prev) =>
-                prev === galleryData.images.length - 1 ? 0 : prev + 1
+                prev === (galleryData.images?.length ?? 1) - 1 ? 0 : prev + 1
             );
         }
     };
@@ -59,7 +59,7 @@ export default function GallerySection({ galleryData }) {
     const goToPrev = () => {
         if (selectedImage !== null) {
             setSelectedImage((prev) =>
-                prev === 0 ? galleryData.images.length - 1 : prev - 1
+                prev === 0 ? (galleryData.images?.length ?? 1) - 1 : prev - 1
             );
         }
     };

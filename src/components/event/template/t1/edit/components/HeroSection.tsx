@@ -15,6 +15,7 @@ import {
 import Cropper from "react-easy-crop";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { MEDIA_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface HeroSectionProps {
   heroData?: {
@@ -336,7 +337,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     formData.append("fieldName", fieldName + Date.now());
 
     const uploadResponse = await fetch(
-      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`,
+      MEDIA_API ? `${MEDIA_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`,
       {
         method: "POST",
         body: formData,
@@ -706,7 +707,7 @@ const toggleMute = () => {
     height: "100%",
     minHeight: "100vh",
   }}
-  src={`${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1`|| "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0"}
+  src={heroContent.videoUrl ? `${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1` : "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0"}
   title="Event Background Video"
   frameBorder="0"
   allow="autoplay; encrypted-media; fullscreen"

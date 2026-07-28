@@ -241,7 +241,7 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
           {/* Upload Section */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-sm border border-amber-200 overflow-hidden">
-              <div className="bg-amber-500 text-white p-3">
+              <div className="bg-amber-700 text-white p-3">
                 <h2 className="text-base font-semibold flex items-center gap-2">
                   <Upload className="w-4 h-4" /> Upload Documents
                 </h2>

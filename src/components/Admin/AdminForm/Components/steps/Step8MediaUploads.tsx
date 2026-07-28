@@ -3,6 +3,7 @@ import { FormStep } from '../FormStep';
 import { FormInput } from '../FormInput';
 import { StepProps } from '../../types/form';
 import { Upload, FileText, Image, Video, Edit3, Plus, Trash2, Check, X, Loader2 } from 'lucide-react';
+import { ADMIN_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 interface UploadField {
   id: string;
@@ -82,7 +83,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     setBrandImagesError(null);
 
     try {
-      const response = await fetch('https://wnznublu2f.execute-api.ap-south-1.amazonaws.com/media-uploads/brand-images/view', {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/media-uploads/brand-images/view` : `${LAMBDA.mediaUploads}/media-uploads/brand-images/view`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +95,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Brand images API response:', data);
 
       if (data.items && Array.isArray(data.items)) {
         // Update working fields with API data
@@ -135,7 +135,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     setDocumentsError(null);
 
     try {
-      const response = await fetch('https://wnznublu2f.execute-api.ap-south-1.amazonaws.com/media-uploads/Documents-Certificates/view', {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/media-uploads/Documents-Certificates/view` : `${LAMBDA.mediaUploads}/media-uploads/Documents-Certificates/view`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -147,7 +147,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Documents API response:', data);
 
       if (data.items && Array.isArray(data.items)) {
         // Update working fields with API data
@@ -187,7 +186,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     setIsUpdatingDocument(true);
 
     try {
-      const response = await fetch(`https://wnznublu2f.execute-api.ap-south-1.amazonaws.com/media-uploads/Documents-Certificates/update/${fieldId}`, {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/media-uploads/Documents-Certificates/update/${fieldId}` : `${LAMBDA.mediaUploads}/media-uploads/Documents-Certificates/update/${fieldId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -204,7 +203,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Document update response:', data);
 
       // Refresh the data after successful update
       await fetchDocuments();
@@ -223,7 +221,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     setIsDeletingDocument(true);
 
     try {
-      const response = await fetch(`https://wnznublu2f.execute-api.ap-south-1.amazonaws.com/media-uploads/Documents-Certificates/delete/${fieldId}`, {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/media-uploads/Documents-Certificates/delete/${fieldId}` : `${LAMBDA.mediaUploads}/media-uploads/Documents-Certificates/delete/${fieldId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -235,7 +233,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Document delete response:', data);
 
       // Refresh the data after successful delete
       await fetchDocuments();
@@ -254,7 +251,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     setIsAddingDocument(true);
 
     try {
-      const response = await fetch('https://wnznublu2f.execute-api.ap-south-1.amazonaws.com/media-uploads/Documents-Certificates/add', {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/media-uploads/Documents-Certificates/add` : `${LAMBDA.mediaUploads}/media-uploads/Documents-Certificates/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -271,7 +268,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Document add response:', data);
 
       // Refresh the data after successful add
       await fetchDocuments();
@@ -290,7 +286,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     setIsUpdatingBrandImage(true);
 
     try {
-      const response = await fetch(`https://wnznublu2f.execute-api.ap-south-1.amazonaws.com/media-uploads/brand-images/update/${fieldId}`, {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/media-uploads/brand-images/update/${fieldId}` : `${LAMBDA.mediaUploads}/media-uploads/brand-images/update/${fieldId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -306,7 +302,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Brand image update response:', data);
 
       // Refresh the data after successful update
       await fetchBrandImages();
@@ -325,7 +320,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     setIsAddingBrandImage(true);
 
     try {
-      const response = await fetch('https://wnznublu2f.execute-api.ap-south-1.amazonaws.com/media-uploads/brand-images/add', {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/media-uploads/brand-images/add` : `${LAMBDA.mediaUploads}/media-uploads/brand-images/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -341,7 +336,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Brand image add response:', data);
 
       // Refresh the data after successful add
       await fetchBrandImages();
@@ -360,7 +354,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     setIsDeletingBrandImage(true);
 
     try {
-      const response = await fetch(`https://wnznublu2f.execute-api.ap-south-1.amazonaws.com/media-uploads/brand-images/delete/${fieldId}`, {
+      const response = await fetch(ADMIN_API ? `${ADMIN_API}/media-uploads/brand-images/delete/${fieldId}` : `${LAMBDA.mediaUploads}/media-uploads/brand-images/delete/${fieldId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -372,7 +366,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }
 
       const data = await response.json();
-      console.log('Brand image delete response:', data);
 
       // Refresh the data after successful delete
       await fetchBrandImages();

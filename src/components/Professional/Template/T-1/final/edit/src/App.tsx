@@ -14,6 +14,7 @@ import { Toaster } from "sonner";
 import { useTemplate } from "../../../../../../../components/context/context";
 import Publish from "./components/Publish";
 import Back from "./components/Back";
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 interface AIResponse {
   professionalId?: string;
@@ -75,8 +76,8 @@ const App: React.FC = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          // `https://xgnw16tgpi.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}?template=template1`,
-          `https://l5fb7y1eij.execute-api.ap-south-1.amazonaws.com/dev/get-teme?userId=${userId}&professionalId=${professionalId}`, 
+          // PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}?template=template1` : `${LAMBDA.profTemplateDash}/${userId}/${professionalId}?template=template1`,
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/get-teme?userId=${userId}&professionalId=${professionalId}` : `${LAMBDA.profTemplateFinalLoad}/get-teme?userId=${userId}&professionalId=${professionalId}`, 
           {
             method: "GET",
             headers: {

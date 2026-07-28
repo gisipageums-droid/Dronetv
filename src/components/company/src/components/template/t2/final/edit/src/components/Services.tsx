@@ -6,6 +6,7 @@ import { X, CheckCircle, ZoomIn } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function Services({
   serviceData,
@@ -290,7 +291,6 @@ export default function Services({
 
       // Set the actual file for auto-upload
       setPendingImages((prev) => ({ ...prev, [croppingIndex]: file }));
-      console.log("Service image cropped, file ready for auto-upload:", file);
 
       // Auto-upload immediately after cropping
       await handleImageUpload();
@@ -352,10 +352,9 @@ export default function Services({
         formData.append("imageField", `services[${index}].image`);
         formData.append("templateSelection", templateSelection);
 
-        console.log("Auto-uploading service image to S3:", file);
 
         const uploadPromise = fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
             body: formData,
@@ -365,7 +364,6 @@ export default function Services({
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL
             updateServiceField(index, "image", uploadData.imageUrl);
-            console.log("Image auto-uploaded to S3:", uploadData.imageUrl);
             return { success: true, index };
           } else {
             const errorData = await uploadResponse.json();

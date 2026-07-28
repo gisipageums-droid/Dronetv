@@ -1,7 +1,8 @@
 import { TokenPlan } from './App';
+import { ADMIN_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
-const API_URL = 'https://i8hkp4rc47.execute-api.ap-south-1.amazonaws.com/prod/dev';
-const GET_API_URL = 'https://m6iy4nsz94.execute-api.ap-south-1.amazonaws.com/prod/dev';
+const API_URL = ADMIN_API ? `${ADMIN_API}/dev` : `${LAMBDA.plansAdmin}/dev`;
+const GET_API_URL = PAYMENT_API ? `${PAYMENT_API}/dev` : `${LAMBDA.plans}/dev`;
 
 export const fetchPlans = async () => {
     try {
@@ -11,7 +12,6 @@ export const fetchPlans = async () => {
         }
         return await response.json();
     } catch (error) {
-        console.error('Error fetching plans:', error);
         throw error;
     }
 };
@@ -42,7 +42,6 @@ export const addUpdatePlan = async (plan: Partial<TokenPlan>) => {
 
         return await response.json();
     } catch (error) {
-        console.error('Error adding/updating plan:', error);
         throw error;
     }
 };
@@ -65,7 +64,6 @@ export const updateTokenPrice = async (tokenPriceINR: string) => {
 
         return await response.json();
     } catch (error) {
-        console.error('Error updating token price:', error);
         throw error;
     }
 };
@@ -88,7 +86,6 @@ export const deletePlan = async (deleteId: string) => {
 
         return await response.json();
     } catch (error) {
-        console.error('Error deleting plan:', error);
         throw error;
     }
 };

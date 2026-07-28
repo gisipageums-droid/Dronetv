@@ -32,7 +32,7 @@ function stageColor(stage: string): { header: string; badge: string; border: str
     case "lead-qualification":
       return { header: "bg-blue-500", badge: "bg-blue-100 text-blue-700", border: "border-blue-200" };
     case "proposal":
-      return { header: "bg-amber-500", badge: "bg-amber-100 text-amber-700", border: "border-amber-200" };
+      return { header: "bg-amber-700", badge: "bg-amber-100 text-amber-700", border: "border-amber-200" };
     case "negotiation":
       return { header: "bg-purple-500", badge: "bg-purple-100 text-purple-700", border: "border-purple-200" };
     case "closed-won":
@@ -40,7 +40,7 @@ function stageColor(stage: string): { header: string; badge: string; border: str
     case "closed-lost":
       return { header: "bg-red-500", badge: "bg-red-100 text-red-700", border: "border-red-200" };
     default:
-      return { header: "bg-gray-400", badge: "bg-gray-100 text-gray-600", border: "border-gray-200" };
+      return { header: "bg-gray-600", badge: "bg-gray-100 text-gray-600", border: "border-gray-200" };
   }
 }
 
@@ -87,7 +87,7 @@ function MoveModal({ onClose, onMoved }: MoveModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
@@ -164,7 +164,7 @@ function MoveModal({ onClose, onMoved }: MoveModalProps) {
           <button
             onClick={submit}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
             Move Lead
@@ -208,7 +208,7 @@ function EditModal({ lead, onClose, onSaved }: EditModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h3 className="text-base font-bold text-gray-900">Edit Lead #{lead.contact_id}</h3>
@@ -270,7 +270,7 @@ function EditModal({ lead, onClose, onSaved }: EditModalProps) {
           <button
             onClick={submit}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : null}
             Save Changes
@@ -345,7 +345,7 @@ function DeleteConfirm({ lead, onCancel, onDeleted }: DeleteConfirmProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
@@ -447,7 +447,7 @@ const FunnelPanel: React.FC = () => {
           </button>
           <button
             onClick={() => setShowMoveModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors"
           >
             <Plus size={15} />
             Move Lead

@@ -228,7 +228,7 @@ export default function Blog({ blogData }) {
   // Use the blogData prop directly
   const content = {
     header: blogData.header,
-    posts: blogData.posts.map((post, index) => ({
+    posts: (blogData.posts || []).map((post, index) => ({
       ...post,
       date: post.date
         ? new Date(post.date).toLocaleDateString("en-US", {

@@ -55,7 +55,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
         setSelectedCountryCode(country.isoCode);
         const states = State.getStatesOfCountry(country.isoCode);
         setAvailableStates(states);
-        console.log(`Loaded ${states.length} states for ${countryValue}`);
       } else {
         setAvailableStates([]);
         setSelectedCountryCode("");
@@ -77,7 +76,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
   );
 
   const handleCountrySelect = (country: any) => {
-    console.log("Country selected:", country.name);
     onCountryChange(country.name);
     setCountryDropdownOpen(false);
     setCountrySearchTerm("");
@@ -86,7 +84,6 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
   };
 
   const handleStateSelect = (state: any) => {
-    console.log("State selected:", state.name);
     onStateChange(state.name);
     setStateDropdownOpen(false);
     setStateSearchTerm("");

@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
               whileHover={{ scale: 1.02 }}
               className="flex items-center space-x-2 mb-4 text-blue-500 dark:text-orange-500"
             >
-              <div className="rounded-full bg-yellow-500 text-white h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+              <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
                 <span className="uppercase">J</span>
               </div>
               <span className="text-2xl font-bold truncate capitalize text-yellow-500">

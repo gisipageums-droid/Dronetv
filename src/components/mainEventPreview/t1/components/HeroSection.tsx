@@ -17,6 +17,7 @@ interface HeroSectionProps {
     highlights: string[];
     btn1: string;
     btn2: string;
+    countdownEnabled?: boolean;
   };
 }
 
@@ -203,30 +204,32 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-900 via-black to-gray-900"
     >
       {/* YouTube Video BG */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-        <iframe
-          id="hero-video"
-          key={heroContent.videoUrl}
-          className="w-full h-full object-cover"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            minHeight: "100vh",
-          }}
-          src={`${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1`}
-          title="Event Background Video"
-          frameBorder="0"
-          allow="autoplay; encrypted-media; fullscreen"
-          allowFullScreen
-        />
-        <div className="absolute inset-0 bg-black/60 z-10"></div>
-      </div>
+      {convertToEmbedUrl(heroContent.videoUrl) && (
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+          <iframe
+            id="hero-video"
+            key={heroContent.videoUrl}
+            className="w-full h-full object-cover"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              minHeight: "100vh",
+            }}
+            src={`${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1`}
+            title="Event Background Video"
+            frameBorder="0"
+            allow="autoplay; encrypted-media; fullscreen"
+            allowFullScreen
+          />
+          <div className="absolute inset-0 bg-black/60 z-10"></div>
+        </div>
+      )}
 {/* Mute / Unmute Button */}
 <button
   onClick={toggleMute}
@@ -273,7 +276,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
             </div>
           </div>
 
-          {/* Countdown Timer */}
+          {/* Countdown Timer — only shown if the organizer enabled it in the event form.
+              Older events published before this flag existed have no value here,
+              so they default to showing (preserves their existing appearance). */}
+          {heroContent.countdownEnabled !== false && (
           <div className="mb-8">
             {countdown.isEventExpired ? (
               <div className="text-center">
@@ -335,6 +341,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
               </div>
             )}
           </div>
+          )}
 
           {/* Highlights */}
           <div className="text-white text-lg max-w-3xl mx-auto mb-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-left">

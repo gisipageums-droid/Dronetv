@@ -18,6 +18,7 @@ const blog3 = "/images/blog/blog3.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 // Animation variants
 const containerVariants = {
@@ -479,7 +480,7 @@ export default function Blog({
           formData.append("templateSelection", templateSelection);
 
           const uploadResponse = await fetch(
-            `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+            MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
             {
               method: "POST",
               body: formData,
@@ -492,7 +493,6 @@ export default function Blog({
             updatedContent.posts = updatedContent.posts.map((post) =>
               post.id === postId ? { ...post, image: uploadData.imageUrl } : post
             );
-            console.log("Image auto-uploaded to S3:", uploadData.imageUrl);
             
             // Remove from pending images since it's uploaded
             setPendingImages(prev => {
@@ -679,7 +679,7 @@ export default function Blog({
         formData.append("templateSelection", templateSelection);
 
         const uploadResponse = await fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
             body: formData,
@@ -692,7 +692,6 @@ export default function Blog({
           updatedContent.posts = updatedContent.posts.map((post) =>
             post.id === postId ? { ...post, image: uploadData.imageUrl } : post
           );
-          console.log("Image uploaded to S3:", uploadData.imageUrl);
         } else {
           const errorData = await uploadResponse.json();
           console.error("Image upload failed:", errorData);

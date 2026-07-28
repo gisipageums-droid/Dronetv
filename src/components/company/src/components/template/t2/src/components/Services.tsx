@@ -457,7 +457,7 @@ export default function Services() {
             >
               <button
                 onClick={closeModal}
-                className='absolute top-4 right-4 bg-white rounded-full p-2'
+                className='absolute top-4 right-4 bg-white text-gray-900 rounded-full p-2'
               >
                 <X className='w-5 h-5' />
               </button>

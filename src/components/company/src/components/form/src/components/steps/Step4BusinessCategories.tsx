@@ -24,12 +24,11 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
     [key: string]: string[];
   }>(formData.subSubCategories || {});
 
-  // Auto-expand first category/subcategory if editing
-  const [expandedMainCategory, setExpandedMainCategory] = useState<string>(
-    formData.mainCategories?.[0] || ""
+  const [expandedMainCategories, setExpandedMainCategories] = useState<Set<string>>(
+    new Set(formData.mainCategories || [])
   );
-  const [expandedSubcategory, setExpandedSubcategory] = useState<string>(
-    Object.keys(formData.subCategories || {})[0] || ""
+  const [expandedSubcategories, setExpandedSubcategories] = useState<Set<string>>(
+    new Set(Object.keys(formData.subCategories || {}))
   );
 
   React.useEffect(() => {
@@ -430,45 +429,45 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
     ],
   };
 
-  // Fixed toggle functions with proper deselection
   const handleMainCategoryToggle = (category: string) => {
     const isCurrentlySelected = selectedMainCategories.includes(category);
-    const isCurrentlyExpanded = expandedMainCategory === category;
+    const isCurrentlyExpanded = expandedMainCategories.has(category);
 
-    if (isCurrentlyExpanded) {
-      // Collapse the category
-      setExpandedMainCategory("");
-      setExpandedSubcategory("");
-    } else {
-      // Expand the category
-      setExpandedMainCategory(category);
-      setExpandedSubcategory("");
-    }
+    // Toggle expand/collapse independently
+    setExpandedMainCategories(prev => {
+      const next = new Set(prev);
+      if (isCurrentlyExpanded) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
 
     // Toggle selection
     if (isCurrentlySelected) {
-      // Remove from selected categories
       setSelectedMainCategories(prev => prev.filter(c => c !== category));
-      
-      // Also remove any associated subcategories and sub-subcategories
+      setExpandedMainCategories(prev => { const n = new Set(prev); n.delete(category); return n; });
       setSelectedSubcategories(prev => {
         const newSubs = { ...prev };
         delete newSubs[category];
         return newSubs;
       });
-      
       setSelectedSubSubcategories(prev => {
         const newSubSubs = { ...prev };
-        // Remove all sub-subcategories that belong to subcategories of this main category
         if (subcategories[category]) {
-          subcategories[category].forEach(subCat => {
-            delete newSubSubs[subCat];
-          });
+          subcategories[category].forEach(subCat => { delete newSubSubs[subCat]; });
         }
         return newSubSubs;
       });
+      setExpandedSubcategories(prev => {
+        const next = new Set(prev);
+        if (subcategories[category]) {
+          subcategories[category].forEach(sub => next.delete(sub));
+        }
+        return next;
+      });
     } else {
-      // Add to selected categories
       setSelectedMainCategories(prev => [...prev, category]);
     }
   };
@@ -477,41 +476,37 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
     mainCategory: string,
     subCategory: string
   ) => {
-    const isCurrentlyExpanded = expandedSubcategory === subCategory;
+    const isCurrentlyExpanded = expandedSubcategories.has(subCategory);
     const isCurrentlySelected = selectedSubcategories[mainCategory]?.includes(subCategory);
 
-    if (isCurrentlyExpanded) {
-      // Collapse the subcategory
-      setExpandedSubcategory("");
-    } else {
-      // Expand the subcategory
-      setExpandedSubcategory(subCategory);
-    }
+    // Toggle expand/collapse independently
+    setExpandedSubcategories(prev => {
+      const next = new Set(prev);
+      if (isCurrentlyExpanded) {
+        next.delete(subCategory);
+      } else {
+        next.add(subCategory);
+      }
+      return next;
+    });
 
-    // Toggle selection
     if (isCurrentlySelected) {
-      // Remove from selected subcategories
       setSelectedSubcategories(prev => {
         const currentSubs = prev[mainCategory] || [];
         const newSubs = currentSubs.filter(s => s !== subCategory);
-        
         if (newSubs.length === 0) {
-          // If no more subcategories for this main category, remove the entire key
           const { [mainCategory]: _, ...rest } = prev;
           return rest;
         }
-        
         return { ...prev, [mainCategory]: newSubs };
       });
-      
-      // Also remove any associated sub-subcategories
       setSelectedSubSubcategories(prev => {
         const newSubSubs = { ...prev };
         delete newSubSubs[subCategory];
         return newSubSubs;
       });
+      setExpandedSubcategories(prev => { const n = new Set(prev); n.delete(subCategory); return n; });
     } else {
-      // Add to selected subcategories
       setSelectedSubcategories(prev => {
         const currentSubs = prev[mainCategory] || [];
         return { ...prev, [mainCategory]: [...currentSubs, subCategory] };
@@ -586,7 +581,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
 
   const getCategoryStatus = (category: string) => {
     const isSelected = selectedMainCategories.includes(category);
-    const isExpanded = expandedMainCategory === category;
+    const isExpanded = expandedMainCategories.has(category);
     if (!isSelected) return "unselected";
 
     const hasSubcategories =
@@ -602,7 +597,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   const getSubCategoryStatus = (mainCategory: string, subCategory: string) => {
     const isSelected =
       selectedSubcategories[mainCategory]?.includes(subCategory);
-    const isExpanded = expandedSubcategory === subCategory;
+    const isExpanded = expandedSubcategories.has(subCategory);
     if (!isSelected) return "unselected";
 
     const hasSubSubcategories =
@@ -650,7 +645,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                   const colors = getCategoryColor(category);
                   const status = getCategoryStatus(category);
                   const isSelected = selectedMainCategories.includes(category);
-                  const isExpanded = expandedMainCategory === category;
+                  const isExpanded = expandedMainCategories.has(category);
 
                   let categoryStyle = "";
                   let textStyle = "";
@@ -712,33 +707,40 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 })}
               </div>
 
-              {/* Subcategories for expanded category */}
-              {expandedMainCategory && (
+              {/* Subcategories — one accordion panel per expanded category */}
+              {selectedMainCategories.filter(cat => expandedMainCategories.has(cat)).map((expandedCat) => (
                 <div
-                  className={`rounded-lg border p-4 ${
-                    getCategoryColor(expandedMainCategory).bg
-                  } ${getCategoryColor(expandedMainCategory).border}`}
+                  key={expandedCat}
+                  className={`rounded-lg border mt-2 animate-step-slide-up ${
+                    getCategoryColor(expandedCat).bg
+                  } ${getCategoryColor(expandedCat).border}`}
                 >
-                  <h4
-                    className={`font-semibold text-sm mb-2 ${
-                      getCategoryColor(expandedMainCategory).text
-                    }`}
-                  >
-                    {expandedMainCategory} - Subcategories
-                  </h4>
+                  <div className={`flex items-center justify-between px-4 py-2 border-b ${getCategoryColor(expandedCat).border}`}>
+                    <h4 className={`font-semibold text-sm ${getCategoryColor(expandedCat).text}`}>
+                      {expandedCat} — Subcategories
+                    </h4>
+                    <button
+                      type="button"
+                      onClick={() => handleMainCategoryToggle(expandedCat)}
+                      className="text-xs text-gray-500 hover:text-gray-700 px-2 py-0.5 rounded hover:bg-white/50"
+                    >
+                      ▲ Collapse
+                    </button>
+                  </div>
 
+                  <div className="p-4">
                   <div className="flex flex-wrap items-start mb-3">
-                    {subcategories[expandedMainCategory]?.map((subCategory) => {
-                      const colors = getCategoryColor(expandedMainCategory);
+                    {subcategories[expandedCat]?.map((subCategory) => {
+                      const colors = getCategoryColor(expandedCat);
                       const subStatus = getSubCategoryStatus(
-                        expandedMainCategory,
+                        expandedCat,
                         subCategory
                       );
                       const isSubSelected =
-                        selectedSubcategories[expandedMainCategory]?.includes(
+                        selectedSubcategories[expandedCat]?.includes(
                           subCategory
                         );
-                      const isSubExpanded = expandedSubcategory === subCategory;
+                      const isSubExpanded = expandedSubcategories.has(subCategory);
 
                       let subCategoryStyle = "";
                       let subTextStyle = "";
@@ -774,7 +776,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                           key={subCategory}
                           onClick={() =>
                             handleSubCategoryToggle(
-                              expandedMainCategory,
+                              expandedCat,
                               subCategory
                             )
                           }
@@ -807,114 +809,82 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                     })}
                   </div>
 
-                  {/* Sub-subcategories for selected subcategories */}
-                  {expandedSubcategory &&
-                    subSubcategories[expandedSubcategory] &&
-                    selectedSubcategories[expandedMainCategory]?.includes(
-                      expandedSubcategory
-                    ) && (
-                      <div className="bg-white rounded-md border border-slate-200 p-3 mb-2">
-                        <h5 className="font-medium text-xs text-slate-800 mb-2">
-                          {expandedSubcategory} - Details
-                        </h5>
+                  {/* Sub-subcategories — one panel per expanded subcategory */}
+                  {(selectedSubcategories[expandedCat] || [])
+                    .filter(sub => expandedSubcategories.has(sub) && subSubcategories[sub])
+                    .map((expandedSub) => (
+                      <div key={expandedSub} className="bg-white rounded-md border border-slate-200 p-3 mb-2 animate-step-slide-up">
+                        <div className="flex items-center justify-between mb-2">
+                          <h5 className="font-medium text-xs text-slate-800">{expandedSub} — Details</h5>
+                          <button
+                            type="button"
+                            onClick={() => handleSubCategoryToggle(expandedCat, expandedSub)}
+                            className="text-xs text-gray-400 hover:text-gray-600 px-1"
+                          >▲</button>
+                        </div>
                         <div className="flex flex-wrap items-start">
-                          {subSubcategories[expandedSubcategory].map(
-                            (subSubCategory) => {
-                              const isSubSubSelected =
-                                selectedSubSubcategories[
-                                  expandedSubcategory
-                                ]?.includes(subSubCategory);
-                              return (
-                                <label
-                                  key={subSubCategory}
-                                  className={`inline-flex items-center px-1.5 py-0.5 mr-1 mb-1 rounded border cursor-pointer transition-all hover:shadow-sm whitespace-nowrap ${
-                                    isSubSubSelected
-                                      ? "bg-green-50 border-green-300 text-green-800"
-                                      : "hover:bg-slate-50 border-slate-200"
-                                  }`}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={isSubSubSelected}
-                                    onChange={() =>
-                                      handleSubSubCategoryToggle(
-                                        expandedSubcategory,
-                                        subSubCategory
-                                      )
-                                    }
-                                    className="sr-only"
-                                  />
-                                  <div
-                                    className={`w-2.5 h-2.5 rounded border mr-1.5 flex items-center justify-center ${
-                                      isSubSubSelected
-                                        ? "border-green-500 bg-green-500"
-                                        : "border-slate-300"
-                                    }`}
-                                  >
-                                    {isSubSubSelected && (
-                                      <svg
-                                        className="w-1.5 h-1.5 text-white"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"
-                                        />
-                                      </svg>
-                                    )}
-                                  </div>
-                                  <span className="text-slate-700 text-xs leading-none">
-                                    {subSubCategory}
-                                  </span>
-                                </label>
-                              );
-                            }
-                          )}
+                          {subSubcategories[expandedSub].map((subSubCategory) => {
+                            const isSubSubSelected = selectedSubSubcategories[expandedSub]?.includes(subSubCategory);
+                            return (
+                              <label
+                                key={subSubCategory}
+                                className={`inline-flex items-center px-1.5 py-0.5 mr-1 mb-1 rounded border cursor-pointer transition-all hover:shadow-sm whitespace-nowrap ${
+                                  isSubSubSelected
+                                    ? "bg-green-50 border-green-300 text-green-800"
+                                    : "hover:bg-slate-50 border-slate-200 text-gray-800"
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isSubSubSelected}
+                                  onChange={() => handleSubSubCategoryToggle(expandedSub, subSubCategory)}
+                                  className="sr-only"
+                                />
+                                <div className={`w-2.5 h-2.5 rounded border mr-1.5 flex items-center justify-center ${
+                                  isSubSubSelected ? "border-green-500 bg-green-500" : "border-slate-300"
+                                }`}>
+                                  {isSubSubSelected && (
+                                    <svg className="w-1.5 h-1.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                  )}
+                                </div>
+                                <span className="text-slate-700 text-xs leading-none">{subSubCategory}</span>
+                              </label>
+                            );
+                          })}
                         </div>
                       </div>
-                    )}
+                    ))
+                  }
 
-                  {/* Other input for current category */}
+                  {/* Other input */}
                   <div className="mt-2">
                     <FormInput
-                      label={`Other ${expandedMainCategory} (comma-separated)`}
+                      label={`Other ${expandedCat} (comma-separated)`}
                       value={formData.otherMainCategories || ""}
                       onChange={(value) =>
                         updateFormData({ otherMainCategories: value })
                       }
                       placeholder="Enter other categories..."
                     />
-
-                    {/* Show tags for entered items */}
-                    {formData.otherMainCategories &&
-                      formData.otherMainCategories.trim() && (
-                        <div className="mt-2">
-                          <h5 className="text-xs font-semibold text-slate-700 mb-2">
-                            Added Items:
-                          </h5>
-                          <div className="flex flex-wrap">
-                            {formData.otherMainCategories
-                              .split(",")
-                              .map((item, index) => {
-                                const trimmedItem = item.trim();
-                                if (!trimmedItem) return null;
-                                return (
-                                  <span
-                                    key={index}
-                                    className="inline-block px-2 py-0.5 mr-1 mb-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium"
-                                  >
-                                    {trimmedItem}
-                                  </span>
-                                );
-                              })}
-                          </div>
-                        </div>
-                      )}
+                    {formData.otherMainCategories && formData.otherMainCategories.trim() && (
+                      <div className="mt-2 flex flex-wrap">
+                        {formData.otherMainCategories.split(",").map((item, index) => {
+                          const trimmedItem = item.trim();
+                          if (!trimmedItem) return null;
+                          return (
+                            <span key={index} className="inline-block px-2 py-0.5 mr-1 mb-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium">
+                              {trimmedItem}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                   </div>
                 </div>
-              )}
+              ))}
             </div>
           </div>
         </div>

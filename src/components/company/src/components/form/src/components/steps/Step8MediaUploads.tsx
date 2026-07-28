@@ -18,10 +18,10 @@
 // import { useUserAuth } from "../../../../../../../context/context";
 
 // // ✅ Updated File Upload API URL (your actual endpoint)
-// const FILE_UPLOAD_API_URL = "https://1i8zpm4qu4.execute-api.ap-south-1.amazonaws.com/prod/upload-file";
+// const FILE_UPLOAD_API_URL = COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
 
 // // ✅ Form Submission API URL (unchanged)
-// const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+// const FORM_SUBMIT_API_URL = COMPANY_API ? `${COMPANY_API}/drafts` : `${LAMBDA.companyFormDraft}/drafts`;
 
 // // ✅ Helper function to upload individual file
 // const uploadSingleFile = async (file: File, fieldName: string, userId: string): Promise<any> => {
@@ -227,7 +227,7 @@
 
 //       if (isDraftLink && userIdFromUrl && draftId) {
 //         // ✅ PUT request for draft link
-//         const draftApiUrl = `https://c2x3twl1q8.execute-api.ap-south-1.amazonaws.com/dev/${userIdFromUrl}/${draftId}`;
+//         const draftApiUrl = COMPANY_API ? `${COMPANY_API}/${userIdFromUrl}/${draftId}` : `${LAMBDA.companyDraftMedia}/${userIdFromUrl}/${draftId}`;
 //         setUploadStatus("Updating draft...");
 //         setUploadProgress(60);
 
@@ -740,55 +740,66 @@ import { useTemplate } from "../../../../../../../context/context";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 import { useUserAuth } from "../../../../../../../context/context";
+import { COMPANY_API, EVENTS_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
 // ✅ Updated File Upload API URL (your actual endpoint)
 const FILE_UPLOAD_API_URL =
-  "https://1i8zpm4qu4.execute-api.ap-south-1.amazonaws.com/prod/upload-file";
+  COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
 
 // ✅ Form Submission API URL (unchanged)
 const FORM_SUBMIT_API_URL =
-  "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+  COMPANY_API ? `${COMPANY_API}/drafts` : `${LAMBDA.companyFormDraft}/drafts`;
 
 // ✅ Token Validation API URL
 const TOKEN_VALIDATION_API_URL =
-  "https://zhjkyvzz15.execute-api.ap-south-1.amazonaws.com/dev/";
+  EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsFormBase}/`;
 
 // ✅ Helper function to upload individual file
+// Uploads go straight to S3 via a presigned URL instead of through this Lambda:
+// API Gateway has a hard 29s integration timeout, and on a slow/mobile
+// connection the multipart body alone can take longer than that to arrive —
+// the request never even starts executing, so the browser sees a bare
+// network failure ("No response from server"). A presigned PUT to S3 has no
+// such cap, so uploads succeed regardless of how slow the connection is.
 const uploadSingleFile = async (
   file: File,
   fieldName: string,
   userId: string
 ): Promise<any> => {
-  const formData = new FormData();
-  formData.append("userId", userId);
-  formData.append("fieldName", fieldName);
-  formData.append("file", file);
-
   try {
-    const response = await axios.post(FILE_UPLOAD_API_URL, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+    const presignRes = await axios.post(
+      FILE_UPLOAD_API_URL,
+      {
+        userId,
+        fieldName,
+        filename: file.name,
+        contentType: file.type || "application/octet-stream",
       },
-      timeout: 120000, // 2 minutes timeout per file
+      { headers: { "Content-Type": "application/json" }, timeout: 30000 }
+    );
+
+    if (!presignRes.data.success) {
+      throw new Error(presignRes.data.error || "Failed to get upload URL");
+    }
+
+    const { uploadUrl, imageUrl, metadata } = presignRes.data;
+
+    await axios.put(uploadUrl, file, {
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+      timeout: 300000, // 5 minutes — direct-to-S3, no gateway timeout to race against
     });
 
-    if (response.data.success) {
-      return {
-        fileName: response.data.fileName || response.data.metadata?.fileName,
-        contentType:
-          response.data.contentType || response.data.metadata?.contentType,
-        imageUrl: response.data.imageUrl, // Primary URL from upload lambda
-        s3Url: response.data.s3Url || response.data.imageUrl, // Fallback compatibility
-        fileSize: response.data.sizeBytes || response.data.metadata?.sizeBytes,
-        sizeMB: response.data.sizeMB || response.data.metadata?.sizeMB,
-        uploadedAt:
-          response.data.uploadedAt || response.data.metadata?.uploadedAt,
-        fieldName: fieldName,
-        metadata: response.data.metadata || {},
-      };
-    } else {
-      throw new Error(response.data.error || "Upload failed");
-    }
+    return {
+      fileName: metadata?.fileName || file.name,
+      contentType: metadata?.contentType || file.type,
+      imageUrl,
+      s3Url: metadata?.s3Url || imageUrl,
+      fileSize: file.size,
+      sizeMB: Math.round((file.size / (1024 * 1024)) * 100) / 100,
+      uploadedAt: metadata?.uploadedAt || Date.now(),
+      fieldName,
+      metadata: metadata || {},
+    };
   } catch (error: any) {
     console.error(`File upload failed for ${fieldName}:`, error);
 
@@ -1025,7 +1036,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
       }));
 
       toast.success(`${fieldName} uploaded successfully!`);
-      console.log(`✅ File uploaded: ${fieldName}`, uploadResult);
     } catch (error: any) {
       setFileProcessingStatus((prev) => ({
         ...prev,
@@ -1129,15 +1139,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         },
       };
 
-      console.log("📤 Submitting form with payload:", {
-        ...payload,
-        uploadedFiles: Object.keys(uploadedFiles),
-        formDataFileFields: Object.keys(formDataWithFileRefs).filter(
-          (key) =>
-            typeof formDataWithFileRefs[key] === "string" &&
-            formDataWithFileRefs[key].startsWith("http")
-        ),
-      });
 
       setUploadProgress(75);
 
@@ -1145,7 +1146,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
       if (isDraftLink && userIdFromUrl && draftId) {
         // ✅ PUT request for draft link
-        const draftApiUrl = `https://c2x3twl1q8.execute-api.ap-south-1.amazonaws.com/dev/${userIdFromUrl}/${draftId}`;
+        const draftApiUrl = COMPANY_API ? `${COMPANY_API}/${userIdFromUrl}/${draftId}` : `${LAMBDA.companyDraftMedia}/${userIdFromUrl}/${draftId}`;
         setUploadStatus("Updating draft...");
         setUploadProgress(60);
 
@@ -1164,7 +1165,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         response = await retryRequest(FORM_SUBMIT_API_URL, payload, 3, 60000);
       }
 
-      console.log("✅ Form submitted successfully:", response.data);
 
       // setDraftDetails(response.data);
       setDraftDetails({
@@ -1187,7 +1187,6 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         localStorage.removeItem("gstSectionData");
         localStorage.removeItem("digi_client_token");
         localStorage.removeItem("digi_state");
-        console.log("✅ All form data cleared from localStorage after successful submission");
       } catch (e) {
         console.error("Failed to clear local data after submit", e);
       }

@@ -16,10 +16,11 @@ import axios from "axios";
 import { useUserAuth } from "../../../context/context";
 import { AlertTriangle, X } from "lucide-react";
 import { toast } from "sonner";
+import { EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../../../lib/apiConfig';
 
 // ✅ Token Validation API URL
 const TOKEN_VALIDATION_API_URL =
-  "https://zhjkyvzz15.execute-api.ap-south-1.amazonaws.com/dev/";
+  EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsFormBase}/`;
 
 // ================== Token validation function ====================
 const validateUserTokens = async (
@@ -195,7 +196,7 @@ function AppInner() {
           setFormLoader(true);
 
           const res = await fetch(
-            `https://ec1amurqr9.execute-api.ap-south-1.amazonaws.com/dev/${userId}/${professionalId}`
+            PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}` : `${LAMBDA.profFormLoad}/${userId}/${professionalId}`
           );
           const userData = await res.json();
           setFormLoader(false);
@@ -275,6 +276,11 @@ function AppInner() {
   const handleNextWithValidation = () => {
     if (current === 0 && !step1Valid) {
       setShowStep1Error(true);
+      // Required-field errors render inline next to each field, which can be
+      // far above wherever the user is scrolled to (e.g. Social Media Links
+      // at the bottom) — without this, clicking Next looked like a no-op.
+      toast.error("Please fill in all required fields marked above.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     setShowStep1Error(false);
@@ -316,7 +322,7 @@ function AppInner() {
 
       if (userId && professionalId) {
         response = await axios.put(
-          `https://tvlifa6840.execute-api.ap-south-1.amazonaws.com/prod/${userId}/${professionalId}`,
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}` : `${LAMBDA.profUpdate}/${userId}/${professionalId}`,
           payload
         );
       } else {
@@ -407,7 +413,7 @@ function AppInner() {
                 <div className="flex flex-col items-center">
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 flex-shrink-0 ${
                     index < current
-                      ? "bg-amber-400 border-amber-400 text-white"
+                      ? "bg-amber-400 border-amber-400 text-black"
                       : index === current
                       ? "bg-black border-black text-yellow-300"
                       : "bg-white border-gray-300 text-gray-400"
@@ -464,7 +470,7 @@ function AppInner() {
         )}
 
         {/* --- Step Content Container --- */}
-        <div className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6">
+        <div key={current} className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6 animate-step-slide-up">
           {current === 0 ? (
             <Step1 step={stepData} setStepValid={setStep1Valid} showErrors={showStep1Error} />
           ) : current === 5 ? (

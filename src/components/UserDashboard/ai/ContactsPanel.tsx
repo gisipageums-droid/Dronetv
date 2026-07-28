@@ -110,7 +110,7 @@ function ContactModal({ initial, onClose, onSaved }: ContactModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
@@ -232,7 +232,7 @@ function ContactModal({ initial, onClose, onSaved }: ContactModalProps) {
           <button
             onClick={submit}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
             {isEdit ? "Save Changes" : "Add Contact"}
@@ -256,7 +256,7 @@ function BulkDeleteConfirm({
   loading: boolean;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
@@ -422,7 +422,7 @@ const ContactsPanel: React.FC = () => {
           </button>
           <button
             onClick={() => { setEditContact(null); setShowModal(true); }}
-            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors"
           >
             <Plus size={15} />
             Add Contact

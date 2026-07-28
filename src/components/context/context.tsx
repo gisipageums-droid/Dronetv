@@ -9,19 +9,27 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { CheckCircle, X } from "lucide-react";
+import { COMPANY_API, PROFESSIONAL_API, EVENTS_API, LAMBDA } from '../../lib/apiConfig';
+import { validateToken, getMe, clearSession } from '../../lib/authService';
 
 // User Authentication Types and Context
 interface User {
   email: string;
   fullName: string;
+  id?: string;
+  role?: string;
+  isAdmin?: boolean;
   token?: string;
   timestamp?: string;
   userData?: {
+    id?: string;
     email?: string;
     fullName?: string;
     city?: string;
     state?: string;
     phone?: string;
+    role?: string;
+    isAdmin?: boolean;
     [key: string]: any;
   };
 }
@@ -51,6 +59,7 @@ interface UserAuthContextType {
   adminLogin: (adminData: Admin) => void;
   logout: () => void;
   adminLogout: () => void;
+  refreshUser: () => Promise<void>;
   haveAccount: boolean;
   setHaveAccount: React.Dispatch<React.SetStateAction<boolean>>;
   accountEmail: string | null;
@@ -113,12 +122,56 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     setAdmin(adminToStore);
   };
 
+  const refreshUser = async () => {
+    try {
+      const fresh = await getMe();
+      const updated = {
+        email: fresh.email,
+        fullName: fresh.fullName,
+        id: fresh.id,
+        role: fresh.role,
+        isAdmin: fresh.isAdmin,
+        token: localStorage.getItem('token') || undefined,
+        timestamp: new Date().toISOString(),
+        userData: fresh,
+      };
+      localStorage.setItem('user', JSON.stringify(updated));
+      setUser(updated);
+    } catch {
+      // Token invalid — clear session
+      clearSession();
+      setUser(null);
+      setAdmin(null);
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && user) {
+      validateToken().then(valid => {
+        if (!valid) {
+          clearSession();
+          setUser(null);
+          setAdmin(null);
+        }
+      });
+    }
+  }, []);
+
+  // Listen for background profile fetch completing (role update)
+  useEffect(() => {
+    const handleRoleUpdate = () => {
+      const stored = localStorage.getItem('user');
+      if (stored) {
+        try { setUser(JSON.parse(stored)); } catch { /* ignore */ }
+      }
+    };
+    window.addEventListener('user-role-updated', handleRoleUpdate);
+    return () => window.removeEventListener('user-role-updated', handleRoleUpdate);
+  }, []);
+
   const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("adminData");
-    localStorage.removeItem("admin");
-    localStorage.removeItem("adminToken");
+    clearSession();
     setUser(null);
     setAdmin(null);
   };
@@ -156,6 +209,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
         adminLogin,
         logout,
         adminLogout,
+        refreshUser,
         haveAccount,
         setHaveAccount,
         accountEmail,
@@ -278,8 +332,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     );
   }
 
-  const API =
-    "https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft";
+  const API = COMPANY_API ? `${COMPANY_API}/draft` : `${LAMBDA.companyDraft}/api/draft`;
   //get API AI gen data :
   const getAIgenData = async (
     userId: string,
@@ -326,15 +379,23 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
+      const PLACEHOLDER_COMPANY_NAMES = new Set(['company name', 'innovative labs', 'your company', 'unnamed company']);
+      const isRealName = (n: string) => !!n && !PLACEHOLDER_COMPANY_NAMES.has(n.toLowerCase().trim());
+      const nameCandidates = [
+        finalTemplate?.content?.header?.companyName,
+        finalTemplate?.content?.profile?.companyName,
+        finalTemplate?.content?.company?.name,
+      ];
+      const extractedName = (nameCandidates.find(n => isRealName((n || '').trim())) || '').trim();
+      const body = extractedName ? { ...finalTemplate, companyName: extractedName } : finalTemplate;
       const response = await fetch(
-        // `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${AIGenData.userId}/update/${AIGenData.publishedId}`,
-        `https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update`,
+        COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(finalTemplate),
+          body: JSON.stringify(body),
         }
       );
 
@@ -348,18 +409,15 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       }
       toast.success("Your company is now live!");
 
-      if (isLogin=== false) {
-        if(isAdminLogin){
-          navigate("/admin/company/dashboard");
-          setNavModel(false);
-        }
-        else{
-          setNavModel(true);
-        }
-      }else{
-          navigate("/user-website");
-          setNavModel(false);
-        }
+      if (isAdminLogin) {
+        navigate("/admin/company/dashboard");
+        setNavModel(false);
+      } else if (isLogin) {
+        navigate("/user-website");
+        setNavModel(false);
+      } else {
+        setNavModel(true);
+      }
 
       setAIGenData({});
     } catch (error) {
@@ -377,15 +435,23 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
+      const PLACEHOLDER_COMPANY_NAMES = new Set(['company name', 'innovative labs', 'your company', 'unnamed company']);
+      const isRealName = (n: string) => !!n && !PLACEHOLDER_COMPANY_NAMES.has(n.toLowerCase().trim());
+      const nameCandidates = [
+        finalTemplate?.content?.header?.companyName,
+        finalTemplate?.content?.profile?.companyName,
+        finalTemplate?.content?.company?.name,
+      ];
+      const extractedName = (nameCandidates.find(n => isRealName((n || '').trim())) || '').trim();
+      const body = extractedName ? { ...finalTemplate, companyName: extractedName } : finalTemplate;
       const response = await fetch(
-        // `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${finaleDataReview.userId}/update/${finaleDataReview.publishedId}`,
-        `https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update`,
+        COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(finalTemplate),
+          body: JSON.stringify(body),
         }
       );
 
@@ -398,18 +464,15 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         setAIGenData(prev => ({ ...prev, publishedId: result.publishedId }));
       }
       toast.success("Your company is now live!");
-      if (isLogin=== false) {
-        if(isAdminLogin){
-          navigate("/admin/company/dashboard");
-          setNavModel(false);
-        }
-        else{
-          setNavModel(true);
-        }
-      }else{
-          navigate("/user-website");
-          setNavModel(false);
-        }
+      if (isAdminLogin) {
+        navigate("/admin/company/dashboard");
+        setNavModel(false);
+      } else if (isLogin) {
+        navigate("/user-website");
+        setNavModel(false);
+      } else {
+        setNavModel(true);
+      }
       setFinaleDataReview({});
     } catch (error) {
       console.error("Upload failed:", error);
@@ -440,7 +503,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(
-        `https://bre0tniae1.execute-api.ap-south-1.amazonaws.com/prod/`,
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/publish` : `${LAMBDA.profPublish}/`,
         {
           method: "PUT",
           headers: {
@@ -459,19 +522,15 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         "Your template is successfully published and now it is under review"
       );
 
-      if (isLogin=== false) {
-        if(isAdminLogin){
-          navigate("/admin/professional/dashboard");
-          setNavModel(false);
-        }
-        else{
-          setNavModel(true);
-        }
-      }else{
-
-          navigate("/user-professionals");
-          setNavModel(false);
-        }
+      if (isAdminLogin) {
+        navigate("/admin/professional/dashboard");
+        setNavModel(false);
+      } else if (isLogin) {
+        navigate("/user-professionals");
+        setNavModel(false);
+      } else {
+        setNavModel(true);
+      }
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
@@ -487,13 +546,23 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
     }
 
     try {
-      const data = {
+      // Extract event name from content so the Lambda can update the top-level attribute
+      const eventName = (
+        finalTemplate?.content?.header?.eventName ||
+        finalTemplate?.content?.footer?.eventName ||
+        finalTemplate?.header?.eventName ||
+        finalTemplate?.footer?.eventName ||
+        ''
+      ).trim();
+
+      const data: any = {
         content: finalTemplate,
         submissionId: AIGenData.eventId,
+        ...(eventName ? { eventName } : {}),
       };
+
       const response = await fetch(
-        // `https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/prod/events-publish/${AIGenData.userId}/${AIGenData.eventId}`,
-        "https://hilzq2z8ci.execute-api.ap-south-1.amazonaws.com/dev/events-publish/event-publish",
+        EVENTS_API ? `${EVENTS_API}/publish` : `${LAMBDA.eventsPublish}/events-publish/event-publish`,
         {
           method: "POST",
           headers: {
@@ -507,23 +576,34 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      toast.success(
-        "Your template is successfully published and now it is under review"
-      );
-      if (isLogin=== false) {
-        if(isAdminLogin){
-          navigate("/admin/event/dashboard");
-          setNavModel(false);
-        }
-        else{
-          setNavModel(true);
-        }
-      }else{
+      // If admin is publishing, auto-approve so event stays visible in public list
+      if (isAdminLogin && AIGenData.eventId) {
+        try {
+          await fetch(
+            EVENTS_API ? `${EVENTS_API}/event/${AIGenData.eventId}` : `${LAMBDA.eventsAdmin}/event/${AIGenData.eventId}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ eventId: AIGenData.eventId, action: "approve", userId: AIGenData.userId }),
+            }
+          );
+        } catch { /* best effort */ }
+      }
 
-          navigate("/user-events");
-          setNavModel(false);
-        }
+      toast.success(
+        isAdminLogin
+          ? "Event updated and published successfully"
+          : "Your template is successfully published and now it is under review"
+      );
+      if (isAdminLogin) {
+        navigate("/admin/event/dashboard");
+        setNavModel(false);
+      } else if (isLogin) {
+        navigate("/user-events");
+        setNavModel(false);
+      } else {
+        setNavModel(true);
+      }
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);

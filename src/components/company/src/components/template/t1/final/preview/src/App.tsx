@@ -5,6 +5,7 @@ import About from "./components/About";
 import Blog from "./components/Blog";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import Documents from "./components/Documents";
 import GallerySection from "./components/Gallery";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -13,6 +14,7 @@ import CompanyProfile from "./components/Profile";
 import Services from "./components/Services";
 import Testimonials from "./components/Testimonials";
 import UsedBy from "./components/UsedBy";
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 // import { useEffect } from "react";
 
 export default function App() {
@@ -31,7 +33,9 @@ export default function App() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://koxt4kvnni.execute-api.ap-south-1.amazonaws.com/dev/templates?publishId=${encodeURIComponent(
+        COMPANY_API ? `${COMPANY_API}/templates?publishId=${encodeURIComponent(
+          pubId ?? ""
+        )}` : `${LAMBDA.companyTemplateLoad}/templates?publishId=${encodeURIComponent(
           pubId ?? ""
         )}`,
         {
@@ -110,14 +114,14 @@ export default function App() {
     <div>
       <Header headerData={finaleDataReview.content.header} />
       <Hero heroData={finaleDataReview.content.hero} />
-      <UsedBy usedByData={finaleDataReview.content.usedBy} />
+      <UsedBy usedByData={finaleDataReview.content.UsedBy ?? finaleDataReview.content.usedBy} />
       <About aboutData={finaleDataReview.content.about} />
       <CompanyProfile profileData={finaleDataReview.content.profile} />
       <Services serviceData={finaleDataReview.content.services} />
       <Products productData={finaleDataReview.content.products} />
       <Blog blogData={finaleDataReview.content.blog} />
       <GallerySection galleryData={finaleDataReview.content.gallery} />
-
+      <Documents documents={finaleDataReview.content.documents} />
       <Testimonials content={finaleDataReview.content.testimonials} />
       <Contact
         content={finaleDataReview.content.contact}

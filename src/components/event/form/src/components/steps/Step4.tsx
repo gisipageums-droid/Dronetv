@@ -1229,7 +1229,7 @@
 // //         file: file
 // //       });
 
-// //       const response = await fetch('https://v96xyrv321.execute-api.ap-south-1.amazonaws.com/prod/upload/events', {
+// //       const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
 // //         method: 'POST',
 // //         body: formData,
 // //         // Don't set Content-Type header - let browser set it with boundary
@@ -2035,7 +2035,7 @@
 //         file: file
 //       });
 
-//       const response = await fetch('https://v96xyrv321.execute-api.ap-south-1.amazonaws.com/prod/upload/events', {
+//       const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
 //         method: 'POST',
 //         body: formData,
 //         // Don't set Content-Type header - let browser set it with boundary
@@ -2661,6 +2661,7 @@
 import React, { useState } from "react";
 import { useForm } from "../../context/FormContext";
 import { Plus, Minus, User, Palette, Users, Upload, X, ChevronDown } from "lucide-react";
+import { MEDIA_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface Speaker {
   name: string;
@@ -2837,20 +2838,13 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
     setUploading(prev => ({ ...prev, [partnerIndex]: true }));
 
     try {
-      console.log('Starting upload for file:', file.name, 'size:', file.size, 'type:', file.type);
-      console.log('Form data fields:', {
-        userId: 'event-partner',
-        fieldName: file.name,
-        file: file
-      });
 
-      const response = await fetch('https://v96xyrv321.execute-api.ap-south-1.amazonaws.com/prod/upload/events', {
+      const response = await fetch(MEDIA_API ? `${MEDIA_API}/upload/events` : `${LAMBDA.eventsImageUpload}/upload/events`, {
         method: 'POST',
         body: formData,
         // Don't set Content-Type header - let browser set it with boundary
       });
 
-      console.log('Upload response status:', response.status);
       
       if (!response.ok) {
         let errorText = 'Unknown error';
@@ -2864,7 +2858,6 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
       }
 
       const responseData: UploadResponse = await response.json();
-      console.log('Upload API response:', responseData);
       
       if (!responseData.success) {
         throw new Error(responseData.error || 'Upload failed on server');

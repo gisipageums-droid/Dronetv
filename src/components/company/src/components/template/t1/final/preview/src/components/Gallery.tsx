@@ -40,16 +40,16 @@ export default function GallerySection({ galleryData }) {
 
     const goToNext = () => {
         if (selectedImage !== null) {
-            setSelectedImage((prev) => 
-                prev === galleryData.images.length - 1 ? 0 : prev + 1
+            setSelectedImage((prev) =>
+                prev === (galleryData.images?.length ?? 1) - 1 ? 0 : prev + 1
             );
         }
     };
 
     const goToPrev = () => {
         if (selectedImage !== null) {
-            setSelectedImage((prev) => 
-                prev === 0 ? galleryData.images.length - 1 : prev - 1
+            setSelectedImage((prev) =>
+                prev === 0 ? (galleryData.images?.length ?? 1) - 1 : prev - 1
             );
         }
     };
@@ -95,7 +95,7 @@ export default function GallerySection({ galleryData }) {
 
                 {/* Gallery Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {galleryData.images.map((image, index) => (
+                    {(galleryData.images || []).map((image, index) => (
                         <motion.div
                             key={image.id}
                             initial={{ opacity: 0, y: 50 }}
@@ -171,14 +171,14 @@ export default function GallerySection({ galleryData }) {
 
                     <div className="max-w-4xl w-full max-h-full">
                         <img
-                            src={galleryData.images[selectedImage].url}
-                            alt={galleryData.images[selectedImage].title}
+                            src={galleryData.images?.[selectedImage]?.url}
+                            alt={galleryData.images?.[selectedImage]?.title}
                             className="w-full h-auto max-h-full object-contain"
                         />
                         <div className="text-white text-center mt-4">
-                            <h3 className="text-xl font-semibold">{galleryData.images[selectedImage].title}</h3>
-                            <p className="text-gray-300">{galleryData.images[selectedImage].category}</p>
-                            <p className="text-gray-400 text-sm mt-2">{galleryData.images[selectedImage].description}</p>
+                            <h3 className="text-xl font-semibold">{galleryData.images?.[selectedImage]?.title}</h3>
+                            <p className="text-gray-300">{galleryData.images?.[selectedImage]?.category}</p>
+                            <p className="text-gray-400 text-sm mt-2">{galleryData.images?.[selectedImage]?.description}</p>
                         </div>
                     </div>
                 </motion.div>

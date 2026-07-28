@@ -1,6 +1,9 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useUserAuth } from "../../context/context";
+import { PAYMENT_API, LAMBDA, AUTH_API } from '../../../lib/apiConfig';
+
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
 // Define transaction type - updated to match API response
 interface Transaction {
@@ -35,6 +38,7 @@ const TransactionHistory: React.FC = () => {
     const [transactionHistoryData, setTransactionHistoryData] = useState<ApiResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [profileBalance, setProfileBalance] = useState<number | null>(null);
 
     const userId = user?.userData?.email;
 
@@ -51,10 +55,10 @@ const TransactionHistory: React.FC = () => {
             setError(null);
 
             const response = await axios.get(
-                `https://vgrrxo3wu9.execute-api.ap-south-1.amazonaws.com/dev/drontv-token-buy-payment-gateway/Transaction-History/${userId}`
+                PAYMENT_API
+                    ? `${PAYMENT_API}/transaction-history/${userId}`
+                    : `${LAMBDA.transactions}/Transaction-History/${userId}`
             );
-
-            console.log("API Response:", response.data);
 
             if (response.data.success) {
                 setTransactionHistoryData(response.data);
@@ -62,8 +66,7 @@ const TransactionHistory: React.FC = () => {
             } else {
                 throw new Error(response.data.message || 'Failed to fetch transactions');
             }
-        } catch (error) {
-            console.error("Error fetching transaction history:", error);
+        } catch {
             setError('Failed to load transactions. Showing demo data.');
 
             // Fallback to mock data
@@ -269,6 +272,11 @@ const TransactionHistory: React.FC = () => {
 
     useEffect(() => {
         transactionHistory();
+        if (userId) {
+            axios.get(`${PROFILE_API}?userId=${userId}`)
+                .then(r => setProfileBalance(r.data?.profile?.tokenBalance ?? 0))
+                .catch(() => {});
+        }
     }, [userId]); // Add userId as dependency
 
     // Filter transactions based on search and date
@@ -311,6 +319,13 @@ const TransactionHistory: React.FC = () => {
             hour: '2-digit',
             minute: '2-digit'
         });
+    };
+
+    const getDisplayTokens = (tx: Transaction): number => {
+        const match = tx.description?.match(/(\d[\d,]*)\s*tokens?\s*\(/i);
+        if (match) return parseInt(match[1].replace(/,/g, ''), 10);
+        if (tx.tokenCount && tx.tokenCount > 0) return tx.tokenCount;
+        return Math.floor(tx.amount / 10);
     };
 
     // Get status badge color
@@ -374,22 +389,28 @@ const TransactionHistory: React.FC = () => {
 
                 {/* Stats Summary */}
                 {transactions.length > 0 && (
-                    <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
                         <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
                             <div className="text-xl md:text-2xl font-bold text-amber-700">{transactions.length}</div>
                             <div className="text-amber-600 text-xs md:text-sm">Total</div>
                         </div>
                         <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
                             <div className="text-xl md:text-2xl font-bold text-emerald-700">
-                                {formatTokens(transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').reduce((sum, tx) => sum + tx.amount, 0))}
+                                {formatTokens(transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').reduce((sum, tx) => sum + (tx.tokenCount || 0), 0))}
                             </div>
-                            <div className="text-amber-600 text-xs md:text-sm">Tokens</div>
+                            <div className="text-amber-600 text-xs md:text-sm">Purchased</div>
                         </div>
                         <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
                             <div className="text-xl md:text-2xl font-bold text-amber-700">
                                 {transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').length}
                             </div>
                             <div className="text-amber-600 text-xs md:text-sm">Completed</div>
+                        </div>
+                        <div className="bg-gray-900 rounded-xl shadow-sm p-3 md:p-4 text-center border border-yellow-400">
+                            <div className="text-xl md:text-2xl font-bold text-yellow-400">
+                                {profileBalance === null ? '…' : formatTokens(profileBalance)}
+                            </div>
+                            <div className="text-yellow-600 text-xs md:text-sm">Balance</div>
                         </div>
                     </div>
                 )}
@@ -500,7 +521,7 @@ const TransactionHistory: React.FC = () => {
                                                 <span className={`flex-shrink-0 text-sm md:text-base font-bold whitespace-nowrap ${
                                                     transaction.type === 'credit' ? 'text-emerald-700' : 'text-amber-800'
                                                 }`}>
-                                                    {transaction.type === 'credit' ? '+' : '-'}{formatTokens(Math.abs(transaction.amount))} tokens
+                                                    {transaction.type === 'credit' ? '+' : '-'}{formatTokens(getDisplayTokens(transaction))} tokens
                                                 </span>
                                             </div>
 

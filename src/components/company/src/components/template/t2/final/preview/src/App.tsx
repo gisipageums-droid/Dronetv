@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 import Profile from "./components/Profile";
 import Gallery from "./components/Gallery";
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 export default function App() {
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
@@ -26,7 +27,7 @@ export default function App() {
      try {
        window.scrollTo({ top: 0, behavior: 'smooth' });
        setIsLoading(true);
-       const response = await fetch(`https://koxt4kvnni.execute-api.ap-south-1.amazonaws.com/dev/templates?publishId=${encodeURIComponent(pubId ?? "")}`,{
+       const response = await fetch(COMPANY_API ? `${COMPANY_API}/templates?publishId=${encodeURIComponent(pubId ?? "")}` : `${LAMBDA.companyTemplateLoad}/templates?publishId=${encodeURIComponent(pubId ?? "")}`,{
          method: 'GET',
          headers: {
            'Content-Type': 'application/json',

@@ -3,6 +3,7 @@ import { Link, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Star, Plane, Clock, Tag, CheckCircle, Activity, Layers, ShieldCheck } from "lucide-react";
 import LoadingScreen from "./loadingscreen";
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 
 
 type ServiceFeature = {
@@ -81,9 +82,7 @@ export default function ServiceDetailPage() {
     setLoading(true);
     setError(null);
 
-    // Using the same API structure as ProductDetailPage but for services
-    // The user provided ID is likely the publishedId
-    const API_URL = `https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/services/details/${id}`;
+    const API_URL = COMPANY_API ? `${COMPANY_API}/services/details/${id}` : `${LAMBDA.products}/services/details/${id}`;
 
     axios
       .get(API_URL)
@@ -96,11 +95,9 @@ export default function ServiceDetailPage() {
 
         const apiData = responseData.data;
 
-        // Extract company name
         setCompanyName(apiData?.companyName || "");
         setTemplate(apiData?.template || "");
 
-        // Access nested services array
         const serviceArray: ServiceAPIItem[] =
           apiData?.services?.services && apiData.services.services.length > 0
             ? apiData.services.services
@@ -131,8 +128,7 @@ export default function ServiceDetailPage() {
 
         setService(mapped);
       })
-      .catch((err) => {
-        console.error("API Error", err);
+      .catch(() => {
         setError("Failed to fetch service details");
       })
       .finally(() => setLoading(false));
@@ -142,7 +138,7 @@ export default function ServiceDetailPage() {
 
   if (error)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-400 p-6">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
         <div className="bg-white rounded-2xl p-8 shadow-md w-full max-w-xl text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
           <p className="mb-6 text-gray-700">{error}</p>
@@ -155,7 +151,7 @@ export default function ServiceDetailPage() {
 
   if (!service)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <p className="text-lg font-semibold">Service not found.</p>
       </div>
     );
@@ -174,7 +170,7 @@ export default function ServiceDetailPage() {
     ));
 
   return (
-    <div className="pt-16 min-h-screen bg-yellow-400 border-[black]">
+    <div className="pt-[104px] min-h-screen bg-gray-50">
 
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
@@ -314,7 +310,6 @@ export default function ServiceDetailPage() {
           </div>
         </div>
 
-        {/* Detailed Descriptionsgit */}
         <div className="p-4 rounded-2xl shadow shadow-black mt-[5px] bg-white">
           <h4 className="font-semibold mb-3">Description</h4>
           <ul className="grid grid-cols-1 text-justify">
@@ -324,7 +319,7 @@ export default function ServiceDetailPage() {
         <div className="mt-8 flex justify-center">
 
 
-          <Link to={template === "template-1" ? `/company/${companyName}` : `/companies/${companyName}`}>
+          <Link to={template === "template-1" ? `/company/${companyName}#contact` : `/companies/${companyName}#contact`}>
             <button className="px-6 py-2.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
               Contact us
             </button>

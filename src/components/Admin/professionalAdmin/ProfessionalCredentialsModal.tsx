@@ -17,6 +17,7 @@ import {
   Image
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface Professional {
   professionalId: string;
@@ -88,7 +89,7 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
       setInternalLoading(true);
       try {
         const res = await fetch(
-          `https://dfdooqn9k1.execute-api.ap-south-1.amazonaws.com/dev/professionals/${professionalId}`
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/professionals/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
@@ -98,7 +99,6 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
           setNotes(json?.metadata?.adminNotes || '');
         }
       } catch (err: any) {
-        console.error('Error fetching professional:', err);
         if (!cancelled) setError('Failed to load professional data');
       } finally {
         if (!cancelled) setInternalLoading(false);
@@ -296,22 +296,22 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
 
                 <InfoSection
                   title="Skills"
-                  icon={<Code className="w-5 h-5 text-yellow-600" />}
-                  bgColor="bg-yellow-50"
+                  icon={<Code className="w-5 h-5 text-gray-600" />}
+                  bgColor="bg-gray-50"
                 >
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm font-medium text-gray-600 mb-2">Skills with Proficiency</p>
                       <div className="space-y-3">
                         {formData.formattedSkills?.map((skill: any, i: number) => (
-                          <div key={i} className="bg-white p-3 rounded-lg border border-yellow-200">
+                          <div key={i} className="bg-white p-3 rounded-lg border border-gray-200">
                             <div className="flex justify-between items-center mb-2">
                               <span className="font-medium text-gray-900">{skill.name}</span>
                               <span className="text-sm text-gray-600">{skill.proficiency.toFixed(1)}%</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-2">
                               <div
-                                className="bg-yellow-500 h-2 rounded-full transition-all"
+                                className="bg-yellow-400 h-2 rounded-full transition-all"
                                 style={{ width: `${skill.proficiency}%` }}
                               ></div>
                             </div>
@@ -325,7 +325,7 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                         {formData.rawSkills?.map((skill: string, i: number) => (
                           <span
                             key={i}
-                            className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full"
+                            className="px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-full"
                           >
                             {skill}
                           </span>
@@ -355,12 +355,12 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                 {formData.projects && formData.projects.length > 0 && (
                   <InfoSection
                     title="Projects"
-                    icon={<Award className="w-5 h-5 text-orange-600" />}
-                    bgColor="bg-orange-50"
+                    icon={<Award className="w-5 h-5 text-gray-600" />}
+                    bgColor="bg-gray-50"
                   >
                     <div className="space-y-3">
                       {formData.projects.map((project: any, i: number) => (
-                        <div key={i} className="bg-white p-4 rounded-lg border border-orange-200">
+                        <div key={i} className="bg-white p-4 rounded-lg border border-gray-200">
                           <h5 className="font-semibold text-gray-900 mb-2">{project.title}</h5>
                           <p className="text-sm text-gray-600 mb-2">{project.description}</p>
                           {project.project_url && (
@@ -411,7 +411,6 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                   </button>
                   <button
                     onClick={() => {
-                      console.log('Notes saved:', notes);
                       onClose();
                     }}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"

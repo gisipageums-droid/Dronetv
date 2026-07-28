@@ -1,394 +1,481 @@
-import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, MapPin, BadgeCheck } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
+import { withInlineAds } from './common/adCreatives';
 
-// 1. Define Company Interface (adapted for new API)
 interface Company {
   companyName: string;
   location?: string;
   sectors?: string[];
   previewImage?: string;
-  heroImage?: string;
   aboutDescription?: string;
+  companyDescription?: string;
   createdAt?: string;
   publishedDate?: string;
   templateSelection?: string;
   urlSlug?: string;
   servicesCount?: number;
   productsCount?: number;
-  companyDescription?: string;
   reviewStatus?: string;
+  publishedId?: string;
+  companyId?: string;
   [key: string]: any;
 }
 
+// Industry detection from company name (sectors API field is always "General")
+const DRONE_KW = /drone|uav|uas|unmanned|aerial|aero(?:space)?|aviation|rotor|rpas|rpto|multicopter|quadcopter|drona/i;
+const GIS_KW   = /gis|geospatial|spatial|mapping|lidar|survey|topograph|remote.?sensing|cartograph|photogramm/i;
+const AI_KW    = /\bai\b|\bai\s+lab|\balgo|robot(?:ics)?|machine.?learn|deep.?learn|computer.?vision|neural|intelligence\b|automation/i;
+
+function getIndustry(c: Company): 'drone' | 'gis' | 'ai' | 'all' {
+  const s = `${c.companyName || ''} ${c.companyDescription || ''} ${c.aboutDescription || ''}`;
+  if (AI_KW.test(s)) return 'ai';
+  if (GIS_KW.test(s)) return 'gis';
+  if (DRONE_KW.test(s)) return 'drone';
+  return 'all';
+}
+
+// Sector detection from company name
+const SECTOR_KW: Record<string, RegExp> = {
+  'Agriculture': /agri|spray|crop|farm|precision|kisan/i,
+  'Survey & Mapping': /survey|mapping|topograph|lidar|georef|photogramm|cadastral/i,
+  'Defence': /defenc|defense|military|security|force|army|navy/i,
+  'Infrastructure': /infra|construct|inspection|bridge|pipeline|power|railway|highway/i,
+  'Aerial Media': /media|photo|film|cinema|video|content|studio|creative/i,
+  'Training': /train|academy|institute|education|school|learn|certif/i,
+};
+
+function getSectors(c: Company): string[] {
+  const s = `${c.companyName || ''} ${c.companyDescription || ''} ${c.aboutDescription || ''}`;
+  return Object.entries(SECTOR_KW)
+    .filter(([, rx]) => rx.test(s))
+    .map(([k]) => k);
+}
+
+function getInitials(name: string): string {
+  return name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
+}
+
+const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#1a7a3a', ai: '#6B2FB5', all: '#444' };
+const IND_LABELS: Record<string, string> = { all: 'All', drone: '🚁 Drone', gis: '🗺️ GIS', ai: '🤖 AI' };
+const AV_COLORS = ['#0B5CB5','#1a7a3a','#CC1F1F','#6B2FB5','#c05800','#1a5a9a','#3a6a1a','#9a3a1a'];
+
+function avColor(name: string): string {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return AV_COLORS[h % AV_COLORS.length];
+}
+
+const CSS = `
+.co-page { background: #F8F8F8; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
+.co-hero { background: #0A0A0A; color: #fff; border-bottom: 2px solid #F5C518; }
+.co-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.co-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; white-space: nowrap; }
+.co-hero h1 span { color: #F5C518; }
+.co-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; }
+.co-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
+.co-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
+.co-tabs { background: #0A0A0A; border-bottom: 3px solid #F5C518; position: sticky; top: 60px; z-index: 110; }
+.co-tabs-i { max-width: 1280px; margin: 0 auto; padding: 0 22px; display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+.co-tabs-i::-webkit-scrollbar { display: none; }
+.co-tab { padding: 10px 18px; font-size: 12.5px; font-weight: 700; background: none; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: all .13s; border: none; border-bottom: 3px solid transparent; margin-bottom: -3px; }
+.co-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
+
+/* Sidebar layout */
+.co-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
+.co-sidebar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); position: sticky; top: 120px; }
+.co-sidebar-title { font-size: 13px; font-weight: 800; color: #0A0A0A; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.co-filter-grp { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0; }
+.co-filter-grp:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.co-fl-label { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
+.co-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.co-chip { padding: 4px 10px; border-radius: 14px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
+.co-main { min-width: 0; }
+.co-search-bar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.co-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
+.co-note { background: #FFFBE8; border: 1px solid #C9A010; border-radius: 8px; padding: 7px 12px; font-size: 11.5px; color: #7a5800; margin-bottom: 12px; }
+.co-resbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 7px; }
+.co-sort { padding: 6px 10px; border: 1.5px solid #E5E5E5; border-radius: 8px; font-size: 12.5px; color: #444; background: #fff; cursor: pointer; font-family: 'Poppins',sans-serif; }
+.co-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 13px; }
+.co-empty { padding: 64px 0; text-align: center; }
+.co-pages { display: flex; justify-content: center; margin-top: 28px; gap: 6px; flex-wrap: wrap; }
+.co-page-btn { padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins',sans-serif; }
+
+/* Mobile sidebar toggle */
+.co-filter-toggle { display: none; }
+.co-mobile-overlay { display: none; }
+
+/* Card */
+.co-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; }
+.co-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.14); transform: translateY(-2px); }
+.co-card-top { padding: 13px 13px 0; display: flex; gap: 10px; align-items: flex-start; }
+.co-avatar { width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0; overflow: hidden; }
+.co-avatar img { width: 44px; height: 44px; border-radius: 9px; object-fit: cover; }
+.co-card-name { font-size: 13px; font-weight: 700; color: #0A0A0A; line-height: 1.3; }
+.co-card-loc { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #777; margin-top: 2px; }
+.co-card-desc { font-size: 12px; color: #777; line-height: 1.6; padding: 0 13px; margin-bottom: 9px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.co-card-foot { padding: 9px 13px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; gap: 6px; }
+.co-btn-out { flex: 1; background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; }
+.co-btn-red { flex: 1; background: #CC1F1F; color: #fff; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
+
+@media (max-width: 960px) {
+  .co-layout { grid-template-columns: 1fr; }
+  .co-sidebar { position: static; display: none; }
+  .co-sidebar.open { display: block; }
+  .co-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #0A0A0A; color: #F5C518; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
+}
+@media (max-width: 600px) {
+  .co-hero-i { padding: 8px 14px; gap: 10px; }
+  .co-hero h1 { font-size: 13px; }
+  .co-stat-n { font-size: 13px; }
+  .co-wrap { padding: 12px 14px; }
+  .co-grid { grid-template-columns: 1fr; }
+  .co-tabs-i { padding: 0 14px; }
+  .co-tab { padding: 8px 12px; font-size: 12px; }
+}
+`;
+
+const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
+
 const CompaniesPage: React.FC = () => {
-  // 2. Typed States
   const [loading, setLoading] = useState(true);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
-  const [filteredCompanies, setFilteredCompanies] = useState<Company[]>([]);
-  const [selectedIndustry, setSelectedIndustry] = useState('All');
+  const [industry, setIndustry] = useState<string>('all');
+  const [states, setStates] = useState<string[]>([]);
+  const [selSectors, setSelSectors] = useState<string[]>([]);
+  const [selStates, setSelStates] = useState<string[]>([]);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [sortBy, setSortBy] = useState('createdAt');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const companiesPerPage = 12;
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const perPage = 12;
   const navigate = useNavigate();
 
-  // 3. Fetch Companies from API
   useEffect(() => {
-    const fetchCompanies = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=main');
-        const data = await res.json();
-        // Set companies from `cards` array, deduplicating by publishedId then by company name
-        const companies = Array.isArray(data.cards) ? data.cards : [];
-        const seenIds = new Set<string>();
-        const seenNames = new Set<string>();
-        const unique = companies.filter((company: Company) => {
-          const id = (company.publishedId || '').toLowerCase().trim();
-          const name = (company.companyName || '').toLowerCase().trim();
-          if (id && seenIds.has(id)) return false;
-          if (name && seenNames.has(name)) return false;
-          if (id) seenIds.add(id);
-          if (name) seenNames.add(name);
-          return true;
+    const url = COMPANY_API
+      ? `${COMPANY_API}/dashboard-cards?viewType=main`
+      : `${LAMBDA.company}/dashboard-cards?viewType=main`;
+    fetch(url)
+      .then(r => r.json())
+      .then(d => {
+        const raw: Company[] = Array.isArray(d.cards) ? d.cards : [];
+        setAllCompanies(raw);
+        const stateSet = new Set<string>();
+        raw.forEach(c => {
+          const parts = (c.location || '').split(',');
+          const st = parts[parts.length - 1]?.trim().replace(/\s+India$/i, '').trim();
+          if (st && st.length > 1 && st.length < 30) stateSet.add(st);
         });
-        setAllCompanies(unique);
-      } catch (error) {
-        console.error(error);
-        setAllCompanies([]);
-      }
-      setLoading(false);
-    };
-    fetchCompanies();
+        setStates(Array.from(stateSet).slice(0, 10));
+      })
+      .catch(() => setAllCompanies([]))
+      .finally(() => setLoading(false));
   }, []);
 
-  // 4. Filtering & Sorting
-  useEffect(() => {
-    let filtered = allCompanies;
-
-    // Filter by industry (map sectors[0] as industry)
-    if (selectedIndustry !== 'All') {
-      filtered = filtered.filter(company =>
-        (company.sectors?.[0] || '').toLowerCase() === selectedIndustry.toLowerCase()
+  const filtered = useMemo(() => {
+    let list = allCompanies;
+    if (industry !== 'all') list = list.filter(c => getIndustry(c) === industry);
+    if (selSectors.length) list = list.filter(c => selSectors.some(s => getSectors(c).includes(s)));
+    if (selStates.length) {
+      list = list.filter(c => {
+        const parts = (c.location || '').split(',');
+        const st = parts[parts.length - 1]?.trim().replace(/\s+India$/i, '').trim();
+        return selStates.includes(st);
+      });
+    }
+    if (verifiedOnly) list = list.filter(c => c.reviewStatus === 'approved');
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(c =>
+        c.companyName?.toLowerCase().includes(q) ||
+        c.companyDescription?.toLowerCase().includes(q) ||
+        c.location?.toLowerCase().includes(q)
       );
     }
-
-    // Filter by search query
-    if (searchQuery) {
-      filtered = filtered.filter(company =>
-        company.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.aboutDescription?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Sorting
-    filtered = [...filtered].sort((a, b) => {
-      switch (sortBy) {
-        case 'companyName':
-          return (a.companyName || '').localeCompare(b.companyName || '');
-        case 'createdAt':
-          // Sort by creation date (newest first)
-          const dateA = new Date(a.createdAt || 0).getTime();
-          const dateB = new Date(b.createdAt || 0).getTime();
-          return dateB - dateA; // Descending order (newest first)
-        default:
-          return 0;
-      }
+    return [...list].sort((a, b) => {
+      if (sortBy === 'companyName') return (a.companyName || '').localeCompare(b.companyName || '');
+      if (sortBy === 'createdAt') return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      if (sortBy === 'featured') return ((b.reviewStatus === 'approved') ? 0 : 1) - ((a.reviewStatus === 'approved') ? 0 : 1);
+      return 0;
     });
+  }, [allCompanies, industry, selSectors, selStates, verifiedOnly, search, sortBy]);
 
-    setFilteredCompanies(filtered);
-    setCurrentPage(1);
-  }, [allCompanies, selectedIndustry, sortBy, searchQuery]);
+  const totalPages = Math.ceil(filtered.length / perPage);
+  const current = filtered.slice((page - 1) * perPage, page * perPage);
 
-  // 5. Pagination
-  const indexOfLastCompany = currentPage * companiesPerPage;
-  const indexOfFirstCompany = indexOfLastCompany - companiesPerPage;
-  const currentCompanies = filteredCompanies.slice(indexOfFirstCompany, indexOfLastCompany);
-  const totalPages = Math.ceil(filteredCompanies.length / companiesPerPage);
-
-  // 6. Industry Colors (optional)
-  const getIndustryColor = (industry: string | undefined) => {
-    switch (industry) {
-      case 'Drone Manufacturing': return 'bg-black';
-      case 'AI Systems': return 'bg-gray-900';
-      case 'GIS Mapping': return 'bg-gray-800';
-      case 'Software & Cloud': return 'bg-gray-700';
-      case 'Professional Services': return 'bg-gray-600';
-      case 'Energy & Propulsion': return 'bg-black';
-      case 'Startups': return 'bg-gray-900';
-      default: return 'bg-gray-800';
-    }
+  const toggleSector = (s: string) => {
+    setSelSectors(p => p.includes(s) ? p.filter(x => x !== s) : [...p, s]);
+    setPage(1);
+  };
+  const toggleState = (s: string) => {
+    setSelStates(p => p.includes(s) ? p.filter(x => x !== s) : [...p, s]);
+    setPage(1);
   };
 
-  // 7. Handle card click
-  const handleCardClick = (company: Company) => {
-    const slug = (company as any).urlSlug || (company as any).publishedId || (company as any).companyId;
+  const handleCardClick = (c: Company) => {
+    const slug = c.urlSlug || c.publishedId || c.companyId;
     if (!slug) return;
-    if (company.templateSelection === 'template-1') {
-      navigate(`/company/${slug}`);
-    } else if (company.templateSelection === 'template-2') {
-      navigate(`/companies/${slug}`);
-    }
+    if (c.templateSelection === 'template-2') navigate(`/companies/${slug}`);
+    else navigate(`/company/${slug}`);
   };
 
-  // 8. Company Card Component (reusable)
-  const CompanyCard: React.FC<{ company: Company; index: number }> = ({ company, index }) => {
-    const totalServices = company.servicesCount || 0;
-    const totalProducts = company.productsCount || 0;
+  const chipStyle = (on: boolean): React.CSSProperties => ({
+    background: on ? '#0A0A0A' : 'transparent',
+    color: on ? '#F5C518' : '#555',
+    border: `1.5px solid ${on ? '#0A0A0A' : '#E0E0E0'}`,
+  });
 
-    return (
-      <div
-        onClick={() => handleCardClick(company)}
-        className="group bg-[#f1ee8e] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02] flex flex-col justify-between"
-      >
-        {/* Image Section - Full Width Banner */}
-        <div className="relative w-full h-56 bg-yellow-100 overflow-hidden p-6">
-          {company.previewImage ? (
-            <img
-              src={company.previewImage}
-              alt={company.companyName}
-              className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-110"
-              onError={(e) => {
-                const target = e.currentTarget;
-                target.style.display = 'none';
-                const fallback = target.nextElementSibling as HTMLElement;
-                if (fallback) fallback.style.display = 'flex';
-              }}
-            />
-          ) : null}
-          <div
-            className="flex-col justify-center items-center w-full h-full bg-gradient-to-br from-yellow-300 to-yellow-400 px-4 gap-2"
-            style={{ display: company.previewImage ? 'none' : 'flex' }}
-          >
-            <p className="text-2xl font-black text-gray-800 text-center uppercase leading-snug tracking-wide">
-              {company.companyName.split(' ')[0]}
-            </p>
-            <p className="text-xs font-semibold text-gray-700 text-center uppercase tracking-widest opacity-70">
-              {company.companyName}
-            </p>
+  const activeFiltersCount = selSectors.length + selStates.length + (verifiedOnly ? 1 : 0);
+
+  const verifiedCount = allCompanies.filter(c => c.reviewStatus === 'approved').length;
+
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+    .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+    .reduce<(number | '...')[]>((acc, p, i, arr) => {
+      if (i > 0 && typeof arr[i - 1] === 'number' && (p as number) - (arr[i - 1] as number) > 1) acc.push('...');
+      acc.push(p); return acc;
+    }, []);
+
+  if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Companies..." />;
+
+  const indryCounts: Record<string, number> = { all: allCompanies.length };
+  for (const ind of ['drone', 'gis', 'ai'] as const) {
+    indryCounts[ind] = allCompanies.filter(c => getIndustry(c) === ind).length;
+  }
+
+  const Sidebar = () => (
+    <aside className={`co-sidebar${sidebarOpen ? ' open' : ''}`}>
+      <div className="co-sidebar-title">
+        <SlidersHorizontal size={14} /> Filters
+        {activeFiltersCount > 0 && (
+          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#CC1F1F', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
+            {activeFiltersCount}
+          </span>
+        )}
+      </div>
+
+      {/* Package Tier */}
+      <div className="co-filter-grp">
+        <div className="co-fl-label">Package Tier</div>
+        <div className="co-chips">
+          {[{ l: '⭐ Brand', v: 'brand' }, { l: '🔵 Scale', v: 'scale' }, { l: '📌 Reach', v: 'reach' }].map(t => (
+            <button key={t.v} className="co-chip" style={chipStyle(false)} disabled>{t.l}</button>
+          ))}
+        </div>
+        <div style={{ fontSize: 10, color: '#aaa', marginTop: 5 }}>Coming soon</div>
+      </div>
+
+      {/* Sector */}
+      <div className="co-filter-grp">
+        <div className="co-fl-label">Sector</div>
+        <div className="co-chips">
+          {ALL_SECTORS.map(s => (
+            <button key={s} className="co-chip" onClick={() => toggleSector(s)} style={chipStyle(selSectors.includes(s))}>{s}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* State */}
+      {states.length > 0 && (
+        <div className="co-filter-grp">
+          <div className="co-fl-label">State</div>
+          <div className="co-chips">
+            {states.map(st => (
+              <button key={st} className="co-chip" onClick={() => toggleState(st)} style={chipStyle(selStates.includes(st))}>{st}</button>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Info Section */}
-        <div className="flex flex-col items-center px-4 pt-4 pb-2 text-center">
-          <div className="flex items-center gap-1 mb-1">
-            <h3 className="text-lg font-bold text-black transition-colors group-hover:text-gray-800 line-clamp-1">
-              {company.companyName}
-            </h3>
-            {company.reviewStatus === 'approved' && (
-              <BadgeCheck className="w-5 h-5 text-green-600 flex-shrink-0" title="Verified" />
-            )}
-          </div>
-          {company.location && (
-            <div className="flex gap-1 justify-center items-center text-xs text-gray-600">
-              <MapPin className="w-3 h-3" />
-              {company.location}
-            </div>
-          )}
+      {/* Verification */}
+      <div className="co-filter-grp">
+        <div className="co-fl-label">Verification</div>
+        <div className="co-chips">
+          <button className="co-chip" onClick={() => { setVerifiedOnly(!verifiedOnly); setPage(1); }} style={chipStyle(verifiedOnly)}>
+            ✓ DGCA-Verified only
+          </button>
         </div>
+      </div>
 
-        {/* Bottom Section */}
-        <div className="flex flex-col flex-1 justify-between px-4 pb-4">
-          <p className="mb-3 text-xs text-gray-700 line-clamp-2 text-center">
-            {company.companyDescription || "No company description."}
-          </p>
+      {/* Clear */}
+      {activeFiltersCount > 0 && (
+        <button onClick={() => { setSelSectors([]); setSelStates([]); setVerifiedOnly(false); setPage(1); }}
+          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#CC1F1F', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          <X size={12} /> Clear all filters
+        </button>
+      )}
+    </aside>
+  );
 
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            <div className="py-1 text-center bg-yellow-200 rounded-md">
-              <div className="text-sm font-bold text-black">{totalServices}</div>
-              <div className="text-[10px] text-gray-600">Services</div>
+  return (
+    <>
+      <style>{CSS}</style>
+      <div className="co-page">
+
+        {/* HERO */}
+        <section className="co-hero">
+          <div className="co-hero-i">
+            <h1>Find verified <span>Drone, GIS &amp; AI</span> companies</h1>
+            <a href="/form" style={{ flexShrink: 0, padding: '5px 14px', background: '#F5C518', color: '#0A0A0A', borderRadius: 6, fontSize: 12, fontWeight: 800, textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'Poppins,sans-serif' }}>+ List Your Company</a>
+            <div className="co-stats">
+              {[
+                { n: allCompanies.length, l: 'Listed' },
+                { n: verifiedCount, l: 'Verified' },
+                { n: allCompanies.reduce((s, c) => s + (Number(c.productsCount) || 0), 0), l: 'Products' },
+                { n: allCompanies.reduce((s, c) => s + (Number(c.servicesCount) || 0), 0), l: 'Services' },
+              ].map(st => (
+                <div key={st.l}>
+                  <div className="co-stat-n">{st.n}</div>
+                  <div className="co-stat-l">{st.l}</div>
+                </div>
+              ))}
             </div>
-            <div className="py-1 text-center bg-yellow-200 rounded-md">
-              <div className="text-sm font-bold text-yellow-700">{totalProducts}</div>
-              <div className="text-[10px] text-yellow-700">Products</div>
+          </div>
+        </section>
+
+        {/* INDUSTRY TABS */}
+        <nav className="co-tabs">
+          <div className="co-tabs-i">
+            {(['all', 'drone', 'gis', 'ai'] as const).map(ind => {
+              const active = industry === ind;
+              return (
+                <button key={ind} className="co-tab"
+                  onClick={() => { setIndustry(ind); setPage(1); }}
+                  style={{ color: active ? '#F5C518' : 'rgba(255,255,255,.48)', borderBottomColor: active ? '#F5C518' : 'transparent' }}>
+                  {IND_LABELS[ind]}
+                  <span style={{ fontSize: 10, fontWeight: 800, padding: '1px 7px', borderRadius: 10, background: active ? '#F5C518' : 'rgba(255,255,255,.1)', color: active ? '#0A0A0A' : 'rgba(255,255,255,.7)' }}>
+                    {indryCounts[ind] ?? 0}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+
+        <div className="co-wrap">
+          {/* Search bar */}
+          <div className="co-search-bar">
+            <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
+            <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search companies, names, locations..." />
+          </div>
+
+          {/* Mobile filter toggle */}
+          <button className="co-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+            <SlidersHorizontal size={14} /> Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+          </button>
+
+          <div className="co-layout">
+            <Sidebar />
+
+            <div className="co-main">
+              <div className="co-note">⭐ Verified companies appear first. Get your company verified by submitting GST documents in your dashboard.</div>
+
+              <div className="co-resbar">
+                <div style={{ fontSize: 12.5, color: '#777' }}>
+                  <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> {filtered.length === 1 ? 'company' : 'companies'}
+                  {industry !== 'all' && <span style={{ color: IND_COLORS[industry], fontWeight: 600 }}> · {IND_LABELS[industry]}</span>}
+                </div>
+                <select className="co-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
+                  <option value="featured">Verified first</option>
+                  <option value="createdAt">Newest first</option>
+                  <option value="companyName">A – Z</option>
+                </select>
+              </div>
+
+              {current.length === 0 ? (
+                <div className="co-empty">
+                  <Search size={48} style={{ color: '#ccc', margin: '0 auto 12px' }} />
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No companies found</div>
+                  <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
+                </div>
+              ) : (
+                <div className="co-grid">
+                  {withInlineAds(current, (c, i) => <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} />)}
+                </div>
+              )}
+
+              {totalPages > 1 && (
+                <div className="co-pages">
+                  <button className="co-page-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                    style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
+                    Previous
+                  </button>
+                  {pages.map((p, i) => p === '...' ? (
+                    <span key={`e${i}`} style={{ padding: '7px 4px', color: '#777' }}>…</span>
+                  ) : (
+                    <button key={p} className="co-page-btn" onClick={() => setPage(p as number)}
+                      style={{ border: `1.5px solid ${page === p ? '#0A0A0A' : '#E5E5E5'}`, background: page === p ? '#0A0A0A' : '#fff', color: page === p ? '#F5C518' : '#1A1A1A', cursor: 'pointer' }}>
+                      {p}
+                    </button>
+                  ))}
+                  <button className="co-page-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                    style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-    );
-  };
+    </>
+  );
+};
 
-  if (loading) {
-    return (
-      <LoadingScreen
-        logoSrc="/images/logo.png"
-        loadingText="Loading Companies..."
-      />
-    );
-  }
+const CompanyCard: React.FC<{ company: Company; onClick: () => void }> = ({ company, onClick }) => {
+  const ind = getIndustry(company);
+  const indColor = IND_COLORS[ind] || '#444';
+  const verified = company.reviewStatus === 'approved';
+  const bg = avColor(company.companyName);
+  const [imgErr, setImgErr] = useState(false);
+  const detectedSectors = getSectors(company);
 
   return (
-    <div className="pt-16 min-h-screen bg-yellow-400">
-      {/* Hero Section */}
-      <section className="mx-auto max-w-7xl overflow-hidden relative sm:px-6 lg:px-8 py-8 flex md:flex-row flex-col justify-between items-center md:items-start">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-11 left-10 w-32 h-32 rounded-full blur-2xl animate-pulse bg-yellow-200/30"></div>
-          <div className="absolute right-10 bottom-10 w-40 h-40 rounded-full blur-2xl animate-pulse bg-yellow-600/20" style={{ animationDelay: '2s' }}></div>
+    <div className="co-card" onClick={onClick}>
+      <div style={{ height: 4, background: indColor }} />
+
+      <div className="co-card-top">
+        <div className="co-avatar" style={{ background: bg }}>
+          {company.previewImage && !imgErr ? (
+            <img src={company.previewImage} alt="" onError={() => setImgErr(true)} />
+          ) : getInitials(company.companyName)}
         </div>
-
-        <div className="text-center md:text-left">
-          <h1 className="mb-2 text-3xl mt-[40px] sm:mt-[0px] font-black tracking-tight text-black md:text-5xl">
-            Companies Directory
-          </h1>
-          <p className="mb-4 max-w-2xl mt-[15px] text-sm md:text-xl text-black/80">
-            Explore top companies leading drone, AI, and geospatial tech.
-          </p>
-        </div>
-
-        <button
-          onClick={() => navigate('/form', { state: { templateId: 1 } })}
-          className="px-6 h-12 text-sm font-semibold text-white bg-black rounded-lg transition duration-300 hover:bg-gray-800"
-        >
-          List your Company
-        </button>
-      </section>
-
-      {/* Filter Section */}
-      <section className="sticky top-16 z-40 py-3 bg-yellow-400 border-b border-black/10">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-2 justify-between items-center md:flex-row">
-            {/* Search Bar */}
-            <div className="relative flex-1 max-w-xs">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="h-4 w-4 text-black/60" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search companies..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="py-2 pr-3 pl-10 w-full text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 placeholder-black/60"
-              />
-            </div>
-
-            {/* Filter and Sort Controls */}
-            <div className="flex gap-3">
-              <div className="relative">
-                <select
-                  value={selectedIndustry}
-                  onChange={(e) => setSelectedIndustry(e.target.value)}
-                  className="px-3 py-2 w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
-                >
-                  {['All'].concat(
-                    Array.from(new Set(allCompanies.flatMap(c => c.sectors ?? [])))
-                  ).map(industry => (
-                    <option key={industry} value={industry}>
-                      {industry === 'All' ? 'All Industries' : industry}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-black/60" />
-              </div>
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={e => setSortBy(e.target.value)}
-                  className="px-3 py-2 w-48 text-sm font-medium text-black bg-yellow-200 rounded-lg border-2 backdrop-blur-sm transition-all duration-300 appearance-none border-black/20 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40"
-                >
-                  <option value="companyName">Sort by Name</option>
-                  <option value="createdAt">Sort by Date (Newest)</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 w-4 h-4 transform -translate-y-1/2 pointer-events-none text-black/60" />
-              </div>
-            </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span className="co-card-name">{company.companyName}</span>
+            {verified && <BadgeCheck size={14} style={{ color: '#1a7a3a', flexShrink: 0 }} />}
           </div>
-
-          {/* Active Filters */}
-          <div className="flex flex-wrap gap-2 mt-2">
-            {selectedIndustry !== 'All' && (
-              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
-                Industry: {selectedIndustry}
-                <button onClick={() => setSelectedIndustry('All')} className="text-sm transition-colors duration-200 hover:text-white">×</button>
-              </span>
-            )}
-            {searchQuery && (
-              <span className="flex gap-1 items-center px-3 py-1 text-xs font-medium text-yellow-400 bg-black rounded-full">
-                Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="text-sm transition-colors duration-200 hover:text-white">×</button>
-              </span>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* All Companies Section */}
-      <section className="py-8 bg-yellow-400">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex gap-2 items-center">
-              <h2 className="text-2xl font-black text-black md:text-3xl">
-                All Companies
-              </h2>
-              <span className="hidden px-3 py-1 text-sm font-medium text-black bg-yellow-200 rounded-full">
-                {filteredCompanies.length} {filteredCompanies.length === 1 ? 'company' : 'companies'}
-              </span>
-            </div>
-            <div className="text-black/60">
-              Page {currentPage} of {totalPages}
-            </div>
-          </div>
-
-          {currentCompanies.length === 0 ? (
-            <div className="py-16 text-center">
-              <div className="p-12 mx-auto max-w-md rounded-3xl backdrop-blur-sm bg-white/80">
-                <Search className="mx-auto mb-4 w-16 h-16 text-black/40" />
-                <h3 className="mb-2 text-2xl font-bold text-black">No companies found</h3>
-                <p className="text-black/60">Try adjusting your filters or search terms</p>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {currentCompanies.map((company, idx) => (
-                <CompanyCard key={`all-${company.companyName}-${idx}`} company={company} index={idx} />
-              ))}
-            </div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center mt-12">
-              <div className="flex gap-2 items-center">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 font-medium text-black rounded-xl border-2 backdrop-blur-sm transition-all duration-300 bg-white/80 border-black/20 hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                {[...Array(totalPages)].map((_, index) => {
-                  const page = index + 1;
-                  if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${page === currentPage
-                          ? 'bg-black text-yellow-400 border-2 border-black'
-                          : 'bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40'
-                          }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  } else if (page === currentPage - 2 || page === currentPage + 2) {
-                    return <span key={page} className="px-2 text-black/60">...</span>;
-                  }
-                  return null;
-                })}
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 font-medium text-black rounded-xl border-2 backdrop-blur-sm transition-all duration-300 bg-white/80 border-black/20 hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
+          {company.location && (
+            <div className="co-card-loc"><MapPin size={10} />{company.location}</div>
           )}
         </div>
-      </section>
+      </div>
+
+      <div style={{ padding: '7px 13px', display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+        {verified && <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#e8f5ec', color: '#1a7a3a', textTransform: 'uppercase' as const }}>Verified</span>}
+        {ind !== 'all' && <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 7, background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor, textTransform: 'uppercase' as const }}>{ind.toUpperCase()}</span>}
+        {detectedSectors.slice(0, 1).map(s => (
+          <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 7, background: '#F8F8F8', color: '#555', border: '1px solid #E5E5E5' }}>{s}</span>
+        ))}
+      </div>
+
+      <p className="co-card-desc">{company.companyDescription || company.aboutDescription || 'No description available.'}</p>
+
+      {((Number(company.servicesCount) || 0) > 0 || (Number(company.productsCount) || 0) > 0) && (
+        <div style={{ padding: '0 13px 9px', display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+          {(Number(company.productsCount) || 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>📦 {company.productsCount} products</span>}
+          {(Number(company.servicesCount) || 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>🔧 {company.servicesCount} services</span>}
+        </div>
+      )}
+
+      <div className="co-card-foot">
+        <button className="co-btn-out" onClick={e => { e.stopPropagation(); onClick(); }}>View Profile <ChevronRight size={11} /></button>
+        <button className="co-btn-red" onClick={e => { e.stopPropagation(); onClick(); }}>Enquire</button>
+      </div>
     </div>
   );
 };

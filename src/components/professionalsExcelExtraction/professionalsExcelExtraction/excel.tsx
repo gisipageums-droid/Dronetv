@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Eye, Search, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import { ADMIN_API, PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
 
 // Type definitions
 interface ExcelDataItem {
@@ -182,7 +183,7 @@ const ProfessionalsExcelDataProcessor = () => {
     // Legacy function - posts all data at once
     setPostingStatus({ loading: true });
 
-    const API_ENDPOINT = 'https://0ang8mgh10.execute-api.ap-south-1.amazonaws.com/prod/';
+    const API_ENDPOINT = PROFESSIONAL_API ? `${PROFESSIONAL_API}/` : `${LAMBDA.profExcelUpload}/`;
 
     try {
       // Prepare all data for batch posting
@@ -251,8 +252,8 @@ const ProfessionalsExcelDataProcessor = () => {
       }
     }));
 
-    // const API_ENDPOINT = 'https://3qw4mfji02.execute-api.ap-south-1.amazonaws.com/prod/ingest';
-    const API_ENDPOINT = 'https://0ang8mgh10.execute-api.ap-south-1.amazonaws.com/prod/';
+    // const API_ENDPOINT = ADMIN_API ? `${ADMIN_API}/ingest` : `${LAMBDA.adminIngest}/ingest`;
+    const API_ENDPOINT = PROFESSIONAL_API ? `${PROFESSIONAL_API}/` : `${LAMBDA.profExcelUpload}/`;
 
     // 🔑 Stabilize idempotency for the whole run
     const batchUploadedAtIso = new Date().toISOString();
@@ -360,8 +361,8 @@ const ProfessionalsExcelDataProcessor = () => {
         throw new Error('No uploadId found for this item');
       }
 
-      // const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev/'; // Replace with your actual API
-      const GENERATE_API_ENDPOINT = 'https://il6m5mp6ak.execute-api.ap-south-1.amazonaws.com/dev1/'; // Replace with your actual API
+      // const GENERATE_API_ENDPOINT = ADMIN_API ? `${ADMIN_API}/` : `${LAMBDA.adminGen}/`; // Replace with your actual API
+      const GENERATE_API_ENDPOINT = PROFESSIONAL_API ? `${PROFESSIONAL_API}/` : `${LAMBDA.profExcelGenerate}/`; // Replace with your actual API
 
       // Prepare payload for generate API
       const payload = {
@@ -419,8 +420,8 @@ const ProfessionalsExcelDataProcessor = () => {
       }
     }));
 
-    // const GENERATE_API_ENDPOINT = 'https://18pvso3ggh.execute-api.ap-south-1.amazonaws.com/dev';
-    const GENERATE_API_ENDPOINT = 'https://il6m5mp6ak.execute-api.ap-south-1.amazonaws.com/dev1/';
+    // const GENERATE_API_ENDPOINT = ADMIN_API ? `${ADMIN_API}` : `${LAMBDA.adminGen}`;
+    const GENERATE_API_ENDPOINT = PROFESSIONAL_API ? `${PROFESSIONAL_API}/` : `${LAMBDA.profExcelGenerate}/`;
 
     // Generate websites one by one with actual API calls
     for (let i = 0; i < postedItems.length; i++) {

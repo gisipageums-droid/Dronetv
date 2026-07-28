@@ -77,7 +77,7 @@ export const FormStep: React.FC<FormStepProps> = ({
                         isActive
                           ? 'bg-yellow-400 text-black'
                           : isCompleted
-                          ? 'bg-amber-600 text-white'
+                          ? 'bg-amber-600 text-black'
                           : 'bg-gray-300 text-gray-600'
                       }`}>
                         {isCompleted ? '✓' : stepNumber}
@@ -112,7 +112,13 @@ export const FormStep: React.FC<FormStepProps> = ({
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto px-6 py-6">
+      <form
+        className="max-w-4xl mx-auto px-6 py-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onNext && onNext();
+        }}
+      >
         {/* Page Title */}
         <div className="mb-4">
           <h1 className="text-2xl font-bold text-black mb-1">{title}</h1>
@@ -129,6 +135,7 @@ export const FormStep: React.FC<FormStepProps> = ({
         {/* Navigation - Updated with skip button */}
         <div className="flex justify-between items-center bg-white rounded-lg shadow-md border border-amber-200 p-3">
           <button
+            type="button"
             onClick={onPrev}
             disabled={isFirstStep}
             className={`flex items-center px-4 py-2 rounded-md font-medium transition-all ${
@@ -145,6 +152,7 @@ export const FormStep: React.FC<FormStepProps> = ({
             {/* Skip Button - Only show for steps 2-5 */}
             {/* {showSkip && !isLastStep && (
               <motion.button
+               type="button"
                whileInView={{opacity:[0,1] , y:[-5,0]}}
                transition={{duration:0.5,ease:"easeIn"}}
                whileHover={{y:[0,-2]}}
@@ -159,12 +167,11 @@ export const FormStep: React.FC<FormStepProps> = ({
 
             {/* Next/Submit Button */}
             <motion.button
-           
+              type="submit"
              whileInView={{opacity:[0,1] , y:[-5,0]}}
                transition={{duration:0.5,ease:"easeIn"}}
                whileHover={{y:[0,-2]}}
                whileTap={{scale:[1,0.9]}}
-              onClick={onNext}
               disabled={!isValid || isSubmitting}
               className={`flex items-center px-6 py-2 rounded-md font-medium transition-all ${
                 !isValid || isSubmitting
@@ -186,7 +193,7 @@ export const FormStep: React.FC<FormStepProps> = ({
             </motion.button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

@@ -330,7 +330,7 @@
 //         formData.append('userId', userId);
 //         formData.append('fieldName', `certification_${certId}`);
 
-//         const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+//         const uploadResponse = await fetch(MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`, {
 //           method: 'POST',
 //           body: formData,
 //         });
@@ -1071,6 +1071,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 // Text limits
 const TEXT_LIMITS = {
@@ -1380,7 +1381,7 @@ export function Certifications({
     formData.append("fieldName", "certification_image");
 
     const uploadResponse = await fetch(
-      `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+      MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`,
       {
         method: "POST",
         body: formData,

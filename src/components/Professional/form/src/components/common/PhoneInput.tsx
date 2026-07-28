@@ -45,7 +45,7 @@ export const PhoneInput = ({
         placeholder={placeholder}
         required={required}
         maxLength={10}
-        className="flex-1 px-3 py-2 focus:outline-none rounded-r-lg"
+        className="flex-1 px-3 py-2 focus:outline-none rounded-r-lg text-gray-900 bg-white"
       />
     </div>
   );

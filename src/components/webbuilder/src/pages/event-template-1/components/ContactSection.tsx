@@ -17,7 +17,6 @@ const ContactSection: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Submitted:', formData);
   };
 
   return (

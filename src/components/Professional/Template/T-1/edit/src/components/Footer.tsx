@@ -129,7 +129,7 @@
 //               whileHover={{ scale: 1.02 }}
 //               className="flex items-center space-x-2 mb-4"
 //             >
-//               <div className="rounded-full bg-yellow-500 text-white h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+//               <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
 //                 <span className="uppercase">
 //                   {content.personalInfo.name[0] || "P"}
 //                 </span>
@@ -655,7 +655,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               whileHover={{ scale: 1.02 }}
               className="flex items-center space-x-2 mb-4"
             >
-              <div className="rounded-full bg-yellow-500 text-white h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+              <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
                 <span className="uppercase">
                   {editedContent.personalInfo.name[0] || "P"}
                 </span>

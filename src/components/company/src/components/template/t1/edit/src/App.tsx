@@ -16,6 +16,7 @@ import { useLocation, useParams } from "react-router-dom";
 // Import the new editable components
 import EditableGallerySection from "./components/Gallery";
 import EditableCompanyProfile from "./components/Profile";
+import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 
 export default function App() {
   const [componentStates, setComponentStates] = useState({});
@@ -37,7 +38,7 @@ export default function App() {
     if (!userId || !draftId || loadedRef.current) return;
     loadedRef.current = true;
 
-    const API_URL = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${userId}/${draftId}?template=template-1`;
+    const API_URL = COMPANY_API ? `${COMPANY_API}/api/draft/${userId}/${draftId}?template=template-1` : `${LAMBDA.companyDraft}/api/draft/${userId}/${draftId}?template=template-1`;
 
     // Form passed data directly — show template immediately
     if (location.state?.aiGenData) {

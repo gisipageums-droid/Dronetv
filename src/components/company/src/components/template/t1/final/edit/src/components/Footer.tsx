@@ -262,7 +262,7 @@
 //         formData.append("templateSelection", templateSelection);
 
 //         const uploadResponse = await fetch(
-//           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //           {
 //             method: "POST",
 //             body: formData,
@@ -1090,6 +1090,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import Cropper from "react-easy-crop";
 import logo from"/logos/logo.svg"
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 // Enhanced crop helper function (same as Header)
 const createImage = (url) =>
@@ -1394,7 +1395,7 @@ export default function EditableFooter({
         formData.append("templateSelection", templateSelection);
 
         const uploadResponse = await fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
             body: formData,

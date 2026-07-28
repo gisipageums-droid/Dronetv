@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { Linkedin, Twitter, User, Edit2, Loader2, Save, X, Plus, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import Cropper from 'react-easy-crop';
+import { MEDIA_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 // Text limits
 const TEXT_LIMITS = {
@@ -205,7 +206,6 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
   // Initialize data from props
   useEffect(() => {
     if (speakersData && !dataLoaded) {
-      console.log('Initializing speakers data:', speakersData);
 
       // Transform API data to component format with proper fallbacks
       const transformedSpeakers = speakersData.speakers?.map(speaker => ({
@@ -385,7 +385,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
     formData.append('userId', userId);
     formData.append('fieldName', fieldName + Date.now());
 
-    const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`, {
+    const uploadResponse = await fetch(MEDIA_API ? `${MEDIA_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`, {
       method: 'POST',
       body: formData,
     });
@@ -448,7 +448,6 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
           }
 
           const result = await saveResponse.json();
-          console.log('Save successful:', result);
         } catch (apiError) {
           console.error('API save error:', apiError);
           // Continue with local state update even if API fails

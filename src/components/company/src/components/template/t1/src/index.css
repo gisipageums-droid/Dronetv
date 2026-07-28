@@ -5634,13 +5634,6 @@ html {
 }
 
 
-/* Add this CSS to your global styles or CSS file to ensure header visibility */
-
-/* Force header elements to be visible */
-header {
-  z-index: 999999 !important;
-  position: fixed !important;
-}
 
 /* Mobile menu button visibility fix */
 header button[aria-label="Toggle mobile menu"] {

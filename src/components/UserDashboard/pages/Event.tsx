@@ -3,14 +3,47 @@ import {
   Building2,
   Edit,
   Eye,
+  Image,
   MapPin,
   Plus,
   Search,
   Users,
 } from "lucide-react";
-import React, { useState, useMemo, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
+import ListingLimitBanner from "../components/common/ListingLimitBanner";
+import { EVENTS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+const DEFAULT_EVENT_IMAGE_PATHS = new Set(["/assets/default-event-image.png", "/images/default-event-image.png"]);
+const isCustomImageUrl = (url: string | undefined) => !!url && !DEFAULT_EVENT_IMAGE_PATHS.has(url);
+
+// Same category tabs as the admin event dashboard (EventAdminDashboard.tsx) — sidebar
+// "Expos"/"Conferences"/"Workshops" links deep-link here via ?view=, and the sidebar
+// "Event Calendar" link and "My Listings > Events" both land on the unfiltered "all" view.
+const VIEW_TABS = [
+  { id: "all", label: "All Events" },
+  { id: "expos", label: "Expos" },
+  { id: "conferences", label: "Conferences" },
+  { id: "workshops", label: "Workshops" },
+];
+
+function matchesView(event: EventCard, view: string): boolean {
+  if (view === "all") return true;
+  const cat = (event.category || "").toLowerCase();
+  if (view === "expos") return cat.includes("expo");
+  if (view === "conferences") return cat.includes("conference");
+  if (view === "workshops") return cat.includes("workshop");
+  return true;
+}
+
+function getEventLimit(earned: number) {
+  if (earned >= 8000) return Infinity;
+  if (earned >= 2000) return 10;
+  if (earned >= 500) return 3;
+  return 2;
+}
 
 interface EventCard {
   heroBannerImage: string | undefined;
@@ -89,8 +122,49 @@ const EventCard: React.FC<EventCardProps> = ({
   onEdit,
   event,
 }) => {
-  const placeholderImg =
-    event.previewImage || event?.eventName?.charAt(0) || "E";
+  const placeholderImg = event?.eventName?.charAt(0) || "E";
+  const [thumbModal, setThumbModal] = useState(false);
+  const [thumbUrl, setThumbUrl] = useState('');
+  const [thumbSaving, setThumbSaving] = useState(false);
+  const [titleModal, setTitleModal] = useState(false);
+  const [titleValue, setTitleValue] = useState('');
+  const [titleSaving, setTitleSaving] = useState(false);
+
+  const handleSaveThumbnail = useCallback(async () => {
+    if (!thumbUrl.trim()) return;
+    setThumbSaving(true);
+    try {
+      await fetch(
+        EVENTS_API ? `${EVENTS_API}/event/${event.eventId}` : `${LAMBDA.eventsAdmin}/event/${event.eventId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId: event.eventId, action: 'update', userId: event.userId, thumbnailUrl: thumbUrl.trim() }),
+        }
+      );
+      event.thumbnailUrl = thumbUrl.trim();
+      setThumbModal(false);
+    } catch { /* best effort */ }
+    finally { setThumbSaving(false); }
+  }, [thumbUrl, event]);
+
+  const handleSaveTitle = useCallback(async () => {
+    if (!titleValue.trim()) return;
+    setTitleSaving(true);
+    try {
+      await fetch(
+        EVENTS_API ? `${EVENTS_API}/event/${event.eventId}` : `${LAMBDA.eventsAdmin}/event/${event.eventId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId: event.eventId, action: 'update', userId: event.userId, eventName: titleValue.trim() }),
+        }
+      );
+      event.eventName = titleValue.trim();
+      setTitleModal(false);
+    } catch { /* best effort */ }
+    finally { setTitleSaving(false); }
+  }, [titleValue, event]);
   const navigate = useNavigate();
 
   const formatDate = (dateString: string): string => {
@@ -148,24 +222,34 @@ const EventCard: React.FC<EventCardProps> = ({
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             {/* Event Image */}
-            <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110">
-              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-yellow-600">
-                {event.previewImage ? (
-                  <img
-                    src={event.heroBannerImage} 
-                    alt={event.eventName}
-                    className="w-full h-full object-cover rounded-md"
-                  />
-                ) : (
-                  placeholderImg
-                )}
+            <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110 cursor-pointer" onClick={() => { setThumbUrl(isCustomImageUrl(event.thumbnailUrl) ? event.thumbnailUrl! : ''); setThumbModal(true); }}>
+              {(isCustomImageUrl(event.thumbnailUrl) || isCustomImageUrl(event.previewImage) || isCustomImageUrl(event.heroBannerImage)) ? (
+                <img
+                  src={event.thumbnailUrl || event.previewImage || event.heroBannerImage}
+                  alt={event.eventName}
+                  className="w-full h-full object-cover"
+                  onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              ) : (
+                <span className="text-2xl font-bold text-yellow-600">{placeholderImg}</span>
+              )}
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <Image className="w-5 h-5 text-white" />
               </div>
             </div>
 
             {/* Event Info */}
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
-                {event?.eventName || "Unnamed Event"}
+              <h3 className="text-lg font-bold text-gray-900 line-clamp-2 flex items-center gap-2">
+                <span>{event?.eventName || "Unnamed Event"}</span>
+                <button
+                  type="button"
+                  onClick={() => { setTitleValue(event.eventName || ''); setTitleModal(true); }}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-yellow-600 flex-shrink-0"
+                  title="Edit event title"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
               </h3>
               <div className="flex items-center text-gray-600 mt-1">
                 <MapPin className="w-4 h-4 mr-1 text-yellow-500" />
@@ -225,7 +309,7 @@ const EventCard: React.FC<EventCardProps> = ({
               onClick={(e) => {
                 e.stopPropagation();
                 if (event?.eventId && event.templateSelection)
-                  onEdit(event.eventId, event.templateSelection);
+                  onEdit(event.submissionId || event.eventId, event.templateSelection);
               }}
               className="flex-1 px-3 py-2 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-500 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-500"
             >
@@ -262,13 +346,52 @@ const EventCard: React.FC<EventCardProps> = ({
           </button>
         </div>
 
-        {/* Event ID */}
-        {/* <div className="mt-4 pt-4 border-t border-yellow-200">
-          <div className="text-xs text-gray-500">
-            ID: {event?.eventId || "No ID"}
-          </div>
-        </div> */}
       </div>
+
+      {/* Thumbnail update modal */}
+      {thumbModal && (
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60" onClick={() => setThumbModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-5" onClick={e => e.stopPropagation()}>
+            <p className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2"><Image className="w-4 h-4 text-yellow-500" /> Update Event Thumbnail</p>
+            <input
+              type="url"
+              value={thumbUrl}
+              onChange={e => setThumbUrl(e.target.value)}
+              placeholder="https://... (image URL)"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-3"
+            />
+            {thumbUrl && <img src={thumbUrl} alt="preview" className="w-full h-32 object-cover rounded-lg mb-3" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setThumbModal(false)} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
+              <button onClick={handleSaveThumbnail} disabled={thumbSaving || !thumbUrl.trim()} className="px-4 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg disabled:opacity-60">
+                {thumbSaving ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Title update modal */}
+      {titleModal && (
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60" onClick={() => setTitleModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-5" onClick={e => e.stopPropagation()}>
+            <p className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2"><Edit className="w-4 h-4 text-yellow-500" /> Edit Event Title</p>
+            <input
+              type="text"
+              value={titleValue}
+              onChange={e => setTitleValue(e.target.value)}
+              placeholder="Event title"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-3"
+            />
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setTitleModal(false)} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
+              <button onClick={handleSaveTitle} disabled={titleSaving || !titleValue.trim()} className="px-4 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg disabled:opacity-60">
+                {titleSaving ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -277,26 +400,38 @@ const EventCard: React.FC<EventCardProps> = ({
 const Events: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const viewFilter = searchParams.get("view") ?? "all";
 
   const { user } = useUserAuth();
-  console.log("user", user);
   const [events, setEvents] = useState<EventCard[]>([]);
-  console.log("events", events)
   const [loading, setloading] = useState(true);
+  const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
+  // Tracks whether the plan/token profile fetch has resolved. Until it has,
+  // totalTokensEarned still holds its 0 default — using it to gate the
+  // "Create New Event" button before then falsely triggers the plan-limit
+  // block (and misroutes to /user-recharge) for users who already have events.
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
-  //get data
   useEffect(() => {
+    const userId = user?.userData?.email;
+    if (!userId) return;
     setloading(true);
-
-    axios.get<EventResponse>(`https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${user?.userData?.email}`).then((response) => {
-      console.log(response.data);
+    axios.get<EventResponse>(EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=user&userId=${userId}` : `https://o9og9e2rik.execute-api.ap-south-1.amazonaws.com/prod/events-dashboard?viewType=user&userId=${userId}`).then((response) => {
       setEvents(response.data.cards);
-    }).catch((error) => {
-      console.log(error);
+    }).catch(() => {
     }).finally(() => {
       setloading(false);
-    })
-  }, []);
+    });
+    fetch(`${PROFILE_API}?userId=${userId}`)
+      .then(r => r.json())
+      .then(d => {
+        const p = d?.profile ?? {};
+        setTotalTokensEarned(p.totalTokensEarned ?? p.tokenBalance ?? 0);
+      })
+      .catch(() => {})
+      .finally(() => setProfileLoaded(true));
+  }, [user?.userData?.email]);
 
   const handleEdit = async (eventId: string, templateSelection: string) => {
     try {
@@ -306,7 +441,6 @@ const Events: React.FC = () => {
         navigate(`/edit/event/t2/final/${eventId}/${user?.userData?.email}`);
       }
     } catch (error) {
-      console.error("Error loading template for editing:", error);
       alert("Failed to load template for editing. Please try again.");
     }
   };
@@ -319,20 +453,21 @@ const Events: React.FC = () => {
         navigate(`/user/events/preview/2/${eventId}/user123`);
       }
     } catch (error) {
-      console.error("Error loading template for preview:", error);
       alert("Failed to load template for preview. Please try again.");
     }
   };
-  console.log("events", events);
-
   const filteredEvents = useMemo(() => {
-    return events?.filter(
-      (event) =>
-        event.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm, events]);
+    return events
+      ?.filter((event) => matchesView(event, viewFilter))
+      .filter(
+        (event) =>
+          event.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+  }, [searchTerm, events, viewFilter]);
+
+  const viewLabel = viewFilter === "expos" ? "Expos" : viewFilter === "conferences" ? "Conferences" : viewFilter === "workshops" ? "Workshops" : "Events Directory";
 
   // Skeleton Loading
   const SkeletonCard: React.FC = () => (
@@ -389,25 +524,58 @@ const Events: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-amber-50 p-8">
-      <div className="flex items-center gap-4 justify-between">
+    <div className="min-h-screen bg-amber-50 p-4 sm:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-0">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-            <Users className="w-6 h-6" />
-            Events Directory
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 flex items-center gap-2">
+            <Users className="w-6 h-6 flex-shrink-0" />
+            {viewLabel}
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 mb-2">
             Browse and manage your events and registrations
           </p>
+          <ListingLimitBanner count={events?.length ?? 0} type="event" label="Events" />
         </div>
 
-        <button
-          onClick={() => navigate("/event/select")}
-          className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-yellow-600 hover:scale-110 transition-all duration-200"
-        >
-          <Plus className="w-5 h-5" />
-          Create New Event
-        </button>
+        {(() => {
+          const limit = getEventLimit(totalTokensEarned);
+          const atLimit = profileLoaded && isFinite(limit) && events.length >= limit;
+          return atLimit ? (
+            <button
+              onClick={() => navigate("/user-recharge")}
+              className="bg-gray-100 text-sm font-medium text-gray-500 flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto border border-gray-300 cursor-not-allowed whitespace-nowrap"
+              title="Plan limit reached. Upgrade to add more."
+            >
+              <Plus className="w-5 h-5" />
+              Limit Reached — Upgrade
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/event/select", viewFilter !== "all" ? { state: { eventType: viewFilter.slice(0, -1) } } : undefined)}
+              className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto hover:bg-yellow-600 hover:scale-110 transition-all duration-200 whitespace-nowrap"
+            >
+              <Plus className="w-5 h-5" />
+              {viewFilter === "expos" ? "Add New Expo" : viewFilter === "conferences" ? "Add New Conference" : viewFilter === "workshops" ? "Add New Workshop" : "Create New Event"}
+            </button>
+          );
+        })()}
+      </div>
+
+      {/* View tabs — same categories as the admin event dashboard */}
+      <div className="flex gap-0 border-b-2 border-yellow-200 mb-4 overflow-x-auto">
+        {VIEW_TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setSearchParams(prev => {
+              if (tab.id === "all") prev.delete("view");
+              else prev.set("view", tab.id);
+              return prev;
+            }, { replace: true })}
+            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-500" : "text-gray-500 border-transparent hover:text-gray-700"}`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       <div className="mb-8 relative">
@@ -445,7 +613,11 @@ const Events: React.FC = () => {
       ) : (
         <div className="text-center py-20 text-gray-500">
           <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
-          No events found matching "{searchTerm}"
+          {searchTerm
+            ? `No events found matching "${searchTerm}"`
+            : viewFilter !== "all"
+              ? `No ${viewLabel.toLowerCase()} yet. Click "Add New ${viewLabel.slice(0, -1)}" to add one.`
+              : "No events yet. Click Create New Event to add one."}
         </div>
       )}
     </div>

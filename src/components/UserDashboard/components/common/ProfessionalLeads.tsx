@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useUserAuth } from "../../../context/context";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { MessageCircle, Send, X, Check, CheckCheck, Clock } from "lucide-react";
+import { MessageCircle, Send, X, Check, CheckCheck, Clock, Coins, Search, Eye, AlertTriangle } from "lucide-react";
+import { AUTH_API, LEADS_API, LAMBDA } from '../../../../lib/apiConfig';
 
 interface Lead {
   leadId: string;
@@ -36,6 +37,8 @@ const ProfessionalLeads: React.FC = () => {
 
   const [leads, setLeads] = useState<Lead[]>([]);
   const [totalTokens, setTotalTokens] = useState(0);
+  const [packageType, setPackageType] = useState("");
+  const hasFreeLeads = packageType === "brand";
   const [showTokenModal, setShowTokenModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -55,12 +58,12 @@ const ProfessionalLeads: React.FC = () => {
     if (!userId) return;
     try {
       const res = await fetch(
-        `https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/profile?userId=${userId}`
+        AUTH_API ? `${AUTH_API}/profile?userId=${userId}` : `${LAMBDA.profile}/profile?userId=${userId}`
       );
       const data = await res.json();
       setTotalTokens(data.profile?.tokenBalance || 0);
+      setPackageType((data.profile?.packageType || "").toLowerCase());
     } catch (error) {
-      console.error("Error fetching user tokens:", error);
     }
   }, [userId]);
 
@@ -69,7 +72,7 @@ const ProfessionalLeads: React.FC = () => {
     if (!userId) return;
     try {
       const res = await fetch(
-        `https://r5mcwn6b10.execute-api.ap-south-1.amazonaws.com/prod/get-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${professionalId}`
+        LEADS_API ? `${LEADS_API}/get-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${professionalId}` : `${LAMBDA.profLeadsGet}/get-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${professionalId}`
       );
       const data = await res.json();
       if (data.success && Array.isArray(data.leads)) {
@@ -88,7 +91,6 @@ const ProfessionalLeads: React.FC = () => {
         setLeads(formattedLeads);
       }
     } catch (error) {
-      console.error("Error fetching leads:", error);
     }
   }, [userId, professionalId]);
 
@@ -96,7 +98,6 @@ const ProfessionalLeads: React.FC = () => {
   useEffect(() => {
     const fetchAll = async () => {
       if (!userId) {
-        console.log("No userId found, skipping API calls");
         setLoading(false);
         return;
       }
@@ -105,7 +106,6 @@ const ProfessionalLeads: React.FC = () => {
         setLoading(true);
         await Promise.all([fetchUserTokens(), fetchLeads()]);
       } catch (error) {
-        console.error("Error in fetchAll:", error);
       } finally {
         setLoading(false);
       }
@@ -116,14 +116,14 @@ const ProfessionalLeads: React.FC = () => {
 
   // handle view lead click to cut 10 token
   const handleViewClick = async (leadId: string) => {
-    if (totalTokens < 10) {
+    if (!hasFreeLeads && totalTokens < 10) {
       setShowTokenModal(true);
       return;
     }
 
     try {
       const res = await fetch(
-        "https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads/view",
+        AUTH_API ? `${AUTH_API}/leads/view` : `${LAMBDA.profile}/leads/view`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -142,10 +142,8 @@ const ProfessionalLeads: React.FC = () => {
         toast.success("Lead viewed successfully!");
         fetchLeads();
       } else {
-        console.error("Error:", data.message);
       }
     } catch (error) {
-      console.error("Error viewing lead:", error);
     }
   };
 
@@ -174,7 +172,7 @@ const ProfessionalLeads: React.FC = () => {
     const id = setInterval(async () => {
       try {
         const response = await fetch(
-          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`,
+          LEADS_API ? `${LEADS_API}/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false` : `${LAMBDA.leadsChat}/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -206,7 +204,6 @@ const ProfessionalLeads: React.FC = () => {
           setChatMessages(transformedMessages);
         }
       } catch (error) {
-        console.error("Error fetching chat messages:", error);
       }
     }, 1000);
 
@@ -237,7 +234,7 @@ const ProfessionalLeads: React.FC = () => {
 
     try {
       const response = await fetch(
-        "https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/send",
+        LEADS_API ? `${LEADS_API}/chat/send` : `${LAMBDA.leadsChat}/chat/send`,
         {
           method: "POST",
           headers: {
@@ -275,7 +272,6 @@ const ProfessionalLeads: React.FC = () => {
         toast.error("Failed to send message");
       }
     } catch (error) {
-      console.error("Error sending message:", error);
       // Remove message if failed
       setChatMessages((prev) =>
         prev.filter((msg) => msg.id !== tempMessage.id)
@@ -350,9 +346,9 @@ const ProfessionalLeads: React.FC = () => {
               Leads Management
             </h2>
           </div>
-          <div className="mt-4 sm:mt-0 bg-amber-500 rounded-xl px-6 py-3 shadow-md">
+          <div className="mt-4 sm:mt-0 bg-amber-700 rounded-xl px-6 py-3 shadow-md">
             <div className="flex items-center">
-              <i className="fas fa-coins text-white text-xl mr-2"></i>
+              <Coins size={20} className="text-white mr-2" />
               <span className="text-white font-bold text-lg">
                 Tokens: {totalTokens}
               </span>
@@ -366,17 +362,17 @@ const ProfessionalLeads: React.FC = () => {
             <input
               type="text"
               placeholder="Search leads..."
-              className="pl-10 pr-4 py-2.5 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white w-full"
+              className="pl-10 pr-4 py-2.5 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white w-full text-gray-900"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <i className="fas fa-search text-amber-500"></i>
+              <Search size={14} className="text-amber-500" />
             </div>
           </div>
 
           <select
-            className="px-4 py-2.5 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
+            className="px-4 py-2.5 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-gray-900"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
@@ -387,10 +383,11 @@ const ProfessionalLeads: React.FC = () => {
         </div>
 
         {/* Leads Table */}
+        {filteredLeads.length > 0 ? (
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-amber-200">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-amber-100">
-              <thead className="bg-amber-500">
+              <thead className="bg-amber-700">
                 <tr>
                   {["Company", "Name", "Subject", "Status", "Action"].map(
                     (header) => (
@@ -405,8 +402,7 @@ const ProfessionalLeads: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-amber-100">
-                {filteredLeads.length > 0 ? (
-                  filteredLeads.map((lead) => (
+                {filteredLeads.map((lead) => (
                     <tr
                       key={lead.leadId}
                       className="hover:bg-amber-50 transition-colors"
@@ -465,52 +461,48 @@ const ProfessionalLeads: React.FC = () => {
                             onClick={() => handleViewClick(lead.leadId)}
                             className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm flex items-center"
                           >
-                            <i className="fas fa-eye mr-2"></i> View (10 tokens)
+                            <Eye size={14} className="mr-2" /> {hasFreeLeads ? "View (Free)" : "View (10 tokens)"}
                           </button>
                         )}
                       </td>
                     </tr>
                   ))
-                ) : (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-16 text-center">
-                      <div className="flex flex-col items-center justify-center">
-                        <div className="bg-amber-100 rounded-full p-4 mb-4">
-                          <MessageCircle className="w-8 h-8 text-amber-500" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-amber-900 mb-2">
-                          No leads found
-                        </h3>
-                        <p className="text-amber-700 text-sm max-w-md">
-                          {searchTerm || selectedCategory !== "All"
-                            ? "Try adjusting your search or filter criteria to find more leads."
-                            : "You haven't received any leads yet. When people contact you through your professional page, they'll appear here."}
-                        </p>
-                        {!searchTerm && selectedCategory === "All" && (
-                          <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200 max-w-sm">
-                            <p className="text-xs text-amber-600">
-                              <strong>Tip:</strong> Share your professional page
-                              to start receiving leads from potential customers.
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                )}
+                }
               </tbody>
             </table>
           </div>
         </div>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 px-6 py-16 text-center">
+            <div className="flex flex-col items-center justify-center">
+              <div className="bg-amber-100 rounded-full p-4 mb-4">
+                <MessageCircle className="w-8 h-8 text-amber-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-amber-900 mb-2">No leads found</h3>
+              <p className="text-amber-700 text-sm max-w-sm">
+                {searchTerm || selectedCategory !== "All"
+                  ? "Try adjusting your search or filter criteria to find more leads."
+                  : "You haven't received any leads yet. When people contact you through your professional page, they'll appear here."}
+              </p>
+              {!searchTerm && selectedCategory === "All" && (
+                <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200 max-w-xs">
+                  <p className="text-xs text-amber-600">
+                    <strong>Tip:</strong> Share your professional page to start receiving leads from potential customers.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Token Modal */}
       {showTokenModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
             <div className="flex justify-center mb-4">
               <div className="bg-amber-100 rounded-full p-3">
-                <i className="fas fa-exclamation-triangle text-amber-600 text-2xl"></i>
+                <AlertTriangle size={24} className="text-amber-600" />
               </div>
             </div>
             <h3 className="text-xl font-bold text-center text-amber-900 mb-2">
@@ -527,7 +519,7 @@ const ProfessionalLeads: React.FC = () => {
               >
                 Cancel
               </button>
-              <button className="flex-1 py-2 bg-amber-500 text-white rounded-lg">
+              <button className="flex-1 py-2 bg-amber-700 text-white rounded-lg">
                 Buy Tokens
               </button>
             </div>
@@ -537,17 +529,17 @@ const ProfessionalLeads: React.FC = () => {
 
       {/* Message Modal */}
       {showMessageModal && selectedLead && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
           <div className="bg-white rounded-2xl shadow-xl w-full h-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="bg-amber-500 px-6 py-4 rounded-t-2xl">
+            <div className="bg-amber-700 px-6 py-4 rounded-t-2xl">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold text-white">Lead Details</h3>
                 <button
                   onClick={closeMessageModal}
                   className="text-white hover:text-amber-200 transition-colors"
                 >
-                  <i className="fas fa-times text-xl"></i>
+                  <X size={20} />
                 </button>
               </div>
             </div>
@@ -670,7 +662,7 @@ const ProfessionalLeads: React.FC = () => {
 
       {/* Chat Modal */}
       {showChatModal && selectedLead && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000000] p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[75vh] flex flex-col">
             {/* Chat Header */}
             <div className="flex items-center justify-between p-3 bg-[#075e54] text-white rounded-t-lg flex-shrink-0">

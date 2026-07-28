@@ -7,21 +7,19 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+
   return (
-    <div className="min-h-screen pt-20 pb-4 px-2 md:px-6 flex bg-gray-50 text-gray-900">
-      <main className="h-screen w-full flex gap-2">
-        {/* Sidebar — desktop only */}
-        <div className="hidden lg:block">
-          <Sidebar />
-        </div>
+    <div className="flex fixed inset-0 pt-20 bg-gray-950 text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
+      {/* Sidebar fills full height */}
+      <div className="hidden lg:flex flex-shrink-0 h-full">
+        <Sidebar />
+      </div>
 
-        {/* Content */}
-        <div className="flex-1 w-full overflow-y-auto rounded-lg shadow-lg border border-yellow-200 pb-20 lg:pb-0">
-          {children}
-        </div>
-      </main>
+      {/* Scrollable content area */}
+      <div className="flex-1 min-w-0 overflow-y-auto pb-20 lg:pb-0 overscroll-contain bg-gray-950">
+        {children}
+      </div>
 
-      {/* Mobile bottom nav */}
       <MobileBottomNav />
     </div>
   );

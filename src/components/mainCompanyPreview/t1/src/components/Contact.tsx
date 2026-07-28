@@ -6,6 +6,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
 import { toast } from "react-toastify";
+import { AUTH_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 export default function Contact({ content, publishedId }) {
   const contactData = content;
@@ -42,7 +43,7 @@ export default function Contact({ content, publishedId }) {
 
     try {
       const response = await fetch(
-        "https://gzl99ryxne.execute-api.ap-south-1.amazonaws.com/Prod/leads-resource/submit",
+        AUTH_API ? `${AUTH_API}/leads-resource/submit` : `${LAMBDA.profile}/leads-resource/submit`,
         {
           method: "POST",
           headers: {
@@ -66,10 +67,8 @@ export default function Contact({ content, publishedId }) {
           category: "Enterprise",
         });
       } else {
-        const err = await response.json();
-        // alert("❌ Failed to send message: " + (err.message || "Unknown error"));
         toast.error(
-          "❌ Failed to send message: " + (err.message || "Unknown error")
+          "❌ Message could not be sent. Please try again or contact the company directly."
         );
       }
     } catch (error) {
@@ -182,6 +181,7 @@ export default function Contact({ content, publishedId }) {
                   placeholder="+1234567890"
                   value={formData.phone}
                   onChange={handleChange}
+                  required
                 />
               </div>
 

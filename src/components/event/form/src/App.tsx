@@ -549,7 +549,7 @@
 //                       index === current
 //                         ? "bg-yellow-400 text-black"
 //                         : index < current
-//                         ? "bg-yellow-400 text-white"
+//                         ? "bg-yellow-400 text-black"
 //                         : "bg-gray-300 text-black"
 //                     }`}
 //                   >
@@ -1051,7 +1051,7 @@
 //                       index === current
 //                         ? "bg-yellow-400 text-black"
 //                         : index < current
-//                         ? "bg-yellow-400 text-white"
+//                         ? "bg-yellow-400 text-black"
 //                         : "bg-gray-300 text-black"
 //                     }`}
 //                   >
@@ -1559,7 +1559,7 @@
 //                       index === current
 //                         ? "bg-yellow-400 text-black"
 //                         : index < current
-//                         ? "bg-yellow-400 text-white"
+//                         ? "bg-yellow-400 text-black"
 //                         : "bg-gray-300 text-black"
 //                     }`}
 //                   >
@@ -1667,7 +1667,7 @@
 
 
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fetchFormStructure, submitForm } from "./api/formApi";
 import { Step1 } from "./components/steps/Step1";
@@ -1685,10 +1685,12 @@ import axios from "axios";
 import { useUserAuth } from "../../../context/context";
 import { AlertTriangle, X } from "lucide-react";
 import { toast } from "sonner";
+import { EVENTS_API, LAMBDA as LAMBDA_CFG } from '../../../../lib/apiConfig';
 
 // ✅ Token Validation API URL
-const TOKEN_VALIDATION_API_URL =
-  "https://zhjkyvzz15.execute-api.ap-south-1.amazonaws.com/dev/";
+const TOKEN_VALIDATION_API_URL = EVENTS_API
+  ? `${EVENTS_API}/token-validation`
+  : LAMBDA_CFG.eventsFormBase;
 
 // ================== Token validation function ====================
 const validateUserTokens = async (
@@ -1809,8 +1811,10 @@ function EventsForm() {
   const { isLogin, user, isAdminLogin } = useUserAuth();
   const { current, next, prev, goTo } = useFormSteps(7); // 6 steps + summary
   const [steps, setSteps] = useState<any[]>([]);
+  const [stepValid, setStepValid] = useState(true);
   const { data, setData, updateField } = useForm();
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [showTokenModal, setShowTokenModal] = useState(false);
@@ -1833,6 +1837,46 @@ function EventsForm() {
 
   const navigate = useNavigate();
   const [formLoader, setFormLoader] = useState(true);
+  const submissionResultRef = useRef<any>(null);
+
+  // Router state (location.state) doesn't survive a page refresh — persist the
+  // selected event type/template to sessionStorage so a mid-form refresh doesn't
+  // silently fall back to the wrong event category.
+  const persistedEventType = (() => {
+    if (location.state?.eventType) {
+      try { sessionStorage.setItem("eventFormType", location.state.eventType); } catch {}
+      return location.state.eventType;
+    }
+    try { return sessionStorage.getItem("eventFormType") || undefined; } catch { return undefined; }
+  })();
+  const persistedTemplateId = (() => {
+    if (location.state?.templateId) {
+      try { sessionStorage.setItem("eventFormTemplateId", String(location.state.templateId)); } catch {}
+      return location.state.templateId;
+    }
+    try { return sessionStorage.getItem("eventFormTemplateId") || undefined; } catch { return undefined; }
+  })();
+
+  const eventTypeLabel = (() => {
+    const t = persistedEventType;
+    if (t === "expo") return "Expo";
+    if (t === "conference") return "Conference";
+    if (t === "workshop") return "Workshop";
+    return "Event";
+  })();
+
+  // The AI generation Lambda is triggered fire-and-forget on submit and takes
+  // a while to finish, so we can't navigate to the generated page immediately.
+  // Kept as a single timer owned by the Loader itself (instead of a second,
+  // uncoordinated setTimeout) so the progress UI and the actual navigation
+  // always finish together rather than the screen going blank mid-animation.
+  const handleLoaderComplete = useCallback(() => {
+    setLoading(false);
+    const response = submissionResultRef.current;
+    if (response) {
+      navigate(`/edit/event/${response.details?.templateSelection == 1 ? "t1" : "t2"}/AIgen/${response.draftId}/${response.userId}`);
+    }
+  }, [navigate]);
 
   // Load form structure and prefill data if editing
   useEffect(() => {
@@ -1894,7 +1938,6 @@ function EventsForm() {
     if (!isLogin && !data.contactInfo?.email) {
       // For non-logged in users without email, we can proceed without token validation
       // or you might want to show a different message
-      console.log("User not logged in and no email provided, skipping token validation");
       return true;
     }
 
@@ -1936,8 +1979,15 @@ function EventsForm() {
 
   // Submit event form
   const handleSubmit = async () => {
+    // Give instant feedback on click — validateBeforeSubmit() makes a real
+    // network call (token check) for non-admin users, which was previously
+    // silent for a few seconds before the loader appeared, making the button
+    // look completely unresponsive.
+    setSubmitting(true);
+
     // First validate tokens only if we have an email to validate with
     const canProceed = await validateBeforeSubmit();
+    setSubmitting(false);
     if (!canProceed) {
       return;
     }
@@ -1998,12 +2048,11 @@ function EventsForm() {
         processingMethod: "separate_upload",
         status: "ai_processing",
         updatedAt: Date.now(),
-        templateSelection: location.state?.templateId,
+        templateSelection: persistedTemplateId,
         version: "1.0",
-        eventType: "conference",
+        eventType: persistedEventType || "conference",
       };
 
-      console.log("Event submission payload:", payload);
 
       let response;
 
@@ -2013,15 +2062,14 @@ function EventsForm() {
           `https://your-event-api-endpoint.com/${userId}/${eventId}`,
           payload
         );
-        console.log("Update response:", response.data);
       }
       // Otherwise → create new event (POST)
       else {
         response = await submitForm(payload);
-        console.log("Create response:", response);
       }
 
       setSuccess(true);
+      submissionResultRef.current = response;
 
       // Clear localStorage draft after successful submission
       try {
@@ -2030,17 +2078,12 @@ function EventsForm() {
         console.error("Failed to clear local draft after submit", e);
       }
 
-      setTimeout(() => setLoading(false), 30000);
-
-      // Navigate to event preview/edit page
-      setTimeout(() => {
-        // navigate(`/event/edit/${finalSubmissionId}/${emil}`);
-        navigate(`/edit/event/${response.details.templateSelection == 1 ? "t1" : "t2"}/AIgen/${response.draftId}/${response.userId}`);
-      }, 30000);
+      // Navigation happens from the Loader's onComplete once its progress
+      // animation finishes — see handleLoaderComplete.
     } catch (err) {
       console.error(err);
       setLoading(false);
-      alert("Event submission failed");
+      toast.error("Event submission failed. Please try again.");
     }
   };
 
@@ -2073,20 +2116,20 @@ function EventsForm() {
           <div>
             <h1 className="text-xl font-bold text-black">EventPro</h1>
             <p className="text-sm text-gray-800">
-              AI-Powered Event Website Generator
+              AI-Powered {eventTypeLabel} Website Generator
             </p>
           </div>
           <div className="text-right">
             <p className="text-xs text-gray-700">Conferences • Seminars • Exhibitions</p>
-            <p className="text-xs text-gray-600">Create stunning event websites instantly</p>
+            <p className="text-xs text-gray-600">Create stunning {eventTypeLabel.toLowerCase()} websites instantly</p>
           </div>
         </div>
       </div>
 
-      {loading && <Loader />}
+      {loading && <Loader duration={30000} onComplete={handleLoaderComplete} />}
 
       <div className="bg-yellow-100 w-full py-4 ">
-        <div className="bg-yellow-100 max-w-4xl mx-auto">
+        <div className="bg-yellow-100 max-w-4xl mx-auto px-4">
           {/* Step Navigation Chips */}
           <div className="flex flex-wrap items-center gap-2 mb-4 justify-center">
             {steps.slice(0, 6).map((s: any, index: number) => (
@@ -2104,7 +2147,7 @@ function EventsForm() {
                     className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${index === current
                       ? "bg-yellow-400 text-black"
                       : index < current
-                        ? "bg-yellow-400 text-white"
+                        ? "bg-yellow-400 text-black"
                         : "bg-gray-300 text-black"
                       }`}
                   >
@@ -2154,8 +2197,8 @@ function EventsForm() {
         )}
 
         {/* Step Content Container */}
-        <div className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6">
-          <StepComponent step={stepData} allSteps={steps} />
+        <div key={current} className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6 animate-step-slide-up">
+          <StepComponent step={stepData} allSteps={steps} setStepValid={setStepValid} />
         </div>
 
         {/* Navigation Buttons */}
@@ -2171,16 +2214,19 @@ function EventsForm() {
           {current < 6 ? (
             <button
               onClick={next}
-              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+              disabled={!stepValid}
+              title={!stepValid ? "Please fill in all required fields" : undefined}
+              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded"
+              disabled={submitting}
+              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create Event Website
+              {submitting ? "Please wait..." : `Create ${eventTypeLabel} Website`}
             </button>
           )}
         </div>

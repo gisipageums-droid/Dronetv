@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FormStep } from '../FormStep';
 import { StepProps } from '../../types/form';
+import { ADMIN_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 const Step3SectorsServed: React.FC<StepProps> = ({
   formData,
@@ -9,7 +10,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
   onPrev,
   isValid,
 }) => {
-  const API_BASE = 'https://9smxz58iuh.execute-api.ap-south-1.amazonaws.com/Sectors-You-Serve';
+  const API_BASE = ADMIN_API ? `${ADMIN_API}/sectors-you-serve` : `${LAMBDA.adminSectors}`;
   const initialDroneSectors = [
     'Agriculture & Precision Farming',
     'Construction & Infrastructure',

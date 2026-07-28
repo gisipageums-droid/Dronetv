@@ -9,6 +9,34 @@ import { useUserAuth } from "../../../../../../../context/context";
 import axios from "axios";
 import "./step1.css";
 import { toast } from "react-toastify";
+import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
+
+// Uploads straight to S3 via a presigned URL and returns the hosted URL —
+// storing the raw file as a base64 data URL in formData instead (as this used
+// to do) bloats the drafts payload past DynamoDB's 400KB item-size limit and
+// the whole "list my company" submit fails with a ValidationException.
+const FILE_UPLOAD_API_URL = COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
+
+const uploadImageFile = async (file: File, fieldName: string, userId: string): Promise<string> => {
+  const presignRes = await axios.post(
+    FILE_UPLOAD_API_URL,
+    { userId, fieldName, filename: file.name, contentType: file.type || "application/octet-stream" },
+    { headers: { "Content-Type": "application/json" }, timeout: 30000 }
+  );
+
+  if (!presignRes.data.success) {
+    throw new Error(presignRes.data.error || "Failed to get upload URL");
+  }
+
+  const { uploadUrl, imageUrl } = presignRes.data;
+
+  await axios.put(uploadUrl, file, {
+    headers: { "Content-Type": file.type || "application/octet-stream" },
+    timeout: 60000,
+  });
+
+  return imageUrl;
+};
 
 interface Step1CompanyCategoryProps extends StepProps {
   checkCompanyName: (name: string) => void;
@@ -1086,6 +1114,7 @@ const GSTVerificationSection: React.FC<{
     const [showConsentDetails, setShowConsentDetails] = useState(false);
     const [verificationType, setVerificationType] = useState('GST');
     const [isVerifyingCIN, setIsVerifyingCIN] = useState(false);
+    const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
     const formatGSTNumber = (value: string) => {
       // Remove all non-alphanumeric characters
@@ -1166,10 +1195,15 @@ const GSTVerificationSection: React.FC<{
           onVerifySuccess(mappedData);
           if (regAddress) onAddressChange(regAddress);
         } else {
-          // silent — no toast in child component
+          toast.error('CIN verification failed. Please fill company details manually.');
         }
-      } catch {
-        // silent
+      } catch (err: any) {
+        const msg = err?.response?.data?.message || err?.message || '';
+        if (msg.includes('revoked') || msg.includes('token')) {
+          toast.warning('Verification service temporarily unavailable. Please fill company details manually.');
+        } else {
+          toast.error('CIN verification failed. Please fill company details manually.');
+        }
       } finally {
         setIsVerifyingCIN(false);
       }
@@ -1495,9 +1529,11 @@ const GSTVerificationSection: React.FC<{
                 rows={3}
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 resize-none"
               />
-              <p className="text-xs text-red-500 mt-1">
-                Please provide the full address as registered with the GST portal (excluding state and pincode).
-              </p>
+              {!address && (
+                <p className="text-xs text-red-500 mt-1">
+                  Please provide the full address as registered with the GST portal (excluding state and pincode).
+                </p>
+              )}
             </div>
           </div>
 
@@ -1719,22 +1755,34 @@ const GSTVerificationSection: React.FC<{
               </div>
             )}
             <div className="flex-1">
-              <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
+              <label className={`cursor-pointer inline-flex items-center gap-2 px-3 py-2 text-sm font-medium border rounded-lg transition-colors ${isUploadingLogo ? 'text-gray-400 border-gray-200 cursor-not-allowed' : 'text-blue-600 border-blue-300 hover:bg-blue-50'}`}>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                {formData.companyLogoUrl ? 'Change Logo' : 'Upload Logo'}
+                {isUploadingLogo ? 'Uploading...' : formData.companyLogoUrl ? 'Change Logo' : 'Upload Logo'}
                 <input
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => {
+                  disabled={isUploadingLogo}
+                  onChange={async (e) => {
                     const file = e.target.files?.[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                      updateFormData({ companyLogoUrl: ev.target?.result as string });
-                    };
-                    reader.readAsDataURL(file);
                     e.target.value = '';
+                    if (!file) return;
+
+                    if (file.size > 5 * 1024 * 1024) {
+                      toast.warn('Logo file must be less than 5MB');
+                      return;
+                    }
+
+                    setIsUploadingLogo(true);
+                    try {
+                      const userId = formData.directorEmail || 'temp-user';
+                      const imageUrl = await uploadImageFile(file, 'companyLogoUrl', userId);
+                      updateFormData({ companyLogoUrl: imageUrl });
+                    } catch (error: any) {
+                      toast.error(`Logo upload failed: ${error.message || 'Please try again.'}`);
+                    } finally {
+                      setIsUploadingLogo(false);
+                    }
                   }}
                 />
               </label>
@@ -2622,14 +2670,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     let interval: any;
 
     if (startPolling) {
-      console.log("Starting DigiLocker polling...");
 
       const poll = async () => {
         const token = digiTokenRef.current;
         const state = digiStateRef.current;
 
         if (!token || !state) {
-          console.log("Missing token or state for polling");
           return;
         }
 
@@ -2646,7 +2692,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             const data = response.data.data;
             const currentFormData = formDataRef.current;
 
-            console.log("DigiLocker Data Found:", data);
 
             // Parse Date of Birth (DD-MM-YYYY to YYYY-MM-DD or as is)
             let formattedDob = "";
@@ -2863,14 +2908,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         // Restore address - CRITICAL: Must restore for verified GST
         if (parsedData.gstAddress) {
           setGstAddress(parsedData.gstAddress);
-          console.log('Restored GST address:', parsedData.gstAddress);
         }
 
         // Restore complete verified GST data - THIS IS CRITICAL
         if (parsedData.verifiedGSTData) {
           // Set the verified data state immediately
           setVerifiedGSTData(parsedData.verifiedGSTData);
-          console.log('Restored verified GST data:', parsedData.verifiedGSTData);
 
           // Also add these to formData so they persist across the app
           if (parsedData.verifiedGSTData.companyName) {
@@ -2901,7 +2944,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           updateFormData(updates);
         }
 
-        console.log('Restored GST section data from localStorage:', parsedData);
       } catch (error) {
         console.error('Failed to load GST section data from localStorage:', error);
       }
@@ -2999,7 +3041,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
     try {
       const response = await axios.post(
-        "https://eqzkmjhfbc.execute-api.ap-south-1.amazonaws.com/dev1/",
+        COMPANY_API ? `${COMPANY_API}/` : `${LAMBDA.companyScrape}/`,
         { email }
       );
 
@@ -3114,7 +3156,6 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   };
 
   useEffect(() => {
-    console.log("Form data updated:", formData);
   }, [formData]);
 
   const EmailVerificationModal = () => {
@@ -3376,40 +3417,51 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               Company Category
             </h2>
             <p className="mb-4 text-sm text-slate-600">
-              Select your company's main business category (you can select multiple)
+              Select all categories that apply to your company
             </p>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {categoryOptions.map(({ value, description }) => (
-                <label
-                  key={value}
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${formData.companyCategory.includes(value)
-                    ? "border-amber-500 bg-yellow-50 shadow-md"
-                    : "border-amber-300 hover:border-amber-400"
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {categoryOptions.map(({ value, description }) => {
+                const isSelected = formData.companyCategory.includes(value);
+                return (
+                  <label
+                    key={value}
+                    className={`relative flex flex-col items-center p-5 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                      isSelected
+                        ? "border-amber-500 bg-amber-50 shadow-md ring-2 ring-amber-300"
+                        : "border-gray-200 bg-white hover:border-amber-300 hover:shadow-sm"
                     }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.companyCategory.includes(value)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        handleCategoryChange([...formData.companyCategory, value]);
-                      } else {
-                        handleCategoryChange(formData.companyCategory.filter((cat) => cat !== value));
-                      }
-                    }}
-                    className="sr-only"
-                  />
-                  <h3 className={`text-lg font-bold mb-2 ${formData.companyCategory.includes(value) ? "text-amber-900" : "text-gray-700"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          handleCategoryChange([...formData.companyCategory, value]);
+                        } else {
+                          handleCategoryChange(formData.companyCategory.filter((c) => c !== value));
+                        }
+                      }}
+                      className="sr-only"
+                    />
+                    <div className={`absolute top-3 right-3 w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                      isSelected ? "border-amber-500 bg-amber-500" : "border-gray-300 bg-white"
                     }`}>
-                    {value}
-                  </h3>
-                  <p className={`text-xs text-center ${formData.companyCategory.includes(value) ? "text-amber-700" : "text-gray-500"
-                    }`}>
-                    {description}
-                  </p>
-                </label>
-              ))}
+                      {isSelected && (
+                        <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                    <h3 className={`text-base font-bold mb-1 ${isSelected ? "text-amber-900" : "text-gray-700"}`}>
+                      {value}
+                    </h3>
+                    <p className={`text-xs text-center leading-relaxed ${isSelected ? "text-amber-700" : "text-gray-500"}`}>
+                      {description}
+                    </p>
+                  </label>
+                );
+              })}
             </div>
 
             {formData.companyCategory.length === 0 && (

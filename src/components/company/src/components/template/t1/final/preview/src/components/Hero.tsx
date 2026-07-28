@@ -79,7 +79,7 @@ export default function Hero({ heroData }) {
               variants={itemVariants}
             >
               <div className='flex -space-x-2'>
-                {heroData.customerImages.map((img, i) => (
+                {(heroData.customerImages || []).map((img, i) => (
                   <motion.div
                     key={i}
                     className='w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white shadow-lg bg-cover bg-center relative'

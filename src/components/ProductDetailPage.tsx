@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { Star, Plane, Truck, ShieldCheck } from "lucide-react";
 import LoadingScreen from "./loadingscreen";
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 
 type ProductFeature = {
   icon?: React.ReactNode;
@@ -60,7 +61,7 @@ export default function ProductDetailPage() {
     setLoading(true);
     setError(null);
 
-    const API_URL = `https://f8wb4qay22.execute-api.ap-south-1.amazonaws.com/frontend-services-or-product/product/details/${id}`;
+    const API_URL = COMPANY_API ? `${COMPANY_API}/product/details/${id}` : `${LAMBDA.products}/product/details/${id}`;
 
     axios
       .get(API_URL)
@@ -124,8 +125,7 @@ export default function ProductDetailPage() {
 
         setProduct(mapped);
       })
-      .catch((err) => {
-        console.error("API Error", err);
+      .catch(() => {
         setError("Failed to fetch product details");
       })
       .finally(() => setLoading(false));
@@ -148,7 +148,7 @@ export default function ProductDetailPage() {
 
   if (!product)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-yellow-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <p className="text-lg font-semibold">Product not found.</p>
       </div>
     );
@@ -169,7 +169,7 @@ export default function ProductDetailPage() {
     ));
 
   return (
-    <div className="pt-16 min-h-screen bg-yellow-400">
+    <div className="pt-[104px] min-h-screen bg-gray-50">
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {/* LEFT: Images + Thumbnails */}
@@ -300,7 +300,7 @@ export default function ProductDetailPage() {
           </ul>
         </div>
         <div className="mt-8 flex justify-center">
-          <Link to={template === "template-1" ? `/company/${companyName}` : `/companies/${companyName}`}>
+          <Link to={template === "template-1" ? `/company/${companyName}#contact` : `/companies/${companyName}#contact`}>
             <button className="px-6 py-2.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
               Contact us
             </button>

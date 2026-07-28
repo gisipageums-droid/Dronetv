@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import logo from "/logos/logo.svg";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function Header({
   headerData,
@@ -206,11 +207,10 @@ export default function Header({
     formData.append("imageField", `${imageField}_${Date.now()}`);
     formData.append("templateSelection", templateSelection);
 
-    console.log(`Uploading ${imageField} to S3:`, file);
 
     try {
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,
@@ -219,7 +219,6 @@ export default function Header({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
@@ -457,6 +456,27 @@ export default function Header({
                   className="hidden"
                 />
               </div>
+
+              {/* Company Name — editable in edit mode */}
+              {isEditMode ? (
+                <input
+                  type="text"
+                  value={headerState.companyName}
+                  onChange={(e) =>
+                    setHeaderState((prev) => ({ ...prev, companyName: e.target.value }))
+                  }
+                  className="ml-2 border-b-2 border-blue-400 bg-transparent text-base font-bold text-gray-800 focus:outline-none focus:border-blue-600 min-w-[120px] max-w-[200px]"
+                  placeholder="Company name"
+                />
+              ) : (
+                <span
+                  className="ml-2 text-base font-bold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors"
+                  onClick={handleEditLogo}
+                  title="Click to edit logo & name"
+                >
+                  {headerState.companyName}
+                </span>
+              )}
             </motion.div>
 
             {/* Desktop Navigation - Static */}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormStep } from '../FormStep';
 import { FormInput } from '../FormInput';
 import { StepProps } from '../../types/form';
@@ -99,12 +99,35 @@ const Step3SectorsServed: React.FC<StepProps> = ({
   embedded,
 }) => {
   const selectedCategories: string[] = formData.companyCategory || [];
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+    new Set(selectedCategories)
+  );
+
+  useEffect(() => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      selectedCategories.forEach((c) => next.add(c));
+      return next;
+    });
+  }, [selectedCategories.join(',')]);
 
   const toggleCategory = (value: string) => {
     const updated = selectedCategories.includes(value)
       ? selectedCategories.filter((c) => c !== value)
       : [...selectedCategories, value];
     updateFormData({ companyCategory: updated });
+  };
+
+  const toggleExpanded = (category: string) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
   };
 
   return (
@@ -121,7 +144,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
       totalSteps={5}
       embedded={embedded}
     >
-      <div className="space-y-6">
+      <div className="space-y-4">
 
         {/* Category selection */}
         <div>
@@ -132,37 +155,45 @@ const Step3SectorsServed: React.FC<StepProps> = ({
             Pre-selected from your registration. You can add more if needed.
           </p>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-            {CATEGORIES.map(({ value, description }) => (
-              <label
-                key={value}
-                className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${
-                  selectedCategories.includes(value)
-                    ? 'border-amber-500 bg-yellow-50 shadow-md'
-                    : 'border-amber-200 hover:border-amber-400'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(value)}
-                  onChange={() => toggleCategory(value)}
-                  className="sr-only"
-                />
-                <h4 className={`text-base font-bold mb-1 ${
-                  selectedCategories.includes(value) ? 'text-amber-900' : 'text-gray-700'
-                }`}>
-                  {value}
-                </h4>
-                <p className={`text-xs text-center ${
-                  selectedCategories.includes(value) ? 'text-amber-700' : 'text-gray-500'
-                }`}>
-                  {description}
-                </p>
-              </label>
-            ))}
+            {CATEGORIES.map(({ value, description }) => {
+              const isSelected = selectedCategories.includes(value);
+              return (
+                <label
+                  key={value}
+                  className={`relative flex flex-col items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                    isSelected
+                      ? 'border-amber-500 bg-amber-50 shadow-md ring-2 ring-amber-200'
+                      : 'border-gray-200 bg-white hover:border-amber-300 hover:shadow-sm'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => toggleCategory(value)}
+                    className="sr-only"
+                  />
+                  <div className={`absolute top-3 right-3 w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                    isSelected ? 'border-amber-500 bg-amber-500' : 'border-gray-300 bg-white'
+                  }`}>
+                    {isSelected && (
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                  <h4 className={`text-base font-bold mb-1 ${isSelected ? 'text-amber-900' : 'text-gray-700'}`}>
+                    {value}
+                  </h4>
+                  <p className={`text-xs text-center ${isSelected ? 'text-amber-700' : 'text-gray-500'}`}>
+                    {description}
+                  </p>
+                </label>
+              );
+            })}
           </div>
         </div>
 
-        {/* Sectors for each selected category */}
+        {/* Sectors for each selected category — accordion panels */}
         {selectedCategories.length === 0 && (
           <div className="py-6 text-center border-2 border-dashed border-amber-200 rounded-lg bg-amber-50">
             <p className="text-amber-700 font-medium text-sm">
@@ -176,67 +207,93 @@ const Step3SectorsServed: React.FC<StepProps> = ({
           const colors = getCategoryColor(category);
           const selectedSectors: string[] = formData.sectorsServed?.[category] || [];
           const otherValue: string = formData.sectorsOther?.[category] || '';
+          const isOpen = expandedCategories.has(category);
 
           return (
-            <div key={category} className={`${colors.bg} rounded-lg p-4 ${colors.border} border`}>
-              <h3 className={`text-sm font-bold ${colors.text} mb-3`}>
-                {category} — Sectors Served
-              </h3>
-              <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
-                {sectors.map((sector) => (
-                  <label
-                    key={sector}
-                    className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-white text-xs ${
-                      selectedSectors.includes(sector)
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-slate-300 bg-white'
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedSectors.includes(sector)}
-                      onChange={(e) => {
-                        const updated = e.target.checked
-                          ? [...selectedSectors, sector]
-                          : selectedSectors.filter((s) => s !== sector);
-                        updateFormData({
-                          sectorsServed: { ...formData.sectorsServed, [category]: updated },
-                        });
-                      }}
-                      className="sr-only"
-                    />
-                    <div className={`w-3 h-3 flex-shrink-0 rounded border-2 mr-2 flex items-center justify-center ${
-                      selectedSectors.includes(sector)
-                        ? 'border-blue-500 bg-blue-500'
-                        : 'border-slate-300'
-                    }`}>
-                      {selectedSectors.includes(sector) && (
-                        <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                    <span className="font-medium leading-tight">{sector}</span>
-                  </label>
-                ))}
-              </div>
+            <div key={category} className={`rounded-xl border-2 overflow-hidden transition-all duration-200 ${colors.border}`}>
+              {/* Accordion header */}
+              <button
+                type="button"
+                onClick={() => toggleExpanded(category)}
+                className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors ${
+                  isOpen ? `${colors.bg}` : 'bg-white hover:bg-gray-50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className={`text-sm font-bold ${colors.text}`}>{category} — Sectors Served</span>
+                  {selectedSectors.length > 0 && (
+                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">
+                      {selectedSectors.length} selected
+                    </span>
+                  )}
+                </div>
+                <svg
+                  className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${colors.text} ${isOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
 
-              {selectedSectors.includes('Other') && (
-                <div className="mt-3">
-                  <FormInput
-                    label={`Other ${category} sectors (comma-separated)`}
-                    value={otherValue}
-                    onChange={(value) =>
-                      updateFormData({
-                        sectorsOther: { ...formData.sectorsOther, [category]: value },
-                      })
-                    }
-                    placeholder="e.g. Forestry, Maritime..."
-                  />
+              {/* Accordion body */}
+              {isOpen && (
+                <div className={`px-4 pb-4 pt-2 ${colors.bg} animate-step-slide-up`}>
+                  <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
+                    {sectors.map((sector) => (
+                      <label
+                        key={sector}
+                        className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-white text-xs ${
+                          selectedSectors.includes(sector)
+                            ? 'border-blue-500 bg-blue-50 text-blue-700'
+                            : 'border-slate-300 bg-white text-gray-800'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedSectors.includes(sector)}
+                          onChange={(e) => {
+                            const updated = e.target.checked
+                              ? [...selectedSectors, sector]
+                              : selectedSectors.filter((s) => s !== sector);
+                            updateFormData({
+                              sectorsServed: { ...formData.sectorsServed, [category]: updated },
+                            });
+                          }}
+                          className="sr-only"
+                        />
+                        <div className={`w-3 h-3 flex-shrink-0 rounded border-2 mr-2 flex items-center justify-center ${
+                          selectedSectors.includes(sector)
+                            ? 'border-blue-500 bg-blue-500'
+                            : 'border-slate-300'
+                        }`}>
+                          {selectedSectors.includes(sector) && (
+                            <svg className="w-2 h-2 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                        <span className="font-medium leading-tight">{sector}</span>
+                      </label>
+                    ))}
+                  </div>
+
+                  {selectedSectors.includes('Other') && (
+                    <div className="mt-3">
+                      <FormInput
+                        label={`Other ${category} sectors (comma-separated)`}
+                        value={otherValue}
+                        onChange={(value) =>
+                          updateFormData({
+                            sectorsOther: { ...formData.sectorsOther, [category]: value },
+                          })
+                        }
+                        placeholder="e.g. Forestry, Maritime..."
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>

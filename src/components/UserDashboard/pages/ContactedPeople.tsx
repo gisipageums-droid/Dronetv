@@ -16,6 +16,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useUserAuth } from "../../context/context";
+import { LEADS_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface ApiResponse {
   success: boolean;
@@ -69,7 +70,6 @@ interface UserRole {
 // Mock toast
 const toast = {
   error: (msg: string) => console.error(msg),
-  success: (msg: string) => console.log(msg),
 };
 
 const ContactedPeople: React.FC = () => {
@@ -209,7 +209,7 @@ const ContactedPeople: React.FC = () => {
     const id = setInterval(async () => {
       try {
         const response = await fetch(
-          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/messages?leadId=${contact.leadId}&markAsRead=false`,
+          LEADS_API ? `${LEADS_API}/chat/messages?leadId=${contact.leadId}&markAsRead=false` : `${LAMBDA.leadsChat}/chat/messages?leadId=${contact.leadId}&markAsRead=false`,
           {
             headers: {
               "X-User-Email": userId,
@@ -268,7 +268,7 @@ const ContactedPeople: React.FC = () => {
 
     try {
       const res = await fetch(
-        "https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/send",
+        LEADS_API ? `${LEADS_API}/chat/send` : `${LAMBDA.leadsChat}/chat/send`,
         {
           method: "POST",
           headers: {
@@ -330,7 +330,7 @@ const ContactedPeople: React.FC = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `https://29c04nhq08.execute-api.ap-south-1.amazonaws.com/prod/chat/leads?mode=recent&sort=latest&userId=${userId}`,
+          LEADS_API ? `${LEADS_API}/chat/leads?mode=recent&sort=latest&userId=${userId}` : `${LAMBDA.leadsChat}/chat/leads?mode=recent&sort=latest&userId=${userId}`,
           {
             headers: { "X-User-Email": userId },
           }
@@ -398,7 +398,7 @@ const ContactedPeople: React.FC = () => {
                 placeholder="Search contacts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 text-gray-900"
               />
             </div>
           </div>
@@ -407,7 +407,7 @@ const ContactedPeople: React.FC = () => {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 text-gray-900"
           >
             {categories.map((cat) => (
               <option key={cat}>{cat}</option>
@@ -420,7 +420,7 @@ const ContactedPeople: React.FC = () => {
               onClick={() => setViewMode("card")}
               className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
                 viewMode === "card"
-                  ? "bg-yellow-400 text-white"
+                  ? "bg-yellow-400 text-black"
                   : "bg-gray-100 text-gray-700"
               }`}
             >
@@ -430,7 +430,7 @@ const ContactedPeople: React.FC = () => {
               onClick={() => setViewMode("table")}
               className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
                 viewMode === "table"
-                  ? "bg-yellow-400 text-white"
+                  ? "bg-yellow-400 text-black"
                   : "bg-gray-100 text-gray-700"
               }`}
             >
@@ -525,7 +525,7 @@ const ContactedPeople: React.FC = () => {
 
                   <button
                     onClick={() => handleChat(contact)}
-                    className="w-full bg-yellow-400 text-white px-4 py-2 rounded-lg hover:bg-yellow-500 transition flex items-center justify-center gap-2"
+                    className="w-full bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-500 transition flex items-center justify-center gap-2"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Chat
@@ -630,7 +630,7 @@ const ContactedPeople: React.FC = () => {
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleChat(contact)}
-                          className="bg-yellow-400 text-white px-3 py-1 rounded text-sm hover:bg-yellow-500"
+                          className="bg-yellow-400 text-black px-3 py-1 rounded text-sm hover:bg-yellow-500"
                         >
                           Chat
                         </button>
@@ -646,7 +646,7 @@ const ContactedPeople: React.FC = () => {
 
       {/* ----------------------- CHAT MODAL ----------------------- */}
       {selectedContact && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 z-[10000000] flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl flex flex-col max-h-[85vh]">
             
             {/* Header */}
@@ -736,7 +736,7 @@ const ContactedPeople: React.FC = () => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 placeholder="Type a message..."
-                className="flex-1 px-4 py-2 bg-gray-100 rounded-full focus:ring-2 focus:ring-[#075e54]"
+                className="flex-1 px-4 py-2 bg-gray-100 rounded-full focus:ring-2 focus:ring-[#075e54] text-gray-900"
               />
 
               <button

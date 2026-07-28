@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { X, ChevronLeft, ChevronRight, Edit2, Loader2, Save, Plus, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import Cropper from 'react-easy-crop';
+import { MEDIA_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 // Text limits
 const TEXT_LIMITS = {
@@ -388,7 +389,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
     formData.append('userId', userId);
     formData.append(`fieldName`, fieldName + Date.now());
 
-    const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/events-image-update`, {
+    const uploadResponse = await fetch(MEDIA_API ? `${MEDIA_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`, {
       method: 'POST',
       body: formData,
     });

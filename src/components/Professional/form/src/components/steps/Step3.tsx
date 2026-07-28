@@ -212,7 +212,7 @@ export const Step3 = ({ step }: { step: any }) => {
           </div>
           <input
             type="text"
-            className="border p-2 w-full rounded text-xs focus:ring-2 focus:ring-yellow-400"
+            className="border p-2 w-full rounded text-xs focus:ring-2 focus:ring-yellow-400 text-gray-900 bg-white"
             placeholder="Type and press Enter or comma..."
             onKeyDown={handleFreeformKeyDown}
           />

@@ -11,6 +11,7 @@ import Step8MediaUploads from "./components/steps/Step8MediaUploads";
 import PreviewPublish from "./components/PreviewPublish";
 import { useTemplate, useUserAuth } from "../../../../../context/context";
 import { toast } from "react-toastify";
+import { COMPANY_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 type DigiStatus = 'idle' | 'loading' | 'polling' | 'verified' | 'error';
 
@@ -143,7 +144,16 @@ function mapFormDataToAIGenData(fd: FormData, draftId: string, userId: string) {
       gallery: {
         heading: { title: `${companyName} Portfolio`, description: `Showcasing our ${industry} expertise` },
         categories: ['All', 'Portfolio', 'Projects'],
-        images: []
+      },
+      documents: {
+        brochure: fd.brochurePdfUrl || '',
+        catalogue: fd.cataloguePdfUrl || '',
+        caseStudies: fd.caseStudiesUrl || '',
+        brandGuidelines: fd.brandGuidelinesUrl || '',
+        dgcaCertificate: fd.dgcaTypeCertificateUrl || '',
+        rptoCertificate: fd.rptoAuthorisationCertificateUrl || '',
+        promoVideo5min: fd.promoVideoFiveMinUrl || '',
+        promoVideo1min: fd.promoVideoOneMinUrl || '',
       },
       header: {
         logoSrc: fd.companyLogoUrl || '',
@@ -402,7 +412,13 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
 
   useEffect(() => {
     if (initialCompanyCategory && initialCompanyCategory.length > 0) {
-      setFormData((prev) => ({ ...prev, companyCategory: initialCompanyCategory }));
+      // Seed only — never clobber a richer selection already restored from
+      // the update-details cache or an unsaved local draft (see below).
+      setFormData((prev) =>
+        prev.companyCategory && prev.companyCategory.length > 0
+          ? prev
+          : { ...prev, companyCategory: initialCompanyCategory }
+      );
     }
   }, [initialCompanyCategory?.join(",")]);
 
@@ -412,9 +428,9 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     const template = companyData.templateSelection || 'template-1';
     setIsDraftLoading(true);
 
-    const draftUrl = `https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}`;
+    const draftUrl = COMPANY_API ? `${COMPANY_API}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}`;
     const publishedUrl = companyData.publishedId
-      ? `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${companyData.publishedId}`
+      ? COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${companyData.publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${companyData.publishedId}`
       : null;
 
     Promise.all([
@@ -423,21 +439,46 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
         ? fetch(publishedUrl, { headers: { 'X-User-Id': companyData.userId } }).then(r => r.json()).catch(() => ({}))
         : Promise.resolve({}),
     ]).then(([draftData, publishedData]) => {
-      // Extract services & products from published template content (scraped at registration)
+      // Extract services & products from published template content (AI-generated after registration —
+      // usually more complete than the raw registration form, which often only has placeholder entries)
       const publishedServices: any[] = publishedData?.content?.services?.services || [];
       const publishedProducts: any[] = publishedData?.content?.products?.products || [];
+      const publishedAboutImage: string = publishedData?.content?.about?.officeImage || '';
+      const publishedHeroImage: string = publishedData?.content?.hero?.mainHeroImage || '';
 
       const formDataFromDraft = draftData?.formData || {};
+      // Previously saved Update Details selections (saved on last submit)
+      const cachedFields: any = publishedData?.content?._updateCache || {};
+      // In-progress edits from this browser that never reached a final submit
+      let localDraft: any = {};
+      try {
+        const saved = companyData.publishedId ? localStorage.getItem(`companyUpdateDraft_${companyData.publishedId}`) : null;
+        if (saved) localDraft = JSON.parse(saved);
+      } catch { /* ignore corrupt local draft */ }
 
-      // Use scraped services/products as fallback when draft has none
+      // Priority: unsaved local draft > cached Update Details > published website content > raw registration form
+      // (the raw registration form's services/products/images are frequently left as placeholders — the
+      // published site's AI-generated content is the more reliable source once it exists)
       const mergedFormData = {
         ...formDataFromDraft,
-        services: formDataFromDraft.services?.length > 0
-          ? formDataFromDraft.services
-          : publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' })),
-        products: formDataFromDraft.products?.length > 0
-          ? formDataFromDraft.products
-          : publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' })),
+        ...cachedFields,
+        ...localDraft,
+        services: localDraft.services?.length > 0
+          ? localDraft.services
+          : cachedFields.services?.length > 0
+            ? cachedFields.services
+            : publishedServices.length > 0
+              ? publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' }))
+              : formDataFromDraft.services || [],
+        products: localDraft.products?.length > 0
+          ? localDraft.products
+          : cachedFields.products?.length > 0
+            ? cachedFields.products
+            : publishedProducts.length > 0
+              ? publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' }))
+              : formDataFromDraft.products || [],
+        aboutImageUrl: localDraft.aboutImageUrl || cachedFields.aboutImageUrl || formDataFromDraft.aboutImageUrl || publishedAboutImage,
+        heroBackgroundUrl: localDraft.heroBackgroundUrl || cachedFields.heroBackgroundUrl || formDataFromDraft.heroBackgroundUrl || publishedHeroImage,
       };
 
       if (Object.keys(mergedFormData).length > 0) {
@@ -445,6 +486,15 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       }
     }).finally(() => setIsDraftLoading(false));
   }, [embedded, companyData?.draftId, companyData?.userId, companyData?.publishedId]);
+
+  // Autosave in-progress Update Details edits so they survive a reload/reopen
+  // before the user reaches the final submit (nothing persists otherwise).
+  useEffect(() => {
+    if (!embedded || !companyData?.publishedId || isDraftLoading) return;
+    try {
+      localStorage.setItem(`companyUpdateDraft_${companyData.publishedId}`, JSON.stringify(formData));
+    } catch { /* storage unavailable — non-fatal, just no autosave this session */ }
+  }, [embedded, companyData?.publishedId, isDraftLoading, formData]);
 
   // Set selected template from parent when creating new company via dashboard
   useEffect(() => {
@@ -470,7 +520,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       if (publicId && urlUserId && urlDraftId) {
         try {
           setIsApiLoading(true);
-          const API_URL = `https://l0jg1d9hnc.execute-api.ap-south-1.amazonaws.com/dev/${publicId}/${urlUserId}/${urlDraftId}`;
+          const API_URL = COMPANY_API ? `${COMPANY_API}/${publicId}/${urlUserId}/${urlDraftId}` : `${LAMBDA.companyDraftLoad}/${publicId}/${urlUserId}/${urlDraftId}`;
           const response = await fetch(API_URL);
           const data = await response.json();
 
@@ -656,7 +706,9 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     setIsCheckingName(true);
     try {
       const res = await fetch(
-        `https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts/check-name?name=${encodeURIComponent(
+        COMPANY_API ? `${COMPANY_API}/drafts/check-name?name=${encodeURIComponent(
+          name
+        )}` : `${LAMBDA.companyFormDraft}/drafts/check-name?name=${encodeURIComponent(
           name
         )}`
       );
@@ -687,8 +739,8 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     useState<string>(templateId);
   const [userId] = useState<string>("user-123");
 
-  const updateFormData = useCallback((data: Partial<FormData>) => {
-    setFormData((prev) => ({ ...prev, ...data }));
+  const updateFormData = useCallback((data: Partial<FormData> | ((prev: FormData) => Partial<FormData>)) => {
+    setFormData((prev) => ({ ...prev, ...(typeof data === "function" ? data(prev) : data) }));
   }, []);
 
   // Step 1 validation logic
@@ -805,8 +857,29 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       const aiGenData = mapFormDataToAIGenData(formData, companyData.draftId, companyData.userId);
       aiGenData.publishedId = companyData.publishedId;
       aiGenData.templateSelection = companyData.templateSelection;
+      // Save safe (non-sensitive) fields so form pre-fills next time user opens Update Details
+      const CACHE_KEYS = [
+        'companyCategory', 'sectorsServed', 'sectorsOther',
+        'mainCategories', 'otherMainCategories', 'geographyOfOperations', 'coverageType',
+        'manufacturingSubcategories', 'manufOther', 'serviceSubcategories', 'servicesOther',
+        'trainingTypes', 'trainingOther', 'photoVideoSubcategories', 'photoVideoOther',
+        'softwareSubcategories', 'softwareOther', 'aiSolutions', 'aiSolutionsOther',
+        'aiProducts', 'aiProductsOther', 'aiServices', 'aiServicesOther',
+        'gnssSolutions', 'gnssSolutionsOther', 'gnssProducts', 'gnssProductsOther',
+        'gnssServices', 'gnssServicesOther', 'services', 'products', 'clients',
+        'testimonials', 'companyValuesSelection', 'promoFormats',
+        'companyLogoUrl', 'brochurePdfUrl', 'cataloguePdfUrl', 'caseStudiesUrl',
+        'brandGuidelinesUrl', 'dgcaTypeCertificateUrl', 'rptoAuthorisationCertificateUrl',
+        'promoVideoFiveMinUrl', 'promoVideoOneMinUrl',
+      ] as const;
+      aiGenData._updateCache = Object.fromEntries(
+        CACHE_KEYS.filter(k => k in (formData as any)).map(k => [k, (formData as any)[k]])
+      );
       if (onEmbeddedSubmit) {
         onEmbeddedSubmit(aiGenData);
+        if (companyData.publishedId) {
+          try { localStorage.removeItem(`companyUpdateDraft_${companyData.publishedId}`); } catch { /* ignore */ }
+        }
       } else {
         const templateNum = companyData.templateSelection === 'template-2' ? '2' : '1';
         navigate(
@@ -826,7 +899,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
 
     setIsSubmitting(true);
     try {
-      const FORM_SUBMIT_API_URL = "https://14exr8c8g0.execute-api.ap-south-1.amazonaws.com/prod/drafts";
+      const FORM_SUBMIT_API_URL = COMPANY_API ? `${COMPANY_API}/drafts` : `${LAMBDA.companyFormDraft}/drafts`;
       
       const finalTemplateId = formData.templateId || templateId || "1";
 
@@ -1003,7 +1076,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     );
   }
 
-  return <div>{renderStep()}</div>;
+  return <div key={currentStep} className="animate-step-slide-up">{renderStep()}</div>;
 }
 
 export default App;

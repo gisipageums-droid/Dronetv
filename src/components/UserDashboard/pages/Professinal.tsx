@@ -11,6 +11,17 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
+import ListingLimitBanner from "../components/common/ListingLimitBanner";
+import { PROFESSIONAL_API, AUTH_API, LAMBDA } from '../../../lib/apiConfig';
+
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+
+function getProfessionalLimit(earned: number) {
+  if (earned >= 8000) return Infinity;
+  if (earned >= 2000) return 15;
+  if (earned >= 500) return 5;
+  return 2;
+}
 
 interface User {
   userId: string;
@@ -229,6 +240,20 @@ const Card: React.FC<ProfessinalCardProps> = ({
               Preview
             </button>
           </div>
+
+          <button
+            onClick={() =>
+              navigate(
+                `/user-professional/leads/${encodeURIComponent(
+                  professional?.fullName || "Professional"
+                )}/${professional.professionalId}`
+              )
+            }
+            className="flex-1 px-3 py-2 bg-green-100 text-green-900 rounded-lg hover:bg-green-200 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-green-400"
+          >
+            <Users className="w-4 h-4" />
+            Leads
+          </button>
            {/* <button
             onClick={() =>
               navigate(
@@ -272,6 +297,8 @@ const Professinal: React.FC = () => {
     useState<IProfessionalApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const navigate = useNavigate();
 
   const fetchProfessionals = useCallback(async (): Promise<void> => {
@@ -293,7 +320,7 @@ const Professinal: React.FC = () => {
       setLoading(true);
 
       const res = await fetch(
-        `https://zgkue3u9cl.execute-api.ap-south-1.amazonaws.com/prod/professional-dashboard-cards?viewType=user&userId=${user.userData.email}`
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}`
       );
 
       if (!res.ok) throw new Error("Failed to fetch companies");
@@ -361,9 +388,17 @@ const Professinal: React.FC = () => {
   };
 
   useEffect(() => {
-    if (user?.userId || user?.userData?.email) {
-      fetchProfessionals();
-    }
+    const userId = user?.userData?.email || "";
+    if (!userId) return;
+    fetchProfessionals();
+    fetch(`${PROFILE_API}?userId=${userId}`)
+      .then(r => r.json())
+      .then(d => {
+        const p = d?.profile ?? {};
+        setTotalTokensEarned(p.totalTokensEarned ?? p.tokenBalance ?? 0);
+      })
+      .catch(() => {})
+      .finally(() => setProfileLoaded(true));
   }, [user, fetchProfessionals]);
 
   const filteredProfessionals = useMemo(() => {
@@ -433,18 +468,37 @@ const Professinal: React.FC = () => {
             <Users className="w-6 h-6 shrink-0" />
             Professional Directory
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 mb-2">
             Browse and manage professional submissions
           </p>
+          <ListingLimitBanner count={professionals?.cards?.length ?? 0} type="professional" label="Professionals" />
         </div>
 
-        <button
-          onClick={() => navigate("/professional/select")}
-          className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 hover:bg-yellow-600 hover:scale-110 transition-all duration-200 self-start sm:self-auto"
-        >
-          <Plus className="w-5 h-5" />
-          Add New Professional
-        </button>
+        {(() => {
+          const limit = getProfessionalLimit(totalTokensEarned);
+          const atLimit = profileLoaded && isFinite(limit) && (professionals?.cards?.length ?? 0) >= limit;
+          return atLimit ? (
+            <button
+              onClick={() => navigate("/user-recharge")}
+              className="bg-gray-100 text-sm font-medium text-gray-500 flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 border border-gray-300 cursor-not-allowed self-start sm:self-auto"
+              title={`Plan limit reached. Upgrade to add more.`}
+            >
+              <Plus className="w-5 h-5" />
+              Limit Reached — Upgrade
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                try { localStorage.removeItem("professionalFormDraft"); } catch { /* ignore */ }
+                navigate("/professional/select");
+              }}
+              className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 hover:bg-yellow-600 hover:scale-110 transition-all duration-200 self-start sm:self-auto"
+            >
+              <Plus className="w-5 h-5" />
+              Add New Professional
+            </button>
+          );
+        })()}
       </div>
 
       <div className="mb-6 relative">

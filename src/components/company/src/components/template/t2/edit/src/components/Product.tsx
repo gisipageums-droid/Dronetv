@@ -17,6 +17,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 export default function Product({
   productData,
@@ -78,11 +79,10 @@ export default function Product({
     formData.append("imageField", `${imageField}_${Date.now()}`);
     formData.append("templateSelection", templateSelection);
 
-    console.log(`Uploading ${imageField} to S3:`, file);
 
     try {
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,
@@ -91,7 +91,6 @@ export default function Product({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log(`${imageField} uploaded to S3:`, uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();

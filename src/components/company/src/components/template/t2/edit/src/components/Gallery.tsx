@@ -14,6 +14,7 @@ import {
 import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 const Gallery = ({
   galleryData,
@@ -185,11 +186,10 @@ const Gallery = ({
     formData.append("imageField", `${imageField}_${Date.now()}`);
     formData.append("templateSelection", templateSelection);
 
-    console.log(`Uploading gallery image to S3:`, file);
 
     try {
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,
@@ -198,7 +198,6 @@ const Gallery = ({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log(`Gallery image uploaded to S3:`, uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
@@ -390,7 +389,6 @@ const Gallery = ({
           delete newPending[croppingIndex];
           return newPending;
         });
-        console.log(`Gallery image uploaded to S3:`, awsImageUrl);
         toast.success("Image uploaded to S3 successfully!");
       } else {
         // If upload fails, keep the file as pending

@@ -16,6 +16,7 @@ import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 export default function EditableProducts({
   productData,
@@ -179,7 +180,7 @@ export default function EditableProducts({
       formData.append("templateSelection", templateSelection);
 
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,
@@ -188,7 +189,6 @@ export default function EditableProducts({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log("Product image uploaded to S3:", uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
@@ -1079,7 +1079,7 @@ export default function EditableProducts({
             >
               {product.isPopular && (
                 <div className="absolute top-4 left-4 z-10">
-                  <Badge className="bg-yellow-400 text-white">
+                  <Badge className="bg-yellow-400 text-black">
                     <Star className="w-3 h-3 mr-1" fill="currentColor" />
                     Popular
                   </Badge>

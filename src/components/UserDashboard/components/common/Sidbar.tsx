@@ -1,124 +1,394 @@
 import React, { useState } from "react";
 import {
-  Building2,
-  Users,
-  Calendar,
-  Menu,
-  X,
-  User,
-  Wallet,
-  Clock1,
-  MessageSquare,
-  Brain,
-  LogOut,
-  Globe,
-  FileText,
+  Building2, Users, Calendar, Menu, X, User, Wallet,
+  MessageSquare, Brain, LogOut, Globe, FileText, Tv, Video,
+  ShoppingBag, Coins, ChevronDown, Share2, Briefcase, Award,
+  GraduationCap, Users2, Newspaper, BookOpen, ImageIcon, Star,
+  BarChart2, Cpu, ClipboardList, Factory, Bot, Handshake,
+  Zap, Target, Layout, Receipt, Package,
 } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
+import axios from "axios";
+import { LAMBDA, AUTH_API } from '../../../../lib/apiConfig';
+import { PERMISSIONS } from '../../../../lib/roles';
+
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+
+interface SubItem {
+  icon: React.ElementType;
+  label: string;
+  href: string;
+}
+
+interface NavGroup {
+  id: string;
+  icon: React.ElementType;
+  label: string;
+  items: SubItem[];
+  paths: string[];
+}
+
+function getNavGroups(_role: string, isAdmin: boolean): NavGroup[] {
+  // Every logged-in user can list a company, a professional profile, and events —
+  // these aren't mutually exclusive, so listing options are never role-gated.
+  const listingItems: SubItem[] = [
+    { icon: Building2, label: "Companies",     href: "/user-companies" },
+    { icon: Users,     label: "Professionals", href: "/user-professionals" },
+    { icon: Calendar,  label: "Events",        href: "/user-events" },
+  ];
+
+  const groups: NavGroup[] = [
+    {
+      id: "listings", icon: Building2, label: "My Listings",
+      paths: ["/user-companies", "/user-professionals", "/user-events"],
+      items: listingItems,
+    },
+
+    {
+      id: "professionals", icon: Users, label: "Professionals",
+      paths: ["/user-content/job", "/user-content/certification", "/user-content/training", "/user-content/community", "/user-content/networking"],
+      items: [
+        { icon: Briefcase,      label: "Job Board",        href: "/user-content/job" },
+        { icon: Award,          label: "Certifications",   href: "/user-content/certification" },
+        { icon: GraduationCap,  label: "Training",         href: "/user-content/training" },
+        { icon: Users2,         label: "Community",        href: "/user-content/community" },
+        { icon: Users2,         label: "Networking",       href: "/user-content/networking" },
+      ],
+    },
+    {
+      id: "events", icon: Calendar, label: "Events",
+      paths: ["/user-events", "/user-content/competition", "/user-content/webinar", "/user-content/meetup"],
+      items: [
+        { icon: Calendar,      label: "Event Calendar",  href: "/user-events" },
+        { icon: Star,          label: "Expos",           href: "/user-events?view=expos" },
+        { icon: Users,         label: "Conferences",     href: "/user-events?view=conferences" },
+        { icon: GraduationCap, label: "Workshops",       href: "/user-events?view=workshops" },
+        { icon: Award,         label: "Competitions",    href: "/user-content/competition" },
+        { icon: Video,         label: "Webinars",        href: "/user-content/webinar" },
+        { icon: Users2,        label: "Meetups",         href: "/user-content/meetup" },
+      ],
+    },
+    {
+      id: "media", icon: Tv, label: "Media Hub",
+      paths: ["/media/", "/user-media-hub", "/gallery",
+        "/user-content/news", "/user-content/magazine", "/user-content/video", "/user-content/gallery",
+        "/user-content/impact-story", "/user-content/market-intelligence", "/user-content/tech-trends",
+        "/user-content/press-release", "/user-content/industry-report"],
+      items: [
+        { icon: Newspaper,     label: "News Pulse",          href: "/user-content/news" },
+        { icon: BookOpen,      label: "Magazine",            href: "/user-content/magazine" },
+        { icon: Video,         label: "Video Spotlight",     href: "/user-content/video" },
+        { icon: ImageIcon,     label: "Gallery",             href: "/user-content/gallery" },
+        { icon: Star,          label: "Impact Stories",      href: "/user-content/impact-story" },
+        { icon: BarChart2,     label: "Market Intelligence", href: "/user-content/market-intelligence" },
+        { icon: Cpu,           label: "Tech Trends",         href: "/user-content/tech-trends" },
+        { icon: FileText,      label: "Press Releases",      href: "/user-content/press-release" },
+        { icon: ClipboardList, label: "Industry Reports",    href: "/user-content/industry-report" },
+      ],
+    },
+    {
+      id: "partnerships", icon: Handshake, label: "Partnerships",
+      paths: ["/partnerships/", "/user-content/manufacturer", "/user-content/ai-company",
+        "/user-content/event-organizer", "/user-content/education-partner", "/user-content/industry-player"],
+      items: [
+        { icon: Factory,       label: "Drone Manufacturers", href: "/user-content/manufacturer" },
+        { icon: Bot,           label: "AI & Tech Companies", href: "/user-content/ai-company" },
+        { icon: Calendar,      label: "Event Organizers",    href: "/user-content/event-organizer" },
+        { icon: GraduationCap, label: "Education Partners",  href: "/user-content/education-partner" },
+        { icon: Briefcase,     label: "Industry Players",    href: "/user-content/industry-player" },
+        { icon: Star,          label: "Partner Benefits",    href: "/partnerships/benefits" },
+        { icon: Handshake,     label: "Become a Partner",   href: "/partnerships/become-a-partner" },
+      ],
+    },
+    {
+      id: "content", icon: Share2, label: "Content",
+      paths: ["/user-posts", "/user-addons"],
+      items: [
+        { icon: Share2,      label: "My Posts", href: "/user-posts" },
+        { icon: ShoppingBag, label: "Addons",   href: "/user-addons" },
+      ],
+    },
+    {
+      id: "analytics", icon: FileText, label: "Analytics",
+      paths: ["/user-leads", "/user-contacted"],
+      items: [
+        { icon: FileText,      label: "Leads",     href: "/user-leads" },
+        { icon: MessageSquare, label: "Contacted", href: "/user-contacted" },
+      ],
+    },
+
+    {
+      id: "tokens", icon: Coins, label: "Tokens",
+      paths: ["/user-recharge", "/user-buy", "/user-bid-keywords", "/user-page-placements", "/user-active-campaigns"],
+      items: [
+        { icon: Wallet,    label: "Token Wallet",     href: "/user-recharge" },
+        { icon: Zap,       label: "Buy Tokens",       href: "/user-buy" },
+        { icon: Target,    label: "Bid for Keywords", href: "/user-bid-keywords" },
+        { icon: Layout,    label: "Page Placements",  href: "/user-page-placements" },
+        { icon: BarChart2, label: "Active Campaigns", href: "/user-active-campaigns" },
+      ],
+    },
+    {
+      id: "account", icon: Globe, label: "Account",
+      paths: ["/user-website", "/user-profile", "/user-plans", "/user-transactions"],
+      items: [
+        { icon: User,    label: "Profile",      href: "/user-profile" },
+        { icon: Globe,   label: "Website",      href: "/user-website" },
+        { icon: Package, label: "My Package",   href: "/user-plans" },
+        { icon: Receipt, label: "Transactions", href: "/user-transactions" },
+      ],
+    },
+    // AI Suite — admin only
+    ...(isAdmin ? [{
+      id: "ai", icon: Brain, label: "AI Suite",
+      paths: ["/user-ai"],
+      items: [
+        { icon: Brain, label: "AI Dashboard", href: "/user-ai" },
+      ],
+    }] : []),
+  ];
+
+  return groups;
+}
 
 const Sidebar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
-  const { user, logout } = useUserAuth();
+  const location = useLocation();
+  const [isOpen, setIsOpen] = useState(() => typeof window !== "undefined" && window.innerWidth >= 1024);
+  const [tokenBalance, setTokenBalance] = useState<number | null>(null);
+  const { user, logout, isAdminLogin } = useUserAuth();
   const navigate = useNavigate();
+
+  const role = user?.role || 'user';
+  const isAdmin = !!(user?.isAdmin || isAdminLogin);
+  const NAV_GROUPS = getNavGroups(role, isAdmin);
+
+  const userId = user?.userData?.email || user?.email || "";
+
+  const getInitialOpen = () => {
+    const open: Record<string, boolean> = {};
+    NAV_GROUPS.forEach(g => {
+      open[g.id] = g.paths.some(p => location.pathname.startsWith(p));
+    });
+    open["listings"] = true;
+    open["tokens"] = true;
+    open["account"] = true;
+    return open;
+  };
+
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(getInitialOpen);
+
+  // Auto-expand whichever group the user navigates into (e.g. via a link elsewhere in the app),
+  // so its sub-items are never hidden behind a collapsed accordion the user doesn't know to click.
+  React.useEffect(() => {
+    const activeGroup = NAV_GROUPS.find(g => g.paths.some(p => location.pathname.startsWith(p)));
+    if (activeGroup && !openGroups[activeGroup.id]) {
+      setOpenGroups(prev => ({ ...prev, [activeGroup.id]: true }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  React.useEffect(() => {
+    if (!userId) return;
+    axios.get(`${PROFILE_API}?userId=${userId}`)
+      .then(r => setTokenBalance(r.data?.profile?.tokenBalance ?? 0))
+      .catch(() => setTokenBalance(0));
+  }, [userId]);
+
+  const toggleGroup = (id: string) => {
+    setOpenGroups(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
-const navLinks = [
-    { icon: User, label: "Dashboard", href: "/user-dashboard" },
-    { icon: Building2, label: "Companies", href: "/user-companies" },
-    { icon: FileText, label: "Leads", href: "/user-leads" },
-    { icon: Globe, label: "Website", href: "/user-website" },
-    {
-      icon: Users,
-      label: "Professionals",
-      href: "/user-professionals",
-    },
-    { icon: Calendar, label: "Events", href: "/user-events" },
-    { icon: Wallet, label: "Recharge", href: "/user-recharge" },
-    { icon: Clock1, label: "Transaction History", href: "/user-transactions" },
-    { icon: MessageSquare, label: "Contacted People", href: "/user-contacted" },
-    ...(user?.email === 'dronesimulatorpro@gmail.com'
-      ? [{ icon: Brain, label: "AI", href: "/user-ai" }]
-      : []),
-  ];
+
   return (
-    <aside className="flex h-screen rounded-lg shadow-lg overflow-hidden">
-      {/* Sidebar */}
+    <aside className="flex h-full">
       <section
-        className={`${
-          isOpen ? "w-74" : "w-20"
-        } bg-amber-50  text-white transition-all duration-300 flex flex-col`}
+        className={`${isOpen ? "w-64" : "w-16"} flex flex-col transition-all duration-300 overflow-x-hidden`}
+        style={{ background: "#111827" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-yellow-400">
+        <div className="flex items-center gap-3 px-4 border-b border-white/10 flex-shrink-0" style={{ paddingTop: "16px", paddingBottom: "16px" }}>
+          <div className="w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center flex-shrink-0">
+            <Tv size={16} className="text-black" />
+          </div>
           {isOpen && (
-            <h1 className="text-2xl font-bold text-black">Dashboard</h1>
+            <div className="flex-1 min-w-0">
+              <div className="text-base font-black text-white leading-tight">
+                Drone<span className="text-yellow-400">Tv</span>.in
+              </div>
+              <div className="text-[9px] text-white/35 uppercase tracking-widest">Member Portal</div>
+            </div>
           )}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className={`p-2 bg-yellow-200 hover:bg-yellow-300 hover:text-gray-900 rounded-lg transition-colors text-black ${
-              !isOpen && "mx-auto"
-            } cursor-pointer`}
-          >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {isOpen ? (
+            <button onClick={() => setIsOpen(false)} className="p-1 rounded-lg text-white/30 hover:text-white hover:bg-white/10 transition-colors flex-shrink-0">
+              <X size={16} />
+            </button>
+          ) : (
+            <button onClick={() => setIsOpen(true)} className="mx-auto p-1 rounded-lg text-white/30 hover:text-white hover:bg-white/10 transition-colors">
+              <Menu size={16} />
+            </button>
+          )}
         </div>
 
-        {/* Navigation Links */}
-        <nav className="flex-1 px-3 py-6 space-y-2">
-          {navLinks.map(({ icon: Icon, label, href }) => (
+        {/* Navigation */}
+        <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto overflow-x-hidden">
+          {/* Dashboard — flat link */}
+          <NavLink
+            to="/user-dashboard"
+            title={!isOpen ? "Dashboard" : undefined}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 border-l-[3px] ${
+                isActive
+                  ? "bg-yellow-400/15 text-yellow-400 border-yellow-400"
+                  : "text-white/60 hover:bg-white/6 hover:text-white border-transparent"
+              }`
+            }
+          >
+            <User size={18} className={`flex-shrink-0 ${!isOpen && "mx-auto"}`} />
+            {isOpen && <span className="truncate">Dashboard</span>}
+          </NavLink>
+
+          {/* Accordion groups */}
+          {NAV_GROUPS.map(group => {
+            const GroupIcon = group.icon;
+            const isGroupActive = group.paths.some(p => location.pathname.startsWith(p));
+            const isGroupOpen = openGroups[group.id];
+
+            if (!isOpen) {
+              return (
+                <div key={group.id} className="relative group/tip">
+                  <button
+                    onClick={() => { setIsOpen(true); setOpenGroups(prev => ({ ...prev, [group.id]: true })); }}
+                    className={`w-full flex items-center justify-center py-2.5 rounded-lg transition-all border-l-[3px] ${
+                      isGroupActive ? "bg-yellow-400/15 border-yellow-400" : "border-transparent hover:bg-white/6"
+                    }`}
+                    title={group.label}
+                  >
+                    <GroupIcon size={18} className={isGroupActive ? "text-yellow-400" : "text-white/60"} />
+                  </button>
+                </div>
+              );
+            }
+
+            return (
+              <div key={group.id}>
+                <button
+                  onClick={() => toggleGroup(group.id)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all border-l-[3px] ${
+                    isGroupActive && !isGroupOpen
+                      ? "bg-yellow-400/10 text-yellow-400 border-yellow-400"
+                      : "text-white/50 hover:text-white/80 hover:bg-white/5 border-transparent"
+                  }`}
+                >
+                  <GroupIcon size={18} className="flex-shrink-0" />
+                  <span className="flex-1 truncate text-left">{group.label}</span>
+                  <ChevronDown
+                    size={14}
+                    className={`flex-shrink-0 transition-transform duration-200 ${isGroupOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {isGroupOpen && (
+                  <div className="ml-4 mt-0.5 space-y-0.5 border-l border-white/10 pl-2">
+                    {group.items.map(item => {
+                      const ItemIcon = item.icon;
+                      // NavLink's own isActive only matches pathname, so sibling items sharing a
+                      // path but differing by ?view= (Event Calendar/Expos/Conferences/Workshops
+                      // all live on /user-events) would otherwise all light up together.
+                      const [itemPath, itemQuery] = item.href.split("?");
+                      const isItemActive = location.pathname === itemPath && (location.search.replace(/^\?/, "")) === (itemQuery || "");
+                      return (
+                        <NavLink
+                          key={item.href}
+                          to={item.href}
+                          className={
+                            `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all border-l-[2px] ${
+                              isItemActive
+                                ? "bg-yellow-400/15 text-yellow-400 border-yellow-400"
+                                : "text-white/50 hover:bg-white/6 hover:text-white border-transparent"
+                            }`
+                          }
+                        >
+                          <ItemIcon size={15} className="flex-shrink-0" />
+                          <span className="truncate">{item.label}</span>
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {/* AI link — gated */}
+          {user?.email === "dronesimulatorpro@gmail.com" && (
             <NavLink
-              key={href}
-              to={href}
+              to="/user-ai"
+              title={!isOpen ? "AI" : undefined}
               className={({ isActive }) =>
-                `flex items-center gap-4 p-3 rounded-lg transition-all duration-200 border ${
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 border-l-[3px] ${
                   isActive
-                    ? "bg-yellow-400 text-white font-semibold border-yellow-500"
-                    : "border-yellow-400 text-black hover:bg-yellow-200 hover:text-gray-900"
+                    ? "bg-yellow-400/15 text-yellow-400 border-yellow-400"
+                    : "text-white/60 hover:bg-white/6 hover:text-white border-transparent"
                 }`
               }
             >
-              <Icon size={22} className={`${!isOpen && "mx-auto"}`} />
-              {isOpen && <span>{label}</span>}
+              <Brain size={18} className={`flex-shrink-0 ${!isOpen && "mx-auto"}`} />
+              {isOpen && <span className="truncate">AI</span>}
             </NavLink>
-          ))}
+          )}
         </nav>
 
-        {/* Profile Section */}
-        <div className="p-2">
-          <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-yellow-200 hover:text-gray-900 transition-colors cursor-pointer border border-yellow-400">
-            {/* Profile Info */}
-            <NavLink to={"/user-profile"} className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center shrink-0">
-                <User size={22} className="text-white" />
-              </div>
+        {/* Token balance */}
+        {isOpen && tokenBalance !== null && (
+          <NavLink
+            to="/user-recharge"
+            className="mx-3 mb-1 flex items-center justify-between px-3 py-2 rounded-lg bg-yellow-400/10 border border-yellow-400/20 hover:bg-yellow-400/20 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Coins size={14} className="text-yellow-400 flex-shrink-0" />
+              <span className="text-xs text-white/60">Tokens</span>
+            </div>
+            <span className="text-sm font-black text-yellow-400">{tokenBalance.toLocaleString()}</span>
+          </NavLink>
+        )}
+        {!isOpen && tokenBalance !== null && (
+          <NavLink to="/user-recharge" className="flex justify-center mb-1 px-2" title={`${tokenBalance} tokens`}>
+            <div className="flex flex-col items-center gap-0.5">
+              <Coins size={16} className="text-yellow-400" />
+              <span className="text-[9px] font-black text-yellow-400">{tokenBalance > 999 ? `${Math.floor(tokenBalance / 1000)}k` : tokenBalance}</span>
+            </div>
+          </NavLink>
+        )}
 
-              {isOpen && (
-                <div className="min-w-0">
-                  <p className="font-medium text-sm truncate text-gray-900">
-                    {user?.userData?.fullName}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {user?.userData?.email}
-                  </p>
-                </div>
-              )}
-            </NavLink>
-
-            {/* Logout Button */}
+        {/* Profile */}
+        <div className="flex-shrink-0 border-t border-white/10 p-3">
+          <NavLink to="/user-profile" className="flex items-center gap-2 min-w-0 mb-2">
+            <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center flex-shrink-0">
+              <span className="text-[11px] font-black text-black">
+                {user?.userData?.fullName?.[0]?.toUpperCase() || "U"}
+              </span>
+            </div>
             {isOpen && (
-              <button
-                onClick={handleLogout}
-                className="text-red-400 hover:text-red-500 hover:scale-110 cursor-pointer transition-all"
-                title="Logout"
-              >
-                <LogOut />
-              </button>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-white truncate">{user?.userData?.fullName}</p>
+                <p className="text-[10px] text-white/40 truncate">{user?.userData?.email}</p>
+              </div>
             )}
-          </div>
+          </NavLink>
+          {isOpen && (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-white/6 transition-all text-sm"
+            >
+              <LogOut size={15} />
+              <span>Logout</span>
+            </button>
+          )}
         </div>
       </section>
     </aside>

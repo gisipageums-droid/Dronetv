@@ -94,7 +94,7 @@
 //                   whileHover={{ scale: 1.1 }}
 //                   onClick={() => {
 //                     // Add your publish logic here
-//                     publishTemplate(); // Call the publish function
+//                     editPublishTemplate();
 //                     setModel(false);
                     
 //                   }}
@@ -123,9 +123,10 @@ import { CheckCircle, X, Upload, AlertCircle } from "lucide-react";
 import { useTemplate } from "../../../../../../../../../context/context"; // Adjust path as needed
 
 export default function Publish() {
+  if (new URLSearchParams(window.location.search).get("adminMode") === "true") return null;
   const [model, setModel] = useState(false);
   const [termsModel, setTermsModel] = useState(false);
-  const { publishTemplate, navigatemodel, navModel } = useTemplate(); // Get the publish function from context
+  const { editPublishTemplate, navigatemodel, navModel } = useTemplate();
 
   // Terms and Conditions Content
   const termsContent = `Last Updated: 24th September, 2025
@@ -190,7 +191,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
 
   return (
     <>
-      <motion.div className="fixed bottom-20 right-10 z-50">
+      <motion.div className="fixed bottom-20 right-4 sm:right-10 z-50">
         <motion.button
           onClick={() => setModel(true)}
           className="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
@@ -279,7 +280,7 @@ You agree to indemnify, defend, and hold harmless DroneTV, its affiliates, and e
                   whileTap={{ scale: 0.9 }}
                   whileHover={{ scale: 1.1 }}
                   onClick={() => {
-                    publishTemplate(); // Call the publish function
+                    editPublishTemplate();
                     setModel(false);
                   }}
                   className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"

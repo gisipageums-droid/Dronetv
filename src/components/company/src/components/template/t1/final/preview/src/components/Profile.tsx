@@ -189,7 +189,7 @@ export default function CompanyProfile({ profileData }) {
                 Our Core Values
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                {profileData.coreValues.map((value, i) => (
+                {(profileData.coreValues || []).map((value, i) => (
                   <motion.div
                     key={i}
                     initial={{ x: -20, opacity: 0 }}

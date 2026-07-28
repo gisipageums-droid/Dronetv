@@ -4,7 +4,7 @@ export const useFormSteps = (totalSteps: number) => {
   // Initialize current step from localStorage
   const [current, setCurrent] = useState<number>(() => {
     try {
-      const saved = localStorage.getItem("professionalFormDraft");
+      const saved = localStorage.getItem("eventFormDraft");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed?.step && Number.isInteger(parsed.step)) {
@@ -20,13 +20,13 @@ export const useFormSteps = (totalSteps: number) => {
   // Persist current step to localStorage whenever it changes
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("professionalFormDraft");
+      const saved = localStorage.getItem("eventFormDraft");
       let existingData = {};
       if (saved) {
         existingData = JSON.parse(saved);
       }
       const payload = JSON.stringify({ ...existingData, step: current });
-      localStorage.setItem("professionalFormDraft", payload);
+      localStorage.setItem("eventFormDraft", payload);
     } catch (e) {
       console.error("Failed to save step to localStorage", e);
     }

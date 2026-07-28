@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import React, { useState } from "react";
-import { FiArrowRight, FiCheck, FiExternalLink, FiEye, FiStar } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { FiArrowLeft, FiArrowRight, FiCheck, FiExternalLink, FiEye, FiStar } from "react-icons/fi";
+import { useLocation, useNavigate } from "react-router-dom";
 import TPL1 from "/images/event t1.png";
 
 const TPL2 =
@@ -42,15 +42,25 @@ const templates: Template[] = [
     // },
 ];
 
+const EVENT_TYPES: { id: string; label: string; description: string }[] = [
+    { id: "expo", label: "Expo", description: "Exhibitions, trade shows, product showcases" },
+    { id: "conference", label: "Conference", description: "Talks, summits, industry conferences" },
+    { id: "workshop", label: "Workshop", description: "Hands-on training and skill-building sessions" },
+];
+
 const EventSelect: React.FC = () => {
     const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
     const [hoveredTemplate, setHoveredTemplate] = useState<number | null>(null);
+    const location = useLocation();
+    const preselectedType = (location.state as { eventType?: string } | null)?.eventType || "";
+    const [eventType, setEventType] = useState<string>(preselectedType);
     const navigate = useNavigate();
 
     const handleSelect = (id: number) => {
+        if (!eventType) return;
         setSelectedTemplate(id);
         // Static flow: send to your event form with selected id in state
-        navigate("/events/form", { state: { templateId: id } });
+        navigate("/events/form", { state: { templateId: id, eventType } });
         // navigate("/user/event/t2", { state: { templateId: id } });
     };
 
@@ -63,7 +73,16 @@ const EventSelect: React.FC = () => {
     };
 
     return (
-        <div className="max-w-6xl bg-white my-16 mx-auto px-4 py-8">
+        <div className="w-full max-w-2xl bg-white my-8 mx-auto px-4 py-8">
+            {/* Back Button */}
+            <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 text-gray-600 hover:text-yellow-600 transition-colors mb-8 text-sm font-medium"
+            >
+                <FiArrowLeft className="w-4 h-4" />
+                Back
+            </button>
+
             {/* Header */}
             <motion.div
                 className="text-center mb-12"
@@ -79,8 +98,43 @@ const EventSelect: React.FC = () => {
                 </p>
             </motion.div>
 
+            {/* What are you creating? */}
+            <motion.div
+                className="mb-10"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+            >
+                <h2 className="text-lg font-semibold text-gray-900 mb-1">What are you creating?</h2>
+                <p className="text-sm text-gray-500 mb-4">Choose a category — this decides where your listing shows up (Expos, Conferences or Workshops).</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {EVENT_TYPES.map((t) => (
+                        <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => setEventType(t.id)}
+                            className={`text-left p-4 rounded-xl border-2 transition-all duration-200 ${eventType === t.id
+                                ? "border-yellow-400 bg-yellow-50 shadow-md"
+                                : "border-gray-200 hover:border-yellow-300"
+                                }`}
+                        >
+                            <div className="flex items-center justify-between mb-1">
+                                <span className="font-semibold text-gray-900">{t.label}</span>
+                                {eventType === t.id && <FiCheck className="w-4 h-4 text-yellow-600" />}
+                            </div>
+                            <p className="text-xs text-gray-500">{t.description}</p>
+                        </button>
+                    ))}
+                </div>
+            </motion.div>
+
             {/* Grid (single card) */}
-            <div className="grid grid-cols-2 gap-6 ">
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity ${!eventType ? "opacity-50 pointer-events-none" : ""}`}>
+                {!eventType && (
+                    <p className="col-span-full text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 -mt-2 mb-2">
+                        Pick a category above to continue.
+                    </p>
+                )}
                 {templates.map((tpl) => {
                     const isActive = selectedTemplate === tpl.id;
                     const isHovered = hoveredTemplate === tpl.id;
@@ -95,10 +149,10 @@ const EventSelect: React.FC = () => {
                             onMouseEnter={() => setHoveredTemplate(tpl.id)}
                             onMouseLeave={() => setHoveredTemplate(null)}
                             onClick={() => handleSelect(tpl.id)}
-                            className={`relative flex flex-col group border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 ${isActive
+                            className={`relative flex flex-col group border-2 rounded-xl p-4 sm:p-6 cursor-pointer transition-all duration-300 w-full min-w-0 ${isActive
                                 ? "border-yellow-400 bg-yellow-50/50 shadow-lg"
                                 : "border-gray-200 hover:border-yellow-300 hover:shadow-xl"
-                                } overflow-hidden`}
+                                }`}
                         >
                             {/* Popular Badge */}
                             {tpl.tags.includes("Popular") && (
@@ -184,7 +238,7 @@ const EventSelect: React.FC = () => {
                                     whileTap={{ scale: 0.98 }}
                                     type="button"
                                     className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 flex-1 ${isActive
-                                        ? "bg-yellow-500 text-white shadow-md"
+                                        ? "bg-yellow-500 text-black shadow-md"
                                         : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
                                         }`}
                                     onClick={(e) => {
@@ -203,7 +257,7 @@ const EventSelect: React.FC = () => {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     type="button"
-                                    className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium border transition-all duration-200 ${isActive
+                                    className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium border transition-all duration-200 flex-1 ${isActive
                                         ? "border-yellow-400 text-yellow-600"
                                         : "border-gray-300 text-gray-600 hover:border-yellow-300 hover:text-yellow-600"
                                         }`}

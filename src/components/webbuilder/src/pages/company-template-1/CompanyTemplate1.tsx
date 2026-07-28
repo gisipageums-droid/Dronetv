@@ -9,6 +9,7 @@ import ProductsSection from './components/ProductsSection';
 import ClientsSection from './components/ClientsSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
+import { COMPANY_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 interface Company {
   [key: string]: any;
@@ -26,7 +27,7 @@ const CompanyTemplate1: React.FC = () => {
       setLoading(true);
       try {
         const decodedCompanyName = decodeURIComponent(companySlug);
-        const res = await fetch('https://80lbhj32ja.execute-api.ap-south-1.amazonaws.com/singlecompany', {
+        const res = await fetch(COMPANY_API ? `${COMPANY_API}` : `${LAMBDA.webbuilderGet}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ companyName: decodedCompanyName })
@@ -42,61 +43,6 @@ const CompanyTemplate1: React.FC = () => {
         }
         // --- Console debug for each section props ---
         if (c && typeof c === 'object') {
-          console.log('=== Navigation ===', {
-            navigationLinks: c.navigationLinks,
-            companyLogo: c.companyLogo,
-          });
-          console.log('=== HeroSection ===', {
-            headline: c.heroHeadline,
-            subheadline: c.heroSubheadline,
-            background: c.heroBackground || c.aboutImage,
-            primaryCTA: c.primaryCTA,
-            secondaryCTA: c.secondaryCTA,
-            companyLogo: c.companyLogo,
-          });
-          console.log('=== AboutSection ===', {
-            aboutTitle: c.aboutTitle,
-            aboutDescription: c.aboutDescription,
-            aboutTeamExperience: c.aboutTeamExperience,
-            aboutImage: c.aboutImage,
-            aboutExperienceYears: c.aboutExperienceYears,
-            companyValues: c.companyValues,
-            videoEmbedUrl: c.videoEmbedUrl,
-          });
-          console.log('=== ServicesSection ===', {
-            servicesTitle: c.servicesTitle,
-            servicesDescription: c.servicesDescription,
-            services: c.services,
-          });
-          console.log('=== ProductsSection ===', {
-            productsTitle: c.productsTitle,
-            productCategories: c.productCategories,
-            products: c.products,
-          });
-          console.log('=== ClientsSection ===', {
-            clientsTitle: c.clientsTitle,
-            clients: c.clients,
-            clientLogos: c.clientLogos,
-            testimonials: c.testimonials,
-          });
-          console.log('=== ContactSection ===', {
-            contactTitle: c.contactTitle,
-            email: c.email,
-            phone: c.phone,
-            addressLine: c.addressLine,
-            city: c.city,
-            state: c.state,
-            pinCode: c.pinCode,
-            mapEmbedUrl: c.mapEmbedUrl,
-            contactFormText: c.contactFormText,
-            submitButtonText: c.submitButtonText,
-          });
-          console.log('=== Footer ===', {
-            footerLogo: c.footerLogo,
-            footerText: c.footerText,
-            footerNavLinks: c.footerNavLinks,
-            socialLinks: c.socialLinks,
-          });
         }
         setCompany(c);
       } catch (e) {

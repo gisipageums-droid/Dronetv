@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Award, Star, MapPin, Calendar, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 
 // 1. Company Interface - covers API fields
 interface Company {
@@ -32,7 +33,7 @@ const FeaturedCompanies: React.FC = () => {
 
   useEffect(() => {
 
-    axios.get('https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?viewType=main')
+    axios.get(COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=main` : `${LAMBDA.company}/dashboard-cards?viewType=main`)
       .then(response => {
         if (response.data.success == true) {
           const seenFIds = new Set<string>();
@@ -53,8 +54,7 @@ const FeaturedCompanies: React.FC = () => {
         }
 
       })
-      .catch(error => {
-        console.error('Error fetching companies:', error);
+      .catch(() => {
         setCompanies([]);
       });
     // const fetchCompanies = async () => {
@@ -281,7 +281,7 @@ const FeaturedCompanies: React.FC = () => {
                         <button
                           onClick={e => {
                             e.stopPropagation();
-                            navigate(company.templateSelection === "template-1" ? `/company/${companySlug}` : `/companies/${companySlug}`);
+                            navigate(company.templateSelection === "template-1" ? `/company/${urlSlug}` : `/companies/${urlSlug}`);
                           }}
                           className="group/btn bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-6 py-3 rounded-xl font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg"
                         >

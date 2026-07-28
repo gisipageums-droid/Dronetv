@@ -1,19 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
-  Shield, CheckCircle, AlertCircle, Loader2, ExternalLink,
-  RefreshCw, BadgeCheck, Upload, Edit, X, Lock, Globe,
+  CheckCircle, AlertCircle, Loader2, ExternalLink,
+  BadgeCheck, Upload, Edit, X, Globe,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import { toast } from "sonner";
-import axios from "axios";
 import { AnimatePresence, motion } from "motion/react";
 import FormApp from "../../company/src/components/form/src/App";
-
-const SUREPASS_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc3NTY0NzYxNywianRpIjoiNTNiZjhhODMtMDZlZS00Y2QyLTgxNDYtZDQ0MjAyN2M1NmE5IiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LmRyb25ldHZAc3VyZXBhc3MuaW8iLCJuYmYiOjE3NzU2NDc2MTcsImV4cCI6MjQwNjM2NzYxNywiZW1haWwiOiJkcm9uZXR2QHN1cmVwYXNzLmlvIiwidGVuYW50X2lkIjoibWFpbiIsInVzZXJfY2xhaW1zIjp7InNjb3BlcyI6WyJ1c2VyIl19fQ.GgTCyK0v20-XH3eq39Y31La05PBX7cBonsq7grngi1M";
-
-type DigiStatus = "idle" | "loading" | "ready" | "polling" | "verified" | "error";
+import { COMPANY_API, MEDIA_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface Company {
   publishedId: string;
@@ -31,53 +26,62 @@ const CompanyWebsite: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const [company, setCompany] = useState<Company | null>(null);
+  const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [companyCategory, setCompanyCategory] = useState<string[]>([]);
-  const [isDetailsUpdated, setIsDetailsUpdated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showPublish, setShowPublish] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [activeTab, setActiveTab] = useState<"preview" | "details">(
     searchParams.get("tab") === "details" ? "details" : "preview"
   );
-  const [digiStatus, setDigiStatus] = useState<DigiStatus>("idle");
-  const [digiUrl, setDigiUrl] = useState("");
-  const [digiClientId, setDigiClientId] = useState("");
-  const [isPublishing, setIsPublishing] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
   const [currentLogo, setCurrentLogo] = useState<string>("");
   const [iframeKey, setIframeKey] = useState(0);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const popupRef = useRef<Window | null>(null);
+  const [statusRefreshing, setStatusRefreshing] = useState(false);
   const logoInputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
 
   const userId = user?.email || user?.userData?.email || "";
 
-  useEffect(() => {
+  const loadCompanyData = useCallback((onDone?: () => void) => {
     if (!userId) return;
-    const CARDS_API = "https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards";
+    const CARDS_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards` : `${LAMBDA.company}/dashboard-cards`;
     const savedUserId = localStorage.getItem("dronetv_company_userId") || "";
     const idsToTry = [userId, savedUserId].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
 
     const tryNext = (idx: number) => {
-      if (idx >= idsToTry.length) { setLoading(false); return; }
+      if (idx >= idsToTry.length) { setLoading(false); onDone?.(); return; }
       fetch(`${CARDS_API}?userId=${idsToTry[idx]}`)
         .then((r) => r.json())
         .then((data) => {
           const cards: Company[] = data.cards || [];
-          if (cards.length > 0) { setCompany(cards[0]); setLoading(false); }
-          else tryNext(idx + 1);
+          if (cards.length > 0) {
+            setAllCompanies(cards);
+            setCompany(prev => {
+              const match = prev ? cards.find(c => c.publishedId === prev.publishedId) : null;
+              return match || cards[0];
+            });
+            setLoading(false);
+            onDone?.();
+          } else tryNext(idx + 1);
         })
         .catch(() => tryNext(idx + 1));
     };
     tryNext(0);
   }, [userId]);
 
+  useEffect(() => { loadCompanyData(); }, [loadCompanyData]);
+
+  const handleRefreshStatus = useCallback(() => {
+    setStatusRefreshing(true);
+    loadCompanyData(() => setStatusRefreshing(false));
+  }, [loadCompanyData]);
+
   useEffect(() => {
     if (!company) return;
     const template = company.templateSelection || "template-1";
-    fetch(`https://3l8nvxqw1a.execute-api.ap-south-1.amazonaws.com/prod/api/draft/${company.userId}/${company.draftId}?template=${template}`)
+    fetch(COMPANY_API ? `${COMPANY_API}/api/draft/${company.userId}/${company.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${company.userId}/${company.draftId}?template=${template}`)
       .then((r) => r.json())
       .then((data) => {
         const cats: string[] = data?.formData?.companyCategory;
@@ -87,38 +91,45 @@ const CompanyWebsite: React.FC = () => {
   }, [company]);
 
   useEffect(() => {
-    if (!company) return;
-    // Fast check: localStorage cache
-    const cachedLock = localStorage.getItem(`details_updated_${company.publishedId}`) === "true";
-    if (cachedLock) { setIsDetailsUpdated(true); return; }
-    // Server-side check: look for _detailsUpdatedAt in published content
-    fetch(
-      `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${company.publishedId}`,
-      { headers: { "Content-Type": "application/json", "X-User-Id": company.userId } }
-    )
-      .then(r => r.json())
-      .then(data => {
-        if (data?.content?._detailsUpdatedAt) {
-          setIsDetailsUpdated(true);
-          localStorage.setItem(`details_updated_${company.publishedId}`, "true");
-        }
+    if (!company || currentLogo) return;
+    const url = COMPANY_API
+      ? `${COMPANY_API}/templates?publishId=${company.publishedId}`
+      : `${LAMBDA.companyTemplateLoad}/templates?publishId=${company.publishedId}`;
+    fetch(url)
+      .then((r) => r.json())
+      .then((data) => {
+        const c = data?.data?.content || {};
+        const logo = c.header?.logoSrc || c.header?.logoUrl || c.company?.logo || "";
+        if (logo) setCurrentLogo(logo);
       })
       .catch(() => {});
   }, [company]);
+
+
+
+  const mergeItemsByTitle = (existing: any[] = [], incoming: any[] = []) => {
+    return incoming.map((item) => {
+      const match = existing.find(
+        (e) => e?.title?.trim().toLowerCase() === item?.title?.trim().toLowerCase()
+      );
+      // Preserve richer AI-generated fields (image, features, benefits, pricing, etc.)
+      // for items the user kept — only title/description come from the quick-edit form.
+      return match ? { ...match, title: item.title, description: item.description } : item;
+    });
+  };
 
   const handleFormSubmit = useCallback(async (aiGenData: any) => {
     if (!company) return;
     setSubmitting(true);
     try {
-      // Fetch existing published content so scraped data is not lost
+      // Fetch existing published content so scraped data / gallery is not lost
       let existingContent: any = {};
       try {
         const detailsRes = await fetch(
-          `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${company.publishedId}`,
-          { headers: { "Content-Type": "application/json", "X-User-Id": company.userId } }
+          `${LAMBDA.companyTemplateLoad}/templates?publishId=${company.publishedId}`
         );
         const details = await detailsRes.json();
-        existingContent = details?.content || {};
+        existingContent = details?.data?.content || {};
       } catch { /* proceed with empty — will use full generated content */ }
 
       const newContent = aiGenData.content || {};
@@ -127,13 +138,20 @@ const CompanyWebsite: React.FC = () => {
       // Selectively merge: preserve scraped text, update only what the 5 steps provide
       const mergedContent = hasExisting ? {
         ...existingContent,
-        // Services from step 3 (Products & Services)
+        // Services from step 3 (Products & Services) — merge by title so existing
+        // images/features/benefits/pricing survive; only title/description come from the form
         ...(newContent.services?.services?.length > 0 ? {
-          services: { ...existingContent.services, services: newContent.services.services },
+          services: {
+            ...existingContent.services,
+            services: mergeItemsByTitle(existingContent.services?.services, newContent.services.services),
+          },
         } : {}),
-        // Products from step 3
+        // Products from step 3 — same per-item merge as services
         ...(newContent.products?.products?.length > 0 ? {
-          products: { ...existingContent.products, products: newContent.products.products },
+          products: {
+            ...existingContent.products,
+            products: mergeItemsByTitle(existingContent.products?.products, newContent.products.products),
+          },
         } : {}),
         // Logo from step 5 (Media Uploads)
         ...(newContent.company?.logo ? {
@@ -164,14 +182,29 @@ const CompanyWebsite: React.FC = () => {
         ...(newContent.clients?.clients?.length > 0 ? {
           clients: { ...existingContent.clients, clients: newContent.clients.clients },
         } : {}),
+        // Gallery images — always preserve existing; never overwrite with empty array
+        ...(existingContent.gallery?.images?.length > 0 ? {
+          gallery: { ...existingContent.gallery, ...(newContent.gallery || {}), images: existingContent.gallery.images },
+        } : {}),
+        // Documents: merge new non-empty URLs over existing, never clear existing with empty
+        ...(newContent.documents ? {
+          documents: {
+            ...(existingContent.documents || {}),
+            ...Object.fromEntries(
+              Object.entries(newContent.documents as Record<string, string>).filter(([, url]) => typeof url === 'string' && url.trim() !== '')
+            ),
+          },
+        } : {}),
       } : newContent;
 
       const finalContent = {
         ...(hasExisting ? mergedContent : newContent),
         _detailsUpdatedAt: new Date().toISOString(),
+        ...(aiGenData._updateCache ? { _updateCache: aiGenData._updateCache } : {}),
       };
 
-      await fetch("https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update", {
+      const newCompanyName = ((newContent.profile?.companyName || newContent.company?.name) as string || '').trim();
+      await fetch(COMPANY_API ? `${COMPANY_API}/update` : `${LAMBDA.companyDraft2}/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -180,25 +213,51 @@ const CompanyWebsite: React.FC = () => {
           draftId: company.draftId,
           templateSelection: company.templateSelection,
           content: finalContent,
+          ...(newCompanyName ? { companyName: newCompanyName } : {}),
         }),
       });
 
-      localStorage.setItem(`details_updated_${company.publishedId}`, "true");
-      setIsDetailsUpdated(true);
+      if (newCompanyName) {
+        setCompany(prev => prev ? { ...prev, companyName: newCompanyName } : prev);
+        setAllCompanies(prev => prev.map(c => c.publishedId === company.publishedId ? { ...c, companyName: newCompanyName } : c));
+      }
       setIframeKey((k) => k + 1);
-      toast.success("Details updated! Redirecting to editor...");
-      navigate(
-        `/user/companies/edit/1/${company.publishedId}/${company.userId}`,
-        { state: { aiGenData: { ...aiGenData, content: finalContent } } }
-      );
+      toast.success("Details saved! You can now publish your company.");
+      setShowPublish(true);
     } catch {
       toast.error("Failed to update details. Please try again.");
     } finally {
       setSubmitting(false);
     }
-  }, [company, navigate]);
+  }, [company]);
 
   const isVerified = company?.reviewStatus === "approved";
+
+  const handlePublish = async () => {
+    if (!company) return;
+    setPublishing(true);
+    try {
+      await fetch(COMPANY_API ? `${COMPANY_API}/admin/templates/review` : `${LAMBDA.companyAdmin}/admin/templates/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publishedId: company.publishedId, action: "approve" }),
+      });
+      // Best-effort: sync company status in profile Lambda so leads work
+      fetch(COMPANY_API ? `${COMPANY_API}/leads/company-activate` : `${LAMBDA.profile}/leads/company-activate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publishedId: company.publishedId, userId: company.userId, template: company.templateSelection || "template-1", status: "active" }),
+      }).catch(() => {});
+      toast.success("Your company is now live!");
+      setCompany(prev => prev ? { ...prev, reviewStatus: "approved" } : prev);
+      setShowPublish(false);
+      setActiveTab("preview");
+    } catch {
+      toast.error("Failed to publish. Please try again.");
+    } finally {
+      setPublishing(false);
+    }
+  };
 
   const handleLogoUpload = async (file: File) => {
     if (!company) return;
@@ -212,7 +271,7 @@ const CompanyWebsite: React.FC = () => {
       fd.append("templateSelection", company.templateSelection);
 
       const uploadRes = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${company.publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${company.publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${company.publishedId}`,
         { method: "POST", body: fd }
       );
       if (!uploadRes.ok) throw new Error("Upload failed");
@@ -220,7 +279,7 @@ const CompanyWebsite: React.FC = () => {
 
       // 2. Fetch current company content
       const detailsRes = await fetch(
-        `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${company.publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${company.publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${company.publishedId}`,
         { headers: { "Content-Type": "application/json", "X-User-Id": company.userId } }
       );
       const details = await detailsRes.json();
@@ -232,7 +291,7 @@ const CompanyWebsite: React.FC = () => {
         company: { ...content.company, logo: imageUrl },
         header: { ...content.header, logoUrl: imageUrl, logoSrc: imageUrl },
       };
-      await fetch("https://59rgr29n6b.execute-api.ap-south-1.amazonaws.com/dev/update", {
+      await fetch(COMPANY_API ? `${COMPANY_API}/update` : `${LAMBDA.companyDraft2}/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -258,97 +317,6 @@ const CompanyWebsite: React.FC = () => {
     ? `/user/companies/preview/1/${company.publishedId}/${company.userId}`
     : "";
 
-  // ---- Aadhaar flow ----
-  const initDigiBoost = async () => {
-    setDigiStatus("loading");
-    setDigiUrl("");
-    setDigiClientId("");
-    try {
-      const res = await axios.post(
-        "https://kyc-api.surepass.app/api/v1/digilocker/initialize",
-        { data: { signup_flow: true } },
-        { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}`, "Content-Type": "application/json" } }
-      );
-      if (!res.data?.success || !res.data?.data?.url) throw new Error("Init failed");
-      setDigiUrl(res.data.data.url);
-      setDigiClientId(res.data.data.client_id);
-      setDigiStatus("ready");
-    } catch {
-      setDigiStatus("error");
-    }
-  };
-
-  const startPolling = (clientId: string) => {
-    if (pollRef.current) clearInterval(pollRef.current);
-    let attempts = 0;
-    pollRef.current = setInterval(async () => {
-      attempts++;
-      try {
-        const res = await axios.get(
-          `https://kyc-api.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
-          { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}` } }
-        );
-        if (res.data?.success) {
-          clearInterval(pollRef.current!);
-          popupRef.current?.close();
-          setDigiStatus("verified");
-          toast.success("Aadhaar verified successfully!");
-          return;
-        }
-      } catch { /* keep polling */ }
-
-      if (popupRef.current?.closed) {
-        clearInterval(pollRef.current!);
-        try {
-          const finalRes = await axios.get(
-            `https://kyc-api.surepass.app/api/v1/digilocker/download-aadhaar/${clientId}`,
-            { headers: { Authorization: `Bearer ${SUREPASS_TOKEN}` } }
-          );
-          if (finalRes.data?.success) {
-            setDigiStatus("verified");
-            toast.success("Aadhaar verified successfully!");
-          } else {
-            setDigiStatus("ready");
-          }
-        } catch { setDigiStatus("ready"); }
-        return;
-      }
-
-      if (attempts >= 60) {
-        clearInterval(pollRef.current!);
-        setDigiStatus("error");
-        toast.error("Verification timed out. Please try again.");
-      }
-    }, 2000);
-  };
-
-  const handleOpenDigiLocker = () => {
-    if (!digiUrl || !digiClientId) return;
-    const popup = window.open(digiUrl, "digilocker-verify", "width=620,height=720,left=300,top=80");
-    popupRef.current = popup;
-    setDigiStatus("polling");
-    startPolling(digiClientId);
-  };
-
-  const handleConfirmPublish = async () => {
-    if (!company || digiStatus !== "verified") return;
-    setIsPublishing(true);
-    try {
-      await axios.post(
-        "https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review",
-        { publishedId: company.publishedId, action: "approve" },
-        { headers: { "Content-Type": "application/json" } }
-      );
-      toast.success("Your company is now live and verified!");
-      setCompany((prev) => prev ? { ...prev, reviewStatus: "approved" } : prev);
-      setDigiStatus("idle");
-    } catch {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setIsPublishing(false);
-    }
-  };
-
   const handleConfirmEdit = () => {
     if (!company) return;
     setShowEditModal(false);
@@ -357,7 +325,7 @@ const CompanyWebsite: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
+      <div className="h-full bg-amber-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
       </div>
     );
@@ -365,7 +333,7 @@ const CompanyWebsite: React.FC = () => {
 
   if (!company) {
     return (
-      <div className="min-h-screen bg-amber-50 flex flex-col items-center justify-center px-4 text-center">
+      <div className="h-full bg-amber-50 flex flex-col items-center justify-center px-4 text-center pb-20 lg:pb-0">
         <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mb-5">
           <Globe className="w-10 h-10 text-amber-500" />
         </div>
@@ -384,13 +352,13 @@ const CompanyWebsite: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-amber-50 flex flex-col">
+    <div className="h-full bg-amber-50 flex flex-col overflow-y-auto">
 
       {/* Edit Confirmation Modal */}
       <AnimatePresence>
         {showEditModal && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -438,20 +406,39 @@ const CompanyWebsite: React.FC = () => {
       </AnimatePresence>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-6 pt-6 pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-gray-900">{company.companyName}</h1>
-            {isVerified && <BadgeCheck className="w-6 h-6 text-green-600" title="Verified" />}
-          </div>
-          <p className="text-sm text-gray-500 mt-0.5">{company.location}</p>
+      <div className="flex items-start justify-between px-4 sm:px-6 pt-5 pb-4 gap-3">
+        <div className="min-w-0 flex-1">
+          {allCompanies.length > 1 ? (
+            <div className="mb-1">
+              <label className="text-xs text-gray-500 font-medium mb-1 block">Select Company</label>
+              <select
+                value={company.publishedId}
+                onChange={(e) => {
+                  const selected = allCompanies.find(c => c.publishedId === e.target.value);
+                  if (selected) { setCompany(selected); setCurrentLogo(""); setShowPublish(false); setIframeKey(k => k + 1); }
+                }}
+                className="text-sm font-semibold text-gray-900 border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 max-w-xs w-full"
+              >
+                {allCompanies.map(c => (
+                  <option key={c.publishedId} value={c.publishedId}>{c.companyName}</option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">{company.companyName}</h1>
+              {isVerified && <BadgeCheck className="w-5 h-5 text-green-600 flex-shrink-0" title="Verified" />}
+            </div>
+          )}
+          <p className="text-sm text-gray-500 mt-0.5 truncate">{company.location}</p>
         </div>
         <button
           onClick={() => setShowEditModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-2 sm:px-4 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors shadow-sm flex-shrink-0 text-sm"
         >
-          <Edit className="w-4 h-4" />
-          Edit Website
+          <Edit className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Edit Website</span>
+          <span className="sm:hidden">Edit</span>
         </button>
       </div>
 
@@ -481,7 +468,7 @@ const CompanyWebsite: React.FC = () => {
 
       {/* Tab Content */}
       {activeTab === "preview" ? (
-        <div className="flex flex-col gap-5 p-6">
+        <div className="flex flex-col gap-4 p-4 sm:p-6 pb-6 lg:pb-6">
           {/* Status Banner */}
           {isVerified ? (
             <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-xl">
@@ -495,36 +482,46 @@ const CompanyWebsite: React.FC = () => {
             <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-300 rounded-xl">
               <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="font-semibold text-yellow-800">Your company is listed but not yet verified</p>
+                <p className="font-semibold text-yellow-800">Verification pending</p>
                 <p className="text-sm text-yellow-700 mt-0.5">
-                  Complete Aadhaar verification below to get a Verified badge and confirm your listing.
+                  Your company is listed. Our team will review and verify your listing shortly.
                 </p>
               </div>
+              <button
+                onClick={handleRefreshStatus}
+                disabled={statusRefreshing}
+                className="flex items-center gap-1 text-xs font-medium text-yellow-700 border border-yellow-400 bg-yellow-100 hover:bg-yellow-200 rounded-lg px-2.5 py-1.5 transition-colors disabled:opacity-50 flex-shrink-0"
+                title="Check latest status"
+              >
+                <Loader2 className={`w-3 h-3 ${statusRefreshing ? 'animate-spin' : 'hidden'}`} />
+                {statusRefreshing ? 'Checking...' : 'Refresh Status'}
+              </button>
             </div>
           )}
 
           {/* Logo Upload */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex items-center gap-5">
-            <div className="w-16 h-16 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center gap-3 sm:gap-5">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
               {currentLogo ? (
                 <img src={currentLogo} alt="Logo" className="w-full h-full object-contain" />
               ) : (
-                <span className="text-xs text-gray-400 text-center px-1">No Logo</span>
+                <span className="text-[10px] text-gray-400 text-center leading-tight px-1">No Logo</span>
               )}
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-800">Company Logo</p>
-              <p className="text-xs text-gray-400 mt-0.5">Shown in your website header. PNG, JPG, or SVG.</p>
+              <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">Shown in your website header. PNG, JPG, or SVG.</p>
+              <p className="text-xs text-gray-400 mt-0.5 sm:hidden">PNG, JPG, or SVG</p>
             </div>
             <button
               onClick={() => logoInputRef.current?.click()}
               disabled={logoUploading}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             >
               {logoUploading ? (
-                <><Loader2 className="w-4 h-4 animate-spin" />Uploading...</>
+                <><Loader2 className="w-3.5 h-3.5 animate-spin" /><span className="hidden sm:inline">Uploading...</span></>
               ) : (
-                <><Upload className="w-4 h-4" />{currentLogo ? "Change Logo" : "Upload Logo"}</>
+                <><Upload className="w-3.5 h-3.5" /><span className="hidden sm:inline">{currentLogo ? "Change Logo" : "Upload Logo"}</span><span className="sm:hidden">Upload</span></>
               )}
             </button>
             <input
@@ -565,128 +562,66 @@ const CompanyWebsite: React.FC = () => {
                 src={previewUrl}
                 title="Company Website Preview"
                 className="w-full border-0"
-                style={{ height: "560px", pointerEvents: "none" }}
+                style={{ height: "clamp(320px, 60vw, 560px)", pointerEvents: "none" }}
               />
               {/* Transparent overlay blocks all clicks inside the iframe */}
               <div className="absolute inset-0" style={{ pointerEvents: "auto", background: "transparent" }} />
             </div>
           </div>
 
-          {/* Aadhaar Verification */}
-          {!isVerified && (
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1 flex items-center gap-2">
-                <Shield className="w-5 h-5 text-indigo-600" />
-                Aadhaar Verification
-              </h3>
-              <p className="text-sm text-gray-500 mb-5">
-                Verify your identity via DigiLocker to publish your company as a verified listing.
-              </p>
-
-              {digiStatus === "idle" && (
-                <button
-                  onClick={initDigiBoost}
-                  className="px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
-                >
-                  Start Aadhaar Verification
-                </button>
-              )}
-
-              {digiStatus === "loading" && (
-                <div className="flex items-center gap-2 text-indigo-600 text-sm">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Initializing secure verification...
-                </div>
-              )}
-
-              {digiStatus === "error" && (
-                <div>
-                  <p className="text-sm text-red-600 mb-2">Initialization failed. Please retry.</p>
-                  <button
-                    onClick={initDigiBoost}
-                    className="flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-                  >
-                    <RefreshCw className="w-4 h-4" /> Retry
-                  </button>
-                </div>
-              )}
-
-              {digiStatus === "ready" && (
-                <div>
-                  <p className="text-sm text-gray-500 mb-3">
-                    Click below to open DigiLocker in a new window and complete verification.
-                  </p>
-                  <button
-                    onClick={handleOpenDigiLocker}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Verify via DigiLocker
-                  </button>
-                </div>
-              )}
-
-              {digiStatus === "polling" && (
-                <div className="flex items-center gap-3 text-indigo-600 text-sm">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Waiting for DigiLocker verification...
-                  <button
-                    onClick={() => { if (pollRef.current) clearInterval(pollRef.current); setDigiStatus("ready"); }}
-                    className="text-xs text-gray-500 hover:text-gray-700 underline ml-2"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-
-              {digiStatus === "verified" && (
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span className="text-sm font-medium text-green-700">Aadhaar Verified Successfully</span>
-                  </div>
-                  <button
-                    onClick={handleConfirmPublish}
-                    disabled={isPublishing}
-                    className={`flex items-center gap-2 px-5 py-2.5 font-semibold rounded-lg transition-colors shadow-md w-fit ${
-                      isPublishing
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
-                    }`}
-                  >
-                    {isPublishing ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
-                    ) : (
-                      <><CheckCircle className="w-4 h-4" /> Confirm & Publish</>
-                    )}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       ) : (
         <div className="flex-1">
-          {isDetailsUpdated ? (
-            <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                <Lock className="w-8 h-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Details Already Updated</h3>
-              <p className="text-gray-500 max-w-sm">
-                You have already submitted your company details. Updates are a one-time action. Contact support if you need further changes.
-              </p>
-              <button
-                onClick={() => setActiveTab("preview")}
-                className="mt-6 px-5 py-2.5 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors"
-              >
-                View Website Preview
-              </button>
-            </div>
-          ) : submitting ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
+          {submitting ? (
+            <div className="flex flex-col items-center justify-center py-16 px-6 gap-4">
               <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
               <p className="text-gray-600 font-medium">Saving your details...</p>
+            </div>
+          ) : showPublish ? (
+            <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+              {isVerified ? (
+                <>
+                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-5">
+                    <CheckCircle className="w-10 h-10 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Details Updated!</h3>
+                  <p className="text-gray-500 max-w-sm mb-8">
+                    Your company is already live. The updated details are now saved to your listing.
+                  </p>
+                  <button
+                    onClick={() => { setShowPublish(false); setActiveTab("preview"); }}
+                    className="flex items-center gap-2 px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-base rounded-xl transition-colors shadow-md"
+                  >
+                    <Globe className="w-5 h-5" /> View My Website
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-5">
+                    <CheckCircle className="w-10 h-10 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Details Saved!</h3>
+                  <p className="text-gray-500 max-w-sm mb-8">
+                    Your company details are ready. Publish now to make your company live and visible to everyone.
+                  </p>
+                  <button
+                    onClick={handlePublish}
+                    disabled={publishing}
+                    className="flex items-center gap-2 px-8 py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-base rounded-xl transition-colors shadow-lg disabled:opacity-60"
+                  >
+                    {publishing
+                      ? <><Loader2 className="w-5 h-5 animate-spin" /> Publishing...</>
+                      : <><Globe className="w-5 h-5" /> Publish My Company</>
+                    }
+                  </button>
+                  <button
+                    onClick={() => setShowPublish(false)}
+                    className="mt-4 text-sm text-gray-400 hover:text-gray-600 underline"
+                  >
+                    Go back and review
+                  </button>
+                </>
+              )}
             </div>
           ) : (
             <FormApp

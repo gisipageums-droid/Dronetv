@@ -31,6 +31,7 @@ const CompanyLogo = ({ company }) => {
 
 export default function UsedBy({ usedByData }) {
   const containerRef = useRef(null);
+  if (!usedByData?.companies?.length) return null;
   const duplicatedCompanies = [...usedByData.companies, ...usedByData.companies];
 
   useEffect(() => {

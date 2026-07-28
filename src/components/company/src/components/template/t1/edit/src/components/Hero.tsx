@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Edit2, Save, X, Loader2, Upload, RotateCw, ZoomIn } from "lucide-react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 const HeroBackground = "/images/hero/HeroBackground.jpg";
 
 // Sample images (replace with your actual imports)
@@ -222,7 +223,7 @@ export default function EditableHero({
       formData.append("templateSelection", templateSelection);
 
       const uploadResponse = await fetch(
-        `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
           body: formData,
@@ -231,7 +232,6 @@ export default function EditableHero({
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
-        console.log(`${fieldName} uploaded to S3:`, uploadData.imageUrl);
         return uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
@@ -324,7 +324,6 @@ export default function EditableHero({
 
       // Check if this is still the latest save operation
       if (saveId !== currentAutoSaveId.current) {
-        console.log("Skipping outdated auto-save");
         return;
       }
 

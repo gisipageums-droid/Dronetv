@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, ChevronDown, Play, Eye, Clock, Star, TrendingUp, Calendar, Plus, X, Upload, Youtube } from 'lucide-react';
+import { Search, Filter, ChevronDown, Play, Eye, Clock, Star, TrendingUp, Calendar, Plus, X, Upload, Youtube, SlidersHorizontal } from 'lucide-react';
+import CompactHero from './common/CompactHero';
 
 const VideosPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -9,6 +10,7 @@ const VideosPage = () => {
   const [filteredFeaturedVideos, setFilteredFeaturedVideos] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddVideoForm, setShowAddVideoForm] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [newVideo, setNewVideo] = useState({
     title: '',
     description: '',
@@ -226,9 +228,7 @@ const VideosPage = () => {
         setAllVideos(defaultVideos);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultVideos));
       }
-    } catch (error) {
-      console.error('Error loading videos from localStorage:', error);
-      // Fallback to defaults if there's any error
+    } catch {
       setAllVideos(defaultVideos);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultVideos));
     }
@@ -238,9 +238,7 @@ const VideosPage = () => {
   const saveVideosToStorage = (videos) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(videos));
-    } catch (error) {
-      console.error('Error saving videos to localStorage:', error);
-      alert('Unable to save videos. Please check your browser settings.');
+    } catch {
     }
   };
 
@@ -277,7 +275,6 @@ const VideosPage = () => {
     e.preventDefault();
 
     if (!newVideo.title || !newVideo.description || !newVideo.videoUrl) {
-      alert('Please fill in all required fields');
       return;
     }
 
@@ -382,28 +379,13 @@ const VideosPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-yellow-400 pt-16">
-      {/* Hero Section */}
-      <section className="py-3 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-200/30 rounded-full animate-pulse blur-2xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-600/20 rounded-full animate-pulse blur-2xl" style={{ animationDelay: '2s' }}></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h1 className="text-2xl md:text-5xl font-black text-black mb-2 tracking-tight">
-            Video Library
-          </h1>
-          <p className="text-xl text-black/80 max-w-2xl mx-auto mb-4">
-            Explore innovative drone tech, AI, and GIS solutions.
-          </p>
-          <div className="w-24 h-1 bg-black mx-auto rounded-full mb-4"></div>
-        </div>
-      </section>
+    <div className="pt-[104px] min-h-screen bg-gray-50">
+      {/* Hero */}
+      <CompactHero title={<>Video <span>Library</span> · {allVideos.length} Videos</>} />
 
       {/* Add Video Modal */}
       {showAddVideoForm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[10000000] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-black">Add New Video</h2>
@@ -515,223 +497,144 @@ const VideosPage = () => {
         </div>
       )}
 
-      {/* Filter Section */}
-      <section className="py-2 bg-yellow-400 sticky top-0 z-40 border-b border-black/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-1 items-center justify-between">
-            {/* Search Bar */}
-            <div className="relative flex-1 max-w-xs">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <Search className="h-4 w-4 text-black/60" />
+      <style>{`
+.vd-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
+.vd-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
+.vd-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
+.vd-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.vd-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
+.vd-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.vd-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.vd-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
+.vd-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.vd-chips{display:flex;gap:5px;flex-wrap:wrap}
+.vd-main{min-width:0}
+.vd-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.vd-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.vd-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
+.vd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px}
+.vd-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
+.vd-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
+.vd-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.vd-filter-toggle{display:none}
+@media(max-width:960px){
+  .vd-layout{grid-template-columns:1fr}
+  .vd-sidebar{position:static;display:none}
+  .vd-sidebar.open{display:block}
+  .vd-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+}
+@media(max-width:600px){.vd-wrap{padding:12px 14px}.vd-grid{grid-template-columns:1fr}}
+`}</style>
+
+      {/* Main content with sidebar */}
+      <div className="vd-wrap">
+        <div className="vd-layout">
+          {/* Sidebar */}
+          <aside className={`vd-sidebar${sidebarOpen ? ' open' : ''}`}>
+            <div className="vd-sidebar-title"><SlidersHorizontal size={14} /> Filters</div>
+
+            <div className="vd-filter-grp">
+              <div className="vd-fl-label">Search</div>
+              <div className="vd-search-bar">
+                <Search size={14} color="#999" />
+                <input placeholder="Search videos..." value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} />
+                {searchQuery && <X size={13} color="#999" style={{cursor:'pointer',flexShrink:0}} onClick={() => setSearchQuery('')} />}
               </div>
-              <input
-                type="text"
-                placeholder="Search videos or topics..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 rounded-lg border-2 border-black/20 bg-yellow-200 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-black placeholder-black/60 font-medium text-sm transition-all duration-300"
-              />
             </div>
 
-            {/* Add Video Button + Category Filter */}
-            <div className="flex items-center gap-2">
-              {/* Add Video Button */}
-              <button
-                onClick={() => setShowAddVideoForm(true)}
-                className="bg-black text-yellow-400 px-7 py-2 rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 flex items-center gap-2 text-sm"
-              >
-                <Plus className="h-4 w-4" />
-                Video
-              </button>
+            <div className="vd-filter-grp">
+              <div className="vd-fl-label">Category</div>
+              <div className="vd-chips">
+                {categories.map(cat => (
+                  <button key={cat} className={`vd-chip${selectedCategory === cat ? ' active' : ''}`} onClick={() => { setSelectedCategory(cat); setCurrentPage(1); }}>
+                    {cat === 'All' ? 'All' : cat}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-              {/* Category Filter */}
-              <div className="relative">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="appearance-none bg-yellow-200 backdrop-blur-sm border-2 border-black/20 rounded-lg px-3 py-2 pr-8 text-black font-medium focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/40 text-sm transition-all duration-300 w-48"
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category === 'All' ? 'All Categories' : category}
-                    </option>
+            <button onClick={() => setShowAddVideoForm(true)}
+              style={{width:'100%',padding:'8px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
+              <Plus size={13} /> Add Video
+            </button>
+          </aside>
+
+          {/* Main */}
+          <div className="vd-main">
+            <button className="vd-filter-toggle" onClick={() => setSidebarOpen(o => !o)}>
+              <SlidersHorizontal size={14} /> Filters {(searchQuery || selectedCategory !== 'All') ? '(active)' : ''}
+            </button>
+
+            {/* Featured Videos */}
+            {filteredFeaturedVideos.length > 0 && (
+              <div className="bg-white border border-gray-200 rounded-xl mb-4 p-4">
+                <h2 style={{fontSize:'13px',fontWeight:800,color:'#0A0A0A',marginBottom:12,display:'flex',alignItems:'center',gap:6}}>
+                  <Star size={14} color="#F5C518" fill="#F5C518" /> Featured Videos ({filteredFeaturedVideos.length})
+                </h2>
+                <div className="vd-grid">
+                  {filteredFeaturedVideos.map(video => (
+                    <div key={video.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                      <div className="relative overflow-hidden">
+                        <iframe src={convertToEmbedUrl(video.videoUrl)} title={video.title} className="w-full h-40 rounded-t-xl" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                        <div className="absolute top-2 left-2 bg-yellow-400 text-black px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1"><Star size={10} fill="currentColor" />Featured</div>
+                      </div>
+                      <div className="p-3">
+                        <h3 className="text-xs font-bold text-gray-900 mb-1 line-clamp-2">{video.title}</h3>
+                        <p className="text-xs text-gray-500 line-clamp-2">{video.description}</p>
+                      </div>
+                    </div>
                   ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60 pointer-events-none" />
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Active Filters Display */}
-          <div className="mt-1 flex flex-wrap gap-1">
-            {selectedCategory !== 'All' && (
-              <span className="bg-black text-yellow-400 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-                Category: {selectedCategory}
-                <button onClick={() => setSelectedCategory('All')} className="hover:text-white text-sm">
-                  ×
-                </button>
-              </span>
             )}
-            {searchQuery && (
-              <span className="bg-black text-yellow-400 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-                Search: "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="hover:text-white text-sm">
-                  ×
-                </button>
-              </span>
-            )}
-          </div>
-        </div>
-      </section>
 
-      {/* Featured Videos Section - Only show when there are filtered featured videos */}
-      {filteredFeaturedVideos.length > 0 && (
-        <section className="py-4 bg-gradient-to-b from-yellow-400 to-yellow-300">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl md:text-3xl font-black text-black flex items-center gap-2">
-                <Star className="h-6 w-6 fill-current" />
-                Featured Videos ({filteredFeaturedVideos.length})
-              </h2>
+            <div className="vd-resbar">
+              <span style={{fontSize:'13px',color:'#666'}}>{filteredVideos.length} video{filteredVideos.length !== 1 ? 's' : ''}</span>
+              {totalPages > 1 && <span style={{fontSize:'12px',color:'#999'}}>Page {currentPage} of {totalPages}</span>}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {filteredFeaturedVideos.map((video, index) => (
-                <div
-                  key={video.id}
-                  className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1 border-2 border-black/20 hover:border-black/40"
-                  style={{
-                    animationDelay: `${index * 200}ms`,
-                    animation: `fadeInUp 0.8s ease-out ${index * 200}ms both`
-                  }}
-                >
-                  <div className="relative overflow-hidden">
-                    <iframe
-                      src={convertToEmbedUrl(video.videoUrl)}
-                      title={video.title}
-                      className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110 border-b-2 border-black/10 rounded-t-3xl"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                    <div className="absolute top-4 left-4 bg-yellow-400 text-black px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
-                      <Star className="h-3 w-3 fill-current" />
-                      Featured
+
+            {currentVideos.length === 0 ? (
+              <div style={{textAlign:'center',padding:'64px 0'}}>
+                <div style={{background:'#fff',border:'1px solid #E5E5E5',borderRadius:'12px',padding:'48px 32px',maxWidth:'360px',margin:'0 auto'}}>
+                  <Search size={40} color="#ccc" style={{margin:'0 auto 12px'}} />
+                  <p style={{fontWeight:700,color:'#333',marginBottom:4}}>No videos found</p>
+                  <p style={{fontSize:'13px',color:'#999'}}>Try adjusting your filters</p>
+                </div>
+              </div>
+            ) : (
+              <div className="vd-grid">
+                {currentVideos.map(video => (
+                  <div key={video.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="p-2">
+                      <iframe src={convertToEmbedUrl(video.videoUrl)} title={video.title} className="w-full h-40 rounded-lg" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                    </div>
+                    <div className="px-3 pb-3">
+                      <h3 className="text-xs font-bold text-gray-900 mb-1 line-clamp-2">{video.title}</h3>
+                      <p className="text-xs text-gray-500 line-clamp-2">{video.description}</p>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-black mb-2 group-hover:text-red-800 transition-colors duration-300">
-                      {video.title}
-                    </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-2">{video.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Video Grid Section */}
-      <section className="py-16 bg-yellow-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl md:text-4xl font-black text-black">
-              All Videos ({filteredVideos.length})
-            </h2>
-            <div className="text-black/60">
-              Page {currentPage} of {totalPages}
-            </div>
-          </div>
-
-          {currentVideos.length === 0 ? (
-            <div className="text-center py-16">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 max-w-md mx-auto">
-                <Search className="h-16 w-16 text-black/40 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-black mb-2">No videos found</h3>
-                <p className="text-black/60">Try adjusting your filters or search terms</p>
+                ))}
               </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {currentVideos.map((video, index) => (
-                <div
-                  key={video.id}
-                  className="group bg-[#f1ee8e] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 border-2 border-black/20 hover:border-black/40"
-                  style={{
-                    animationDelay: `${index * 100}ms`,
-                    animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
-                  }}
-                >
-                  <div className="p-3">
-                    <div className="relative overflow-hidden rounded-2xl">
-                      <iframe
-                        src={convertToEmbedUrl(video.videoUrl)}
-                        title={video.title}
-                        className="w-full h-48 object-cover rounded-2xl"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none" />
-                    </div>
-                  </div>
+            )}
 
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold text-black mb-2 group-hover:text-red-800 transition-colors duration-300 line-clamp-2">
-                      {video.title}
-                    </h3>
-                    <p className="text-gray-600 mb-3 line-clamp-2 text-sm">{video.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center mt-12">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                >
-                  Previous
-                </button>
-
-                {[...Array(totalPages)].map((_, index) => {
-                  const page = index + 1;
-                  if (page === currentPage || page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 ${page === currentPage
-                          ? 'bg-black text-yellow-400 border-2 border-black'
-                          : 'bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black hover:bg-white hover:border-black/40'
-                          }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  } else if (page === currentPage - 2 || page === currentPage + 2) {
-                    return <span key={page} className="px-2 text-black/60">...</span>;
+            {totalPages > 1 && (
+              <div className="vd-pages">
+                <button className="vd-page-btn" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>← Prev</button>
+                {[...Array(totalPages)].map((_, i) => {
+                  const pg = i + 1;
+                  if (pg === currentPage || pg === 1 || pg === totalPages || (pg >= currentPage - 1 && pg <= currentPage + 1)) {
+                    return <button key={pg} className={`vd-page-btn${pg === currentPage ? ' active' : ''}`} onClick={() => setCurrentPage(pg)}>{pg}</button>;
+                  } else if (pg === currentPage - 2 || pg === currentPage + 2) {
+                    return <span key={pg} style={{alignSelf:'center',color:'#999'}}>…</span>;
                   }
                   return null;
                 })}
-
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm border-2 border-black/20 text-black font-medium hover:bg-white hover:border-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                >
-                  Next
-                </button>
+                <button className="vd-page-btn" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>Next →</button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

@@ -13,6 +13,7 @@ import {
   // MapPin,
 } from "lucide-react";
 import AIInputField from "./Component/AllInputField";
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../lib/apiConfig';
 // import { uploadImageToS3 } from "./src/utils/s3Upload";
 
 interface ImageWithPreview {
@@ -260,7 +261,7 @@ const ProfessionalForm: React.FC = () => {
       );
 
       const initRes = await fetch(
-        "https://ginc7xsgw8.execute-api.ap-south-1.amazonaws.com/portfolio",
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}` : `${LAMBDA.webbuilderPortfolio}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -273,7 +274,6 @@ const ProfessionalForm: React.FC = () => {
         throw new Error("Failed to create portfolio");
 
       portfolioId = initData.id;
-      console.log("✅ Created portfolio with ID:", portfolioId);
 
       // ✅ Step 2: Parallel image uploads
       const uploadPromises: Promise<void>[] = [];
@@ -301,7 +301,7 @@ const ProfessionalForm: React.FC = () => {
 
         const imgPayload = { id: portfolioId, [fieldName]: imageBase64 };
         const res = await fetch(
-          "https://ginc7xsgw8.execute-api.ap-south-1.amazonaws.com/portfolio",
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}` : `${LAMBDA.webbuilderPortfolio}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -311,7 +311,6 @@ const ProfessionalForm: React.FC = () => {
 
         const data = await res.json();
         if (!res.ok) console.error(`❌ Failed to upload ${fieldName}`, data);
-        else console.log(`✅ Uploaded ${fieldName}`, data);
       };
 
       // Queue uploads
@@ -343,7 +342,6 @@ const ProfessionalForm: React.FC = () => {
 
       await Promise.all(uploadPromises);
 
-      console.log("🎯 All images uploaded for portfolio ID:", portfolioId);
       navigate("/professionals");
     } catch (err) {
       console.error("❌ handleSubmit error:", err);

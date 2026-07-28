@@ -173,7 +173,7 @@
 //       formData.append("fieldName", "heroImage");
 
 //       const uploadResponse = await fetch(
-//         `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`,
+//         MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`,
 //         {
 //           method: "POST",
 //           body: formData,
@@ -553,6 +553,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { MEDIA_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 export interface HeroContent {
   name: string;
@@ -755,7 +756,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
       xhr.open(
         "POST",
-        `https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`
+        MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`
       );
       xhr.send(formData);
     });

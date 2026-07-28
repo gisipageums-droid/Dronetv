@@ -313,7 +313,7 @@
 //         formData.append('userId', userId);
 //         formData.append('fieldName', 'about_image');
 
-//         const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+//         const uploadResponse = await fetch(MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`, {
 //           method: 'POST',
 //           body: formData,
 //         });
@@ -945,6 +945,7 @@ import { toast } from "sonner";
 import { AnimatedButton } from "./AnimatedButton";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import Cropper from 'react-easy-crop';
+import { MEDIA_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 // Text limits
 const TEXT_LIMITS = {
@@ -1230,7 +1231,7 @@ export function About({
     formData.append('userId', userId);
     formData.append('fieldName', 'about_image');
 
-    const uploadResponse = await fetch(`https://ow3v94b9gf.execute-api.ap-south-1.amazonaws.com/dev/`, {
+    const uploadResponse = await fetch(MEDIA_API ? `${MEDIA_API}/image-update` : `${LAMBDA.eventImageUpdate}/`, {
       method: 'POST',
       body: formData,
     });

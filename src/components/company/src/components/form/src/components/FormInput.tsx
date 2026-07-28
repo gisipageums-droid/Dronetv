@@ -47,6 +47,7 @@ export const FormInput: React.FC<FormInputProps> = ({
           placeholder={placeholder}
           rows={rows || 4}
           disabled={disabled}
+          required={required}
           className={inputClasses}
         />
       ) : (
@@ -56,6 +57,7 @@ export const FormInput: React.FC<FormInputProps> = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
+          required={required}
           className={inputClasses}
         />
       )}
@@ -109,6 +111,7 @@ export const Select: React.FC<SelectProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
+        required={required}
         className={selectClasses}
       >
         <option value="">{placeholder}</option>
@@ -172,7 +175,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             key={option}
             className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-slate-50 ${selected.includes(option)
               ? 'border-blue-500 bg-blue-50 text-blue-700'
-              : 'border-slate-300'
+              : 'border-slate-300 text-gray-800'
               }`}
           >
             <input

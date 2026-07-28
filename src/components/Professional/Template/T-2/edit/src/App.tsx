@@ -15,6 +15,7 @@ import { Testimonials } from './components/SimpleTestimonials';
 import { Skills } from './components/Skills';
 import { Toaster } from "./components/ui/sonner";
 import Publish from './components/Publish';
+import { PROFESSIONAL_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 // Define types for the component states
 interface ComponentStates {
@@ -96,7 +97,7 @@ export default function EditTemp_2() {
 
     const tryFetch = async () => {
       try {
-        const response = await fetch(`https://0jj3p6425j.execute-api.ap-south-1.amazonaws.com/prod/api/professional/${userId}/${draftId}?template=template-2`);
+        const response = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/api/professional/${userId}/${draftId}?template=template-2` : `${LAMBDA.profTemplateLoad}/api/professional/${userId}/${draftId}?template=template-2`);
 
         if (!response.ok) {
           if (response.status === 404 && elapsed < POLL_MAX_WAIT) {

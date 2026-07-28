@@ -312,7 +312,7 @@
 //         formData.append("templateSelection", templateSelection);
 
 //         const uploadResponse = await fetch(
-//           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //           {
 //             method: "POST",
 //             body: formData,
@@ -1133,7 +1133,7 @@
 //         formData.append("templateSelection", templateSelection);
 
 //         const uploadResponse = await fetch(
-//           `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+//           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //           {
 //             method: "POST",
 //             body: formData,
@@ -1625,6 +1625,7 @@ import Cropper, { Area } from "react-easy-crop";
 import { toast } from "react-toastify";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Button } from "./ui/button";
+import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
 
 interface Client {
   name: string;
@@ -1934,7 +1935,6 @@ export default function Clients({
         [croppingFor.index]: file,
       }));
 
-      console.log("Client image cropped, file ready for auto-upload:", file);
 
       // Auto-upload immediately after cropping
       await handleImageUpload();
@@ -1994,10 +1994,9 @@ export default function Clients({
         formData.append("imageField", `clients[${index}].image`);
         formData.append("templateSelection", templateSelection);
 
-        console.log("Auto-uploading client image to S3:", file);
 
         const uploadPromise = fetch(
-          `https://o66ziwsye5.execute-api.ap-south-1.amazonaws.com/prod/upload-image/${userId}/${publishedId}`,
+          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
             body: formData,
@@ -2007,7 +2006,6 @@ export default function Clients({
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL
             updateClient(index, "image", uploadData.imageUrl);
-            console.log("Image auto-uploaded to S3:", uploadData.imageUrl);
             return { success: true, index };
           } else {
             const errorData = await uploadResponse.json();

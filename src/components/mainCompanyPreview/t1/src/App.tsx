@@ -11,9 +11,11 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import { useTemplate } from "../../../context/context";
 import { useParams, useNavigate } from "react-router-dom";
+import Documents from "./components/Documents";
 import GallerySection from "./components/Gallery";
 import CompanyProfile from "./components/Profile"
 import Back from "./components/Back"
+import { COMPANY_API, LAMBDA } from '../../../../lib/apiConfig';
 
 export default function App() {
   const { finaleDataReview, setFinaleDataReview } = useTemplate();
@@ -25,7 +27,7 @@ export default function App() {
   async function fetchTemplateData(slug: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(`https://ykcimvca79.execute-api.ap-south-1.amazonaws.com/dev/template?companyName=${encodeURIComponent(slug)}`);
+      const response = await fetch(COMPANY_API ? `${COMPANY_API}/template?companyName=${encodeURIComponent(slug)}` : `${LAMBDA.companyPreviewLoad}/template?companyName=${encodeURIComponent(slug)}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -58,6 +60,16 @@ export default function App() {
       setIsLoading(false);
     }
   }, [urlSlug]);
+
+  // Scroll to the section named in the URL hash (e.g. #contact) once content has loaded
+  useEffect(() => {
+    if (isLoading || !window.location.hash) return;
+    const id = window.location.hash.slice(1);
+    const timer = setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   if (isLoading) {
     return (
@@ -96,8 +108,7 @@ export default function App() {
   }
 
   return (
-    // The className here is no longer needed as the useEffect handles the root element
-    <div>
+    <div className="w-full overflow-x-hidden">
       <Header
         headerData={finaleDataReview.content.header}
 
@@ -108,7 +119,7 @@ export default function App() {
 
       />
       <UsedBy
-        usedByData={finaleDataReview.content.usedBy}
+        usedByData={finaleDataReview.content.UsedBy ?? finaleDataReview.content.usedBy}
       />
       <About
         aboutData={finaleDataReview.content.about}
@@ -126,6 +137,7 @@ export default function App() {
 
       <GallerySection
         galleryData={finaleDataReview.content.gallery} />
+      <Documents documents={finaleDataReview.content.documents} />
       <Blog
         blogData={finaleDataReview.content.blog}
 
