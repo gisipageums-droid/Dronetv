@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Eye, EyeOff, Trash2, Edit } from 'lucide-react';
+import { Eye, EyeOff, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
 import { useUserAuth } from '../../context/context';
@@ -60,21 +60,24 @@ export default function MyContentManager() {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      <div>
-        <h1 className="text-xl font-extrabold text-gray-900">My {typeLabel}s</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Manage what you've posted — create new, publish, or remove.</p>
+    <div className="min-h-screen bg-[#F4F5F7] p-4 md:p-6">
+      <div className="mb-5 flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-xl font-extrabold text-gray-900">My {typeLabel}s</h1>
+          <p className="text-sm text-gray-500 mt-0.5">{items.length} items · Manage what you've posted — create new, publish, or remove.</p>
+        </div>
+        <PostContentCTA contentType={contentType} typeLabel={typeLabel} onSuccess={load} variant="button" />
       </div>
 
-      <PostContentCTA contentType={contentType} typeLabel={typeLabel} onSuccess={load} />
-
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        {loading ? (
-          <div className="text-center py-16 text-gray-400">Loading...</div>
-        ) : items.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">You haven't posted any {typeLabel.toLowerCase()}s yet.</div>
-        ) : (
-          <table className="w-full text-sm">
+      {loading ? (
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm text-center py-16 text-gray-400">Loading...</div>
+      ) : items.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm text-center py-16 text-gray-400">
+          No content yet. Click "Add Content" to create your first item.
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+          <table className="w-full min-w-[600px] text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Title</th>
@@ -86,19 +89,26 @@ export default function MyContentManager() {
             <tbody className="divide-y divide-gray-100">
               {items.map(item => (
                 <tr key={item.contentId} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-900">{item.title}</td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">{new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.isPublished ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                    <div className="flex items-center gap-3">
+                      {item.imageUrl && <img src={item.imageUrl} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />}
+                      <span className="font-medium text-gray-900 line-clamp-1">{item.title}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-gray-500 text-xs">{item.date || new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.isPublished ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                       {item.isPublished ? 'Published' : 'Draft'}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <button onClick={() => togglePublish(item)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500" title={item.isPublished ? 'Unpublish' : 'Publish'}>
+                      <button onClick={() => togglePublish(item)} title={item.isPublished ? 'Unpublish' : 'Publish'}
+                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-green-600 transition-colors">
                         {item.isPublished ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
-                      <button onClick={() => handleDelete(item)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-red-600" title="Delete">
+                      <button onClick={() => handleDelete(item)} title="Delete"
+                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-red-600 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -107,8 +117,8 @@ export default function MyContentManager() {
               ))}
             </tbody>
           </table>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

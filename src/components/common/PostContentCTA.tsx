@@ -36,9 +36,11 @@ interface PostContentCTAProps {
   ctaTitle?: string;
   ctaDescription?: string;
   onSuccess?: () => void;
+  /** 'cta' = big dark marketing card (public pages). 'button' = plain admin-style "+ Add Content" button (dashboard). */
+  variant?: 'cta' | 'button';
 }
 
-export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDescription, onSuccess }: PostContentCTAProps) {
+export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDescription, onSuccess, variant = 'cta' }: PostContentCTAProps) {
   const { user } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || '';
   const cost = TOKEN_COST_BY_TYPE[contentType] ?? DEFAULT_POST_COST;
@@ -99,29 +101,42 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
 
   return (
     <>
-      <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <h3 className="font-bold text-white text-base mb-1">Have a {typeLabel.toLowerCase()} to share?</h3>
-          <p className="text-sm text-white/60 max-w-lg">
-            {ctaDescription || `Post your ${typeLabel.toLowerCase()} on DroneTv.in and reach thousands of drone professionals.`}
-          </p>
-          <p className="text-xs text-yellow-400/80 mt-1 flex items-center gap-1">
-            <Coins className="w-3 h-3" /> Costs {cost} tokens per submission
-          </p>
+      {variant === 'cta' ? (
+        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-bold text-white text-base mb-1">Have a {typeLabel.toLowerCase()} to share?</h3>
+            <p className="text-sm text-white/60 max-w-lg">
+              {ctaDescription || `Post your ${typeLabel.toLowerCase()} on DroneTv.in and reach thousands of drone professionals.`}
+            </p>
+            <p className="text-xs text-yellow-400/80 mt-1 flex items-center gap-1">
+              <Coins className="w-3 h-3" /> Costs {cost} tokens per submission
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            {userId ? (
+              <button onClick={openModal}
+                className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                <Plus className="w-4 h-4" /> {ctaTitle || `Post Your ${typeLabel}`}
+              </button>
+            ) : (
+              <a href="/login" className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                Login to Post
+              </a>
+            )}
+          </div>
         </div>
-        <div className="flex-shrink-0">
-          {userId ? (
-            <button onClick={openModal}
-              className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
-              <Plus className="w-4 h-4" /> {ctaTitle || `Post Your ${typeLabel}`}
-            </button>
-          ) : (
-            <a href="/login" className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
-              Login to Post
-            </a>
-          )}
-        </div>
-      </div>
+      ) : (
+        userId ? (
+          <button onClick={openModal}
+            className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
+            <Plus className="w-4 h-4" /> Add Content
+          </button>
+        ) : (
+          <a href="/login" className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
+            Login to Post
+          </a>
+        )
+      )}
 
       {open && (
         <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4 overflow-y-auto">

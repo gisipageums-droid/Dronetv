@@ -47,9 +47,9 @@ function getNavGroups(_role: string, isAdmin: boolean): NavGroup[] {
 
     {
       id: "professionals", icon: Users, label: "Professionals",
-      paths: ["/professionals/", "/user-content/certification", "/user-content/training", "/user-content/community", "/user-content/networking"],
+      paths: ["/user-content/job", "/professionals/pilot-directory", "/user-content/certification", "/user-content/training", "/professionals/career-path", "/user-content/community", "/user-content/networking"],
       items: [
-        { icon: Briefcase,      label: "Job Board",        href: "/professionals/job-board" },
+        { icon: Briefcase,      label: "Job Board",        href: "/user-content/job" },
         { icon: User,           label: "Pilot Directory",  href: "/professionals/pilot-directory" },
         { icon: Award,          label: "Certifications",   href: "/user-content/certification" },
         { icon: GraduationCap,  label: "Training",         href: "/user-content/training" },
