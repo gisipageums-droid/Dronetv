@@ -5,7 +5,7 @@ import {
   ShoppingBag, Coins, ChevronDown, Share2, Briefcase, Award,
   GraduationCap, Users2, Newspaper, BookOpen, ImageIcon, Star,
   BarChart2, Cpu, ClipboardList, Factory, Bot, Handshake,
-  Zap, Target, Layout, Receipt, Package, TrendingUp,
+  Zap, Target, Layout, Receipt, Package,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
@@ -47,25 +47,23 @@ function getNavGroups(_role: string, isAdmin: boolean): NavGroup[] {
 
     {
       id: "professionals", icon: Users, label: "Professionals",
-      paths: ["/user-content/job", "/professionals/pilot-directory", "/user-content/certification", "/user-content/training", "/professionals/career-path", "/user-content/community", "/user-content/networking"],
+      paths: ["/user-content/job", "/user-content/certification", "/user-content/training", "/user-content/community", "/user-content/networking"],
       items: [
         { icon: Briefcase,      label: "Job Board",        href: "/user-content/job" },
-        { icon: User,           label: "Pilot Directory",  href: "/professionals/pilot-directory" },
         { icon: Award,          label: "Certifications",   href: "/user-content/certification" },
         { icon: GraduationCap,  label: "Training",         href: "/user-content/training" },
-        { icon: TrendingUp,     label: "Career Path",      href: "/professionals/career-path" },
         { icon: Users2,         label: "Community",        href: "/user-content/community" },
         { icon: Users2,         label: "Networking",       href: "/user-content/networking" },
       ],
     },
     {
       id: "events", icon: Calendar, label: "Events",
-      paths: ["/events/", "/user-content/competition", "/user-content/webinar", "/user-content/meetup"],
+      paths: ["/user-events", "/user-content/competition", "/user-content/webinar", "/user-content/meetup"],
       items: [
-        { icon: Calendar,      label: "Event Calendar",  href: "/events/calendar" },
-        { icon: Star,          label: "Expos",           href: "/events/expos" },
-        { icon: Users,         label: "Conferences",     href: "/events/conferences" },
-        { icon: GraduationCap, label: "Workshops",       href: "/events/workshops" },
+        { icon: Calendar,      label: "Event Calendar",  href: "/user-events" },
+        { icon: Star,          label: "Expos",           href: "/user-events?view=expos" },
+        { icon: Users,         label: "Conferences",     href: "/user-events?view=conferences" },
+        { icon: GraduationCap, label: "Workshops",       href: "/user-events?view=workshops" },
         { icon: Award,         label: "Competitions",    href: "/user-content/competition" },
         { icon: Video,         label: "Webinars",        href: "/user-content/webinar" },
         { icon: Users2,        label: "Meetups",         href: "/user-content/meetup" },
@@ -298,13 +296,18 @@ const Sidebar: React.FC = () => {
                   <div className="ml-4 mt-0.5 space-y-0.5 border-l border-white/10 pl-2">
                     {group.items.map(item => {
                       const ItemIcon = item.icon;
+                      // NavLink's own isActive only matches pathname, so sibling items sharing a
+                      // path but differing by ?view= (Event Calendar/Expos/Conferences/Workshops
+                      // all live on /user-events) would otherwise all light up together.
+                      const [itemPath, itemQuery] = item.href.split("?");
+                      const isItemActive = location.pathname === itemPath && (location.search.replace(/^\?/, "")) === (itemQuery || "");
                       return (
                         <NavLink
                           key={item.href}
                           to={item.href}
-                          className={({ isActive }) =>
+                          className={
                             `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all border-l-[2px] ${
-                              isActive
+                              isItemActive
                                 ? "bg-yellow-400/15 text-yellow-400 border-yellow-400"
                                 : "text-white/50 hover:bg-white/6 hover:text-white border-transparent"
                             }`

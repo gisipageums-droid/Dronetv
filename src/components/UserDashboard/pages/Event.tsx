@@ -10,7 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
 import { EVENTS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
@@ -18,6 +18,25 @@ import { EVENTS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const DEFAULT_EVENT_IMAGE_PATHS = new Set(["/assets/default-event-image.png", "/images/default-event-image.png"]);
 const isCustomImageUrl = (url: string | undefined) => !!url && !DEFAULT_EVENT_IMAGE_PATHS.has(url);
+
+// Same category tabs as the admin event dashboard (EventAdminDashboard.tsx) — sidebar
+// "Expos"/"Conferences"/"Workshops" links deep-link here via ?view=, and the sidebar
+// "Event Calendar" link and "My Listings > Events" both land on the unfiltered "all" view.
+const VIEW_TABS = [
+  { id: "all", label: "All Events" },
+  { id: "expos", label: "Expos" },
+  { id: "conferences", label: "Conferences" },
+  { id: "workshops", label: "Workshops" },
+];
+
+function matchesView(event: EventCard, view: string): boolean {
+  if (view === "all") return true;
+  const cat = (event.category || "").toLowerCase();
+  if (view === "expos") return cat.includes("expo");
+  if (view === "conferences") return cat.includes("conference");
+  if (view === "workshops") return cat.includes("workshop");
+  return true;
+}
 
 function getEventLimit(earned: number) {
   if (earned >= 8000) return Infinity;
@@ -381,6 +400,8 @@ const EventCard: React.FC<EventCardProps> = ({
 const Events: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const viewFilter = searchParams.get("view") ?? "all";
 
   const { user } = useUserAuth();
   const [events, setEvents] = useState<EventCard[]>([]);
@@ -436,13 +457,17 @@ const Events: React.FC = () => {
     }
   };
   const filteredEvents = useMemo(() => {
-    return events?.filter(
-      (event) =>
-        event.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm, events]);
+    return events
+      ?.filter((event) => matchesView(event, viewFilter))
+      .filter(
+        (event) =>
+          event.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          event.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+  }, [searchTerm, events, viewFilter]);
+
+  const viewLabel = viewFilter === "expos" ? "Expos" : viewFilter === "conferences" ? "Conferences" : viewFilter === "workshops" ? "Workshops" : "Events Directory";
 
   // Skeleton Loading
   const SkeletonCard: React.FC = () => (
@@ -504,7 +529,7 @@ const Events: React.FC = () => {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 flex items-center gap-2">
             <Users className="w-6 h-6 flex-shrink-0" />
-            Events Directory
+            {viewLabel}
           </h1>
           <p className="text-gray-600 mb-2">
             Browse and manage your events and registrations
@@ -526,14 +551,31 @@ const Events: React.FC = () => {
             </button>
           ) : (
             <button
-              onClick={() => navigate("/event/select")}
+              onClick={() => navigate("/event/select", viewFilter !== "all" ? { state: { eventType: viewFilter.slice(0, -1) } } : undefined)}
               className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto hover:bg-yellow-600 hover:scale-110 transition-all duration-200 whitespace-nowrap"
             >
               <Plus className="w-5 h-5" />
-              Create New Event
+              {viewFilter === "expos" ? "Add New Expo" : viewFilter === "conferences" ? "Add New Conference" : viewFilter === "workshops" ? "Add New Workshop" : "Create New Event"}
             </button>
           );
         })()}
+      </div>
+
+      {/* View tabs — same categories as the admin event dashboard */}
+      <div className="flex gap-0 border-b-2 border-yellow-200 mb-4 overflow-x-auto">
+        {VIEW_TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setSearchParams(prev => {
+              if (tab.id === "all") prev.delete("view");
+              else prev.set("view", tab.id);
+              return prev;
+            }, { replace: true })}
+            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-500" : "text-gray-500 border-transparent hover:text-gray-700"}`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       <div className="mb-8 relative">
@@ -571,7 +613,11 @@ const Events: React.FC = () => {
       ) : (
         <div className="text-center py-20 text-gray-500">
           <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
-          {searchTerm ? `No events found matching "${searchTerm}"` : "No events yet. Click Create New Event to add one."}
+          {searchTerm
+            ? `No events found matching "${searchTerm}"`
+            : viewFilter !== "all"
+              ? `No ${viewLabel.toLowerCase()} yet. Click "Add New ${viewLabel.slice(0, -1)}" to add one.`
+              : "No events yet. Click Create New Event to add one."}
         </div>
       )}
     </div>
