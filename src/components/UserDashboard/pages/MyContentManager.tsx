@@ -19,6 +19,46 @@ const TYPE_LABELS: Record<string, string> = {
   'industry-player': 'Industry Player Listing',
 };
 
+// Same section groupings + tab bar as AdminMediaDashboard.tsx (MODE_CONFIG), so
+// switching between related content types happens via tabs on this one page,
+// exactly like admin, instead of only via separate sidebar clicks.
+const GROUPS: { id: string; types: { value: ContentType; label: string }[] }[] = [
+  { id: 'professionals', types: [
+    { value: 'job', label: 'Job Listing' },
+    { value: 'training', label: 'Training Program' },
+    { value: 'certification', label: 'Certification' },
+    { value: 'networking', label: 'Networking' },
+    { value: 'community', label: 'Community' },
+  ] },
+  { id: 'media', types: [
+    { value: 'news', label: 'News' },
+    { value: 'magazine', label: 'Magazine' },
+    { value: 'video', label: 'Video Spotlight' },
+    { value: 'gallery', label: 'Gallery' },
+    { value: 'impact-story', label: 'Impact Story' },
+    { value: 'market-intelligence', label: 'Market Intelligence' },
+    { value: 'tech-trends', label: 'Tech Trends' },
+    { value: 'press-release', label: 'Press Release' },
+    { value: 'industry-report', label: 'Industry Report' },
+  ] },
+  { id: 'partnerships', types: [
+    { value: 'manufacturer', label: 'Manufacturer' },
+    { value: 'ai-company', label: 'AI Tech Company' },
+    { value: 'event-organizer', label: 'Event Organizer' },
+    { value: 'education-partner', label: 'Education Partner' },
+    { value: 'industry-player', label: 'Industry Player' },
+  ] },
+  { id: 'events', types: [
+    { value: 'competition', label: 'Competition' },
+    { value: 'webinar', label: 'Webinar' },
+    { value: 'meetup', label: 'Meetup' },
+  ] },
+];
+
+function findGroup(type: ContentType) {
+  return GROUPS.find(g => g.types.some(t => t.value === type));
+}
+
 const DEFAULT_LABEL: Record<FieldKey, string> = {
   category: 'Category', source: 'Source', author: 'Author', date: 'Date', readTime: 'Read Time',
   videoUrl: 'Video URL', company: 'Company', location: 'Location', price: 'Price', salary: 'Salary',
@@ -37,13 +77,21 @@ interface EditForm {
 
 export default function MyContentManager() {
   const { type } = useParams<{ type: string }>();
-  const contentType = (type || 'news') as ContentType;
-  const typeLabel = TYPE_LABELS[contentType] || contentType;
+  const urlContentType = (type || 'news') as ContentType;
+  const group = findGroup(urlContentType);
   const { user } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || '';
-  const extraFields = FIELD_CONFIG[contentType] || [];
 
-  const [items, setItems] = useState<MediaItem[]>([]);
+  // Local tab state (like admin's activeType) — switching tabs filters in place,
+  // it doesn't navigate, so it feels like one page with tabs rather than reloading
+  // a different route per type.
+  const [activeType, setActiveType] = useState<ContentType | 'all'>(urlContentType);
+  useEffect(() => { setActiveType(urlContentType); }, [urlContentType]);
+
+  const contentType = activeType === 'all' ? (group?.types[0].value ?? urlContentType) : activeType;
+  const typeLabel = TYPE_LABELS[contentType] || contentType;
+
+  const [groupItems, setGroupItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
@@ -54,13 +102,23 @@ export default function MyContentManager() {
   const load = useCallback(() => {
     if (!userId) { setLoading(false); return; }
     setLoading(true);
-    fetchAdminContent(undefined, contentType)
-      .then(all => setItems(all.filter(i => i.author === userId || i.userId === userId)))
+    fetchAdminContent(undefined)
+      .then(all => setGroupItems(all.filter(i =>
+        (i.author === userId || i.userId === userId) &&
+        (!group || group.types.some(t => t.value === i.contentType))
+      )))
       .catch(() => toast.error('Failed to load your posts'))
       .finally(() => setLoading(false));
-  }, [contentType, userId]);
+  }, [userId, group]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Items scoped to the active tab — "all" shows every type in this section (with
+  // a Type column), a specific tab shows only that type, matching admin exactly.
+  const items = useMemo(
+    () => activeType === 'all' ? groupItems : groupItems.filter(i => i.contentType === activeType),
+    [groupItems, activeType]
+  );
 
   const filteredItems = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -92,10 +150,13 @@ export default function MyContentManager() {
     }
   };
 
-  const fieldLabel = (key: FieldKey) => FIELD_LABELS[contentType]?.[key] || DEFAULT_LABEL[key];
+  // Field config is keyed off the ROW's own contentType, not the page-level one —
+  // matters once the "All" tab can show mixed types in the same table.
+  const fieldLabelFor = (rowType: ContentType, key: FieldKey) => FIELD_LABELS[rowType]?.[key] || DEFAULT_LABEL[key];
 
   const openEdit = (item: MediaItem) => {
     setEditItem(item);
+    const rowFields = FIELD_CONFIG[item.contentType as ContentType] || [];
     const form: EditForm = {
       title: item.title,
       description: item.description,
@@ -103,7 +164,7 @@ export default function MyContentManager() {
       externalLink: item.externalLink || '',
       isPublished: item.isPublished,
     };
-    extraFields.forEach(key => { form[key] = (item as any)[key] || ''; });
+    rowFields.forEach(key => { form[key] = (item as any)[key] || ''; });
     setEditForm(form);
   };
 
@@ -115,6 +176,7 @@ export default function MyContentManager() {
     if (!editForm.title.trim()) { toast.error('Title is required'); return; }
     setSaving(true);
     try {
+      const rowFields = FIELD_CONFIG[editItem.contentType as ContentType] || [];
       const payload: any = {
         contentType: editItem.contentType,
         contentId: editItem.contentId,
@@ -124,7 +186,7 @@ export default function MyContentManager() {
         externalLink: editForm.externalLink,
         isPublished: editForm.isPublished,
       };
-      extraFields.forEach(key => { payload[key] = editForm[key] || ''; });
+      rowFields.forEach(key => { payload[key] = editForm[key] || ''; });
       await updateContent(payload);
       toast.success('Updated');
       closeEdit();
@@ -140,11 +202,31 @@ export default function MyContentManager() {
     <div className="min-h-screen bg-[#F4F5F7] p-4 md:p-6">
       <div className="mb-5 flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-extrabold text-gray-900">My {typeLabel}s</h1>
+          <h1 className="text-xl font-extrabold text-gray-900">{activeType === 'all' ? 'My Content' : `My ${typeLabel}s`}</h1>
           <p className="text-sm text-gray-500 mt-0.5">{items.length} items · Manage what you've posted — create new, edit, publish, or remove.</p>
         </div>
         <PostContentCTA contentType={contentType} typeLabel={typeLabel} onSuccess={load} variant="button" />
       </div>
+
+      {/* Section tab bar — same pattern as AdminMediaDashboard.tsx, lets you switch
+          between related content types in place instead of only via the sidebar. */}
+      {group && (
+        <div className="flex gap-0 bg-gray-900 rounded-t-lg mb-4 overflow-x-auto">
+          <button onClick={() => setActiveType('all')}
+            className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === 'all' ? 'text-white border-yellow-400' : 'text-gray-400 border-transparent hover:text-white'}`}>
+            All ({groupItems.length})
+          </button>
+          {group.types.map(t => {
+            const count = groupItems.filter(i => i.contentType === t.value).length;
+            return (
+              <button key={t.value} onClick={() => setActiveType(t.value)}
+                className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === t.value ? 'text-white border-yellow-400' : 'text-gray-400 border-transparent hover:text-white'}`}>
+                {t.label}{count > 0 ? ` (${count})` : ''}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {!loading && items.length > 0 && (
         <div className="relative w-full max-w-xs mb-4">
@@ -170,6 +252,7 @@ export default function MyContentManager() {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Title</th>
+                {activeType === 'all' && <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Type</th>}
                 <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Source</th>
                 <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Date</th>
                 <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Status</th>
@@ -185,6 +268,13 @@ export default function MyContentManager() {
                       <span className="font-medium text-gray-900 line-clamp-1">{item.title}</span>
                     </div>
                   </td>
+                  {activeType === 'all' && (
+                    <td className="px-4 py-3">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 capitalize">
+                        {TYPE_LABELS[item.contentType] || item.contentType}
+                      </span>
+                    </td>
+                  )}
                   <td className="px-4 py-3 text-gray-500 text-xs">{item.source || item.company || '—'}</td>
                   <td className="px-4 py-3 text-gray-500 text-xs">{item.date || new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
                   <td className="px-4 py-3">
@@ -219,7 +309,7 @@ export default function MyContentManager() {
         <div className="fixed inset-0 z-[10000000] flex items-start justify-center bg-black/60 overflow-y-auto py-8">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 my-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900">Edit {typeLabel}</h2>
+              <h2 className="text-lg font-bold text-gray-900">Edit {TYPE_LABELS[editItem.contentType] || editItem.contentType}</h2>
               <button onClick={closeEdit} className="p-1.5 rounded hover:bg-gray-100"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={handleSaveEdit}>
@@ -237,11 +327,11 @@ export default function MyContentManager() {
                     placeholder="Short description or summary" />
                 </div>
 
-                {extraFields.length > 0 && (
+                {(FIELD_CONFIG[editItem.contentType as ContentType] || []).filter(k => k !== 'targetPages').length > 0 && (
                   <div className="grid grid-cols-2 gap-4">
-                    {extraFields.filter(k => k !== 'targetPages').map(key => (
+                    {(FIELD_CONFIG[editItem.contentType as ContentType] || []).filter(k => k !== 'targetPages').map(key => (
                       <div key={key}>
-                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">{fieldLabel(key)}</label>
+                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">{fieldLabelFor(editItem.contentType as ContentType, key)}</label>
                         <input
                           type={FIELD_TYPE[key] === 'date' ? 'date' : 'text'}
                           value={editForm[key] || ''}
