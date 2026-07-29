@@ -555,10 +555,19 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         ''
       ).trim();
 
+      // The publish Lambda requires eventId/userId (and the rest of the draft
+      // metadata) nested INSIDE `content`, with the actual edited template
+      // itself nested a level deeper as `content.content` — not as top-level
+      // sibling fields. See dronetv-events-update-functionality-2 source.
+      // Older drafts saved before an eventId was persisted don't have one —
+      // fall back to draftId, which is always present and equally unique.
       const data: any = {
-        content: finalTemplate,
-        submissionId: AIGenData.eventId,
-        ...(eventName ? { eventName } : {}),
+        content: {
+          ...AIGenData,
+          eventId: AIGenData.eventId || AIGenData.draftId,
+          content: finalTemplate,
+          ...(eventName ? { eventName } : {}),
+        },
       };
 
       const response = await fetch(
