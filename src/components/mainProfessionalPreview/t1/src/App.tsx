@@ -69,7 +69,7 @@ const FinalT1: React.FC = () => {
           cardsData = await lambdaCardsRes.json();
         }
         const card = (cardsData.cards || []).find(
-          (c: any) => c.urlSlug === urlSlug
+          (c: any) => (c.urlSlug || "").toLowerCase() === urlSlug.toLowerCase()
         );
         if (!card) throw new Error("Profile not found");
 

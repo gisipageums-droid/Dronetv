@@ -49,7 +49,7 @@ export default function MainProTemp2() {
       );
       if (!cardsResp.ok) throw new Error(`Cards fetch failed: ${cardsResp.status}`);
       const cardsData = await cardsResp.json();
-      const card = (cardsData.cards || []).find((c: any) => c.urlSlug === urlSlug);
+      const card = (cardsData.cards || []).find((c: any) => (c.urlSlug || '').toLowerCase() === urlSlug.toLowerCase());
       if (!card) {
         setError('not found');
         setIsLoading(false);
