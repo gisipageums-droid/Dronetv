@@ -295,7 +295,10 @@ export default function AdminMediaDashboard() {
     setLoading(true);
     try {
       const data = await fetchAdminContent(signal);
-      setItems(data);
+      // Exclude legacy "[Application] ..." job entries — leftover junk from
+      // before the real Job Board ATS existed, not real job listings. They
+      // shouldn't count toward the Job Listing tab or the All total.
+      setItems(data.filter(i => !(i.contentType === 'job' && i.title.startsWith('[Application]'))));
     } catch (err: any) {
       if (err?.name === 'AbortError') return;
       toast.error('Failed to load content');
