@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Briefcase, Search, FileText, User, Award, FolderKanban, Paperclip, Activity, ExternalLink, GraduationCap, Code2, MessageSquare, X, SlidersHorizontal, Clock, MapPin } from 'lucide-react';
+import { Briefcase, Search, FileText, User, Award, FolderKanban, Paperclip, Activity, ExternalLink, GraduationCap, Code2, MessageSquare, X, SlidersHorizontal, Clock, MapPin, Trash2, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { fetchAdminContent, MediaItem } from '../../../lib/mediaApi';
+import { fetchAdminContent, deleteContent, MediaItem } from '../../../lib/mediaApi';
 import { fetchApplications, updateApplication, getResumeViewUrl, sendCandidateMessage, JobApplication } from '../../../lib/jobApplicationsApi';
 
 const STATUS_OPTIONS: JobApplication['status'][] = ['Applied', 'Shortlisted', 'Interviewing', 'Hired', 'Rejected'];
@@ -65,6 +65,9 @@ export default function AdminJobBoardDashboard() {
   const [messageOpen, setMessageOpen] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
+
+  const [deleteConfirmJob, setDeleteConfirmJob] = useState<MediaItem | null>(null);
+  const [deletingJob, setDeletingJob] = useState(false);
 
   useEffect(() => {
     fetchAdminContent(undefined, 'job')
@@ -141,6 +144,25 @@ export default function AdminJobBoardDashboard() {
     }
   };
 
+  const confirmDeleteJob = async () => {
+    if (!deleteConfirmJob) return;
+    setDeletingJob(true);
+    try {
+      await deleteContent(deleteConfirmJob.contentType, deleteConfirmJob.contentId);
+      toast.success('Job deleted');
+      const remaining = jobs.filter(j => j.contentId !== deleteConfirmJob.contentId);
+      setJobs(remaining);
+      if (selectedJobId === deleteConfirmJob.contentId) {
+        setSelectedJobId(remaining.length > 0 ? remaining[0].contentId : null);
+      }
+      setDeleteConfirmJob(null);
+    } catch {
+      toast.error('Failed to delete job');
+    } finally {
+      setDeletingJob(false);
+    }
+  };
+
   const openMessage = () => {
     if (!selectedApplication) return;
     setMessageText(`Hi ${selectedApplication.fullName}, we reviewed your profile for ${selectedApplication.jobTitle || 'the role'} and would love to schedule an interview...`);
@@ -191,24 +213,31 @@ export default function AdminJobBoardDashboard() {
             ) : filteredJobs.length === 0 ? (
               <div className="p-4 text-xs text-gray-400 text-center">No job listings yet</div>
             ) : filteredJobs.map(job => (
-              <button key={job.contentId} onClick={() => setSelectedJobId(job.contentId)}
-                className={`w-full text-left px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors flex gap-2.5 ${selectedJobId === job.contentId ? 'bg-yellow-50 border-l-2 border-l-yellow-400' : ''}`}>
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold ${colorFor(job.contentId)}`}>
-                  <Briefcase size={14} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{job.title}</p>
-                  <p className="text-xs text-gray-400 truncate">{job.company}{job.location ? ` · ${job.location}` : ''}</p>
-                  <div className="flex items-center justify-between mt-1.5">
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.isPublished ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                      {job.isPublished ? 'Active' : 'Draft'}
-                    </span>
-                    {applicantCount(job.contentId) !== undefined && (
-                      <span className="text-[10px] text-gray-400">{applicantCount(job.contentId)} applicants</span>
-                    )}
+              <div key={job.contentId}
+                className={`group w-full px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors flex gap-2.5 ${selectedJobId === job.contentId ? 'bg-yellow-50 border-l-2 border-l-yellow-400' : ''}`}>
+                <button onClick={() => setSelectedJobId(job.contentId)} className="flex gap-2.5 flex-1 min-w-0 text-left">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold ${colorFor(job.contentId)}`}>
+                    <Briefcase size={14} />
                   </div>
-                </div>
-              </button>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{job.title}</p>
+                    <p className="text-xs text-gray-400 truncate">{job.company}{job.location ? ` · ${job.location}` : ''}</p>
+                    <div className="flex items-center justify-between mt-1.5">
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.isPublished ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                        {job.isPublished ? 'Active' : 'Draft'}
+                      </span>
+                      {applicantCount(job.contentId) !== undefined && (
+                        <span className="text-[10px] text-gray-400">{applicantCount(job.contentId)} applicants</span>
+                      )}
+                    </div>
+                  </div>
+                </button>
+                <button onClick={() => setDeleteConfirmJob(job)}
+                  title="Delete job"
+                  className="p-1.5 h-fit rounded hover:bg-red-50 text-gray-300 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0">
+                  <Trash2 size={14} />
+                </button>
+              </div>
             ))}
           </div>
         </div>
@@ -476,6 +505,34 @@ export default function AdminJobBoardDashboard() {
           )}
         </div>
       </div>
+
+      {deleteConfirmJob && (
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle size={18} className="text-red-600" />
+                </div>
+                <h3 className="text-base font-bold text-gray-900">Delete Job</h3>
+              </div>
+              <p className="text-sm text-gray-600">
+                Delete <span className="font-semibold">"{deleteConfirmJob.title}"</span>? All applications for this job will remain accessible from the candidate records, but the listing will be removed from Job Board and the public site. This cannot be undone.
+              </p>
+            </div>
+            <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-100 bg-gray-50">
+              <button onClick={() => setDeleteConfirmJob(null)} disabled={deletingJob}
+                className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50">
+                Cancel
+              </button>
+              <button onClick={confirmDeleteJob} disabled={deletingJob}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg disabled:opacity-50">
+                {deletingJob ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {messageOpen && selectedApplication && (
         <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4">
