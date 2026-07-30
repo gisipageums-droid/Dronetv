@@ -50,6 +50,13 @@ const AboutPage = () => {
     },
     {
       id: 3,
+      name: "Dr Pranay Kumar",
+      role: "Marketing Director",
+      image: "/images/pranay.png",
+      bio: "Marketing Director at Drone TV and IPAGE UMS, with expertise in brand strategy, digital campaigns, and UAV market positioning.",
+    },
+    {
+      id: 4,
       name: "Amarnath Reddy",
       role: "Promotional Manager",
       image: "/images/amar.png",
