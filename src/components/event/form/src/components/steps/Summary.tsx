@@ -2117,39 +2117,39 @@ export const Summary = () => {
         <h3 className="text-xl font-semibold text-blue-800 mb-4">Social Media Links</h3>
         <div className="grid md:grid-cols-3 gap-4">
           {data.socialLinks?.facebook && (
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <span className="text-sm font-medium text-gray-500">Facebook</span>
-              <a 
-                href={data.socialLinks.facebook} 
-                target="_blank" 
+              <a
+                href={data.socialLinks.facebook}
+                target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 underline hover:text-blue-800"
+                className="text-blue-600 underline hover:text-blue-800 break-all"
               >
                 {data.socialLinks.facebook}
               </a>
             </div>
           )}
           {data.socialLinks?.linkedin && (
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <span className="text-sm font-medium text-gray-500">LinkedIn</span>
-              <a 
-                href={data.socialLinks.linkedin} 
-                target="_blank" 
+              <a
+                href={data.socialLinks.linkedin}
+                target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 underline hover:text-blue-800"
+                className="text-blue-600 underline hover:text-blue-800 break-all"
               >
                 {data.socialLinks.linkedin}
               </a>
             </div>
           )}
           {data.socialLinks?.instagram && (
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <span className="text-sm font-medium text-gray-500">Instagram</span>
-              <a 
-                href={data.socialLinks.instagram} 
-                target="_blank" 
+              <a
+                href={data.socialLinks.instagram}
+                target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 underline hover:text-blue-800"
+                className="text-blue-600 underline hover:text-blue-800 break-all"
               >
                 {data.socialLinks.instagram}
               </a>
