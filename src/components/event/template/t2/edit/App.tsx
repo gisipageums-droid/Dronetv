@@ -53,6 +53,7 @@ export default function Edit_event_t2() {
   const [componentStates, setComponentStates] = useState<ComponentStates>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [contentLoaded, setContentLoaded] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [hasFetched, setHasFetched] = useState(false);
 
@@ -153,9 +154,21 @@ export default function Edit_event_t2() {
         setFinalTemplate(data.data);
         setAIGenData(data.data);
 
-        // Initialize component states with fetched data
-        if (data.data.content) {
-          setComponentStates(data.data.content);
+        // The AIgen load endpoint returns section content directly under
+        // data.data.content (header, hero, ...). The admin/published-event
+        // load endpoint wraps it one level deeper, under
+        // data.data.content.content, alongside record metadata. Reading the
+        // wrong level here previously left every section empty — which
+        // still let the admin click Publish and silently overwrite the real
+        // live content with blank defaults.
+        const sectionContent =
+          isAIgen === "AIgen" ? data.data?.content : data.data?.content?.content;
+
+        if (sectionContent && Object.keys(sectionContent).length > 0) {
+          setComponentStates(sectionContent);
+          setContentLoaded(true);
+        } else {
+          setError("Could not load the event's existing content. Please refresh and try again before publishing.");
         }
 
         setHasFetched(true);
@@ -299,7 +312,13 @@ export default function Edit_event_t2() {
       </main>
 
       {/* Publish Component */}
-      <Publish />
+      {contentLoaded ? (
+        <Publish />
+      ) : (
+        <div className="fixed bottom-20 right-10 z-50 bg-gray-400 text-white font-semibold py-3 px-6 rounded-full shadow-lg cursor-not-allowed" title="Waiting for the event's existing content to load before publishing is enabled">
+          Loading content…
+        </div>
+      )}
 
       {/* Toast Notifications */}
       <ToastContainer
