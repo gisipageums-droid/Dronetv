@@ -190,12 +190,12 @@ const HomePage = () => (
 const AppContent = () => {
   const location = useLocation();
   const hideFooter =
-    location.pathname.startsWith("/company") ||
+    location.pathname.startsWith("/company/") ||
     location.pathname.startsWith("/form") ||
     location.pathname.startsWith("/user") ||
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/edit") ||
-    location.pathname.startsWith("/professional") ||
+    location.pathname.startsWith("/professional/") ||
     location.pathname.startsWith("/template") ||
     location.pathname.startsWith("/event/leads");
   const hideNavigation =
