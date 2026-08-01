@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import Hero from "./components/Hero";
+import PagePlacementSlot from "./components/common/PagePlacementSlot";
 import PopularVideos from "./components/PopularVideos";
 import BrowseByTopic from "./components/BrowseByTopic";
 import FeaturedCompanies from "./components/FeaturedCompanies";
@@ -177,6 +178,11 @@ import PartnershipsHubPage from "./pages/partnerships/PartnershipsHub";
 const HomePage = () => (
   <>
     <Hero />
+    {/* "Featured Strip" paid placements (HP-2/HP-3) — booked via User Dashboard > Page Placements */}
+    <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 gap-4 py-6">
+      <PagePlacementSlot slotId="HP-2" aspect="3/1" minHeight={90} />
+      <PagePlacementSlot slotId="HP-3" aspect="3/1" minHeight={90} />
+    </div>
     <PopularVideos />
     <UpcomingEvents />
     <BrowseByTopic />

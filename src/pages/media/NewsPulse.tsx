@@ -4,6 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import AdSlot from '../../components/common/AdSlot';
+import PagePlacementSlot from '../../components/common/PagePlacementSlot';
 import { withInlineAds, ExpoAdCreative, DroneAdCreative, getAdsFor } from '../../components/common/adCreatives';
 import PostContentCTA from '../../components/common/PostContentCTA';
 
@@ -116,6 +117,9 @@ export default function NewsPulsePage() {
           </div>}
 
           <div>
+            {/* "News Pulse Spot" paid placement — booked via User Dashboard > Page Placements */}
+            <PagePlacementSlot slotId="media-news" aspect="4/1" minHeight={90} className="mb-5 w-full" />
+
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
               <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Latest</span>
               News Grid

@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Layout, Coins, CheckCircle, AlertCircle, RefreshCw, X, Info } from "lucide-react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { Layout, Coins, CheckCircle, AlertCircle, RefreshCw, X, Info, Upload, ImageIcon, Link as LinkIcon } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
 import { AUTH_API, LAMBDA } from "../../../lib/apiConfig";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND = LAMBDA.tokenSpend;
+const ADS_UPLOAD_API = `${LAMBDA.eventsImageUpload}/upload/ads`;
 
 const DURATION_OPTIONS = [
   { days: 1,  label: "1 Day",   discount: "" },
@@ -31,7 +32,7 @@ const SLOT_DEFINITIONS = [
 ];
 
 interface SlotStatus { available: boolean; costPerDay: number; holder: string | null; expiresAt: string | null; }
-interface Placement { placementId: string; slotId: string; slotLabel: string; durationDays: number; costPerDay: number; totalTokens: number; status: string; createdAt: string; expiresAt: string; daysLeft?: number; }
+interface Placement { placementId: string; slotId: string; slotLabel: string; durationDays: number; costPerDay: number; totalTokens: number; status: string; createdAt: string; expiresAt: string; daysLeft?: number; imageUrl?: string | null; linkUrl?: string | null; }
 
 const PagePlacements: React.FC = () => {
   const { user } = useUserAuth();
@@ -45,6 +46,9 @@ const PagePlacements: React.FC = () => {
   const [cancelling, setCancelling]     = useState<string | null>(null);
   const [success, setSuccess]           = useState("");
   const [error, setError]               = useState("");
+  const [uploadingFor, setUploadingFor] = useState<string | null>(null);
+  const [linkDraft, setLinkDraft]       = useState<Record<string, string>>({});
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const userId = user?.userData?.email || user?.email || "";
 
@@ -111,6 +115,42 @@ const PagePlacements: React.FC = () => {
     setCancelling(null);
   };
 
+  const handleUploadCreative = async (placementId: string, file: File) => {
+    if (!file.type.startsWith("image/")) {
+      setError("Please choose an image file for the ad banner.");
+      return;
+    }
+    setUploadingFor(placementId);
+    setError("");
+    try {
+      const formData = new FormData();
+      formData.append("userId", userId);
+      formData.append("fieldName", "placementBanner");
+      formData.append("file", file);
+
+      const uploadRes = await axios.post(ADS_UPLOAD_API, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (!uploadRes.data?.success) throw new Error(uploadRes.data?.error || "Upload failed");
+
+      const imageUrl = uploadRes.data.s3Url;
+      const linkUrl = linkDraft[placementId] || "";
+
+      const saveRes = await axios.put(`${TOKEN_SPEND}/placement/creative`, {
+        placementId, userId, imageUrl, linkUrl,
+      });
+      if (!saveRes.data?.success) throw new Error(saveRes.data?.message || "Could not save creative");
+
+      setSuccess("Ad banner uploaded!");
+      setTimeout(() => setSuccess(""), 4000);
+      await fetchAll();
+    } catch (e: any) {
+      setError(e.response?.data?.message || e.message || "Failed to upload ad banner");
+    } finally {
+      setUploadingFor(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-950 p-4 sm:p-6">
       <div className="max-w-6xl mx-auto">
@@ -151,21 +191,71 @@ const PagePlacements: React.FC = () => {
             </div>
             <div className="divide-y divide-white/5">
               {activePlacements.map(p => (
-                <div key={p.placementId} className="flex items-center justify-between px-5 py-3">
-                  <div>
-                    <div className="text-sm font-bold text-white">{p.slotLabel}</div>
-                    <div className="text-xs text-white/40">{p.totalTokens} ₮ · {Math.max(0, Math.ceil((new Date(p.expiresAt).getTime() - Date.now()) / 86400000))}d remaining</div>
+                <div key={p.placementId} className="px-5 py-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-sm font-bold text-white">{p.slotLabel}</div>
+                      <div className="text-xs text-white/40">{p.totalTokens} ₮ · {Math.max(0, Math.ceil((new Date(p.expiresAt).getTime() - Date.now()) / 86400000))}d remaining</div>
+                    </div>
+                    <button
+                      onClick={() => handleCancel(p.placementId)}
+                      disabled={cancelling === p.placementId}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-red-400 border border-red-400/20 rounded-lg hover:bg-red-400/10 transition-colors disabled:opacity-40"
+                    >
+                      {cancelling === p.placementId
+                        ? <div className="w-3 h-3 border border-red-400 border-t-transparent rounded-full animate-spin" />
+                        : <X size={12} />}
+                      Cancel
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleCancel(p.placementId)}
-                    disabled={cancelling === p.placementId}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-red-400 border border-red-400/20 rounded-lg hover:bg-red-400/10 transition-colors disabled:opacity-40"
-                  >
-                    {cancelling === p.placementId
-                      ? <div className="w-3 h-3 border border-red-400 border-t-transparent rounded-full animate-spin" />
-                      : <X size={12} />}
-                    Cancel
-                  </button>
+
+                  <div className="mt-3 flex items-start gap-3 bg-black/30 border border-white/8 rounded-lg p-3">
+                    {p.imageUrl ? (
+                      <img src={p.imageUrl} alt={`${p.slotLabel} banner`} className="w-24 h-14 object-cover rounded border border-white/10 flex-shrink-0" />
+                    ) : (
+                      <div className="w-24 h-14 flex items-center justify-center bg-white/5 rounded border border-dashed border-white/15 flex-shrink-0">
+                        <ImageIcon size={16} className="text-white/25" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0 space-y-2">
+                      {!p.imageUrl && (
+                        <p className="text-xs text-amber-400/90">No ad banner uploaded yet — this slot won't show anything until you add one.</p>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex-1">
+                          <LinkIcon size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/25" />
+                          <input
+                            type="url"
+                            placeholder="Click-through link (optional)"
+                            defaultValue={p.linkUrl || ""}
+                            onChange={(e) => setLinkDraft(prev => ({ ...prev, [p.placementId]: e.target.value }))}
+                            className="w-full pl-7 pr-2 py-1.5 bg-white/5 border border-white/10 rounded text-xs text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/50"
+                          />
+                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          ref={(el) => { fileInputRefs.current[p.placementId] = el; }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleUploadCreative(p.placementId, file);
+                            e.target.value = "";
+                          }}
+                        />
+                        <button
+                          onClick={() => fileInputRefs.current[p.placementId]?.click()}
+                          disabled={uploadingFor === p.placementId}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-yellow-400 border border-yellow-400/30 rounded-lg hover:bg-yellow-400/10 transition-colors disabled:opacity-40 whitespace-nowrap"
+                        >
+                          {uploadingFor === p.placementId
+                            ? <div className="w-3 h-3 border border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                            : <Upload size={12} />}
+                          {p.imageUrl ? "Change Banner" : "Upload Banner"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
