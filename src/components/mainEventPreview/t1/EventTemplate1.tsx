@@ -14,6 +14,29 @@ import { Toaster } from "sonner";
 import Back from "./components/Back";
 import { EVENTS_API, LAMBDA } from '../../../lib/apiConfig';
 
+// Different event records store section content at different nesting
+// depths under the fetched record's `content` field — some records have
+// it directly, others wrap it one level deeper alongside record metadata
+// (older records, or records touched by different backend paths). Reading
+// a fixed depth left every section on real published events silently
+// falling back to placeholder "demo Event" content. Detect the right
+// level instead of assuming.
+const looksLikeEventSections = (obj: any): boolean =>
+  !!obj && typeof obj === "object" &&
+  ("header" in obj || "hero" in obj || "speakersData" in obj || "sponsorsData" in obj);
+
+function normalizeEventRecord(raw: any): any {
+  if (!raw || typeof raw !== "object") return raw;
+  const direct = raw.content;
+  const nested = direct?.content;
+  const sectionContent = looksLikeEventSections(direct)
+    ? direct
+    : looksLikeEventSections(nested)
+    ? nested
+    : direct;
+  return { ...raw, content: sectionContent };
+}
+
 interface EventTemplateData {
   draftId?: string;
   eventName?: string; 
@@ -185,7 +208,8 @@ const EventTemplate1: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setFinalTemplate(data.data.data);
+        const normalized = normalizeEventRecord(data.data.data);
+        setFinalTemplate(normalized);
         setAIGenData(data.data.data);
         setIsLoading(false);
         return;
@@ -205,7 +229,8 @@ const EventTemplate1: React.FC = () => {
           const retryRes = await fetch(retryUrl, { method: "GET", headers: { "Content-Type": "application/json" } });
           if (retryRes.ok) {
             const retryData = await retryRes.json();
-            setFinalTemplate(retryData.data.data);
+            const normalized = normalizeEventRecord(retryData.data.data);
+            setFinalTemplate(normalized);
             setAIGenData(retryData.data.data);
             setIsLoading(false);
             return;
