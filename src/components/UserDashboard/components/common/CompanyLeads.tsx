@@ -218,13 +218,13 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
       id: `temp-${Date.now()}`,
       isRead: false,
       messageId: `temp-${Date.now()}`,
-      senderType: "lead",
+      senderType: "user",
       senderName: user?.userData?.fullName || user?.fullName || "You",
       message: messageToSend,
       timestamp: new Date(),
       delivered: false,
       seen: false,
-      sender: "lead",
+      sender: "user",
     };
 
     setChatMessages((prev) => [...prev, tempMessage]);
@@ -740,7 +740,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
                   <div
                     key={msg.id}
                     className={`flex ${
-                      msg.sender === "user" ? "justify-start" : "justify-end"
+                      msg.sender === "user" ? "justify-end" : "justify-start"
                     }`}
                   >
                     <div className="max-w-xs lg:max-w-md">
@@ -765,7 +765,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
                               minute: "2-digit",
                             })}
                           </span>
-                          {msg.sender !== "user" && (
+                          {msg.sender === "user" && (
                             <span className="ml-1">
                               {!msg.delivered ? (
                                 <Clock className="w-3 h-3" />

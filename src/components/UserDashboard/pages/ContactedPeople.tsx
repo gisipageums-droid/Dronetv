@@ -125,6 +125,18 @@ const ContactedPeople: React.FC = () => {
     };
   };
 
+  // senderType from the backend is always relative to WHO SENT the message
+  // ("user" = the company/listing owner, "lead" = the lead submitter) —
+  // never relative to who is currently viewing. This page is shared by
+  // both roles, so "is this my message" must be derived from the viewer's
+  // role in this specific conversation, not a hardcoded senderType check.
+  const isMyMessage = (msg: ChatMessage, contact: Lead) => {
+    const role = getUserRoleInConversation(contact);
+    if (role.type === "company") return msg.senderType === "user";
+    if (role.type === "lead") return msg.senderType === "lead";
+    return msg.senderType === "user";
+  };
+
   const getRoleBadgeColor = (role: UserRole) => {
     switch (role.type) {
       case "company":
@@ -251,16 +263,19 @@ const ContactedPeople: React.FC = () => {
     const txt = newMessage;
     setNewMessage("");
 
+    const myRole = getUserRoleInConversation(selectedContact);
+    const mySenderType: "user" | "lead" = myRole.type === "company" ? "user" : "lead";
+
     const tempMessage: ChatMessage = {
       id: `temp-${Date.now()}`,
       messageId: `temp-${Date.now()}`,
-      senderType: "user",
+      senderType: mySenderType,
       senderName: user?.userData?.fullName || user?.fullName || "You",
       message: txt,
       timestamp: new Date(),
       delivered: false,
       seen: false,
-      sender: "user",
+      sender: mySenderType,
       isRead: false,
     };
 
@@ -688,43 +703,46 @@ const ContactedPeople: React.FC = () => {
                 </p>
               )}
 
-              {chatMessages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex ${
-                    msg.sender === "user" ? "justify-end" : "justify-start"
-                  } mb-2`}
-                >
+              {chatMessages.map((msg) => {
+                const mine = isMyMessage(msg, selectedContact);
+                return (
                   <div
-                    className={`max-w-xs p-3 rounded-lg ${
-                      msg.sender === "user"
-                        ? "bg-[#dcf8c6] text-gray-800"
-                        : "bg-white text-gray-700 shadow"
-                    }`}
+                    key={msg.id}
+                    className={`flex ${
+                      mine ? "justify-end" : "justify-start"
+                    } mb-2`}
                   >
-                    <p className="text-sm">{msg.message}</p>
+                    <div
+                      className={`max-w-xs p-3 rounded-lg ${
+                        mine
+                          ? "bg-[#dcf8c6] text-gray-800"
+                          : "bg-white text-gray-700 shadow"
+                      }`}
+                    >
+                      <p className="text-sm">{msg.message}</p>
 
-                    <div className="text-xs text-gray-600 flex justify-end gap-1 mt-1">
-                      {new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      <div className="text-xs text-gray-600 flex justify-end gap-1 mt-1">
+                        {new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
 
-                      {msg.sender === "user" && (
-                        <>
-                          {!msg.delivered ? (
-                            <Clock className="w-3 h-3" />
-                          ) : msg.seen ? (
-                            <CheckCheck className="w-3 h-3 text-blue-500" />
-                          ) : (
-                            <Check className="w-3 h-3" />
-                          )}
-                        </>
-                      )}
+                        {mine && (
+                          <>
+                            {!msg.delivered ? (
+                              <Clock className="w-3 h-3" />
+                            ) : msg.seen ? (
+                              <CheckCheck className="w-3 h-3 text-blue-500" />
+                            ) : (
+                              <Check className="w-3 h-3" />
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               <div ref={messagesEndRef} />
             </div>
