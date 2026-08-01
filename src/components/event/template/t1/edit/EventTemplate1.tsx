@@ -355,15 +355,25 @@ const EventTemplate1: React.FC = () => {
         setFinalTemplate(data.data);
         setAIGenData(data.data);
 
-        // The AIgen load endpoint returns section content directly under
-        // data.data.content (header, hero, ...). The admin/published-event
-        // load endpoint wraps it one level deeper, under
-        // data.data.content.content, alongside record metadata. Reading the
-        // wrong level here previously left every section empty — which
-        // still let the admin click Publish and silently overwrite the real
-        // live content with blank defaults.
-        const sectionContent =
-          isAIgen === "AIgen" ? data.data?.content : data.data?.content?.content;
+        // Different event records store section content at different
+        // nesting depths — some have it directly under data.data.content
+        // (header, hero, ...), others wrap it one level deeper under
+        // data.data.content.content alongside record metadata (older
+        // records, seen on events created before some backend change).
+        // Assuming a fixed depth per isAIgen branch previously left
+        // sections empty for records shaped the other way — which still
+        // let Publish silently overwrite real content with blank defaults.
+        // Detect the right level by checking which one actually looks like
+        // section content instead of assuming.
+        const looksLikeSections = (obj: any) =>
+          obj && typeof obj === "object" &&
+          ("header" in obj || "hero" in obj || "speakersData" in obj || "sponsorsData" in obj);
+        const rawContent = data.data?.content;
+        const sectionContent = looksLikeSections(rawContent)
+          ? rawContent
+          : looksLikeSections(rawContent?.content)
+          ? rawContent.content
+          : null;
 
         if (sectionContent && Object.keys(sectionContent).length > 0) {
           setComponentStates({
