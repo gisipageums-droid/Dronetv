@@ -3,7 +3,6 @@ import {
   Calendar,
   MapPin,
   Clock,
-  ArrowRight,
   Edit,
   Save,
   X,
@@ -454,12 +453,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     setCrop({ x: 0, y: 0 });
   };
 
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   const [countdown, setCountdown] = useState({
     days: 0,
@@ -1241,64 +1234,6 @@ const toggleMute = () => {
             )}
           </div>
 
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <div className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer">
-              {editMode ? (
-                <div className="flex flex-col items-center">
-                  <input
-                    type="text"
-                    value={heroContent.btn1}
-                    onChange={(e) =>
-                      setHeroContent({ ...heroContent, btn1: e.target.value })
-                    }
-                    placeholder="Button 1 Text"
-                    maxLength={50}
-                    className="bg-white text-black px-2 py-1 rounded-md text-center"
-                  />
-                  <div className="text-xs text-gray-700 text-right mt-1">
-                    {heroContent.btn1.length}/50
-                  </div>
-                </div>
-              ) : (
-                <span onClick={() => scrollToSection("#contact")}>
-                  {heroContent.btn1}
-                </span>
-              )}
-              <ArrowRight
-                size={20}
-                className="transform group-hover:translate-x-1 transition-transform"
-              />
-            </div>
-
-            <div className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 cursor-pointer">
-              {editMode ? (
-                <div className="flex flex-col items-center">
-                  <input
-                    type="text"
-                    value={heroContent.btn2}
-                    onChange={(e) =>
-                      setHeroContent({ ...heroContent, btn2: e.target.value })
-                    }
-                    placeholder="Button 2 Text"
-                    maxLength={50}
-                    className="bg-white text-black px-2 py-1 rounded-md text-center"
-                  />
-                  <div className="text-xs text-gray-700 text-right mt-1">
-                    {heroContent.btn2.length}/50
-                  </div>
-                </div>
-              ) : (
-                <span onClick={() => scrollToSection("#contact")}>
-                  {heroContent.btn2}
-                </span>
-              )}
-              <ArrowRight
-                size={20}
-                className="transform group-hover:translate-x-1 transition-transform"
-              />
-            </div>
-          </div>
         </div>
       </div>
 

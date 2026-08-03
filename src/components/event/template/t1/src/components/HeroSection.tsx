@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Clock } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -115,32 +115,6 @@ const HeroSection: React.FC = () => {
             <p>• Know About Visitors</p>
           </div>
 
-          {/* Buttons */}
-          <div
-            data-aos="fade-up"
-            data-aos-delay="1200"
-            className="flex flex-col sm:flex-row gap-6 justify-center"
-          >
-            <a
-              href="https://www.droneexpo.in/visitor-registration"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              <span>Register to Visit</span>
-              <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
-            </a>
-
-            <a
-              href="https://www.droneexpo.in/exhibitor-registration"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105"
-            >
-              <span>Exhibitor Enquiry</span>
-              <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
-            </a>
-          </div>
         </div>
       </div>
     </section>

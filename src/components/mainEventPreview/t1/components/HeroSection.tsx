@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Calendar, MapPin, Clock, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface HeroSectionProps {
@@ -23,13 +23,6 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
   const navigate = useNavigate();
-
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   const [countdown, setCountdown] = useState({
     days: 0,
@@ -350,28 +343,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
             ))}
           </div>
 
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <div className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              <span onClick={() => scrollToSection("#contact")}>
-                {heroContent.btn1}
-              </span>
-              <ArrowRight
-                size={20}
-                className="transform group-hover:translate-x-1 transition-transform"
-              />
-            </div>
-
-            <div className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105">
-              <span onClick={() => scrollToSection("#contact")}>
-                {heroContent.btn2}
-              </span>
-              <ArrowRight
-                size={20}
-                className="transform group-hover:translate-x-1 transition-transform"
-              />
-            </div>
-          </div>
         </div>
       </div>
     </section>
