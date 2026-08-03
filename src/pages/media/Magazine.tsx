@@ -5,6 +5,7 @@ import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 import PostContentCTA from '../../components/common/PostContentCTA';
+import PagePlacementSlot from '../../components/common/PagePlacementSlot';
 
 const MEDIA_BASE = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
 
@@ -90,6 +91,8 @@ export default function MagazinePage() {
 
       <div className="max-w-6xl mx-auto px-6 py-10 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
+
+        <PagePlacementSlot slotId="media-magazine" aspect="4/1" minHeight={90} className="mb-8 w-full" />
 
         {/* Articles from CMS */}
         {articles.length > 0 && (

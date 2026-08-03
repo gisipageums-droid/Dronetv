@@ -37,6 +37,7 @@ interface Placement { placementId: string; slotId: string; slotLabel: string; du
 const PagePlacements: React.FC = () => {
   const { user } = useUserAuth();
   const [tokenBalance, setTokenBalance] = useState<number>(0);
+  const [packageType, setPackageType]   = useState<string>("");
   const [slotStatus, setSlotStatus]     = useState<Record<string, SlotStatus>>({});
   const [myPlacements, setMyPlacements] = useState<Placement[]>([]);
   const [loading, setLoading]           = useState(true);
@@ -62,6 +63,7 @@ const PagePlacements: React.FC = () => {
         axios.get(`${TOKEN_SPEND}/placements?userId=${userId}`),
       ]);
       setTokenBalance(profileR.data?.profile?.tokenBalance ?? 0);
+      setPackageType((profileR.data?.profile?.packageType || "").toLowerCase());
       setSlotStatus(slotsR.data?.slots ?? {});
       setMyPlacements(placR.data?.placements ?? []);
     } catch {
@@ -79,6 +81,7 @@ const PagePlacements: React.FC = () => {
   const liveCostPerDay = selectedSlot ? (slotStatus[selectedSlot]?.costPerDay ?? slotDef?.costPerDay ?? 0) : 0;
   const bookCost = durOpt ? liveCostPerDay * durOpt.days : 0;
   const categories = Array.from(new Set(SLOT_DEFINITIONS.map(s => s.category)));
+  const hasPackage = ["reach", "scale", "brand"].includes(packageType);
 
   const handleBook = async () => {
     if (!selectedSlot || !slotDef || !durOpt) return;
@@ -372,7 +375,12 @@ const PagePlacements: React.FC = () => {
                     </div>
                   </div>
 
-                  {tokenBalance < bookCost && (
+                  {!hasPackage && (
+                    <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 text-red-400 text-xs mb-3">
+                      <AlertCircle size={12} /> Requires an active package. <a href="/user-recharge" className="underline ml-1">Upgrade</a>
+                    </div>
+                  )}
+                  {hasPackage && tokenBalance < bookCost && (
                     <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 text-red-400 text-xs mb-3">
                       <AlertCircle size={12} /> Insufficient. <a href="/user-buy" className="underline ml-1">Buy tokens</a>
                     </div>
@@ -380,7 +388,7 @@ const PagePlacements: React.FC = () => {
 
                   <button
                     onClick={handleBook}
-                    disabled={booking || tokenBalance < bookCost}
+                    disabled={booking || !hasPackage || tokenBalance < bookCost}
                     className="w-full py-3 rounded-xl font-black text-sm bg-yellow-400 text-black hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {booking
