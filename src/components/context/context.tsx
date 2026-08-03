@@ -279,33 +279,33 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
   function navigatemodel() {
     return (
       <motion.div
-        className="fixed top-0 left-0 w-full h-full backdrop-blur-md bg-black/70 flex items-center justify-center z-[999999]"
+        className="fixed top-0 left-0 w-full h-full backdrop-blur-md bg-ink/70 flex items-center justify-center z-[999999]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+          className="bg-surface-card rounded-xl shadow-2xl max-w-md w-full p-6"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <CheckCircle className="text-green-600" size={24} />
-              <h3 className="text-xl font-semibold text-gray-900">
+              <CheckCircle className="text-status-success" size={24} />
+              <h3 className="text-xl font-semibold text-ink">
                 Successfully Published!
               </h3>
             </div>
             <button
               onClick={() => setNavModel(false)}
-              className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+              className="p-1 rounded-full hover:bg-ink-light transition-colors"
             >
-              <X size={20} className="text-gray-500" />
+              <X size={20} className="text-ink-caption" />
             </button>
           </div>
           <div className="mb-6">
-            <p className="text-gray-600">
+            <p className="text-ink-paragraph">
               Your company listing is now live! Your login credentials have been sent to your registered email address. You can log in to manage your listing anytime.
             </p>
           </div>
@@ -314,7 +314,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
               onClick={() => { setNavModel(false); navigate("/listed-companies"); }}
-              className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 text-ink-paragraph font-medium rounded-lg border border-ink-light bg-surface-card hover:bg-ink-light transition-colors"
             >
               View Companies
             </motion.button>
@@ -322,7 +322,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
               onClick={() => { setNavModel(false); navigate("/login"); }}
-              className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
+              className="px-4 py-2 bg-status-info text-white font-medium rounded-lg hover:bg-status-info transition-colors shadow-md"
             >
               Log In
             </motion.button>

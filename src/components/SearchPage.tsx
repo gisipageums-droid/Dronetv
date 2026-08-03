@@ -151,12 +151,12 @@ const SearchPage = () => {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'video': return 'bg-red-600';
-      case 'company': return 'bg-black';
-      case 'product': return 'bg-gray-800';
-      case 'event': return 'bg-gray-900';
-      case 'news': return 'bg-gray-700';
-      default: return 'bg-gray-600';
+      case 'video': return 'bg-status-error';
+      case 'company': return 'bg-ink';
+      case 'product': return 'bg-ink-charcoal';
+      case 'event': return 'bg-ink';
+      case 'news': return 'bg-ink-paragraph';
+      default: return 'bg-ink-paragraph';
     }
   };
 
@@ -168,7 +168,7 @@ const SearchPage = () => {
         return (
           <div
             key={result.id}
-            className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
+            className="group bg-surface-card rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
             style={{ 
               animationDelay: `${index * 100}ms`,
               animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
@@ -181,10 +181,10 @@ const SearchPage = () => {
                 className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110"
               />
               
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
               
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                <div className="bg-red-600 rounded-full p-3 transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-red-700 shadow-2xl">
+                <div className="bg-status-error rounded-full p-3 transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-status-error shadow-2xl">
                   <Play className="h-6 w-6 text-white" />
                 </div>
               </div>
@@ -194,24 +194,24 @@ const SearchPage = () => {
                 Video
               </div>
 
-              <div className="absolute bottom-3 right-3 bg-black/80 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+              <div className="absolute bottom-3 right-3 bg-ink/80 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 {result.duration}
               </div>
             </div>
             
             <div className="p-6">
-              <h3 className="text-lg font-bold text-black mb-2 group-hover:text-red-800 transition-colors duration-300 line-clamp-2">
+              <h3 className="text-lg font-bold text-ink mb-2 group-hover:text-status-error transition-colors duration-300 line-clamp-2">
                 {result.title}
               </h3>
-              <p className="text-gray-600 mb-3 line-clamp-2 text-sm">{result.description}</p>
+              <p className="text-ink-paragraph mb-3 line-clamp-2 text-sm">{result.description}</p>
               
-              <div className="flex items-center gap-3 text-xs text-gray-500">
+              <div className="flex items-center gap-3 text-xs text-ink-caption">
                 <div className="flex items-center gap-1">
                   <Eye className="h-3 w-3" />
                   {result.views}
                 </div>
-                <div className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
+                <div className="bg-ink-light text-ink-paragraph px-2 py-1 rounded-full text-xs font-medium">
                   {result.category}
                 </div>
               </div>
@@ -224,24 +224,24 @@ const SearchPage = () => {
         return (
           <div
             key={result.id}
-            className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
+            className="group bg-surface-card rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
             style={{ 
               animationDelay: `${index * 100}ms`,
               animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
             }}
           >
-            <div className="p-8 bg-gray-50 transition-all duration-300">
+            <div className="p-8 bg-ink-offwhite transition-all duration-300">
               <div className="flex justify-center mb-4">
-                <div className="bg-gray-200 rounded-full p-6">
-                  <LogoComponent className="h-12 w-12 text-gray-600" />
+                <div className="bg-ink-light rounded-full p-6">
+                  <LogoComponent className="h-12 w-12 text-ink-paragraph" />
                 </div>
               </div>
               
               <div className="text-center">
-                <h3 className="text-xl font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300">
+                <h3 className="text-xl font-bold text-ink mb-2 group-hover:text-ink-charcoal transition-colors duration-300">
                   {result.name}
                 </h3>
-                <div className={`${getTypeColor(result.type)} text-yellow-400 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1`}>
+                <div className={`${getTypeColor(result.type)} text-brand-yellow px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1`}>
                   <IconComponent className="h-3 w-3" />
                   Company
                 </div>
@@ -249,21 +249,21 @@ const SearchPage = () => {
             </div>
             
             <div className="p-6">
-              <p className="text-gray-600 mb-4 leading-relaxed text-sm line-clamp-3">
+              <p className="text-ink-paragraph mb-4 leading-relaxed text-sm line-clamp-3">
                 {result.description}
               </p>
               
               <div className="grid grid-cols-2 gap-2">
-                <div className="text-center p-2 bg-gray-50 rounded-lg border border-gray-100">
-                  <div className="text-sm font-bold text-gray-900">{result.employees}</div>
-                  <div className="text-xs text-gray-500">Employees</div>
+                <div className="text-center p-2 bg-ink-offwhite rounded-lg border border-ink-light">
+                  <div className="text-sm font-bold text-ink">{result.employees}</div>
+                  <div className="text-xs text-ink-caption">Employees</div>
                 </div>
-                <div className="text-center p-2 bg-gray-50 rounded-lg border border-gray-100">
-                  <div className="text-sm font-bold text-gray-900 flex items-center justify-center gap-1">
-                    <Star className="h-3 w-3 fill-current text-yellow-400" />
+                <div className="text-center p-2 bg-ink-offwhite rounded-lg border border-ink-light">
+                  <div className="text-sm font-bold text-ink flex items-center justify-center gap-1">
+                    <Star className="h-3 w-3 fill-current text-brand-yellow" />
                     {result.rating}
                   </div>
-                  <div className="text-xs text-gray-500">Rating</div>
+                  <div className="text-xs text-ink-caption">Rating</div>
                 </div>
               </div>
             </div>
@@ -274,7 +274,7 @@ const SearchPage = () => {
         return (
           <div
             key={result.id}
-            className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
+            className="group bg-surface-card rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
             style={{ 
               animationDelay: `${index * 100}ms`,
               animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
@@ -287,10 +287,10 @@ const SearchPage = () => {
                 className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110"
               />
               
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
               
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                <div className="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300">
+                <div className="bg-brand-yellow text-ink px-4 py-2 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-brand-yellow-soft">
                   View Details
                 </div>
               </div>
@@ -300,23 +300,23 @@ const SearchPage = () => {
                 Product
               </div>
 
-              <div className="absolute bottom-3 right-3 bg-black/80 text-white px-2 py-1 rounded-lg text-xs font-medium">
+              <div className="absolute bottom-3 right-3 bg-ink/80 text-white px-2 py-1 rounded-lg text-xs font-medium">
                 {result.price}
               </div>
             </div>
             
             <div className="p-6">
-              <h3 className="text-lg font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2">
+              <h3 className="text-lg font-bold text-ink mb-2 group-hover:text-ink-charcoal transition-colors duration-300 line-clamp-2">
                 {result.name}
               </h3>
-              <p className="text-gray-600 mb-3 line-clamp-2 text-sm">{result.description}</p>
+              <p className="text-ink-paragraph mb-3 line-clamp-2 text-sm">{result.description}</p>
               
               <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1 text-gray-500">
-                  <Star className="h-3 w-3 fill-current text-yellow-500" />
+                <div className="flex items-center gap-1 text-ink-caption">
+                  <Star className="h-3 w-3 fill-current text-brand-gold" />
                   {result.rating}
                 </div>
-                <div className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
+                <div className="bg-ink-light text-ink-paragraph px-2 py-1 rounded-full text-xs font-medium">
                   {result.category}
                 </div>
               </div>
@@ -328,7 +328,7 @@ const SearchPage = () => {
         return (
           <div
             key={result.id}
-            className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
+            className="group bg-surface-card rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
             style={{ 
               animationDelay: `${index * 100}ms`,
               animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
@@ -341,10 +341,10 @@ const SearchPage = () => {
                 className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110"
               />
               
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
               
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                <div className="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300">
+                <div className="bg-brand-yellow text-ink px-4 py-2 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-brand-yellow-soft">
                   View Event
                 </div>
               </div>
@@ -356,22 +356,22 @@ const SearchPage = () => {
             </div>
             
             <div className="p-6">
-              <h3 className="text-lg font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2">
+              <h3 className="text-lg font-bold text-ink mb-2 group-hover:text-ink-charcoal transition-colors duration-300 line-clamp-2">
                 {result.title}
               </h3>
-              <p className="text-gray-600 mb-3 line-clamp-2 text-sm">{result.description}</p>
+              <p className="text-ink-paragraph mb-3 line-clamp-2 text-sm">{result.description}</p>
               
               <div className="space-y-1 text-xs">
-                <div className="flex items-center text-gray-600">
-                  <Calendar className="h-3 w-3 mr-1 text-yellow-600" />
+                <div className="flex items-center text-ink-paragraph">
+                  <Calendar className="h-3 w-3 mr-1 text-brand-gold" />
                   {result.date}
                 </div>
-                <div className="flex items-center text-gray-600">
-                  <MapPin className="h-3 w-3 mr-1 text-yellow-600" />
+                <div className="flex items-center text-ink-paragraph">
+                  <MapPin className="h-3 w-3 mr-1 text-brand-gold" />
                   {result.location}
                 </div>
-                <div className="flex items-center text-gray-600">
-                  <Users className="h-3 w-3 mr-1 text-yellow-600" />
+                <div className="flex items-center text-ink-paragraph">
+                  <Users className="h-3 w-3 mr-1 text-brand-gold" />
                   {result.attendees}
                 </div>
               </div>
@@ -383,7 +383,7 @@ const SearchPage = () => {
         return (
           <div
             key={result.id}
-            className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
+            className="group bg-surface-card rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105"
             style={{ 
               animationDelay: `${index * 100}ms`,
               animation: `fadeInUp 0.8s ease-out ${index * 100}ms both`
@@ -396,10 +396,10 @@ const SearchPage = () => {
                 className="w-full h-48 object-cover transition-all duration-700 group-hover:scale-110"
               />
               
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
               
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                <div className="bg-yellow-400 text-black px-4 py-2 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-yellow-300">
+                <div className="bg-brand-yellow text-ink px-4 py-2 rounded-full font-bold shadow-2xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-brand-yellow-soft">
                   Read Article
                 </div>
               </div>
@@ -409,19 +409,19 @@ const SearchPage = () => {
                 News
               </div>
 
-              <div className="absolute bottom-3 right-3 bg-black/80 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+              <div className="absolute bottom-3 right-3 bg-ink/80 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 {result.readTime}
               </div>
             </div>
             
             <div className="p-6">
-              <h3 className="text-lg font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2">
+              <h3 className="text-lg font-bold text-ink mb-2 group-hover:text-ink-charcoal transition-colors duration-300 line-clamp-2">
                 {result.title}
               </h3>
-              <p className="text-gray-600 mb-3 line-clamp-2 text-sm">{result.description}</p>
+              <p className="text-ink-paragraph mb-3 line-clamp-2 text-sm">{result.description}</p>
               
-              <div className="flex items-center justify-between text-xs text-gray-500">
+              <div className="flex items-center justify-between text-xs text-ink-caption">
                 <div>By {result.author}</div>
                 <div>{new Date(result.date).toLocaleDateString()}</div>
               </div>
@@ -435,31 +435,31 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       {/* Hero / Search */}
       <CompactHero title={<>Search <span>Results</span></>} />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
-        <p className="text-sm text-gray-500 mb-3">Showing results for "<span className="text-gray-900 font-semibold">{searchTerm}</span>"</p>
+        <p className="text-sm text-ink-caption mb-3">Showing results for "<span className="text-ink font-semibold">{searchTerm}</span>"</p>
 
         <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
+              <Search className="h-4 w-4 text-ink-caption" />
             </div>
             <input
               type="text"
               placeholder="Search for videos, companies, products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-gray-900 placeholder-gray-400 text-sm"
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-ink-light bg-surface-card focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow text-ink placeholder-ink-caption text-sm"
             />
           </div>
           <div className="relative">
             <select
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value)}
-              className="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-9 text-gray-700 text-sm focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
+              className="appearance-none bg-surface-card border border-ink-light rounded-xl px-4 py-2.5 pr-9 text-ink-paragraph text-sm focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow"
             >
               {filterOptions.map(option => (
                 <option key={option} value={option}>
@@ -467,7 +467,7 @@ const SearchPage = () => {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-ink-caption pointer-events-none" />
           </div>
         </div>
       </div>
@@ -475,16 +475,16 @@ const SearchPage = () => {
       {/* Results */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-12">
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-gray-500">{filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''} found</p>
-          {totalPages > 1 && <p className="text-sm text-gray-400">Page {currentPage} of {totalPages}</p>}
+          <p className="text-sm text-ink-caption">{filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''} found</p>
+          {totalPages > 1 && <p className="text-sm text-ink-caption">Page {currentPage} of {totalPages}</p>}
         </div>
 
         {currentResults.length === 0 ? (
           <div className="py-16 text-center">
-            <div className="p-10 mx-auto max-w-md rounded-xl border border-gray-200 bg-white">
-              <Search className="mx-auto mb-4 w-12 h-12 text-gray-300" />
-              <h3 className="mb-2 text-lg font-bold text-gray-900">No results found</h3>
-              <p className="text-sm text-gray-400">Try adjusting your search terms or filters</p>
+            <div className="p-10 mx-auto max-w-md rounded-xl border border-ink-light bg-surface-card">
+              <Search className="mx-auto mb-4 w-12 h-12 text-ink-light" />
+              <h3 className="mb-2 text-lg font-bold text-ink">No results found</h3>
+              <p className="text-sm text-ink-caption">Try adjusting your search terms or filters</p>
             </div>
           </div>
         ) : (
@@ -499,7 +499,7 @@ const SearchPage = () => {
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-4 py-2 font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                className="px-4 py-2 font-medium text-ink-paragraph rounded-xl border border-ink-light hover:bg-ink-offwhite disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
               >
                 Previous
               </button>
@@ -510,20 +510,20 @@ const SearchPage = () => {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${page === currentPage ? 'bg-black text-yellow-400 border border-black' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                      className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${page === currentPage ? 'bg-ink text-brand-yellow border border-ink' : 'border border-ink-light text-ink-paragraph hover:bg-ink-offwhite'}`}
                     >
                       {page}
                     </button>
                   );
                 } else if (page === currentPage - 2 || page === currentPage + 2) {
-                  return <span key={page} className="px-2 text-gray-400">...</span>;
+                  return <span key={page} className="px-2 text-ink-caption">...</span>;
                 }
                 return null;
               })}
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 font-medium text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                className="px-4 py-2 font-medium text-ink-paragraph rounded-xl border border-ink-light hover:bg-ink-offwhite disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
               >
                 Next
               </button>

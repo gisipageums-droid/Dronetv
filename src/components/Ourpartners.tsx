@@ -1,11 +1,11 @@
 import React from "react";
 
 const OurPartners = () => (
-  <section className="py-20 bg-yellow-300 min-h-[50vh] flex flex-col items-center justify-center">
-    <h2 className="text-4xl md:text-5xl font-black text-black mb-10 tracking-tight">
+  <section className="py-20 bg-brand-yellow-soft min-h-[50vh] flex flex-col items-center justify-center">
+    <h2 className="text-4xl md:text-5xl font-black text-ink mb-10 tracking-tight">
       Our Partners
     </h2>
-    <div className="max-w-3xl w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border-2 border-black/10 bg-[#f1ee8e] flex items-center justify-center">
+    <div className="max-w-3xl w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border-2 border-ink/10 bg-[#f1ee8e] flex items-center justify-center">
       <img
         src="/images/partners.jpg" // Change path as needed
         alt="Partner Banner"

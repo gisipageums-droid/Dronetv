@@ -96,7 +96,7 @@ const PrivacyPolicyPage = () => {
     };
 
     return (
-        <div className="pt-[104px] min-h-screen bg-gray-50">
+        <div className="pt-[104px] min-h-screen bg-ink-offwhite">
             {/* Hero */}
             <CompactHero
                 title={<>Privacy <span>Policy</span></>}
@@ -105,13 +105,13 @@ const PrivacyPolicyPage = () => {
 
             {/* Content */}
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Commitment to Your Privacy</h2>
-                    <p className="text-gray-700 leading-relaxed mb-4">
+                <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-8 mb-6">
+                    <h2 className="text-2xl font-bold text-ink mb-4">Our Commitment to Your Privacy</h2>
+                    <p className="text-ink-paragraph leading-relaxed mb-4">
                         At Drone TV, we are committed to protecting your privacy and ensuring the security of your personal information.
                         This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.
                     </p>
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-ink-paragraph leading-relaxed">
                         By using Drone TV, you consent to the data practices described in this policy.
                         If you do not agree with this policy, please do not use our services.
                     </p>
@@ -121,17 +121,17 @@ const PrivacyPolicyPage = () => {
                     {sections.map((section, index) => {
                         const IconComponent = section.icon;
                         return (
-                            <div key={index} className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+                            <div key={index} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-8">
                                 <div className="flex items-start gap-4">
-                                    <div className="bg-black rounded-xl p-3 flex-shrink-0">
-                                        <IconComponent className="h-6 w-6 text-yellow-400" />
+                                    <div className="bg-ink rounded-xl p-3 flex-shrink-0">
+                                        <IconComponent className="h-6 w-6 text-brand-yellow" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-4">{section.title}</h3>
+                                        <h3 className="text-xl font-bold text-ink mb-4">{section.title}</h3>
                                         <ul className="space-y-3">
                                             {section.content.map((item, itemIndex) => (
-                                                <li key={itemIndex} className="flex items-start gap-3 text-gray-700">
-                                                    <span className="flex-shrink-0 h-1.5 w-1.5 bg-yellow-400 rounded-full mt-2"></span>
+                                                <li key={itemIndex} className="flex items-start gap-3 text-ink-paragraph">
+                                                    <span className="flex-shrink-0 h-1.5 w-1.5 bg-brand-yellow rounded-full mt-2"></span>
                                                     <span className="leading-relaxed text-sm">{item}</span>
                                                 </li>
                                             ))}
@@ -143,28 +143,28 @@ const PrivacyPolicyPage = () => {
                     })}
                 </div>
 
-                <div className="mt-6 bg-white rounded-xl border border-gray-200 shadow-sm p-8">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">Changes to This Privacy Policy</h3>
-                    <p className="text-gray-700 leading-relaxed mb-4">
+                <div className="mt-6 bg-surface-card rounded-xl border border-ink-light shadow-sm p-8">
+                    <h3 className="text-xl font-bold text-ink mb-4">Changes to This Privacy Policy</h3>
+                    <p className="text-ink-paragraph leading-relaxed mb-4">
                         We may update this Privacy Policy from time to time to reflect changes in our practices or for legal,
                         operational, or regulatory reasons. We will notify you of any material changes by posting the new
                         Privacy Policy on this page and updating the "Last Updated" date.
                     </p>
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-ink-paragraph leading-relaxed">
                         We encourage you to review this Privacy Policy periodically to stay informed about how we are
                         protecting your information.
                     </p>
                 </div>
 
-                <div className="mt-6 bg-black rounded-xl p-8 text-center">
-                    <Mail className="h-10 w-10 text-yellow-400 mx-auto mb-4" />
+                <div className="mt-6 bg-ink rounded-xl p-8 text-center">
+                    <Mail className="h-10 w-10 text-brand-yellow mx-auto mb-4" />
                     <h3 className="text-xl font-bold text-white mb-3">Privacy Questions or Concerns?</h3>
                     <p className="text-white/70 mb-6 text-sm">
                         If you have questions about this Privacy Policy or our data practices, please don't hesitate to contact us.
                     </p>
                     <a
                         href="/contact"
-                        className="inline-block bg-yellow-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-all duration-200"
+                        className="inline-block bg-brand-yellow text-ink px-8 py-3 rounded-lg font-semibold hover:bg-brand-yellow-soft transition-all duration-200"
                     >
                         Contact Us
                     </a>
@@ -173,7 +173,7 @@ const PrivacyPolicyPage = () => {
                 <div className="text-center mt-8">
                     <button
                         onClick={scrollToTop}
-                        className="px-6 py-2.5 text-sm font-medium bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-700 transition"
+                        className="px-6 py-2.5 text-sm font-medium bg-surface-card border border-ink-light rounded-xl hover:bg-ink-offwhite text-ink-paragraph transition"
                     >
                         Back to Top
                     </button>

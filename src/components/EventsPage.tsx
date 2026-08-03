@@ -66,18 +66,18 @@ const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime
   }, [eventDate, eventTime]);
 
   if (countdown.isEventExpired) {
-    return <div className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded">Event Ended</div>;
+    return <div className="text-xs font-bold text-status-error bg-status-error/15 px-2 py-1 rounded">Event Ended</div>;
   }
   if (countdown.isEventStarted) {
     return (
-      <div className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded flex items-center gap-1 animate-pulse">
-        <div className="w-2 h-2 bg-green-600 rounded-full animate-ping" />
+      <div className="text-xs font-bold text-status-success bg-status-success/15 px-2 py-1 rounded flex items-center gap-1 animate-pulse">
+        <div className="w-2 h-2 bg-status-success rounded-full animate-ping" />
         Live Now
       </div>
     );
   }
   return (
-    <div className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded flex items-center gap-1">
+    <div className="text-xs font-bold text-brand-gold bg-brand-yellow-soft px-2 py-1 rounded flex items-center gap-1">
       <Clock className="h-3 w-3" />
       {countdown.days > 0 ? `${countdown.days}d ` : ""}{countdown.hours}h {countdown.minutes}m {countdown.seconds}s
     </div>
@@ -199,35 +199,35 @@ const EventsPage = () => {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case "Conference": return "bg-black";
-      case "Summit": return "bg-gray-900";
-      case "Workshop": return "bg-gray-800";
-      case "Expo": return "bg-gray-700";
-      case "Webinar": return "bg-gray-600";
-      default: return "bg-gray-800";
+      case "Conference": return "bg-ink";
+      case "Summit": return "bg-ink";
+      case "Workshop": return "bg-ink-charcoal";
+      case "Expo": return "bg-ink-paragraph";
+      case "Webinar": return "bg-ink-paragraph";
+      default: return "bg-ink-charcoal";
     }
   };
 
   if (loading) {
     return (
-      <div className="pt-[104px] min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="pt-[104px] min-h-screen bg-ink-offwhite flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black mx-auto" />
-          <p className="mt-4 text-gray-500 text-sm">Loading events...</p>
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-ink mx-auto" />
+          <p className="mt-4 text-ink-caption text-sm">Loading events...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       {/* Hero */}
       <CompactHero
         title={<>Events <span>Calendar</span> · {allEvents.length || '0'} Events</>}
         action={
           <button
             onClick={() => navigate(isLogin ? "/event/select" : "/login")}
-            className="px-3 py-1.5 text-xs font-semibold text-black bg-yellow-400 rounded-lg hover:bg-yellow-300 transition flex-shrink-0"
+            className="px-3 py-1.5 text-xs font-semibold text-ink bg-brand-yellow rounded-lg hover:bg-brand-yellow-soft transition flex-shrink-0"
           >
             List your Event
           </button>
@@ -350,16 +350,16 @@ const EventsPage = () => {
                   <div
                     key={event.id}
                     onClick={() => handleCardClick(event)}
-                    className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
+                    className="group bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
                   >
                     <div className="relative overflow-hidden rounded-t-xl">
                       <img src={event.image} alt={event.name} className="w-full h-40 object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className={`absolute top-3 right-3 ${getTypeColor(event.type)} text-white px-2 py-1 rounded-full text-xs font-bold`}>{event.type}</div>
                     </div>
                     <div className="p-4">
-                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{event.name}</h3>
-                      {event.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.description}</p>}
-                      <div className="space-y-1 text-xs text-gray-500">
+                      <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{event.name}</h3>
+                      {event.description && <p className="text-xs text-ink-caption leading-relaxed mb-3 line-clamp-2">{event.description}</p>}
+                      <div className="space-y-1 text-xs text-ink-caption">
                         {event.date && <div className="flex items-center gap-1.5"><Calendar className="h-3 w-3 flex-shrink-0" />{event.date}</div>}
                         {event.location && <div className="flex items-center gap-1.5"><MapPin className="h-3 w-3 flex-shrink-0" />{event.location}</div>}
                         {event.attendees && event.attendees !== "Not specified" && <div className="flex items-center gap-1.5"><Users className="h-3 w-3 flex-shrink-0" />{event.attendees}</div>}

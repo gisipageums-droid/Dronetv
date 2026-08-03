@@ -114,9 +114,9 @@ const ProfessionalsPage: React.FC = () => {
             navigate(`/professional/${slug}`);
           }
         }}
-        className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden flex flex-col"
+        className="group bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden flex flex-col"
       >
-        <div className="relative w-full h-48 bg-gray-100 overflow-hidden flex items-center justify-center">
+        <div className="relative w-full h-48 bg-ink-light overflow-hidden flex items-center justify-center">
           {professional.previewImage ? (
             <img
               src={professional.previewImage}
@@ -124,8 +124,8 @@ const ProfessionalsPage: React.FC = () => {
               className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="flex justify-center items-center w-full h-full bg-gray-100">
-              <span className="text-5xl font-bold text-gray-400 uppercase">
+            <div className="flex justify-center items-center w-full h-full bg-ink-light">
+              <span className="text-5xl font-bold text-ink-caption uppercase">
                 {displayName?.[0] || '?'}
               </span>
             </div>
@@ -133,9 +133,9 @@ const ProfessionalsPage: React.FC = () => {
         </div>
 
         <div className="flex flex-col items-center px-4 pt-4 pb-2 text-center">
-          <h3 className="mb-1 text-sm font-bold text-gray-900 line-clamp-1">{displayName}</h3>
+          <h3 className="mb-1 text-sm font-bold text-ink line-clamp-1">{displayName}</h3>
           {professional.location && professional.location !== "Location Not Specified" && (
-            <div className="flex gap-1 justify-center items-center text-xs text-gray-500">
+            <div className="flex gap-1 justify-center items-center text-xs text-ink-caption">
               <MapPin className="w-3 h-3" />
               {professional.location}
             </div>
@@ -143,17 +143,17 @@ const ProfessionalsPage: React.FC = () => {
         </div>
 
         <div className="flex flex-col flex-1 justify-between px-4 pb-4">
-          <p className="mb-3 text-xs text-gray-500 line-clamp-2 text-center">
+          <p className="mb-3 text-xs text-ink-caption line-clamp-2 text-center">
             {professional.professionalDescription || "No professional description."}
           </p>
           <div className="grid grid-cols-2 gap-2">
-            <div className="py-1.5 text-center bg-gray-50 rounded-lg border border-gray-100">
-              <div className="text-sm font-bold text-gray-900">{totalSkills}</div>
-              <div className="text-[10px] text-gray-500">Skills</div>
+            <div className="py-1.5 text-center bg-ink-offwhite rounded-lg border border-ink-light">
+              <div className="text-sm font-bold text-ink">{totalSkills}</div>
+              <div className="text-[10px] text-ink-caption">Skills</div>
             </div>
-            <div className="py-1.5 text-center bg-gray-50 rounded-lg border border-gray-100">
-              <div className="text-sm font-bold text-gray-900">{totalServices}</div>
-              <div className="text-[10px] text-gray-500">Services</div>
+            <div className="py-1.5 text-center bg-ink-offwhite rounded-lg border border-ink-light">
+              <div className="text-sm font-bold text-ink">{totalServices}</div>
+              <div className="text-[10px] text-ink-caption">Services</div>
             </div>
           </div>
         </div>
@@ -166,7 +166,7 @@ const ProfessionalsPage: React.FC = () => {
   }
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       {/* Hero */}
       <CompactHero
         title={<>Professionals <span>Directory</span> · {allProfessionals.length || '0'} Profiles</>}
@@ -177,7 +177,7 @@ const ProfessionalsPage: React.FC = () => {
               try { localStorage.removeItem("professionalFormDraft"); } catch { /* ignore */ }
               navigate("/professional/select");
             }}
-            className="px-3 py-1.5 text-xs font-semibold text-black bg-yellow-400 rounded-lg hover:bg-yellow-300 transition flex-shrink-0"
+            className="px-3 py-1.5 text-xs font-semibold text-ink bg-brand-yellow rounded-lg hover:bg-brand-yellow-soft transition flex-shrink-0"
           >
             List your Profile
           </button>
@@ -296,8 +296,8 @@ const ProfessionalsPage: React.FC = () => {
       {/* Hub Grid */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Hub</span>
+        <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+          <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Hub</span>
           Everything You Need as a Drone, GIS & AI Professional
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
@@ -312,27 +312,27 @@ const ProfessionalsPage: React.FC = () => {
             { to: '/professionals/certifications', icon: '⚡', count: 'Rs.50K', unit: 'Starting Cost', title: 'Start Here', desc: 'New to drones? Complete 5-day DGCA Small category certification. Start earning from month one.', highlight: true },
           ], card => (
             <a key={card.to} href={card.to}
-              className={`rounded-xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col ${card.highlight ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 bg-white'}`}>
-              <div className={`px-4 py-3 flex items-center gap-3 ${card.highlight ? 'bg-yellow-400' : 'bg-black'}`}>
+              className={`rounded-xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col ${card.highlight ? 'border-brand-yellow bg-surface-main' : 'border-ink-light bg-surface-card'}`}>
+              <div className={`px-4 py-3 flex items-center gap-3 ${card.highlight ? 'bg-brand-yellow' : 'bg-ink'}`}>
                 <span className="text-xl">{card.icon}</span>
                 <div>
-                  <span className={`text-sm font-extrabold block leading-none ${card.highlight ? 'text-black' : 'text-white'}`}>{card.count}</span>
-                  <span className={`text-xs ${card.highlight ? 'text-black/60' : 'text-white/50'}`}>{card.unit}</span>
+                  <span className={`text-sm font-extrabold block leading-none ${card.highlight ? 'text-ink' : 'text-white'}`}>{card.count}</span>
+                  <span className={`text-xs ${card.highlight ? 'text-ink/60' : 'text-white/50'}`}>{card.unit}</span>
                 </div>
               </div>
               <div className="px-4 py-3 flex-1">
-                <p className="font-bold text-gray-900 text-sm mb-1">{card.title}</p>
-                <p className="text-xs text-gray-500 leading-relaxed">{card.desc}</p>
+                <p className="font-bold text-ink text-sm mb-1">{card.title}</p>
+                <p className="text-xs text-ink-caption leading-relaxed">{card.desc}</p>
               </div>
-              <div className={`px-4 py-2 border-t ${card.highlight ? 'border-yellow-200' : 'border-gray-100'}`}>
-                <span className={`text-xs font-bold ${card.highlight ? 'text-yellow-700' : 'text-yellow-600'}`}>Explore →</span>
+              <div className={`px-4 py-2 border-t ${card.highlight ? 'border-brand-yellow-soft' : 'border-ink-light'}`}>
+                <span className={`text-xs font-bold ${card.highlight ? 'text-brand-gold' : 'text-brand-gold'}`}>Explore →</span>
               </div>
             </a>
           ))}
         </div>
 
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">2026</span>
+        <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+          <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">2026</span>
           Why Drone is the Right Career
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -342,11 +342,11 @@ const ProfessionalsPage: React.FC = () => {
             { icon: '⚡', title: 'Get Certified in 5 Days for Small Category', desc: 'DGCA Small category Remote Pilot Certificate takes just 5 days at an approved RPTO. Total cost including training, medical, and DGCA fees ranges from Rs. 50,000 upwards. No engineering degree required — Class 10 pass is sufficient.' },
             { icon: '🌾', title: 'Jobs in Agriculture, Survey, Defence, Media, Logistics', desc: 'Agriculture spraying, GIS mapping, infrastructure inspection, aerial cinematography, defence surveillance, and drone delivery are all active hiring sectors. Specialise in what interests you most.' },
           ].map((item, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex items-start gap-4">
+            <div key={i} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-5 flex items-start gap-4">
               <span className="text-2xl flex-shrink-0">{item.icon}</span>
               <div>
-                <h3 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-ink text-sm mb-1">{item.title}</h3>
+                <p className="text-xs text-ink-caption leading-relaxed">{item.desc}</p>
               </div>
             </div>
           ))}

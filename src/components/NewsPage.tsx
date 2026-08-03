@@ -33,7 +33,7 @@ export default function NewsPage() {
   const paginated = filtered.slice((currentPage - 1) * articlesPerPage, currentPage * articlesPerPage);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       {/* Hero */}
       <CompactHero title={<>News <span>&amp; Insights</span> · {items.length || '0'} Articles</>} />
 
@@ -120,28 +120,28 @@ export default function NewsPage() {
 
                 <div className="nw-grid">
                   {paginated.map(item => (
-                    <div key={item.contentId} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
+                    <div key={item.contentId} className="bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
                       {item.imageUrl ? <img src={item.imageUrl} alt={item.title} className="w-full h-44 object-cover" /> : (
-                        <div className="w-full h-44 bg-zinc-900 flex items-center justify-center">
-                          <span className="text-yellow-400 text-3xl font-extrabold">DTV</span>
+                        <div className="w-full h-44 bg-ink flex items-center justify-center">
+                          <span className="text-brand-yellow text-3xl font-extrabold">DTV</span>
                         </div>
                       )}
                       <div className="p-4 flex flex-col flex-1">
-                        {item.category && <span className="bg-black text-yellow-400 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                        <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
-                        {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-5 flex-1">{item.description}</p>}
+                        {item.category && <span className="bg-ink text-brand-yellow text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                        <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                        {item.description && <p className="text-xs text-ink-caption leading-relaxed mb-3 line-clamp-5 flex-1">{item.description}</p>}
                         <div className="space-y-1 mt-auto">
-                          {(item.source || item.author) && <div className="flex items-center gap-1.5 text-xs text-gray-400"><User className="w-3 h-3 flex-shrink-0" />{item.source || item.author}</div>}
-                          {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-400"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}
-                          {item.readTime && <div className="flex items-center gap-1.5 text-xs text-gray-400"><Clock className="w-3 h-3 flex-shrink-0" />{item.readTime}</div>}
+                          {(item.source || item.author) && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><User className="w-3 h-3 flex-shrink-0" />{item.source || item.author}</div>}
+                          {item.date && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}
+                          {item.readTime && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><Clock className="w-3 h-3 flex-shrink-0" />{item.readTime}</div>}
                         </div>
                         {item.tags && item.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1.5 mt-3">
-                            {item.tags.slice(0, 3).map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
+                            {item.tags.slice(0, 3).map(tag => <span key={tag} className="bg-ink-light text-ink-paragraph text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
                           </div>
                         )}
                         {item.externalLink && (
-                          <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                          <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center gap-1 text-xs font-bold text-brand-gold hover:text-brand-yellow">
                             Read Article <ExternalLink className="w-3 h-3" />
                           </a>
                         )}

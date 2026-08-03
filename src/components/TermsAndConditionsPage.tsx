@@ -79,7 +79,7 @@ const TermsAndConditionsPage = () => {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       {/* Hero */}
       <CompactHero
         title={<>Terms &amp; <span>Conditions</span></>}
@@ -88,9 +88,9 @@ const TermsAndConditionsPage = () => {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Drone TV</h2>
-          <p className="text-gray-700 leading-relaxed">
+        <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-8 mb-6">
+          <h2 className="text-2xl font-bold text-ink mb-4">Welcome to Drone TV</h2>
+          <p className="text-ink-paragraph leading-relaxed">
             These Terms and Conditions govern your use of the Drone TV platform and services.
             By accessing or using our website and services, you agree to comply with and be bound by these terms.
             Please review them carefully.
@@ -101,17 +101,17 @@ const TermsAndConditionsPage = () => {
           {sections.map((section, index) => {
             const IconComponent = section.icon;
             return (
-              <div key={index} className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+              <div key={index} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-8">
                 <div className="flex items-start gap-4">
-                  <div className="bg-black rounded-xl p-3 flex-shrink-0">
-                    <IconComponent className="h-6 w-6 text-yellow-400" />
+                  <div className="bg-ink rounded-xl p-3 flex-shrink-0">
+                    <IconComponent className="h-6 w-6 text-brand-yellow" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">{section.title}</h3>
+                    <h3 className="text-xl font-bold text-ink mb-4">{section.title}</h3>
                     <ul className="space-y-3">
                       {section.content.map((item, itemIndex) => (
-                        <li key={itemIndex} className="flex items-start gap-3 text-gray-700">
-                          <span className="flex-shrink-0 h-1.5 w-1.5 bg-yellow-400 rounded-full mt-2"></span>
+                        <li key={itemIndex} className="flex items-start gap-3 text-ink-paragraph">
+                          <span className="flex-shrink-0 h-1.5 w-1.5 bg-brand-yellow rounded-full mt-2"></span>
                           <span className="leading-relaxed text-sm">{item}</span>
                         </li>
                       ))}
@@ -123,15 +123,15 @@ const TermsAndConditionsPage = () => {
           })}
         </div>
 
-        <div className="mt-6 bg-black rounded-xl p-8 text-center">
-          <Mail className="h-10 w-10 text-yellow-400 mx-auto mb-4" />
+        <div className="mt-6 bg-ink rounded-xl p-8 text-center">
+          <Mail className="h-10 w-10 text-brand-yellow mx-auto mb-4" />
           <h3 className="text-xl font-bold text-white mb-3">Questions About These Terms?</h3>
           <p className="text-white/70 mb-6 text-sm">
             If you have any questions or concerns regarding these Terms and Conditions, please contact us.
           </p>
           <a
             href="/contact"
-            className="inline-block bg-yellow-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-all duration-200"
+            className="inline-block bg-brand-yellow text-ink px-8 py-3 rounded-lg font-semibold hover:bg-brand-yellow-soft transition-all duration-200"
           >
             Contact Us
           </a>
@@ -140,7 +140,7 @@ const TermsAndConditionsPage = () => {
         <div className="text-center mt-8">
           <button
             onClick={scrollToTop}
-            className="px-6 py-2.5 text-sm font-medium bg-white border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-700 transition"
+            className="px-6 py-2.5 text-sm font-medium bg-surface-card border border-ink-light rounded-xl hover:bg-ink-offwhite text-ink-paragraph transition"
           >
             Back to Top
           </button>

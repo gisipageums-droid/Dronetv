@@ -46,20 +46,20 @@ const ForgotPassword: React.FC = () => {
 
   if (isSubmitted) {
     return (
-      <div className="max-w-md mx-auto mt-20 bg-white rounded-lg shadow-lg p-8">
+      <div className="max-w-md mx-auto mt-20 bg-surface-card rounded-lg shadow-lg p-8">
         <div className="flex flex-col items-center">
           <img src="/images/logo.png" alt="DroneTv" className="h-10 mb-6 object-contain" />
           <div className="mb-6">
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="mx-auto w-16 h-16 bg-status-success/15 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-status-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Check Your Email</h2>
-            <p className="text-gray-600 mb-6">
+            <h2 className="text-3xl font-bold text-ink mb-2">Check Your Email</h2>
+            <p className="text-ink-paragraph mb-6">
               We've sent a password reset link to <strong>{email}</strong>
             </p>
-            <p className="text-sm text-gray-500 mb-8">
+            <p className="text-sm text-ink-caption mb-8">
               Didn't receive the email? Check your spam folder or try again.
             </p>
           </div>
@@ -69,13 +69,13 @@ const ForgotPassword: React.FC = () => {
                 setIsSubmitted(false)
                 setEmail('')
               }}
-              className="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition"
+              className="w-full bg-status-warning text-white py-2 rounded hover:bg-status-warning transition"
             >
               Try Again
             </button>
             <Link
               to="/login"
-              className="w-full inline-block text-center bg-gray-200 text-gray-700 py-2 rounded hover:bg-gray-300 transition"
+              className="w-full inline-block text-center bg-ink-light text-ink-paragraph py-2 rounded hover:bg-ink-light transition"
             >
               Back to Sign In
             </Link>
@@ -86,11 +86,11 @@ const ForgotPassword: React.FC = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-20 bg-white rounded-lg shadow-lg p-8">
+    <div className="max-w-md mx-auto mt-20 bg-surface-card rounded-lg shadow-lg p-8">
       <div className="flex flex-col items-center mb-8">
         <img src="/images/logo.png" alt="DroneTv" className="h-10 mb-4 object-contain" />
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h2>
-        <p className="text-gray-600 text-center">
+        <h2 className="text-3xl font-bold text-ink mb-2">Reset Password</h2>
+        <p className="text-ink-paragraph text-center">
           Enter your email address and we'll send you a link to reset your password.
         </p>
       </div>
@@ -105,16 +105,16 @@ const ForgotPassword: React.FC = () => {
             name="email"
             value={email}
             onChange={handleChange}
-            className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-400 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+            className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-status-warning ${errors.email ? 'border-status-error' : 'border-ink-light'}`}
             placeholder="Enter your email"
           />
-          {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+          {errors.email && <p className="text-status-error text-sm mt-1">{errors.email}</p>}
         </div>
-        {errors.submit && <p className="text-red-600 text-center">{errors.submit}</p>}
+        {errors.submit && <p className="text-status-error text-center">{errors.submit}</p>}
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition"
+          className="w-full bg-status-warning text-white py-2 rounded hover:bg-status-warning transition"
         >
           {isLoading ? 'Sending...' : 'Send Reset Link'}
         </button>
@@ -122,7 +122,7 @@ const ForgotPassword: React.FC = () => {
       <div className="mt-6 text-center">
         <Link
           to="/login"
-          className="text-orange-500 hover:text-orange-600 font-medium"
+          className="text-status-warning hover:text-status-warning font-medium"
         >
           ← Back to Sign In
         </Link>

@@ -138,11 +138,11 @@ export default function ServiceDetailPage() {
 
   if (error)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-        <div className="bg-white rounded-2xl p-8 shadow-md w-full max-w-xl text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="mb-6 text-gray-700">{error}</p>
-          <button onClick={() => window.location.reload()} className="px-5 py-3 bg-black text-white rounded-lg font-semibold">
+      <div className="min-h-screen flex items-center justify-center bg-ink-offwhite p-6">
+        <div className="bg-surface-card rounded-2xl p-8 shadow-md w-full max-w-xl text-center">
+          <h2 className="text-2xl font-bold text-status-error mb-4">Error</h2>
+          <p className="mb-6 text-ink-paragraph">{error}</p>
+          <button onClick={() => window.location.reload()} className="px-5 py-3 bg-ink text-white rounded-lg font-semibold">
             Try again
           </button>
         </div>
@@ -151,7 +151,7 @@ export default function ServiceDetailPage() {
 
   if (!service)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-ink-offwhite">
         <p className="text-lg font-semibold">Service not found.</p>
       </div>
     );
@@ -166,20 +166,20 @@ export default function ServiceDetailPage() {
 
   const renderStars = (rating = 0) =>
     Array.from({ length: 5 }).map((_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "text-yellow-500" : "text-gray-300"}`} />
+      <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "text-brand-gold" : "text-ink-light"}`} />
     ));
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
 
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 items-start">
           {/* LEFT: Images */}
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow overflow-hidden">
+            <div className="bg-surface-card rounded-2xl shadow overflow-hidden">
               <div
-                className="relative w-full cursor-zoom-in bg-white"
+                className="relative w-full cursor-zoom-in bg-surface-card"
                 onMouseEnter={() => setShowZoom(true)}
                 onMouseLeave={() => setShowZoom(false)}
                 onMouseMove={handleImageHover}
@@ -208,7 +208,7 @@ export default function ServiceDetailPage() {
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
-                    className={`flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === idx ? "border-black shadow-lg" : "border-gray-200 hover:border-gray-300"
+                    className={`flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === idx ? "border-ink shadow-lg" : "border-ink-light hover:border-ink-light"
                       }`}
                   >
                     <img src={img} alt={`${service.name} ${idx + 1}`} className="w-full h-full object-cover" />
@@ -220,16 +220,16 @@ export default function ServiceDetailPage() {
 
           {/* RIGHT: Info */}
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl shadow">
+            <div className="bg-surface-card p-6 rounded-2xl shadow">
               <div className="flex items-start justify-between gap-6">
                 <div className="flex-1">
-                  <h1 className="text-3xl font-extrabold text-black">{service.name}</h1>
+                  <h1 className="text-3xl font-extrabold text-ink">{service.name}</h1>
                   {companyName && (
-                    <p className="mt-2 text-lg font-semibold text-gray-800">
-                      <span className="text-black">{companyName}</span>
+                    <p className="mt-2 text-lg font-semibold text-ink-charcoal">
+                      <span className="text-ink">{companyName}</span>
                     </p>
                   )}
-                  <p className="mt-2 text-gray-600 text-justify">{service.shortDescription}</p>
+                  <p className="mt-2 text-ink-paragraph text-justify">{service.shortDescription}</p>
                 </div>
               </div>
 
@@ -237,24 +237,24 @@ export default function ServiceDetailPage() {
             </div>
 
             {/* Tabs */}
-            <div className="bg-white rounded-2xl shadow overflow-hidden">
+            <div className="bg-surface-card rounded-2xl shadow overflow-hidden">
               <div className="border-b">
                 <nav className="flex overflow-x-auto" aria-label="Service tabs">
                   <button
                     onClick={() => setActiveTab("features")}
-                    className={`px-6 py-4 font-semibold whitespace-nowrap ${activeTab === "features" ? "text-black bg-yellow-50 border-b-2 border-black" : "text-gray-600 hover:bg-gray-50"}`}
+                    className={`px-6 py-4 font-semibold whitespace-nowrap ${activeTab === "features" ? "text-ink bg-surface-main border-b-2 border-ink" : "text-ink-paragraph hover:bg-ink-offwhite"}`}
                   >
                     Key Features
                   </button>
                   <button
                     onClick={() => setActiveTab("benefits")}
-                    className={`px-6 py-4 font-semibold whitespace-nowrap ${activeTab === "benefits" ? "text-black bg-yellow-50 border-b-2 border-black" : "text-gray-600 hover:bg-gray-50"}`}
+                    className={`px-6 py-4 font-semibold whitespace-nowrap ${activeTab === "benefits" ? "text-ink bg-surface-main border-b-2 border-ink" : "text-ink-paragraph hover:bg-ink-offwhite"}`}
                   >
                     Benefits
                   </button>
                   <button
                     onClick={() => setActiveTab("process")}
-                    className={`px-6 py-4 font-semibold whitespace-nowrap ${activeTab === "process" ? "text-black bg-yellow-50 border-b-2 border-black" : "text-gray-600 hover:bg-gray-50"}`}
+                    className={`px-6 py-4 font-semibold whitespace-nowrap ${activeTab === "process" ? "text-ink bg-surface-main border-b-2 border-ink" : "text-ink-paragraph hover:bg-ink-offwhite"}`}
                   >
                     Process
                   </button>
@@ -263,13 +263,13 @@ export default function ServiceDetailPage() {
 
               <div className="p-6">
                 {activeTab === "features" && (
-                  <div className="prose max-w-none text-gray-700">
-                    <h3 className="text-2xl font-bold text-black mb-4">Key Features</h3>
+                  <div className="prose max-w-none text-ink-paragraph">
+                    <h3 className="text-2xl font-bold text-ink mb-4">Key Features</h3>
                     <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {service.features.map((f, i) => (
-                        <li key={i} className="flex gap-3 items-start p-3 bg-yellow-50 rounded-xl">
-                          <div className="mt-1 text-black/80">{f.icon}</div>
-                          <div className="text-gray-700">{f.text}</div>
+                        <li key={i} className="flex gap-3 items-start p-3 bg-surface-main rounded-xl">
+                          <div className="mt-1 text-ink/80">{f.icon}</div>
+                          <div className="text-ink-paragraph">{f.text}</div>
                         </li>
                       ))}
                     </ul>
@@ -277,13 +277,13 @@ export default function ServiceDetailPage() {
                 )}
 
                 {activeTab === "benefits" && (
-                  <div className="prose max-w-none text-gray-700">
-                    <h3 className="text-2xl font-bold text-black mb-4">Benefits</h3>
+                  <div className="prose max-w-none text-ink-paragraph">
+                    <h3 className="text-2xl font-bold text-ink mb-4">Benefits</h3>
                     <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {service.benefits.map((b, i) => (
-                        <li key={i} className="flex gap-3 items-start p-3 bg-yellow-50 rounded-xl">
-                          <div className="mt-1 text-green-600"><CheckCircle className="w-5 h-5" /></div>
-                          <div className="text-gray-700">{b}</div>
+                        <li key={i} className="flex gap-3 items-start p-3 bg-surface-main rounded-xl">
+                          <div className="mt-1 text-status-success"><CheckCircle className="w-5 h-5" /></div>
+                          <div className="text-ink-paragraph">{b}</div>
                         </li>
                       ))}
                     </ul>
@@ -291,15 +291,15 @@ export default function ServiceDetailPage() {
                 )}
 
                 {activeTab === "process" && (
-                  <div className="prose max-w-none text-gray-700">
-                    <h3 className="text-2xl font-bold text-black mb-4">Our Process</h3>
+                  <div className="prose max-w-none text-ink-paragraph">
+                    <h3 className="text-2xl font-bold text-ink mb-4">Our Process</h3>
                     <div className="space-y-1">
                       {service.process.map((p, i) => (
-                        <div key={i} className="flex gap-4 items-center p-3 bg-yellow-50 rounded-xl">
-                          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-black text-white rounded-full font-bold">
+                        <div key={i} className="flex gap-4 items-center p-3 bg-surface-main rounded-xl">
+                          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-ink text-white rounded-full font-bold">
                             {i + 1}
                           </div>
-                          <div className="text-gray-700 font-medium">{p}</div>
+                          <div className="text-ink-paragraph font-medium">{p}</div>
                         </div>
                       ))}
                     </div>
@@ -310,7 +310,7 @@ export default function ServiceDetailPage() {
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl shadow shadow-black mt-[5px] bg-white">
+        <div className="p-4 rounded-2xl shadow shadow-ink mt-[5px] bg-surface-card">
           <h4 className="font-semibold mb-3">Description</h4>
           <ul className="grid grid-cols-1 text-justify">
             <li>{service.detailedDescription}</li>

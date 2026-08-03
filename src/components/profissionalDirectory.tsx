@@ -167,22 +167,22 @@ interface ErrorMessageProps {
 const Header: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className='h-[40vh] md:h-[60vh] bg-gray-100 flex items-center justify-center px-4 sm:px-6  md:mt-4 pt-[120px] md:pt-[10px]'>
+    <div className='h-[40vh] md:h-[60vh] bg-ink-light flex items-center justify-center px-4 sm:px-6  md:mt-4 pt-[120px] md:pt-[10px]'>
       {/* ===== Always Visible Popup ===== */}
       <div className="fixed right-4 bottom-24 md:right-12 md:bottom-auto md:top-28 z-10 animate-bounce">
-        <div className="px-3 py-2 md:px-5 md:py-4 text-center bg-white rounded-xl border border-yellow-300 shadow-lg max-w-[280px] md:max-w-none">
-          <h2 className="text-sm font-semibold text-amber-900 md:text-lg">
+        <div className="px-3 py-2 md:px-5 md:py-4 text-center bg-surface-card rounded-xl border border-brand-yellow-soft shadow-lg max-w-[280px] md:max-w-none">
+          <h2 className="text-sm font-semibold text-brand-gold md:text-lg">
             🎉 Free Trial
           </h2>
-          <p className="mt-1 text-sm md:text-lg font-semibold text-amber-700">
+          <p className="mt-1 text-sm md:text-lg font-semibold text-brand-gold">
             You have{" "}
-            <span className="font-bold text-amber-600">90</span> free trial days
+            <span className="font-bold text-brand-gold">90</span> free trial days
             remaining.
           </p>
-          <p className="pl-4 mt-2 text-xs md:pl-6 md:mt-4 text-left text-amber-700">
-            ✅ Create <span className="font-bold text-amber-600">unlimited professional profiles</span>.
+          <p className="pl-4 mt-2 text-xs md:pl-6 md:mt-4 text-left text-brand-gold">
+            ✅ Create <span className="font-bold text-brand-gold">unlimited professional profiles</span>.
           </p>
-          <p className="pl-4 mt-1 text-xs md:pl-6 md:mt-1 text-left text-amber-700">
+          <p className="pl-4 mt-1 text-xs md:pl-6 md:mt-1 text-left text-brand-gold">
             ✅ <span className="font-bold">Edit and customize</span> profiles at any time.
           </p>
         </div>
@@ -190,36 +190,36 @@ const Header: React.FC = () => {
 
       <div className='text-center max-w-3xl relative w-full'>
         {/* Geometric Elements - UPDATED COLORS */}
-        <div className='absolute -top-10 -left-10 w-20 h-20 md:-top-20 md:-left-20 md:w-40 md:h-40 border border-yellow-200 rounded-full opacity-40'></div>
-        <div className='absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-yellow-200 opacity-30 rounded-2xl'></div>
+        <div className='absolute -top-10 -left-10 w-20 h-20 md:-top-20 md:-left-20 md:w-40 md:h-40 border border-brand-yellow-soft rounded-full opacity-40'></div>
+        <div className='absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-brand-yellow-soft opacity-30 rounded-2xl'></div>
 
         <div className='relative z-10  '>
           <div className='flex items-center justify-center gap-2 md:gap-4 mb-4 '>
-            <div className='w-2 h-2 md:w-3 md:h-3 bg-yellow-400 rounded-full'></div>
-            <div className='w-4 h-4 md:w-6 md:h-6 border-2 border-amber-400'></div>
-            <div className='w-3 h-3 md:w-4 md:h-4 bg-amber-600 rotate-45'></div>
+            <div className='w-2 h-2 md:w-3 md:h-3 bg-brand-yellow rounded-full'></div>
+            <div className='w-4 h-4 md:w-6 md:h-6 border-2 border-brand-yellow'></div>
+            <div className='w-3 h-3 md:w-4 md:h-4 bg-brand-gold rotate-45'></div>
           </div>
 
-          <h1 className='text-3xl md:text-5xl font-light text-amber-900 mb-4 md:mb-6'>
+          <h1 className='text-3xl md:text-5xl font-light text-brand-gold mb-4 md:mb-6'>
             My Professional Profiles
-            <span className='block text-xl md:text-3xl font-extralight text-yellow-600 mt-1 md:mt-2'>
+            <span className='block text-xl md:text-3xl font-extralight text-brand-gold mt-1 md:mt-2'>
               Dashboard
             </span>
           </h1>
 
-          <p className='text-base md:text-lg text-amber-700 mb-6 md:mb-10 max-w-xl mx-auto font-light'>
+          <p className='text-base md:text-lg text-brand-gold mb-6 md:mb-10 max-w-xl mx-auto font-light'>
             Manage your professional profiles, showcase your expertise, and update your content.
           </p>
 
           <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
             <button
               onClick={() => { try { localStorage.removeItem("professionalFormDraft"); } catch { /* ignore */ } navigate('/professional/select'); }}
-              className='bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-6 py-3 md:px-8 md:py-4 font-semibold hover:from-yellow-500 hover:to-yellow-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto text-sm md:text-base'
+              className='bg-gradient-to-r from-brand-yellow to-brand-gold text-ink px-6 py-3 md:px-8 md:py-4 font-semibold hover:from-brand-gold hover:to-brand-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto text-sm md:text-base'
             >
               + Add New Profile
             </button>
-            <div className='w-px h-8 md:h-12 bg-yellow-300 hidden sm:block'></div>
-            <button className='text-amber-700 hover:text-amber-900 transition-colors duration-300 text-sm md:text-base sm:mt-0 mt-2'>
+            <div className='w-px h-8 md:h-12 bg-brand-yellow-soft hidden sm:block'></div>
+            <button className='text-brand-gold hover:text-brand-yellow transition-colors duration-300 text-sm md:text-base sm:mt-0 mt-2'>
               View Analytics
             </button>
           </div>
@@ -236,10 +236,10 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
     <div className='relative'>
       <button
         onClick={() => setOpen(!open)}
-        className='w-full flex justify-between items-center px-4 py-3 bg-gray-50 text-gray-700 text-sm rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300'
+        className='w-full flex justify-between items-center px-4 py-3 bg-ink-offwhite text-ink-paragraph text-sm rounded-lg border border-ink-light hover:bg-ink-light transition-colors focus:outline-none focus:ring-1 focus:ring-ink-light'
       >
         <span
-          className={value === options[0] ? "text-gray-500" : "text-gray-900"}
+          className={value === options[0] ? "text-ink-caption" : "text-ink"}
         >
           {value || placeholder}
         </span>
@@ -249,7 +249,7 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
       </button>
 
       {open && (
-        <div className='absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-sm z-10'>
+        <div className='absolute mt-1 w-full bg-surface-card border border-ink-light rounded-lg shadow-sm z-10'>
           {options.map((option: string, idx: number) => (
             <button
               key={idx}
@@ -258,8 +258,8 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
                 setOpen(false);
               }}
               className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option
-                ? "bg-gray-50 text-gray-900 font-medium"
-                : "text-gray-700 hover:bg-gray-50"
+                ? "bg-ink-offwhite text-ink font-medium"
+                : "text-ink-paragraph hover:bg-ink-offwhite"
                 }`}
             >
               {option}
@@ -292,7 +292,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className={`bg-white p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-200
+    <div className={`bg-surface-card p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-ink-light
       ${isMobileSidebarOpen ? 'fixed inset-0 z-50 w-full overflow-y-auto' : 'hidden md:block md:w-80'}`}
     >
       {isMobileSidebarOpen && (
@@ -307,26 +307,26 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className='space-y-6 md:space-y-8'>
         {/* Search Section */}
         <div className='space-y-3'>
-          <label className='text-sm font-medium text-gray-900 block'>
+          <label className='text-sm font-medium text-ink block'>
             Search
           </label>
           <div className='relative'>
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
+              <Search className="h-4 w-4 text-ink-caption" />
             </div>
             <input
               type='text'
               placeholder='Search profiles...'
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
-              className='w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 bg-gray-50 transition-colors'
+              className='w-full pl-10 pr-4 py-3 text-sm border border-ink-light rounded-lg focus:outline-none focus:ring-1 focus:ring-ink-light focus:border-ink-light bg-ink-offwhite transition-colors'
             />
           </div>
         </div>
 
         {/* Specialty Filter */}
         <div className='space-y-3'>
-          <label className='text-sm font-medium text-gray-900 block'>
+          <label className='text-sm font-medium text-ink block'>
             Specialty
           </label>
           <MinimalisticDropdown
@@ -339,7 +339,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Sort Filter */}
         <div className='space-y-3'>
-          <label className='text-sm font-medium text-gray-900 block'>
+          <label className='text-sm font-medium text-ink block'>
             Sort by
           </label>
           <MinimalisticDropdown
@@ -357,18 +357,18 @@ const Sidebar: React.FC<SidebarProps> = ({
             onSpecialtyChange("All Specialties");
             onSortChange("Sort by Name");
           }}
-          className='text-sm text-gray-500 hover:text-gray-700 transition-colors underline underline-offset-2'
+          className='text-sm text-ink-caption hover:text-ink-paragraph transition-colors underline underline-offset-2'
         >
           Clear all filters
         </button>
 
         {/* Divider */}
-        <div className='border-t border-gray-100'></div>
+        <div className='border-t border-ink-light'></div>
 
 
         <motion.button
           whileTap={{ scale: [0.9, 1] }}
-          className="bg-gray-100 p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
+          className="bg-ink-light p-2 rounded-lg shadow-sm hover:shadow-xl hover:scale-105 duration-200"
         >
           <Link to={"/user/companies"}>Companies</Link>
         </motion.button>
@@ -376,10 +376,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* CTA Section */}
         <div className='space-y-3'>
-          <p className='text-sm text-gray-600'>Ready to showcase your expertise?</p>
+          <p className='text-sm text-ink-paragraph'>Ready to showcase your expertise?</p>
           <button
             onClick={() => { try { localStorage.removeItem("professionalFormDraft"); } catch { /* ignore */ } navigate("/professional/select"); }}
-            className='w-full bg-gray-900 text-white py-3 px-4 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors'
+            className='w-full bg-ink text-white py-3 px-4 rounded-lg text-sm font-medium hover:bg-ink-charcoal transition-colors'
           >
             Create New Profile
           </button>
@@ -416,26 +416,26 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
     switch (statusLower) {
       case 'active':
         return {
-          bg: 'bg-yellow-100',
-          text: 'text-yellow-800',
+          bg: 'bg-brand-yellow-soft',
+          text: 'text-brand-gold',
           label: 'Under Review'
         };
       case 'approved':
         return {
-          bg: 'bg-green-100',
-          text: 'text-green-800',
+          bg: 'bg-status-success/15',
+          text: 'text-status-success',
           label: 'Published'
         };
       case 'rejected':
         return {
-          bg: 'bg-red-100',
-          text: 'text-red-800',
+          bg: 'bg-status-error/15',
+          text: 'text-status-error',
           label: 'Rejected'
         };
       default:
         return {
-          bg: 'bg-blue-100',
-          text: 'text-blue-800',
+          bg: 'bg-status-info/15',
+          text: 'text-status-info',
           label: 'Published'
         };
     }
@@ -444,11 +444,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
   const statusStyle = getStatusBadge(profile.status);
 
   return (
-    <div className='overflow-hidden w-full h-full bg-gray-50  rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl border-gradient-to-b group'>
+    <div className='overflow-hidden w-full h-full bg-ink-offwhite  rounded-2xl border-l-8 shadow-lg transition-all duration-300 hover:shadow-xl border-gradient-to-b group'>
       <div className='p-4 md:p-6 lg:p-8'>
         <div className='flex items-center justify-between mb-4 md:mb-6'>
           <div className='flex items-center gap-3 md:gap-4'>
-            <div className='w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden shadow-md bg-white p-1 md:p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-purple-50 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110'>
+            <div className='w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-xl overflow-hidden shadow-md bg-surface-card p-1 md:p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-status-info/10 group-hover:to-brand-gold/10 transition-all duration-500 group-hover:rotate-3 group-hover:scale-110'>
               <img
                 src={profile.previewImage || placeholderImg}
                 alt={`${profile.professionalName} profile`}
@@ -460,15 +460,15 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
               />
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className='text-lg md:text-xl font-bold text-gray-900 line-clamp-2'>
+              <h3 className='text-lg md:text-xl font-bold text-ink line-clamp-2'>
                 {profile.professionalName || 'Unnamed Profile'}
               </h3>
-              <div className='flex items-center text-gray-600 mt-1'>
+              <div className='flex items-center text-ink-paragraph mt-1'>
                 <MapPin className='w-3 h-3 mr-1' />
                 <span className='text-xs md:text-sm'>{profile.location || 'Location not specified'}</span>
               </div>
               {profile.jobTitle && (
-                <div className='flex items-center text-gray-600 mt-1'>
+                <div className='flex items-center text-ink-paragraph mt-1'>
                   <Briefcase className='w-3 h-3 mr-1' />
                   <span className='text-xs md:text-sm'>{profile.jobTitle}</span>
                 </div>
@@ -489,7 +489,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
             {(profile.specialties && profile.specialties.length > 0 ? profile.specialties : ['General']).map((specialty: string, index: number) => (
               <span
                 key={index}
-                className='px-2 py-1 md:px-3 md:py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full'
+                className='px-2 py-1 md:px-3 md:py-1 bg-ink-light text-ink-paragraph text-xs font-medium rounded-full'
               >
                 {specialty}
               </span>
@@ -504,13 +504,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
               {profile.skills.slice(0, 3).map((skill: string, index: number) => (
                 <span
                   key={index}
-                  className='px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full'
+                  className='px-2 py-1 bg-status-success/15 text-status-success text-xs font-medium rounded-full'
                 >
                   {skill}
                 </span>
               ))}
               {profile.skills.length > 3 && (
-                <span className='px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full'>
+                <span className='px-2 py-1 bg-ink-light text-ink-paragraph text-xs font-medium rounded-full'>
                   +{profile.skills.length - 3} more
                 </span>
               )}
@@ -521,11 +521,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
         {/* Date and Actions Row */}
         <div className='flex flex-col gap-3'>
           <div className='flex items-center gap-3 md:gap-6'>
-            <div className='flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1 md:px-4 md:py-2'>
-              <span className='font-bold text-purple-600 text-xs md:text-sm'>
+            <div className='flex items-center gap-2 bg-ink-offwhite rounded-lg px-3 py-1 md:px-4 md:py-2'>
+              <span className='font-bold text-brand-gold text-xs md:text-sm'>
                 {profile.publishedDate ? formatDate(profile.publishedDate) : 'Date not available'}
               </span>
-              <span className='text-xs text-gray-600 hidden md:block'>Published</span>
+              <span className='text-xs text-ink-paragraph hidden md:block'>Published</span>
             </div>
           </div>
 
@@ -537,7 +537,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
                 const url = `${window.location.origin}/professional/form/${profile.userId}/${profile.professionalId}`;
                 window.open(url, "_blank");
               }}
-              className="px-3 py-2 md:px-4 md:py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2"
+              className="px-3 py-2 md:px-4 md:py-2 bg-brand-gold/15 text-brand-gold rounded-lg hover:bg-brand-gold/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2"
             >
               <Edit className="w-3 h-3 md:w-4 md:h-4" />
               Edit Data
@@ -548,7 +548,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
                 e.stopPropagation();
                 onPreview(profile.professionalId, profile.templateSelection || "");
               }}
-              className='px-3 py-2 md:px-4 md:py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2'
+              className='px-3 py-2 md:px-4 md:py-2 bg-status-info/15 text-status-info rounded-lg hover:bg-status-info/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2'
             >
               <Eye className='w-3 h-3 md:w-4 md:h-4' />
               Preview
@@ -558,7 +558,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
                 e.stopPropagation();
                 onEdit(profile.professionalId, profile.templateSelection || "");
               }}
-              className='px-3 py-2 md:px-4 md:py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2'
+              className='px-3 py-2 md:px-4 md:py-2 bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2'
             >
               <Edit className='w-3 h-3 md:w-4 md:h-4' />
               Edit
@@ -567,8 +567,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
         </div>
 
         {/* Published ID (small text at bottom) */}
-        <div className='mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100'>
-          <div className='flex justify-between items-center text-xs text-gray-400'>
+        <div className='mt-3 md:mt-4 pt-3 md:pt-4 border-t border-ink-light'>
+          <div className='flex justify-between items-center text-xs text-ink-caption'>
             <span className="truncate mr-2">ID: {profile.professionalId || 'No ID'}</span>
           </div>
         </div>
@@ -580,8 +580,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onEdit, onPreview })
 // Loading Component
 const LoadingSpinner: React.FC = () => (
   <div className='flex items-center justify-center py-16'>
-    <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-black'></div>
-    <span className='ml-4 text-gray-600'>Loading profiles...</span>
+    <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-ink'></div>
+    <span className='ml-4 text-ink-paragraph'>Loading profiles...</span>
   </div>
 );
 
@@ -589,11 +589,11 @@ const LoadingSpinner: React.FC = () => (
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
   <div className='text-center py-16'>
     <div className='text-6xl mb-4'>⚠</div>
-    <p className='text-xl text-red-600 mb-2'>Error loading profiles</p>
-    <p className='text-gray-500 mb-4'>{error}</p>
+    <p className='text-xl text-status-error mb-2'>Error loading profiles</p>
+    <p className='text-ink-caption mb-4'>{error}</p>
     <button
       onClick={onRetry}
-      className='bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors'
+      className='bg-status-error text-white px-6 py-3 rounded-lg font-semibold hover:bg-status-error transition-colors'
     >
       Try Again
     </button>
@@ -622,23 +622,23 @@ const MainContent: React.FC<MainContentProps> = ({
 
   if (loading)
     return (
-      <div className='flex-1 bg-gray-50 px-4 md:px-8 py-8'>
+      <div className='flex-1 bg-ink-offwhite px-4 md:px-8 py-8'>
         <LoadingSpinner />
       </div>
     );
   if (error)
     return (
-      <div className='flex-1 bg-gray-50 px-4 md:px-8 py-8'>
+      <div className='flex-1 bg-ink-offwhite px-4 md:px-8 py-8'>
         <ErrorMessage error={error} onRetry={onRetry} />
       </div>
     );
 
   return (
-    <div className='flex-1 bg-gray-50 px-4 md:px-8 py-8'>
+    <div className='flex-1 bg-ink-offwhite px-4 md:px-8 py-8'>
       {/* Mobile filter button */}
       <button
         onClick={onOpenMobileSidebar}
-        className="md:hidden flex items-center gap-2 mb-6 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200"
+        className="md:hidden flex items-center gap-2 mb-6 bg-surface-card px-4 py-2 rounded-lg shadow-sm border border-ink-light"
       >
         <Menu className="w-4 h-4" />
         <span>Filters</span>
@@ -646,15 +646,15 @@ const MainContent: React.FC<MainContentProps> = ({
 
       {/* Results Header */}
       <div className='flex items-center justify-between mb-6 md:mb-8 flex-wrap gap-3 md:gap-4'>
-        <h2 className='text-xl md:text-2xl font-bold text-black'>
+        <h2 className='text-xl md:text-2xl font-bold text-ink'>
           My Professional Profiles ({totalCount || profiles.length})
         </h2>
         <div className='flex items-center gap-2 md:gap-4'>
-          <span className='text-black font-medium text-sm md:text-base'>
+          <span className='text-ink font-medium text-sm md:text-base'>
             Page {currentPage} of {totalPages}
           </span>
           {hasMore && (
-            <span className='text-xs md:text-sm text-gray-600 bg-gray-200 px-2 py-1 md:px-3 md:py-1 rounded-full'>
+            <span className='text-xs md:text-sm text-ink-paragraph bg-ink-light px-2 py-1 md:px-3 md:py-1 rounded-full'>
               More available
             </span>
           )}
@@ -681,13 +681,13 @@ const MainContent: React.FC<MainContentProps> = ({
             // Empty State with Filters Applied
             <div className='text-center py-12 md:py-16'>
               <div className='text-6xl mb-4'>🔍</div>
-              <p className='text-xl text-gray-700 mb-2'>No profiles match your filters</p>
-              <p className='text-gray-500 mb-6'>
+              <p className='text-xl text-ink-paragraph mb-2'>No profiles match your filters</p>
+              <p className='text-ink-caption mb-6'>
                 Try adjusting your search criteria or clear all filters
               </p>
               <button
                 onClick={onClearFilters}
-                className='bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors'
+                className='bg-ink text-white px-6 py-3 rounded-lg font-semibold hover:bg-ink-charcoal transition-colors'
               >
                 Clear All Filters
               </button>
@@ -696,13 +696,13 @@ const MainContent: React.FC<MainContentProps> = ({
             // Empty State - No profiles at all
             <div className='text-center py-12 md:py-16'>
               <div className='text-6xl mb-4'>👤</div>
-              <p className='text-xl text-gray-700 mb-2'>No profiles found</p>
-              <p className='text-gray-500 mb-6'>
+              <p className='text-xl text-ink-paragraph mb-2'>No profiles found</p>
+              <p className='text-ink-caption mb-6'>
                 You haven't created any professional profiles yet.
               </p>
               <button
                 onClick={() => navigate('/user/professionals/template-selection')}
-                className='bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors'
+                className='bg-ink text-white px-6 py-3 rounded-lg font-semibold hover:bg-ink-charcoal transition-colors'
               >
                 Create Your First Professional Profile
               </button>
@@ -1021,11 +1021,11 @@ const ProfessionalDirectory: React.FC = () => {
   const totalPages = Math.max(1, Math.ceil(sortedProfiles.length / 12));
 
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen bg-ink-offwhite'>
       <Header />
 
       {/* Main Layout Container */}
-      <div className='flex flex-col md:flex-row bg-gray-50 min-h-screen'>
+      <div className='flex flex-col md:flex-row bg-ink-offwhite min-h-screen'>
         {/* Left Sidebar */}
         <Sidebar
           searchTerm={searchTerm}

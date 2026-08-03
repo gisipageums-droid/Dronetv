@@ -585,19 +585,19 @@ const ProfessionalsExcelDataProcessor = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-yellow-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-surface-main to-brand-yellow-soft p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-yellow-800 mb-2">Excel Data Processor</h1>
-          <p className="text-yellow-600 text-lg">Upload Professionals Excel files and manage your data</p>
+          <h1 className="text-4xl font-bold text-brand-gold mb-2">Excel Data Processor</h1>
+          <p className="text-brand-gold text-lg">Upload Professionals Excel files and manage your data</p>
         </div>
 
         {/* File Upload Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border-2 border-yellow-300">
+        <div className="bg-surface-card rounded-xl shadow-lg p-6 mb-8 border-2 border-brand-yellow-soft">
           <div className="flex flex-col items-center justify-center">
-            <Upload className="w-16 h-16 text-yellow-500 mb-4" />
-            <h2 className="text-2xl font-semibold text-yellow-800 mb-4">Upload Excel File</h2>
+            <Upload className="w-16 h-16 text-brand-gold mb-4" />
+            <h2 className="text-2xl font-semibold text-brand-gold mb-4">Upload Excel File</h2>
 
             <input
               type="file"
@@ -610,26 +610,26 @@ const ProfessionalsExcelDataProcessor = () => {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
-              className={`${isLoading ? 'bg-yellow-400 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-600'} text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center gap-2 mb-4`}
+              className={`${isLoading ? 'bg-brand-yellow cursor-not-allowed' : 'bg-brand-gold hover:bg-brand-gold'} text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center gap-2 mb-4`}
             >
               <FileText className="w-5 h-5" />
               {isLoading ? 'Processing...' : 'Choose File'}
             </button>
 
             {file && (
-              <p className="text-green-600 font-medium mb-4">
+              <p className="text-status-success font-medium mb-4">
                 Selected: {file.name}
               </p>
             )}
 
             {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              <div className="bg-status-error/15 border border-status-error text-status-error px-4 py-3 rounded mb-4">
                 <p className="font-medium">Error: {error}</p>
               </div>
             )}
 
             {processingInfo && (
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+              <div className="bg-status-success/15 border border-status-success text-status-success px-4 py-3 rounded mb-4">
                 <p className="text-sm">
                   <CheckCircle className="w-4 h-4 inline mr-2" />
                   {processingInfo}
@@ -644,8 +644,8 @@ const ProfessionalsExcelDataProcessor = () => {
                   onClick={handlePostAllData}
                   disabled={postingStatus.postAll?.inProgress || excelData.every(item => item._status === 'posted' || item._status === 'generated')}
                   className={`${postingStatus.postAll?.inProgress || excelData.every(item => item._status === 'posted' || item._status === 'generated')
-                    ? 'bg-red-400 cursor-not-allowed'
-                    : 'bg-red-500 hover:bg-red-600'
+                    ? 'bg-status-error cursor-not-allowed'
+                    : 'bg-status-error hover:bg-status-error'
                     } text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200 flex items-center gap-2`}
                 >
                   {postingStatus.postAll?.inProgress ? (
@@ -677,8 +677,8 @@ const ProfessionalsExcelDataProcessor = () => {
                   disabled={postingStatus.loading}
                   className={`${
                     postingStatus.loading 
-                      ? 'bg-orange-400 cursor-not-allowed' 
-                      : 'bg-orange-500 hover:bg-orange-600'
+                      ? 'bg-status-warning cursor-not-allowed' 
+                      : 'bg-status-warning hover:bg-status-warning'
                   } text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center gap-2 text-sm`}
                 >
                   {postingStatus.loading ? (
@@ -702,8 +702,8 @@ const ProfessionalsExcelDataProcessor = () => {
                     onClick={handleGenerateAllWebsites}
                     disabled={postingStatus.generateAll?.inProgress}
                     className={`${postingStatus.generateAll?.inProgress
-                      ? 'bg-blue-400 cursor-not-allowed'
-                      : 'bg-blue-600 hover:bg-blue-700'
+                      ? 'bg-status-info cursor-not-allowed'
+                      : 'bg-status-info hover:bg-status-info'
                       } text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200 flex items-center gap-2`}
                   >
                     {postingStatus.generateAll?.inProgress ? (
@@ -731,28 +731,28 @@ const ProfessionalsExcelDataProcessor = () => {
 
         {/* Data Table */}
         {excelData.length > 0 && (
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-yellow-300">
+          <div className="bg-surface-card rounded-xl shadow-lg overflow-hidden border-2 border-brand-yellow-soft">
             {/* Search and Controls */}
-            <div className="p-4 bg-yellow-50 border-b-2 border-yellow-200">
+            <div className="p-4 bg-surface-main border-b-2 border-brand-yellow-soft">
               <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-4">
                 <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-yellow-600 w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-brand-gold w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search data..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-brand-yellow-soft rounded-lg focus:ring-2 focus:ring-brand-gold focus:border-transparent"
                   />
                 </div>
 
                 {/* Items per page selector */}
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-yellow-700 whitespace-nowrap">Items per page:</label>
+                  <label className="text-sm text-brand-gold whitespace-nowrap">Items per page:</label>
                   <select
                     value={itemsPerPage}
                     onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                    className="border border-yellow-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    className="border border-brand-yellow-soft rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-gold focus:border-transparent"
                   >
                     <option value={10}>10</option>
                     <option value={20}>20</option>
@@ -764,7 +764,7 @@ const ProfessionalsExcelDataProcessor = () => {
 
               {/* Results info and pagination */}
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                <div className="text-sm text-yellow-700">
+                <div className="text-sm text-brand-gold">
                   Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length} records
                   {filteredData.length < excelData.length && ` (filtered from ${excelData.length} total)`}
                 </div>
@@ -773,18 +773,18 @@ const ProfessionalsExcelDataProcessor = () => {
                 <div className="flex flex-col gap-2">
                   {/* Posting Progress Indicator */}
                   {postingStatus.postAll?.inProgress && (
-                    <div className="flex items-center gap-3 bg-red-50 px-4 py-2 rounded-lg border border-red-200">
-                      <AlertCircle className="w-4 h-4 text-red-600 animate-spin" />
+                    <div className="flex items-center gap-3 bg-status-error/10 px-4 py-2 rounded-lg border border-status-error/25">
+                      <AlertCircle className="w-4 h-4 text-status-error animate-spin" />
                       <div className="text-sm">
-                        <span className="font-medium text-red-800">
+                        <span className="font-medium text-status-error">
                           Posting Data: {postingStatus.postAll.completed}/{postingStatus.postAll.total}
                           {(postingStatus.postAll.errors || 0) > 0 && (
-                            <span className="text-orange-600 ml-2">({postingStatus.postAll.errors} errors)</span>
+                            <span className="text-status-warning ml-2">({postingStatus.postAll.errors} errors)</span>
                           )}
                         </span>
-                        <div className="w-32 bg-red-200 rounded-full h-2 mt-1">
+                        <div className="w-32 bg-status-error/25 rounded-full h-2 mt-1">
                           <div
-                            className="bg-red-600 h-2 rounded-full transition-all duration-300"
+                            className="bg-status-error h-2 rounded-full transition-all duration-300"
                             style={{
                               width: `${(postingStatus.postAll.completed / postingStatus.postAll.total) * 100}%`
                             }}
@@ -796,15 +796,15 @@ const ProfessionalsExcelDataProcessor = () => {
 
                   {/* Generation Progress Indicator */}
                   {postingStatus.generateAll?.inProgress && (
-                    <div className="flex items-center gap-3 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
-                      <AlertCircle className="w-4 h-4 text-blue-600 animate-spin" />
+                    <div className="flex items-center gap-3 bg-status-info/10 px-4 py-2 rounded-lg border border-status-info/25">
+                      <AlertCircle className="w-4 h-4 text-status-info animate-spin" />
                       <div className="text-sm">
-                        <span className="font-medium text-blue-800">
+                        <span className="font-medium text-status-info">
                           Generating Websites: {postingStatus.generateAll.completed}/{postingStatus.generateAll.total}
                         </span>
-                        <div className="w-32 bg-blue-200 rounded-full h-2 mt-1">
+                        <div className="w-32 bg-status-info/25 rounded-full h-2 mt-1">
                           <div
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            className="bg-status-info h-2 rounded-full transition-all duration-300"
                             style={{
                               width: `${(postingStatus.generateAll.completed / postingStatus.generateAll.total) * 100}%`
                             }}
@@ -822,8 +822,8 @@ const ProfessionalsExcelDataProcessor = () => {
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
                       className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${currentPage === 1
-                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        : 'bg-yellow-500 text-white hover:bg-yellow-600'
+                        ? 'bg-ink-light text-ink-caption cursor-not-allowed'
+                        : 'bg-brand-gold text-white hover:bg-brand-gold'
                         }`}
                     >
                       Previous
@@ -848,8 +848,8 @@ const ProfessionalsExcelDataProcessor = () => {
                             key={pageNum}
                             onClick={() => handlePageChange(pageNum)}
                             className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${currentPage === pageNum
-                              ? 'bg-yellow-600 text-white'
-                              : 'bg-white text-yellow-600 hover:bg-yellow-100 border border-yellow-300'
+                              ? 'bg-brand-gold text-white'
+                              : 'bg-surface-card text-brand-gold hover:bg-brand-yellow-soft border border-brand-yellow-soft'
                               }`}
                           >
                             {pageNum}
@@ -862,8 +862,8 @@ const ProfessionalsExcelDataProcessor = () => {
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
                       className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${currentPage === totalPages
-                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        : 'bg-yellow-500 text-white hover:bg-yellow-600'
+                        ? 'bg-ink-light text-ink-caption cursor-not-allowed'
+                        : 'bg-brand-gold text-white hover:bg-brand-gold'
                         }`}
                     >
                       Next
@@ -877,38 +877,38 @@ const ProfessionalsExcelDataProcessor = () => {
             <div className="overflow-x-auto">
               <div className="min-w-full inline-block align-middle">
                 <table className="min-w-full table-auto">
-                  <thead className="bg-yellow-100">
+                  <thead className="bg-brand-yellow-soft">
                     <tr>
-                      <th className="px-3 py-3 text-left text-yellow-800 font-semibold text-xs uppercase tracking-wider min-w-[100px] whitespace-nowrap">
+                      <th className="px-3 py-3 text-left text-brand-gold font-semibold text-xs uppercase tracking-wider min-w-[100px] whitespace-nowrap">
                         Actions
                       </th>
                       {columns.map((column) => (
                         <th
                           key={column}
-                          className="px-3 py-3 text-left text-yellow-800 font-semibold cursor-pointer hover:bg-yellow-200 transition-colors text-xs uppercase tracking-wider min-w-[120px] whitespace-nowrap"
+                          className="px-3 py-3 text-left text-brand-gold font-semibold cursor-pointer hover:bg-brand-yellow-soft transition-colors text-xs uppercase tracking-wider min-w-[120px] whitespace-nowrap"
                           onClick={() => handleSort(column)}
                         >
                           <div className="flex items-center gap-1">
                             <span className="truncate">{column}</span>
-                            <span className="text-yellow-600">{getSortIcon(column)}</span>
+                            <span className="text-brand-gold">{getSortIcon(column)}</span>
                           </div>
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-yellow-100 bg-white">
+                  <tbody className="divide-y divide-brand-yellow-soft bg-surface-card">
                     {paginatedData.length > 0 ? (
                       paginatedData.map((row, index) => {
                         const rowId = row._id || (startIndex + index);
                         const numericRowId = typeof rowId === 'number' ? rowId : (startIndex + index);
                         return (
-                          <tr key={`row-${rowId}`} className="hover:bg-yellow-50 transition-colors">
+                          <tr key={`row-${rowId}`} className="hover:bg-surface-main transition-colors">
                             <td className="px-3 py-2 min-w-[100px]">
                               <div className="flex items-center gap-1">
                                 {row._status === 'generated' && (
                                   <button
                                     onClick={() => handleViewWebsite(String(row.website || row.url || ''))}
-                                    className="bg-black hover:bg-gray-800 text-white p-1.5 rounded-md transition-colors duration-200"
+                                    className="bg-ink hover:bg-ink-charcoal text-white p-1.5 rounded-md transition-colors duration-200"
                                     title="View Website"
                                   >
                                     <Eye className="w-3 h-3" />
@@ -920,8 +920,8 @@ const ProfessionalsExcelDataProcessor = () => {
                                     onClick={() => handleGenerateWebsite(numericRowId)}
                                     disabled={postingStatus[numericRowId] === 'generating'}
                                     className={`${postingStatus[numericRowId] === 'generating'
-                                      ? 'bg-yellow-400 cursor-not-allowed'
-                                      : 'bg-yellow-500 hover:bg-yellow-600'
+                                      ? 'bg-brand-yellow cursor-not-allowed'
+                                      : 'bg-brand-gold hover:bg-brand-gold'
                                       } text-white px-2 py-1 rounded-md transition-colors duration-200 text-xs font-medium`}
                                   >
                                     {postingStatus[numericRowId] === 'generating' ? (
@@ -941,20 +941,20 @@ const ProfessionalsExcelDataProcessor = () => {
                                 )}
 
                                 {row._status === 'generated' && (
-                                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                                  <span className="bg-status-success/15 text-status-success px-2 py-1 rounded-full text-xs font-medium">
                                     ✓
                                   </span>
                                 )}
 
                                 {(!row._status || row._status === 'pending') && (
-                                  <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
+                                  <span className="bg-ink-light text-ink-paragraph px-2 py-1 rounded-full text-xs font-medium">
                                     ⏳
                                   </span>
                                 )}
                               </div>
                             </td>
                             {columns.map((column) => (
-                              <td key={`${rowId}-${column}`} className="px-3 py-2 text-yellow-900 text-xs min-w-[120px]">
+                              <td key={`${rowId}-${column}`} className="px-3 py-2 text-brand-gold text-xs min-w-[120px]">
                                 <div className="truncate max-w-[150px]" title={String(row[column] || '')}>
                                   {String(row[column] || '')}
                                 </div>
@@ -965,7 +965,7 @@ const ProfessionalsExcelDataProcessor = () => {
                       })
                     ) : (
                       <tr>
-                        <td colSpan={columns.length + 1} className="px-6 py-12 text-center text-yellow-600">
+                        <td colSpan={columns.length + 1} className="px-6 py-12 text-center text-brand-gold">
                           {searchTerm ? 'No matching records found. Try adjusting your search.' : 'No data to display.'}
                         </td>
                       </tr>
@@ -980,9 +980,9 @@ const ProfessionalsExcelDataProcessor = () => {
         {/* Empty State */}
         {excelData.length === 0 && !isLoading && (
           <div className="text-center py-12">
-            <FileText className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-yellow-800 mb-2">No Data Available</h3>
-            <p className="text-yellow-600">Upload an Excel file to get started</p>
+            <FileText className="w-16 h-16 text-brand-yellow mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-brand-gold mb-2">No Data Available</h3>
+            <p className="text-brand-gold">Upload an Excel file to get started</p>
           </div>
         )}
       </div>

@@ -103,15 +103,15 @@ const PopularVideos = () => {
 
   const getCategoryColor = (category) => {
     switch (category) {
-      case 'AI': return 'bg-gradient-to-r from-red-600 to-red-800';
-      case 'GIS': return 'bg-gradient-to-r from-black to-gray-800';
-      case 'Drone': return 'bg-gradient-to-r from-red-800 to-black';
-      default: return 'bg-gradient-to-r from-gray-800 to-black';
+      case 'AI': return 'bg-gradient-to-r from-status-error to-status-error';
+      case 'GIS': return 'bg-gradient-to-r from-ink to-ink-charcoal';
+      case 'Drone': return 'bg-gradient-to-r from-status-error to-ink';
+      default: return 'bg-gradient-to-r from-ink-charcoal to-ink';
     }
   };
 
   return (
-  <section className="py-20 bg-yellow-300 relative overflow-hidden">
+  <section className="py-20 bg-brand-yellow-soft relative overflow-hidden">
   {/* Background Pattern */}
   <div className="absolute inset-0 opacity-5">
     <div
@@ -125,10 +125,10 @@ const PopularVideos = () => {
 
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
     <div className="text-center mb-16">
-      <h2 className="text-4xl md:text-6xl font-black text-black mb-4 tracking-tight">
-        <span className="text-black">Popular Videos</span>
+      <h2 className="text-4xl md:text-6xl font-black text-ink mb-4 tracking-tight">
+        <span className="text-ink">Popular Videos</span>
       </h2>
-      <div className="w-24 h-1 bg-gradient-to-r from-black to-red-600 mx-auto rounded-full"></div>
+      <div className="w-24 h-1 bg-gradient-to-r from-ink to-status-error mx-auto rounded-full"></div>
     </div>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -155,10 +155,10 @@ const PopularVideos = () => {
           </div>
 
           <div className="p-4 sm:p-6">
-            <h3 className="text-lg sm:text-xl font-bold text-black mb-2 group-hover:text-red-800 transition-colors duration-300">
+            <h3 className="text-lg sm:text-xl font-bold text-ink mb-2 group-hover:text-status-error transition-colors duration-300">
               {video.title}
             </h3>
-            <p className="text-sm sm:text-base text-gray-600 mb-4 line-clamp-2">
+            <p className="text-sm sm:text-base text-ink-paragraph mb-4 line-clamp-2">
               {video.description}
             </p>
 
