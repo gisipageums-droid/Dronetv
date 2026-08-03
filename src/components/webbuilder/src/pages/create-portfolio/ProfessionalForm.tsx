@@ -389,7 +389,7 @@ const ProfessionalForm: React.FC = () => {
       case 1:
         return (
           <div className="space-y-8">
-            <h3 className="text-3xl font-bold text-black mb-8 text-center">
+            <h3 className="text-3xl font-bold text-ink mb-8 text-center">
               Choose Your Portfolio Template
             </h3>
 
@@ -400,10 +400,10 @@ const ProfessionalForm: React.FC = () => {
                   className={`rounded-2xl overflow-hidden border-4 transition-all duration-300 ${
                     formData.selectedTemplate === template.id
                       ? "border-[#FF0000] shadow-2xl transform scale-105"
-                      : "border-gray-200 hover:border-[#FFD400]"
+                      : "border-ink-light hover:border-[#FFD400]"
                   }`}
                 >
-                  <div className="bg-white p-6">
+                  <div className="bg-surface-card p-6">
                     <div
                       onClick={() =>
                         handleInputChange("selectedTemplate", template.id)
@@ -417,12 +417,12 @@ const ProfessionalForm: React.FC = () => {
                       />
                     </div>
 
-                    <h4 className="text-xl font-bold text-black mb-2">
+                    <h4 className="text-xl font-bold text-ink mb-2">
                       {template.name}
                     </h4>
-                    <p className="text-gray-600 mb-4">{template.description}</p>
+                    <p className="text-ink-paragraph mb-4">{template.description}</p>
 
-                    <div className="space-y-2 text-sm text-gray-500 mb-4">
+                    <div className="space-y-2 text-sm text-ink-caption mb-4">
                       {template.features.map((feature, index) => (
                         <div key={index}>• {feature}</div>
                       ))}
@@ -433,7 +433,7 @@ const ProfessionalForm: React.FC = () => {
                         onClick={() =>
                           handleInputChange("selectedTemplate", template.id)
                         }
-                        className="bg-[#FFD400] text-black px-4 py-2 rounded-md font-semibold hover:bg-yellow-400 transition"
+                        className="bg-[#FFD400] text-ink px-4 py-2 rounded-md font-semibold hover:bg-brand-yellow transition"
                       >
                         Select
                       </button>
@@ -442,7 +442,7 @@ const ProfessionalForm: React.FC = () => {
                         href={`/company/portfolio/template-${template.id}/258964443767`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 underline text-sm hover:text-blue-800"
+                        className="text-status-info underline text-sm hover:text-status-info"
                       >
                         Preview
                       </a>
@@ -457,18 +457,18 @@ const ProfessionalForm: React.FC = () => {
       case 2: // General Settings
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">
+            <h3 className="text-2xl font-bold text-ink mb-6">
               General Settings
             </h3>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Logo Upload
               </label>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                <p className="text-gray-500 text-sm">Upload your logo</p>
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
+                <Upload size={32} className="mx-auto text-ink-caption mb-2" />
+                <p className="text-ink-caption text-sm">Upload your logo</p>
 
                 {logoUploadLoading && (
                   <div className="flex items-center justify-center mt-2">
@@ -502,8 +502,8 @@ const ProfessionalForm: React.FC = () => {
                   <div
                     className={`mt-2 text-sm font-semibold ${
                       logoUploadMessage.includes("failed")
-                        ? "text-red-600"
-                        : "text-green-600"
+                        ? "text-status-error"
+                        : "text-status-success"
                     }`}
                   >
                     {logoUploadMessage}
@@ -547,7 +547,7 @@ const ProfessionalForm: React.FC = () => {
                 />
 
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black text-sm"
+                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
                   onClick={() =>
                     document.getElementById("logo-upload-input")?.click()
                   }
@@ -571,7 +571,7 @@ const ProfessionalForm: React.FC = () => {
 
             <div className="grid md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Primary Color
                 </label>
                 <div className="flex items-center gap-2">
@@ -589,13 +589,13 @@ const ProfessionalForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange("primaryColor", e.target.value)
                     }
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Text Color
                 </label>
                 <div className="flex items-center gap-2">
@@ -613,13 +613,13 @@ const ProfessionalForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange("textColor", e.target.value)
                     }
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Accent Color
                 </label>
                 <div className="flex items-center gap-2">
@@ -637,7 +637,7 @@ const ProfessionalForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange("accentColor", e.target.value)
                     }
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -648,23 +648,23 @@ const ProfessionalForm: React.FC = () => {
       case 3: // Hero Section
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">Hero Section</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">Hero Section</h3>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Full Name
               </label>
               <input
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="John Doe"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Rotating Titles (comma-separated)
               </label>
               <input
@@ -673,20 +673,20 @@ const ProfessionalForm: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange("rotatingTitles", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Drone Pilot, UAV Engineer, Content Creator"
               />
             </div>
 
             {/* <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Tagline/Subtext
               </label>
               <textarea
                 value={formData.tagline}
                 onChange={(e) => handleInputChange("tagline", e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Capturing the world from above with cutting-edge drone technology"
               />
             </div> */}
@@ -697,18 +697,18 @@ const ProfessionalForm: React.FC = () => {
               promptPrefix="Write a compelling and concise tagline for this description:"
               multiline
               rows={3}
-              inputClassName="w-[45vw] px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+              inputClassName="w-[45vw] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
               onChange={(value) => handleInputChange("tagline", value)}
             />
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Hero Background Image
               </label>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                <p className="text-gray-500 text-sm">
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
+                <Upload size={32} className="mx-auto text-ink-caption mb-2" />
+                <p className="text-ink-caption text-sm">
                   Upload hero background image
                 </p>
 
@@ -744,8 +744,8 @@ const ProfessionalForm: React.FC = () => {
                   <div
                     className={`mt-2 text-sm font-semibold ${
                       heroBgUploadMessage.includes("failed")
-                        ? "text-red-600"
-                        : "text-green-600"
+                        ? "text-status-error"
+                        : "text-status-success"
                     }`}
                   >
                     {heroBgUploadMessage}
@@ -790,7 +790,7 @@ const ProfessionalForm: React.FC = () => {
                   onClick={() =>
                     document.getElementById("hero-bg-upload-input")?.click()
                   }
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black text-sm"
+                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
                 >
                   Choose File
                 </button>
@@ -810,7 +810,7 @@ const ProfessionalForm: React.FC = () => {
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Primary Button Text
                 </label>
                 <input
@@ -819,11 +819,11 @@ const ProfessionalForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange("button1Text", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Primary Button Link
                 </label>
                 <input
@@ -832,14 +832,14 @@ const ProfessionalForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange("button1Link", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Secondary Button Text
                 </label>
                 <input
@@ -848,11 +848,11 @@ const ProfessionalForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange("button2Text", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Secondary Button Link
                 </label>
                 <input
@@ -861,7 +861,7 @@ const ProfessionalForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange("button2Link", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
             </div>
@@ -871,16 +871,16 @@ const ProfessionalForm: React.FC = () => {
       case 4: // About Me
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">About Me</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">About Me</h3>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Profile Picture
               </label>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                <p className="text-gray-500 text-sm">
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
+                <Upload size={32} className="mx-auto text-ink-caption mb-2" />
+                <p className="text-ink-caption text-sm">
                   Upload your profile picture
                 </p>
 
@@ -916,8 +916,8 @@ const ProfessionalForm: React.FC = () => {
                   <div
                     className={`mt-2 text-sm font-semibold ${
                       profilePicUploadMessage.includes("failed")
-                        ? "text-red-600"
-                        : "text-green-600"
+                        ? "text-status-error"
+                        : "text-status-success"
                     }`}
                   >
                     {profilePicUploadMessage}
@@ -958,7 +958,7 @@ const ProfessionalForm: React.FC = () => {
                 />
 
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black text-sm"
+                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
                   onClick={() =>
                     document.getElementById("profile-pic-upload-input")?.click()
                   }
@@ -970,7 +970,7 @@ const ProfessionalForm: React.FC = () => {
                 {/* Preview */}
                 {formData.profilePicture?.preview && (
                   <div className="mt-4">
-                    <p className="text-sm text-gray-500 mb-2">Preview:</p>
+                    <p className="text-sm text-ink-caption mb-2">Preview:</p>
                     <img
                       src={formData.profilePicture.preview}
                       alt="Profile Preview"
@@ -982,14 +982,14 @@ const ProfessionalForm: React.FC = () => {
             </div>
 
             {/* <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Bio/Introduction
               </label>
               <textarea
                 value={formData.bio}
                 onChange={(e) => handleInputChange("bio", e.target.value)}
                 rows={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Tell your story..."
               />
             </div> */}
@@ -1000,44 +1000,44 @@ const ProfessionalForm: React.FC = () => {
               promptPrefix="Write a professional, friendly introduction based on:"
               multiline
               rows={6}
-              inputClassName="w-[45vw] px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+              inputClassName="w-[45vw] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
               onChange={(value) => handleInputChange("bio", value)}
             />
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Email
                 </label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Phone
                 </label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange("phone", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Location
               </label>
               <input
                 type="text"
                 value={formData.location}
                 onChange={(e) => handleInputChange("location", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="City, Country"
               />
             </div>
@@ -1048,7 +1048,7 @@ const ProfessionalForm: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">Skills</h3>
+              <h3 className="text-2xl font-bold text-ink">Skills</h3>
               <button
                 onClick={() =>
                   addArrayItem("skills", {
@@ -1066,10 +1066,10 @@ const ProfessionalForm: React.FC = () => {
 
             <div className="space-y-4">
               {formData.skills.map((skill, index) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-4 rounded-lg">
                   <div className="grid md:grid-cols-4 gap-4 items-end">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">
                         Category
                       </label>
                       <select
@@ -1080,7 +1080,7 @@ const ProfessionalForm: React.FC = () => {
                             category: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       >
                         <option value="Frontend">Frontend</option>
                         <option value="Backend">Backend</option>
@@ -1088,7 +1088,7 @@ const ProfessionalForm: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">
                         Skill Name
                       </label>
                       <input
@@ -1100,12 +1100,12 @@ const ProfessionalForm: React.FC = () => {
                             name: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         placeholder="React"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">
                         Proficiency (%)
                       </label>
                       <input
@@ -1119,12 +1119,12 @@ const ProfessionalForm: React.FC = () => {
                             proficiency: parseInt(e.target.value),
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       />
                     </div>
                     <button
                       onClick={() => removeArrayItem("skills", index)}
-                      className="bg-red-500 text-white w-32 h-10 flex items-center justify-center rounded-md hover:bg-red-600"
+                      className="bg-status-error text-white w-32 h-10 flex items-center justify-center rounded-md hover:bg-status-error"
                     >
                       Delete
                       <Trash2 size={18} />
@@ -1140,7 +1140,7 @@ const ProfessionalForm: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">
+              <h3 className="text-2xl font-bold text-ink">
                 Services Offered
               </h3>
               <button
@@ -1162,12 +1162,12 @@ const ProfessionalForm: React.FC = () => {
               {formData.services.map((service, index) => (
                 <div
                   key={index}
-                  className="bg-gray-50 p-4 rounded-lg shadow-sm"
+                  className="bg-ink-offwhite p-4 rounded-lg shadow-sm"
                 >
                   <div className="grid md:grid-cols-4 gap-4 items-center">
                     {/* Icon Selector */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">
                         Icon
                       </label>
                       <select
@@ -1178,7 +1178,7 @@ const ProfessionalForm: React.FC = () => {
                             icon: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       >
                         <option value="camera">Camera</option>
                         <option value="video">Video</option>
@@ -1190,7 +1190,7 @@ const ProfessionalForm: React.FC = () => {
 
                     {/* Title */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">
                         Title
                       </label>
                       <input
@@ -1202,7 +1202,7 @@ const ProfessionalForm: React.FC = () => {
                             title: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         placeholder="Aerial Photography"
                       />
                     </div>
@@ -1210,7 +1210,7 @@ const ProfessionalForm: React.FC = () => {
                     {/* AI Generated Description */}
                     {/* AI Generated Description */}
                     <div className="flex flex-col md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">
                         Description
                       </label>
                       <AIInputField
@@ -1219,7 +1219,7 @@ const ProfessionalForm: React.FC = () => {
                         multiline
                         rows={2}
                         value={service.description}
-                        inputClassName="w-full min-h-[42px] px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        inputClassName="w-full min-h-[42px] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         onChange={(value) =>
                           updateArrayItem("services", index, {
                             ...service,
@@ -1233,7 +1233,7 @@ const ProfessionalForm: React.FC = () => {
                     <div className="flex items-end">
                       <button
                         onClick={() => removeArrayItem("services", index)}
-                        className="bg-red-500 text-white w-32 h-10 flex items-center justify-center rounded-md hover:bg-red-600"
+                        className="bg-status-error text-white w-32 h-10 flex items-center justify-center rounded-md hover:bg-status-error"
                       >
                         Delete
                         <Trash2 size={18} />
@@ -1250,7 +1250,7 @@ const ProfessionalForm: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">
+              <h3 className="text-2xl font-bold text-ink">
                 Portfolio Projects
               </h3>
               <button
@@ -1271,19 +1271,19 @@ const ProfessionalForm: React.FC = () => {
 
             <div className="space-y-6">
               {formData.projects.map((project, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-6 rounded-lg">
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">
                         Project Image
                       </label>
 
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                      <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
                         <Upload
                           size={32}
-                          className="mx-auto text-gray-400 mb-2"
+                          className="mx-auto text-ink-caption mb-2"
                         />
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-ink-caption text-sm">
                           Upload project image
                         </p>
 
@@ -1321,8 +1321,8 @@ const ProfessionalForm: React.FC = () => {
                               projectImageUploadMessage[index].includes(
                                 "failed"
                               )
-                                ? "text-red-600"
-                                : "text-green-600"
+                                ? "text-status-error"
+                                : "text-status-success"
                             }`}
                           >
                             {projectImageUploadMessage[index]}
@@ -1383,7 +1383,7 @@ const ProfessionalForm: React.FC = () => {
                         />
 
                         <button
-                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black text-sm"
+                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
                           onClick={() =>
                             document
                               .getElementById(
@@ -1411,7 +1411,7 @@ const ProfessionalForm: React.FC = () => {
 
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">
                           Title
                         </label>
                         <input
@@ -1423,12 +1423,12 @@ const ProfessionalForm: React.FC = () => {
                               title: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Project Name"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">
                           Category
                         </label>
                         <select
@@ -1439,7 +1439,7 @@ const ProfessionalForm: React.FC = () => {
                               category: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         >
                           <option value="Web">Web</option>
                           <option value="Drone">Drone</option>
@@ -1455,7 +1455,7 @@ const ProfessionalForm: React.FC = () => {
                     promptPrefix="Write a short and clear project description based on:"
                     multiline
                     rows={3}
-                    inputClassName="w-[45vw] px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    inputClassName="w-[45vw] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                     onChange={(value) =>
                       updateArrayItem("projects", index, {
                         ...project,
@@ -1466,7 +1466,7 @@ const ProfessionalForm: React.FC = () => {
 
                   <button
                     onClick={() => removeArrayItem("projects", index)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-600"
+                    className="bg-status-error text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-status-error"
                   >
                     <Trash2 size={16} />
                     Remove Project
@@ -1481,7 +1481,7 @@ const ProfessionalForm: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">Testimonials</h3>
+              <h3 className="text-2xl font-bold text-ink">Testimonials</h3>
               <button
                 onClick={() =>
                   addArrayItem("testimonials", {
@@ -1501,18 +1501,18 @@ const ProfessionalForm: React.FC = () => {
 
             <div className="space-y-6">
               {formData.testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-6 rounded-lg">
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">
                         Client Photo
                       </label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                      <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
                         <Upload
                           size={32}
-                          className="mx-auto text-gray-400 mb-2"
+                          className="mx-auto text-ink-caption mb-2"
                         />
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-ink-caption text-sm">
                           Upload client photo
                         </p>
 
@@ -1550,8 +1550,8 @@ const ProfessionalForm: React.FC = () => {
                               testimonialPhotoUploadMessage[index].includes(
                                 "failed"
                               )
-                                ? "text-red-600"
-                                : "text-green-600"
+                                ? "text-status-error"
+                                : "text-status-success"
                             }`}
                           >
                             {testimonialPhotoUploadMessage[index]}
@@ -1619,7 +1619,7 @@ const ProfessionalForm: React.FC = () => {
                         />
 
                         <button
-                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black text-sm"
+                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
                           onClick={() =>
                             document
                               .getElementById(
@@ -1651,7 +1651,7 @@ const ProfessionalForm: React.FC = () => {
 
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">
                           Client Name
                         </label>
                         <input
@@ -1663,12 +1663,12 @@ const ProfessionalForm: React.FC = () => {
                               name: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="John Smith"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">
                           Role
                         </label>
                         <input
@@ -1680,12 +1680,12 @@ const ProfessionalForm: React.FC = () => {
                               role: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="CEO, Company Name"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">
                           Rating
                         </label>
                         <div className="flex items-center gap-2">
@@ -1701,7 +1701,7 @@ const ProfessionalForm: React.FC = () => {
                               className={`${
                                 star <= testimonial.rating
                                   ? "text-[#FFD400]"
-                                  : "text-gray-300"
+                                  : "text-ink-light"
                               }`}
                             >
                               <Star size={20} fill="currentColor" />
@@ -1712,7 +1712,7 @@ const ProfessionalForm: React.FC = () => {
                     </div>
                   </div>
                   {/* <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-ink-paragraph mb-2">
                       Quote
                     </label>
                     <textarea
@@ -1724,7 +1724,7 @@ const ProfessionalForm: React.FC = () => {
                         })
                       }
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       placeholder="What did they say about your work?"
                     />
                   </div> */}
@@ -1735,7 +1735,7 @@ const ProfessionalForm: React.FC = () => {
                     promptPrefix="Client feedback for a portfolio:"
                     multiline
                     rows={3}
-                    inputClassName="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    inputClassName="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                     onChange={(value) =>
                       updateArrayItem("testimonials", index, {
                         ...testimonial,
@@ -1746,7 +1746,7 @@ const ProfessionalForm: React.FC = () => {
 
                   <button
                     onClick={() => removeArrayItem("testimonials", index)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-600"
+                    className="bg-status-error text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-status-error"
                   >
                     <Trash2 size={16} />
                     Remove Testimonial
@@ -1761,7 +1761,7 @@ const ProfessionalForm: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">
+              <h3 className="text-2xl font-bold text-ink">
                 Blog Preview (Optional)
               </h3>
               <button
@@ -1782,19 +1782,19 @@ const ProfessionalForm: React.FC = () => {
 
             <div className="space-y-6">
               {formData.blogPosts.map((post, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-6 rounded-lg">
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">
                         Featured Image
                       </label>
 
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                      <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
                         <Upload
                           size={32}
-                          className="mx-auto text-gray-400 mb-2"
+                          className="mx-auto text-ink-caption mb-2"
                         />
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-ink-caption text-sm">
                           Upload blog image
                         </p>
 
@@ -1830,8 +1830,8 @@ const ProfessionalForm: React.FC = () => {
                           <div
                             className={`mt-2 text-sm font-semibold ${
                               blogImageUploadMessage[index].includes("failed")
-                                ? "text-red-600"
-                                : "text-green-600"
+                                ? "text-status-error"
+                                : "text-status-success"
                             }`}
                           >
                             {blogImageUploadMessage[index]}
@@ -1894,7 +1894,7 @@ const ProfessionalForm: React.FC = () => {
                         />
 
                         <button
-                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black text-sm"
+                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
                           onClick={() =>
                             document
                               .getElementById(
@@ -1926,7 +1926,7 @@ const ProfessionalForm: React.FC = () => {
 
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">
                           Title
                         </label>
                         <input
@@ -1938,12 +1938,12 @@ const ProfessionalForm: React.FC = () => {
                               title: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Blog post title"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">
                           Blog URL
                         </label>
                         <input
@@ -1955,14 +1955,14 @@ const ProfessionalForm: React.FC = () => {
                               url: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="https://blog.example.com/post"
                         />
                       </div>
                     </div>
                   </div>
                   {/* <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-ink-paragraph mb-2">
                       Excerpt
                     </label>
                     <textarea
@@ -1974,7 +1974,7 @@ const ProfessionalForm: React.FC = () => {
                         })
                       }
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       placeholder="Brief description of the blog post..."
                     />
                   </div> */}
@@ -1985,7 +1985,7 @@ const ProfessionalForm: React.FC = () => {
                     promptPrefix="Write a brief blog excerpt:"
                     multiline
                     rows={3}
-                    inputClassName="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    inputClassName="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                     onChange={(value) =>
                       updateArrayItem("blogPosts", index, {
                         ...post,
@@ -1996,7 +1996,7 @@ const ProfessionalForm: React.FC = () => {
 
                   <button
                     onClick={() => removeArrayItem("blogPosts", index)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-600"
+                    className="bg-status-error text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-status-error"
                   >
                     <Trash2 size={16} />
                     Remove Post
@@ -2010,12 +2010,12 @@ const ProfessionalForm: React.FC = () => {
       case 10: // Contact
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">
+            <h3 className="text-2xl font-bold text-ink mb-6">
               Contact Section
             </h3>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Contact Message
               </label>
               <textarea
@@ -2024,14 +2024,14 @@ const ProfessionalForm: React.FC = () => {
                   handleInputChange("contactMessage", e.target.value)
                 }
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Available for freelance drone work and collaborations."
               />
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   Instagram
                 </label>
                 <input
@@ -2044,12 +2044,12 @@ const ProfessionalForm: React.FC = () => {
                       e.target.value
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   placeholder="https://instagram.com/username"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   LinkedIn
                 </label>
                 <input
@@ -2062,7 +2062,7 @@ const ProfessionalForm: React.FC = () => {
                       e.target.value
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   placeholder="https://linkedin.com/in/username"
                 />
               </div>
@@ -2070,7 +2070,7 @@ const ProfessionalForm: React.FC = () => {
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   GitHub
                 </label>
                 <input
@@ -2083,12 +2083,12 @@ const ProfessionalForm: React.FC = () => {
                       e.target.value
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   placeholder="https://github.com/username"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   WhatsApp
                 </label>
                 <input
@@ -2101,21 +2101,21 @@ const ProfessionalForm: React.FC = () => {
                       e.target.value
                     )
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   placeholder="+1234567890"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Google Maps Embed URL (Optional)
               </label>
               <input
                 type="url"
                 value={formData.mapUrl}
                 onChange={(e) => handleInputChange("mapUrl", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="https://maps.google.com/embed?..."
               />
             </div>
@@ -2125,10 +2125,10 @@ const ProfessionalForm: React.FC = () => {
       case 11: // Footer
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">Footer</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">Footer</h3>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Footer Text
               </label>
               <input
@@ -2137,19 +2137,19 @@ const ProfessionalForm: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange("footerText", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="© 2024 Your Name. All rights reserved."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">
                 Footer Logo (Optional)
               </label>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                <p className="text-gray-500 text-sm">
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
+                <Upload size={32} className="mx-auto text-ink-caption mb-2" />
+                <p className="text-ink-caption text-sm">
                   Upload footer logo or leave empty to use header logo
                 </p>
 
@@ -2185,8 +2185,8 @@ const ProfessionalForm: React.FC = () => {
                   <div
                     className={`mt-2 text-sm font-semibold ${
                       footerLogoUploadMessage.includes("failed")
-                        ? "text-red-600"
-                        : "text-green-600"
+                        ? "text-status-error"
+                        : "text-status-success"
                     }`}
                   >
                     {footerLogoUploadMessage}
@@ -2226,7 +2226,7 @@ const ProfessionalForm: React.FC = () => {
                 />
 
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black text-sm"
+                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
                   onClick={() =>
                     document.getElementById("footer-logo-upload-input")?.click()
                   }
@@ -2255,9 +2255,9 @@ const ProfessionalForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-ink-offwhite">
       {/* Header */}
-      <header className="bg-black text-white py-6">
+      <header className="bg-ink text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
@@ -2277,17 +2277,17 @@ const ProfessionalForm: React.FC = () => {
       </header>
 
       {/* Progress Bar */}
-      <div className="bg-white border-b">
+      <div className="bg-surface-card border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-600">
+            <span className="text-sm font-medium text-ink-paragraph">
               Step {currentStep} of {steps.length}
             </span>
-            <span className="text-sm font-medium text-gray-600">
+            <span className="text-sm font-medium text-ink-paragraph">
               {Math.round((currentStep / steps.length) * 100)}% Complete
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-ink-light rounded-full h-2">
             <div
               className="bg-[#FF0000] h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / steps.length) * 100}%` }}
@@ -2301,7 +2301,7 @@ const ProfessionalForm: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Step Navigation */}
-            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
+            <div className="bg-surface-card rounded-lg p-6 mb-8 shadow-sm">
               <div className="flex flex-wrap gap-2 mb-6">
                 {steps.map((step, index) => (
                   <button
@@ -2311,8 +2311,8 @@ const ProfessionalForm: React.FC = () => {
                       currentStep === index + 1
                         ? "bg-[#FF0000] text-white"
                         : currentStep > index + 1
-                        ? "bg-[#FFD400] text-black"
-                        : "bg-gray-200 text-gray-600"
+                        ? "bg-[#FFD400] text-ink"
+                        : "bg-ink-light text-ink-paragraph"
                     }`}
                   >
                     {step}
@@ -2322,7 +2322,7 @@ const ProfessionalForm: React.FC = () => {
             </div>
 
             {/* Form Content */}
-            <div className="bg-white rounded-lg p-8 shadow-sm">
+            <div className="bg-surface-card rounded-lg p-8 shadow-sm">
               {renderStepContent()}
             </div>
 
@@ -2331,7 +2331,7 @@ const ProfessionalForm: React.FC = () => {
               <button
                 onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
                 disabled={currentStep === 1}
-                className="flex items-center gap-2 px-6 py-3 bg-gray-200 text-gray-600 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-ink-light text-ink-paragraph rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-ink-light transition-colors"
               >
                 <ArrowLeft size={20} />
                 Previous
@@ -2350,12 +2350,12 @@ const ProfessionalForm: React.FC = () => {
               ) : (
                 <div className="flex flex-col items-end">
                   {submitError && (
-                    <p className="text-red-500 mb-2">{submitError}</p>
+                    <p className="text-status-error mb-2">{submitError}</p>
                   )}
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-black rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-ink rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       "Creating..."

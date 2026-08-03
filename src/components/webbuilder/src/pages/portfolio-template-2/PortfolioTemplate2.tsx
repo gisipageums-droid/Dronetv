@@ -474,7 +474,7 @@ const PortfolioTemplate2: React.FC = () => {
 
   return (
     <div className={darkMode ? 'dark' : ''}>
-      <div className="bg-white dark:bg-gray-900 transition-colors duration-300">
+      <div className="bg-surface-card dark:bg-gray-900 transition-colors duration-300">
         <Navigation darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
 
         <HeroSection

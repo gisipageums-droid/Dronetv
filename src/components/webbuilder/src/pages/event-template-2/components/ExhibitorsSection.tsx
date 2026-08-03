@@ -72,26 +72,26 @@ const ExhibitorsSection: React.FC = () => {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'Manufacturing': return 'bg-[#FF0000] text-white';
-      case 'Software': return 'bg-[#FFD400] text-black';
-      case 'Services': return 'bg-blue-500 text-white';
-      case 'Research': return 'bg-purple-500 text-white';
-      case 'Hardware': return 'bg-green-500 text-white';
-      case 'Innovation': return 'bg-orange-500 text-white';
-      case 'Components': return 'bg-indigo-500 text-white';
-      case 'Cloud': return 'bg-cyan-500 text-white';
-      default: return 'bg-gray-500 text-white';
+      case 'Software': return 'bg-[#FFD400] text-ink';
+      case 'Services': return 'bg-status-info text-white';
+      case 'Research': return 'bg-brand-gold text-white';
+      case 'Hardware': return 'bg-status-success text-white';
+      case 'Innovation': return 'bg-status-warning text-white';
+      case 'Components': return 'bg-status-info text-white';
+      case 'Cloud': return 'bg-status-info text-white';
+      default: return 'bg-ink-caption text-white';
     }
   };
 
   return (
-    <section id="exhibitors" className="py-20 bg-gray-900">
+    <section id="exhibitors" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
             Our <span className="text-white">Exhibitors</span>
           </h2>
           <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-300 text-lg max-w-3xl mx-auto">
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Discover innovative products and services from leading companies in the drone industry.
           </p>
         </div>
@@ -103,7 +103,7 @@ const ExhibitorsSection: React.FC = () => {
               key={index}
               data-aos="fade-up" 
               data-aos-delay={index * 100}
-              className="group bg-black/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800 hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
+              className="group bg-ink/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
             >
               {/* Logo */}
               <div className="relative h-32 bg-white/5 flex items-center justify-center p-4">
@@ -130,7 +130,7 @@ const ExhibitorsSection: React.FC = () => {
                   </span>
                 </div>
                 
-                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                <p className="text-ink-caption text-sm mb-4 leading-relaxed">
                   {exhibitor.description}
                 </p>
                 
@@ -151,11 +151,11 @@ const ExhibitorsSection: React.FC = () => {
 
         {/* Floor Plan CTA */}
         <div data-aos="fade-up" data-aos-delay="800" className="text-center">
-          <div className="bg-black/50 backdrop-blur-sm rounded-3xl p-12 max-w-3xl mx-auto border border-gray-800">
+          <div className="bg-ink/50 backdrop-blur-sm rounded-3xl p-12 max-w-3xl mx-auto border border-ink-charcoal">
             <h3 className="text-3xl font-bold text-white mb-4">
               Explore the Exhibition Floor
             </h3>
-            <p className="text-gray-400 mb-8 text-lg">
+            <p className="text-ink-caption mb-8 text-lg">
               Navigate through 100+ exhibitor booths showcasing the latest in drone technology, 
               from hardware innovations to software solutions.
             </p>
@@ -163,7 +163,7 @@ const ExhibitorsSection: React.FC = () => {
               <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
                 Download Floor Plan
               </button>
-              <button className="border-2 border-[#FFD400] text-[#FFD400] hover:bg-[#FFD400] hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300">
+              <button className="border-2 border-[#FFD400] text-[#FFD400] hover:bg-[#FFD400] hover:text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300">
                 Book Your Booth
               </button>
             </div>
@@ -174,19 +174,19 @@ const ExhibitorsSection: React.FC = () => {
         <div data-aos="fade-up" data-aos-delay="1000" className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16">
           <div className="text-center">
             <div className="text-3xl font-bold text-[#FF0000] mb-2">100+</div>
-            <div className="text-gray-400">Exhibitors</div>
+            <div className="text-ink-caption">Exhibitors</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-[#FF0000] mb-2">25+</div>
-            <div className="text-gray-400">Countries</div>
+            <div className="text-ink-caption">Countries</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-[#FF0000] mb-2">50+</div>
-            <div className="text-gray-400">Product Launches</div>
+            <div className="text-ink-caption">Product Launches</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-[#FF0000] mb-2">10K+</div>
-            <div className="text-gray-400">Sq Ft Exhibition</div>
+            <div className="text-ink-caption">Sq Ft Exhibition</div>
           </div>
         </div>
       </div>

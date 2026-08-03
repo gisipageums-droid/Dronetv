@@ -46,19 +46,19 @@
 //       <div className="container mx-auto px-4 relative z-10">
 //         <div className="text-center max-w-4xl mx-auto">
 //           <div data-aos="fade-up" data-aos-delay="300">
-//             <h1 className="text-6xl md:text-8xl font-bold text-black mb-6 leading-tight">
+//             <h1 className="text-6xl md:text-8xl font-bold text-ink mb-6 leading-tight">
 //               Sumit <span className="text-[#FF0000]">Krishnan</span>
 //             </h1>
 //           </div>
 
 //           <div data-aos="fade-up" data-aos-delay="600" className="mb-8">
-//             <div className="text-2xl md:text-3xl font-semibold text-black">
+//             <div className="text-2xl md:text-3xl font-semibold text-ink">
 //               I'm a <span ref={typedRef} className="text-[#FF0000]"></span>
 //             </div>
 //           </div>
 
 //           <div data-aos="fade-up" data-aos-delay="900" className="mb-12">
-//             <p className="text-lg md:text-xl text-black/80 max-w-2xl mx-auto leading-relaxed">
+//             <p className="text-lg md:text-xl text-ink/80 max-w-2xl mx-auto leading-relaxed">
 //               Empowering India’s drone workforce with certified training, real-world simulations, and aerospace expertise. Based at India Drone Academy, Hyderabad.
 //             </p>
 //           </div>
@@ -67,8 +67,8 @@
 
 //           {/* Scroll Indicator */}
 //           {/* <div data-aos="fade-up" data-aos-delay="1500" className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-//             <div className="w-6 h-10 border-2 border-black rounded-full flex justify-center">
-//               <div className="w-1 h-3 bg-black rounded-full animate-bounce mt-2"></div>
+//             <div className="w-6 h-10 border-2 border-ink rounded-full flex justify-center">
+//               <div className="w-1 h-3 bg-ink rounded-full animate-bounce mt-2"></div>
 //             </div>
 //           </div> */}
 //         </div>
@@ -76,7 +76,7 @@
 
 //       {/* Floating Elements */}
 //       <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-[#FF0000] rounded-full animate-ping"></div>
-//       <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-black rounded-full animate-pulse"></div>
+//       <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-ink rounded-full animate-pulse"></div>
 //       <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-[#FF0000] rounded-full animate-bounce"></div>
 //     </section>
 //   );
@@ -170,14 +170,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
       {/* Gradient Overlay */}
       <div 
-        className="absolute inset-0 bg-gradient-to-br from-black/80 via-gray-900/60 to-black/90 opacity-80"
+        className="absolute inset-0 bg-gradient-to-br from-ink/80 via-ink/60 to-ink/90 opacity-80"
       />
 
       {/* Animated particles */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
-        <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-white rounded-full animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-red-400 rounded-full animate-bounce"></div>
+        <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-brand-yellow rounded-full animate-ping"></div>
+        <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-surface-card rounded-full animate-pulse"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-status-error rounded-full animate-bounce"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -271,7 +271,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                   <MessageCircle size={18} /> {button1Text}
                 </span>
                 <div 
-                  className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left opacity-20"
+                  className="absolute inset-0 bg-surface-card transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left opacity-20"
                 ></div>
               </a>
             )}
@@ -279,7 +279,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             {button2Text && button2Link && (
               <a
                 href={button2Link}
-                className="group relative overflow-hidden border-2 border-white text-white hover:text-black px-8 py-3 rounded-full font-bold text-base md:text-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 backdrop-blur-sm"
+                className="group relative overflow-hidden border-2 border-white text-white hover:text-ink px-8 py-3 rounded-full font-bold text-base md:text-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 backdrop-blur-sm"
                 style={{
                   minWidth: '180px'
                 }}
@@ -288,7 +288,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                   <Download size={18} /> {button2Text}
                 </span>
                 <div 
-                  className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left opacity-20"
+                  className="absolute inset-0 bg-surface-card transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left opacity-20"
                 ></div>
               </a>
             )}
@@ -302,7 +302,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             }}
           >
             <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-              <div className="w-1 h-3 bg-white rounded-full animate-bounce mt-2"></div>
+              <div className="w-1 h-3 bg-surface-card rounded-full animate-bounce mt-2"></div>
             </div>
           </div>
         </div>

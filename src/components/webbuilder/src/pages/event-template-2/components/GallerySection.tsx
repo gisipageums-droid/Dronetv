@@ -75,14 +75,14 @@ const GallerySection: React.FC = () => {
   };
 
   return (
-    <section id="gallery" className="py-20 bg-black">
+    <section id="gallery" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
             Event <span className="text-white">Gallery</span>
           </h2>
           <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-300 text-lg max-w-3xl mx-auto">
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Experience the excitement from previous events and get a preview of what awaits you at this year's expo.
           </p>
         </div>
@@ -104,7 +104,7 @@ const GallerySection: React.FC = () => {
               />
               
               {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <div className="mb-2">
                     <span className="bg-[#FF0000] text-white px-2 py-1 rounded-full text-xs font-semibold">
@@ -135,7 +135,7 @@ const GallerySection: React.FC = () => {
                 <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                   item.type === 'video' 
                     ? 'bg-[#FF0000] text-white' 
-                    : 'bg-[#FFD400] text-black'
+                    : 'bg-[#FFD400] text-ink'
                 }`}>
                   {item.type === 'video' ? 'Video' : 'Photo'}
                 </span>
@@ -146,7 +146,7 @@ const GallerySection: React.FC = () => {
 
         {/* View More Button */}
         <div data-aos="fade-up" data-aos-delay="800" className="text-center mt-16">
-          <button className="bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+          <button className="bg-[#FFD400] hover:bg-[#FFD400]/90 text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
             View Complete Gallery
           </button>
         </div>
@@ -154,7 +154,7 @@ const GallerySection: React.FC = () => {
 
       {/* Lightbox Modal */}
       {selectedMedia && (
-        <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-ink/95 flex items-center justify-center z-50 p-4">
           <div className="relative max-w-4xl w-full">
             {/* Close Button */}
             <button 
@@ -180,7 +180,7 @@ const GallerySection: React.FC = () => {
             </button>
 
             {/* Media Content */}
-            <div className="bg-black rounded-lg overflow-hidden">
+            <div className="bg-ink rounded-lg overflow-hidden">
               <img 
                 src={selectedMedia.src} 
                 alt={selectedMedia.title}
@@ -188,7 +188,7 @@ const GallerySection: React.FC = () => {
               />
               
               {/* Media Info */}
-              <div className="p-6 bg-gray-900">
+              <div className="p-6 bg-ink">
                 <div className="flex items-center gap-3 mb-2">
                   <span className="bg-[#FF0000] text-white px-2 py-1 rounded-full text-xs font-semibold">
                     {selectedMedia.category}
@@ -196,7 +196,7 @@ const GallerySection: React.FC = () => {
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                     selectedMedia.type === 'video' 
                       ? 'bg-[#FF0000] text-white' 
-                      : 'bg-[#FFD400] text-black'
+                      : 'bg-[#FFD400] text-ink'
                   }`}>
                     {selectedMedia.type === 'video' ? 'Video' : 'Photo'}
                   </span>

@@ -60,14 +60,14 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
   const blogPosts = processBlogPosts();
 
   return (
-    <section id="blog" className="py-20 bg-gray-50 dark:bg-gray-800">
+    <section id="blog" className="py-20 bg-ink-offwhite dark:bg-gray-800">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
             Latest <span className="text-[#FF0000]">Blog Posts</span>
           </h2>
           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph dark:text-gray-400 max-w-2xl mx-auto">
             Stay updated with the latest insights, tips, and trends in drone technology and aerial photography.
           </p>
         </div>
@@ -79,7 +79,7 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
                 key={post.id}
                 data-aos={index % 2 === 0 ? "fade-right" : "fade-left"}
                 data-aos-delay={index * 200}
-                className={`group flex items-center gap-8 bg-white dark:bg-gray-900 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden ${
+                className={`group flex items-center gap-8 bg-surface-card dark:bg-gray-900 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden ${
                   index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'
                 } flex-col lg:flex-row`}
               >
@@ -93,7 +93,7 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
                       (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80';
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
                   {/* Category Badge */}
                   <div className="absolute top-6 left-6">
@@ -105,7 +105,7 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
 
                 {/* Content */}
                 <div className="flex-1 p-8 lg:p-12">
-                  <div className="flex items-center gap-4 mb-4 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-4 mb-4 text-sm text-ink-caption dark:text-gray-400">
                     <div className="flex items-center gap-2">
                       <Calendar size={16} />
                       <span>{new Date(post.date).toLocaleDateString('en-US', { 
@@ -121,11 +121,11 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
                     <span className="text-[#FF0000] font-medium">{post.readTime}</span>
                   </div>
 
-                  <h3 className="text-2xl lg:text-3xl font-bold text-black dark:text-white mb-4 group-hover:text-[#FF0000] transition-colors duration-300">
+                  <h3 className="text-2xl lg:text-3xl font-bold text-ink dark:text-white mb-4 group-hover:text-[#FF0000] transition-colors duration-300">
                     {post.title}
                   </h3>
 
-                  <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed text-lg">
+                  <p className="text-ink-paragraph dark:text-gray-400 mb-6 leading-relaxed text-lg">
                     {post.excerpt}
                   </p>
 
@@ -145,13 +145,13 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400">No blog posts available at the moment.</p>
+            <p className="text-ink-paragraph dark:text-gray-400">No blog posts available at the moment.</p>
           </div>
         )}
 
         {/* View All Button */}
         <div data-aos="fade-up" data-aos-delay="800" className="text-center mt-16">
-          <button className="bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          <button className="bg-[#FFD400] hover:bg-[#FFD400]/90 text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
             View All Blog Posts
           </button>
         </div>

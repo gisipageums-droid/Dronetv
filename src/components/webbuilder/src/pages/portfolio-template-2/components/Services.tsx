@@ -83,7 +83,7 @@ const Services: React.FC<ServicesProps> = ({
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink mb-4">
             {servicesTitle} <span style={{ color: accentColor }}>Services</span>
           </h2>
           <div
@@ -95,7 +95,7 @@ const Services: React.FC<ServicesProps> = ({
           <p
             data-aos="fade-up"
             data-aos-delay="400"
-            className="text-black/80 max-w-2xl mx-auto text-lg"
+            className="text-ink/80 max-w-2xl mx-auto text-lg"
           >
             {servicesDescription}
           </p>
@@ -114,19 +114,19 @@ const Services: React.FC<ServicesProps> = ({
             >
               {/* Text Section */}
               <div className="flex-1">
-                <div className="bg-white rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105">
+                <div className="bg-surface-card rounded-3xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105">
                   <div className="flex items-center gap-4 mb-6">
                     <div
                       className="w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg"
                       style={{ backgroundColor: accentColor }}
                     >
                       {iconMap[service.icon] ||
-                        <span className="w-8 h-8 bg-gray-300 rounded-full inline-block"></span>}
+                        <span className="w-8 h-8 bg-ink-light rounded-full inline-block"></span>}
                     </div>
-                    <h3 className="text-2xl font-bold text-black">{service.title}</h3>
+                    <h3 className="text-2xl font-bold text-ink">{service.title}</h3>
                   </div>
 
-                  <p className="text-gray-700 mb-6 leading-relaxed text-lg">
+                  <p className="text-ink-paragraph mb-6 leading-relaxed text-lg">
                     {service.description}
                   </p>
 
@@ -138,7 +138,7 @@ const Services: React.FC<ServicesProps> = ({
                             className="w-2 h-2 rounded-full"
                             style={{ backgroundColor: accentColor }}
                           ></div>
-                          <span className="text-gray-600 font-medium">{feature}</span>
+                          <span className="text-ink-paragraph font-medium">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -165,7 +165,7 @@ const Services: React.FC<ServicesProps> = ({
                     >
                       <div className="transform scale-150" style={{ color: accentColor }}>
                         {iconMap[service.icon] ||
-                          <span className="w-8 h-8 bg-gray-300 rounded-full inline-block"></span>}
+                          <span className="w-8 h-8 bg-ink-light rounded-full inline-block"></span>}
                       </div>
                     </div>
                   </div>
@@ -179,7 +179,7 @@ const Services: React.FC<ServicesProps> = ({
                     }}
                   ></div>
                   <div
-                    className="absolute -bottom-4 -left-4 w-6 h-6 bg-black rounded-full animate-bounce"
+                    className="absolute -bottom-4 -left-4 w-6 h-6 bg-ink rounded-full animate-bounce"
                     style={{
                       animationDelay: `${index * 0.2 + 0.5}s`,
                     }}

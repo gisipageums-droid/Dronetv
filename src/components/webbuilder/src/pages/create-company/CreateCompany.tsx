@@ -300,7 +300,7 @@ const CreateCompany: React.FC = () => {
       case 1:
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-black mb-4">Basic Company Details</h2>
+            <h2 className="text-2xl font-bold text-ink mb-4">Basic Company Details</h2>
             <input
               type="text"
               required
@@ -317,7 +317,7 @@ const CreateCompany: React.FC = () => {
 
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-1">Your Name</label>
               <input
                 type="text"
                 placeholder="John Doe"
@@ -327,7 +327,7 @@ const CreateCompany: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-1">Email</label>
               <input
                 type="email"
                 placeholder="you@example.com"
@@ -338,7 +338,7 @@ const CreateCompany: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-1">Phone Number</label>
               <input
                 type="tel"
                 placeholder="+91 9876543210"
@@ -349,7 +349,7 @@ const CreateCompany: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Promotional Code</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-1">Promotional Code</label>
               <input
                 type="text"
                 placeholder="Enter Promotional Code"
@@ -361,12 +361,12 @@ const CreateCompany: React.FC = () => {
                 }}
               />
               {promoCodeError && (
-                <div className="text-red-600 mt-1 text-sm">{promoCodeError}</div>
+                <div className="text-status-error mt-1 text-sm">{promoCodeError}</div>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-1">Category</label>
               <select
                 className="w-full px-4 py-2 border rounded-md"
                 value={formData.category || ''}
@@ -396,14 +396,14 @@ const CreateCompany: React.FC = () => {
       case 2: // Header & Hero
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">Header & Hero Section</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">Header & Hero Section</h3>
 
             {/* Company Logo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Company Logo</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">Upload your company logo</p>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Company Logo</label>
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-6 text-center">
+                <Upload size={48} className="mx-auto text-ink-caption mb-4" />
+                <p className="text-ink-caption">Upload your company logo</p>
 
                 {/* Loader & message UI */}
                 {imageUploadLoading && (
@@ -416,7 +416,7 @@ const CreateCompany: React.FC = () => {
                   </div>
                 )}
                 {imageUploadMessage && (
-                  <div className="text-green-600 font-semibold mt-2">{imageUploadMessage}</div>
+                  <div className="text-status-success font-semibold mt-2">{imageUploadMessage}</div>
                 )}
 
                 <input
@@ -446,7 +446,7 @@ const CreateCompany: React.FC = () => {
                   }}
                 />
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black"
+                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
                   onClick={() => document.getElementById('company-logo-input')?.click()}
                   type="button"
                 >
@@ -466,10 +466,10 @@ const CreateCompany: React.FC = () => {
 
             {/* Hero Background Image */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Hero Background Image</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">Upload your hero background image</p>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Hero Background Image</label>
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-6 text-center">
+                <Upload size={48} className="mx-auto text-ink-caption mb-4" />
+                <p className="text-ink-caption">Upload your hero background image</p>
 
                 {/* Loader & message UI */}
                 {heroImageUploadLoading && (
@@ -482,7 +482,7 @@ const CreateCompany: React.FC = () => {
                   </div>
                 )}
                 {heroImageUploadMessage && (
-                  <div className="text-green-600 font-semibold mt-2">{heroImageUploadMessage}</div>
+                  <div className="text-status-success font-semibold mt-2">{heroImageUploadMessage}</div>
                 )}
 
                 <input
@@ -511,7 +511,7 @@ const CreateCompany: React.FC = () => {
                   }}
                 />
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black"
+                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
                   onClick={() => document.getElementById('hero-background-input')?.click()}
                   type="button"
                 >
@@ -530,24 +530,24 @@ const CreateCompany: React.FC = () => {
 
             {/* Hero Headline */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Hero Headline</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Hero Headline</label>
               <input
                 type="text"
                 value={formData.heroHeadline}
                 onChange={e => handleInputChange('heroHeadline', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
                 placeholder="Advanced Drone Solutions"
               />
             </div>
 
             {/* Hero Subheadline */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Hero Subheadline</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Hero Subheadline</label>
               <textarea
                 value={formData.heroSubheadline}
                 onChange={e => handleInputChange('heroSubheadline', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
                 placeholder="Pioneering the future of aerial technology..."
               />
             </div>
@@ -555,44 +555,44 @@ const CreateCompany: React.FC = () => {
             {/* CTA Buttons */}
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Primary CTA Text</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Primary CTA Text</label>
                 <input
                   type="text"
                   value={formData.primaryCTA.text}
                   onChange={e => handleNestedInputChange('primaryCTA', 'text', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
                   placeholder="Explore Services"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Primary CTA Link</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Primary CTA Link</label>
                 <input
                   type="text"
                   value={formData.primaryCTA.link}
                   onChange={e => handleNestedInputChange('primaryCTA', 'link', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
                   placeholder="#services"
                 />
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Secondary CTA Text</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Secondary CTA Text</label>
                 <input
                   type="text"
                   value={formData.secondaryCTA.text}
                   onChange={e => handleNestedInputChange('secondaryCTA', 'text', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
                   placeholder="Contact Us"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Secondary CTA Link</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Secondary CTA Link</label>
                 <input
                   type="text"
                   value={formData.secondaryCTA.link}
                   onChange={e => handleNestedInputChange('secondaryCTA', 'link', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
                   placeholder="#contact"
                 />
               </div>
@@ -603,50 +603,50 @@ const CreateCompany: React.FC = () => {
       case 3: // About Section
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">About Section</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">About Section</h3>
 
             {/* Section Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Section Title</label>
               <input
                 type="text"
                 value={formData.aboutTitle}
                 onChange={e => handleInputChange('aboutTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="About DroneTech"
               />
             </div>
 
             {/* Section Description (first para) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Section Description (Company Summary)</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Section Description (Company Summary)</label>
               <textarea
                 value={formData.aboutDescription}
                 onChange={e => handleInputChange('aboutDescription', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="DroneTech is a pioneering company in the UAV industry, specializing in advanced drone solutions for various sectors..."
               />
             </div>
 
             {/* Section Description (team/experience para) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Section Description (Team/Experience)</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Section Description (Team/Experience)</label>
               <textarea
                 value={formData.aboutTeamExperience}
                 onChange={e => handleInputChange('aboutTeamExperience', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="With over 5 years of experience and a team of expert engineers, we deliver cutting-edge drone technology..."
               />
             </div>
 
             {/* About Image */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">About Section Image</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">Upload about section image</p>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">About Section Image</label>
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-6 text-center">
+                <Upload size={48} className="mx-auto text-ink-caption mb-4" />
+                <p className="text-ink-caption">Upload about section image</p>
 
                 {/* Loader & message UI */}
                 {aboutImageUploadLoading && (
@@ -659,7 +659,7 @@ const CreateCompany: React.FC = () => {
                   </div>
                 )}
                 {aboutImageUploadMessage && (
-                  <div className="text-green-600 font-semibold mt-2">{aboutImageUploadMessage}</div>
+                  <div className="text-status-success font-semibold mt-2">{aboutImageUploadMessage}</div>
                 )}
 
                 <input
@@ -688,7 +688,7 @@ const CreateCompany: React.FC = () => {
                   }}
                 />
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black"
+                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
                   onClick={() => document.getElementById('about-image-input')?.click()}
                   type="button"
                 >
@@ -708,22 +708,22 @@ const CreateCompany: React.FC = () => {
 
             {/* Years of Experience */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Years of Experience</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Years of Experience</label>
               <input
                 type="number"
                 min={1}
                 value={formData.aboutExperienceYears || 5}
                 onChange={e => handleInputChange('aboutExperienceYears', parseInt(e.target.value))}
-                className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-32 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="5"
               />
-              <span className="ml-2 text-gray-600 text-sm">Years</span>
+              <span className="ml-2 text-ink-paragraph text-sm">Years</span>
             </div>
 
             {/* Company Values */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">Company Values (Mission, Vision, Values)</label>
+                <label className="block text-sm font-medium text-ink-paragraph">Company Values (Mission, Vision, Values)</label>
                 <button
                   onClick={() => addArrayItem('companyValues', { icon: 'target', title: '', description: '' })}
                   className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
@@ -734,15 +734,15 @@ const CreateCompany: React.FC = () => {
               </div>
               <div className="space-y-4">
                 {formData.companyValues.map((value, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                  <div key={index} className="bg-ink-offwhite p-4 rounded-lg">
                     <div className="grid md:grid-cols-4 gap-4 mb-4">
                       {/* Icon selector */}
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">Icon</label>
+                        <label className="block text-xs font-medium text-ink-paragraph mb-1">Icon</label>
                         <select
                           value={value.icon}
                           onChange={e => updateArrayItem('companyValues', index, { ...value, icon: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md"
                         >
                           <option value="target">🎯 Target (Mission)</option>
                           <option value="eye">👁️ Eye (Vision)</option>
@@ -754,13 +754,13 @@ const CreateCompany: React.FC = () => {
                         type="text"
                         value={value.title}
                         onChange={e => updateArrayItem('companyValues', index, { ...value, title: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md"
                         placeholder="e.g. Mission"
                       />
                       {/* Delete button */}
                       <button
                         onClick={() => removeArrayItem('companyValues', index)}
-                        className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mt-6"
+                        className="bg-status-error text-white px-4 py-2 rounded-md hover:bg-status-error mt-6"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -770,7 +770,7 @@ const CreateCompany: React.FC = () => {
                       value={value.description}
                       onChange={e => updateArrayItem('companyValues', index, { ...value, description: e.target.value })}
                       rows={2}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                      className="w-full px-3 py-2 border border-ink-light rounded-md"
                       placeholder="Describe this value..."
                     />
                   </div>
@@ -784,7 +784,7 @@ const CreateCompany: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">Services Section</h3>
+              <h3 className="text-2xl font-bold text-ink">Services Section</h3>
               <button
                 onClick={() =>
                   addArrayItem('services', {
@@ -801,33 +801,33 @@ const CreateCompany: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Section Title</label>
               <input
                 type="text"
                 value={formData.servicesTitle}
                 onChange={e => handleInputChange('servicesTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Our Services"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Section Description</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Section Description</label>
               <textarea
                 value={formData.servicesDescription || ''}
                 onChange={e => handleInputChange('servicesDescription', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Comprehensive drone solutions tailored to meet the unique needs of various industries and applications."
               />
             </div>
 
             <div className="space-y-4">
               {formData.services.map((service, index) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-4 rounded-lg">
                   <div className="grid md:grid-cols-4 gap-4 items-end">
                     {/* Icon Selector */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Icon</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Icon</label>
                       <select
                         value={service.icon}
                         onChange={e =>
@@ -836,7 +836,7 @@ const CreateCompany: React.FC = () => {
                             icon: e.target.value
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       >
                         <option value="camera">Camera (Aerial Surveying)</option>
                         <option value="zap">Zap (Agricultural Monitoring)</option>
@@ -846,7 +846,7 @@ const CreateCompany: React.FC = () => {
                     </div>
                     {/* Title */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Title</label>
                       <input
                         type="text"
                         value={service.title}
@@ -856,13 +856,13 @@ const CreateCompany: React.FC = () => {
                             title: e.target.value
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         placeholder="e.g. Aerial Surveying"
                       />
                     </div>
                     {/* Description */}
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Description</label>
                       <textarea
                         value={service.description}
                         onChange={e =>
@@ -872,14 +872,14 @@ const CreateCompany: React.FC = () => {
                           })
                         }
                         rows={2}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         placeholder="Describe the service..."
                       />
                     </div>
                     {/* Remove Button */}
                     <button
                       onClick={() => removeArrayItem('services', index)}
-                      className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 mt-8"
+                      className="bg-status-error text-white p-2 rounded-md hover:bg-status-error mt-8"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -894,7 +894,7 @@ const CreateCompany: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">Products Section</h3>
+              <h3 className="text-2xl font-bold text-ink">Products Section</h3>
               <button
                 onClick={() => addArrayItem('products', { image: '', title: '', description: '', link: '' })}
                 className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
@@ -905,35 +905,35 @@ const CreateCompany: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Section Title</label>
               <input
                 type="text"
                 value={formData.productsTitle}
                 onChange={(e) => handleInputChange('productsTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Product Categories (comma-separated)</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Product Categories (comma-separated)</label>
               <input
                 type="text"
                 value={formData.productCategories}
                 onChange={(e) => handleInputChange('productCategories', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="All, Surveillance, Agriculture, Custom"
               />
             </div>
 
             <div className="space-y-6">
               {formData.products.map((product, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-6 rounded-lg">
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                        <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                        <p className="text-gray-500 text-sm">Upload product image</p>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Product Image</label>
+                      <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
+                        <Upload size={32} className="mx-auto text-ink-caption mb-2" />
+                        <p className="text-ink-caption text-sm">Upload product image</p>
 
                         {/* Loader & message UI */}
                         {productImageUploadLoading[index] && (
@@ -946,7 +946,7 @@ const CreateCompany: React.FC = () => {
                           </div>
                         )}
                         {productImageUploadMessage[index] && (
-                          <div className="text-green-600 font-semibold mt-2">{productImageUploadMessage[index]}</div>
+                          <div className="text-status-success font-semibold mt-2">{productImageUploadMessage[index]}</div>
                         )}
 
                         <input
@@ -972,7 +972,7 @@ const CreateCompany: React.FC = () => {
                           }}
                         />
                         <button
-                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black"
+                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
                           onClick={() => document.getElementById(`product-image-input-${index}`)?.click()}
                           type="button"
                         >
@@ -991,40 +991,40 @@ const CreateCompany: React.FC = () => {
 
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Title</label>
                         <input
                           type="text"
                           value={product.title}
                           onChange={(e) => updateArrayItem('products', index, { ...product, title: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Product name"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Link</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Link</label>
                         <input
                           type="text"
                           value={product.link}
                           onChange={(e) => updateArrayItem('products', index, { ...product, link: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Product link"
                         />
                       </div>
                     </div>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <label className="block text-sm font-medium text-ink-paragraph mb-2">Description</label>
                     <textarea
                       value={product.description}
                       onChange={(e) => updateArrayItem('products', index, { ...product, description: e.target.value })}
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       placeholder="Product description..."
                     />
                   </div>
                   <button
                     onClick={() => removeArrayItem('products', index)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-600"
+                    className="bg-status-error text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-status-error"
                   >
                     <Trash2 size={16} />
                     Remove Product
@@ -1038,15 +1038,15 @@ const CreateCompany: React.FC = () => {
       case 6: // Clients & Testimonials
         return (
           <div className="space-y-10">
-            <h3 className="text-2xl font-bold text-black mb-6">Clients & Testimonials</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">Clients & Testimonials</h3>
 
             {/* Clients Section */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">Clients</label>
+                <label className="block text-sm font-medium text-ink-paragraph">Clients</label>
                 <button
                   onClick={() => addArrayItem('clients', { name: '', logo: '', industry: '' })}
-                  className="bg-[#FFD400] text-black px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FFD400]/90"
+                  className="bg-[#FFD400] text-ink px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FFD400]/90"
                 >
                   <Plus size={16} />
                   Add Client
@@ -1054,16 +1054,16 @@ const CreateCompany: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {(formData.clients || []).map((client, idx) => (
-                  <div key={idx} className="bg-white p-4 rounded-lg shadow-sm space-y-3">
+                  <div key={idx} className="bg-surface-card p-4 rounded-lg shadow-sm space-y-3">
                     {/* Logo Upload */}
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Logo</label>
+                      <label className="block text-xs font-medium text-ink-paragraph mb-1">Logo</label>
                       <div className="flex items-center gap-2">
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+                        <div className="w-12 h-12 bg-ink-light rounded-full flex items-center justify-center overflow-hidden">
                           {client.logo ? (
                             <img src={client.logo} alt="Client Logo" className="w-full h-full object-cover" />
                           ) : (
-                            <span className="text-gray-400 text-xs">No Logo</span>
+                            <span className="text-ink-caption text-xs">No Logo</span>
                           )}
                         </div>
                         {/* Loader & Message */}
@@ -1076,10 +1076,10 @@ const CreateCompany: React.FC = () => {
                           </div>
                         )}
                         {clientLogoUploadMessage[idx] && (
-                          <span className="text-green-600 text-xs ml-2">{clientLogoUploadMessage[idx]}</span>
+                          <span className="text-status-success text-xs ml-2">{clientLogoUploadMessage[idx]}</span>
                         )}
                         <button
-                          className="bg-[#FFD400] text-black px-2 py-1 text-xs rounded"
+                          className="bg-[#FFD400] text-ink px-2 py-1 text-xs rounded"
                           type="button"
                           onClick={() => {
                             const input = document.createElement('input');
@@ -1107,7 +1107,7 @@ const CreateCompany: React.FC = () => {
                           Upload
                         </button>
                         <button
-                          className="bg-red-500 text-white px-2 py-1 text-xs rounded"
+                          className="bg-status-error text-white px-2 py-1 text-xs rounded"
                           onClick={() => removeArrayItem('clients', idx)}
                         >
                           Remove
@@ -1117,23 +1117,23 @@ const CreateCompany: React.FC = () => {
 
                     {/* Client Name */}
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Client Name</label>
+                      <label className="block text-xs font-medium text-ink-paragraph mb-1">Client Name</label>
                       <input
                         type="text"
                         value={client.name}
                         onChange={e => updateArrayItem('clients', idx, { ...client, name: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md text-sm"
                         placeholder="Company Name"
                       />
                     </div>
                     {/* Client Industry */}
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Industry</label>
+                      <label className="block text-xs font-medium text-ink-paragraph mb-1">Industry</label>
                       <input
                         type="text"
                         value={client.industry}
                         onChange={e => updateArrayItem('clients', idx, { ...client, industry: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md text-sm"
                         placeholder="e.g. Technology, Agriculture"
                       />
                     </div>
@@ -1145,7 +1145,7 @@ const CreateCompany: React.FC = () => {
             {/* Testimonials Section */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">Testimonials</label>
+                <label className="block text-sm font-medium text-ink-paragraph">Testimonials</label>
                 <button
                   onClick={() => addArrayItem('testimonials', { name: '', role: '', quote: '', photo: '', rating: 5 })}
                   className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
@@ -1157,13 +1157,13 @@ const CreateCompany: React.FC = () => {
 
               <div className="space-y-6">
                 {formData.testimonials.map((testimonial, index) => (
-                  <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                  <div key={index} className="bg-ink-offwhite p-6 rounded-lg">
                     <div className="grid md:grid-cols-2 gap-4 mb-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Client Photo</label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                          <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                          <p className="text-gray-500 text-sm">Upload client photo</p>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Client Photo</label>
+                        <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
+                          <Upload size={32} className="mx-auto text-ink-caption mb-2" />
+                          <p className="text-ink-caption text-sm">Upload client photo</p>
 
                           {/* Loader & message UI */}
                           {testimonialPhotoUploadLoading[index] && (
@@ -1176,7 +1176,7 @@ const CreateCompany: React.FC = () => {
                             </div>
                           )}
                           {testimonialPhotoUploadMessage[index] && (
-                            <div className="text-green-600 font-semibold mt-2">{testimonialPhotoUploadMessage[index]}</div>
+                            <div className="text-status-success font-semibold mt-2">{testimonialPhotoUploadMessage[index]}</div>
                           )}
 
                           <input
@@ -1202,7 +1202,7 @@ const CreateCompany: React.FC = () => {
                             }}
                           />
                           <button
-                            className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black"
+                            className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
                             onClick={() => document.getElementById(`testimonial-photo-input-${index}`)?.click()}
                             type="button"
                           >
@@ -1220,33 +1220,33 @@ const CreateCompany: React.FC = () => {
 
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Client Name</label>
+                          <label className="block text-sm font-medium text-ink-paragraph mb-2">Client Name</label>
                           <input
                             type="text"
                             value={testimonial.name}
                             onChange={(e) => updateArrayItem('testimonials', index, { ...testimonial, name: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                            className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                             placeholder="John Smith"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                          <label className="block text-sm font-medium text-ink-paragraph mb-2">Role</label>
                           <input
                             type="text"
                             value={testimonial.role}
                             onChange={(e) => updateArrayItem('testimonials', index, { ...testimonial, role: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                            className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                             placeholder="CEO, Company Name"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                          <label className="block text-sm font-medium text-ink-paragraph mb-2">Rating</label>
                           <div className="flex items-center gap-2">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <button
                                 key={star}
                                 onClick={() => updateArrayItem('testimonials', index, { ...testimonial, rating: star })}
-                                className={`${star <= testimonial.rating ? 'text-[#FFD400]' : 'text-gray-300'}`}
+                                className={`${star <= testimonial.rating ? 'text-[#FFD400]' : 'text-ink-light'}`}
                               >
                                 <Star size={20} fill="currentColor" />
                               </button>
@@ -1256,18 +1256,18 @@ const CreateCompany: React.FC = () => {
                       </div>
                     </div>
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Quote</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Quote</label>
                       <textarea
                         value={testimonial.quote}
                         onChange={(e) => updateArrayItem('testimonials', index, { ...testimonial, quote: e.target.value })}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         placeholder="What did they say about your company?"
                       />
                     </div>
                     <button
                       onClick={() => removeArrayItem('testimonials', index)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-600"
+                      className="bg-status-error text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-status-error"
                     >
                       <Trash2 size={16} />
                       Remove Testimonial
@@ -1282,77 +1282,77 @@ const CreateCompany: React.FC = () => {
       case 7: // Contact
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">Contact Section</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">Contact Section</h3>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Section Title</label>
               <input
                 type="text"
                 value={formData.contactTitle}
                 onChange={(e) => handleInputChange('contactTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
               />
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Email</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Phone</label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Address Line</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Address Line</label>
                 <input
                   type="text"
                   value={formData.addressLine}
                   onChange={e => handleInputChange('addressLine', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md"
                   placeholder="123 Main Street"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">City</label>
                 <input
                   type="text"
                   value={formData.city}
                   onChange={e => handleInputChange('city', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md"
                   placeholder="Hyderabad"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">State</label>
                 <input
                   type="text"
                   value={formData.state}
                   onChange={e => handleInputChange('state', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md"
                   placeholder="Telangana"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Pin Code</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Pin Code</label>
                 <input
                   type="text"
                   value={formData.pinCode}
                   onChange={e => handleInputChange('pinCode', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md"
                   placeholder="500001"
                 />
               </div>
@@ -1360,33 +1360,33 @@ const CreateCompany: React.FC = () => {
 
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Google Maps Embed URL</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Google Maps Embed URL</label>
               <input
                 type="url"
                 value={formData.mapEmbedUrl}
                 onChange={(e) => handleInputChange('mapEmbedUrl', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="https://maps.google.com/embed?..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Contact Form Text</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Contact Form Text</label>
               <textarea
                 value={formData.contactFormText}
                 onChange={(e) => handleInputChange('contactFormText', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Submit Button Text</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Submit Button Text</label>
               <input
                 type="text"
                 value={formData.submitButtonText}
                 onChange={(e) => handleInputChange('submitButtonText', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
               />
             </div>
           </div>
@@ -1395,14 +1395,14 @@ const CreateCompany: React.FC = () => {
       case 8: // Footer
         return (
           <div className="space-y-8">
-            <h3 className="text-2xl font-bold text-black mb-6">Footer Section</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">Footer Section</h3>
 
             {/* Logo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Footer Logo</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">Upload your footer logo</p>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Footer Logo</label>
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-6 text-center">
+                <Upload size={48} className="mx-auto text-ink-caption mb-4" />
+                <p className="text-ink-caption">Upload your footer logo</p>
 
                 {/* Loader & message UI */}
                 {footerLogoUploadLoading && (
@@ -1415,7 +1415,7 @@ const CreateCompany: React.FC = () => {
                   </div>
                 )}
                 {footerLogoUploadMessage && (
-                  <div className="text-green-600 font-semibold mt-2">{footerLogoUploadMessage}</div>
+                  <div className="text-status-success font-semibold mt-2">{footerLogoUploadMessage}</div>
                 )}
 
                 <input
@@ -1445,7 +1445,7 @@ const CreateCompany: React.FC = () => {
                   }}
                 />
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-black"
+                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
                   onClick={() => document.getElementById('footer-logo-input')?.click()}
                   type="button"
                 >
@@ -1465,56 +1465,56 @@ const CreateCompany: React.FC = () => {
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Footer Description</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Footer Description</label>
               <textarea
                 value={formData.footerDescription || ''}
                 onChange={e => handleInputChange('footerDescription', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Short company description for the footer..."
               />
             </div>
 
             {/* Footer Text */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Footer Text</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Footer Text</label>
               <input
                 type="text"
                 value={formData.footerText || ''}
                 onChange={e => handleInputChange('footerText', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
               />
             </div>
 
             {/* Contact Info */}
             <div className="grid md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Contact Email</label>
+                <label className="block text-xs text-ink-caption mb-1">Contact Email</label>
                 <input
                   type="email"
                   value={formData.footerEmail || ''}
                   onChange={e => handleInputChange('footerEmail', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   placeholder="info@dronetech.com"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Contact Phone</label>
+                <label className="block text-xs text-ink-caption mb-1">Contact Phone</label>
                 <input
                   type="text"
                   value={formData.footerPhone || ''}
                   onChange={e => handleInputChange('footerPhone', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   placeholder="+91 98765 43210"
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Contact Address</label>
+                <label className="block text-xs text-ink-caption mb-1">Contact Address</label>
                 <input
                   type="text"
                   value={formData.footerAddress || ''}
                   onChange={e => handleInputChange('footerAddress', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   placeholder="Bangalore, Karnataka"
                 />
               </div>
@@ -1522,7 +1522,7 @@ const CreateCompany: React.FC = () => {
 
             {/* Footer Navigation Links */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Footer Navigation Links</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Footer Navigation Links</label>
               <div className="space-y-2">
                 {formData.footerNavLinks?.map((item, idx) => (
                   <div className="flex gap-2" key={idx}>
@@ -1531,19 +1531,19 @@ const CreateCompany: React.FC = () => {
                       value={item.label}
                       onChange={e => updateArrayItem('footerNavLinks', idx, { ...item, label: e.target.value })}
                       placeholder="Label"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md"
+                      className="flex-1 px-3 py-2 border border-ink-light rounded-md"
                     />
                     <input
                       type="text"
                       value={item.link}
                       onChange={e => updateArrayItem('footerNavLinks', idx, { ...item, link: e.target.value })}
                       placeholder="#section"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md"
+                      className="flex-1 px-3 py-2 border border-ink-light rounded-md"
                     />
                     <button
                       type="button"
                       onClick={() => removeArrayItem('footerNavLinks', idx)}
-                      className="text-red-500 font-bold"
+                      className="text-status-error font-bold"
                     >
                       X
                     </button>
@@ -1561,75 +1561,75 @@ const CreateCompany: React.FC = () => {
 
             {/* Social Links */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Social Links</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Social Links</label>
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Facebook</label>
+                  <label className="block text-xs text-ink-caption mb-1">Facebook</label>
                   <input
                     type="url"
                     value={formData.socialLinks.facebook || ''}
                     onChange={e => handleNestedInputChange('socialLinks', 'facebook', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md"
                     placeholder="https://facebook.com/..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Twitter</label>
+                  <label className="block text-xs text-ink-caption mb-1">Twitter</label>
                   <input
                     type="url"
                     value={formData.socialLinks.twitter || ''}
                     onChange={e => handleNestedInputChange('socialLinks', 'twitter', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md"
                     placeholder="https://twitter.com/..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Instagram</label>
+                  <label className="block text-xs text-ink-caption mb-1">Instagram</label>
                   <input
                     type="url"
                     value={formData.socialLinks.instagram || ''}
                     onChange={e => handleNestedInputChange('socialLinks', 'instagram', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md"
                     placeholder="https://instagram.com/..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">LinkedIn</label>
+                  <label className="block text-xs text-ink-caption mb-1">LinkedIn</label>
                   <input
                     type="url"
                     value={formData.socialLinks.linkedin || ''}
                     onChange={e => handleNestedInputChange('socialLinks', 'linkedin', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md"
                     placeholder="https://linkedin.com/company/..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">YouTube</label>
+                  <label className="block text-xs text-ink-caption mb-1">YouTube</label>
                   <input
                     type="url"
                     value={formData.socialLinks.youtube || ''}
                     onChange={e => handleNestedInputChange('socialLinks', 'youtube', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md"
                     placeholder="https://youtube.com/..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Website</label>
+                  <label className="block text-xs text-ink-caption mb-1">Website</label>
                   <input
                     type="url"
                     value={formData.socialLinks.website || ''}
                     onChange={e => handleNestedInputChange('socialLinks', 'website', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md"
                     placeholder="https://yourcompany.com"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">WhatsApp</label>
+                  <label className="block text-xs text-ink-caption mb-1">WhatsApp</label>
                   <input
                     type="url"
                     value={formData.socialLinks.whatsapp || ''}
                     onChange={e => handleNestedInputChange('socialLinks', 'whatsapp', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md"
                     placeholder="https://wa.me/..."
                   />
                 </div>
@@ -1643,21 +1643,21 @@ const CreateCompany: React.FC = () => {
                 checked={!!formData.newsletterEnabled}
                 onChange={e => handleInputChange('newsletterEnabled', e.target.checked)}
                 id="newsletterEnabled"
-                className="w-5 h-5 border-gray-400 rounded focus:ring-2 focus:ring-[#FF0000]"
+                className="w-5 h-5 border-ink-caption rounded focus:ring-2 focus:ring-[#FF0000]"
               />
-              <label htmlFor="newsletterEnabled" className="text-gray-700 text-sm font-medium">
+              <label htmlFor="newsletterEnabled" className="text-ink-paragraph text-sm font-medium">
                 Enable Newsletter Signup in Footer
               </label>
             </div>
 
             {formData.newsletterEnabled && (
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Newsletter Description</label>
+                <label className="block text-xs text-ink-caption mb-1">Newsletter Description</label>
                 <input
                   type="text"
                   value={formData.newsletterDescription || ''}
                   onChange={e => handleInputChange('newsletterDescription', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md"
                   placeholder="Subscribe to our newsletter for the latest drone technology updates."
                 />
               </div>
@@ -1673,9 +1673,9 @@ const CreateCompany: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-ink-offwhite">
       {/* Header */}
-      <header className="bg-black text-white py-6">
+      <header className="bg-ink text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
@@ -1689,17 +1689,17 @@ const CreateCompany: React.FC = () => {
       </header>
 
       {/* Progress Bar */}
-      <div className="bg-white border-b">
+      <div className="bg-surface-card border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-600">
+            <span className="text-sm font-medium text-ink-paragraph">
               Step {currentStep} of {steps.length}
             </span>
-            <span className="text-sm font-medium text-gray-600">
+            <span className="text-sm font-medium text-ink-paragraph">
               {Math.round((currentStep / steps.length) * 100)}% Complete
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-ink-light rounded-full h-2">
             <div
               className="bg-[#FF0000] h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / steps.length) * 100}%` }}
@@ -1713,7 +1713,7 @@ const CreateCompany: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Step Navigation */}
-            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
+            <div className="bg-surface-card rounded-lg p-6 mb-8 shadow-sm">
               <div className="flex flex-wrap gap-2 mb-6">
                 {steps.map((step, index) => (
                   <button
@@ -1722,8 +1722,8 @@ const CreateCompany: React.FC = () => {
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${currentStep === index + 1
                       ? 'bg-[#FF0000] text-white'
                       : currentStep > index + 1
-                        ? 'bg-[#FFD400] text-black'
-                        : 'bg-gray-200 text-gray-600'
+                        ? 'bg-[#FFD400] text-ink'
+                        : 'bg-ink-light text-ink-paragraph'
                       }`}
                   >
                     {step}
@@ -1733,7 +1733,7 @@ const CreateCompany: React.FC = () => {
             </div>
 
             {/* Form Content */}
-            <div className="bg-white rounded-lg p-8 shadow-sm">
+            <div className="bg-surface-card rounded-lg p-8 shadow-sm">
               {renderStepContent()}
             </div>
 
@@ -1742,7 +1742,7 @@ const CreateCompany: React.FC = () => {
               <button
                 onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
                 disabled={currentStep === 1}
-                className="flex items-center gap-2 px-6 py-3 bg-gray-200 text-gray-600 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-ink-light text-ink-paragraph rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-ink-light transition-colors"
               >
                 <ArrowLeft size={20} />
                 Previous
@@ -1771,7 +1771,7 @@ const CreateCompany: React.FC = () => {
               ) : (
                 <button
                   onClick={handleSubmit}
-                  className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-black rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
+                  className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-ink rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
                 >
                   <Save size={20} />
                   Create Company Page

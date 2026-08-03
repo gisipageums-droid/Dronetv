@@ -82,13 +82,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   }, [imagePaths.length]);
 
   return (
-    <section id="home" className="min-h-screen bg-white dark:bg-gray-900 flex items-center pt-20">
+    <section id="home" className="min-h-screen bg-surface-card dark:bg-gray-900 flex items-center pt-20">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Section */}
           <div className="space-y-8">
             <h1 
-              className="text-5xl lg:text-7xl font-bold text-black dark:text-white leading-tight"
+              className="text-5xl lg:text-7xl font-bold text-ink dark:text-white leading-tight"
               data-aos="fade-right"
             >
               Hello, I'm <br />
@@ -99,7 +99,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             </h1>
 
             <div 
-              className="text-2xl lg:text-3xl font-medium text-black dark:text-white" 
+              className="text-2xl lg:text-3xl font-medium text-ink dark:text-white" 
               data-aos="fade-right" 
               data-aos-delay="600"
             >
@@ -107,7 +107,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
             
             <p 
-              className="text-lg text-gray-600 dark:text-gray-400 max-w-lg leading-relaxed" 
+              className="text-lg text-ink-paragraph dark:text-gray-400 max-w-lg leading-relaxed" 
               data-aos="fade-right" 
               data-aos-delay="900"
             >
@@ -135,7 +135,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               {button2Text && (
                 <a
                   href={button2Link}
-                  className="group relative overflow-hidden border-2 border-gray-800 dark:border-gray-200 text-gray-800 dark:text-gray-200 px-6 py-3 rounded-full font-bold transition-all duration-300 transform hover:scale-105"
+                  className="group relative overflow-hidden border-2 border-ink-charcoal dark:border-gray-200 text-ink-charcoal dark:text-gray-200 px-6 py-3 rounded-full font-bold transition-all duration-300 transform hover:scale-105"
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     <Download size={18} /> {button2Text}

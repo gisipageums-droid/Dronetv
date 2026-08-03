@@ -40,14 +40,14 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
   return (
    <nav className={`fixed top-[60px] left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? 'bg-black/95 backdrop-blur-md shadow-2xl py-3' 
+        ? 'bg-ink/95 backdrop-blur-md shadow-2xl py-3' 
         : 'bg-transparent py-6'
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="text-2xl font-bold">
-            <span className={isScrolled ? 'text-[#FFD400]' : 'text-black dark:text-white'}>
+            <span className={isScrolled ? 'text-[#FFD400]' : 'text-ink dark:text-white'}>
               Drone
             </span>
             <span className="text-[#FF0000]">TV</span>
@@ -62,7 +62,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
                 className={`relative font-medium transition-all duration-300 group ${
                   isScrolled 
                     ? 'text-white hover:text-[#FFD400]' 
-                    : 'text-black dark:text-white hover:text-[#FF0000]'
+                    : 'text-ink dark:text-white hover:text-[#FF0000]'
                 }`}
               >
                 {item.name}
@@ -82,7 +82,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
               className={`p-2 rounded-full transition-colors ${
                 isScrolled 
                   ? 'text-white hover:bg-white/10' 
-                  : 'text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
+                  : 'text-ink dark:text-white hover:bg-ink-light dark:hover:bg-gray-700'
               }`}
             >
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -92,7 +92,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`lg:hidden p-2 ${
-                isScrolled ? 'text-white' : 'text-black dark:text-white'
+                isScrolled ? 'text-white' : 'text-ink dark:text-white'
               }`}
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -102,7 +102,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 py-4 bg-black/95 backdrop-blur-md rounded-lg">
+          <div className="lg:hidden mt-4 py-4 bg-ink/95 backdrop-blur-md rounded-lg">
             {navItems.map((item) => (
               <button
                 key={item.name}

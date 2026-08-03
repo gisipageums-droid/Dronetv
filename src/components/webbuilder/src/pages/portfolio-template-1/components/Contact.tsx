@@ -30,48 +30,48 @@
 //   };
 
 //   return (
-//     <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-800">
+//     <section id="contact" className="py-20 bg-ink-offwhite dark:bg-gray-800">
 //       <div className="container mx-auto px-4">
 //         <div className="text-center mb-16">
-//           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4">
+//           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
 //             Get In <span className="text-[#FF0000]">Touch</span>
 //           </h2>
 //           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-//           <p data-aos="fade-up" data-aos-delay="400" className="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+//           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph dark:text-gray-300 max-w-2xl mx-auto">
 //             Connect with me for drone training, aerospace education, or research collaboration. I'm currently based in Hyderabad and actively mentoring drone pilots across India.
 //           </p>
 //         </div>
 
 //         <div className="grid lg:grid-cols-2 gap-16">
 //           <div data-aos="fade-right">
-//             <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
-//               <h3 className="text-2xl font-bold text-black dark:text-white mb-6">Send me a message</h3>
+//             <div className="bg-surface-card dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
+//               <h3 className="text-2xl font-bold text-ink dark:text-white mb-6">Send me a message</h3>
 //               {isSubmitted && (
-//                 <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 rounded-lg p-4 mb-6 flex items-center gap-3">
-//                   <CheckCircle className="text-green-600 dark:text-green-400" size={20} />
-//                   <span className="text-green-800 dark:text-green-200">Message sent successfully! I'll get back to you soon.</span>
+//                 <div className="bg-status-success/15 dark:bg-green-900 border border-status-success dark:border-green-600 rounded-lg p-4 mb-6 flex items-center gap-3">
+//                   <CheckCircle className="text-status-success dark:text-green-400" size={20} />
+//                   <span className="text-status-success dark:text-green-200">Message sent successfully! I'll get back to you soon.</span>
 //                 </div>
 //               )}
 //               <form onSubmit={handleSubmit} className="space-y-6">
 //                 <div className="grid md:grid-cols-2 gap-6">
 //                   <div className="group">
-//                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name *</label>
-//                     <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-black dark:text-white" placeholder="Your name" />
+//                     <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Name *</label>
+//                     <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-ink dark:text-white" placeholder="Your name" />
 //                   </div>
 //                   <div className="group">
-//                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email *</label>
-//                     <input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-black dark:text-white" placeholder="your@email.com" />
+//                     <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Email *</label>
+//                     <input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-ink dark:text-white" placeholder="your@email.com" />
 //                   </div>
 //                 </div>
 //                 <div className="group">
-//                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject *</label>
-//                   <input type="text" name="subject" value={formData.subject} onChange={handleInputChange} required className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-black dark:text-white" placeholder="Training inquiry / Partnership" />
+//                   <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Subject *</label>
+//                   <input type="text" name="subject" value={formData.subject} onChange={handleInputChange} required className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-ink dark:text-white" placeholder="Training inquiry / Partnership" />
 //                 </div>
 //                 <div className="group">
-//                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message *</label>
-//                   <textarea name="message" value={formData.message} onChange={handleInputChange} required rows={6} className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-black dark:text-white resize-none" placeholder="Tell me how I can help you..." />
+//                   <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Message *</label>
+//                   <textarea name="message" value={formData.message} onChange={handleInputChange} required rows={6} className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-ink dark:text-white resize-none" placeholder="Tell me how I can help you..." />
 //                 </div>
-//                 <button type="submit" disabled={isSubmitting} className="w-full bg-[#FF0000] hover:bg-[#FF0000]/90 disabled:bg-gray-400 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 disabled:transform-none">
+//                 <button type="submit" disabled={isSubmitting} className="w-full bg-[#FF0000] hover:bg-[#FF0000]/90 disabled:bg-ink-caption text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 disabled:transform-none">
 //                   {isSubmitting ? (<><div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> Sending...</>) : (<><Send size={20} />Send Message</>)}
 //                 </button>
 //               </form>
@@ -80,17 +80,17 @@
 
 //           <div data-aos="fade-left">
 //             <div className="space-y-8">
-//               <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
-//                 <h3 className="text-2xl font-bold text-black dark:text-white mb-6">Contact Information</h3>
+//               <div className="bg-surface-card dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
+//                 <h3 className="text-2xl font-bold text-ink dark:text-white mb-6">Contact Information</h3>
 //                 <div className="space-y-6">
 //                   <div className="flex items-center gap-4">
 //                     <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center">
 //                       <Mail size={20} className="text-white" />
 //                     </div>
 //                     <div>
-//                       <h4 className="font-semibold text-black dark:text-white">Primary Email</h4>
-//                       <p className="text-gray-600 dark:text-gray-400">sumit@indiadroneacademy.com</p>
-//                       <p className="text-gray-600 dark:text-gray-400">sumitkrishnan99@gmail.com</p>
+//                       <h4 className="font-semibold text-ink dark:text-white">Primary Email</h4>
+//                       <p className="text-ink-paragraph dark:text-gray-400">sumit@indiadroneacademy.com</p>
+//                       <p className="text-ink-paragraph dark:text-gray-400">sumitkrishnan99@gmail.com</p>
 //                     </div>
 //                   </div>
 //                   <div className="flex items-center gap-4">
@@ -98,8 +98,8 @@
 //                       <Phone size={20} className="text-white" />
 //                     </div>
 //                     <div>
-//                       <h4 className="font-semibold text-black dark:text-white">Phone</h4>
-//                       <p className="text-gray-600 dark:text-gray-400">+91-9580120509</p>
+//                       <h4 className="font-semibold text-ink dark:text-white">Phone</h4>
+//                       <p className="text-ink-paragraph dark:text-gray-400">+91-9580120509</p>
 //                     </div>
 //                   </div>
 //                   <div className="flex items-center gap-4">
@@ -107,23 +107,23 @@
 //                       <MapPin size={20} className="text-white" />
 //                     </div>
 //                     <div>
-//                       <h4 className="font-semibold text-black dark:text-white">Location</h4>
-//                       <p className="text-gray-600 dark:text-gray-400">Hyderabad & Lucknow, India</p>
+//                       <h4 className="font-semibold text-ink dark:text-white">Location</h4>
+//                       <p className="text-ink-paragraph dark:text-gray-400">Hyderabad & Lucknow, India</p>
 //                     </div>
 //                   </div>
 //                 </div>
 //               </div>
 //               <div className="bg-[#FFD400] rounded-2xl p-8">
-//                 <h3 className="text-2xl font-bold text-black mb-4">Available for Training & Collaborations</h3>
-//                 <p className="text-black/80 mb-6">I’m actively involved in drone pilot training, curriculum development, and UAV-based research. Feel free to connect for academic sessions, workshops, or institutional partnerships.</p>
+//                 <h3 className="text-2xl font-bold text-ink mb-4">Available for Training & Collaborations</h3>
+//                 <p className="text-ink/80 mb-6">I’m actively involved in drone pilot training, curriculum development, and UAV-based research. Feel free to connect for academic sessions, workshops, or institutional partnerships.</p>
 //                 <div className="grid grid-cols-2 gap-4 text-sm">
 //                   <div>
-//                     <strong className="text-black">Response Time:</strong>
-//                     <p className="text-black/70">Within 24–48 hours</p>
+//                     <strong className="text-ink">Response Time:</strong>
+//                     <p className="text-ink/70">Within 24–48 hours</p>
 //                   </div>
 //                   <div>
-//                     <strong className="text-black">Session Availability:</strong>
-//                     <p className="text-black/70">Slots open this month</p>
+//                     <strong className="text-ink">Session Availability:</strong>
+//                     <p className="text-ink/70">Slots open this month</p>
 //                   </div>
 //                 </div>
 //               </div>
@@ -193,10 +193,10 @@ const Contact: React.FC<ContactProps> = ({
   };
 
   return (
-    <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-800">
+    <section id="contact" className="py-20 bg-ink-offwhite dark:bg-gray-800">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
             Get In <span style={{ color: accentColor }}>Touch</span>
           </h2>
           <div 
@@ -205,72 +205,72 @@ const Contact: React.FC<ContactProps> = ({
             className="w-24 h-1 mx-auto mb-6"
             style={{ backgroundColor: primaryColor }}
           ></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph dark:text-gray-300 max-w-2xl mx-auto">
             {contactMessage}
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-16">
           <div data-aos="fade-right">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold text-black dark:text-white mb-6">Send me a message</h3>
+            <div className="bg-surface-card dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
+              <h3 className="text-2xl font-bold text-ink dark:text-white mb-6">Send me a message</h3>
               {isSubmitted && (
-                <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 rounded-lg p-4 mb-6 flex items-center gap-3">
-                  <CheckCircle className="text-green-600 dark:text-green-400" size={20} />
-                  <span className="text-green-800 dark:text-green-200">Message sent successfully! I'll get back to you soon.</span>
+                <div className="bg-status-success/15 dark:bg-green-900 border border-status-success dark:border-green-600 rounded-lg p-4 mb-6 flex items-center gap-3">
+                  <CheckCircle className="text-status-success dark:text-green-400" size={20} />
+                  <span className="text-status-success dark:text-green-200">Message sent successfully! I'll get back to you soon.</span>
                 </div>
               )}
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="group">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Name *</label>
+                    <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Name *</label>
                     <input 
                       type="text" 
                       name="name" 
                       value={formData.name} 
                       onChange={handleInputChange} 
                       required 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-300 text-black dark:text-white" 
+                      className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-300 text-ink dark:text-white" 
                       // style={{ focusRingColor: accentColor }}
                       placeholder="Your name" 
                     />
                   </div>
                   <div className="group">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email *</label>
+                    <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Email *</label>
                     <input 
                       type="email" 
                       name="email" 
                       value={formData.email} 
                       onChange={handleInputChange} 
                       required 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-300 text-black dark:text-white" 
+                      className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-300 text-ink dark:text-white" 
                       // style={{ focusRingColor: accentColor }}
                       placeholder="your@email.com" 
                     />
                   </div>
                 </div>
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject *</label>
+                  <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Subject *</label>
                   <input 
                     type="text" 
                     name="subject" 
                     value={formData.subject} 
                     onChange={handleInputChange} 
                     required 
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-300 text-black dark:text-white" 
+                    className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-300 text-ink dark:text-white" 
                     // style={{ focusRingColor: accentColor }}
                     placeholder="Training inquiry / Partnership" 
                   />
                 </div>
                 <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message *</label>
+                  <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Message *</label>
                   <textarea 
                     name="message" 
                     value={formData.message} 
                     onChange={handleInputChange} 
                     required 
                     rows={6} 
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-300 text-black dark:text-white resize-none" 
+                    className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:border-transparent transition-all duration-300 text-ink dark:text-white resize-none" 
                     // style={{ focusRingColor: accentColor }}
                     placeholder="Tell me how I can help you..." 
                   />
@@ -303,8 +303,8 @@ const Contact: React.FC<ContactProps> = ({
 
           <div data-aos="fade-left">
             <div className="space-y-8">
-              <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
-                <h3 className="text-2xl font-bold text-black dark:text-white mb-6">Contact Information</h3>
+              <div className="bg-surface-card dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
+                <h3 className="text-2xl font-bold text-ink dark:text-white mb-6">Contact Information</h3>
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
                     <div 
@@ -314,8 +314,8 @@ const Contact: React.FC<ContactProps> = ({
                       <Mail size={20} className="text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-black dark:text-white">Primary Email</h4>
-                      <p className="text-gray-600 dark:text-gray-400">{email}</p>
+                      <h4 className="font-semibold text-ink dark:text-white">Primary Email</h4>
+                      <p className="text-ink-paragraph dark:text-gray-400">{email}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -326,14 +326,14 @@ const Contact: React.FC<ContactProps> = ({
                       <Phone size={20} className="text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-black dark:text-white">Phone</h4>
-                      <p className="text-gray-600 dark:text-gray-400">{phone}</p>
+                      <h4 className="font-semibold text-ink dark:text-white">Phone</h4>
+                      <p className="text-ink-paragraph dark:text-gray-400">{phone}</p>
                       {socialLinks.whatsapp && (
                         <a 
                           href={socialLinks.whatsapp} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-500 hover:underline"
+                          className="text-sm text-status-info hover:underline"
                         >
                           Message on WhatsApp
                         </a>
@@ -348,8 +348,8 @@ const Contact: React.FC<ContactProps> = ({
                       <MapPin size={20} className="text-white" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-black dark:text-white">Location</h4>
-                      <p className="text-gray-600 dark:text-gray-400">{location}</p>
+                      <h4 className="font-semibold text-ink dark:text-white">Location</h4>
+                      <p className="text-ink-paragraph dark:text-gray-400">{location}</p>
                     </div>
                   </div>
                 </div>
@@ -358,16 +358,16 @@ const Contact: React.FC<ContactProps> = ({
                 className="rounded-2xl p-8"
                 style={{ backgroundColor: primaryColor }}
               >
-                <h3 className="text-2xl font-bold text-black mb-4">Available for Collaborations</h3>
-                <p className="text-black/80 mb-6">We're actively involved in drone technology, GIS solutions, and AI integration. Connect with us for partnerships, training programs, or media collaborations.</p>
+                <h3 className="text-2xl font-bold text-ink mb-4">Available for Collaborations</h3>
+                <p className="text-ink/80 mb-6">We're actively involved in drone technology, GIS solutions, and AI integration. Connect with us for partnerships, training programs, or media collaborations.</p>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <strong className="text-black">Response Time:</strong>
-                    <p className="text-black/70">Within 24–48 hours</p>
+                    <strong className="text-ink">Response Time:</strong>
+                    <p className="text-ink/70">Within 24–48 hours</p>
                   </div>
                   <div>
-                    <strong className="text-black">Availability:</strong>
-                    <p className="text-black/70">Global projects</p>
+                    <strong className="text-ink">Availability:</strong>
+                    <p className="text-ink/70">Global projects</p>
                   </div>
                 </div>
                 {socialLinks && (
@@ -377,7 +377,7 @@ const Contact: React.FC<ContactProps> = ({
                         href={socialLinks.linkedin} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-black hover:text-black/70 transition-colors"
+                        className="text-ink hover:text-ink/70 transition-colors"
                       >
                         <span className="sr-only">LinkedIn</span>
                         <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -390,7 +390,7 @@ const Contact: React.FC<ContactProps> = ({
                         href={socialLinks.instagram} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-black hover:text-black/70 transition-colors"
+                        className="text-ink hover:text-ink/70 transition-colors"
                       >
                         <span className="sr-only">Instagram</span>
                         <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

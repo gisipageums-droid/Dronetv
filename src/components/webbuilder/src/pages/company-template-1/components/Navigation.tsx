@@ -32,7 +32,7 @@ const Navigation: React.FC<NavigationProps> = ({ navigationLinks, companyLogo, c
 
   return (
     <nav className={`fixed top-[60px] left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-        ? 'bg-black/95 backdrop-blur-md shadow-lg py-3'
+        ? 'bg-ink/95 backdrop-blur-md shadow-lg py-3'
         : 'bg-transparent py-6'
       }`}>
       <div className="container mx-auto px-4">
@@ -43,7 +43,7 @@ const Navigation: React.FC<NavigationProps> = ({ navigationLinks, companyLogo, c
               <img
                 src={companyLogo}
                 alt="Company Logo"
-                className="h-8 w-8 object-contain rounded-full bg-white shadow"
+                className="h-8 w-8 object-contain rounded-full bg-surface-card shadow"
               />
             )}
             <span className={isScrolled ? 'text-[#FFD400]' : 'text-white'}>
@@ -85,7 +85,7 @@ const Navigation: React.FC<NavigationProps> = ({ navigationLinks, companyLogo, c
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 py-4 bg-black/95 backdrop-blur-md rounded-lg">
+          <div className="lg:hidden mt-4 py-4 bg-ink/95 backdrop-blur-md rounded-lg">
             {(navigationLinks || []).map((item) => (
               <button
                 key={item.label}

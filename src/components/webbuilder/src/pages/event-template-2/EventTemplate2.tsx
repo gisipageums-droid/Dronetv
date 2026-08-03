@@ -25,7 +25,7 @@ const EventTemplate2: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-black text-white">
+    <div className="bg-ink text-white">
       <Navigation />
       <HeroSection />
       <HighlightsSection />

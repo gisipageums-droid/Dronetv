@@ -45,7 +45,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold text-black dark:text-white">
+          <div className="text-2xl font-bold text-ink dark:text-white">
             Drone<span className="text-[#FF0000]">TV</span>
           </div>
 
@@ -55,7 +55,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="relative text-black dark:text-white hover:text-[#FF0000] transition-colors duration-300 font-medium group"
+                className="relative text-ink dark:text-white hover:text-[#FF0000] transition-colors duration-300 font-medium group"
               >
                 {item.name}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0000] transition-all duration-300 group-hover:w-full"></span>
@@ -67,7 +67,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
           <div className="flex items-center space-x-4">
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-full hover:bg-ink-light dark:hover:bg-gray-700 transition-colors"
             >
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
@@ -75,7 +75,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-black dark:text-white"
+              className="md:hidden p-2 text-ink dark:text-white"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -84,12 +84,12 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 py-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+          <div className="md:hidden mt-4 py-4 bg-surface-card dark:bg-gray-900 rounded-lg shadow-lg">
             {navItems.map((item) => (
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-4 py-2 text-black dark:text-white hover:text-[#FF0000] hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="block w-full text-left px-4 py-2 text-ink dark:text-white hover:text-[#FF0000] hover:bg-ink-light dark:hover:bg-gray-800 transition-colors"
               >
                 {item.name}
               </button>

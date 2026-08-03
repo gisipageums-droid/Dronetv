@@ -18,10 +18,10 @@ const EventPreview: React.FC = () => {
 
   if (!formData) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-surface-card flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#FF0000] mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your event page...</p>
+          <p className="text-ink-paragraph">Loading your event page...</p>
         </div>
       </div>
     );
@@ -30,9 +30,9 @@ const EventPreview: React.FC = () => {
   const isTemplate2 = templateId === '2';
 
   return (
-    <div className={`min-h-screen ${isTemplate2 ? 'bg-black text-white' : 'bg-white'}`}>
+    <div className={`min-h-screen ${isTemplate2 ? 'bg-ink text-white' : 'bg-surface-card'}`}>
       {/* Preview Header */}
-      <header className="bg-black text-white py-4 sticky top-0 z-50">
+      <header className="bg-ink text-white py-4 sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -51,7 +51,7 @@ const EventPreview: React.FC = () => {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => navigate('/create-event')}
-                className="flex items-center gap-2 bg-[#FFD400] text-black px-4 py-2 rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
+                className="flex items-center gap-2 bg-[#FFD400] text-ink px-4 py-2 rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
               >
                 <Edit size={16} />
                 Edit
@@ -68,14 +68,14 @@ const EventPreview: React.FC = () => {
       {/* Preview Content */}
       <main className="pt-8">
         <div className="container mx-auto px-4">
-          <div className={`${isTemplate2 ? 'bg-black' : 'bg-white'} rounded-lg shadow-lg overflow-hidden`}>
+          <div className={`${isTemplate2 ? 'bg-ink' : 'bg-surface-card'} rounded-lg shadow-lg overflow-hidden`}>
             {/* Hero Section Preview */}
-            <section className={`${isTemplate2 ? 'bg-black' : 'bg-[#FFD400]'} py-20 text-center relative`}>
+            <section className={`${isTemplate2 ? 'bg-ink' : 'bg-[#FFD400]'} py-20 text-center relative`}>
               <div className="container mx-auto px-4">
-                <h1 className={`text-6xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-black'} mb-4`}>
+                <h1 className={`text-6xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
                   {formData.eventName || 'Your Event Name'}
                 </h1>
-                <div className={`flex justify-center gap-6 mb-8 ${isTemplate2 ? 'text-white' : 'text-black'}`}>
+                <div className={`flex justify-center gap-6 mb-8 ${isTemplate2 ? 'text-white' : 'text-ink'}`}>
                   <div className="flex items-center gap-2">
                     <span>📅</span>
                     <span>{formData.eventDate || 'Event Date'}</span>
@@ -90,10 +90,10 @@ const EventPreview: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className={`${isTemplate2 ? 'bg-[#FFD400] text-black' : 'bg-[#FF0000] text-white'} px-8 py-4 rounded-full font-semibold`}>
+                  <button className={`${isTemplate2 ? 'bg-[#FFD400] text-ink' : 'bg-[#FF0000] text-white'} px-8 py-4 rounded-full font-semibold`}>
                     {formData.primaryCTA?.text || 'Register Now'}
                   </button>
-                  <button className={`${isTemplate2 ? 'bg-[#FF0000] text-white' : 'bg-black text-white'} px-8 py-4 rounded-full font-semibold`}>
+                  <button className={`${isTemplate2 ? 'bg-[#FF0000] text-white' : 'bg-ink text-white'} px-8 py-4 rounded-full font-semibold`}>
                     {formData.secondaryCTA?.text || 'View Agenda'}
                   </button>
                 </div>
@@ -101,16 +101,16 @@ const EventPreview: React.FC = () => {
             </section>
 
             {/* About Section Preview */}
-            <section className={`py-20 ${isTemplate2 ? 'bg-gray-900' : 'bg-white'}`}>
+            <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-surface-card'}`}>
               <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                  <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-black'} mb-4`}>
+                  <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
                     {formData.aboutTitle || 'About the Event'}
                   </h2>
                   <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#FFD400]' : 'bg-[#FFD400]'} mx-auto`}></div>
                 </div>
                 <div className="max-w-4xl mx-auto text-center">
-                  <p className={`${isTemplate2 ? 'text-gray-300' : 'text-gray-600'} text-lg leading-relaxed mb-8`}>
+                  <p className={`${isTemplate2 ? 'text-ink-light' : 'text-ink-paragraph'} text-lg leading-relaxed mb-8`}>
                     {formData.description || 'Your event description will appear here. Tell attendees what to expect and why they should join.'}
                   </p>
                   
@@ -118,11 +118,11 @@ const EventPreview: React.FC = () => {
                   {formData.objectives && formData.objectives.length > 0 && (
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                       {formData.objectives.map((objective: string, index: number) => (
-                        <div key={index} className={`${isTemplate2 ? 'bg-black' : 'bg-gray-50'} rounded-lg p-6`}>
+                        <div key={index} className={`${isTemplate2 ? 'bg-ink' : 'bg-ink-offwhite'} rounded-lg p-6`}>
                           <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
                             <span className="text-white font-bold">{index + 1}</span>
                           </div>
-                          <p className={`${isTemplate2 ? 'text-gray-300' : 'text-gray-600'}`}>{objective}</p>
+                          <p className={`${isTemplate2 ? 'text-ink-light' : 'text-ink-paragraph'}`}>{objective}</p>
                         </div>
                       ))}
                     </div>
@@ -133,24 +133,24 @@ const EventPreview: React.FC = () => {
 
             {/* Speakers Section Preview */}
             {formData.speakers && formData.speakers.length > 0 && (
-              <section className={`py-20 ${isTemplate2 ? 'bg-black' : 'bg-gray-50'}`}>
+              <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-ink-offwhite'}`}>
                 <div className="container mx-auto px-4">
                   <div className="text-center mb-16">
-                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-black'} mb-4`}>
+                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
                       Featured Speakers
                     </h2>
                     <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#FFD400]' : 'bg-[#FFD400]'} mx-auto`}></div>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {formData.speakers.map((speaker: any, index: number) => (
-                      <div key={index} className={`${isTemplate2 ? 'bg-gray-900' : 'bg-white'} rounded-lg overflow-hidden shadow-lg`}>
-                        <div className={`h-48 ${isTemplate2 ? 'bg-gray-800' : 'bg-gray-200'} flex items-center justify-center`}>
-                          <span className={`${isTemplate2 ? 'text-gray-500' : 'text-gray-500'}`}>Speaker Photo</span>
+                      <div key={index} className={`${isTemplate2 ? 'bg-ink' : 'bg-surface-card'} rounded-lg overflow-hidden shadow-lg`}>
+                        <div className={`h-48 ${isTemplate2 ? 'bg-ink-charcoal' : 'bg-ink-light'} flex items-center justify-center`}>
+                          <span className={`${isTemplate2 ? 'text-ink-caption' : 'text-ink-caption'}`}>Speaker Photo</span>
                         </div>
                         <div className="p-6">
-                          <h3 className={`text-xl font-bold ${isTemplate2 ? 'text-white' : 'text-black'} mb-2`}>{speaker.name}</h3>
+                          <h3 className={`text-xl font-bold ${isTemplate2 ? 'text-white' : 'text-ink'} mb-2`}>{speaker.name}</h3>
                           <p className={`text-[#FFD400] font-semibold mb-2`}>{speaker.role}</p>
-                          <p className={`text-sm ${isTemplate2 ? 'text-gray-400' : 'text-gray-600'}`}>{speaker.topic}</p>
+                          <p className={`text-sm ${isTemplate2 ? 'text-ink-caption' : 'text-ink-paragraph'}`}>{speaker.topic}</p>
                           {speaker.featured && (
                             <span className="inline-block bg-[#FF0000] text-white px-2 py-1 rounded text-xs font-semibold mt-2">
                               KEYNOTE
@@ -166,29 +166,29 @@ const EventPreview: React.FC = () => {
 
             {/* Agenda Section Preview */}
             {formData.agenda && formData.agenda.length > 0 && (
-              <section className={`py-20 ${isTemplate2 ? 'bg-gray-900' : 'bg-white'}`}>
+              <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-surface-card'}`}>
                 <div className="container mx-auto px-4">
                   <div className="text-center mb-16">
-                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-black'} mb-4`}>
+                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
                       Event Schedule
                     </h2>
                     <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#FFD400]' : 'bg-[#FFD400]'} mx-auto`}></div>
                   </div>
                   <div className="max-w-4xl mx-auto space-y-6">
                     {formData.agenda.map((session: any, index: number) => (
-                      <div key={index} className={`${isTemplate2 ? 'bg-black' : 'bg-gray-50'} rounded-lg p-6`}>
+                      <div key={index} className={`${isTemplate2 ? 'bg-ink' : 'bg-ink-offwhite'} rounded-lg p-6`}>
                         <div className="flex items-center gap-6">
                           <div className="text-2xl font-bold text-[#FF0000]">{session.time}</div>
                           <div className="flex-1">
-                            <h3 className={`text-xl font-bold ${isTemplate2 ? 'text-white' : 'text-black'} mb-2`}>{session.title}</h3>
-                            <div className={`flex gap-4 text-sm ${isTemplate2 ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <h3 className={`text-xl font-bold ${isTemplate2 ? 'text-white' : 'text-ink'} mb-2`}>{session.title}</h3>
+                            <div className={`flex gap-4 text-sm ${isTemplate2 ? 'text-ink-caption' : 'text-ink-paragraph'}`}>
                               <span>👤 {session.speaker}</span>
                               <span>📍 {session.location}</span>
                               <span>⏱️ {session.duration}</span>
                             </div>
                           </div>
                           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            session.type === 'keynote' ? 'bg-[#FF0000] text-white' : 'bg-[#FFD400] text-black'
+                            session.type === 'keynote' ? 'bg-[#FF0000] text-white' : 'bg-[#FFD400] text-ink'
                           }`}>
                             {session.type.toUpperCase()}
                           </span>
@@ -202,7 +202,7 @@ const EventPreview: React.FC = () => {
 
             {/* Highlights Section (Template 2 only) */}
             {isTemplate2 && formData.highlights && formData.highlights.length > 0 && (
-              <section className="py-20 bg-black">
+              <section className="py-20 bg-ink">
                 <div className="container mx-auto px-4">
                   <div className="text-center mb-16">
                     <h2 className="text-4xl font-bold text-[#FFD400] mb-4">
@@ -212,12 +212,12 @@ const EventPreview: React.FC = () => {
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {formData.highlights.map((highlight: any, index: number) => (
-                      <div key={index} className="bg-gray-900 rounded-lg p-6 text-center">
+                      <div key={index} className="bg-ink rounded-lg p-6 text-center">
                         <div className="w-16 h-16 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
                           <span className="text-white font-bold">{highlight.icon.charAt(0).toUpperCase()}</span>
                         </div>
                         <h3 className="text-xl font-bold text-[#FFD400] mb-3">{highlight.title}</h3>
-                        <p className="text-gray-400">{highlight.description}</p>
+                        <p className="text-ink-caption">{highlight.description}</p>
                       </div>
                     ))}
                   </div>
@@ -226,37 +226,37 @@ const EventPreview: React.FC = () => {
             )}
 
             {/* Contact Section Preview */}
-            <section className={`py-20 ${isTemplate2 ? 'bg-gray-900' : 'bg-gray-50'}`}>
+            <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-ink-offwhite'}`}>
               <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                  <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-black'} mb-4`}>
+                  <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
                     Register Now
                   </h2>
                   <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#FFD400]' : 'bg-[#FFD400]'} mx-auto mb-6`}></div>
-                  <p className={`${isTemplate2 ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto`}>
+                  <p className={`${isTemplate2 ? 'text-ink-light' : 'text-ink-paragraph'} max-w-2xl mx-auto`}>
                     {formData.contactFormMessage || 'Ready to join us? Register now or get in touch for more information.'}
                   </p>
                 </div>
                 
                 <div className="grid lg:grid-cols-2 gap-16">
-                  <div className={`${isTemplate2 ? 'bg-black' : 'bg-white'} rounded-lg p-8`}>
+                  <div className={`${isTemplate2 ? 'bg-ink' : 'bg-surface-card'} rounded-lg p-8`}>
                     <form className="space-y-6">
                       <div className="grid md:grid-cols-2 gap-6">
                         <input
                           type="text"
                           placeholder="Your Name"
-                          className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-gray-800 border-gray-700 text-white' : 'bg-gray-50 border-gray-300'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent`}
+                          className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-ink-offwhite border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent`}
                         />
                         <input
                           type="email"
                           placeholder="Your Email"
-                          className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-gray-800 border-gray-700 text-white' : 'bg-gray-50 border-gray-300'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent`}
+                          className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-ink-offwhite border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent`}
                         />
                       </div>
                       <textarea
                         rows={4}
                         placeholder="Message (Optional)"
-                        className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-gray-800 border-gray-700 text-white' : 'bg-gray-50 border-gray-300'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent resize-none`}
+                        className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-ink-offwhite border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent resize-none`}
                       />
                       <button
                         type="submit"
@@ -268,8 +268,8 @@ const EventPreview: React.FC = () => {
                   </div>
                   
                   <div className="space-y-6">
-                    <div className={`${isTemplate2 ? 'bg-gray-800' : 'bg-gray-200'} rounded-lg h-64 flex items-center justify-center`}>
-                      <span className={`${isTemplate2 ? 'text-gray-500' : 'text-gray-500'}`}>Map Placeholder</span>
+                    <div className={`${isTemplate2 ? 'bg-ink-charcoal' : 'bg-ink-light'} rounded-lg h-64 flex items-center justify-center`}>
+                      <span className={`${isTemplate2 ? 'text-ink-caption' : 'text-ink-caption'}`}>Map Placeholder</span>
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center gap-4">
@@ -277,8 +277,8 @@ const EventPreview: React.FC = () => {
                           <span className="text-white">@</span>
                         </div>
                         <div>
-                          <h4 className={`font-semibold ${isTemplate2 ? 'text-white' : 'text-black'}`}>Email</h4>
-                          <p className={`${isTemplate2 ? 'text-gray-400' : 'text-gray-600'}`}>{formData.email || 'your@email.com'}</p>
+                          <h4 className={`font-semibold ${isTemplate2 ? 'text-white' : 'text-ink'}`}>Email</h4>
+                          <p className={`${isTemplate2 ? 'text-ink-caption' : 'text-ink-paragraph'}`}>{formData.email || 'your@email.com'}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
@@ -286,8 +286,8 @@ const EventPreview: React.FC = () => {
                           <span className="text-white">📞</span>
                         </div>
                         <div>
-                          <h4 className={`font-semibold ${isTemplate2 ? 'text-white' : 'text-black'}`}>Phone</h4>
-                          <p className={`${isTemplate2 ? 'text-gray-400' : 'text-gray-600'}`}>{formData.phone || '+1 (555) 123-4567'}</p>
+                          <h4 className={`font-semibold ${isTemplate2 ? 'text-white' : 'text-ink'}`}>Phone</h4>
+                          <p className={`${isTemplate2 ? 'text-ink-caption' : 'text-ink-paragraph'}`}>{formData.phone || '+1 (555) 123-4567'}</p>
                         </div>
                       </div>
                     </div>
@@ -297,14 +297,14 @@ const EventPreview: React.FC = () => {
             </section>
 
             {/* Footer Preview */}
-            <footer className="bg-black text-white py-12">
+            <footer className="bg-ink text-white py-12">
               <div className="container mx-auto px-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold mb-4">
                     <span className="text-[#FFD400]">Your</span>
                     <span className="text-[#FF0000]">Event</span>
                   </div>
-                  <p className="text-gray-400 mb-6">
+                  <p className="text-ink-caption mb-6">
                     © 2025 {formData.eventName || 'Your Event'}. All rights reserved.
                   </p>
                   <div className="flex justify-center gap-4">

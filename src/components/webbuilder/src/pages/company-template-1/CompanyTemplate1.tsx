@@ -60,7 +60,7 @@ const CompanyTemplate1: React.FC = () => {
   // You can also log here, but logging in useEffect after fetch will catch API mapping errors early
 
   return (
-    <div className="bg-white">
+    <div className="bg-surface-card">
       <Navigation
         navigationLinks={company.navigationLinks}
         companyLogo={company.companyLogo}

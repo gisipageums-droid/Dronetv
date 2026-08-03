@@ -204,7 +204,7 @@ const CreateEvent: React.FC = () => {
       case 1: // Template Selection
         return (
           <div className="space-y-8">
-            <h3 className="text-3xl font-bold text-black mb-8 text-center">Choose Your Event Template</h3>
+            <h3 className="text-3xl font-bold text-ink mb-8 text-center">Choose Your Event Template</h3>
             
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <div 
@@ -212,16 +212,16 @@ const CreateEvent: React.FC = () => {
                 className={`cursor-pointer rounded-2xl overflow-hidden border-4 transition-all duration-300 ${
                   formData.selectedTemplate === '1' 
                     ? 'border-[#FF0000] shadow-2xl transform scale-105' 
-                    : 'border-gray-200 hover:border-[#FFD400]'
+                    : 'border-ink-light hover:border-[#FFD400]'
                 }`}
               >
-                <div className="bg-white p-6">
-                  <div className="h-48 bg-gradient-to-br from-white to-gray-100 rounded-lg mb-4 flex items-center justify-center border">
-                    <span className="text-2xl font-bold text-black">Template 1</span>
+                <div className="bg-surface-card p-6">
+                  <div className="h-48 bg-gradient-to-br from-white to-ink-light rounded-lg mb-4 flex items-center justify-center border">
+                    <span className="text-2xl font-bold text-ink">Template 1</span>
                   </div>
-                  <h4 className="text-xl font-bold text-black mb-2">Professional Conference</h4>
-                  <p className="text-gray-600 mb-4">Clean, professional design perfect for conferences, summits, and corporate events</p>
-                  <div className="space-y-2 text-sm text-gray-500">
+                  <h4 className="text-xl font-bold text-ink mb-2">Professional Conference</h4>
+                  <p className="text-ink-paragraph mb-4">Clean, professional design perfect for conferences, summits, and corporate events</p>
+                  <div className="space-y-2 text-sm text-ink-caption">
                     <div>• Hero with countdown timer</div>
                     <div>• Speaker carousel</div>
                     <div>• Timeline agenda</div>
@@ -235,16 +235,16 @@ const CreateEvent: React.FC = () => {
                 className={`cursor-pointer rounded-2xl overflow-hidden border-4 transition-all duration-300 ${
                   formData.selectedTemplate === '2' 
                     ? 'border-[#FF0000] shadow-2xl transform scale-105' 
-                    : 'border-gray-200 hover:border-[#FFD400]'
+                    : 'border-ink-light hover:border-[#FFD400]'
                 }`}
               >
-                <div className="bg-white p-6">
-                  <div className="h-48 bg-black rounded-lg mb-4 flex items-center justify-center">
+                <div className="bg-surface-card p-6">
+                  <div className="h-48 bg-ink rounded-lg mb-4 flex items-center justify-center">
                     <span className="text-2xl font-bold text-[#FFD400]">Template 2</span>
                   </div>
-                  <h4 className="text-xl font-bold text-black mb-2">Creative Expo Style</h4>
-                  <p className="text-gray-600 mb-4">Vibrant, animated design ideal for expos, fairs, and creative events</p>
-                  <div className="space-y-2 text-sm text-gray-500">
+                  <h4 className="text-xl font-bold text-ink mb-2">Creative Expo Style</h4>
+                  <p className="text-ink-paragraph mb-4">Vibrant, animated design ideal for expos, fairs, and creative events</p>
+                  <div className="space-y-2 text-sm text-ink-caption">
                     <div>• Animated hero section</div>
                     <div>• Event highlights cards</div>
                     <div>• Tabbed schedule</div>
@@ -259,40 +259,40 @@ const CreateEvent: React.FC = () => {
       case 2: // Event Header
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">Event Header & Hero Section</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">Event Header & Hero Section</h3>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Event Name</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Event Name</label>
               <input
                 type="text"
                 value={formData.eventName}
                 onChange={(e) => handleInputChange('eventName', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Drone Innovation Summit 2025"
               />
             </div>
 
             <div className="grid md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Event Date</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Event Date</label>
                 <input
                   type="date"
                   value={formData.eventDate}
                   onChange={(e) => handleInputChange('eventDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Event Time</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Event Time</label>
                 <input
                   type="time"
                   value={formData.eventTime}
                   onChange={(e) => handleInputChange('eventTime', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">
                   <input
                     type="checkbox"
                     checked={formData.showCountdown}
@@ -305,72 +305,72 @@ const CreateEvent: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Venue</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Venue</label>
               <input
                 type="text"
                 value={formData.venue}
                 onChange={(e) => handleInputChange('venue', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Tech Convention Center, San Francisco"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Event Logo</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">Upload your event logo</p>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Event Logo</label>
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-6 text-center">
+                <Upload size={48} className="mx-auto text-ink-caption mb-4" />
+                <p className="text-ink-caption">Upload your event logo</p>
                 <input type="file" className="hidden" accept="image/*" />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Hero Background Image</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">Upload hero background image</p>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Hero Background Image</label>
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-6 text-center">
+                <Upload size={48} className="mx-auto text-ink-caption mb-4" />
+                <p className="text-ink-caption">Upload hero background image</p>
                 <input type="file" className="hidden" accept="image/*" />
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Primary CTA Text</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Primary CTA Text</label>
                 <input
                   type="text"
                   value={formData.primaryCTA.text}
                   onChange={(e) => handleNestedInputChange('primaryCTA', 'text', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Primary CTA Link</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Primary CTA Link</label>
                 <input
                   type="text"
                   value={formData.primaryCTA.link}
                   onChange={(e) => handleNestedInputChange('primaryCTA', 'link', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Secondary CTA Text</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Secondary CTA Text</label>
                 <input
                   type="text"
                   value={formData.secondaryCTA.text}
                   onChange={(e) => handleNestedInputChange('secondaryCTA', 'text', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Secondary CTA Link</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Secondary CTA Link</label>
                 <input
                   type="text"
                   value={formData.secondaryCTA.link}
                   onChange={(e) => handleNestedInputChange('secondaryCTA', 'link', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 />
               </div>
             </div>
@@ -380,43 +380,43 @@ const CreateEvent: React.FC = () => {
       case 3: // About Section
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">About Section</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">About Section</h3>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Section Title</label>
               <input
                 type="text"
                 value={formData.aboutTitle}
                 onChange={(e) => handleInputChange('aboutTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Event Description</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Event Description</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="Describe your event, its purpose, and what attendees can expect..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Video Embed URL (Optional)</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Video Embed URL (Optional)</label>
               <input
                 type="url"
                 value={formData.videoEmbedUrl}
                 onChange={(e) => handleInputChange('videoEmbedUrl', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="https://youtube.com/embed/..."
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">Key Objectives</label>
+                <label className="block text-sm font-medium text-ink-paragraph">Key Objectives</label>
                 <button
                   onClick={() => addArrayItem('objectives', '')}
                   className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
@@ -433,12 +433,12 @@ const CreateEvent: React.FC = () => {
                       type="text"
                       value={objective}
                       onChange={(e) => updateArrayItem('objectives', index, e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       placeholder="Event objective"
                     />
                     <button
                       onClick={() => removeArrayItem('objectives', index)}
-                      className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                      className="bg-status-error text-white px-3 py-2 rounded-md hover:bg-status-error"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -453,7 +453,7 @@ const CreateEvent: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">Speakers & Guests</h3>
+              <h3 className="text-2xl font-bold text-ink">Speakers & Guests</h3>
               <button
                 onClick={() => addArrayItem('speakers', { name: '', role: '', topic: '', photo: '', featured: false })}
                 className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
@@ -465,34 +465,34 @@ const CreateEvent: React.FC = () => {
 
             <div className="space-y-6">
               {formData.speakers.map((speaker, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-6 rounded-lg">
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Speaker Photo</label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                        <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                        <p className="text-gray-500 text-sm">Upload speaker photo</p>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Speaker Photo</label>
+                      <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
+                        <Upload size={32} className="mx-auto text-ink-caption mb-2" />
+                        <p className="text-ink-caption text-sm">Upload speaker photo</p>
                         <input type="file" className="hidden" accept="image/*" />
                       </div>
                     </div>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Name</label>
                         <input
                           type="text"
                           value={speaker.name}
                           onChange={(e) => updateArrayItem('speakers', index, { ...speaker, name: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Dr. Jane Smith"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Role & Company</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Role & Company</label>
                         <input
                           type="text"
                           value={speaker.role}
                           onChange={(e) => updateArrayItem('speakers', index, { ...speaker, role: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="CEO, TechCorp"
                         />
                       </div>
@@ -510,18 +510,18 @@ const CreateEvent: React.FC = () => {
                     </div>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Speaking Topic</label>
+                    <label className="block text-sm font-medium text-ink-paragraph mb-2">Speaking Topic</label>
                     <input
                       type="text"
                       value={speaker.topic}
                       onChange={(e) => updateArrayItem('speakers', index, { ...speaker, topic: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       placeholder="The Future of AI Technology"
                     />
                   </div>
                   <button
                     onClick={() => removeArrayItem('speakers', index)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-600"
+                    className="bg-status-error text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-status-error"
                   >
                     <Trash2 size={16} />
                     Remove Speaker
@@ -536,7 +536,7 @@ const CreateEvent: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">Event Agenda</h3>
+              <h3 className="text-2xl font-bold text-ink">Event Agenda</h3>
               <button
                 onClick={() => addArrayItem('agenda', { day: 1, time: '', title: '', speaker: '', location: '', type: 'session', duration: '1 hour' })}
                 className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
@@ -548,14 +548,14 @@ const CreateEvent: React.FC = () => {
 
             <div className="space-y-4">
               {formData.agenda.map((session, index) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-4 rounded-lg">
                   <div className="grid md:grid-cols-6 gap-4 items-end">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Day</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Day</label>
                       <select
                         value={session.day}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, day: parseInt(e.target.value) })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       >
                         <option value={1}>Day 1</option>
                         <option value={2}>Day 2</option>
@@ -563,58 +563,58 @@ const CreateEvent: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Time</label>
                       <input
                         type="time"
                         value={session.time}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, time: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Title</label>
                       <input
                         type="text"
                         value={session.title}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, title: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         placeholder="Session title"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Speaker</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Speaker</label>
                       <input
                         type="text"
                         value={session.speaker}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, speaker: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         placeholder="Speaker name"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Location</label>
                       <input
                         type="text"
                         value={session.location}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, location: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         placeholder="Room/Location"
                       />
                     </div>
                     <button
                       onClick={() => removeArrayItem('agenda', index)}
-                      className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
+                      className="bg-status-error text-white p-2 rounded-md hover:bg-status-error"
                     >
                       <Trash2 size={16} />
                     </button>
                   </div>
                   <div className="grid md:grid-cols-2 gap-4 mt-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Type</label>
                       <select
                         value={session.type}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, type: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       >
                         <option value="keynote">Keynote</option>
                         <option value="panel">Panel</option>
@@ -625,12 +625,12 @@ const CreateEvent: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Duration</label>
                       <input
                         type="text"
                         value={session.duration}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, duration: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         placeholder="1 hour"
                       />
                     </div>
@@ -645,8 +645,8 @@ const CreateEvent: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">Event Highlights</h3>
-              <div className="text-sm text-gray-500">
+              <h3 className="text-2xl font-bold text-ink">Event Highlights</h3>
+              <div className="text-sm text-ink-caption">
                 {formData.selectedTemplate === '2' ? 'Template 2 Feature' : 'Not used in Template 1'}
               </div>
               {formData.selectedTemplate === '2' && (
@@ -663,14 +663,14 @@ const CreateEvent: React.FC = () => {
             {formData.selectedTemplate === '2' ? (
               <div className="space-y-4">
                 {formData.highlights.map((highlight, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                  <div key={index} className="bg-ink-offwhite p-4 rounded-lg">
                     <div className="grid md:grid-cols-4 gap-4 items-end">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Icon</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Icon</label>
                         <select
                           value={highlight.icon}
                           onChange={(e) => updateArrayItem('highlights', index, { ...highlight, icon: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         >
                           <option value="zap">Zap</option>
                           <option value="trophy">Trophy</option>
@@ -680,28 +680,28 @@ const CreateEvent: React.FC = () => {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Title</label>
                         <input
                           type="text"
                           value={highlight.title}
                           onChange={(e) => updateArrayItem('highlights', index, { ...highlight, title: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Highlight title"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Description</label>
                         <textarea
                           value={highlight.description}
                           onChange={(e) => updateArrayItem('highlights', index, { ...highlight, description: e.target.value })}
                           rows={2}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Brief description"
                         />
                       </div>
                       <button
                         onClick={() => removeArrayItem('highlights', index)}
-                        className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
+                        className="bg-status-error text-white p-2 rounded-md hover:bg-status-error"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -710,7 +710,7 @@ const CreateEvent: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-ink-caption">
                 <p>Event Highlights are only available in Template 2 (Creative Expo Style)</p>
                 <p className="text-sm mt-2">This section will be skipped for Template 1</p>
               </div>
@@ -722,7 +722,7 @@ const CreateEvent: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">Sponsors & Partners</h3>
+              <h3 className="text-2xl font-bold text-ink">Sponsors & Partners</h3>
               <button
                 onClick={() => addArrayItem('sponsors', { name: '', logo: '', website: '', tier: 'silver' })}
                 className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
@@ -734,43 +734,43 @@ const CreateEvent: React.FC = () => {
 
             <div className="space-y-6">
               {formData.sponsors.map((sponsor, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-6 rounded-lg">
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Sponsor Logo</label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                        <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                        <p className="text-gray-500 text-sm">Upload sponsor logo</p>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Sponsor Logo</label>
+                      <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
+                        <Upload size={32} className="mx-auto text-ink-caption mb-2" />
+                        <p className="text-ink-caption text-sm">Upload sponsor logo</p>
                         <input type="file" className="hidden" accept="image/*" />
                       </div>
                     </div>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Company Name</label>
                         <input
                           type="text"
                           value={sponsor.name}
                           onChange={(e) => updateArrayItem('sponsors', index, { ...sponsor, name: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Company Name"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Website</label>
                         <input
                           type="url"
                           value={sponsor.website}
                           onChange={(e) => updateArrayItem('sponsors', index, { ...sponsor, website: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="https://company.com"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Sponsor Tier</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Sponsor Tier</label>
                         <select
                           value={sponsor.tier}
                           onChange={(e) => updateArrayItem('sponsors', index, { ...sponsor, tier: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         >
                           <option value="platinum">Platinum</option>
                           <option value="gold">Gold</option>
@@ -781,7 +781,7 @@ const CreateEvent: React.FC = () => {
                   </div>
                   <button
                     onClick={() => removeArrayItem('sponsors', index)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-600"
+                    className="bg-status-error text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-status-error"
                   >
                     <Trash2 size={16} />
                     Remove Sponsor
@@ -796,7 +796,7 @@ const CreateEvent: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black">Event Gallery</h3>
+              <h3 className="text-2xl font-bold text-ink">Event Gallery</h3>
               <button
                 onClick={() => addArrayItem('galleryItems', { type: 'image', src: '', title: '', category: 'Event' })}
                 className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
@@ -808,43 +808,43 @@ const CreateEvent: React.FC = () => {
 
             <div className="space-y-6">
               {formData.galleryItems.map((item, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                <div key={index} className="bg-ink-offwhite p-6 rounded-lg">
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Media File</label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                        <Upload size={32} className="mx-auto text-gray-400 mb-2" />
-                        <p className="text-gray-500 text-sm">Upload image or video</p>
+                      <label className="block text-sm font-medium text-ink-paragraph mb-2">Media File</label>
+                      <div className="border-2 border-dashed border-ink-light rounded-lg p-4 text-center">
+                        <Upload size={32} className="mx-auto text-ink-caption mb-2" />
+                        <p className="text-ink-caption text-sm">Upload image or video</p>
                         <input type="file" className="hidden" accept="image/*,video/*" />
                       </div>
                     </div>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Title</label>
                         <input
                           type="text"
                           value={item.title}
                           onChange={(e) => updateArrayItem('galleryItems', index, { ...item, title: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Media title"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Category</label>
                         <input
                           type="text"
                           value={item.category}
                           onChange={(e) => updateArrayItem('galleryItems', index, { ...item, category: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                           placeholder="Category"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                        <label className="block text-sm font-medium text-ink-paragraph mb-2">Type</label>
                         <select
                           value={item.type}
                           onChange={(e) => updateArrayItem('galleryItems', index, { ...item, type: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                         >
                           <option value="image">Image</option>
                           <option value="video">Video</option>
@@ -854,7 +854,7 @@ const CreateEvent: React.FC = () => {
                   </div>
                   <button
                     onClick={() => removeArrayItem('galleryItems', index)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-red-600"
+                    className="bg-status-error text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-status-error"
                   >
                     <Trash2 size={16} />
                     Remove Media
@@ -868,92 +868,92 @@ const CreateEvent: React.FC = () => {
       case 9: // Registration/Contact
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">Registration & Contact</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">Registration & Contact</h3>
             
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Contact Email</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   placeholder="info@event.com"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Contact Phone</label>
+                <label className="block text-sm font-medium text-ink-paragraph mb-2">Contact Phone</label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Google Maps Embed URL</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Google Maps Embed URL</label>
               <input
                 type="url"
                 value={formData.mapEmbedUrl}
                 onChange={(e) => handleInputChange('mapEmbedUrl', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                 placeholder="https://maps.google.com/embed?..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Contact Form Message</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Contact Form Message</label>
               <textarea
                 value={formData.contactFormMessage}
                 onChange={(e) => handleInputChange('contactFormMessage', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Social Media Links</label>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Social Media Links</label>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Facebook</label>
+                  <label className="block text-xs text-ink-caption mb-1">Facebook</label>
                   <input
                     type="url"
                     value={formData.socialLinks.facebook}
                     onChange={(e) => handleNestedInputChange('socialLinks', 'facebook', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                     placeholder="https://facebook.com/..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Twitter</label>
+                  <label className="block text-xs text-ink-caption mb-1">Twitter</label>
                   <input
                     type="url"
                     value={formData.socialLinks.twitter}
                     onChange={(e) => handleNestedInputChange('socialLinks', 'twitter', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                     placeholder="https://twitter.com/..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Instagram</label>
+                  <label className="block text-xs text-ink-caption mb-1">Instagram</label>
                   <input
                     type="url"
                     value={formData.socialLinks.instagram}
                     onChange={(e) => handleNestedInputChange('socialLinks', 'instagram', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                     placeholder="https://instagram.com/..."
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">LinkedIn</label>
+                  <label className="block text-xs text-ink-caption mb-1">LinkedIn</label>
                   <input
                     type="url"
                     value={formData.socialLinks.linkedin}
                     onChange={(e) => handleNestedInputChange('socialLinks', 'linkedin', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                     placeholder="https://linkedin.com/..."
                   />
                 </div>
@@ -965,20 +965,20 @@ const CreateEvent: React.FC = () => {
       case 10: // Footer
         return (
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-black mb-6">Footer Section</h3>
+            <h3 className="text-2xl font-bold text-ink mb-6">Footer Section</h3>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Footer Logo (Optional)</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <Upload size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-500">Upload footer logo or leave empty to use header logo</p>
+              <label className="block text-sm font-medium text-ink-paragraph mb-2">Footer Logo (Optional)</label>
+              <div className="border-2 border-dashed border-ink-light rounded-lg p-6 text-center">
+                <Upload size={48} className="mx-auto text-ink-caption mb-4" />
+                <p className="text-ink-caption">Upload footer logo or leave empty to use header logo</p>
                 <input type="file" className="hidden" accept="image/*" />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">Footer Navigation Links</label>
+                <label className="block text-sm font-medium text-ink-paragraph">Footer Navigation Links</label>
                 <button
                   onClick={() => addArrayItem('footerNavLinks', { label: '', link: '' })}
                   className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
@@ -995,19 +995,19 @@ const CreateEvent: React.FC = () => {
                       type="text"
                       value={link.label}
                       onChange={(e) => updateArrayItem('footerNavLinks', index, { ...link, label: e.target.value })}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       placeholder="Link label"
                     />
                     <input
                       type="text"
                       value={link.link}
                       onChange={(e) => updateArrayItem('footerNavLinks', index, { ...link, link: e.target.value })}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
                       placeholder="Link URL"
                     />
                     <button
                       onClick={() => removeArrayItem('footerNavLinks', index)}
-                      className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                      className="bg-status-error text-white px-3 py-2 rounded-md hover:bg-status-error"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -1024,9 +1024,9 @@ const CreateEvent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-ink-offwhite">
       {/* Header */}
-      <header className="bg-black text-white py-6">
+      <header className="bg-ink text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
@@ -1040,17 +1040,17 @@ const CreateEvent: React.FC = () => {
       </header>
 
       {/* Progress Bar */}
-      <div className="bg-white border-b">
+      <div className="bg-surface-card border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-600">
+            <span className="text-sm font-medium text-ink-paragraph">
               Step {currentStep} of {steps.length}
             </span>
-            <span className="text-sm font-medium text-gray-600">
+            <span className="text-sm font-medium text-ink-paragraph">
               {Math.round((currentStep / steps.length) * 100)}% Complete
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-ink-light rounded-full h-2">
             <div 
               className="bg-[#FF0000] h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / steps.length) * 100}%` }}
@@ -1064,7 +1064,7 @@ const CreateEvent: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Step Navigation */}
-            <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
+            <div className="bg-surface-card rounded-lg p-6 mb-8 shadow-sm">
               <div className="flex flex-wrap gap-2 mb-6">
                 {steps.map((step, index) => (
                   <button
@@ -1074,8 +1074,8 @@ const CreateEvent: React.FC = () => {
                       currentStep === index + 1
                         ? 'bg-[#FF0000] text-white'
                         : currentStep > index + 1
-                        ? 'bg-[#FFD400] text-black'
-                        : 'bg-gray-200 text-gray-600'
+                        ? 'bg-[#FFD400] text-ink'
+                        : 'bg-ink-light text-ink-paragraph'
                     }`}
                   >
                     {step}
@@ -1085,7 +1085,7 @@ const CreateEvent: React.FC = () => {
             </div>
 
             {/* Form Content */}
-            <div className="bg-white rounded-lg p-8 shadow-sm">
+            <div className="bg-surface-card rounded-lg p-8 shadow-sm">
               {renderStepContent()}
             </div>
 
@@ -1094,7 +1094,7 @@ const CreateEvent: React.FC = () => {
               <button
                 onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
                 disabled={currentStep === 1}
-                className="flex items-center gap-2 px-6 py-3 bg-gray-200 text-gray-600 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-ink-light text-ink-paragraph rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-ink-light transition-colors"
               >
                 <ArrowLeft size={20} />
                 Previous
@@ -1112,7 +1112,7 @@ const CreateEvent: React.FC = () => {
               ) : (
                 <button
                   onClick={handleSubmit}
-                  className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-black rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
+                  className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-ink rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
                 >
                   <Save size={20} />
                   Create Event Page

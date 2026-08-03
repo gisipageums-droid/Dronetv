@@ -55,7 +55,7 @@ const Navigation: React.FC = () => {
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
                 className={`relative font-medium transition-colors duration-300 group ${isScrolled
-                  ? 'text-black hover:text-[#FF0000]'
+                  ? 'text-ink hover:text-[#FF0000]'
                   : 'text-white hover:text-[#FFD400]'
                   }`}
               >
@@ -80,7 +80,7 @@ const Navigation: React.FC = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden p-2 ${isScrolled ? 'text-black' : 'text-white'}`}
+            className={`lg:hidden p-2 ${isScrolled ? 'text-ink' : 'text-white'}`}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -93,7 +93,7 @@ const Navigation: React.FC = () => {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-4 py-3 text-black hover:text-[#FF0000] hover:bg-gray-100 transition-colors"
+                className="block w-full text-left px-4 py-3 text-ink hover:text-[#FF0000] hover:bg-ink-light transition-colors"
               >
                 {item.name}
               </button>

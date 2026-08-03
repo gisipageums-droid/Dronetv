@@ -56,14 +56,14 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
   const testimonials = processTestimonials();
 
   return (
-    <section id="testimonials" className="py-20 bg-black">
+    <section id="testimonials" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-white mb-4">
             Client <span className="text-[#FFD400]">Testimonials</span>
           </h2>
           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FF0000] mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-400 max-w-2xl mx-auto">
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-caption max-w-2xl mx-auto">
             Don't just take my word for it. Here's what my clients say about working with me.
           </p>
         </div>
@@ -93,7 +93,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
             >
               {testimonials.map((testimonial) => (
                 <SwiperSlide key={testimonial.id}>
-                  <div className="relative bg-gray-900 rounded-3xl p-8 h-full shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 border border-[#FFD400]/20">
+                  <div className="relative bg-ink rounded-3xl p-8 h-full shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 border border-[#FFD400]/20">
                     {/* Quote Icon */}
                     <div className="absolute -top-4 left-8 w-8 h-8 bg-[#FF0000] rounded-full flex items-center justify-center">
                       <Quote size={16} className="text-white" />
@@ -107,12 +107,12 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
                     </div>
                     
                     {/* Testimonial Text */}
-                    <p className="text-gray-300 mb-8 italic leading-relaxed text-lg">
+                    <p className="text-ink-light mb-8 italic leading-relaxed text-lg">
                       "{testimonial.text}"
                     </p>
                     
                     {/* Client Info */}
-                    <div className="flex items-center gap-4 mt-auto pt-6 border-t border-gray-800">
+                    <div className="flex items-center gap-4 mt-auto pt-6 border-t border-ink-charcoal">
                       <div className="relative">
                         <img 
                           src={testimonial.image} 
@@ -133,7 +133,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
                           {testimonial.position}
                         </p>
                         {testimonial.company && (
-                          <p className="text-gray-400 text-xs">
+                          <p className="text-ink-caption text-xs">
                             {testimonial.company}
                           </p>
                         )}
@@ -146,24 +146,24 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-400">No testimonials available at the moment.</p>
+            <p className="text-ink-caption">No testimonials available at the moment.</p>
           </div>
         )}
 
         {/* Call to Action */}
         <div data-aos="fade-up" data-aos-delay="800" className="text-center mt-16">
           <div className="bg-gradient-to-r from-[#FFD400] to-[#FFD400]/80 rounded-3xl p-12 max-w-3xl mx-auto">
-            <h3 className="text-3xl font-bold text-black mb-4">
+            <h3 className="text-3xl font-bold text-ink mb-4">
               Ready to Create Something Amazing?
             </h3>
-            <p className="text-black/80 mb-8 text-lg">
+            <p className="text-ink/80 mb-8 text-lg">
               Join these satisfied clients and let's bring your vision to life with stunning aerial content.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
                 Start Your Project
               </button>
-              <button className="border-2 border-black text-black hover:bg-black hover:text-white px-8 py-4 rounded-full font-semibold transition-all duration-300">
+              <button className="border-2 border-ink text-ink hover:bg-ink-charcoal hover:text-white px-8 py-4 rounded-full font-semibold transition-all duration-300">
                 View Portfolio
               </button>
             </div>

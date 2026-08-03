@@ -65,7 +65,7 @@ const ClientsSection: React.FC = () => {
   ];
 
   return (
-    <section id="clients" className="py-20 bg-black">
+    <section id="clients" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         {/* Clients Section */}
         <div className="text-center mb-16">
@@ -73,7 +73,7 @@ const ClientsSection: React.FC = () => {
             Trusted by the <span className="text-white">Best</span>
           </h2>
           <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-300 text-lg">
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg">
             Leading organizations across defense, agriculture, and innovation trust our drone solutions.
           </p>
         </div>
@@ -95,8 +95,8 @@ const ClientsSection: React.FC = () => {
           >
             {clients.map((client, index) => (
               <SwiperSlide key={index}>
-                <div className="group flex flex-col items-center p-6 bg-gray-900/30 backdrop-blur-sm rounded-2xl border border-gray-800 hover:border-[#FFD400]/50 transition-all duration-300 transform hover:scale-105">
-                  <div className="w-16 h-16 bg-gray-800 rounded-full mb-4 overflow-hidden group-hover:ring-4 group-hover:ring-[#FFD400]/30 transition-all grayscale group-hover:grayscale-0">
+                <div className="group flex flex-col items-center p-6 bg-ink/30 backdrop-blur-sm rounded-2xl border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-300 transform hover:scale-105">
+                  <div className="w-16 h-16 bg-ink-charcoal rounded-full mb-4 overflow-hidden group-hover:ring-4 group-hover:ring-[#FFD400]/30 transition-all grayscale group-hover:grayscale-0">
                     <img 
                       src={client.logo} 
                       alt={client.name}
@@ -106,7 +106,7 @@ const ClientsSection: React.FC = () => {
                   <h3 className="text-sm font-semibold text-white text-center mb-1 group-hover:text-[#FFD400] transition-colors">
                     {client.name}
                   </h3>
-                  <p className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">
+                  <p className="text-xs text-ink-caption group-hover:text-ink-caption transition-colors">
                     {client.industry}
                   </p>
                 </div>
@@ -129,7 +129,7 @@ const ClientsSection: React.FC = () => {
               key={index}
               data-aos="fade-up" 
               data-aos-delay={index * 200}
-              className="group relative bg-gray-900/50 backdrop-blur-sm rounded-3xl p-8 border border-gray-800 hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
+              className="group relative bg-ink/50 backdrop-blur-sm rounded-3xl p-8 border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
             >
               {/* Quote Icon */}
               <div className="absolute -top-4 left-8 w-8 h-8 bg-[#FF0000] rounded-full flex items-center justify-center">
@@ -144,12 +144,12 @@ const ClientsSection: React.FC = () => {
               </div>
               
               {/* Testimonial Text */}
-              <p className="text-gray-300 mb-8 italic leading-relaxed text-lg group-hover:text-white transition-colors">
+              <p className="text-ink-light mb-8 italic leading-relaxed text-lg group-hover:text-white transition-colors">
                 "{testimonial.text}"
               </p>
               
               {/* Client Info */}
-              <div className="flex items-center gap-4 pt-6 border-t border-gray-800 group-hover:border-gray-700 transition-colors">
+              <div className="flex items-center gap-4 pt-6 border-t border-ink-charcoal group-hover:border-ink-paragraph transition-colors">
                 <img 
                   src={testimonial.image} 
                   alt={testimonial.name}
@@ -162,7 +162,7 @@ const ClientsSection: React.FC = () => {
                   <p className="text-[#FFD400] text-sm font-medium">
                     {testimonial.position}
                   </p>
-                  <p className="text-gray-400 text-xs">
+                  <p className="text-ink-caption text-xs">
                     {testimonial.company}
                   </p>
                 </div>

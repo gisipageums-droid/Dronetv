@@ -53,10 +53,10 @@
 //   };
 
 //   return (
-//     <section id="about" className="py-20 bg-white dark:bg-gray-900">
+//     <section id="about" className="py-20 bg-surface-card dark:bg-gray-900">
 //       <div className="container mx-auto px-4">
 //         <div className="text-center mb-16">
-//           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4">
+//           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
 //             {title} <span className="text-[#FF0000]">{highlightText}</span>
 //           </h2>
 //           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto"></div>
@@ -71,27 +71,27 @@
 //                 alt={signatureText} 
 //                 className="w-full h-98 object-cover transition-transform duration-500 group-hover:scale-110"
 //               />
-//               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+//               <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 //             </div>
             
 //             {/* Floating Badge */}
-//             <div className="absolute -bottom-6 -right-6 bg-[#FFD400] text-black px-6 py-3 rounded-full font-bold shadow-lg">
+//             <div className="absolute -bottom-6 -right-6 bg-[#FFD400] text-ink px-6 py-3 rounded-full font-bold shadow-lg">
 //               {experienceYears}+ Years Experience
 //             </div>
 //           </div>
 
 //           {/* Content */}
 //           <div data-aos="fade-left">
-//             <h3 className="text-3xl font-bold text-black dark:text-white mb-6">
+//             <h3 className="text-3xl font-bold text-ink dark:text-white mb-6">
 //               {subtitle}
 //             </h3>
             
-//             <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+//             <p className="text-ink-paragraph dark:text-gray-300 mb-6 leading-relaxed">
 //               {description}
 //             </p>
             
 //             <p 
-//               className="text-gray-700 dark:text-gray-300 mb-8 leading-relaxed"
+//               className="text-ink-paragraph dark:text-gray-300 mb-8 leading-relaxed"
 //               dangerouslySetInnerHTML={{ __html: additionalDescription }}
 //             />
 
@@ -103,8 +103,8 @@
 //                     {iconMap[info.type]}
 //                   </div>
 //                   <div>
-//                     <span className="text-gray-600 dark:text-gray-400">{info.label}</span>
-//                     <p className="text-black dark:text-white font-semibold">{info.value}</p>
+//                     <span className="text-ink-paragraph dark:text-gray-400">{info.label}</span>
+//                     <p className="text-ink dark:text-white font-semibold">{info.value}</p>
 //                   </div>
 //                 </div>
 //               ))}
@@ -199,10 +199,10 @@ const AboutMe: React.FC<AboutMeProps> = ({
   };
 
   return (
-    <section id="about" className="py-20 bg-white dark:bg-gray-900">
+    <section id="about" className="py-20 bg-surface-card dark:bg-gray-900">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
             {title} <span style={{ color: accentColor }}>{highlightText}</span>
           </h2>
           <div 
@@ -222,12 +222,12 @@ const AboutMe: React.FC<AboutMeProps> = ({
                 alt={signatureText} 
                 className="w-full h-98 object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
             
             {/* Floating Badge */}
             <div 
-              className="absolute -bottom-6 -right-6 text-black px-6 py-3 rounded-full font-bold shadow-lg"
+              className="absolute -bottom-6 -right-6 text-ink px-6 py-3 rounded-full font-bold shadow-lg"
               style={{ backgroundColor: primaryColor }}
             >
               {experienceYears}+ Years Experience
@@ -236,17 +236,17 @@ const AboutMe: React.FC<AboutMeProps> = ({
 
           {/* Content */}
           <div data-aos="fade-left">
-            <h3 className="text-3xl font-bold text-black dark:text-white mb-6">
+            <h3 className="text-3xl font-bold text-ink dark:text-white mb-6">
               {subtitle}
             </h3>
             
-            <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+            <p className="text-ink-paragraph dark:text-gray-300 mb-6 leading-relaxed">
               {finalDescription}
             </p>
             
             {additionalDescription && (
               <p 
-                className="text-gray-700 dark:text-gray-300 mb-8 leading-relaxed"
+                className="text-ink-paragraph dark:text-gray-300 mb-8 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: additionalDescription }}
               />
             )}
@@ -262,8 +262,8 @@ const AboutMe: React.FC<AboutMeProps> = ({
                     {iconMap[info.type]}
                   </div>
                   <div>
-                    <span className="text-gray-600 dark:text-gray-400">{info.label}</span>
-                    <p className="text-black dark:text-white font-semibold">{info.value}</p>
+                    <span className="text-ink-paragraph dark:text-gray-400">{info.label}</span>
+                    <p className="text-ink dark:text-white font-semibold">{info.value}</p>
                   </div>
                 </div>
               ))}

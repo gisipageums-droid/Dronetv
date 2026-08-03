@@ -56,34 +56,34 @@ const Contact: React.FC = () => {
     <section id="contact" className="py-20 bg-[#FFD400]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink mb-4">
             Get in <span className="text-[#FF0000]">Touch with Us</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-black mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-black/80 max-w-2xl mx-auto text-lg">
+          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-ink mx-auto mb-6"></div>
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink/80 max-w-2xl mx-auto text-lg">
             Whether it's aerial mapping, drone training, or media partnerships—we're excited to collaborate with you. Reach out today!
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
           <div data-aos="fade-up" data-aos-delay="600">
-            <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-2xl">
+            <div className="bg-surface-card rounded-3xl p-8 lg:p-12 shadow-2xl">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageCircle size={32} className="text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-black mb-2">
+                <h3 className="text-2xl font-bold text-ink mb-2">
                   Send us a message
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-ink-paragraph">
                   Our team typically replies within 24 hours.
                 </p>
               </div>
 
               {isSubmitted && (
-                <div className="bg-green-100 border border-green-400 rounded-2xl p-4 mb-6 flex items-center gap-3">
-                  <CheckCircle className="text-green-600" size={20} />
-                  <span className="text-green-800 font-medium">
+                <div className="bg-status-success/15 border border-status-success rounded-2xl p-4 mb-6 flex items-center gap-3">
+                  <CheckCircle className="text-status-success" size={20} />
+                  <span className="text-status-success font-medium">
                     Message sent successfully! We'll be in touch soon.
                   </span>
                 </div>
@@ -99,10 +99,10 @@ const Contact: React.FC = () => {
                         value={formData[field as keyof typeof formData]}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-[#FF0000] focus:bg-white transition-all duration-300 text-black placeholder-transparent peer"
+                        className="w-full px-6 py-4 bg-ink-offwhite border-2 border-ink-light rounded-2xl focus:border-[#FF0000] focus:bg-surface-card transition-all duration-300 text-ink placeholder-transparent peer"
                         placeholder={field === 'email' ? 'your@email.com' : 'Your name'}
                       />
-                      <label className="absolute left-6 top-4 text-gray-500 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FF0000] peer-valid:top-1 peer-valid:text-sm">
+                      <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FF0000] peer-valid:top-1 peer-valid:text-sm">
                         {field === 'email' ? 'Email Address *' : 'Your Name *'}
                       </label>
                     </div>
@@ -116,10 +116,10 @@ const Contact: React.FC = () => {
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-[#FF0000] focus:bg-white transition-all duration-300 text-black placeholder-transparent peer"
+                    className="w-full px-6 py-4 bg-ink-offwhite border-2 border-ink-light rounded-2xl focus:border-[#FF0000] focus:bg-surface-card transition-all duration-300 text-ink placeholder-transparent peer"
                     placeholder="Subject"
                   />
-                  <label className="absolute left-6 top-4 text-gray-500 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FF0000] peer-valid:top-1 peer-valid:text-sm">
+                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FF0000] peer-valid:top-1 peer-valid:text-sm">
                     Subject *
                   </label>
                 </div>
@@ -131,10 +131,10 @@ const Contact: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl focus:border-[#FF0000] focus:bg-white transition-all duration-300 text-black placeholder-transparent peer resize-none"
+                    className="w-full px-6 py-4 bg-ink-offwhite border-2 border-ink-light rounded-2xl focus:border-[#FF0000] focus:bg-surface-card transition-all duration-300 text-ink placeholder-transparent peer resize-none"
                     placeholder="Your message..."
                   />
-                  <label className="absolute left-6 top-4 text-gray-500 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FF0000] peer-valid:top-1 peer-valid:text-sm">
+                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FF0000] peer-valid:top-1 peer-valid:text-sm">
                     Message *
                   </label>
                 </div>
@@ -142,7 +142,7 @@ const Contact: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#FF0000] hover:bg-[#FF0000]/90 disabled:bg-gray-400 text-white py-4 px-8 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl"
+                  className="w-full bg-[#FF0000] hover:bg-[#FF0000]/90 disabled:bg-ink-caption text-white py-4 px-8 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl"
                 >
                   {isSubmitting ? (
                     <>
@@ -163,12 +163,12 @@ const Contact: React.FC = () => {
           {/* Optimized Contact Info */}
           <div data-aos="fade-up" data-aos-delay="800" className="grid md:grid-cols-3 gap-6 mt-12">
             {contactInfo.map((info, index) => (
-              <div key={index} className="bg-black rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
+              <div key={index} className="bg-ink rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
                 <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
                   {info.icon}
                 </div>
                 <h4 className="font-bold text-white mb-2">{info.title}</h4>
-                <p className="text-gray-400">{info.content}</p>
+                <p className="text-ink-caption">{info.content}</p>
               </div>
             ))}
           </div>

@@ -35,7 +35,7 @@ const Navigation: React.FC = () => {
   return (
    <nav className={`fixed top-[60px] left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? 'bg-black/95 backdrop-blur-md shadow-2xl py-3' 
+        ? 'bg-ink/95 backdrop-blur-md shadow-2xl py-3' 
         : 'bg-transparent py-6'
     }`}>
       <div className="container mx-auto px-4">
@@ -62,7 +62,7 @@ const Navigation: React.FC = () => {
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-4">
-            <button className="border-2 border-[#FFD400] text-[#FFD400] hover:bg-[#FFD400] hover:text-black px-6 py-2 rounded-full font-semibold transition-all duration-300">
+            <button className="border-2 border-[#FFD400] text-[#FFD400] hover:bg-[#FFD400] hover:text-ink px-6 py-2 rounded-full font-semibold transition-all duration-300">
               Book Stall
             </button>
             <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
@@ -81,7 +81,7 @@ const Navigation: React.FC = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 py-4 bg-black/95 backdrop-blur-md rounded-lg border border-gray-800">
+          <div className="lg:hidden mt-4 py-4 bg-ink/95 backdrop-blur-md rounded-lg border border-ink-charcoal">
             {navItems.map((item) => (
               <button
                 key={item.name}
@@ -92,7 +92,7 @@ const Navigation: React.FC = () => {
               </button>
             ))}
             <div className="flex flex-col gap-2 px-4 mt-4">
-              <button className="border-2 border-[#FFD400] text-[#FFD400] hover:bg-[#FFD400] hover:text-black px-6 py-2 rounded-full font-semibold transition-colors">
+              <button className="border-2 border-[#FFD400] text-[#FFD400] hover:bg-[#FFD400] hover:text-ink px-6 py-2 rounded-full font-semibold transition-colors">
                 Book Stall
               </button>
               <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-2 rounded-full font-semibold transition-colors">

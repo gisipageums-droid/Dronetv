@@ -75,14 +75,14 @@ const SpeakersSection: React.FC = () => {
   const regularSpeakers = speakers.filter(speaker => !speaker.featured);
 
   return (
-    <section id="speakers" className="py-20 bg-gray-900">
+    <section id="speakers" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
             Featured <span className="text-white">Speakers</span>
           </h2>
           <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-300 text-lg max-w-3xl mx-auto">
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Learn from visionary leaders and technical experts who are shaping the future of drone technology.
           </p>
         </div>
@@ -98,7 +98,7 @@ const SpeakersSection: React.FC = () => {
                 key={speaker.id}
                 data-aos="fade-up" 
                 data-aos-delay={index * 200}
-                className="group relative bg-black/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-800 hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
+                className="group relative bg-ink/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
               >
                 {/* Featured Badge */}
                 <div className="absolute top-4 right-4 z-10">
@@ -114,7 +114,7 @@ const SpeakersSection: React.FC = () => {
                     alt={speaker.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent"></div>
                   
                   {/* Social Links */}
                   <div className="absolute bottom-6 left-6 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -139,9 +139,9 @@ const SpeakersSection: React.FC = () => {
                     {speaker.name}
                   </h3>
                   <p className="text-[#FFD400] font-semibold mb-1">{speaker.title}</p>
-                  <p className="text-gray-400 mb-4">{speaker.company}</p>
-                  <div className="border-t border-gray-800 pt-4">
-                    <p className="text-sm text-gray-500 mb-2">Speaking on:</p>
+                  <p className="text-ink-caption mb-4">{speaker.company}</p>
+                  <div className="border-t border-ink-charcoal pt-4">
+                    <p className="text-sm text-ink-caption mb-2">Speaking on:</p>
                     <p className="text-white font-medium">{speaker.topic}</p>
                   </div>
                 </div>
@@ -161,7 +161,7 @@ const SpeakersSection: React.FC = () => {
                 key={speaker.id}
                 data-aos="fade-up" 
                 data-aos-delay={index * 100}
-                className="group bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-800 hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
+                className="group bg-ink/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
               >
                 {/* Image */}
                 <div className="relative h-48 overflow-hidden">
@@ -170,7 +170,7 @@ const SpeakersSection: React.FC = () => {
                     alt={speaker.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
                   
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-[#FF0000]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -184,8 +184,8 @@ const SpeakersSection: React.FC = () => {
                     {speaker.name}
                   </h4>
                   <p className="text-[#FFD400] text-sm font-semibold mb-1">{speaker.title}</p>
-                  <p className="text-gray-500 text-sm mb-3">{speaker.company}</p>
-                  <p className="text-gray-400 text-xs">{speaker.topic}</p>
+                  <p className="text-ink-caption text-sm mb-3">{speaker.company}</p>
+                  <p className="text-ink-caption text-xs">{speaker.topic}</p>
                 </div>
               </div>
             ))}

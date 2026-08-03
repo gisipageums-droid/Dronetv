@@ -15,11 +15,11 @@ const Footer: React.FC = () => {
   ];
 
   const socialLinks = [
-    { icon: <Facebook size={20} />, href: '#', label: 'Facebook', color: 'hover:text-blue-400' },
-    { icon: <Twitter size={20} />, href: '#', label: 'Twitter', color: 'hover:text-blue-300' },
-    { icon: <Instagram size={20} />, href: '#', label: 'Instagram', color: 'hover:text-pink-400' },
-    { icon: <Linkedin size={20} />, href: '#', label: 'LinkedIn', color: 'hover:text-blue-500' },
-    { icon: <Youtube size={20} />, href: '#', label: 'YouTube', color: 'hover:text-red-400' },
+    { icon: <Facebook size={20} />, href: '#', label: 'Facebook', color: 'hover:text-status-info' },
+    { icon: <Twitter size={20} />, href: '#', label: 'Twitter', color: 'hover:text-status-info/40' },
+    { icon: <Instagram size={20} />, href: '#', label: 'Instagram', color: 'hover:text-status-error' },
+    { icon: <Linkedin size={20} />, href: '#', label: 'LinkedIn', color: 'hover:text-status-info' },
+    { icon: <Youtube size={20} />, href: '#', label: 'YouTube', color: 'hover:text-status-error' },
   ];
 
   const scrollToSection = (href: string) => {
@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-black text-white border-t border-gray-800">
+    <footer className="bg-ink text-white border-t border-ink-charcoal">
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Event Info */}
@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
               <span className="text-[#FFD400]">Future of</span>
               <span className="text-[#FF0000]">Flight</span>
             </div>
-            <p className="text-gray-400 mb-6 leading-relaxed">
+            <p className="text-ink-caption mb-6 leading-relaxed">
               The ultimate drone technology expo bringing together innovators, competitors, 
               and enthusiasts for an unforgettable experience in aerial innovation.
             </p>
@@ -48,15 +48,15 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3 group">
                 <Mail size={16} className="text-[#FF0000] group-hover:text-[#FFD400] transition-colors" />
-                <span className="text-gray-400 group-hover:text-white transition-colors">register@futureoflightexpo.com</span>
+                <span className="text-ink-caption group-hover:text-white transition-colors">register@futureoflightexpo.com</span>
               </div>
               <div className="flex items-center gap-3 group">
                 <Phone size={16} className="text-[#FF0000] group-hover:text-[#FFD400] transition-colors" />
-                <span className="text-gray-400 group-hover:text-white transition-colors">+1 (555) EXPO-2025</span>
+                <span className="text-ink-caption group-hover:text-white transition-colors">+1 (555) EXPO-2025</span>
               </div>
               <div className="flex items-center gap-3 group">
                 <MapPin size={16} className="text-[#FF0000] group-hover:text-[#FFD400] transition-colors" />
-                <span className="text-gray-400 group-hover:text-white transition-colors">Los Angeles, CA</span>
+                <span className="text-ink-caption group-hover:text-white transition-colors">Los Angeles, CA</span>
               </div>
             </div>
           </div>
@@ -69,7 +69,7 @@ const Footer: React.FC = () => {
                 <li key={index}>
                   <button
                     onClick={() => scrollToSection(link.href)}
-                    className="text-gray-400 hover:text-[#FFD400] transition-colors duration-300 hover:translate-x-2 transform inline-block"
+                    className="text-ink-caption hover:text-[#FFD400] transition-colors duration-300 hover:translate-x-2 transform inline-block"
                   >
                     {link.name}
                   </button>
@@ -81,14 +81,14 @@ const Footer: React.FC = () => {
           {/* Newsletter */}
           <div>
             <h3 className="text-xl font-bold mb-6 text-[#FFD400]">Stay Connected</h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-ink-caption mb-6">
               Get updates on speakers, competitions, and exclusive expo content.
             </p>
             <div className="flex flex-col gap-3">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-[#FFD400] focus:border-transparent transition-all duration-300 text-white placeholder-gray-400"
+                className="px-4 py-3 bg-ink-charcoal/50 border border-ink-paragraph rounded-lg focus:ring-2 focus:ring-[#FFD400] focus:border-transparent transition-all duration-300 text-white placeholder-ink-caption"
               />
               <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
                 Subscribe
@@ -98,9 +98,9 @@ const Footer: React.FC = () => {
         </div>
         
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 pt-8">
+        <div className="border-t border-ink-charcoal pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-gray-400 text-sm mb-4 md:mb-0">
+            <div className="text-ink-caption text-sm mb-4 md:mb-0">
               © 2025 Future of Flight Expo. All rights reserved. | Privacy Policy | Terms of Service
             </div>
             
@@ -112,7 +112,7 @@ const Footer: React.FC = () => {
                     key={index}
                     href={social.href}
                     aria-label={social.label}
-                    className={`w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-[#FF0000] ${social.color} transition-all duration-300 transform hover:scale-110 hover:bg-gray-700`}
+                    className={`w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-[#FF0000] ${social.color} transition-all duration-300 transform hover:scale-110 hover:bg-ink-paragraph`}
                   >
                     {social.icon}
                   </a>
@@ -122,7 +122,7 @@ const Footer: React.FC = () => {
               {/* Back to Top */}
               <button
                 onClick={scrollToTop}
-                className="w-10 h-10 bg-[#FFD400] rounded-full flex items-center justify-center text-black hover:bg-[#FFD400]/90 transition-all duration-300 transform hover:scale-110 shadow-lg"
+                className="w-10 h-10 bg-[#FFD400] rounded-full flex items-center justify-center text-ink hover:bg-[#FFD400]/90 transition-all duration-300 transform hover:scale-110 shadow-lg"
               >
                 <ArrowUp size={20} />
               </button>

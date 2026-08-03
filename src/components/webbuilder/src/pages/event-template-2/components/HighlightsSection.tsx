@@ -19,25 +19,25 @@ const HighlightsSection: React.FC = () => {
       icon: <Users size={48} />,
       title: 'Networking Hub',
       description: 'Connect with industry leaders, investors, and fellow enthusiasts in dedicated networking zones.',
-      color: 'from-purple-500 to-purple-400'
+      color: 'from-brand-gold to-brand-gold'
     },
     {
       icon: <Rocket size={48} />,
       title: 'Live Demonstrations',
       description: 'Experience hands-on demos of the latest drone technologies, from mapping to delivery systems.',
-      color: 'from-blue-500 to-blue-400'
+      color: 'from-status-info to-status-info'
     }
   ];
 
   return (
-    <section id="highlights" className="py-20 bg-black">
+    <section id="highlights" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
             What's <span className="text-white">Happening</span>
           </h2>
           <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-300 text-lg max-w-3xl mx-auto">
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Immerse yourself in the ultimate drone experience with competitions, demonstrations, and networking opportunities.
           </p>
         </div>
@@ -48,7 +48,7 @@ const HighlightsSection: React.FC = () => {
               key={index}
               data-aos="fade-up" 
               data-aos-delay={index * 200}
-              className="group relative bg-gray-900/50 backdrop-blur-sm rounded-3xl p-8 border border-gray-800 hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105 overflow-hidden"
+              className="group relative bg-ink/50 backdrop-blur-sm rounded-3xl p-8 border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105 overflow-hidden"
             >
               {/* Gradient Background */}
               <div className={`absolute inset-0 bg-gradient-to-br ${highlight.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
@@ -56,7 +56,7 @@ const HighlightsSection: React.FC = () => {
               <div className="relative z-10">
                 {/* Icon */}
                 <div className="w-20 h-20 bg-[#FF0000] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#FFD400] group-hover:scale-110 transition-all duration-300">
-                  <div className="text-white group-hover:text-black transition-colors">
+                  <div className="text-white group-hover:text-ink transition-colors">
                     {highlight.icon}
                   </div>
                 </div>
@@ -66,7 +66,7 @@ const HighlightsSection: React.FC = () => {
                   {highlight.title}
                 </h3>
                 
-                <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
+                <p className="text-ink-caption leading-relaxed group-hover:text-ink-light transition-colors">
                   {highlight.description}
                 </p>
 
@@ -89,17 +89,17 @@ const HighlightsSection: React.FC = () => {
         {/* Call to Action */}
         <div data-aos="fade-up" data-aos-delay="800" className="text-center mt-16">
           <div className="bg-gradient-to-r from-[#FFD400] to-[#FFD400]/80 rounded-3xl p-12 max-w-3xl mx-auto">
-            <h3 className="text-3xl font-bold text-black mb-4">
+            <h3 className="text-3xl font-bold text-ink mb-4">
               Ready to Experience the Future?
             </h3>
-            <p className="text-black/80 mb-8 text-lg">
+            <p className="text-ink/80 mb-8 text-lg">
               Join thousands of drone enthusiasts, industry professionals, and technology pioneers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
                 Register Now
               </button>
-              <button className="border-2 border-black text-black hover:bg-black hover:text-white px-8 py-4 rounded-full font-semibold transition-all duration-300">
+              <button className="border-2 border-ink text-ink hover:bg-ink-charcoal hover:text-white px-8 py-4 rounded-full font-semibold transition-all duration-300">
                 View Schedule
               </button>
             </div>

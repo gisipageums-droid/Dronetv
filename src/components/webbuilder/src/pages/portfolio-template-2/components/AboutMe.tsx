@@ -76,11 +76,11 @@ const AboutMe: React.FC<AboutMeProps> = ({
   };
 
   return (
-    <section id="about" className="py-20 bg-gray-50 dark:bg-gray-800">
+    <section id="about" className="py-20 bg-ink-offwhite dark:bg-gray-800">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Profile Card */}
-          <div data-aos="fade-up" className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden">
+          <div data-aos="fade-up" className="bg-surface-card dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden">
             {/* Header with Profile Photo */}
             <div 
               className="relative p-12 text-center"
@@ -102,11 +102,11 @@ const AboutMe: React.FC<AboutMeProps> = ({
                 </div>
               </div>
 
-              <h2 className="text-3xl font-bold text-black mt-6 mb-2">{title}</h2>
-              <p className="text-black/80 text-lg font-medium text-center">
+              <h2 className="text-3xl font-bold text-ink mt-6 mb-2">{title}</h2>
+              <p className="text-ink/80 text-lg font-medium text-center">
                 {subtitle}
               </p>
-              <p className="text-black/70 text-base mt-2">
+              <p className="text-ink/70 text-base mt-2">
                 {position}
               </p>
             </div>
@@ -116,13 +116,13 @@ const AboutMe: React.FC<AboutMeProps> = ({
               <div className="grid md:grid-cols-2 gap-12">
                 {/* Bio */}
                 <div>
-                  <h3 className="text-2xl font-bold text-black dark:text-white mb-6">About Me</h3>
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <h3 className="text-2xl font-bold text-ink dark:text-white mb-6">About Me</h3>
+                  <p className="text-ink-paragraph dark:text-gray-400 leading-relaxed">
                     {finalDescription}
                   </p>
                   {additionalDescription && (
                     <p 
-                      className="text-gray-600 dark:text-gray-400 leading-relaxed mt-4"
+                      className="text-ink-paragraph dark:text-gray-400 leading-relaxed mt-4"
                       dangerouslySetInnerHTML={{ __html: additionalDescription }}
                     />
                   )}
@@ -130,7 +130,7 @@ const AboutMe: React.FC<AboutMeProps> = ({
 
                 {/* Contact Info */}
                 <div>
-                  <h3 className="text-2xl font-bold text-black dark:text-white mb-6">Get In Touch</h3>
+                  <h3 className="text-2xl font-bold text-ink dark:text-white mb-6">Get In Touch</h3>
 
                   <div className="space-y-6">
                     {finalContactInfo.map((info, index) => (
@@ -142,22 +142,22 @@ const AboutMe: React.FC<AboutMeProps> = ({
                           {iconMap[info.type]}
                         </div>
                         <div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">{info.label}</div>
-                          <div className="text-black dark:text-white font-semibold">{info.value}</div>
+                          <div className="text-sm text-ink-paragraph dark:text-gray-400">{info.label}</div>
+                          <div className="text-ink dark:text-white font-semibold">{info.value}</div>
                         </div>
                       </div>
                     ))}
                   </div>
 
                   {/* Signature */}
-                  <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                  <div className="mt-12 pt-8 border-t border-ink-light dark:border-gray-700">
                     <div 
                       className="text-3xl font-bold opacity-60 transform -rotate-2"
                       style={{ color: primaryColor }}
                     >
                       {signatureText}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    <div className="text-sm text-ink-caption dark:text-gray-400 mt-2">
                       "{quote}"
                     </div>
                   </div>

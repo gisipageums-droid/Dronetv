@@ -73,7 +73,7 @@ const Footer: React.FC<FooterProps> = ({
     : defaultServices;
 
   return (
-    <footer className="bg-black text-white relative overflow-hidden">
+    <footer className="bg-ink text-white relative overflow-hidden">
       {/* Background Pattern */}
       <div 
         className="absolute inset-0 opacity-10"
@@ -94,7 +94,7 @@ const Footer: React.FC<FooterProps> = ({
                 <span style={{ color: primaryColor }}>{brandHighlight}</span>
               </div>
             )}
-            <p className="text-gray-400 mb-6 max-w-md">{brandDescription}</p>
+            <p className="text-ink-caption mb-6 max-w-md">{brandDescription}</p>
             
             {/* Social Links */}
             <div className="flex gap-4">
@@ -105,7 +105,7 @@ const Footer: React.FC<FooterProps> = ({
                   aria-label={social.label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 transform hover:scale-110"
+                  className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white transition-all duration-300 transform hover:scale-110"
                   style={{ backgroundColor: social.label === 'Twitter' ? '#1DA1F2' : '', color: social.label === 'Twitter' ? 'white' : '' }}
                 >
                   {social.icon}
@@ -122,7 +122,7 @@ const Footer: React.FC<FooterProps> = ({
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors duration-300 hover:translate-x-1 transform inline-block"
+                    className="text-ink-caption hover:text-white transition-colors duration-300 hover:translate-x-1 transform inline-block"
                     style={{ color: `rgba(${hexToRgb(primaryColor)}, 1)` }}
                   >
                     {link.name}
@@ -137,7 +137,7 @@ const Footer: React.FC<FooterProps> = ({
             <h3 className="text-xl font-bold mb-4" style={{ color: primaryColor }}>Services</h3>
             <ul className="space-y-2">
               {displayServices.map((service, index) => (
-                <li key={index} className="text-gray-400 hover:text-white transition-colors duration-300">
+                <li key={index} className="text-ink-caption hover:text-white transition-colors duration-300">
                   {service}
                 </li>
               ))}
@@ -146,7 +146,7 @@ const Footer: React.FC<FooterProps> = ({
         </div>
         
         {/* Contact Info */}
-        <div className="bg-gray-900 rounded-2xl p-8 mb-12">
+        <div className="bg-ink rounded-2xl p-8 mb-12">
           <div className="grid md:grid-cols-3 gap-8">
             <ContactItem icon={<Mail size={24} style={{ color: accentColor }} />} title="Email" value={email} link={`mailto:${email}`} />
             <ContactItem icon={<Phone size={24} style={{ color: accentColor }} />} title="Phone" value={phone} link={`tel:${phone.replace(/\D/g, '')}`} />
@@ -155,13 +155,13 @@ const Footer: React.FC<FooterProps> = ({
         </div>
         
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 pt-8">
+        <div className="border-t border-ink-charcoal pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-gray-400 text-sm mb-4 md:mb-0">
+            <div className="text-ink-caption text-sm mb-4 md:mb-0">
               {footerText}
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-gray-400 text-sm">Back to top</span>
+              <span className="text-ink-caption text-sm">Back to top</span>
               <button
                 onClick={scrollToTop}
                 className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-300 transform hover:scale-110"
@@ -184,11 +184,11 @@ const ContactItem: React.FC<{ icon: JSX.Element; title: string; value: string; l
     <div>
       <h4 className="font-bold mb-1">{title}</h4>
       {link ? (
-        <a href={link} className="text-gray-400 hover:text-white transition-colors">
+        <a href={link} className="text-ink-caption hover:text-white transition-colors">
           {value}
         </a>
       ) : (
-        <p className="text-gray-400">{value}</p>
+        <p className="text-ink-caption">{value}</p>
       )}
     </div>
   </div>

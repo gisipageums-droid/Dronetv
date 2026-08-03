@@ -5,7 +5,7 @@ const HeroSection: React.FC = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black">
+      <div className="absolute inset-0 bg-gradient-to-br from-ink via-ink to-ink">
         {/* Animated Particles */}
         <div className="absolute inset-0">
           {[...Array(20)].map((_, i) => (
@@ -63,7 +63,7 @@ const HeroSection: React.FC = () => {
           <p 
             data-aos="fade-up" 
             data-aos-delay="900"
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl text-ink-light mb-8 max-w-3xl mx-auto leading-relaxed"
           >
             Experience the most innovative drone technologies, witness thrilling competitions, 
             and connect with industry pioneers at the ultimate aerial technology showcase.
@@ -94,7 +94,7 @@ const HeroSection: React.FC = () => {
             data-aos-delay="1500"
             className="flex flex-col sm:flex-row gap-6 justify-center"
           >
-            <button className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            <button className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
               <span>Book Your Stall</span>
               <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
             </button>
@@ -113,15 +113,15 @@ const HeroSection: React.FC = () => {
           >
             <div className="text-center">
               <div className="text-3xl font-bold text-[#FF0000] mb-2">100+</div>
-              <div className="text-sm text-gray-400">Exhibitors</div>
+              <div className="text-sm text-ink-caption">Exhibitors</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-[#FF0000] mb-2">50+</div>
-              <div className="text-sm text-gray-400">Speakers</div>
+              <div className="text-sm text-ink-caption">Speakers</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-[#FF0000] mb-2">20+</div>
-              <div className="text-sm text-gray-400">Competitions</div>
+              <div className="text-sm text-ink-caption">Competitions</div>
             </div>
           </div>
         </div>

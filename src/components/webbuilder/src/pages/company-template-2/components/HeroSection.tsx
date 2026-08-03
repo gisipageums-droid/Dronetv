@@ -18,7 +18,7 @@ const HeroSection: React.FC = () => {
           backgroundImage: 'url("https://images.pexels.com/photos/442587/pexels-photo-442587.jpeg?auto=compress&cs=tinysrgb&w=1920")'
         }}
       >
-        <div className="absolute inset-0 bg-black/80"></div>
+        <div className="absolute inset-0 bg-ink/80"></div>
       </div>
 
       {/* Floating Drone SVG */}
@@ -50,7 +50,7 @@ const HeroSection: React.FC = () => {
           <p 
             data-aos="fade-up" 
             data-aos-delay="600"
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl text-ink-light mb-8 max-w-3xl mx-auto leading-relaxed"
           >
             Revolutionary drone technology solutions for defense, agriculture, surveillance, and beyond. 
             Leading the aerial innovation revolution across industries.
@@ -61,7 +61,7 @@ const HeroSection: React.FC = () => {
             data-aos-delay="900"
             className="flex flex-col sm:flex-row gap-6 justify-center"
           >
-            <button className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            <button className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
               <span>Explore Fleet</span>
               <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
             </button>

@@ -39,10 +39,10 @@
 //   ];
 
 //   return (
-//     <section id="skills" className="py-20 bg-gray-50 dark:bg-gray-800">
+//     <section id="skills" className="py-20 bg-ink-offwhite dark:bg-gray-800">
 //       <div className="container mx-auto px-4">
 //         <div className="text-center mb-16">
-//           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4">
+//           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
 //             My <span className="text-[#FF0000]">Skills</span>
 //           </h2>
 //           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto"></div>
@@ -55,23 +55,23 @@
 //               key={index}
 //               data-aos="fade-up"
 //               data-aos-delay={index * 200}
-//               className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300"
+//               className="bg-surface-card dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300"
 //             >
 //               <div className="flex items-center gap-4 mb-6">
 //                 <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center text-white">
 //                   {category.icon}
 //                 </div>
-//                 <h3 className="text-xl font-bold text-black dark:text-white">{category.title}</h3>
+//                 <h3 className="text-xl font-bold text-ink dark:text-white">{category.title}</h3>
 //               </div>
 
 //               <div className="space-y-4">
 //                 {category.skills.map((skill, skillIndex) => (
 //                   <div key={skillIndex}>
 //                     <div className="flex justify-between items-center mb-2">
-//                       <span className="text-gray-700 dark:text-gray-300 font-medium">{skill.name}</span>
+//                       <span className="text-ink-paragraph dark:text-gray-300 font-medium">{skill.name}</span>
 //                       <span className="text-[#FF0000] font-bold">{skill.level}%</span>
 //                     </div>
-//                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+//                     <div className="w-full bg-ink-light dark:bg-gray-700 rounded-full h-2">
 //                       <div
 //                         className="bg-gradient-to-r from-[#FFD400] to-[#FF0000] h-2 rounded-full transition-all duration-1000 ease-out"
 //                         style={{ width: `${skill.level}%` }}
@@ -85,7 +85,7 @@
 //         </div>
 
 //         {/* Certifications */}
-//         <div data-aos="fade-up" className="bg-black rounded-2xl p-8">
+//         <div data-aos="fade-up" className="bg-ink rounded-2xl p-8">
 //           <h3 className="text-2xl font-bold text-white text-center mb-8">
 //             Certifications & <span className="text-[#FFD400]">Achievements</span>
 //           </h3>
@@ -94,14 +94,14 @@
 //             {certifications.map((cert, index) => (
 //               <div
 //                 key={index}
-//                 className="flex items-center gap-4 p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-300"
+//                 className="flex items-center gap-4 p-4 bg-ink-charcoal rounded-lg hover:bg-ink-paragraph transition-colors duration-300"
 //               >
 //                 <div className="w-10 h-10 bg-[#FF0000] rounded-full flex items-center justify-center text-white flex-shrink-0">
 //                   {cert.icon}
 //                 </div>
 //                 <div>
 //                   <h4 className="text-white font-semibold">{cert.title}</h4>
-//                   <p className="text-gray-400 text-sm">{cert.desc}</p>
+//                   <p className="text-ink-caption text-sm">{cert.desc}</p>
 //                 </div>
 //               </div>
 //             ))}
@@ -254,10 +254,10 @@ const Skills: React.FC<SkillsProps> = ({
       ];
 
   return (
-    <section id="skills" className="py-20 bg-gray-50 dark:bg-gray-800">
+    <section id="skills" className="py-20 bg-ink-offwhite dark:bg-gray-800">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
             My <span style={{ color: accentColor }}>Skills</span>
           </h2>
           <div className="w-24 h-1 mx-auto" style={{ backgroundColor: primaryColor }}></div>
@@ -268,7 +268,7 @@ const Skills: React.FC<SkillsProps> = ({
           {skillCategories.map((category, index) => (
             <div
               key={index}
-              className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-surface-card dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <div className="flex items-center gap-4 mb-6">
                 <div 
@@ -277,17 +277,17 @@ const Skills: React.FC<SkillsProps> = ({
                 >
                   {category.icon}
                 </div>
-                <h3 className="text-xl font-bold text-black dark:text-white">{category.title}</h3>
+                <h3 className="text-xl font-bold text-ink dark:text-white">{category.title}</h3>
               </div>
 
               <div className="space-y-4">
                 {category.skills.map((skill, skillIndex) => (
                   <div key={skillIndex}>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-700 dark:text-gray-300 font-medium">{skill.name}</span>
+                      <span className="text-ink-paragraph dark:text-gray-300 font-medium">{skill.name}</span>
                       <span className="font-bold" style={{ color: accentColor }}>{skill.proficiency}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-ink-light dark:bg-gray-700 rounded-full h-2">
                       <div
                         className="h-2 rounded-full transition-all duration-1000 ease-out"
                         style={{ 
@@ -304,7 +304,7 @@ const Skills: React.FC<SkillsProps> = ({
         </div>
 
         {/* Certifications */}
-        <div className="bg-black rounded-2xl p-8">
+        <div className="bg-ink rounded-2xl p-8">
           <h3 className="text-2xl font-bold text-white text-center mb-8">
             Certifications & <span style={{ color: primaryColor }}>Achievements</span>
           </h3>
@@ -313,7 +313,7 @@ const Skills: React.FC<SkillsProps> = ({
             {displayCertifications.map((cert, index) => (
               <div
                 key={index}
-                className="flex items-center gap-4 p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-300"
+                className="flex items-center gap-4 p-4 bg-ink-charcoal rounded-lg hover:bg-ink-paragraph transition-colors duration-300"
               >
                 <div 
                   className="w-10 h-10 rounded-full flex items-center justify-center text-white flex-shrink-0"
@@ -323,7 +323,7 @@ const Skills: React.FC<SkillsProps> = ({
                 </div>
                 <div>
                   <h4 className="text-white font-semibold">{cert.title}</h4>
-                  <p className="text-gray-400 text-sm">{cert.description}</p>
+                  <p className="text-ink-caption text-sm">{cert.description}</p>
                 </div>
               </div>
             ))}

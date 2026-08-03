@@ -70,21 +70,21 @@ const ProductsSection: React.FC = () => {
     : products.filter(product => product.category === activeFilter);
 
   return (
-    <section id="products" className="py-20 bg-gray-900">
+    <section id="products" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
             Our <span className="text-white">Fleet</span>
           </h2>
           <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-300 text-lg max-w-3xl mx-auto">
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Cutting-edge drone technology engineered for superior performance across diverse mission requirements.
           </p>
         </div>
 
         {/* Filter Buttons */}
         <div data-aos="fade-up" data-aos-delay="600" className="flex justify-center mb-12">
-          <div className="flex flex-wrap gap-4 p-2 bg-black/50 backdrop-blur-sm rounded-full border border-gray-800">
+          <div className="flex flex-wrap gap-4 p-2 bg-ink/50 backdrop-blur-sm rounded-full border border-ink-charcoal">
             {categories.map((category) => (
               <button
                 key={category}
@@ -92,7 +92,7 @@ const ProductsSection: React.FC = () => {
                 className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
                   activeFilter === category
                     ? 'bg-[#FF0000] text-white shadow-lg transform scale-105'
-                    : 'text-gray-400 hover:text-[#FFD400] hover:bg-white/5'
+                    : 'text-ink-caption hover:text-[#FFD400] hover:bg-white/5'
                 }`}
               >
                 {category}
@@ -122,7 +122,7 @@ const ProductsSection: React.FC = () => {
           >
             {filteredProducts.map((product) => (
               <SwiperSlide key={product.id}>
-                <div className="group bg-black/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-800 hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105">
+                <div className="group bg-ink/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105">
                   {/* Image */}
                   <div className="relative overflow-hidden">
                     <img 
@@ -130,7 +130,7 @@ const ProductsSection: React.FC = () => {
                       alt={product.name}
                       className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent"></div>
                     
                     {/* Category Badge */}
                     <div className="absolute top-4 left-4">
@@ -140,8 +140,8 @@ const ProductsSection: React.FC = () => {
                     </div>
                     
                     {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <button className="bg-[#FFD400] text-black px-6 py-2 rounded-full font-semibold hover:bg-[#FFD400]/90 transition-colors flex items-center gap-2">
+                    <div className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <button className="bg-[#FFD400] text-ink px-6 py-2 rounded-full font-semibold hover:bg-[#FFD400]/90 transition-colors flex items-center gap-2">
                         <Eye size={16} />
                         View Details
                       </button>
@@ -158,7 +158,7 @@ const ProductsSection: React.FC = () => {
                       {product.specs}
                     </p>
                     
-                    <p className="text-gray-400 mb-4 leading-relaxed group-hover:text-gray-300 transition-colors">
+                    <p className="text-ink-caption mb-4 leading-relaxed group-hover:text-ink-light transition-colors">
                       {product.description}
                     </p>
                     

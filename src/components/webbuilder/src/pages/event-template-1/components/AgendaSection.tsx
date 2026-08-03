@@ -32,21 +32,21 @@ const AgendaSection = () => {
   const [activeDay, setActiveDay] = useState<1 | 2 | 3>(1);
 
   return (
-    <section id="agenda" className="py-20 bg-white">
+    <section id="agenda" className="py-20 bg-surface-card">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
             Event <span className="text-[#FF0000]">Themes</span>
           </h2>
           <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-ink-paragraph text-lg max-w-2xl mx-auto">
             Each day focuses on a powerful industry-relevant theme.
           </p>
         </div>
 
         {/* Day Tabs */}
         <div className="flex justify-center mb-10">
-          <div className="flex bg-gray-100 rounded-full p-2 shadow-md">
+          <div className="flex bg-ink-light rounded-full p-2 shadow-md">
             {[1, 2, 3].map((day) => (
               <button
                 key={day}
@@ -54,7 +54,7 @@ const AgendaSection = () => {
                 className={`px-6 py-2 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
                   activeDay === day
                     ? 'bg-[#FF0000] text-white shadow-lg'
-                    : 'text-gray-700 hover:text-[#FF0000]'
+                    : 'text-ink-paragraph hover:text-[#FF0000]'
                 }`}
               >
                 Day {day}
@@ -64,16 +64,16 @@ const AgendaSection = () => {
         </div>
 
         {/* Theme Box */}
-        <div className="max-w-3xl mx-auto bg-gray-100 rounded-3xl shadow-lg p-8 text-center">
-          <h3 className="text-xl md:text-2xl font-bold text-black mb-2">
+        <div className="max-w-3xl mx-auto bg-ink-light rounded-3xl shadow-lg p-8 text-center">
+          <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
             {agendaThemes[activeDay].title}
           </h3>
           {agendaThemes[activeDay].note && (
-            <p className="text-sm text-gray-500 font-medium mb-4">
+            <p className="text-sm text-ink-caption font-medium mb-4">
               {agendaThemes[activeDay].note}
             </p>
           )}
-          <ul className="text-left list-disc list-inside space-y-3 text-gray-700 text-base">
+          <ul className="text-left list-disc list-inside space-y-3 text-ink-paragraph text-base">
             {agendaThemes[activeDay].bullets.map((point, idx) => (
               <li key={idx}>{point}</li>
             ))}

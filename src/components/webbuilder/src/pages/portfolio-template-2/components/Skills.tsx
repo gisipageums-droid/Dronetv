@@ -74,13 +74,13 @@ const Skills: React.FC<SkillsProps> = ({
   const certData = certifications.length > 0 ? certifications : defaultCerts;
 
   return (
-    <section id="skills" className="py-20 bg-white dark:bg-gray-900">
+    <section id="skills" className="py-20 bg-surface-card dark:bg-gray-900">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2
             data-aos="fade-up"
-            className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4"
+            className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4"
           >
             Top <span style={{ color: accentColor }}>Skills</span>
           </h2>
@@ -93,7 +93,7 @@ const Skills: React.FC<SkillsProps> = ({
           <p
             data-aos="fade-up"
             data-aos-delay="400"
-            className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
+            className="text-ink-paragraph dark:text-gray-400 max-w-2xl mx-auto"
           >
             A proven skill set focused on building, growing, and sustaining
             strategic business ventures across emerging and established markets.
@@ -124,7 +124,7 @@ const Skills: React.FC<SkillsProps> = ({
                     index % 2 === 0 ? "lg:text-right" : "lg:text-left"
                   }`}
                 >
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <div className="bg-ink-offwhite dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                     <div
                       className={`flex items-center gap-4 mb-4 ${
                         index % 2 === 0
@@ -138,13 +138,13 @@ const Skills: React.FC<SkillsProps> = ({
                       >
                         {iconMap[skill.name] || <Cpu size={24} />}
                       </div>
-                      <h3 className="text-xl font-bold text-black dark:text-white">
+                      <h3 className="text-xl font-bold text-ink dark:text-white">
                         {skill.name}
                       </h3>
                     </div>
 
                     {/* Description placeholder (could come from API in future) */}
-                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                    <p className="text-ink-paragraph dark:text-gray-400 mb-6">
                       {`Proven expertise in ${skill.name.toLowerCase()}.`}
                     </p>
 
@@ -157,7 +157,7 @@ const Skills: React.FC<SkillsProps> = ({
                             : "lg:flex-row"
                         } flex-row`}
                       >
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <span className="text-sm font-medium text-ink-paragraph dark:text-gray-300">
                           Proficiency
                         </span>
                         <span
@@ -167,7 +167,7 @@ const Skills: React.FC<SkillsProps> = ({
                           {skill.proficiency}%
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                      <div className="w-full bg-ink-light dark:bg-gray-700 rounded-full h-3">
                         <div
                           className="h-3 rounded-full transition-all duration-1000 ease-out"
                           style={{
@@ -197,7 +197,7 @@ const Skills: React.FC<SkillsProps> = ({
         </div>
 
         {/* Certifications */}
-        <div className="mt-20 bg-black rounded-2xl p-8">
+        <div className="mt-20 bg-ink rounded-2xl p-8">
           <h3 className="text-2xl font-bold text-white text-center mb-8">
             Certifications &{" "}
             <span style={{ color: primaryColor }}>Achievements</span>
@@ -206,7 +206,7 @@ const Skills: React.FC<SkillsProps> = ({
             {certData.map((cert, index) => (
               <div
                 key={index}
-                className="flex items-center gap-4 p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-300"
+                className="flex items-center gap-4 p-4 bg-ink-charcoal rounded-lg hover:bg-ink-paragraph transition-colors duration-300"
               >
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center text-white flex-shrink-0"
@@ -216,7 +216,7 @@ const Skills: React.FC<SkillsProps> = ({
                 </div>
                 <div>
                   <h4 className="text-white font-semibold">{cert.title}</h4>
-                  <p className="text-gray-400 text-sm">{cert.description}</p>
+                  <p className="text-ink-caption text-sm">{cert.description}</p>
                 </div>
               </div>
             ))}

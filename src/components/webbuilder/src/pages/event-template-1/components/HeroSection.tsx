@@ -46,7 +46,7 @@ const HeroSection: React.FC = () => {
           allowFullScreen
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black/60 z-10"></div>
+        <div className="absolute inset-0 bg-ink/60 z-10"></div>
       </div>
 
       {/* Content */}
@@ -91,9 +91,9 @@ const HeroSection: React.FC = () => {
               { label: 'Minutes', value: timeLeft.minutes },
               { label: 'Seconds', value: timeLeft.seconds }
             ].map((item, index) => (
-              <div key={index} className="bg-black/50 backdrop-blur-sm rounded-lg p-4 border border-[#FFD400]/30">
+              <div key={index} className="bg-ink/50 backdrop-blur-sm rounded-lg p-4 border border-[#FFD400]/30">
                 <div className="text-2xl font-bold text-[#FFD400]">{item.value.toString().padStart(2, '0')}</div>
-                <div className="text-sm text-gray-300">{item.label}</div>
+                <div className="text-sm text-ink-light">{item.label}</div>
               </div>
             ))}
           </div>
@@ -114,12 +114,12 @@ const HeroSection: React.FC = () => {
             data-aos-delay="1200"
             className="flex flex-col sm:flex-row gap-6 justify-center"
           >
-            <button className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            <button className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
               <span>Register to Visit</span>
               <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
             </button>
 
-            <button className="group border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105">
+            <button className="group border-2 border-white text-white hover:bg-surface-card hover:text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105">
               <span>Exhibitor Enquiry</span>
               <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
             </button>

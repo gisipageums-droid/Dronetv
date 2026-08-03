@@ -76,7 +76,7 @@ const AIInputField: FC<AIInputFieldProps> = ({
 
   return (
     <div className="mb-4 relative">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-ink-paragraph mb-2">
         {label}
       </label>
       <div className="flex gap-2 items-start">
@@ -91,7 +91,7 @@ const AIInputField: FC<AIInputFieldProps> = ({
             rows={rows}
             className={
               inputClassName ||
-              "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+              "w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
             }
           />
         ) : (
@@ -105,7 +105,7 @@ const AIInputField: FC<AIInputFieldProps> = ({
             placeholder={placeholder}
             className={
               inputClassName ||
-              "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+              "w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
             }
           />
         )}
@@ -144,31 +144,31 @@ const AIInputField: FC<AIInputFieldProps> = ({
               })();
             }
           }}
-          className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:opacity-90 transition"
+          className="px-4 py-2 bg-gradient-to-r from-brand-gold to-status-error text-white rounded-md hover:opacity-90 transition"
         >
           ✨Generate
         </button>
       </div>
 
       {popupOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 animate-fadeIn">
-          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-gray-200">
+        <div className="fixed inset-0 bg-ink bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 animate-fadeIn">
+          <div className="bg-surface-card w-full max-w-xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-ink-light">
             {/* Header */}
-            <div className="sticky top-0 bg-white/80 backdrop-blur-md px-5 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-3">
-                <span className="text-transparent bg-gradient-to-br from-sky-400 to-blue-600 bg-clip-text text-2xl drop-shadow-[0_0_4px_rgba(56,189,248,0.7)]">
+            <div className="sticky top-0 bg-white/80 backdrop-blur-md px-5 py-4 border-b border-ink-light flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-ink-charcoal flex items-center gap-3">
+                <span className="text-transparent bg-gradient-to-br from-status-info to-status-info bg-clip-text text-2xl drop-shadow-[0_0_4px_rgba(56,189,248,0.7)]">
                   ✦
                 </span>
                 Ask Gemini
               </h2>
               <button
                 onClick={() => setPopupOpen(false)}
-                className="p-2 rounded-full hover:bg-red-50 transition-colors group"
+                className="p-2 rounded-full hover:bg-status-error/10 transition-colors group"
                 aria-label="Close"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-500 group-hover:text-red-500 transition"
+                  className="h-5 w-5 text-ink-caption group-hover:text-status-error transition"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -196,15 +196,15 @@ const AIInputField: FC<AIInputFieldProps> = ({
                   }`}
                 >
                   {/* Avatar */}
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-r from-brand-gold to-status-error text-white text-xs font-bold">
                     {msg.role === "user" ? "U" : "AI"}
                   </div>
                   {/* Bubble */}
                   <div
                     className={`px-4 py-2 rounded-2xl max-w-[75%] whitespace-pre-line shadow-sm ${
                       msg.role === "user"
-                        ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
-                        : "bg-white border border-gray-200 text-gray-800"
+                        ? "bg-gradient-to-r from-status-info to-status-info text-white"
+                        : "bg-surface-card border border-ink-light text-ink-charcoal"
                     }`}
                   >
                     {msg.text}
@@ -212,22 +212,22 @@ const AIInputField: FC<AIInputFieldProps> = ({
                 </div>
               ))}
               {loading && (
-                <div className="text-gray-400 italic">AI is thinking...</div>
+                <div className="text-ink-caption italic">AI is thinking...</div>
               )}
             </div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 bg-white/80 backdrop-blur-md border-t border-gray-200 p-3 flex gap-2">
+            <div className="sticky bottom-0 bg-white/80 backdrop-blur-md border-t border-ink-light p-3 flex gap-2">
               <input
                 type="text"
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-status-error"
               />
               <button
                 onClick={sendChatMessage}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
+                className="bg-gradient-to-r from-brand-gold to-status-error text-white px-4 py-2 rounded-lg hover:opacity-90"
               >
                 Send
               </button>
@@ -235,7 +235,7 @@ const AIInputField: FC<AIInputFieldProps> = ({
 
             {/* Selected text preview & submit */}
             {selectedText && (
-              <div className="px-4 py-2 bg-blue-50 border-t border-blue-300 text-sm text-blue-800">
+              <div className="px-4 py-2 bg-status-info/10 border-t border-status-info/40 text-sm text-status-info">
                 <strong>Selected:</strong> {selectedText}
               </div>
             )}
@@ -243,7 +243,7 @@ const AIInputField: FC<AIInputFieldProps> = ({
               <button
                 onClick={handleSubmitSelection}
                 disabled={!selectedText}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition"
+                className="w-full bg-status-info text-white py-2 rounded-lg hover:bg-status-info disabled:opacity-50 transition"
               >
                 Submit Selection
               </button>
