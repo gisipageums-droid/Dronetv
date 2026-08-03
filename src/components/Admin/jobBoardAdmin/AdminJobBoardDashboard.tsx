@@ -7,22 +7,22 @@ import { fetchApplications, updateApplication, getResumeViewUrl, sendCandidateMe
 const STATUS_OPTIONS: JobApplication['status'][] = ['Applied', 'Shortlisted', 'Interviewing', 'Hired', 'Rejected'];
 
 const STATUS_COLORS: Record<string, string> = {
-  Applied: 'bg-gray-100 text-gray-700',
-  Shortlisted: 'bg-blue-100 text-blue-700',
-  Interviewing: 'bg-amber-100 text-amber-700',
-  Hired: 'bg-green-100 text-green-700',
-  Rejected: 'bg-red-100 text-red-700',
+  Applied: 'bg-ink-light text-ink-paragraph',
+  Shortlisted: 'bg-status-info/15 text-status-info',
+  Interviewing: 'bg-brand-yellow-soft text-brand-gold',
+  Hired: 'bg-status-success/15 text-status-success',
+  Rejected: 'bg-status-error/15 text-status-error',
 };
 
 const STATUS_DOT: Record<string, string> = {
-  Applied: 'bg-gray-400',
-  Shortlisted: 'bg-blue-400',
-  Interviewing: 'bg-amber-400',
-  Hired: 'bg-green-500',
-  Rejected: 'bg-red-400',
+  Applied: 'bg-ink-caption',
+  Shortlisted: 'bg-status-info',
+  Interviewing: 'bg-brand-yellow',
+  Hired: 'bg-status-success',
+  Rejected: 'bg-status-error',
 };
 
-const AVATAR_PALETTE = ['bg-blue-100 text-blue-700', 'bg-purple-100 text-purple-700', 'bg-pink-100 text-pink-700', 'bg-emerald-100 text-emerald-700', 'bg-amber-100 text-amber-700', 'bg-cyan-100 text-cyan-700'];
+const AVATAR_PALETTE = ['bg-status-info/15 text-status-info', 'bg-brand-gold/15 text-brand-gold', 'bg-status-error/15 text-status-error', 'bg-status-success/15 text-status-success', 'bg-brand-yellow-soft text-brand-gold', 'bg-status-info/15 text-status-info'];
 
 function initials(name: string): string {
   return name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]?.toUpperCase()).join('') || '?';
@@ -185,23 +185,23 @@ export default function AdminJobBoardDashboard() {
   };
 
   return (
-    <div className="flex flex-col h-[70vh] min-h-[500px] bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+    <div className="flex flex-col h-[70vh] min-h-[500px] bg-ink-offwhite border border-ink-light rounded-xl overflow-hidden">
       <div className="flex flex-1 min-h-0">
         {/* Jobs pane */}
-        <div className="w-[300px] flex-shrink-0 border-r border-gray-200 bg-white flex flex-col">
-          <div className="p-3 border-b border-gray-100">
-            <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Jobs ({jobs.length})</div>
+        <div className="w-[300px] flex-shrink-0 border-r border-ink-light bg-surface-card flex flex-col">
+          <div className="p-3 border-b border-ink-light">
+            <div className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Jobs ({jobs.length})</div>
             <div className="relative mb-2">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-caption" />
               <input value={jobSearch} onChange={e => setJobSearch(e.target.value)} placeholder="Search jobs..."
-                className="w-full pl-8 pr-2 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:border-yellow-400" />
+                className="w-full pl-8 pr-2 py-1.5 text-xs border border-ink-light rounded-lg focus:outline-none focus:border-brand-yellow" />
             </div>
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1 text-xs font-semibold text-gray-500">
+              <span className="flex items-center gap-1 text-xs font-semibold text-ink-caption">
                 <SlidersHorizontal size={12} /> Filter
               </span>
               <select value={jobSort} onChange={e => setJobSort(e.target.value as 'newest' | 'oldest')}
-                className="text-xs font-semibold text-gray-600 border border-gray-200 rounded-md px-1.5 py-1 focus:outline-none focus:border-yellow-400">
+                className="text-xs font-semibold text-ink-paragraph border border-ink-light rounded-md px-1.5 py-1 focus:outline-none focus:border-brand-yellow">
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
               </select>
@@ -209,32 +209,32 @@ export default function AdminJobBoardDashboard() {
           </div>
           <div className="flex-1 overflow-y-auto">
             {loadingJobs ? (
-              <div className="p-4 text-xs text-gray-400 text-center">Loading jobs...</div>
+              <div className="p-4 text-xs text-ink-caption text-center">Loading jobs...</div>
             ) : filteredJobs.length === 0 ? (
-              <div className="p-4 text-xs text-gray-400 text-center">No job listings yet</div>
+              <div className="p-4 text-xs text-ink-caption text-center">No job listings yet</div>
             ) : filteredJobs.map(job => (
               <div key={job.contentId}
-                className={`group w-full px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors flex gap-2.5 ${selectedJobId === job.contentId ? 'bg-yellow-50 border-l-2 border-l-yellow-400' : ''}`}>
+                className={`group w-full px-3 py-3 border-b border-ink-offwhite hover:bg-ink-offwhite transition-colors flex gap-2.5 ${selectedJobId === job.contentId ? 'bg-surface-main border-l-2 border-l-brand-yellow' : ''}`}>
                 <button onClick={() => setSelectedJobId(job.contentId)} className="flex gap-2.5 flex-1 min-w-0 text-left">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold ${colorFor(job.contentId)}`}>
                     <Briefcase size={14} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{job.title}</p>
-                    <p className="text-xs text-gray-400 truncate">{job.company}{job.location ? ` · ${job.location}` : ''}</p>
+                    <p className="text-sm font-semibold text-ink truncate">{job.title}</p>
+                    <p className="text-xs text-ink-caption truncate">{job.company}{job.location ? ` · ${job.location}` : ''}</p>
                     <div className="flex items-center justify-between mt-1.5">
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.isPublished ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.isPublished ? 'bg-status-success/15 text-status-success' : 'bg-brand-yellow-soft text-brand-gold'}`}>
                         {job.isPublished ? 'Active' : 'Draft'}
                       </span>
                       {applicantCount(job.contentId) !== undefined && (
-                        <span className="text-[10px] text-gray-400">{applicantCount(job.contentId)} applicants</span>
+                        <span className="text-[10px] text-ink-caption">{applicantCount(job.contentId)} applicants</span>
                       )}
                     </div>
                   </div>
                 </button>
                 <button onClick={() => setDeleteConfirmJob(job)}
                   title="Delete job"
-                  className="p-1.5 h-fit rounded hover:bg-red-50 text-gray-300 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0">
+                  className="p-1.5 h-fit rounded hover:bg-status-error/10 text-ink-light hover:text-status-error transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0">
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -243,37 +243,37 @@ export default function AdminJobBoardDashboard() {
         </div>
 
         {/* Candidates pane */}
-        <div className="w-[300px] flex-shrink-0 border-r border-gray-200 bg-white flex flex-col">
-          <div className="p-3 border-b border-gray-100">
-            <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Candidates ({applications.length})</div>
+        <div className="w-[300px] flex-shrink-0 border-r border-ink-light bg-surface-card flex flex-col">
+          <div className="p-3 border-b border-ink-light">
+            <div className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Candidates ({applications.length})</div>
             <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-caption" />
               <input value={candidateSearch} onChange={e => setCandidateSearch(e.target.value)} placeholder="Search candidates..."
-                className="w-full pl-8 pr-2 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:border-yellow-400" />
+                className="w-full pl-8 pr-2 py-1.5 text-xs border border-ink-light rounded-lg focus:outline-none focus:border-brand-yellow" />
             </div>
           </div>
           <div className="flex-1 overflow-y-auto">
             {!selectedJobId ? (
-              <div className="p-4 text-xs text-gray-400 text-center">Select a job to view candidates</div>
+              <div className="p-4 text-xs text-ink-caption text-center">Select a job to view candidates</div>
             ) : loadingApplications ? (
-              <div className="p-4 text-xs text-gray-400 text-center">Loading candidates...</div>
+              <div className="p-4 text-xs text-ink-caption text-center">Loading candidates...</div>
             ) : filteredCandidates.length === 0 ? (
-              <div className="p-4 text-xs text-gray-400 text-center">No applications yet</div>
+              <div className="p-4 text-xs text-ink-caption text-center">No applications yet</div>
             ) : filteredCandidates.map(app => (
               <button key={app.applicationId} onClick={() => setSelectedApplicationId(app.applicationId)}
-                className={`w-full text-left px-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors flex gap-2.5 ${selectedApplicationId === app.applicationId ? 'bg-yellow-50 border-l-2 border-l-yellow-400' : ''}`}>
+                className={`w-full text-left px-3 py-3 border-b border-ink-offwhite hover:bg-ink-offwhite transition-colors flex gap-2.5 ${selectedApplicationId === app.applicationId ? 'bg-surface-main border-l-2 border-l-brand-yellow' : ''}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[11px] font-bold ${colorFor(app.applicationId)}`}>
                   {initials(app.fullName || '?')}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{app.fullName || 'Unnamed'}</p>
+                    <p className="text-sm font-semibold text-ink truncate">{app.fullName || 'Unnamed'}</p>
                     <span className="flex items-center gap-1 flex-shrink-0">
                       <span className={`w-1.5 h-1.5 rounded-full ${STATUS_DOT[app.status]}`} />
                       <span className={`text-[10px] font-semibold ${STATUS_COLORS[app.status].split(' ')[1]}`}>{app.status}</span>
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 truncate">
+                  <p className="text-xs text-ink-caption truncate">
                     {app.experienceYears ? `${app.experienceYears} yrs` : app.currentRole || 'Applicant'}{app.location ? ` · ${app.location.split(',')[0]}` : ''}
                   </p>
                 </div>
@@ -285,20 +285,20 @@ export default function AdminJobBoardDashboard() {
         {/* Profile pane */}
         <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
           {!selectedApplication ? (
-            <div className="flex-1 flex items-center justify-center text-sm text-gray-400">
+            <div className="flex-1 flex items-center justify-center text-sm text-ink-caption">
               {selectedJob ? 'Select a candidate to view their profile' : 'Select a job to get started'}
             </div>
           ) : (
             <>
-              <div className="px-6 py-4 border-b border-gray-200 bg-white flex-shrink-0">
+              <div className="px-6 py-4 border-b border-ink-light bg-surface-card flex-shrink-0">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold ${colorFor(selectedApplication.applicationId)}`}>
                       {initials(selectedApplication.fullName || '?')}
                     </div>
                     <div className="min-w-0">
-                      <h2 className="text-base font-bold text-gray-900">{selectedApplication.fullName}</h2>
-                      <p className="text-xs text-gray-500 truncate">
+                      <h2 className="text-base font-bold text-ink">{selectedApplication.fullName}</h2>
+                      <p className="text-xs text-ink-caption truncate">
                         {selectedApplication.currentRole || 'Applicant'}{selectedApplication.currentCompany ? ` · ${selectedApplication.currentCompany}` : ''}
                         {selectedApplication.education ? ` · ${selectedApplication.education.split(',')[0]}` : ''}
                       </p>
@@ -306,33 +306,33 @@ export default function AdminJobBoardDashboard() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <select value={selectedApplication.status} onChange={e => handleStatusChange(e.target.value as JobApplication['status'])}
-                      className="text-xs font-semibold border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-yellow-400">
+                      className="text-xs font-semibold border border-ink-light rounded-lg px-2 py-1.5 focus:outline-none focus:border-brand-yellow">
                       {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                     <button onClick={openMessage}
-                      className="flex items-center gap-1.5 text-xs font-bold bg-yellow-400 text-black px-3 py-1.5 rounded-lg hover:bg-yellow-300 transition-colors">
+                      className="flex items-center gap-1.5 text-xs font-bold bg-brand-yellow text-ink px-3 py-1.5 rounded-lg hover:bg-brand-yellow-soft transition-colors">
                       <MessageSquare size={14} /> Message
                     </button>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mt-3 ml-[60px]">
                   {selectedApplication.experienceYears && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-yellow-50 text-yellow-800 border border-yellow-200 px-2.5 py-1 rounded-full">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-surface-main text-brand-gold border border-brand-yellow-soft px-2.5 py-1 rounded-full">
                       <Clock size={12} /> {selectedApplication.experienceYears} Years Experience
                     </span>
                   )}
                   {selectedApplication.location && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-ink-light text-ink-paragraph px-2.5 py-1 rounded-full">
                       <MapPin size={12} /> {selectedApplication.location}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="flex border-b border-gray-200 bg-white px-6 flex-shrink-0 overflow-x-auto">
+              <div className="flex border-b border-ink-light bg-surface-card px-6 flex-shrink-0 overflow-x-auto">
                 {TABS.map(t => (
                   <button key={t.key} onClick={() => setActiveTab(t.key)}
-                    className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 whitespace-nowrap transition-colors ${activeTab === t.key ? 'border-yellow-400 text-gray-900' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
+                    className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 whitespace-nowrap transition-colors ${activeTab === t.key ? 'border-brand-yellow text-ink' : 'border-transparent text-ink-caption hover:text-ink-paragraph'}`}>
                     {t.icon}{t.label}
                   </button>
                 ))}
@@ -343,31 +343,31 @@ export default function AdminJobBoardDashboard() {
                   <div className="flex gap-8">
                     <div className="flex-1 min-w-0 space-y-6">
                       <div>
-                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Professional Summary</h3>
-                        <p className="text-sm text-gray-700 leading-relaxed">{selectedApplication.professionalSummary || 'No summary provided.'}</p>
+                        <h3 className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Professional Summary</h3>
+                        <p className="text-sm text-ink-paragraph leading-relaxed">{selectedApplication.professionalSummary || 'No summary provided.'}</p>
                       </div>
                       {(selectedApplication.skills || []).length > 0 && (
                         <div>
-                          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Skills</h3>
+                          <h3 className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Skills</h3>
                           <div className="flex flex-wrap gap-2">
                             {selectedApplication.skills!.map((s, i) => (
-                              <span key={i} className="text-xs font-semibold bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg">{s}</span>
+                              <span key={i} className="text-xs font-semibold bg-ink-light text-ink-paragraph px-2.5 py-1 rounded-lg">{s}</span>
                             ))}
                           </div>
                         </div>
                       )}
                       {(selectedApplication.experienceHighlights || []).length > 0 && (
                         <div>
-                          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Experience Highlights</h3>
+                          <h3 className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Experience Highlights</h3>
                           <div className="space-y-4">
                             {selectedApplication.experienceHighlights!.map((exp, i) => (
                               <div key={i} className="flex gap-3">
-                                <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
+                                <div className="w-2 h-2 rounded-full bg-status-info mt-1.5 flex-shrink-0" />
                                 <div>
-                                  <p className="text-sm font-bold text-gray-900">{exp.title}</p>
-                                  <p className="text-xs text-gray-500">{exp.company}</p>
-                                  <p className="text-xs text-gray-400">{exp.period}</p>
-                                  <ul className="list-disc list-inside text-sm text-gray-600 mt-1 space-y-0.5">
+                                  <p className="text-sm font-bold text-ink">{exp.title}</p>
+                                  <p className="text-xs text-ink-caption">{exp.company}</p>
+                                  <p className="text-xs text-ink-caption">{exp.period}</p>
+                                  <ul className="list-disc list-inside text-sm text-ink-paragraph mt-1 space-y-0.5">
                                     {exp.bullets?.map((b, bi) => <li key={bi}>{b}</li>)}
                                   </ul>
                                 </div>
@@ -378,17 +378,17 @@ export default function AdminJobBoardDashboard() {
                       )}
                     </div>
                     <div className="w-[260px] flex-shrink-0">
-                      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Personal Details</h3>
+                      <h3 className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-3">Personal Details</h3>
                       <div className="space-y-4">
-                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Email</p><p className="text-sm text-gray-800 break-words">{selectedApplication.email}</p></div>
-                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Phone</p><p className="text-sm text-gray-800">{selectedApplication.phone || '—'}</p></div>
-                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Location</p><p className="text-sm text-gray-800">{selectedApplication.location || '—'}</p></div>
-                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Current Company</p><p className="text-sm text-gray-800">{selectedApplication.currentCompany || '—'}</p></div>
-                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Education</p><p className="text-sm text-gray-800">{selectedApplication.education || '—'}</p></div>
-                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Expected Salary</p><p className="text-sm text-gray-800">{selectedApplication.expectedSalary || '—'}</p></div>
-                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Notice Period</p><p className="text-sm text-gray-800">{selectedApplication.noticePeriod || '—'}</p></div>
-                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Date of Birth</p><p className="text-sm text-gray-800">{selectedApplication.dateOfBirth || '—'}</p></div>
-                        <div><p className="text-[10px] text-gray-400 uppercase font-bold">Gender</p><p className="text-sm text-gray-800">{selectedApplication.gender || '—'}</p></div>
+                        <div><p className="text-[10px] text-ink-caption uppercase font-bold">Email</p><p className="text-sm text-ink-charcoal break-words">{selectedApplication.email}</p></div>
+                        <div><p className="text-[10px] text-ink-caption uppercase font-bold">Phone</p><p className="text-sm text-ink-charcoal">{selectedApplication.phone || '—'}</p></div>
+                        <div><p className="text-[10px] text-ink-caption uppercase font-bold">Location</p><p className="text-sm text-ink-charcoal">{selectedApplication.location || '—'}</p></div>
+                        <div><p className="text-[10px] text-ink-caption uppercase font-bold">Current Company</p><p className="text-sm text-ink-charcoal">{selectedApplication.currentCompany || '—'}</p></div>
+                        <div><p className="text-[10px] text-ink-caption uppercase font-bold">Education</p><p className="text-sm text-ink-charcoal">{selectedApplication.education || '—'}</p></div>
+                        <div><p className="text-[10px] text-ink-caption uppercase font-bold">Expected Salary</p><p className="text-sm text-ink-charcoal">{selectedApplication.expectedSalary || '—'}</p></div>
+                        <div><p className="text-[10px] text-ink-caption uppercase font-bold">Notice Period</p><p className="text-sm text-ink-charcoal">{selectedApplication.noticePeriod || '—'}</p></div>
+                        <div><p className="text-[10px] text-ink-caption uppercase font-bold">Date of Birth</p><p className="text-sm text-ink-charcoal">{selectedApplication.dateOfBirth || '—'}</p></div>
+                        <div><p className="text-[10px] text-ink-caption uppercase font-bold">Gender</p><p className="text-sm text-ink-charcoal">{selectedApplication.gender || '—'}</p></div>
                       </div>
                     </div>
                   </div>
@@ -397,11 +397,11 @@ export default function AdminJobBoardDashboard() {
                 {activeTab === 'education' && (
                   <div className="max-w-2xl">
                     {!selectedApplication.education ? (
-                      <p className="text-sm text-gray-400">No education details provided.</p>
+                      <p className="text-sm text-ink-caption">No education details provided.</p>
                     ) : (
-                      <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-start gap-3">
-                        <GraduationCap size={18} className="text-yellow-500 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm font-semibold text-gray-800">{selectedApplication.education}</p>
+                      <div className="bg-surface-card border border-ink-light rounded-xl p-4 flex items-start gap-3">
+                        <GraduationCap size={18} className="text-brand-gold flex-shrink-0 mt-0.5" />
+                        <p className="text-sm font-semibold text-ink-charcoal">{selectedApplication.education}</p>
                       </div>
                     )}
                   </div>
@@ -410,11 +410,11 @@ export default function AdminJobBoardDashboard() {
                 {activeTab === 'projects' && (
                   <div className="space-y-3 max-w-2xl">
                     {(selectedApplication.projects || []).length === 0 ? (
-                      <p className="text-sm text-gray-400">No projects listed.</p>
+                      <p className="text-sm text-ink-caption">No projects listed.</p>
                     ) : selectedApplication.projects!.map((p, i) => (
-                      <div key={i} className="bg-white border border-gray-200 rounded-xl p-4">
-                        <p className="text-sm font-bold text-gray-900">{p.name}</p>
-                        {p.description && <p className="text-sm text-gray-600 mt-1">{p.description}</p>}
+                      <div key={i} className="bg-surface-card border border-ink-light rounded-xl p-4">
+                        <p className="text-sm font-bold text-ink">{p.name}</p>
+                        {p.description && <p className="text-sm text-ink-paragraph mt-1">{p.description}</p>}
                       </div>
                     ))}
                   </div>
@@ -423,12 +423,12 @@ export default function AdminJobBoardDashboard() {
                 {activeTab === 'experience' && (
                   <div className="space-y-4 max-w-2xl">
                     {(selectedApplication.experienceHighlights || []).length === 0 ? (
-                      <p className="text-sm text-gray-400">No experience details provided.</p>
+                      <p className="text-sm text-ink-caption">No experience details provided.</p>
                     ) : selectedApplication.experienceHighlights!.map((exp, i) => (
-                      <div key={i} className="border-l-2 border-yellow-400 pl-4">
-                        <p className="text-sm font-bold text-gray-900">{exp.title}</p>
-                        <p className="text-xs text-gray-500">{exp.company} · {exp.period}</p>
-                        <ul className="list-disc list-inside text-sm text-gray-600 mt-1 space-y-0.5">
+                      <div key={i} className="border-l-2 border-brand-yellow pl-4">
+                        <p className="text-sm font-bold text-ink">{exp.title}</p>
+                        <p className="text-xs text-ink-caption">{exp.company} · {exp.period}</p>
+                        <ul className="list-disc list-inside text-sm text-ink-paragraph mt-1 space-y-0.5">
                           {exp.bullets?.map((b, bi) => <li key={bi}>{b}</li>)}
                         </ul>
                       </div>
@@ -439,9 +439,9 @@ export default function AdminJobBoardDashboard() {
                 {activeTab === 'skills' && (
                   <div className="flex flex-wrap gap-2 max-w-2xl">
                     {(selectedApplication.skills || []).length === 0 ? (
-                      <p className="text-sm text-gray-400">No skills listed.</p>
+                      <p className="text-sm text-ink-caption">No skills listed.</p>
                     ) : selectedApplication.skills!.map((s, i) => (
-                      <span key={i} className="text-xs font-semibold bg-gray-100 text-gray-700 px-2.5 py-1 rounded-lg">{s}</span>
+                      <span key={i} className="text-xs font-semibold bg-ink-light text-ink-paragraph px-2.5 py-1 rounded-lg">{s}</span>
                     ))}
                   </div>
                 )}
@@ -449,10 +449,10 @@ export default function AdminJobBoardDashboard() {
                 {activeTab === 'documents' && (
                   <div className="space-y-2 max-w-2xl">
                     {(selectedApplication.documents || []).length === 0 ? (
-                      <p className="text-sm text-gray-400">No additional documents uploaded.</p>
+                      <p className="text-sm text-ink-caption">No additional documents uploaded.</p>
                     ) : selectedApplication.documents!.map((d, i) => (
-                      <div key={i} className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700">
-                        <Paperclip size={14} className="text-gray-400" />{d.name}
+                      <div key={i} className="flex items-center gap-2 bg-surface-card border border-ink-light rounded-lg px-3 py-2 text-sm text-ink-paragraph">
+                        <Paperclip size={14} className="text-ink-caption" />{d.name}
                       </div>
                     ))}
                   </div>
@@ -461,23 +461,23 @@ export default function AdminJobBoardDashboard() {
                 {activeTab === 'resume' && (
                   <div className="max-w-2xl">
                     {!selectedApplication.resumeKey ? (
-                      <p className="text-sm text-gray-400">Candidate did not upload a resume.</p>
+                      <p className="text-sm text-ink-caption">Candidate did not upload a resume.</p>
                     ) : (
-                      <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-3">
+                      <div className="bg-surface-card border border-ink-light rounded-xl p-4 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2 min-w-0">
-                          <FileText size={18} className="text-red-500 flex-shrink-0" />
-                          <p className="text-sm font-semibold text-gray-800 truncate">
+                          <FileText size={18} className="text-status-error flex-shrink-0" />
+                          <p className="text-sm font-semibold text-ink-charcoal truncate">
                             {selectedApplication.resumeKey.split('/').pop()?.replace(/^[0-9a-f-]{36}-/, '')}
                           </p>
                         </div>
                         {resumeUrl ? (
                           <a href={resumeUrl} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-xs font-semibold text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-1.5 hover:bg-yellow-100 flex-shrink-0">
+                            className="inline-flex items-center gap-2 text-xs font-semibold text-brand-gold bg-surface-main border border-brand-yellow-soft rounded-lg px-3 py-1.5 hover:bg-brand-yellow-soft flex-shrink-0">
                             <ExternalLink size={14} /> Open Resume
                           </a>
                         ) : (
                           <button onClick={handleViewResume} disabled={resumeLoading}
-                            className="inline-flex items-center gap-2 text-xs font-semibold bg-gray-900 text-white rounded-lg px-3 py-1.5 hover:bg-gray-800 disabled:opacity-50 flex-shrink-0">
+                            className="inline-flex items-center gap-2 text-xs font-semibold bg-ink text-white rounded-lg px-3 py-1.5 hover:bg-ink-charcoal disabled:opacity-50 flex-shrink-0">
                             {resumeLoading ? 'Loading...' : 'View Resume'}
                           </button>
                         )}
@@ -490,11 +490,11 @@ export default function AdminJobBoardDashboard() {
                   <div className="space-y-3 max-w-2xl">
                     {(selectedApplication.activity || []).slice().reverse().map((a, i) => (
                       <div key={i} className="flex items-start gap-3 text-sm">
-                        <div className="w-2 h-2 rounded-full bg-yellow-400 mt-1.5 flex-shrink-0" />
+                        <div className="w-2 h-2 rounded-full bg-brand-yellow mt-1.5 flex-shrink-0" />
                         <div>
-                          <p className="font-semibold text-gray-800">{a.action}</p>
-                          <p className="text-xs text-gray-400">{new Date(a.timestamp).toLocaleString('en-IN')}</p>
-                          {a.note && <p className="text-xs text-gray-500 mt-0.5">{a.note}</p>}
+                          <p className="font-semibold text-ink-charcoal">{a.action}</p>
+                          <p className="text-xs text-ink-caption">{new Date(a.timestamp).toLocaleString('en-IN')}</p>
+                          {a.note && <p className="text-xs text-ink-caption mt-0.5">{a.note}</p>}
                         </div>
                       </div>
                     ))}
@@ -507,26 +507,26 @@ export default function AdminJobBoardDashboard() {
       </div>
 
       {deleteConfirmJob && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/60 p-4">
+          <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
             <div className="p-5">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                  <AlertTriangle size={18} className="text-red-600" />
+                <div className="w-9 h-9 rounded-full bg-status-error/15 flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle size={18} className="text-status-error" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900">Delete Job</h3>
+                <h3 className="text-base font-bold text-ink">Delete Job</h3>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-ink-paragraph">
                 Delete <span className="font-semibold">"{deleteConfirmJob.title}"</span>? All applications for this job will remain accessible from the candidate records, but the listing will be removed from Job Board and the public site. This cannot be undone.
               </p>
             </div>
-            <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-100 bg-gray-50">
+            <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-ink-light bg-ink-offwhite">
               <button onClick={() => setDeleteConfirmJob(null)} disabled={deletingJob}
-                className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50">
+                className="px-4 py-2 border border-ink-light rounded-lg text-sm font-medium text-ink-paragraph hover:bg-ink-light disabled:opacity-50">
                 Cancel
               </button>
               <button onClick={confirmDeleteJob} disabled={deletingJob}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg disabled:opacity-50">
+                className="px-4 py-2 bg-status-error hover:bg-status-error text-white text-sm font-bold rounded-lg disabled:opacity-50">
                 {deletingJob ? 'Deleting...' : 'Delete'}
               </button>
             </div>
@@ -535,11 +535,11 @@ export default function AdminJobBoardDashboard() {
       )}
 
       {messageOpen && selectedApplication && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 bg-gray-900">
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/60 p-4">
+          <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 bg-ink">
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                <MessageSquare size={16} className="text-yellow-400" /> Message {selectedApplication.fullName}
+                <MessageSquare size={16} className="text-brand-yellow" /> Message {selectedApplication.fullName}
               </h2>
               <button onClick={() => setMessageOpen(false)} className="p-1 rounded hover:bg-white/10">
                 <X size={16} className="text-white" />
@@ -547,21 +547,21 @@ export default function AdminJobBoardDashboard() {
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Recipient</p>
-                <p className="text-sm font-semibold text-gray-800">{selectedApplication.fullName} ({selectedApplication.email})</p>
+                <p className="text-[10px] font-bold text-ink-caption uppercase tracking-wide mb-1">Recipient</p>
+                <p className="text-sm font-semibold text-ink-charcoal">{selectedApplication.fullName} ({selectedApplication.email})</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Message Content</p>
+                <p className="text-[10px] font-bold text-ink-caption uppercase tracking-wide mb-1">Message Content</p>
                 <textarea rows={5} value={messageText} onChange={e => setMessageText(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
+                  className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow resize-none" />
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-100">
-              <button onClick={() => setMessageOpen(false)} className="text-sm font-semibold text-gray-500 hover:text-gray-700">
+            <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-ink-light">
+              <button onClick={() => setMessageOpen(false)} className="text-sm font-semibold text-ink-caption hover:text-ink-paragraph">
                 Cancel
               </button>
               <button onClick={handleSendMessage} disabled={sendingMessage || !messageText.trim()}
-                className="bg-yellow-400 hover:bg-yellow-300 text-black text-sm font-bold px-4 py-2 rounded-lg disabled:opacity-50 transition-colors">
+                className="bg-brand-yellow hover:bg-brand-yellow-soft text-ink text-sm font-bold px-4 py-2 rounded-lg disabled:opacity-50 transition-colors">
                 {sendingMessage ? 'Sending...' : 'Send Message'}
               </button>
             </div>

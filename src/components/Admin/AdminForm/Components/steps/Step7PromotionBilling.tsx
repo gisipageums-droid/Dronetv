@@ -172,13 +172,13 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
     >
       <div className="space-y-8">
         {/* Promotion Formats Section */}
-        <div className="p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-orange-200">
+        <div className="p-6 bg-gradient-to-r from-surface-main to-status-warning/10 rounded-lg border border-status-warning/25">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold text-orange-900">Promotion Preferences</h3>
+            <h3 className="text-lg font-bold text-status-warning">Promotion Preferences</h3>
             <button
               type="button"
               onClick={() => openEditModal('Promotion Formats', promoFormats)}
-              className="inline-flex gap-1 items-center px-3 py-1 text-xs text-orange-800 bg-orange-100 rounded-lg transition-colors hover:bg-orange-200"
+              className="inline-flex gap-1 items-center px-3 py-1 text-xs text-status-warning bg-status-warning/15 rounded-lg transition-colors hover:bg-status-warning/25"
             >
               ✏️ Edit Options
             </button>
@@ -188,9 +188,9 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
             {promoFormats.map((format) => (
               <label
                 key={format}
-                className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-white ${formData.promoFormats?.includes(format)
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-slate-300'
+                className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-surface-card ${formData.promoFormats?.includes(format)
+                  ? 'border-status-info bg-status-info/10 text-status-info'
+                  : 'border-ink-light'
                   }`}
               >
                 <input
@@ -210,8 +210,8 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                 />
                 <div
                   className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center ${formData.promoFormats?.includes(format)
-                    ? 'border-blue-500 bg-blue-500'
-                    : 'border-slate-300'
+                    ? 'border-status-info bg-status-info'
+                    : 'border-ink-light'
                     }`}
                 >
                   {formData.promoFormats?.includes(format) && (
@@ -227,7 +227,7 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                 <span className="text-sm font-medium">
                   {format}
                   {(format.includes('Premium') || format.includes('Paid')) && (
-                    <span className="px-2 py-1 ml-2 text-xs text-orange-800 bg-orange-200 rounded-full">
+                    <span className="px-2 py-1 ml-2 text-xs text-status-warning bg-status-warning/25 rounded-full">
                       Paid Service
                     </span>
                   )}
@@ -237,13 +237,13 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
           </div>
 
           {formData.promoFormats?.length > 0 && (
-            <div className="p-4 mt-4 bg-orange-100 rounded-lg border border-orange-200">
-              <h4 className="mb-2 font-semibold text-orange-900">Selected Formats:</h4>
+            <div className="p-4 mt-4 bg-status-warning/15 rounded-lg border border-status-warning/25">
+              <h4 className="mb-2 font-semibold text-status-warning">Selected Formats:</h4>
               <div className="flex flex-wrap gap-2">
                 {formData.promoFormats.map((format) => (
                   <span
                     key={format}
-                    className="px-3 py-1 text-xs font-medium text-orange-800 bg-orange-200 rounded-full border border-orange-300"
+                    className="px-3 py-1 text-xs font-medium text-status-warning bg-status-warning/25 rounded-full border border-status-warning/40"
                   >
                     {format}
                   </span>
@@ -255,19 +255,19 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
 
         {/* Billing Information Section */}
         {/* {showBillingFields && (
-          <div className="p-6 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="p-6 bg-status-info/10 rounded-lg border border-status-info/25">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-blue-900">Billing Information</h3>
+              <h3 className="text-lg font-bold text-status-info">Billing Information</h3>
               <button
                 type="button"
                 onClick={() => openEditModal('Payment Methods', paymentMethods)}
-                className="inline-flex gap-1 items-center px-3 py-1 text-xs text-blue-800 bg-blue-100 rounded-lg transition-colors hover:bg-blue-200"
+                className="inline-flex gap-1 items-center px-3 py-1 text-xs text-status-info bg-status-info/15 rounded-lg transition-colors hover:bg-status-info/25"
               >
                 ✏️ Edit Options
               </button>
             </div>
 
-            <p className="mb-4 text-sm text-blue-700">
+            <p className="mb-4 text-sm text-status-info">
               Since you've selected premium services, please provide billing details.
             </p>
 
@@ -301,16 +301,16 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
               />
 
               <div>
-                <label className="block mb-3 text-sm font-semibold text-slate-700">
+                <label className="block mb-3 text-sm font-semibold text-ink-paragraph">
                   Preferred Payment Method
                 </label>
                 <div className="grid grid-cols-1 gap-2">
                   {paymentMethods.map((method) => (
                     <label
                       key={method}
-                      className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-white ${formData.paymentMethod === method
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-slate-300'
+                      className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-surface-card ${formData.paymentMethod === method
+                        ? 'border-status-info bg-status-info/10 text-status-info'
+                        : 'border-ink-light'
                         }`}
                     >
                       <input
@@ -325,12 +325,12 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                       />
                       <div
                         className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${formData.paymentMethod === method
-                          ? 'border-blue-500 bg-blue-500'
-                          : 'border-slate-300'
+                          ? 'border-status-info bg-status-info'
+                          : 'border-ink-light'
                           }`}
                       >
                         {formData.paymentMethod === method && (
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                          <div className="w-2 h-2 bg-surface-card rounded-full"></div>
                         )}
                       </div>
                       <span className="text-sm font-medium">{method}</span>
@@ -354,8 +354,8 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
         )} */}
 
         {/* Terms & Conditions Section */}
-        <div className="p-6 rounded-lg border bg-slate-50 border-slate-200">
-          <h3 className="mb-4 text-lg font-bold text-slate-900">Terms & Conditions</h3>
+        <div className="p-6 rounded-lg border bg-ink-offwhite border-ink-light">
+          <h3 className="mb-4 text-lg font-bold text-ink">Terms & Conditions</h3>
 
           <div className="space-y-4">
             <label className="flex items-start">
@@ -365,13 +365,13 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                 onChange={(e) => {
                   updateFormData({ acceptTerms: e.target.checked });
                 }}
-                className="mt-1 mr-3 w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                className="mt-1 mr-3 w-5 h-5 text-status-info rounded border-ink-light focus:ring-status-info"
               />
-              <span className="text-slate-700">
+              <span className="text-ink-paragraph">
                 <span className="font-semibold">I accept the Terms & Conditions</span>
-                <span className="ml-1 text-red-500">*</span>
+                <span className="ml-1 text-status-error">*</span>
                 <br />
-                <span className="text-sm text-slate-600">
+                <span className="text-sm text-ink-paragraph">
                   I agree to the terms of service, data processing, and promotional activities as outlined in the DroneTV platform agreement.
                 </span>
               </span>
@@ -384,13 +384,13 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                 onChange={(e) => {
                   updateFormData({ acceptPrivacy: e.target.checked });
                 }}
-                className="mt-1 mr-3 w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                className="mt-1 mr-3 w-5 h-5 text-status-info rounded border-ink-light focus:ring-status-info"
               />
-              <span className="text-slate-700">
+              <span className="text-ink-paragraph">
                 <span className="font-semibold">I accept the Privacy Policy</span>
-                <span className="ml-1 text-red-500">*</span>
+                <span className="ml-1 text-status-error">*</span>
                 <br />
-                <span className="text-sm text-slate-600">
+                <span className="text-sm text-ink-paragraph">
                   I understand how my data will be collected, processed, and used for website generation and promotional purposes.
                 </span>
               </span>
@@ -398,8 +398,8 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
           </div>
 
           {(!formData.acceptTerms || !formData.acceptPrivacy) && (
-            <div className="p-3 mt-4 bg-red-50 rounded-lg border border-red-200">
-              <p className="text-sm text-red-700">
+            <div className="p-3 mt-4 bg-status-error/10 rounded-lg border border-status-error/25">
+              <p className="text-sm text-status-error">
                 Please accept both Terms & Conditions and Privacy Policy to continue.
               </p>
             </div>
@@ -408,32 +408,32 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
 
         {/* Edit Modal */}
         {isEditModalOpen && (
-          <div className="flex fixed inset-0 z-50 justify-center items-center backdrop-blur-sm bg-black/60">
-            <div className="bg-white rounded-xl shadow-xl w-11/12 max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="flex gap-2 items-center text-xl font-bold text-gray-900">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+          <div className="flex fixed inset-0 z-50 justify-center items-center backdrop-blur-sm bg-ink/60">
+            <div className="bg-surface-card rounded-xl shadow-xl w-11/12 max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+              <div className="p-6 border-b border-ink-light">
+                <h3 className="flex gap-2 items-center text-xl font-bold text-ink">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-status-info" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                   </svg>
                   Edit {currentEditingCategory}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">Add or remove options for {currentEditingCategory}</p>
+                <p className="mt-1 text-sm text-ink-caption">Add or remove options for {currentEditingCategory}</p>
               </div>
 
               <div className="overflow-y-auto flex-1 p-6">
                 <div className="mb-6">
-                  <h4 className="mb-3 font-medium text-gray-700">Current Options</h4>
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <h4 className="mb-3 font-medium text-ink-paragraph">Current Options</h4>
+                  <div className="p-4 bg-ink-offwhite rounded-lg border border-ink-light">
                     {editableOptions.length > 0 ? (
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                         {editableOptions.map((option, index) => (
                           <div
                             key={index}
-                            className="flex justify-between items-center px-3 py-2 bg-white rounded-lg border border-gray-200"
+                            className="flex justify-between items-center px-3 py-2 bg-surface-card rounded-lg border border-ink-light"
                           >
                             <input
                               type="text"
-                              className={`flex-1 text-sm bg-transparent outline-none ${editingIndex === index ? 'ring-1 ring-blue-300 rounded px-2 py-1' : ''}`}
+                              className={`flex-1 text-sm bg-transparent outline-none ${editingIndex === index ? 'ring-1 ring-status-info/40 rounded px-2 py-1' : ''}`}
                               value={option}
                               readOnly={editingIndex !== index}
                               onChange={(e) =>
@@ -450,7 +450,7 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                               {editingIndex === index ? (
                                 <button
                                   type="button"
-                                  className="text-green-600 transition-colors hover:text-green-800"
+                                  className="text-status-success transition-colors hover:text-status-success"
                                   title="Done"
                                   onClick={async () => {
                                     setEditingIndex(null);
@@ -464,7 +464,7 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                               ) : (
                                 <button
                                   type="button"
-                                  className="text-gray-500 transition-colors hover:text-gray-700"
+                                  className="text-ink-caption transition-colors hover:text-ink-paragraph"
                                   title="Edit"
                                   onClick={() => setEditingIndex(index)}
                                 >
@@ -475,7 +475,7 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                               )}
                               <button
                                 type="button"
-                                className="text-red-500 transition-colors hover:text-red-700"
+                                className="text-status-error transition-colors hover:text-status-error"
                                 onClick={() => handleRemoveOption(index)}
                               >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
@@ -487,28 +487,28 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                         ))}
                       </div>
                     ) : (
-                      <p className="py-3 text-sm text-center text-gray-500">No options added yet</p>
+                      <p className="py-3 text-sm text-center text-ink-caption">No options added yet</p>
                     )}
                   </div>
                   {updateError && (
-                    <p className="mt-2 text-sm text-red-600">{updateError}</p>
+                    <p className="mt-2 text-sm text-status-error">{updateError}</p>
                   )}
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-medium text-gray-700">Add New Option</h4>
+                  <h4 className="mb-3 font-medium text-ink-paragraph">Add New Option</h4>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       placeholder="Enter new option"
-                      className="flex-1 px-4 py-2 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="flex-1 px-4 py-2 rounded-lg border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                       value={newOption}
                       onChange={(e) => setNewOption(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddOption()}
                     />
                     <button
                       type="button"
-                      className="flex gap-1 items-center px-4 py-2 text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600"
+                      className="flex gap-1 items-center px-4 py-2 text-white bg-status-info rounded-lg transition-colors hover:bg-status-info"
                       onClick={handleAddOption}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
@@ -520,17 +520,17 @@ const Step7PromotionBilling: React.FC<StepProps> = ({
                 </div>
               </div>
 
-              <div className="flex gap-3 justify-end p-6 bg-gray-50 border-t border-gray-200">
+              <div className="flex gap-3 justify-end p-6 bg-ink-offwhite border-t border-ink-light">
                 <button
                   type="button"
-                  className="px-4 py-2 font-medium text-gray-700 rounded-lg transition-colors hover:text-gray-900"
+                  className="px-4 py-2 font-medium text-ink-paragraph rounded-lg transition-colors hover:text-ink"
                   onClick={() => setIsEditModalOpen(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className={`flex gap-1 items-center px-4 py-2 font-medium text-white rounded-lg transition-colors ${isUpdatingOptions ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                  className={`flex gap-1 items-center px-4 py-2 font-medium text-white rounded-lg transition-colors ${isUpdatingOptions ? 'bg-status-info cursor-not-allowed' : 'bg-status-info hover:bg-status-info'}`}
                   onClick={handleSaveOptions}
                   disabled={isUpdatingOptions}
                 >

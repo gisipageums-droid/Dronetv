@@ -447,40 +447,40 @@ export default function AdminMediaDashboard() {
     <div className="min-h-screen bg-[#F4F5F7]">
       <div className="mb-5 flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-extrabold text-gray-900">
+          <h1 className="text-xl font-extrabold text-ink">
             {activeType === 'applications' ? 'Partner Applications' : config.title}
           </h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-ink-caption mt-0.5">
             {activeType === 'applications'
               ? `${appSubmissions.length} applications received`
               : `${sectionItems.length} items · ${config.subtitle}`}
           </p>
         </div>
         {activeType !== 'applications' && (
-          <button onClick={openCreate} className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
+          <button onClick={openCreate} className="flex items-center gap-2 bg-brand-yellow text-ink font-bold px-4 py-2 rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm">
             <Plus className="w-4 h-4" /> Add Content
           </button>
         )}
       </div>
 
       <div className="py-1">
-        <div className="flex gap-0 bg-gray-900 rounded-t-lg mb-4 overflow-x-auto">
+        <div className="flex gap-0 bg-ink rounded-t-lg mb-4 overflow-x-auto">
           <button onClick={() => setActiveTypeAndSync('all')}
-            className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === 'all' ? 'text-white border-yellow-400' : 'text-gray-400 border-transparent hover:text-white'}`}>
+            className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === 'all' ? 'text-white border-brand-yellow' : 'text-ink-caption border-transparent hover:text-white'}`}>
             All ({sectionItems.length})
           </button>
           {config.types.map(t => {
             const count = items.filter(i => i.contentType === t.value).length;
             return (
               <button key={t.value} onClick={() => setActiveTypeAndSync(t.value)}
-                className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === t.value ? 'text-white border-yellow-400' : 'text-gray-400 border-transparent hover:text-white'}`}>
+                className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === t.value ? 'text-white border-brand-yellow' : 'text-ink-caption border-transparent hover:text-white'}`}>
                 {t.label}{count > 0 ? ` (${count})` : ''}
               </button>
             );
           })}
           {mode === 'professionals' && (
             <button onClick={() => navigate('/admin/professional/dashboard')}
-              className="px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] border-transparent text-gray-400 hover:text-white transition-all">
+              className="px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] border-transparent text-ink-caption hover:text-white transition-all">
               Pilot Directory
             </button>
           )}
@@ -488,11 +488,11 @@ export default function AdminMediaDashboard() {
 
         {activeType !== 'job' && (
           <div className="relative w-full max-w-xs mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-caption" />
             <input type="text" placeholder={activeType === 'applications' ? 'Search applications...' : 'Search content...'}
               value={activeType === 'applications' ? appSearch : search}
               onChange={e => activeType === 'applications' ? setAppSearch(e.target.value) : setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+              className="w-full pl-9 pr-4 py-2 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
           </div>
         )}
 
@@ -500,32 +500,32 @@ export default function AdminMediaDashboard() {
           <AdminJobBoardDashboard />
         ) : activeType === 'applications' ? (
           appLoading ? (
-            <div className="text-center py-16 text-gray-400">Loading...</div>
+            <div className="text-center py-16 text-ink-caption">Loading...</div>
           ) : appError ? (
-            <div className="text-center py-16 text-red-400">Failed to load applications.</div>
+            <div className="text-center py-16 text-status-error">Failed to load applications.</div>
           ) : filteredAppSubmissions.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">No applications received yet.</div>
+            <div className="text-center py-16 text-ink-caption">No applications received yet.</div>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+            <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-x-auto">
               <table className="w-full min-w-[600px] text-sm">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-ink-offwhite border-b border-ink-light">
                   <tr>
-                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Name</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Contact</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Message</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide whitespace-nowrap">Submitted</th>
+                    <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Name</th>
+                    <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Contact</th>
+                    <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Message</th>
+                    <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide whitespace-nowrap">Submitted</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-ink-light">
                   {filteredAppSubmissions.map(sub => (
-                    <tr key={sub.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 font-medium text-gray-900 align-top whitespace-nowrap">{sub.name}</td>
-                      <td className="px-4 py-3 text-gray-500 text-xs align-top whitespace-nowrap">
+                    <tr key={sub.id} className="hover:bg-ink-offwhite transition-colors">
+                      <td className="px-4 py-3 font-medium text-ink align-top whitespace-nowrap">{sub.name}</td>
+                      <td className="px-4 py-3 text-ink-caption text-xs align-top whitespace-nowrap">
                         <div>{sub.email}</div>
                         <div>{sub.phone}</div>
                       </td>
-                      <td className="px-4 py-3 text-gray-600 text-xs align-top max-w-md">{sub.message}</td>
-                      <td className="px-4 py-3 text-gray-500 text-xs align-top whitespace-nowrap">
+                      <td className="px-4 py-3 text-ink-paragraph text-xs align-top max-w-md">{sub.message}</td>
+                      <td className="px-4 py-3 text-ink-caption text-xs align-top whitespace-nowrap">
                         {sub.submittedAt ? new Date(sub.submittedAt).toLocaleString('en-IN') : '—'}
                       </td>
                     </tr>
@@ -535,64 +535,64 @@ export default function AdminMediaDashboard() {
             </div>
           )
         ) : loading ? (
-          <div className="text-center py-16 text-gray-400">Loading...</div>
+          <div className="text-center py-16 text-ink-caption">Loading...</div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">No content yet. Click "Add Content" to create your first item.</div>
+          <div className="text-center py-16 text-ink-caption">No content yet. Click "Add Content" to create your first item.</div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+          <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-x-auto">
             <table className="w-full min-w-[600px] text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-ink-offwhite border-b border-ink-light">
                 <tr>
-                  <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Title</th>
-                  <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Type</th>
-                  <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Source</th>
-                  <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Date</th>
-                  <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Status</th>
-                  <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Actions</th>
+                  <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Title</th>
+                  <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Type</th>
+                  <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Source</th>
+                  <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Date</th>
+                  <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Status</th>
+                  <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-ink-light">
                 {filtered.map(item => {
                   const isApplication = item.title.startsWith('[Application]');
                   const displayTitle = isApplication ? item.title.replace('[Application] ', '') : item.title;
                   return (
-                  <tr key={item.contentId} className={`hover:bg-gray-50 transition-colors ${isApplication ? 'bg-blue-50/40' : ''}`}>
+                  <tr key={item.contentId} className={`hover:bg-ink-offwhite transition-colors ${isApplication ? 'bg-status-info/40' : ''}`}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {item.imageUrl && <img src={item.imageUrl} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />}
                         <div>
                           {isApplication && (
-                            <span className="inline-block bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.5 rounded mb-0.5 uppercase tracking-wide">Application</span>
+                            <span className="inline-block bg-status-info/15 text-status-info text-[10px] font-bold px-1.5 py-0.5 rounded mb-0.5 uppercase tracking-wide">Application</span>
                           )}
-                          <span className="font-medium text-gray-900 line-clamp-1 block">{displayTitle}</span>
+                          <span className="font-medium text-ink line-clamp-1 block">{displayTitle}</span>
                           {isApplication && item.company && (
-                            <span className="text-xs text-gray-500 block">{item.company} · {item.source} · {item.author}</span>
+                            <span className="text-xs text-ink-caption block">{item.company} · {item.source} · {item.author}</span>
                           )}
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded capitalize ${isApplication ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'}`}>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded capitalize ${isApplication ? 'bg-status-info/15 text-status-info' : 'bg-ink-light text-ink-paragraph'}`}>
                         {isApplication ? 'Job Application' : (ALL_TYPE_DEFS.find(t => t.value === item.contentType)?.label || item.contentType)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{isApplication ? (item.source || '—') : (item.source || item.company || '—')}</td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{item.date || new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
+                    <td className="px-4 py-3 text-ink-caption text-xs">{isApplication ? (item.source || '—') : (item.source || item.company || '—')}</td>
+                    <td className="px-4 py-3 text-ink-caption text-xs">{item.date || new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.isPublished ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.isPublished ? 'bg-status-success/15 text-status-success' : 'bg-ink-light text-ink-caption'}`}>
                         {item.isPublished ? 'Published' : 'Draft'}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <button onClick={() => togglePublish(item)} title={item.isPublished ? 'Unpublish' : 'Publish'}
-                          className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-green-600 transition-colors">
+                          className="p-1.5 rounded hover:bg-ink-light text-ink-caption hover:text-status-success transition-colors">
                           {item.isPublished ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
-                        <button onClick={() => openEdit(item)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-colors">
+                        <button onClick={() => openEdit(item)} className="p-1.5 rounded hover:bg-ink-light text-ink-caption hover:text-status-info transition-colors">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => handleDelete(item)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-red-600 transition-colors">
+                        <button onClick={() => handleDelete(item)} className="p-1.5 rounded hover:bg-ink-light text-ink-caption hover:text-status-error transition-colors">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -607,11 +607,11 @@ export default function AdminMediaDashboard() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-[10000000] flex items-start justify-center bg-black/60 overflow-y-auto py-8">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 my-auto">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900">{editItem ? 'Edit Content' : 'Add New Content'}</h2>
-              <button onClick={() => setShowForm(false)} className="p-1.5 rounded hover:bg-gray-100">
+        <div className="fixed inset-0 z-[10000000] flex items-start justify-center bg-ink/60 overflow-y-auto py-8">
+          <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-2xl mx-4 my-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
+              <h2 className="text-lg font-bold text-ink">{editItem ? 'Edit Content' : 'Add New Content'}</h2>
+              <button onClick={() => setShowForm(false)} className="p-1.5 rounded hover:bg-ink-light">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -620,9 +620,9 @@ export default function AdminMediaDashboard() {
             <div className="px-6 py-5 space-y-4">
               {/* Content type selector — top row */}
               <div>
-                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Content Type *</label>
+                <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Content Type *</label>
                 <select value={form.contentType} onChange={e => setForm(f => ({ ...f, contentType: e.target.value as ContentType }))}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                  className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                   disabled={!!editItem}>
                   {config.types.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
@@ -630,17 +630,17 @@ export default function AdminMediaDashboard() {
 
               {/* Title — always required */}
               <div>
-                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Title *</label>
+                <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Title *</label>
                 <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                  className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                   placeholder="Content title" required />
               </div>
 
               {/* Description — always shown */}
               <div>
-                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Description</label>
+                <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Description</label>
                 <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                  rows={3} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400 resize-none"
+                  rows={3} className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow resize-none"
                   placeholder="Short description or summary" />
               </div>
 
@@ -650,8 +650,8 @@ export default function AdminMediaDashboard() {
                 const has = (k: FieldKey) => fields.includes(k);
                 const label = (k: FieldKey, fallback: string) =>
                   FIELD_LABELS[form.contentType]?.[k] ?? fallback;
-                const inp = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-yellow-400';
-                const lbl = 'text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1';
+                const inp = 'w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-yellow';
+                const lbl = 'text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1';
 
                 const rows: React.ReactNode[] = [];
 
@@ -814,7 +814,7 @@ export default function AdminMediaDashboard() {
                           <option value="sponsor-badge">Sponsor Badge (no image)</option>
                         </select>
                         {form.zone && ZONE_IMAGE_HINT[form.zone] && (
-                          <p className="text-[11px] text-gray-400 mt-1">Upload an image close to {ZONE_IMAGE_HINT[form.zone]} — the full image is shown (not cropped), so a mismatched shape leaves visible padding.</p>
+                          <p className="text-[11px] text-ink-caption mt-1">Upload an image close to {ZONE_IMAGE_HINT[form.zone]} — the full image is shown (not cropped), so a mismatched shape leaves visible padding.</p>
                         )}
                       </div>
                       <div>
@@ -846,19 +846,19 @@ export default function AdminMediaDashboard() {
                     <div key="targetPages">
                       <div className="flex items-center justify-between mb-1">
                         <label className={lbl}>Target Pages</label>
-                        <label className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 cursor-pointer">
+                        <label className="flex items-center gap-1.5 text-xs font-semibold text-ink-paragraph cursor-pointer">
                           <input type="checkbox" checked={isAllPages}
                             onChange={e => setForm(f => ({ ...f, targetPages: e.target.checked ? ['all'] : [] }))} />
                           All Pages
                         </label>
                       </div>
-                      <div className={`border border-gray-200 rounded-lg max-h-56 overflow-y-auto p-3 space-y-3 ${isAllPages ? 'opacity-50 pointer-events-none bg-gray-50' : 'bg-white'}`}>
+                      <div className={`border border-ink-light rounded-lg max-h-56 overflow-y-auto p-3 space-y-3 ${isAllPages ? 'opacity-50 pointer-events-none bg-ink-offwhite' : 'bg-surface-card'}`}>
                         {SITE_PAGES.map(group => (
                           <div key={group.section}>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">{group.section}</p>
+                            <p className="text-[10px] font-bold text-ink-caption uppercase tracking-wide mb-1">{group.section}</p>
                             <div className="grid grid-cols-2 gap-x-3 gap-y-1">
                               {group.pages.map(p => (
-                                <label key={p.path} className="flex items-center gap-1.5 text-xs text-gray-700 cursor-pointer">
+                                <label key={p.path} className="flex items-center gap-1.5 text-xs text-ink-paragraph cursor-pointer">
                                   <input type="checkbox" checked={form.targetPages.includes(p.path)}
                                     onChange={() => togglePage(p.path)} disabled={isAllPages} />
                                   {p.label}
@@ -869,7 +869,7 @@ export default function AdminMediaDashboard() {
                         ))}
                       </div>
                       {!isAllPages && (
-                        <p className="text-[11px] text-gray-400 mt-1">{form.targetPages.length} page(s) selected</p>
+                        <p className="text-[11px] text-ink-caption mt-1">{form.targetPages.length} page(s) selected</p>
                       )}
                     </div>
                   );
@@ -899,11 +899,11 @@ export default function AdminMediaDashboard() {
               {/* Image — real upload for ads, plain URL for every other content type */}
               {form.contentType === 'ad' ? (
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Ad Creative Image</label>
+                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Ad Creative Image</label>
                   {form.imageUrl && (
-                    <img src={form.imageUrl} alt="Ad creative preview" className="w-full max-h-40 object-contain rounded-lg border border-gray-200 mb-2 bg-gray-50" />
+                    <img src={form.imageUrl} alt="Ad creative preview" className="w-full max-h-40 object-contain rounded-lg border border-ink-light mb-2 bg-ink-offwhite" />
                   )}
-                  <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-lg py-3 cursor-pointer hover:border-yellow-400 transition-colors text-sm font-semibold text-gray-500">
+                  <label className="flex items-center justify-center gap-2 border-2 border-dashed border-ink-light rounded-lg py-3 cursor-pointer hover:border-brand-yellow transition-colors text-sm font-semibold text-ink-caption">
                     <Upload className="w-4 h-4" />
                     {uploadingImage ? 'Uploading...' : form.imageUrl ? 'Replace Image' : 'Upload Image'}
                     <input type="file" accept="image/*" className="hidden" disabled={uploadingImage}
@@ -924,9 +924,9 @@ export default function AdminMediaDashboard() {
                 </div>
               ) : (
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Image URL</label>
+                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Image URL</label>
                   <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                    className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                     placeholder="https://..." />
                 </div>
               )}
@@ -935,41 +935,41 @@ export default function AdminMediaDashboard() {
               {(FIELD_CONFIG[form.contentType] ?? []).includes('videoUrl') ? (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">External Link</label>
+                    <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">External Link</label>
                     <input value={form.externalLink} onChange={e => setForm(f => ({ ...f, externalLink: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                       placeholder="https://..." />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Video URL</label>
+                    <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Video URL</label>
                     <input value={form.videoUrl} onChange={e => setForm(f => ({ ...f, videoUrl: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                       placeholder="YouTube URL" />
                   </div>
                 </div>
               ) : (
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">External Link</label>
+                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">External Link</label>
                   <input value={form.externalLink} onChange={e => setForm(f => ({ ...f, externalLink: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                    className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                     placeholder="https://..." />
                 </div>
               )}
 
               {/* Tags */}
               <div>
-                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Tags</label>
+                <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Tags</label>
                 <div className="flex gap-2">
                   <input value={tagInput} onChange={e => setTagInput(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                    className="flex-1 border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                     placeholder="Type tag + Enter" />
-                  <button onClick={addTag} className="px-3 py-2 bg-gray-100 rounded-lg text-sm font-medium hover:bg-gray-200">Add</button>
+                  <button onClick={addTag} className="px-3 py-2 bg-ink-light rounded-lg text-sm font-medium hover:bg-ink-light">Add</button>
                 </div>
                 {form.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {form.tags.map(tag => (
-                      <span key={tag} className="flex items-center gap-1 bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                      <span key={tag} className="flex items-center gap-1 bg-ink-light text-ink-paragraph text-xs font-semibold px-2 py-0.5 rounded-full">
                         {tag}
                         <button onClick={() => setForm(f => ({ ...f, tags: f.tags.filter(t => t !== tag) }))}><X className="w-3 h-3" /></button>
                       </span>
@@ -981,19 +981,19 @@ export default function AdminMediaDashboard() {
               {/* Publish toggle */}
               <div className="flex items-center gap-2">
                 <button onClick={() => setForm(f => ({ ...f, isPublished: !f.isPublished }))}
-                  className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${form.isPublished ? 'bg-green-500' : 'bg-gray-300'}`}>
-                  <div className={`w-4 h-4 bg-white rounded-full mx-1 transition-transform ${form.isPublished ? 'translate-x-4' : 'translate-x-0'}`} />
+                  className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${form.isPublished ? 'bg-status-success' : 'bg-ink-light'}`}>
+                  <div className={`w-4 h-4 bg-surface-card rounded-full mx-1 transition-transform ${form.isPublished ? 'translate-x-4' : 'translate-x-0'}`} />
                 </button>
-                <span className="text-sm font-medium text-gray-700">{form.isPublished ? 'Published (visible on site)' : 'Draft (hidden from public)'}</span>
+                <span className="text-sm font-medium text-ink-paragraph">{form.isPublished ? 'Published (visible on site)' : 'Draft (hidden from public)'}</span>
               </div>
             </div>
 
-            <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
-              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <div className="px-6 py-4 border-t border-ink-light flex justify-end gap-3">
+              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 border border-ink-light rounded-lg text-sm font-medium text-ink-paragraph hover:bg-ink-offwhite">
                 Cancel
               </button>
               <button type="submit" disabled={saving}
-                className="flex items-center gap-2 px-5 py-2 bg-yellow-400 text-black font-bold rounded-lg text-sm hover:bg-yellow-300 transition-colors disabled:opacity-50">
+                className="flex items-center gap-2 px-5 py-2 bg-brand-yellow text-ink font-bold rounded-lg text-sm hover:bg-brand-yellow-soft transition-colors disabled:opacity-50">
                 {saving ? 'Saving...' : <><Check className="w-4 h-4" /> {editItem ? 'Update' : 'Create'}</>}
               </button>
             </div>
@@ -1003,21 +1003,21 @@ export default function AdminMediaDashboard() {
       )}
 
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/60 z-[10000000] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6">
+        <div className="fixed inset-0 bg-ink/60 z-[10000000] flex items-center justify-center p-4">
+          <div className="bg-surface-card rounded-xl shadow-2xl max-w-sm w-full p-6">
             <div className="flex items-center gap-3 mb-3">
-              <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0" />
-              <h3 className="text-lg font-bold text-gray-900">Delete Content</h3>
+              <AlertTriangle className="w-6 h-6 text-status-error flex-shrink-0" />
+              <h3 className="text-lg font-bold text-ink">Delete Content</h3>
             </div>
-            <p className="text-sm text-gray-600 mb-5">
+            <p className="text-sm text-ink-paragraph mb-5">
               Delete <span className="font-semibold">"{deleteConfirm.title}"</span>? This cannot be undone.
             </p>
             <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <button onClick={() => setDeleteConfirm(null)} className="px-4 py-2 border border-ink-light rounded-lg text-sm font-medium text-ink-paragraph hover:bg-ink-offwhite">
                 Cancel
               </button>
               <button onClick={confirmDelete} disabled={deleting}
-                className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700 disabled:opacity-50">
+                className="px-4 py-2 bg-status-error text-white font-bold rounded-lg text-sm hover:bg-status-error disabled:opacity-50">
                 {deleting ? 'Deleting...' : 'Delete'}
               </button>
             </div>

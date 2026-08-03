@@ -148,11 +148,11 @@ function useDebounce<T>(value: T, delay = 300) {
 // -------------------- Header --------------------
 const Header: React.FC = () => {
   return (
-    <div className="bg-gray-900 px-6 py-5">
+    <div className="bg-ink px-6 py-5">
       <div className="max-w-7xl mx-auto">
-        <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">Admin</p>
+        <p className="text-xs font-bold tracking-widest text-brand-yellow uppercase mb-1">Admin</p>
         <h1 className="text-xl font-extrabold text-white mb-0.5">Company Management</h1>
-        <p className="text-sm text-gray-400">Review and manage all company listings, credentials, and approvals.</p>
+        <p className="text-sm text-ink-caption">Review and manage all company listings, credentials, and approvals.</p>
       </div>
     </div>
   );
@@ -171,12 +171,12 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex justify-between items-center px-4 py-3 w-full text-sm text-gray-700 bg-gray-50 rounded-lg border border-gray-200 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-300"
+        className="flex justify-between items-center px-4 py-3 w-full text-sm text-ink-paragraph bg-ink-offwhite rounded-lg border border-ink-light transition-colors hover:bg-ink-light focus:outline-none focus:ring-1 focus:ring-ink-light"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
         <span
-          className={value === options[0] ? "text-gray-500" : "text-gray-900"}
+          className={value === options[0] ? "text-ink-caption" : "text-ink"}
         >
           {value || options[0] || placeholder}
         </span>
@@ -187,7 +187,7 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
 
       {open && (
         <div
-          className="absolute z-10 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-sm"
+          className="absolute z-10 mt-1 w-full bg-surface-card rounded-lg border border-ink-light shadow-sm"
           role="listbox"
         >
           {options.map((option: string, idx: number) => (
@@ -199,8 +199,8 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
               }}
               className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
                 value === option
-                  ? "bg-gray-50 text-gray-900 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
+                  ? "bg-ink-offwhite text-ink font-medium"
+                  : "text-ink-paragraph hover:bg-ink-offwhite"
               }`}
               role="option"
               aria-selected={value === option}
@@ -232,27 +232,27 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   // Status filter options - Updated to match EventAdminDashboard
   const statusOptions = [
-    { value: "all", label: "All Companies", color: "text-yellow-900" },
-    { value: "under_review", label: "Under Review", color: "text-yellow-600" },
-    { value: "approved", label: "Approved", color: "text-green-600" },
-    { value: "rejected", label: "Rejected", color: "text-red-600" },
+    { value: "all", label: "All Companies", color: "text-brand-gold" },
+    { value: "under_review", label: "Under Review", color: "text-brand-gold" },
+    { value: "approved", label: "Approved", color: "text-status-success" },
+    { value: "rejected", label: "Rejected", color: "text-status-error" },
   ];
 
   return (
     <div
-      className={`bg-white border-r border-gray-200 p-4 md:p-6 h-fit md:sticky md:top-0
+      className={`bg-surface-card border-r border-ink-light p-4 md:p-6 h-fit md:sticky md:top-0
       ${
         isMobileSidebarOpen
-          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-white"
+          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-surface-card"
           : "hidden md:block md:w-72"
       }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-base font-bold text-gray-900">Filters</h2>
+          <h2 className="text-base font-bold text-ink">Filters</h2>
           <button
             onClick={onCloseMobileSidebar}
-            className="p-2 text-gray-500"
+            className="p-2 text-ink-caption"
             aria-label="Close filters"
           >
             <X className="w-5 h-5" />
@@ -263,7 +263,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="space-y-6 md:space-y-8">
         {/* Status Filter Section - Updated to match EventAdminDashboard */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-xs font-bold text-ink-caption uppercase tracking-wide block">
             Filter by Status
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -275,13 +275,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                 className={`px-3 py-2 text-xs font-medium rounded-lg border transition-colors flex items-center justify-center gap-1 ${
                   statusFilter === option.value
                     ? option.value === "under_review"
-                      ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                      ? "bg-brand-yellow-soft border-brand-yellow-soft text-brand-gold"
                       : option.value === "approved"
-                      ? "bg-green-100 border-green-300 text-green-800"
+                      ? "bg-status-success/15 border-status-success/40 text-status-success"
                       : option.value === "rejected"
-                      ? "bg-red-100 border-red-300 text-red-800"
-                      : "bg-gray-100 border-gray-300 text-gray-800"
-                    : "bg-white border-gray-200 hover:border-yellow-400 text-gray-600"
+                      ? "bg-status-error/15 border-status-error/40 text-status-error"
+                      : "bg-ink-light border-ink-light text-ink-charcoal"
+                    : "bg-surface-card border-ink-light hover:border-brand-yellow text-ink-paragraph"
                 }`}
               >
                 {option.label === "Needs Review" && (
@@ -302,11 +302,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Search Section */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-xs font-bold text-ink-caption uppercase tracking-wide block">
             Search Companies
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-ink-caption" />
             <input
               type="text"
               placeholder="Search companies..."
@@ -314,7 +314,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onSearchChange(e.target.value)
               }
-              className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white transition-colors placeholder-gray-400 text-gray-900"
+              className="w-full pl-9 pr-4 py-2.5 text-sm border border-ink-light rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow bg-surface-card transition-colors placeholder-ink-caption text-ink"
               aria-label="Search companies"
             />
           </div>
@@ -322,7 +322,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Sort Filter */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-xs font-bold text-ink-caption uppercase tracking-wide block">
             Sort by
           </label>
           <MinimalisticDropdown
@@ -341,32 +341,32 @@ const Sidebar: React.FC<SidebarProps> = ({
             onSortChange("Sort by Date");
             onStatusChange("all");
           }}
-          className="text-xs text-gray-400 hover:text-gray-600 transition-colors underline underline-offset-2"
+          className="text-xs text-ink-caption hover:text-ink-paragraph transition-colors underline underline-offset-2"
         >
           Clear all filters
         </button>
 
         {/* Divider */}
-        <div className="border-t border-gray-200"></div>
+        <div className="border-t border-ink-light"></div>
 
         {/* Navigation Links */}
         <div className="flex gap-1.5 flex-col mt-4">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">Other Sections</p>
+          <p className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-1">Other Sections</p>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-2.5 rounded-lg hover:bg-gray-100 duration-150 flex items-center gap-2 border border-gray-200 bg-white"
+            className="text-sm text-ink-paragraph p-2.5 rounded-lg hover:bg-ink-light duration-150 flex items-center gap-2 border border-ink-light bg-surface-card"
           >
             <Link to={"/admin/professional/dashboard"} className="w-full text-left">Professionals</Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-2.5 rounded-lg hover:bg-gray-100 duration-150 flex items-center gap-2 border border-gray-200 bg-white"
+            className="text-sm text-ink-paragraph p-2.5 rounded-lg hover:bg-ink-light duration-150 flex items-center gap-2 border border-ink-light bg-surface-card"
           >
             <Link to={"/admin/event/dashboard"} className="w-full text-left">Events</Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-2.5 rounded-lg hover:bg-gray-100 duration-150 flex items-center gap-2 border border-gray-200 bg-white"
+            className="text-sm text-ink-paragraph p-2.5 rounded-lg hover:bg-ink-light duration-150 flex items-center gap-2 border border-ink-light bg-surface-card"
           >
             <Link to={"/admin/plans"} className="w-full text-left">Admin Plans</Link>
           </motion.button>
@@ -404,14 +404,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
           <motion.div
-            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+            className="bg-surface-card rounded-xl shadow-2xl max-w-md w-full p-6"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -421,20 +421,20 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 {icon}
-                <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+                <h3 className="text-xl font-semibold text-ink">{title}</h3>
               </div>
               <button
                 onClick={onClose}
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-1 rounded-full hover:bg-ink-light transition-colors"
                 disabled={isLoading}
               >
-                <X size={20} className="text-gray-500" />
+                <X size={20} className="text-ink-caption" />
               </button>
             </div>
 
             {/* Modal Body */}
             <div className="mb-6">
-              <p className="text-gray-600">{message}</p>
+              <p className="text-ink-paragraph">{message}</p>
             </div>
 
             {/* Modal Footer */}
@@ -442,7 +442,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={onClose}
-                className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-ink-paragraph font-medium rounded-lg border border-ink-light bg-surface-card hover:bg-ink-offwhite transition-colors"
                 disabled={isLoading}
               >
                 Cancel
@@ -512,27 +512,27 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
   const getStatusBadge = (reviewStatus?: string) => {
     if (reviewStatus === "active" || reviewStatus === "under_review")
       return {
-        bg: "bg-yellow-100",
-        text: "text-yellow-800",
+        bg: "bg-brand-yellow-soft",
+        text: "text-brand-gold",
         label: "Needs Review",
       };
     if (reviewStatus === "rejected")
-      return { bg: "bg-red-100", text: "text-red-800", label: "Rejected" };
+      return { bg: "bg-status-error/15", text: "text-status-error", label: "Rejected" };
     if (reviewStatus === "approved")
-      return { bg: "bg-green-100", text: "text-green-800", label: "Approved" };
-    return { bg: "bg-gray-50", text: "text-gray-700", label: "Unknown" };
+      return { bg: "bg-status-success/15", text: "text-status-success", label: "Approved" };
+    return { bg: "bg-ink-offwhite", text: "text-ink-paragraph", label: "Unknown" };
   };
 
   const statusStyle = getStatusBadge(company.reviewStatus);
 
   return (
-    <div className="overflow-hidden w-full h-auto rounded-xl border border-gray-200 border-l-4 border-l-yellow-400 shadow-sm transition-all duration-200 hover:shadow-md bg-white">
+    <div className="overflow-hidden w-full h-auto rounded-xl border border-ink-light border-l-4 border-l-brand-yellow shadow-sm transition-all duration-200 hover:shadow-md bg-surface-card">
       <div className="p-4 sm:p-5 md:p-6 lg:p-8">
         {/* Header: stacks on small screens, row on >=sm */}
         <div className="grid grid-cols-1 sm:flex-row sm:justify-between sm:items-center mb-4 md:mb-6 gap-3 sm:gap-0">
           <div className="flex gap-3 items-start sm:items-center min-w-0">
             {/* Logo */}
-            <div className="flex flex-shrink-0 overflow-hidden justify-center items-center p-1 w-10 h-10 bg-gray-100 rounded-lg sm:w-12 sm:h-12">
+            <div className="flex flex-shrink-0 overflow-hidden justify-center items-center p-1 w-10 h-10 bg-ink-light rounded-lg sm:w-12 sm:h-12">
               <img
                 src={company.previewImage || placeholderImg}
                 alt={`${company.companyName || "Company"} logo`}
@@ -548,11 +548,11 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
 
             {/* Title + location: use min-w-0 so  works */}
             <div className="min-w-0">
-              <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900  line-clamp-2">
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-ink  line-clamp-2">
                 {company.companyName || "Unnamed Company"}
               </h3>
 
-              <div className="flex items-center mt-1 text-gray-600 text-xs sm:text-sm">
+              <div className="flex items-center mt-1 text-ink-paragraph text-xs sm:text-sm">
                 <MapPin className="mr-1 w-3 h-3 flex-shrink-0" />
                 <span className="">
                   {company.location || "Location not specified"}
@@ -582,7 +582,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
             ).map((sector: string, index: number) => (
               <span
                 key={index}
-                className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-full"
+                className="px-2 py-1 text-xs font-medium text-ink-paragraph bg-ink-light rounded-full"
               >
                 {sector}
               </span>
@@ -593,11 +593,11 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
         {/* Info + Buttons */}
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-3 items-center">
-            <div className="flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg">
-              <span className="text-xs sm:text-sm font-bold text-gray-700">
+            <div className="flex gap-2 items-center px-3 py-1 bg-ink-offwhite rounded-lg">
+              <span className="text-xs sm:text-sm font-bold text-ink-paragraph">
                 {formatDate(displayDateValue)}
               </span>
-              <span className="hidden sm:inline text-xs text-gray-600">
+              <span className="hidden sm:inline text-xs text-ink-paragraph">
                 {displayDateLabel}
               </span>
             </div>
@@ -612,7 +612,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onCredentials(company.publishedId);
               }}
               aria-label={`Credentials ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-purple-700 bg-purple-100 rounded-lg transition-colors hover:bg-purple-200 disabled:opacity-50 disabled:pointer-events-none"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-brand-gold bg-brand-gold/15 rounded-lg transition-colors hover:bg-brand-gold/25 disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
               aria-disabled={disabled}
             >
@@ -627,7 +627,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onEdit(company.publishedId, company.templateSelection);
               }}
               aria-label={`Edit ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-gray-100 rounded-lg transition-colors hover:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-ink-paragraph bg-ink-light rounded-lg transition-colors hover:bg-ink-light disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
               aria-disabled={disabled}
             >
@@ -645,7 +645,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onApprove(company.publishedId);
               }}
               aria-label={`Approve ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-green-700 bg-green-100 rounded-lg transition-colors hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-status-success bg-status-success/15 rounded-lg transition-colors hover:bg-status-success/25 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={disabled || company.reviewStatus === "approved"}
               aria-disabled={disabled}
             >
@@ -660,7 +660,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onReject(company.publishedId);
               }}
               aria-label={`Reject ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-red-700 bg-red-100 rounded-lg transition-colors hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-status-error bg-status-error/15 rounded-lg transition-colors hover:bg-status-error/25 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={disabled || company.reviewStatus === "rejected"}
               aria-disabled={disabled}
             >
@@ -676,7 +676,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
                 onDelete(company.publishedId);
               }}
               aria-label={`Delete ${company.companyName}`}
-              className="flex col-span-1 sm:col-span-2 gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600 disabled:opacity-50 disabled:pointer-events-none"
+              className="flex col-span-1 sm:col-span-2 gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-status-error rounded-lg transition-colors hover:bg-status-error disabled:opacity-50 disabled:pointer-events-none"
               disabled={disabled}
               aria-disabled={disabled}
             >
@@ -693,19 +693,19 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
 // -------------------- Loading & Error --------------------
 const LoadingSpinner: React.FC = () => (
   <div className="flex justify-center items-center py-16">
-    <div className="w-12 h-12 rounded-full border-b-2 border-purple-600 animate-spin" />
-    <span className="ml-4 text-gray-600">Loading companies...</span>
+    <div className="w-12 h-12 rounded-full border-b-2 border-brand-gold animate-spin" />
+    <span className="ml-4 text-ink-paragraph">Loading companies...</span>
   </div>
 );
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
   <div className="py-16 text-center">
     <div className="mb-4 text-6xl">⚠</div>
-    <p className="mb-2 text-xl text-red-600">Error loading companies</p>
-    <p className="mb-4 text-gray-500">{error}</p>
+    <p className="mb-2 text-xl text-status-error">Error loading companies</p>
+    <p className="mb-4 text-ink-caption">{error}</p>
     <button
       onClick={onRetry}
-      className="px-6 py-3 font-semibold text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600"
+      className="px-6 py-3 font-semibold text-white bg-status-error rounded-lg transition-colors hover:bg-status-error"
     >
       Try Again
     </button>
@@ -887,12 +887,12 @@ const RecentCompaniesSection: React.FC<{
       <div className="mb-8">
         <div className="flex gap-3 items-center mb-6">
           <div className="flex gap-2 items-center">
-            <Clock className="w-5 h-5 text-yellow-500" />
-            <h2 className="text-base font-bold text-gray-900">
+            <Clock className="w-5 h-5 text-brand-gold" />
+            <h2 className="text-base font-bold text-ink">
               Recent Companies
             </h2>
           </div>
-          <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+          <span className="px-2.5 py-1 text-xs font-bold text-ink-paragraph bg-ink-light rounded-full">
             Last 7 days
           </span>
         </div>
@@ -913,7 +913,7 @@ const RecentCompaniesSection: React.FC<{
           ))}
         </div>
 
-        <div className="mt-6 border-t border-gray-200"></div>
+        <div className="mt-6 border-t border-ink-light"></div>
       </div>
     );
   };
@@ -1373,40 +1373,40 @@ const AdminDashboard: React.FC = () => {
           title: "Confirm Edit",
           message: `Are you sure you want to edit "${companyName}"? You will be redirected to the edit page.`,
           confirmText: "Edit Company",
-          confirmColor: "bg-gray-700 hover:bg-gray-600",
-          icon: <Edit className="text-gray-700" size={24} />,
+          confirmColor: "bg-ink-paragraph hover:bg-ink-paragraph",
+          icon: <Edit className="text-ink-paragraph" size={24} />,
         };
       case "approve":
         return {
           title: "Confirm Approval",
           message: `Are you sure you want to approve "${companyName}"? This will make the company visible to users.`,
           confirmText: "Approve Company",
-          confirmColor: "bg-green-600 hover:bg-green-700",
-          icon: <CheckCircle className="text-green-600" size={24} />,
+          confirmColor: "bg-status-success hover:bg-status-success",
+          icon: <CheckCircle className="text-status-success" size={24} />,
         };
       case "reject":
         return {
           title: "Confirm Rejection",
           message: `Are you sure you want to reject "${companyName}"? This will mark the company as rejected.`,
           confirmText: "Reject Company",
-          confirmColor: "bg-red-600 hover:bg-red-700",
-          icon: <XCircle className="text-red-600" size={24} />,
+          confirmColor: "bg-status-error hover:bg-status-error",
+          icon: <XCircle className="text-status-error" size={24} />,
         };
       case "delete":
         return {
           title: "Confirm Deletion",
           message: `Are you sure you want to delete "${companyName}"? This action cannot be undone and all company data will be permanently removed.`,
           confirmText: "Delete Company",
-          confirmColor: "bg-red-600 hover:bg-red-700",
-          icon: <Trash2 className="text-red-600" size={24} />,
+          confirmColor: "bg-status-error hover:bg-status-error",
+          icon: <Trash2 className="text-status-error" size={24} />,
         };
       default:
         return {
           title: "Confirm Action",
           message: "Are you sure you want to perform this action?",
           confirmText: "Confirm",
-          confirmColor: "bg-blue-600 hover:bg-blue-700",
-          icon: <AlertCircle className="text-blue-600" size={24} />,
+          confirmColor: "bg-status-info hover:bg-status-info",
+          icon: <AlertCircle className="text-status-info" size={24} />,
         };
     }
   };
@@ -1432,27 +1432,27 @@ const AdminDashboard: React.FC = () => {
 
       {/* Page title */}
       <div className="mb-4">
-        <h1 className="text-xl font-extrabold text-gray-900">Company Listings</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Review and manage all company listings, credentials, and approvals.</p>
+        <h1 className="text-xl font-extrabold text-ink">Company Listings</h1>
+        <p className="text-sm text-ink-caption mt-0.5">Review and manage all company listings, credentials, and approvals.</p>
       </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
-          { label: "Total", value: companies.length, color: "border-t-yellow-400" },
-          { label: "Pending Review", value: companies.filter(c => c.reviewStatus === "under_review").length, color: "border-t-orange-400" },
-          { label: "Approved", value: companies.filter(c => c.reviewStatus === "approved").length, color: "border-t-green-500" },
-          { label: "Rejected", value: companies.filter(c => c.reviewStatus === "rejected").length, color: "border-t-red-500" },
+          { label: "Total", value: companies.length, color: "border-t-brand-yellow" },
+          { label: "Pending Review", value: companies.filter(c => c.reviewStatus === "under_review").length, color: "border-t-status-warning" },
+          { label: "Approved", value: companies.filter(c => c.reviewStatus === "approved").length, color: "border-t-status-success" },
+          { label: "Rejected", value: companies.filter(c => c.reviewStatus === "rejected").length, color: "border-t-status-error" },
         ].map(stat => (
-          <div key={stat.label} className={`bg-white rounded-lg border border-gray-200 border-t-4 ${stat.color} p-4 shadow-sm`}>
-            <div className="text-2xl font-black text-gray-900">{isFetching ? "—" : stat.value}</div>
-            <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wide">{stat.label}</div>
+          <div key={stat.label} className={`bg-surface-card rounded-lg border border-ink-light border-t-4 ${stat.color} p-4 shadow-sm`}>
+            <div className="text-2xl font-black text-ink">{isFetching ? "—" : stat.value}</div>
+            <div className="text-xs font-semibold text-ink-caption mt-1 uppercase tracking-wide">{stat.label}</div>
           </div>
         ))}
       </div>
 
       {/* View tabs */}
-      <div className="flex gap-0 border-b-2 border-gray-200 mb-4 overflow-x-auto">
+      <div className="flex gap-0 border-b-2 border-ink-light mb-4 overflow-x-auto">
         {[
           { id: "all", label: "All Companies" },
           { id: "leads", label: "Lead Management" },
@@ -1465,7 +1465,7 @@ const AdminDashboard: React.FC = () => {
               setCurrentPage(1);
               setStatusFilter("all");
             }}
-            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-400" : "text-gray-500 border-transparent hover:text-gray-700"}`}
+            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-ink border-brand-yellow" : "text-ink-caption border-transparent hover:text-ink-paragraph"}`}
           >
             {tab.label}
           </button>
@@ -1483,24 +1483,24 @@ const AdminDashboard: React.FC = () => {
           catch { return "—"; }
         };
         const tierBadge: Record<string, string> = {
-          reach: "bg-blue-100 text-blue-700",
-          scale: "bg-yellow-100 text-yellow-700",
-          brand: "bg-purple-100 text-purple-700",
+          reach: "bg-status-info/15 text-status-info",
+          scale: "bg-brand-yellow-soft text-brand-gold",
+          brand: "bg-brand-gold/15 text-brand-gold",
         };
         return (
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
-                <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <div className="flex items-center gap-2 bg-surface-card border border-ink-light rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
+                <Search className="w-4 h-4 text-ink-caption flex-shrink-0" />
                 <input
                   type="text"
                   placeholder="Search by company or email…"
                   value={subscriptionsSearchTerm}
                   onChange={e => setSubscriptionsSearchTerm(e.target.value)}
-                  className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
+                  className="border-none outline-none text-sm bg-transparent w-full text-ink-charcoal placeholder-ink-caption"
                 />
               </div>
-              <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+              <span className="px-2.5 py-1 text-xs font-bold text-ink-paragraph bg-ink-light rounded-full">
                 {filteredSubs.length} {filteredSubs.length === 1 ? "subscription" : "subscriptions"}
               </span>
             </div>
@@ -1509,34 +1509,34 @@ const AdminDashboard: React.FC = () => {
               <LoadingSpinner />
             ) : filteredSubs.length === 0 ? (
               <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
-                <Building2 className="w-24 h-24 text-gray-400" />
-                <p className="text-sm font-semibold text-gray-400">No subscriptions found.</p>
+                <Building2 className="w-24 h-24 text-ink-caption" />
+                <p className="text-sm font-semibold text-ink-caption">No subscriptions found.</p>
               </div>
             ) : (
-              <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+              <div className="bg-surface-card border border-ink-light rounded-xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-200 bg-gray-50">
-                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Company</th>
-                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Owner</th>
-                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Package</th>
-                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Token Balance</th>
-                        <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide whitespace-nowrap">Renews</th>
+                      <tr className="border-b border-ink-light bg-ink-offwhite">
+                        <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide">Company</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide">Owner</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide">Package</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide">Token Balance</th>
+                        <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide whitespace-nowrap">Renews</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredSubs.map(sub => (
-                        <tr key={sub.userId} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                          <td className="px-4 py-3 font-semibold text-gray-900 align-top whitespace-nowrap">{sub.companyName}</td>
-                          <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">{sub.userId}</td>
+                        <tr key={sub.userId} className="border-b border-ink-light last:border-0 hover:bg-ink-offwhite">
+                          <td className="px-4 py-3 font-semibold text-ink align-top whitespace-nowrap">{sub.companyName}</td>
+                          <td className="px-4 py-3 text-ink-paragraph align-top whitespace-nowrap">{sub.userId}</td>
                           <td className="px-4 py-3 align-top">
-                            <span className={`text-xs font-bold px-2 py-0.5 rounded capitalize ${tierBadge[sub.packageType] || "bg-gray-100 text-gray-700"}`}>
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded capitalize ${tierBadge[sub.packageType] || "bg-ink-light text-ink-paragraph"}`}>
                               {sub.packageType || "No Package"}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">{sub.tokenBalance.toLocaleString()} ₮</td>
-                          <td className="px-4 py-3 text-gray-500 align-top whitespace-nowrap">{fmtExpiry(sub.packageExpiry)}</td>
+                          <td className="px-4 py-3 text-ink-paragraph align-top whitespace-nowrap">{sub.tokenBalance.toLocaleString()} ₮</td>
+                          <td className="px-4 py-3 text-ink-caption align-top whitespace-nowrap">{fmtExpiry(sub.packageExpiry)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1551,17 +1551,17 @@ const AdminDashboard: React.FC = () => {
       {viewFilter === "leads" && (
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-4">
-            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
-              <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <div className="flex items-center gap-2 bg-surface-card border border-ink-light rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
+              <Search className="w-4 h-4 text-ink-caption flex-shrink-0" />
               <input
                 type="text"
                 placeholder="Search leads…"
                 value={leadsSearchTerm}
                 onChange={e => setLeadsSearchTerm(e.target.value)}
-                className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
+                className="border-none outline-none text-sm bg-transparent w-full text-ink-charcoal placeholder-ink-caption"
               />
             </div>
-            <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+            <span className="px-2.5 py-1 text-xs font-bold text-ink-paragraph bg-ink-light rounded-full">
               {filteredLeads.length} {filteredLeads.length === 1 ? "lead" : "leads"}
             </span>
           </div>
@@ -1572,42 +1572,42 @@ const AdminDashboard: React.FC = () => {
             <ErrorMessage error={leadsError} onRetry={() => setLeadsRefreshKey(k => k + 1)} />
           ) : filteredLeads.length === 0 ? (
             <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
-              <Building2 className="w-24 h-24 text-gray-400" />
-              <p className="text-sm font-semibold text-gray-400">No leads yet.</p>
+              <Building2 className="w-24 h-24 text-ink-caption" />
+              <p className="text-sm font-semibold text-ink-caption">No leads yet.</p>
             </div>
           ) : (
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-surface-card border border-ink-light rounded-xl shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50">
-                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Company</th>
-                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">From</th>
-                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Contact</th>
-                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Message</th>
-                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide">Status</th>
-                      <th className="text-left px-4 py-2.5 font-semibold text-gray-600 text-xs uppercase tracking-wide whitespace-nowrap">Submitted</th>
+                    <tr className="border-b border-ink-light bg-ink-offwhite">
+                      <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide">Company</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide">From</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide">Contact</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide">Message</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide">Status</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-ink-paragraph text-xs uppercase tracking-wide whitespace-nowrap">Submitted</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredLeads.map(lead => (
-                      <tr key={lead.leadId} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                        <td className="px-4 py-3 font-semibold text-gray-900 align-top whitespace-nowrap">{lead.companyName || lead.company || "—"}</td>
-                        <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">{`${lead.firstName || ""} ${lead.lastName || ""}`.trim() || "—"}</td>
-                        <td className="px-4 py-3 text-gray-600 align-top whitespace-nowrap">
+                      <tr key={lead.leadId} className="border-b border-ink-light last:border-0 hover:bg-ink-offwhite">
+                        <td className="px-4 py-3 font-semibold text-ink align-top whitespace-nowrap">{lead.companyName || lead.company || "—"}</td>
+                        <td className="px-4 py-3 text-ink-paragraph align-top whitespace-nowrap">{`${lead.firstName || ""} ${lead.lastName || ""}`.trim() || "—"}</td>
+                        <td className="px-4 py-3 text-ink-paragraph align-top whitespace-nowrap">
                           <div>{lead.email}</div>
-                          <div className="text-xs text-gray-400">{lead.phone}</div>
+                          <div className="text-xs text-ink-caption">{lead.phone}</div>
                         </td>
-                        <td className="px-4 py-3 text-gray-600 align-top max-w-md">
-                          {lead.subject && <div className="font-semibold text-xs text-gray-500 mb-0.5">{lead.subject}</div>}
+                        <td className="px-4 py-3 text-ink-paragraph align-top max-w-md">
+                          {lead.subject && <div className="font-semibold text-xs text-ink-caption mb-0.5">{lead.subject}</div>}
                           {lead.message}
                         </td>
                         <td className="px-4 py-3 align-top">
-                          <span className={`text-xs font-bold px-2 py-0.5 rounded ${lead.viewed ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded ${lead.viewed ? 'bg-status-success/15 text-status-success' : 'bg-brand-yellow-soft text-brand-gold'}`}>
                             {lead.viewed ? 'Viewed' : 'Unviewed'}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-gray-500 align-top whitespace-nowrap">
+                        <td className="px-4 py-3 text-ink-caption align-top whitespace-nowrap">
                           {(lead.submittedAt || lead.createdAt) ? new Date(lead.submittedAt || lead.createdAt || '').toLocaleString('en-IN') : "—"}
                         </td>
                       </tr>
@@ -1624,20 +1624,20 @@ const AdminDashboard: React.FC = () => {
       {viewFilter !== "subscriptions" && viewFilter !== "leads" && (
       <React.Fragment>
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
-          <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        <div className="flex items-center gap-2 bg-surface-card border border-ink-light rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
+          <Search className="w-4 h-4 text-ink-caption flex-shrink-0" />
           <input
             type="text"
             placeholder="Search companies…"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
+            className="border-none outline-none text-sm bg-transparent w-full text-ink-charcoal placeholder-ink-caption"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
+          className="px-3 py-1.5 border border-ink-light rounded-md text-sm bg-surface-card text-ink-charcoal focus:outline-none focus:border-brand-yellow cursor-pointer"
         >
           <option value="all">All Companies</option>
           <option value="under_review">Under Review</option>
@@ -1647,7 +1647,7 @@ const AdminDashboard: React.FC = () => {
         <select
           value={sortBy}
           onChange={e => setSortBy(e.target.value)}
-          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
+          className="px-3 py-1.5 border border-ink-light rounded-md text-sm bg-surface-card text-ink-charcoal focus:outline-none focus:border-brand-yellow cursor-pointer"
         >
           {SORT_OPTIONS.map(opt => (
             <option key={opt} value={opt}>{opt}</option>
@@ -1672,12 +1672,12 @@ const AdminDashboard: React.FC = () => {
           {/* Companies Section */}
           <div className="flex gap-3 items-center mb-6">
             <div className="flex gap-2 items-center">
-              <Building2 className="w-5 h-5 text-yellow-500" />
-              <h2 className="text-base font-bold text-gray-900">
+              <Building2 className="w-5 h-5 text-brand-gold" />
+              <h2 className="text-base font-bold text-ink">
                 {statusFilter === "all" ? "All Companies" : statusFilter === "under_review" ? "Under Review Companies" : statusFilter === "approved" ? "Approved Companies" : "Rejected Companies"}
               </h2>
             </div>
-            <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+            <span className="px-2.5 py-1 text-xs font-bold text-ink-paragraph bg-ink-light rounded-full">
               {sortedCompanies.length}{" "}
               {sortedCompanies.length === 1 ? "company" : "companies"}
             </span>
@@ -1689,8 +1689,8 @@ const AdminDashboard: React.FC = () => {
             <ErrorMessage error={error} onRetry={handleRetry} />
           ) : sortedCompanies.length === 0 ? (
             <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
-              <Building2 className="w-24 h-24 text-gray-400" />
-              <p className="text-sm font-semibold text-gray-400">
+              <Building2 className="w-24 h-24 text-ink-caption" />
+              <p className="text-sm font-semibold text-ink-caption">
                 Oops looks like there is no companies!
               </p>
             </div>
@@ -1717,18 +1717,18 @@ const AdminDashboard: React.FC = () => {
                 <div className="flex justify-center items-center mt-8">
                   <button
                     onClick={handlePrevPage}
-                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-ink-paragraph bg-surface-card border border-ink-light rounded-lg transition-colors hover:bg-ink-offwhite disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={currentPage <= 1}
                   >
                     <ArrowRight className="w-4 h-4 rotate-180" />
                     Previous
                   </button>
-                  <span className="mx-4 text-sm text-gray-600">
+                  <span className="mx-4 text-sm text-ink-paragraph">
                     Page {currentPage} of {totalPages}
                   </span>
                   <button
                     onClick={handleNextPage}
-                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-black bg-yellow-400 rounded-lg transition-colors hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-ink bg-brand-yellow rounded-lg transition-colors hover:bg-brand-yellow-soft disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={currentPage >= totalPages}
                   >
                     Next

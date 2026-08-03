@@ -73,14 +73,14 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999999] p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-ink bg-opacity-50 flex items-center justify-center z-[99999999] p-4">
+      <div className="bg-surface-card rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-bold">Company Form Details </h3>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-ink-caption hover:text-ink-paragraph"
             >
               <X className="w-6 h-6" />
             </button>
@@ -91,7 +91,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
             <div className="flex flex-wrap gap-2 mb-6">
               <button
                 onClick={() => onPreview(company.publishedId)}
-                className="px-3 w-full py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center"
+                className="px-3 w-full py-2 bg-status-info/15 text-status-info rounded-lg hover:bg-status-info/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center"
               >
                 <Eye className="w-3 h-3 md:w-4 md:h-4" />
                 Preview
@@ -99,14 +99,14 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
 
               <button
                 onClick={() => onApprove(company.publishedId)}
-                className="px-3 py-2 w-full bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center"
+                className="px-3 py-2 w-full bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center"
               >
                 <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
                 Approve
               </button>
               <button
                 onClick={() => onReject(company.publishedId)}
-                className="px-3 py-2 w-full bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center"
+                className="px-3 py-2 w-full bg-status-error/15 text-status-error rounded-lg hover:bg-status-error/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center"
               >
                 <XCircle className="w-3 h-3 md:w-4 md:h-4" />
                 Reject
@@ -117,19 +117,19 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
           {data ? (
             <div className="space-y-6">
               {/* Basic Information */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-lg text-gray-800 mb-3">
+              <div className="bg-ink-offwhite p-4 rounded-lg">
+                <h4 className="font-semibold text-lg text-ink-charcoal mb-3">
                   Company Information
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Company Name</p>
+                    <p className="text-sm text-ink-paragraph">Company Name</p>
                     <p className="font-medium">
                       {data.formData.rawData.companyName || "Not provided"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Industry</p>
+                    <p className="text-sm text-ink-paragraph">Industry</p>
                     <p className="font-medium">
                       {data.formData.rawData.mainCategories &&
                         Array.isArray(data.formData.rawData.mainCategories)
@@ -142,7 +142,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-600">Established Year</p>
+                    <p className="text-sm text-ink-paragraph">Established Year</p>
                     <p className="font-medium">
                       {data.formData.rawData.yearEstablished
                         ? new Date(
@@ -152,13 +152,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Website</p>
+                    <p className="text-sm text-ink-paragraph">Website</p>
                     <p className="font-medium">
                       {data.formData.rawData.websiteUrl || "None"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Legal Name</p>
+                    <p className="text-sm text-ink-paragraph">Legal Name</p>
                     <p className="font-medium">
                       {data.formData.rawData.legalName ||
                         data.formData.rawData.companyName ||
@@ -166,7 +166,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Nature of Business</p>
+                    <p className="text-sm text-ink-paragraph">Nature of Business</p>
                     <p className="font-medium">
                       {data.formData.rawData.natureOfBusiness || "Not provided"}
                     </p>
@@ -175,20 +175,20 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               </div>
 
               {/* Identity & Tax Information */}
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-lg text-gray-800 mb-3">
+              <div className="bg-brand-gold/10 p-4 rounded-lg">
+                <h4 className="font-semibold text-lg text-ink-charcoal mb-3">
                   Identity & Tax Information
                 </h4>
 
                 {/* PAN Details */}
-                <div className="mb-6 p-3 bg-white rounded-lg border border-gray-200">
-                  <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
+                <div className="mb-6 p-3 bg-surface-card rounded-lg border border-ink-light">
+                  <h5 className="font-medium text-ink-paragraph mb-3 flex items-center gap-2">
                     <Key className="w-4 h-4" />
                     PAN Details
                   </h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="relative">
-                      <p className="text-sm text-gray-600">PAN Number</p>
+                      <p className="text-sm text-ink-paragraph">PAN Number</p>
                       <div className="flex items-center gap-2">
                         <p className="font-medium font-mono uppercase">
                           {data.formData.rawData.panNumber || "Not provided"}
@@ -201,10 +201,10 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                                 "pan"
                               )
                             }
-                            className="text-gray-400 hover:text-gray-600"
+                            className="text-ink-caption hover:text-ink-paragraph"
                           >
                             {copiedField === "pan" ? (
-                              <Check className="w-4 h-4 text-green-500" />
+                              <Check className="w-4 h-4 text-status-success" />
                             ) : (
                               <Copy className="w-3 h-3" />
                             )}
@@ -213,19 +213,19 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Business Field</p>
+                      <p className="text-sm text-ink-paragraph">Business Field</p>
                       <p className="font-medium">
                         {data.formData.rawData.businessField || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">CIN Number</p>
+                      <p className="text-sm text-ink-paragraph">CIN Number</p>
                       <p className="font-medium">
                         {data.formData.rawData.cin || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Udyam Registration</p>
+                      <p className="text-sm text-ink-paragraph">Udyam Registration</p>
                       <p className="font-medium">
                         {data.formData.rawData.udyamRegistrationNumber ||
                           "Not provided"}
@@ -235,14 +235,14 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                 </div>
 
                 {/* GST Details */}
-                <div className="p-3 bg-white rounded-lg border border-gray-200">
-                  <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
+                <div className="p-3 bg-surface-card rounded-lg border border-ink-light">
+                  <h5 className="font-medium text-ink-paragraph mb-3 flex items-center gap-2">
                     <Key className="w-4 h-4" />
                     GST Details
                   </h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="relative">
-                      <p className="text-sm text-gray-600">GSTIN</p>
+                      <p className="text-sm text-ink-paragraph">GSTIN</p>
                       <div className="flex items-center gap-2">
                         <p className="font-medium font-mono uppercase">
                           {data.formData.rawData.gstin || "Not provided"}
@@ -252,10 +252,10 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                             onClick={() =>
                               handleCopy(data.formData.rawData.gstin, "gstin")
                             }
-                            className="text-gray-400 hover:text-gray-600"
+                            className="text-ink-caption hover:text-ink-paragraph"
                           >
                             {copiedField === "gstin" ? (
-                              <Check className="w-4 h-4 text-green-500" />
+                              <Check className="w-4 h-4 text-status-success" />
                             ) : (
                               <Copy className="w-3 h-3" />
                             )}
@@ -264,7 +264,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">GST Address</p>
+                      <p className="text-sm text-ink-paragraph">GST Address</p>
                       <p className="font-medium">
                         {data.formData.rawData.gstAddress ||
                           data.formData.rawData.communicationAddress ||
@@ -272,14 +272,14 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Billing GST Details</p>
+                      <p className="text-sm text-ink-paragraph">Billing GST Details</p>
                       <p className="font-medium">
                         {data.formData.rawData.billingGstDetails ||
                           "Same as above"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Billing Address</p>
+                      <p className="text-sm text-ink-paragraph">Billing Address</p>
                       <p className="font-medium">
                         {data.formData.rawData.billingAddress ||
                           "Same as registered address"}
@@ -290,37 +290,37 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               </div>
 
               {/* Contact Information */}
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-lg text-gray-800 mb-3">
+              <div className="bg-status-info/10 p-4 rounded-lg">
+                <h4 className="font-semibold text-lg text-ink-charcoal mb-3">
                   Contact Information
                 </h4>
 
                 {/* Primary Contact */}
                 <div className="mb-4">
-                  <h5 className="font-medium text-gray-700 mb-2">
+                  <h5 className="font-medium text-ink-paragraph mb-2">
                     Primary Contact
                   </h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600">Name</p>
+                      <p className="text-sm text-ink-paragraph">Name</p>
                       <p className="font-medium">
                         {data.formData.rawData.directorName || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Email</p>
+                      <p className="text-sm text-ink-paragraph">Email</p>
                       <p className="font-medium">
                         {data.formData.rawData.directorEmail || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Phone</p>
+                      <p className="text-sm text-ink-paragraph">Phone</p>
                       <p className="font-medium">
                         {data.formData.rawData.directorPhone || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Designation</p>
+                      <p className="text-sm text-ink-paragraph">Designation</p>
                       <p className="font-medium">
                         {data.formData.rawData.directorName
                           ? "Director"
@@ -332,30 +332,30 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
 
                 {/* Alternative Contact */}
                 <div className="mb-4">
-                  <h5 className="font-medium text-gray-700 mb-2">
+                  <h5 className="font-medium text-ink-paragraph mb-2">
                     Alternative Contact
                   </h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600">Name</p>
+                      <p className="text-sm text-ink-paragraph">Name</p>
                       <p className="font-medium">
                         {data.formData.rawData.altContactName || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Email</p>
+                      <p className="text-sm text-ink-paragraph">Email</p>
                       <p className="font-medium">
                         {data.formData.rawData.altContactEmail || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Phone</p>
+                      <p className="text-sm text-ink-paragraph">Phone</p>
                       <p className="font-medium">
                         {data.formData.rawData.altContactPhone || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">WhatsApp</p>
+                      <p className="text-sm text-ink-paragraph">WhatsApp</p>
                       <p className="font-medium">
                         {data.formData.rawData.whatsappNumber || "Not provided"}
                       </p>
@@ -365,12 +365,12 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
 
                 {/* Business Address */}
                 <div className="mb-4">
-                  <h5 className="font-medium text-gray-700 mb-2">
+                  <h5 className="font-medium text-ink-paragraph mb-2">
                     Business Address
                   </h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600">Street</p>
+                      <p className="text-sm text-ink-paragraph">Street</p>
                       <p className="font-medium">
                         {data.formData.rawData.officeAddress ||
                           data.formData.rawData.directorAddress ||
@@ -378,19 +378,19 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">City</p>
+                      <p className="text-sm text-ink-paragraph">City</p>
                       <p className="font-medium">
                         {data.formData.rawData.city || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">State</p>
+                      <p className="text-sm text-ink-paragraph">State</p>
                       <p className="font-medium">
                         {data.formData.rawData.state || "Not provided"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Pincode</p>
+                      <p className="text-sm text-ink-paragraph">Pincode</p>
                       <p className="font-medium">
                         {data.formData.rawData.postalCode ||
                           data.formData.rawData.pinCode ||
@@ -398,7 +398,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Country</p>
+                      <p className="text-sm text-ink-paragraph">Country</p>
                       <p className="font-medium">
                         {data.formData.rawData.country || "Not provided"}
                       </p>
@@ -409,7 +409,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                 {/* Communication Address */}
                 {data.formData.rawData.communicationAddress && (
                   <div className="mb-4">
-                    <h5 className="font-medium text-gray-700 mb-2">
+                    <h5 className="font-medium text-ink-paragraph mb-2">
                       Communication Address
                     </h5>
                     <p className="font-medium">
@@ -420,18 +420,18 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
 
                 {/* Social Links */}
                 <div>
-                  <h5 className="font-medium text-gray-700 mb-2">
+                  <h5 className="font-medium text-ink-paragraph mb-2">
                     Social Links
                   </h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600">Website</p>
+                      <p className="text-sm text-ink-paragraph">Website</p>
                       {data.formData?.rawData?.websiteUrl ? (
                         <a
                           href={data.formData.rawData.websiteUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-medium text-blue-600 hover:underline"
+                          className="font-medium text-status-info hover:underline"
                         >
                           Open Link
                         </a>
@@ -440,13 +440,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       )}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">LinkedIn</p>
+                      <p className="text-sm text-ink-paragraph">LinkedIn</p>
                       {data.formData?.rawData?.socialLinks?.linkedin ? (
                         <a
                           href={data.formData.rawData.socialLinks.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-medium text-blue-600 hover:underline"
+                          className="font-medium text-status-info hover:underline"
                         >
                           Open Link
                         </a>
@@ -455,13 +455,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       )}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Facebook</p>
+                      <p className="text-sm text-ink-paragraph">Facebook</p>
                       {data.formData?.rawData?.socialLinks?.facebook ? (
                         <a
                           href={data.formData.rawData.socialLinks.facebook}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-medium text-blue-600 hover:underline"
+                          className="font-medium text-status-info hover:underline"
                         >
                           Open Link
                         </a>
@@ -470,13 +470,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       )}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Instagram</p>
+                      <p className="text-sm text-ink-paragraph">Instagram</p>
                       {data.formData?.rawData?.socialLinks?.instagram ? (
                         <a
                           href={data.formData.rawData.socialLinks.instagram}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-medium text-blue-600 hover:underline"
+                          className="font-medium text-status-info hover:underline"
                         >
                           Open Link
                         </a>
@@ -485,13 +485,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                       )}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">YouTube</p>
+                      <p className="text-sm text-ink-paragraph">YouTube</p>
                       {data.formData?.rawData?.socialLinks?.youtube ? (
                         <a
                           href={data.formData.rawData.socialLinks.youtube}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-medium text-blue-600 hover:underline"
+                          className="font-medium text-status-info hover:underline"
                         >
                           Open Link
                         </a>
@@ -504,13 +504,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               </div>
 
               {/* Business Details */}
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-lg text-gray-800 mb-3">
+              <div className="bg-status-success/10 p-4 rounded-lg">
+                <h4 className="font-semibold text-lg text-ink-charcoal mb-3">
                   Business Details
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Primary Services</p>
+                    <p className="text-sm text-ink-paragraph">Primary Services</p>
                     <p className="font-medium">
                       {Array.isArray(data.formData?.rawData?.services)
                         ? data.formData.rawData.services
@@ -521,7 +521,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Products</p>
+                    <p className="text-sm text-ink-paragraph">Products</p>
                     <p className="font-medium">
                       {Array.isArray(data.formData?.rawData?.products)
                         ? data.formData.rawData.products
@@ -532,7 +532,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Sectors Served</p>
+                    <p className="text-sm text-ink-paragraph">Sectors Served</p>
                     <p className="font-medium">
                       {data.formData?.rawData?.sectorsServed
                         ? Object.entries(
@@ -550,7 +550,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Specializations</p>
+                    <p className="text-sm text-ink-paragraph">Specializations</p>
                     <p className="font-medium">
                       {Array.isArray(data.formData?.rawData?.mainCategories)
                         ? data.formData.rawData.mainCategories.join(", ")
@@ -560,7 +560,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Geography of Operations</p>
+                    <p className="text-sm text-ink-paragraph">Geography of Operations</p>
                     <p className="font-medium">
                       {Array.isArray(data.formData?.rawData?.geographyOfOperations)
                         ? data.formData.rawData.geographyOfOperations.join(", ")
@@ -568,7 +568,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Promotion Formats</p>
+                    <p className="text-sm text-ink-paragraph">Promotion Formats</p>
                     <p className="font-medium">
                       {Array.isArray(data.formData?.rawData?.promoFormats)
                         ? data.formData.rawData.promoFormats.join(", ")
@@ -579,166 +579,166 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               </div>
 
               {/* Technical Information */}
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <h4 className="font-semibold text-lg text-gray-800 mb-3">
+              <div className="bg-ink-offwhite p-4 rounded-lg border border-ink-light">
+                <h4 className="font-semibold text-lg text-ink-charcoal mb-3">
                   Technical Information
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">DGCA Certificate</p>
+                    <p className="text-sm text-ink-paragraph">DGCA Certificate</p>
                     {data.formData?.rawData?.dgcaTypeCertificateUrl ? (
                       <a
                         href={data.formData?.rawData?.dgcaTypeCertificateUrl}
-                        className="text-blue-600 hover:underline"
+                        className="text-status-info hover:underline"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         View Document
                       </a>
                     ) : (
-                      <p className="text-gray-500">Not provided</p>
+                      <p className="text-ink-caption">Not provided</p>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">RPTO Certificate</p>
+                    <p className="text-sm text-ink-paragraph">RPTO Certificate</p>
                     {data.formData?.rawData?.rptoAuthorisationCertificateUrl ? (
                       <a
                         href={data.formData?.rawData?.rptoAuthorisationCertificateUrl}
-                        className="text-blue-600 hover:underline"
+                        className="text-status-info hover:underline"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         View Document
                       </a>
                     ) : (
-                      <p className="text-gray-500">Not provided</p>
+                      <p className="text-ink-caption">Not provided</p>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* Documents & Links */}
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <h4 className="font-semibold text-lg text-gray-800 mb-3">
+              <div className="bg-ink-offwhite p-4 rounded-lg border border-ink-light">
+                <h4 className="font-semibold text-lg text-ink-charcoal mb-3">
                   Documents & Links
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Company Logo</p>
+                    <p className="text-sm text-ink-paragraph">Company Logo</p>
                     {data.formData?.rawData?.companyLogoUrl ? (
                       <a
                         href={data.formData.rawData.companyLogoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-status-info hover:underline"
                       >
                         View Logo
                       </a>
                     ) : (
-                      <p className="text-gray-500">Not provided</p>
+                      <p className="text-ink-caption">Not provided</p>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Brochure PDF</p>
+                    <p className="text-sm text-ink-paragraph">Brochure PDF</p>
                     {data.formData?.rawData?.brochurePdfUrl ? (
                       <a
                         href={data.formData.rawData.brochurePdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-status-info hover:underline"
                       >
                         View Brochure
                       </a>
                     ) : (
-                      <p className="text-gray-500">Not provided</p>
+                      <p className="text-ink-caption">Not provided</p>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Catalogue PDF</p>
+                    <p className="text-sm text-ink-paragraph">Catalogue PDF</p>
                     {data.formData?.rawData?.cataloguePdfUrl ? (
                       <a
                         href={data.formData.rawData.cataloguePdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-status-info hover:underline"
                       >
                         View Catalogue
                       </a>
                     ) : (
-                      <p className="text-gray-500">Not provided</p>
+                      <p className="text-ink-caption">Not provided</p>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Brand Guidelines</p>
+                    <p className="text-sm text-ink-paragraph">Brand Guidelines</p>
                     {data.formData?.rawData?.brandGuidelinesUrl ? (
                       <a
                         href={data.formData.rawData.brandGuidelinesUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-status-info hover:underline"
                       >
                         View Guidelines
                       </a>
                     ) : (
-                      <p className="text-gray-500">Not provided</p>
+                      <p className="text-ink-caption">Not provided</p>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Promo Video (1 min)</p>
+                    <p className="text-sm text-ink-paragraph">Promo Video (1 min)</p>
                     {data.formData?.rawData?.promoVideoOneMinUrl ? (
                       <a
                         href={data.formData.rawData.promoVideoOneMinUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-status-info hover:underline"
                       >
                         Watch Video
                       </a>
                     ) : (
-                      <p className="text-gray-500">Not provided</p>
+                      <p className="text-ink-caption">Not provided</p>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Promo Video (5 min)</p>
+                    <p className="text-sm text-ink-paragraph">Promo Video (5 min)</p>
                     {data.formData?.rawData?.promoVideoFiveMinUrl ? (
                       <a
                         href={data.formData.rawData.promoVideoFiveMinUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-status-info hover:underline"
                       >
                         Watch Video
                       </a>
                     ) : (
-                      <p className="text-gray-500">Not provided</p>
+                      <p className="text-ink-caption">Not provided</p>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* Metadata */}
-              <div className="bg-gray-100 p-4 rounded-lg">
+              <div className="bg-ink-light p-4 rounded-lg">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Published ID</p>
+                    <p className="text-sm text-ink-paragraph">Published ID</p>
                     <p className="font-medium font-mono text-xs">
                       {data.publishedId}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Draft ID</p>
+                    <p className="text-sm text-ink-paragraph">Draft ID</p>
                     <p className="font-medium font-mono text-xs">
                       {data.draftId}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Template Used</p>
+                    <p className="text-sm text-ink-paragraph">Template Used</p>
                     <p className="font-medium">
                       {data.metadata?.templateUsed || "Not specified"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Submitted At</p>
+                    <p className="text-sm text-ink-paragraph">Submitted At</p>
                     <p className="font-medium">
                       {data.metadata?.originalSubmittedAt
                         ? new Date(
@@ -748,13 +748,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Data Source</p>
+                    <p className="text-sm text-ink-paragraph">Data Source</p>
                     <p className="font-medium">
                       {data.metadata?.dataSource || "Unknown"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Published Status</p>
+                    <p className="text-sm text-ink-paragraph">Published Status</p>
                     <p className="font-medium">
                       {data.metadata?.publishedStatus || "Unknown"}
                     </p>
@@ -766,7 +766,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               <div className="flex justify-end gap-3 pt-4 border-t">
                 <button
                   onClick={onClose}
-                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-6 py-2 border border-ink-light rounded-lg text-ink-paragraph hover:bg-ink-offwhite transition-colors"
                 >
                   Close
                 </button>
@@ -774,8 +774,8 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
             </div>
           ) : (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading company details...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-status-info mx-auto mb-4"></div>
+              <p className="text-ink-paragraph">Loading company details...</p>
             </div>
           )}
         </div>

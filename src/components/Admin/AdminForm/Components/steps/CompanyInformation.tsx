@@ -80,31 +80,31 @@ export default function CompanyInformation({
 
     return (
         <>
-            <div className="p-3 bg-yellow-50 rounded-lg border border-amber-200">
+            <div className="p-3 bg-surface-main rounded-lg border border-brand-yellow-soft">
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="flex items-center text-sm font-bold text-amber-900">
+                    <h3 className="flex items-center text-sm font-bold text-brand-gold">
                         <Building2 className="mr-2 w-5 h-5" />
                         Company Information
                     </h3>
                     <div className="flex space-x-2">
-                        <button onClick={() => setShowAddFieldModal(true)} className="p-1 rounded hover:bg-amber-100" title="Add New Field">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button onClick={() => setShowAddFieldModal(true)} className="p-1 rounded hover:bg-brand-yellow-soft" title="Add New Field">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                         </button>
                         <button
                             onClick={openEditCompanyModal}
                             disabled={isLoadingCompanyDetails}
-                            className="p-1 rounded hover:bg-amber-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="p-1 rounded hover:bg-brand-yellow-soft disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Edit Company Information"
                         >
                             {isLoadingCompanyDetails ? (
-                                <svg className="w-5 h-5 text-amber-500 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-brand-gold animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                             ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.586a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                             )}
@@ -119,8 +119,8 @@ export default function CompanyInformation({
                         <div className="mt-4 space-y-3">
                             {isLoadingCompanyDetails ? (
                                 <div className="flex justify-center items-center py-4">
-                                    <div className="w-8 h-8 rounded-full border-b-2 border-amber-500 animate-spin"></div>
-                                    <span className="ml-2 text-sm text-gray-600">Loading company data...</span>
+                                    <div className="w-8 h-8 rounded-full border-b-2 border-brand-gold animate-spin"></div>
+                                    <span className="ml-2 text-sm text-ink-paragraph">Loading company data...</span>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -134,14 +134,14 @@ export default function CompanyInformation({
                                             return (
                                                 <div key={key} className="relative">
                                                     <div className="mb-2">
-                                                        <label className="block mb-1 text-xs font-semibold text-gray-700">
+                                                        <label className="block mb-1 text-xs font-semibold text-ink-paragraph">
                                                             {labelText}
-                                                            {(key === 'companyName' || key === 'promoCode') && <span className="ml-1 text-red-500">*</span>}
+                                                            {(key === 'companyName' || key === 'promoCode') && <span className="ml-1 text-status-error">*</span>}
                                                         </label>
                                                         <input
                                                             type="text"
                                                             placeholder={placeholderText}
-                                                            className="px-3 py-2 w-full text-sm bg-white rounded-md border border-amber-300 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-amber-400"
+                                                            className="px-3 py-2 w-full text-sm bg-surface-card rounded-md border border-brand-yellow-soft transition-all focus:outline-none focus:ring-2 focus:ring-status-info focus:border-transparent hover:border-brand-yellow"
                                                             value={String((formData as any)[key] ?? '')}
                                                             onChange={(e) => updateFormData({ [key]: e.target.value })}
                                                         />
@@ -149,7 +149,7 @@ export default function CompanyInformation({
                                                     <div className="flex absolute top-0 right-0 space-x-1">
                                                         <button
                                                             onClick={() => deleteCoreField(key as any)}
-                                                            className="p-1 text-red-500 rounded hover:text-red-700 hover:bg-red-50"
+                                                            className="p-1 text-status-error rounded hover:text-status-error hover:bg-status-error/10"
                                                             title="Delete field"
                                                         >
                                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,14 +163,14 @@ export default function CompanyInformation({
                                     {customFields.length > 0 && customFields.map((field) => (
                                         <div key={field.id} className="relative">
                                             <div className="mb-2">
-                                                <label className="block mb-1 text-xs font-semibold text-gray-700">
+                                                <label className="block mb-1 text-xs font-semibold text-ink-paragraph">
                                                     {field.label}
-                                                    {field.required && <span className="ml-1 text-red-500">*</span>}
+                                                    {field.required && <span className="ml-1 text-status-error">*</span>}
                                                 </label>
                                                 <input
                                                     type="text"
                                                     placeholder={field.placeholder}
-                                                    className="px-3 py-2 w-full text-sm bg-white rounded-md border border-amber-300 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-amber-400"
+                                                    className="px-3 py-2 w-full text-sm bg-surface-card rounded-md border border-brand-yellow-soft transition-all focus:outline-none focus:ring-2 focus:ring-status-info focus:border-transparent hover:border-brand-yellow"
                                                     value={String(field.value ?? '')}
                                                     onChange={(e) => updateCustomFieldValue(field.id, e.target.value)}
                                                 />
@@ -178,7 +178,7 @@ export default function CompanyInformation({
                                             <div className="flex absolute top-0 right-0 space-x-1">
                                                 <button
                                                     onClick={() => removeCustomField(field.id)}
-                                                    className="p-1 text-red-500 rounded hover:text-red-700 hover:bg-red-50"
+                                                    className="p-1 text-status-error rounded hover:text-status-error hover:bg-status-error/10"
                                                     title="Delete field"
                                                 >
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,9 +195,9 @@ export default function CompanyInformation({
             </div>
 
             {showEditCompanyModal && (
-                <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
-                    <div className="p-6 mx-4 w-full max-w-2xl max-h-[300px] overflow-auto bg-white rounded-lg shadow-xl">
-                        <h3 className="mb-4 text-lg font-bold text-gray-900">Edit Company Information</h3>
+                <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-center bg-ink bg-opacity-50">
+                    <div className="p-6 mx-4 w-full max-w-2xl max-h-[300px] overflow-auto bg-surface-card rounded-lg shadow-xl">
+                        <h3 className="mb-4 text-lg font-bold text-ink">Edit Company Information</h3>
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -211,21 +211,21 @@ export default function CompanyInformation({
                                         const phVal: any = (editingCompanyPlaceholders as any)?.[key];
                                         return (
                                             <div key={key}>
-                                                <label className="block mb-1 text-sm font-medium text-gray-700">Name</label>
+                                                <label className="block mb-1 text-sm font-medium text-ink-paragraph">Name</label>
                                                 <input
                                                     type="text"
                                                     value={typeof labelVal === 'string' ? labelVal : (labelVal?.label ?? '')}
                                                     onChange={(e) => setEditingCompanyLabels((prev: any) => ({ ...prev, [key]: e.target.value }))}
                                                     placeholder={key}
-                                                    className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                                    className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                                 />
-                                                <label className="block mt-2 mb-1 text-sm font-medium text-gray-700">Placeholder Text</label>
+                                                <label className="block mt-2 mb-1 text-sm font-medium text-ink-paragraph">Placeholder Text</label>
                                                 <input
                                                     type="text"
                                                     value={typeof phVal === 'string' ? phVal : (phVal?.placeholder ?? '')}
                                                     onChange={(e) => setEditingCompanyPlaceholders((prev: any) => ({ ...prev, [key]: e.target.value }))}
                                                     placeholder={key}
-                                                    className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                                    className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                                 />
                                             </div>
                                         );
@@ -233,13 +233,13 @@ export default function CompanyInformation({
                             </div>
                             {editingCustomFields.length > 0 && (
                                 <div className="mt-4">
-                                    <h4 className="mb-3 text-sm font-semibold text-gray-700">Custom Fields</h4>
+                                    <h4 className="mb-3 text-sm font-semibold text-ink-paragraph">Custom Fields</h4>
                                     <div className="space-y-4">
                                         {editingCustomFields.map((field) => (
-                                            <div key={field.id} className="p-3 rounded-lg border border-gray-200">
+                                            <div key={field.id} className="p-3 rounded-lg border border-ink-light">
                                                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                                                     <div>
-                                                        <label className="block mb-1 text-sm font-medium text-gray-700">
+                                                        <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                                             Field Label
                                                         </label>
                                                         <input
@@ -247,11 +247,11 @@ export default function CompanyInformation({
                                                             value={typeof field.label === 'string' ? field.label : String(field.label || '')}
                                                             onChange={(e) => updateEditingCustomFieldLabel(field.id, e.target.value)}
                                                             placeholder="Enter field label"
-                                                            className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                                            className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block mb-1 text-sm font-medium text-gray-700">
+                                                        <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                                             Placeholder Text
                                                         </label>
                                                         <input
@@ -259,7 +259,7 @@ export default function CompanyInformation({
                                                             value={typeof field.placeholder === 'string' ? field.placeholder : String(field.placeholder || '')}
                                                             onChange={(e) => updateEditingCustomFieldPlaceholder(field.id, e.target.value)}
                                                             placeholder="Enter placeholder text"
-                                                            className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                                            className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                                         />
                                                     </div>
                                                 </div>
@@ -273,15 +273,15 @@ export default function CompanyInformation({
                                                                     f.id === field.id ? { ...f, required: e.target.checked } : f
                                                                 ));
                                                             }}
-                                                            className="w-4 h-4 text-amber-600 bg-gray-100 rounded border-gray-300 focus:ring-amber-500 focus:ring-2"
+                                                            className="w-4 h-4 text-brand-gold bg-ink-light rounded border-ink-light focus:ring-brand-gold focus:ring-2"
                                                         />
-                                                        <label className="ml-2 text-sm font-medium text-gray-700">
+                                                        <label className="ml-2 text-sm font-medium text-ink-paragraph">
                                                             Required Field
                                                         </label>
                                                     </div>
                                                     <button
                                                         onClick={() => removeEditingCustomField(field.id)}
-                                                        className="p-1 text-red-500 rounded hover:text-red-700 hover:bg-red-50"
+                                                        className="p-1 text-status-error rounded hover:text-status-error hover:bg-status-error/10"
                                                         title="Delete field"
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,14 +299,14 @@ export default function CompanyInformation({
                         <div className="flex justify-end mt-6 space-x-3">
                             <button
                                 onClick={() => setShowEditCompanyModal(false)}
-                                className="px-4 py-2 text-gray-600 rounded-md border border-gray-300 hover:bg-gray-50"
+                                className="px-4 py-2 text-ink-paragraph rounded-md border border-ink-light hover:bg-ink-offwhite"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={saveCompanyChanges}
                                 disabled={isSavingCompanyChanges}
-                                className="flex items-center px-4 py-2 text-white bg-amber-500 rounded-md hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex items-center px-4 py-2 text-white bg-brand-gold rounded-md hover:bg-brand-gold disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isSavingCompanyChanges ? (
                                     <>
@@ -326,13 +326,13 @@ export default function CompanyInformation({
             )}
 
             {showAddFieldModal && (
-                <div className="flex fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
-                    <div className="p-6 mx-4 w-full max-w-md max-h-[300px] overflow-auto bg-white rounded-lg shadow-xl">
-                        <h3 className="mb-4 text-lg font-bold text-gray-900">Add New Field</h3>
+                <div className="flex fixed inset-0 z-50 justify-center items-center bg-ink bg-opacity-50">
+                    <div className="p-6 mx-4 w-full max-w-md max-h-[300px] overflow-auto bg-surface-card rounded-lg shadow-xl">
+                        <h3 className="mb-4 text-lg font-bold text-ink">Add New Field</h3>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block mb-1 text-sm font-medium text-gray-700">
+                                <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                     Name
                                 </label>
                                 <input
@@ -340,12 +340,12 @@ export default function CompanyInformation({
                                     value={newFieldLabel}
                                     onChange={(e) => setNewFieldLabel(e.target.value)}
                                     placeholder="e.g., Company Location"
-                                    className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                    className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                 />
                             </div>
 
                             <div>
-                                <label className="block mb-1 text-sm font-medium text-gray-700">
+                                <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                     Placeholder Text
                                 </label>
                                 <input
@@ -353,7 +353,7 @@ export default function CompanyInformation({
                                     value={newFieldPlaceholder}
                                     onChange={(e) => setNewFieldPlaceholder(e.target.value)}
                                     placeholder="e.g., Enter company location"
-                                    className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                    className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                 />
                             </div>
 
@@ -363,9 +363,9 @@ export default function CompanyInformation({
                                     id="newFieldRequired"
                                     checked={newFieldRequired}
                                     onChange={(e) => setNewFieldRequired(e.target.checked)}
-                                    className="w-4 h-4 text-amber-600 bg-gray-100 rounded border-gray-300 focus:ring-amber-500 focus:ring-2"
+                                    className="w-4 h-4 text-brand-gold bg-ink-light rounded border-ink-light focus:ring-brand-gold focus:ring-2"
                                 />
-                                <label htmlFor="newFieldRequired" className="ml-2 text-sm font-medium text-gray-700">
+                                <label htmlFor="newFieldRequired" className="ml-2 text-sm font-medium text-ink-paragraph">
                                     Required Field
                                 </label>
                             </div>
@@ -374,14 +374,14 @@ export default function CompanyInformation({
                         <div className="flex justify-end mt-6 space-x-3">
                             <button
                                 onClick={() => setShowAddFieldModal(false)}
-                                className="px-4 py-2 text-gray-600 rounded-md border border-gray-300 hover:bg-gray-50"
+                                className="px-4 py-2 text-ink-paragraph rounded-md border border-ink-light hover:bg-ink-offwhite"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={addCustomField}
                                 disabled={isAddingField}
-                                className="flex items-center px-4 py-2 text-white bg-amber-500 rounded-md hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex items-center px-4 py-2 text-white bg-brand-gold rounded-md hover:bg-brand-gold disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isAddingField ? (
                                     <>

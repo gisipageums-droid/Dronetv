@@ -588,7 +588,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
   const FileUploadSection = ({
     title,
     icon: Icon,
-    bgColor = 'bg-slate-50',
+    bgColor = 'bg-ink-offwhite',
     sectionKey,
     children
   }: {
@@ -605,7 +605,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             type="button"
             onClick={fetchBrandImages}
             disabled={isLoadingBrandImages}
-            className="p-1 text-slate-500 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 text-ink-caption hover:text-ink-paragraph disabled:opacity-50 disabled:cursor-not-allowed"
             title="Refresh brand images data"
           >
             <Loader2 className={`w-4 h-4 ${isLoadingBrandImages ? 'animate-spin' : ''}`} />
@@ -616,7 +616,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             type="button"
             onClick={fetchDocuments}
             disabled={isLoadingDocuments}
-            className="p-1 text-slate-500 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 text-ink-caption hover:text-ink-paragraph disabled:opacity-50 disabled:cursor-not-allowed"
             title="Refresh documents data"
           >
             <Loader2 className={`w-4 h-4 ${isLoadingDocuments ? 'animate-spin' : ''}`} />
@@ -625,14 +625,14 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         <button
           type="button"
           onClick={() => openEditModal(sectionKey)}
-          className="p-1 text-slate-500 hover:text-slate-700"
+          className="p-1 text-ink-caption hover:text-ink-paragraph"
           title={`Edit ${title} options`}
         >
           <Edit3 size={16} />
         </button>
       </div>
-      <h3 className="flex items-center mb-4 text-lg font-bold text-slate-900">
-        <Icon className="mr-3 w-6 h-6 text-slate-600" />
+      <h3 className="flex items-center mb-4 text-lg font-bold text-ink">
+        <Icon className="mr-3 w-6 h-6 text-ink-paragraph" />
         {title}
       </h3>
       {children}
@@ -653,27 +653,27 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         <button
           type="button"
           onClick={onRemove}
-          className="absolute -top-2 -right-2 p-1 text-white bg-red-500 rounded-full hover:bg-red-600"
+          className="absolute -top-2 -right-2 p-1 text-white bg-status-error rounded-full hover:bg-status-error"
           title="Remove this field"
         >
           <Trash2 size={12} />
         </button>
       )}
-      <label className="block mb-2 text-sm font-semibold text-slate-700">
+      <label className="block mb-2 text-sm font-semibold text-ink-paragraph">
         {field.label}
-        {field.required && <span className="ml-1 text-red-500">*</span>}
+        {field.required && <span className="ml-1 text-status-error">*</span>}
       </label>
       {field.description && (
-        <p className="mb-2 text-sm text-slate-600">{field.description}</p>
+        <p className="mb-2 text-sm text-ink-paragraph">{field.description}</p>
       )}
 
       {field.type === 'file' ? (
-        <div className="p-6 text-center rounded-lg border-2 border-dashed transition-colors border-slate-300 hover:border-slate-400">
-          <Upload className="mx-auto mb-2 w-8 h-8 text-slate-400" />
-          <p className="mb-2 text-slate-600">
+        <div className="p-6 text-center rounded-lg border-2 border-dashed transition-colors border-ink-light hover:border-ink-caption">
+          <Upload className="mx-auto mb-2 w-8 h-8 text-ink-caption" />
+          <p className="mb-2 text-ink-paragraph">
             {field.value ? `Selected: ${field.value}` : 'Click to upload or drag and drop'}
           </p>
-          <p className="mb-3 text-xs text-slate-500">{field.accept}</p>
+          <p className="mb-3 text-xs text-ink-caption">{field.accept}</p>
           <input
             type="file"
             accept={field.accept}
@@ -690,7 +690,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           />
           <label
             htmlFor={`upload-${field.id}`}
-            className="inline-block px-4 py-2 text-white bg-blue-600 rounded-lg transition-colors cursor-pointer hover:bg-blue-700"
+            className="inline-block px-4 py-2 text-white bg-status-info rounded-lg transition-colors cursor-pointer hover:bg-status-info"
           >
             Choose File
           </label>
@@ -918,7 +918,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         <FileUploadSection
           title="Brand & Site Images"
           icon={Image}
-          bgColor="bg-blue-50"
+          bgColor="bg-status-info/10"
           sectionKey="brand-images"
         >
           <div className="space-y-6">
@@ -926,7 +926,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
               <FileUploadBox key={field.id} field={field} />
             ))}
           </div>
-          <p className="mt-4 text-sm text-blue-700">
+          <p className="mt-4 text-sm text-status-info">
             <strong>Note:</strong> AI will generate additional images and design elements for your website automatically.
           </p>
         </FileUploadSection>
@@ -935,7 +935,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         <FileUploadSection
           title="Documents & Certificates"
           icon={FileText}
-          bgColor="bg-green-50"
+          bgColor="bg-status-success/10"
           sectionKey="documents"
         >
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -951,7 +951,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         <FileUploadSection
           title="Videos & Promotional Content"
           icon={Video}
-          bgColor="bg-purple-50"
+          bgColor="bg-brand-gold/10"
           sectionKey="videos"
         >
           <div className="space-y-4">
@@ -960,9 +960,9 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             ))}
           </div>
 
-          <div className="p-4 mt-6 bg-purple-100 rounded-lg">
-            <h4 className="mb-2 font-semibold text-purple-900">Video Guidelines:</h4>
-            <ul className="space-y-1 text-sm text-purple-800">
+          <div className="p-4 mt-6 bg-brand-gold/15 rounded-lg">
+            <h4 className="mb-2 font-semibold text-brand-gold">Video Guidelines:</h4>
+            <ul className="space-y-1 text-sm text-brand-gold">
               <li>• Videos should be 1080p or higher resolution</li>
               <li>• YouTube, Vimeo, or Google Drive links are preferred</li>
               <li>• Ensure videos are publicly accessible or properly shared</li>
@@ -973,13 +973,13 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         </FileUploadSection>
 
         {/* Upload Summary */}
-        <div className="p-6 rounded-lg bg-slate-100">
-          <h3 className="mb-4 text-lg font-bold text-slate-900">Upload Summary</h3>
+        <div className="p-6 rounded-lg bg-ink-light">
+          <h3 className="mb-4 text-lg font-bold text-ink">Upload Summary</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <h4 className="mb-2 font-semibold text-slate-800">Required Files:</h4>
+              <h4 className="mb-2 font-semibold text-ink-charcoal">Required Files:</h4>
               <ul className="space-y-1 text-sm">
-                <li className={`flex items-center ${formData.companyLogoUrl ? 'text-green-600' : 'text-red-600'}`}>
+                <li className={`flex items-center ${formData.companyLogoUrl ? 'text-status-success' : 'text-status-error'}`}>
                   <span className="mr-2 w-2 h-2 bg-current rounded-full"></span>
                   Company Logo {formData.companyLogoUrl ? '✓' : '(Required)'}
                 </li>
@@ -987,8 +987,8 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             </div>
 
             <div>
-              <h4 className="mb-2 font-semibold text-slate-800">File Limits:</h4>
-              <ul className="space-y-1 text-sm text-slate-600">
+              <h4 className="mb-2 font-semibold text-ink-charcoal">File Limits:</h4>
+              <ul className="space-y-1 text-sm text-ink-paragraph">
                 <li>• Images: Maximum 5MB each</li>
                 <li>• PDFs: Maximum 20MB each</li>
                 <li>• All URLs must use HTTPS</li>
@@ -997,9 +997,9 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             </div>
           </div>
 
-          <div className="p-4 mt-6 bg-green-50 rounded-lg border border-green-200">
-            <h4 className="mb-2 font-semibold text-green-800">🎉 Ready to Generate Your Website!</h4>
-            <p className="text-sm text-green-700">
+          <div className="p-4 mt-6 bg-status-success/10 rounded-lg border border-status-success/25">
+            <h4 className="mb-2 font-semibold text-status-success">🎉 Ready to Generate Your Website!</h4>
+            <p className="text-sm text-status-success">
               Once you click "Submit Form", our AI will create a professional website with all your information,
               generate additional content, optimize for SEO, and create a beautiful design that matches your industry.
             </p>
@@ -1009,14 +1009,14 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
       {/* Edit Modal for managing upload fields */}
       {isEditModalOpen && (
-        <div className="flex fixed inset-0 z-50 justify-center items-center backdrop-blur-sm bg-black/60">
-          <div className="bg-white rounded-xl shadow-xl w-11/12 max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="flex fixed inset-0 z-50 justify-center items-center backdrop-blur-sm bg-ink/60">
+          <div className="bg-surface-card rounded-xl shadow-xl w-11/12 max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
             {/* Modal Header */}
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="flex gap-2 items-center text-xl font-bold text-gray-900">
+            <div className="p-6 border-b border-ink-light">
+              <h3 className="flex gap-2 items-center text-xl font-bold text-ink">
                 ✏️ Manage {currentEditingSection} Fields
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-ink-caption">
                 Add, remove, or modify upload fields for the {currentEditingSection} section
               </p>
             </div>
@@ -1025,32 +1025,32 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             <div className="overflow-y-auto flex-1 p-6">
               {/* Current Fields */}
               <div className="mb-8">
-                <h4 className="mb-4 font-medium text-gray-700">Current Fields</h4>
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h4 className="mb-4 font-medium text-ink-paragraph">Current Fields</h4>
+                <div className="p-4 bg-ink-offwhite rounded-lg border border-ink-light">
                   {/* Loading state for brand-images */}
                   {currentEditingSection === 'brand-images' && isLoadingBrandImages && (
                     <div className="flex justify-center items-center py-8">
-                      <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
-                      <span className="ml-2 text-blue-600">Loading brand images data...</span>
+                      <Loader2 className="w-6 h-6 text-status-info animate-spin" />
+                      <span className="ml-2 text-status-info">Loading brand images data...</span>
                     </div>
                   )}
 
                   {/* Loading state for documents */}
                   {currentEditingSection === 'documents' && isLoadingDocuments && (
                     <div className="flex justify-center items-center py-8">
-                      <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
-                      <span className="ml-2 text-blue-600">Loading documents data...</span>
+                      <Loader2 className="w-6 h-6 text-status-info animate-spin" />
+                      <span className="ml-2 text-status-info">Loading documents data...</span>
                     </div>
                   )}
 
                   {/* Error state for brand-images */}
                   {currentEditingSection === 'brand-images' && brandImagesError && (
-                    <div className="p-4 mb-4 bg-red-50 rounded-lg border border-red-200">
-                      <p className="text-red-600">Error: {brandImagesError}</p>
+                    <div className="p-4 mb-4 bg-status-error/10 rounded-lg border border-status-error/25">
+                      <p className="text-status-error">Error: {brandImagesError}</p>
                       <button
                         type="button"
                         onClick={fetchBrandImages}
-                        className="px-3 py-1 mt-2 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+                        className="px-3 py-1 mt-2 text-sm text-white bg-status-error rounded hover:bg-status-error"
                       >
                         Retry
                       </button>
@@ -1059,12 +1059,12 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
                   {/* Error state for documents */}
                   {currentEditingSection === 'documents' && documentsError && (
-                    <div className="p-4 mb-4 bg-red-50 rounded-lg border border-red-200">
-                      <p className="text-red-600">Error: {documentsError}</p>
+                    <div className="p-4 mb-4 bg-status-error/10 rounded-lg border border-status-error/25">
+                      <p className="text-status-error">Error: {documentsError}</p>
                       <button
                         type="button"
                         onClick={fetchDocuments}
-                        className="px-3 py-1 mt-2 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+                        className="px-3 py-1 mt-2 text-sm text-white bg-status-error rounded hover:bg-status-error"
                       >
                         Retry
                       </button>
@@ -1076,33 +1076,33 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                       {workingFields.map((field) => (
                         <div
                           key={field.id}
-                          className="px-4 py-3 bg-white rounded-lg border border-gray-200"
+                          className="px-4 py-3 bg-surface-card rounded-lg border border-ink-light"
                         >
                           {editingFieldId === field.id ? (
                             <div className="space-y-2">
                               <div className="grid grid-cols-1 gap-2">
                                 <div>
-                                  <label className="block mb-1 text-xs font-medium text-gray-700">Label</label>
+                                  <label className="block mb-1 text-xs font-medium text-ink-paragraph">Label</label>
                                   <input
                                     type="text"
-                                    className="px-2 py-1 w-full text-sm rounded border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="px-2 py-1 w-full text-sm rounded border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                                     value={(editingDraft.label as string) ?? field.label}
                                     onChange={(e) => setEditingDraft(d => ({ ...d, label: e.target.value }))}
                                   />
                                 </div>
                                 <div>
-                                  <label className="block mb-1 text-xs font-medium text-gray-700">Description</label>
+                                  <label className="block mb-1 text-xs font-medium text-ink-paragraph">Description</label>
                                   <input
                                     type="text"
-                                    className="px-2 py-1 w-full text-sm rounded border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="px-2 py-1 w-full text-sm rounded border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                                     value={(editingDraft.description as string) ?? field.description}
                                     onChange={(e) => setEditingDraft(d => ({ ...d, description: e.target.value }))}
                                   />
                                 </div>
                                 <div>
-                                  <label className="block mb-1 text-xs font-medium text-gray-700">Type</label>
+                                  <label className="block mb-1 text-xs font-medium text-ink-paragraph">Type</label>
                                   <select
-                                    className="px-2 py-1 w-full text-sm rounded border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="px-2 py-1 w-full text-sm rounded border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                                     value={(editingDraft.type as 'file' | 'url') ?? field.type}
                                     onChange={(e) => setEditingDraft(d => ({ ...d, type: e.target.value as 'file' | 'url' }))}
                                   >
@@ -1111,19 +1111,19 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                                   </select>
                                 </div>
                                 <div>
-                                  <label className="block mb-1 text-xs font-medium text-gray-700">Accepted Types</label>
+                                  <label className="block mb-1 text-xs font-medium text-ink-paragraph">Accepted Types</label>
                                   <input
                                     type="text"
-                                    className="px-2 py-1 w-full text-sm rounded border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="px-2 py-1 w-full text-sm rounded border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                                     value={(editingDraft.accept as string) ?? field.accept}
                                     onChange={(e) => setEditingDraft(d => ({ ...d, accept: e.target.value }))}
                                     placeholder="e.g., .pdf,.jpg,.jpeg,.png"
                                   />
                                 </div>
-                                <label className="inline-flex gap-2 items-center text-xs text-gray-700">
+                                <label className="inline-flex gap-2 items-center text-xs text-ink-paragraph">
                                   <input
                                     type="checkbox"
-                                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                    className="w-4 h-4 text-status-info rounded border-ink-light focus:ring-status-info"
                                     checked={(editingDraft.required as boolean) ?? field.required}
                                     onChange={(e) => setEditingDraft(d => ({ ...d, required: e.target.checked }))}
                                   />
@@ -1133,7 +1133,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                               <div className="flex gap-2 justify-end">
                                 <button
                                   type="button"
-                                  className="inline-flex gap-1 items-center px-2 py-1 text-xs text-gray-700 rounded border border-gray-300 hover:bg-gray-50"
+                                  className="inline-flex gap-1 items-center px-2 py-1 text-xs text-ink-paragraph rounded border border-ink-light hover:bg-ink-offwhite"
                                   onClick={handleCancelEditField}
                                   title="Cancel"
                                 >
@@ -1142,7 +1142,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                                 </button>
                                 <button
                                   type="button"
-                                  className="inline-flex gap-1 items-center px-2 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="inline-flex gap-1 items-center px-2 py-1 text-xs text-white bg-status-info rounded hover:bg-status-info disabled:opacity-50 disabled:cursor-not-allowed"
                                   onClick={handleSaveEditField}
                                   disabled={isUpdatingBrandImage || isUpdatingDocument}
                                   title="Save"
@@ -1167,20 +1167,20 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                                 <div className="flex gap-2 items-center">
                                   <span className="text-sm font-medium">{field.label}</span>
                                   {field.isPredefined && (
-                                    <span className="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded">
+                                    <span className="px-2 py-1 text-xs text-status-info bg-status-info/15 rounded">
                                       Predefined
                                     </span>
                                   )}
                                 </div>
-                                <p className="mt-1 text-xs text-gray-500">{field.accept}</p>
+                                <p className="mt-1 text-xs text-ink-caption">{field.accept}</p>
                                 {field.required && (
-                                  <span className="text-xs text-red-500">Required</span>
+                                  <span className="text-xs text-status-error">Required</span>
                                 )}
                               </div>
                               <div className="flex gap-2 items-center ml-2">
                                 <button
                                   type="button"
-                                  className="text-yellow-600 hover:text-yellow-700"
+                                  className="text-brand-gold hover:text-brand-yellow"
                                   title="Edit this field"
                                   onClick={() => handleStartEditField(field)}
                                 >
@@ -1188,7 +1188,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                                 </button>
                                 <button
                                   type="button"
-                                  className="text-red-500 transition-colors hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="text-status-error transition-colors hover:text-status-error disabled:opacity-50 disabled:cursor-not-allowed"
                                   onClick={() => handleRemoveField(field.id)}
                                   disabled={field.id === 'company-logo' || isDeletingBrandImage || isDeletingDocument}
                                   title={field.id === 'company-logo' ? 'Company Logo cannot be removed' : 'Remove this field'}
@@ -1206,30 +1206,30 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                       ))}
                     </div>
                   ) : (
-                    <p className="py-4 text-sm text-center text-gray-500">No fields added yet</p>
+                    <p className="py-4 text-sm text-center text-ink-caption">No fields added yet</p>
                   )}
                 </div>
               </div>
 
               {/* Add New Field */}
-              <div className="p-6 mb-6 bg-blue-50 rounded-lg">
-                <h4 className="mb-4 font-medium text-blue-900">Add New Field</h4>
+              <div className="p-6 mb-6 bg-status-info/10 rounded-lg">
+                <h4 className="mb-4 font-medium text-status-info">Add New Field</h4>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block mb-1 text-sm font-medium text-gray-700">Field Label *</label>
+                    <label className="block mb-1 text-sm font-medium text-ink-paragraph">Field Label *</label>
                     <input
                       type="text"
                       placeholder="e.g., Safety Certificate, Insurance Document, etc."
-                      className="px-3 py-2 w-full rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="px-3 py-2 w-full rounded-lg border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                       value={newField.label}
                       onChange={(e) => setNewField({ ...newField, label: e.target.value })}
                     />
                   </div>
 
                   <div>
-                    <label className="block mb-1 text-sm font-medium text-gray-700">Field Type</label>
+                    <label className="block mb-1 text-sm font-medium text-ink-paragraph">Field Type</label>
                     <select
-                      className="px-3 py-2 w-full rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="px-3 py-2 w-full rounded-lg border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                       value={newField.type}
                       onChange={(e) => setNewField({ ...newField, type: e.target.value as 'file' | 'url' })}
                     >
@@ -1240,9 +1240,9 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
                   {newField.type === 'file' && (
                     <div>
-                      <label className="block mb-1 text-sm font-medium text-gray-700">Accepted File Types</label>
+                      <label className="block mb-1 text-sm font-medium text-ink-paragraph">Accepted File Types</label>
                       <select
-                        className="px-3 py-2 w-full rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="px-3 py-2 w-full rounded-lg border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                         value={newField.accept}
                         onChange={(e) => setNewField({ ...newField, accept: e.target.value })}
                       >
@@ -1256,11 +1256,11 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                   )}
 
                   <div>
-                    <label className="block mb-1 text-sm font-medium text-gray-700">Description</label>
+                    <label className="block mb-1 text-sm font-medium text-ink-paragraph">Description</label>
                     <input
                       type="text"
                       placeholder="e.g., Upload your safety certification document"
-                      className="px-3 py-2 w-full rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="px-3 py-2 w-full rounded-lg border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                       value={newField.description}
                       onChange={(e) => setNewField({ ...newField, description: e.target.value })}
                     />
@@ -1270,11 +1270,11 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                     <input
                       type="checkbox"
                       id="required-field"
-                      className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                      className="w-4 h-4 text-status-info rounded border-ink-light focus:ring-status-info"
                       checked={newField.required}
                       onChange={(e) => setNewField({ ...newField, required: e.target.checked })}
                     />
-                    <label htmlFor="required-field" className="block ml-2 text-sm text-gray-900">
+                    <label htmlFor="required-field" className="block ml-2 text-sm text-ink">
                       Required field
                     </label>
                   </div>
@@ -1282,7 +1282,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                   <div className="flex items-end">
                     <button
                       type="button"
-                      className="flex gap-2 items-center px-4 py-2 text-white bg-blue-600 rounded-lg transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex gap-2 items-center px-4 py-2 text-white bg-status-info rounded-lg transition-colors hover:bg-status-info disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={handleAddField}
                       disabled={!newField.label.trim() || isAddingBrandImage || isAddingDocument}
                     >
@@ -1304,17 +1304,17 @@ const Step8MediaUploads: React.FC<StepProps> = ({
             </div>
 
             {/* Modal Footer */}
-            <div className="flex gap-3 justify-end p-6 bg-gray-50 border-t border-gray-200">
+            <div className="flex gap-3 justify-end p-6 bg-ink-offwhite border-t border-ink-light">
               <button
                 type="button"
-                className="px-4 py-2 font-medium text-gray-700 rounded-lg transition-colors hover:text-gray-900"
+                className="px-4 py-2 font-medium text-ink-paragraph rounded-lg transition-colors hover:text-ink"
                 onClick={() => setIsEditModalOpen(false)}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="flex gap-1 items-center px-4 py-2 font-medium text-white bg-blue-600 rounded-lg transition-colors hover:bg-blue-700"
+                className="flex gap-1 items-center px-4 py-2 font-medium text-white bg-status-info rounded-lg transition-colors hover:bg-status-info"
                 onClick={handleSaveFields}
               >
                 ✅ Save Changes

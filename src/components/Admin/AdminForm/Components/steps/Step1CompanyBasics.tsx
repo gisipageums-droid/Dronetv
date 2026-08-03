@@ -24,8 +24,8 @@ const Step1CompanyBasics: React.FC<StepProps> = ({
     >
       <div className="space-y-8">
         {/* Company Information */}
-        <div className="p-6 bg-blue-50 rounded-lg">
-          <h3 className="flex items-center mb-4 text-lg font-bold text-blue-900">
+        <div className="p-6 bg-status-info/10 rounded-lg">
+          <h3 className="flex items-center mb-4 text-lg font-bold text-status-info">
             <Building2 className="mr-3 w-6 h-6" />
             Company Information
           </h3>
@@ -64,8 +64,8 @@ const Step1CompanyBasics: React.FC<StepProps> = ({
         </div>
 
         {/* Director Information */}
-        <div className="p-6 bg-green-50 rounded-lg">
-          <h3 className="flex items-center mb-4 text-lg font-bold text-green-900">
+        <div className="p-6 bg-status-success/10 rounded-lg">
+          <h3 className="flex items-center mb-4 text-lg font-bold text-status-success">
             <User className="mr-3 w-6 h-6" />
             Director/MD Information
           </h3>
@@ -99,8 +99,8 @@ const Step1CompanyBasics: React.FC<StepProps> = ({
         </div>
 
         {/* Alternative Contact */}
-        <div className="p-6 bg-purple-50 rounded-lg">
-          <h3 className="flex items-center mb-4 text-lg font-bold text-purple-900">
+        <div className="p-6 bg-brand-gold/10 rounded-lg">
+          <h3 className="flex items-center mb-4 text-lg font-bold text-brand-gold">
             <Phone className="mr-3 w-6 h-6" />
             Alternative Contact
           </h3>
@@ -134,8 +134,8 @@ const Step1CompanyBasics: React.FC<StepProps> = ({
         </div>
 
         {/* Address Information */}
-        <div className="p-6 bg-orange-50 rounded-lg">
-          <h3 className="flex items-center mb-4 text-lg font-bold text-orange-900">
+        <div className="p-6 bg-status-warning/10 rounded-lg">
+          <h3 className="flex items-center mb-4 text-lg font-bold text-status-warning">
             <Globe className="mr-3 w-6 h-6" />
             Address Information
           </h3>
@@ -183,8 +183,8 @@ const Step1CompanyBasics: React.FC<StepProps> = ({
         </div>
 
         {/* Optional Information */}
-        <div className="p-6 rounded-lg bg-slate-50">
-          <h3 className="mb-4 text-lg font-bold text-slate-900">Additional Information (Optional)</h3>
+        <div className="p-6 rounded-lg bg-ink-offwhite">
+          <h3 className="mb-4 text-lg font-bold text-ink">Additional Information (Optional)</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormInput
               label="Legal Company Name"

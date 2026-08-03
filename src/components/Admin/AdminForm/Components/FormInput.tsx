@@ -30,9 +30,9 @@ export const FormInput: React.FC<FormInputProps> = ({
 }) => {
   return (
     <div className="mb-2">
-      <label className="block text-xs font-semibold text-gray-700 mb-1">
+      <label className="block text-xs font-semibold text-ink-paragraph mb-1">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-status-error ml-1">*</span>}
       </label>
 
       {type === 'textarea' ? (
@@ -44,10 +44,10 @@ export const FormInput: React.FC<FormInputProps> = ({
           rows={rows || 4}
           disabled={disabled}
           required={required}
-          className={`w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${error
-            ? 'border-red-300 bg-red-50'
-            : 'border-amber-300 bg-white hover:border-amber-400'
-            } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''} ${className}`}
+          className={`w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-status-info focus:border-transparent text-sm ${error
+            ? 'border-status-error/40 bg-status-error/10'
+            : 'border-brand-yellow-soft bg-surface-card hover:border-brand-yellow'
+            } ${disabled ? 'bg-ink-light cursor-not-allowed' : ''} ${className}`}
         />
       ) : (
         <input
@@ -58,15 +58,15 @@ export const FormInput: React.FC<FormInputProps> = ({
           placeholder={placeholder}
           disabled={disabled}
           required={required}
-          className={`w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${error
-            ? 'border-red-300 bg-red-50'
-            : 'border-amber-300 bg-white hover:border-amber-400'
-            } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''} ${className}`}
+          className={`w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-status-info focus:border-transparent text-sm ${error
+            ? 'border-status-error/40 bg-status-error/10'
+            : 'border-brand-yellow-soft bg-surface-card hover:border-brand-yellow'
+            } ${disabled ? 'bg-ink-light cursor-not-allowed' : ''} ${className}`}
         />
       )}
 
       {error && (
-        <div className="flex items-center mt-1 text-red-600">
+        <div className="flex items-center mt-1 text-status-error">
           <AlertCircle className="w-4 h-4 mr-2" />
           <span className="text-xs">{error}</span>
         </div>
@@ -96,16 +96,16 @@ export const Select: React.FC<SelectProps> = ({
   placeholder = 'Select an option',
   className = '',
 }) => {
-  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${error
-    ? 'border-red-300 bg-red-50'
-    : 'border-amber-300 bg-white hover:border-amber-400'
+  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-status-info focus:border-transparent text-sm ${error
+    ? 'border-status-error/40 bg-status-error/10'
+    : 'border-brand-yellow-soft bg-surface-card hover:border-brand-yellow'
     } ${className}`;
 
   return (
     <div className="mb-3">
-      <label className="block text-xs font-semibold text-gray-700 mb-1">
+      <label className="block text-xs font-semibold text-ink-paragraph mb-1">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-status-error ml-1">*</span>}
 
       </label>
 
@@ -124,7 +124,7 @@ export const Select: React.FC<SelectProps> = ({
       </select>
 
       {error && (
-        <div className="flex items-center mt-1 text-red-600">
+        <div className="flex items-center mt-1 text-status-error">
           <AlertCircle className="w-4 h-4 mr-2" />
           <span className="text-xs">{error}</span>
         </div>
@@ -166,18 +166,18 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
   return (
     <div className="mb-3">
-      <label className="block text-xs font-semibold text-slate-700 mb-2">
+      <label className="block text-xs font-semibold text-ink-paragraph mb-2">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-status-error ml-1">*</span>}
       </label>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {options.map((option) => (
           <label
             key={option}
-            className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-slate-50 ${selected.includes(option)
-              ? 'border-blue-500 bg-blue-50 text-blue-700'
-              : 'border-slate-300'
+            className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-ink-offwhite ${selected.includes(option)
+              ? 'border-status-info bg-status-info/10 text-status-info'
+              : 'border-ink-light'
               }`}
           >
             <input
@@ -188,8 +188,8 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             />
             <div
               className={`w-3 h-3 rounded border-2 mr-2 flex items-center justify-center ${selected.includes(option)
-                ? 'border-blue-500 bg-blue-500'
-                : 'border-slate-300'
+                ? 'border-status-info bg-status-info'
+                : 'border-ink-light'
                 }`}
             >
               {selected.includes(option) && (
@@ -221,7 +221,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
           />
           {otherValue && otherValue.trim() && (
             <div className="mt-3">
-              <h5 className="text-xs font-semibold text-slate-700 mb-1">
+              <h5 className="text-xs font-semibold text-ink-paragraph mb-1">
                 Added Items:
               </h5>
               <div className="flex flex-wrap">
@@ -231,7 +231,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                   return (
                     <span
                       key={index}
-                      className="inline-block px-2 py-0.5 mr-1 mb-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium"
+                      className="inline-block px-2 py-0.5 mr-1 mb-1 bg-status-info/15 text-status-info rounded border border-status-info/25 text-xs font-medium"
                     >
                       {trimmedItem}
                     </span>
@@ -244,7 +244,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       )}
 
       {error && (
-        <div className="flex items-center mt-1 text-red-600">
+        <div className="flex items-center mt-1 text-status-error">
           <AlertCircle className="w-4 h-4 mr-2" />
           <span className="text-xs">{error}</span>
         </div>

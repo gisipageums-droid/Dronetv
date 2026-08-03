@@ -129,11 +129,11 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
     children: React.ReactNode;
     icon?: React.ReactNode;
     bgColor?: string
-  }> = ({ title, children, icon, bgColor = 'bg-gray-50' }) => (
-    <div className={`${bgColor} p-6 rounded-xl border border-gray-200`}>
+  }> = ({ title, children, icon, bgColor = 'bg-ink-offwhite' }) => (
+    <div className={`${bgColor} p-6 rounded-xl border border-ink-light`}>
       <div className="flex items-center gap-3 mb-4">
         {icon}
-        <h4 className="font-semibold text-lg text-gray-900">{title}</h4>
+        <h4 className="font-semibold text-lg text-ink">{title}</h4>
       </div>
       {children}
     </div>
@@ -145,27 +145,27 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
     span?: number
   }> = ({ label, value, span = 1 }) => (
     <div className={span > 1 ? 'col-span-full' : 'col-span-1'}>
-      <p className="text-sm font-medium text-gray-600 mb-1">{label}</p>
-      <p className="text-gray-900 break-words">{value || 'Not provided'}</p>
+      <p className="text-sm font-medium text-ink-paragraph mb-1">{label}</p>
+      <p className="text-ink break-words">{value || 'Not provided'}</p>
     </div>
   );
 
   const formData = data?.formData || {};
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[999999] p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[80vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center z-[999999] p-4">
+      <div className="bg-surface-card rounded-lg shadow-xl max-w-6xl w-full max-h-[80vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">Professional Details</h3>
+              <h3 className="text-2xl font-bold text-ink">Professional Details</h3>
               {data?.professionalId && (
-                <p className="text-sm text-gray-500 mt-1">ID: {data.professionalId}</p>
+                <p className="text-sm text-ink-caption mt-1">ID: {data.professionalId}</p>
               )}
             </div>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-ink-caption hover:text-ink-paragraph transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
@@ -173,29 +173,29 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
 
           {isLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading professional details...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-status-info mx-auto mb-4"></div>
+              <p className="text-ink-paragraph">Loading professional details...</p>
             </div>
           ) : error ? (
-            <div className="text-center py-8 text-red-500 font-medium">{error}</div>
+            <div className="text-center py-8 text-status-error font-medium">{error}</div>
           ) : data ? (
             <>
               <div className="flex flex-col sm:flex-row gap-3 mb-6">
                 {/* <button
                   onClick={() => professionalId && onPreview(professionalId)}
-                  className="flex-1 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium flex items-center gap-2 justify-center"
+                  className="flex-1 px-4 py-2 bg-status-info/15 text-status-info rounded-lg hover:bg-status-info/25 transition-colors text-sm font-medium flex items-center gap-2 justify-center"
                 >
                   <Eye className="w-4 h-4" /> Preview Profile
                 </button> */}
                 <button
                   onClick={() => professionalId && onApprove(professionalId)}
-                  className="flex-1 px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm font-medium flex items-center gap-2 justify-center"
+                  className="flex-1 px-4 py-2 bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-sm font-medium flex items-center gap-2 justify-center"
                 >
                   <CheckCircle className="w-4 h-4" /> Approve
                 </button>
                 <button
                   onClick={() => professionalId && onReject(professionalId)}
-                  className="flex-1 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium flex items-center gap-2 justify-center"
+                  className="flex-1 px-4 py-2 bg-status-error/15 text-status-error rounded-lg hover:bg-status-error/25 transition-colors text-sm font-medium flex items-center gap-2 justify-center"
                 >
                   <XCircle className="w-4 h-4" /> Reject
                 </button>
@@ -205,8 +205,8 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                 {formData.userImage && (
                   <InfoSection
                     title="Profile Image"
-                    icon={<Image className="w-5 h-5 text-purple-600" />}
-                    bgColor="bg-purple-50"
+                    icon={<Image className="w-5 h-5 text-brand-gold" />}
+                    bgColor="bg-brand-gold/10"
                   >
                     <img
                       src={formData.userImage}
@@ -218,8 +218,8 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
 
                 <InfoSection
                   title="Basic Information"
-                  icon={<User className="w-5 h-5 text-blue-600" />}
-                  bgColor="bg-blue-50"
+                  icon={<User className="w-5 h-5 text-status-info" />}
+                  bgColor="bg-status-info/10"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <InfoField label="Full Name" value={formData.basicInfo?.fullName} />
@@ -233,8 +233,8 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
 
                 <InfoSection
                   title="Contact Information"
-                  icon={<Mail className="w-5 h-5 text-green-600" />}
-                  bgColor="bg-green-50"
+                  icon={<Mail className="w-5 h-5 text-status-success" />}
+                  bgColor="bg-status-success/10"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <InfoField label="Email" value={formData.addressInformation?.email || formData.userId} />
@@ -247,8 +247,8 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
 
                 <InfoSection
                   title="Address"
-                  icon={<MapPin className="w-5 h-5 text-red-600" />}
-                  bgColor="bg-red-50"
+                  icon={<MapPin className="w-5 h-5 text-status-error" />}
+                  bgColor="bg-status-error/10"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <InfoField label="Address" value={formData.basicInfo?.address} span={3} />
@@ -261,17 +261,17 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
 
                 <InfoSection
                   title="Categories & Subcategories"
-                  icon={<Briefcase className="w-5 h-5 text-indigo-600" />}
-                  bgColor="bg-indigo-50"
+                  icon={<Briefcase className="w-5 h-5 text-status-info" />}
+                  bgColor="bg-status-info/10"
                 >
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-2">Categories</p>
+                      <p className="text-sm font-medium text-ink-paragraph mb-2">Categories</p>
                       <div className="flex flex-wrap gap-2">
                         {formData.categories?.map((cat: string, i: number) => (
                           <span
                             key={i}
-                            className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-medium rounded-full"
+                            className="px-3 py-1 bg-status-info/15 text-status-info text-sm font-medium rounded-full"
                           >
                             {cat}
                           </span>
@@ -279,12 +279,12 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-2">Subcategories</p>
+                      <p className="text-sm font-medium text-ink-paragraph mb-2">Subcategories</p>
                       <div className="flex flex-wrap gap-2">
                         {formData.subcategories?.map((sub: any, i: number) => (
                           <span
                             key={i}
-                            className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full"
+                            className="px-3 py-1 bg-status-info/15 text-status-info text-sm font-medium rounded-full"
                           >
                             {sub.name} ({sub.parent})
                           </span>
@@ -296,22 +296,22 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
 
                 <InfoSection
                   title="Skills"
-                  icon={<Code className="w-5 h-5 text-gray-600" />}
-                  bgColor="bg-gray-50"
+                  icon={<Code className="w-5 h-5 text-ink-paragraph" />}
+                  bgColor="bg-ink-offwhite"
                 >
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-2">Skills with Proficiency</p>
+                      <p className="text-sm font-medium text-ink-paragraph mb-2">Skills with Proficiency</p>
                       <div className="space-y-3">
                         {formData.formattedSkills?.map((skill: any, i: number) => (
-                          <div key={i} className="bg-white p-3 rounded-lg border border-gray-200">
+                          <div key={i} className="bg-surface-card p-3 rounded-lg border border-ink-light">
                             <div className="flex justify-between items-center mb-2">
-                              <span className="font-medium text-gray-900">{skill.name}</span>
-                              <span className="text-sm text-gray-600">{skill.proficiency.toFixed(1)}%</span>
+                              <span className="font-medium text-ink">{skill.name}</span>
+                              <span className="text-sm text-ink-paragraph">{skill.proficiency.toFixed(1)}%</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full bg-ink-light rounded-full h-2">
                               <div
-                                className="bg-yellow-400 h-2 rounded-full transition-all"
+                                className="bg-brand-yellow h-2 rounded-full transition-all"
                                 style={{ width: `${skill.proficiency}%` }}
                               ></div>
                             </div>
@@ -320,12 +320,12 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-2">Raw Skills</p>
+                      <p className="text-sm font-medium text-ink-paragraph mb-2">Raw Skills</p>
                       <div className="flex flex-wrap gap-2">
                         {formData.rawSkills?.map((skill: string, i: number) => (
                           <span
                             key={i}
-                            className="px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-full"
+                            className="px-3 py-1 bg-ink-light text-ink-paragraph text-sm font-medium rounded-full"
                           >
                             {skill}
                           </span>
@@ -338,14 +338,14 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                 {formData.services && formData.services.length > 0 && (
                   <InfoSection
                     title="Services"
-                    icon={<Briefcase className="w-5 h-5 text-teal-600" />}
-                    bgColor="bg-teal-50"
+                    icon={<Briefcase className="w-5 h-5 text-status-info" />}
+                    bgColor="bg-status-info/10"
                   >
                     <div className="space-y-3">
                       {formData.services.map((service: any, i: number) => (
-                        <div key={i} className="bg-white p-4 rounded-lg border border-teal-200">
-                          <h5 className="font-semibold text-gray-900 mb-2">{service.serviceName}</h5>
-                          <p className="text-sm text-gray-600">{service.serviceDetails}</p>
+                        <div key={i} className="bg-surface-card p-4 rounded-lg border border-status-info/25">
+                          <h5 className="font-semibold text-ink mb-2">{service.serviceName}</h5>
+                          <p className="text-sm text-ink-paragraph">{service.serviceDetails}</p>
                         </div>
                       ))}
                     </div>
@@ -355,20 +355,20 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                 {formData.projects && formData.projects.length > 0 && (
                   <InfoSection
                     title="Projects"
-                    icon={<Award className="w-5 h-5 text-gray-600" />}
-                    bgColor="bg-gray-50"
+                    icon={<Award className="w-5 h-5 text-ink-paragraph" />}
+                    bgColor="bg-ink-offwhite"
                   >
                     <div className="space-y-3">
                       {formData.projects.map((project: any, i: number) => (
-                        <div key={i} className="bg-white p-4 rounded-lg border border-gray-200">
-                          <h5 className="font-semibold text-gray-900 mb-2">{project.title}</h5>
-                          <p className="text-sm text-gray-600 mb-2">{project.description}</p>
+                        <div key={i} className="bg-surface-card p-4 rounded-lg border border-ink-light">
+                          <h5 className="font-semibold text-ink mb-2">{project.title}</h5>
+                          <p className="text-sm text-ink-paragraph mb-2">{project.description}</p>
                           {project.project_url && (
                             <a
                               href={project.project_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:underline"
+                              className="text-sm text-status-info hover:underline"
                             >
                               View Project →
                             </a>
@@ -381,8 +381,8 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
 
                 <InfoSection
                   title="Submission Metadata"
-                  icon={<FileText className="w-5 h-5 text-gray-600" />}
-                  bgColor="bg-gray-50"
+                  icon={<FileText className="w-5 h-5 text-ink-paragraph" />}
+                  bgColor="bg-ink-offwhite"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <InfoField label="Status" value={formData.status} />
@@ -402,10 +402,10 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                   </div>
                 </InfoSection>
 
-                <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
+                <div className="flex justify-end gap-3 pt-6 border-t border-ink-light">
                   <button
                     onClick={onClose}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                    className="px-6 py-2 border border-ink-light rounded-lg text-ink-paragraph hover:bg-ink-offwhite transition-colors font-medium"
                   >
                     Close
                   </button>
@@ -413,7 +413,7 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                     onClick={() => {
                       onClose();
                     }}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                    className="px-6 py-2 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors font-medium"
                   >
                     Save Notes
                   </button>
@@ -421,7 +421,7 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
               </div>
             </>
           ) : (
-            <p className="text-center text-gray-600 py-8">No data found</p>
+            <p className="text-center text-ink-paragraph py-8">No data found</p>
           )}
         </div>
       </div>

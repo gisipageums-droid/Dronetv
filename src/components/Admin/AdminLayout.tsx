@@ -401,12 +401,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const SidebarContent = () => (
     <>
       <div className="flex items-center gap-2 px-5 py-4 border-b border-white/10 flex-shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center flex-shrink-0">
-          <Tv size={16} className="text-black" />
+        <div className="w-8 h-8 rounded-lg bg-brand-yellow flex items-center justify-center flex-shrink-0">
+          <Tv size={16} className="text-ink" />
         </div>
         <div>
           <div className="text-base font-black text-white leading-tight">
-            Drone<span className="text-yellow-400">Tv</span>.in
+            Drone<span className="text-brand-yellow">Tv</span>.in
           </div>
           <div className="text-[9px] text-white/35 uppercase tracking-widest">Admin Panel</div>
         </div>
@@ -431,7 +431,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     onClick={() => handleParentClick(item)}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 mb-0.5 text-left ${
                       isGroupActive
-                        ? "bg-yellow-400/15 text-yellow-400 border-l-[3px] border-yellow-400"
+                        ? "bg-brand-yellow/15 text-brand-yellow border-l-[3px] border-brand-yellow"
                         : "text-white/60 hover:bg-white/6 hover:text-white border-l-[3px] border-transparent"
                     }`}
                   >
@@ -447,7 +447,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     onClick={() => handleParentClick(item)}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                       isGroupActive
-                        ? "bg-yellow-400/15 text-yellow-400 border-l-[3px] border-yellow-400"
+                        ? "bg-brand-yellow/15 text-brand-yellow border-l-[3px] border-brand-yellow"
                         : "text-white/60 hover:bg-white/6 hover:text-white border-l-[3px] border-transparent"
                     }`}
                   >
@@ -482,7 +482,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             onClick={() => handleSubClick(item.id, sub)}
                             className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-md text-xs font-medium transition-all duration-150 mb-0.5 text-left ${
                               isSubActive
-                                ? "text-yellow-400 bg-yellow-400/10"
+                                ? "text-brand-yellow bg-brand-yellow/10"
                                 : "text-white/50 hover:text-white hover:bg-white/6"
                             }`}
                           >
@@ -503,7 +503,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       <div className="flex-shrink-0 border-t border-white/10 p-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-[11px] font-black text-black flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-brand-yellow flex items-center justify-center text-[11px] font-black text-ink flex-shrink-0">
             {adminInitials}
           </div>
           <div className="flex-1 min-w-0">
@@ -513,7 +513,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button
             onClick={handleLogout}
             title="Logout"
-            className="text-white/40 hover:text-red-400 transition-colors p-1 rounded"
+            className="text-white/40 hover:text-status-error transition-colors p-1 rounded"
           >
             <LogOut size={16} />
           </button>
@@ -523,11 +523,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100" style={{ fontFamily: "'Poppins', sans-serif" }}>
+    <div className="flex min-h-screen bg-ink-light" style={{ fontFamily: "'Poppins', sans-serif" }}>
 
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+          className="fixed inset-0 z-40 bg-ink/60 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -543,20 +543,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       <div className="flex flex-col flex-1 min-h-screen min-w-0 lg:ml-64">
 
-        <header className="fixed top-0 right-0 left-0 lg:left-64 z-30 flex items-center h-14 px-4 gap-3 bg-yellow-400 shadow-md">
+        <header className="fixed top-0 right-0 left-0 lg:left-64 z-30 flex items-center h-14 px-4 gap-3 bg-brand-yellow shadow-md">
 
           <button
             onClick={() => setMobileOpen(v => !v)}
-            className="flex-shrink-0 p-2 rounded-lg text-black hover:bg-yellow-300 transition-colors lg:hidden"
+            className="flex-shrink-0 p-2 rounded-lg text-ink hover:bg-brand-yellow-soft transition-colors lg:hidden"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
-            <span className="text-black/60 text-sm font-medium hidden sm:block truncate">DroneTv.in</span>
-            <span className="text-black/40 hidden sm:block">›</span>
-            <span className="text-black font-bold text-sm truncate">{breadcrumb}</span>
+            <span className="text-ink/60 text-sm font-medium hidden sm:block truncate">DroneTv.in</span>
+            <span className="text-ink/40 hidden sm:block">›</span>
+            <span className="text-ink font-bold text-sm truncate">{breadcrumb}</span>
           </div>
 
           <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -565,7 +565,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               href="https://dronetv.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black text-yellow-400 text-xs font-bold hover:bg-gray-900 transition-colors whitespace-nowrap"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-ink text-brand-yellow text-xs font-bold hover:bg-ink-charcoal transition-colors whitespace-nowrap"
             >
               <Globe size={13} />
               View Site
@@ -574,42 +574,42 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div ref={notifRef} className="relative">
               <button
                 onClick={() => setNotifOpen(v => !v)}
-                className="relative p-2 rounded-lg text-black hover:bg-yellow-300 transition-colors"
+                className="relative p-2 rounded-lg text-ink hover:bg-brand-yellow-soft transition-colors"
                 aria-label="Notifications"
               >
                 <Bell size={18} />
                 {pendingTotal > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 border-2 border-yellow-400 text-white text-[9px] font-black flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-status-error border-2 border-brand-yellow text-white text-[9px] font-black flex items-center justify-center">
                     {pendingTotal > 99 ? "99+" : pendingTotal}
                   </span>
                 )}
               </button>
               {notifOpen && (
-                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl border border-gray-200 shadow-xl z-50 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                    <p className="font-bold text-sm text-gray-900">Pending Reviews</p>
+                <div className="absolute right-0 top-full mt-2 w-72 bg-surface-card rounded-xl border border-ink-light shadow-xl z-50 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-ink-light flex items-center justify-between">
+                    <p className="font-bold text-sm text-ink">Pending Reviews</p>
                     {pendingTotal > 0 && (
-                      <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full">{pendingTotal} pending</span>
+                      <span className="bg-status-error/15 text-status-error text-xs font-bold px-2 py-0.5 rounded-full">{pendingTotal} pending</span>
                     )}
                   </div>
                   {pendingItems.length === 0 ? (
-                    <div className="px-4 py-6 text-center text-sm text-gray-400">All clear — no pending reviews</div>
+                    <div className="px-4 py-6 text-center text-sm text-ink-caption">All clear — no pending reviews</div>
                   ) : (
                     <div className="py-1">
                       {pendingItems.map(item => (
                         <button
                           key={item.path}
                           onClick={() => { navigate(item.path); setNotifOpen(false); }}
-                          className="w-full flex items-center justify-between px-4 py-3 hover:bg-yellow-50 transition-colors text-left"
+                          className="w-full flex items-center justify-between px-4 py-3 hover:bg-surface-main transition-colors text-left"
                         >
-                          <span className="text-sm font-medium text-gray-800">{item.label} pending review</span>
-                          <span className="bg-yellow-400 text-black text-xs font-black px-2 py-0.5 rounded-full ml-2 flex-shrink-0">{item.count}</span>
+                          <span className="text-sm font-medium text-ink-charcoal">{item.label} pending review</span>
+                          <span className="bg-brand-yellow text-ink text-xs font-black px-2 py-0.5 rounded-full ml-2 flex-shrink-0">{item.count}</span>
                         </button>
                       ))}
                     </div>
                   )}
-                  <div className="px-4 py-2 border-t border-gray-100 text-center">
-                    <span className="text-xs text-gray-400">Refreshes every minute</span>
+                  <div className="px-4 py-2 border-t border-ink-light text-center">
+                    <span className="text-xs text-ink-caption">Refreshes every minute</span>
                   </div>
                 </div>
               )}
@@ -618,24 +618,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div ref={userRef} className="relative">
               <button
                 onClick={() => setUserOpen(v => !v)}
-                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-yellow-300 transition-colors"
+                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-brand-yellow-soft transition-colors"
               >
-                <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-[10px] font-black text-yellow-400">
+                <div className="w-7 h-7 rounded-full bg-ink flex items-center justify-center text-[10px] font-black text-brand-yellow">
                   {adminInitials}
                 </div>
-                <span className="hidden sm:block text-xs font-bold text-black">{adminDisplayName}</span>
-                <ChevronDown size={13} className={`text-black hidden sm:block transition-transform ${userOpen ? "rotate-180" : ""}`} />
+                <span className="hidden sm:block text-xs font-bold text-ink">{adminDisplayName}</span>
+                <ChevronDown size={13} className={`text-ink hidden sm:block transition-transform ${userOpen ? "rotate-180" : ""}`} />
               </button>
 
               {userOpen && (
-                <div className="absolute right-0 top-full mt-2 w-44 bg-white rounded-xl border border-gray-200 shadow-xl z-50 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="font-bold text-sm text-gray-900">{adminDisplayName}</p>
-                    <p className="text-xs text-gray-500">{adminDisplayRole}</p>
+                <div className="absolute right-0 top-full mt-2 w-44 bg-surface-card rounded-xl border border-ink-light shadow-xl z-50 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-ink-light">
+                    <p className="font-bold text-sm text-ink">{adminDisplayName}</p>
+                    <p className="text-xs text-ink-caption">{adminDisplayRole}</p>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-status-error hover:bg-status-error/10 transition-colors"
                   >
                     <LogOut size={15} />
                     Logout
@@ -647,7 +647,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        <main className="flex-1 min-w-0 mt-14 p-4 sm:p-6 overflow-x-hidden bg-gray-100">
+        <main className="flex-1 min-w-0 mt-14 p-4 sm:p-6 overflow-x-hidden bg-ink-light">
           {children}
         </main>
       </div>

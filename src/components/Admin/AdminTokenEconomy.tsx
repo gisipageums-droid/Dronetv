@@ -168,19 +168,19 @@ const AdminTokenEconomy: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <Coins size={20} className="text-yellow-500" />
-          <h1 className="text-lg font-bold text-gray-900">Token Economy</h1>
-          <span className="ml-2 text-xs font-bold bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">
+          <Coins size={20} className="text-brand-gold" />
+          <h1 className="text-lg font-bold text-ink">Token Economy</h1>
+          <span className="ml-2 text-xs font-bold bg-status-warning/15 text-status-warning px-2 py-0.5 rounded-full">
             Phase Gate: {PHASE_GATE_DEFAULTS.readiness}% Ready
           </span>
         </div>
-        <button onClick={fetchData} className="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+        <button onClick={fetchData} className="p-1.5 text-ink-caption hover:text-ink-paragraph rounded-lg hover:bg-ink-light transition-colors">
           <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
         </button>
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-0 border-b-2 border-gray-200 mb-5 overflow-x-auto">
+      <div className="flex gap-0 border-b-2 border-ink-light mb-5 overflow-x-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -188,7 +188,7 @@ const AdminTokenEconomy: React.FC = () => {
               key={tab.id}
               onClick={() => { setActiveTab(tab.id); window.history.replaceState(null, "", tab.path); }}
               className={`flex items-center gap-1.5 px-4 py-2 text-xs font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${
-                activeTab === tab.id ? "text-gray-900 border-yellow-400" : "text-gray-500 border-transparent hover:text-gray-700"
+                activeTab === tab.id ? "text-ink border-brand-yellow" : "text-ink-caption border-transparent hover:text-ink-paragraph"
               }`}
             >
               <Icon size={13} />
@@ -210,38 +210,38 @@ const AdminTokenEconomy: React.FC = () => {
             ].map((s) => {
               const Icon = s.icon;
               return (
-                <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4">
+                <div key={s.label} className="bg-surface-card rounded-xl border border-ink-light p-4">
                   <div className="flex items-center justify-between mb-1">
-                    <Icon size={15} className="text-yellow-500" />
+                    <Icon size={15} className="text-brand-gold" />
                   </div>
-                  <div className="text-xl font-black text-gray-900">{s.value}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{s.sub}</div>
+                  <div className="text-xl font-black text-ink">{s.value}</div>
+                  <div className="text-xs text-ink-caption mt-0.5">{s.sub}</div>
                 </div>
               );
             })}
           </div>
 
           {/* Revenue by stream */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h3 className="text-sm font-bold text-gray-700 mb-3">Revenue by Stream — {ledgerMonthLabel}</h3>
+          <div className="bg-surface-card rounded-xl border border-ink-light p-4">
+            <h3 className="text-sm font-bold text-ink-paragraph mb-3">Revenue by Stream — {ledgerMonthLabel}</h3>
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="w-5 h-5 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-brand-yellow border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
               <div className="space-y-2.5">
                 {streams.length > 0 ? streams.map((stream) => (
                   <div key={stream.label}>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-600">{stream.label}</span>
-                      <span className="text-xs font-bold text-gray-900">{stream.tokens.toLocaleString()} ₮ · {stream.pct}%</span>
+                      <span className="text-xs text-ink-paragraph">{stream.label}</span>
+                      <span className="text-xs font-bold text-ink">{stream.tokens.toLocaleString()} ₮ · {stream.pct}%</span>
                     </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${Math.min(stream.pct, 100)}%` }} />
+                    <div className="h-2 bg-ink-light rounded-full overflow-hidden">
+                      <div className="h-full bg-brand-yellow rounded-full" style={{ width: `${Math.min(stream.pct, 100)}%` }} />
                     </div>
                   </div>
                 )) : (
-                  <p className="text-xs text-gray-400 text-center py-4">No spend data yet</p>
+                  <p className="text-xs text-ink-caption text-center py-4">No spend data yet</p>
                 )}
               </div>
             )}
@@ -251,20 +251,20 @@ const AdminTokenEconomy: React.FC = () => {
 
       {/* Live Auctions */}
       {activeTab === "auctions" && (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-gray-700">Keyword Bid Monitor — All Active Keywords</h3>
-            <span className="text-xs text-gray-400">{activeBids.length} active bids</span>
+        <div className="bg-surface-card rounded-xl border border-ink-light overflow-hidden">
+          <div className="px-4 py-3 border-b border-ink-light flex items-center justify-between">
+            <h3 className="text-sm font-bold text-ink-paragraph">Keyword Bid Monitor — All Active Keywords</h3>
+            <span className="text-xs text-ink-caption">{activeBids.length} active bids</span>
           </div>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-5 h-5 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-brand-yellow border-t-transparent rounded-full animate-spin" />
             </div>
           ) : activeBids.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                  <tr className="bg-ink-offwhite text-xs text-ink-caption uppercase tracking-wider">
                     <th className="px-4 py-2 text-left">Keyword</th>
                     <th className="px-4 py-2 text-left">User</th>
                     <th className="px-4 py-2 text-right">Bid/day</th>
@@ -274,38 +274,38 @@ const AdminTokenEconomy: React.FC = () => {
                 </thead>
                 <tbody>
                   {activeBids.map((row) => (
-                    <tr key={row.bidId} className="border-t border-gray-100 hover:bg-gray-50">
-                      <td className="px-4 py-3 font-medium text-gray-900">{row.keyword}</td>
-                      <td className="px-4 py-3 text-xs text-gray-500 max-w-[120px] truncate">{row.userId}</td>
-                      <td className="px-4 py-3 text-right font-bold text-gray-900">{row.bidAmount} ₮</td>
-                      <td className="px-4 py-3 text-right text-gray-600">{row.totalCost} ₮</td>
-                      <td className="px-4 py-3 text-xs text-gray-400">{formatDate(row.expiresAt)}</td>
+                    <tr key={row.bidId} className="border-t border-ink-light hover:bg-ink-offwhite">
+                      <td className="px-4 py-3 font-medium text-ink">{row.keyword}</td>
+                      <td className="px-4 py-3 text-xs text-ink-caption max-w-[120px] truncate">{row.userId}</td>
+                      <td className="px-4 py-3 text-right font-bold text-ink">{row.bidAmount} ₮</td>
+                      <td className="px-4 py-3 text-right text-ink-paragraph">{row.totalCost} ₮</td>
+                      <td className="px-4 py-3 text-xs text-ink-caption">{formatDate(row.expiresAt)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : (
-            <div className="py-12 text-center text-sm text-gray-400">No active keyword bids yet</div>
+            <div className="py-12 text-center text-sm text-ink-caption">No active keyword bids yet</div>
           )}
         </div>
       )}
 
       {/* Token Ledger */}
       {activeTab === "ledger" && (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h3 className="text-sm font-bold text-gray-700">Token Transaction Ledger — {ledgerMonthLabel}</h3>
+        <div className="bg-surface-card rounded-xl border border-ink-light overflow-hidden">
+          <div className="px-4 py-3 border-b border-ink-light">
+            <h3 className="text-sm font-bold text-ink-paragraph">Token Transaction Ledger — {ledgerMonthLabel}</h3>
           </div>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-5 h-5 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-brand-yellow border-t-transparent rounded-full animate-spin" />
             </div>
           ) : ledger.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                  <tr className="bg-ink-offwhite text-xs text-ink-caption uppercase tracking-wider">
                     <th className="px-4 py-2 text-left">Date</th>
                     <th className="px-4 py-2 text-left">User</th>
                     <th className="px-4 py-2 text-left">Type</th>
@@ -316,22 +316,22 @@ const AdminTokenEconomy: React.FC = () => {
                 </thead>
                 <tbody>
                   {ledger.map((row, i) => (
-                    <tr key={row.id ?? i} className="border-t border-gray-100 hover:bg-gray-50">
-                      <td className="px-4 py-2.5 text-xs text-gray-500 whitespace-nowrap">{formatDate(row.createdAt)}</td>
-                      <td className="px-4 py-2.5 text-xs text-gray-700 font-medium max-w-[120px] truncate">{row.userId}</td>
-                      <td className="px-4 py-2.5 text-xs text-gray-600 capitalize">{row.type}</td>
-                      <td className="px-4 py-2.5 text-xs text-gray-500 max-w-[140px] truncate">
+                    <tr key={row.id ?? i} className="border-t border-ink-light hover:bg-ink-offwhite">
+                      <td className="px-4 py-2.5 text-xs text-ink-caption whitespace-nowrap">{formatDate(row.createdAt)}</td>
+                      <td className="px-4 py-2.5 text-xs text-ink-paragraph font-medium max-w-[120px] truncate">{row.userId}</td>
+                      <td className="px-4 py-2.5 text-xs text-ink-paragraph capitalize">{row.type}</td>
+                      <td className="px-4 py-2.5 text-xs text-ink-caption max-w-[140px] truncate">
                         {row.keyword ?? row.slotLabel ?? "—"}
                       </td>
-                      <td className={`px-4 py-2.5 text-right text-xs font-bold ${row.tokens >= 0 ? "text-green-600" : "text-red-500"}`}>
+                      <td className={`px-4 py-2.5 text-right text-xs font-bold ${row.tokens >= 0 ? "text-status-success" : "text-status-error"}`}>
                         {row.tokens >= 0 ? `+${row.tokens}` : row.tokens} ₮
                       </td>
                       <td className="px-4 py-2.5 text-center">
                         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                          row.status === "active" ? "bg-green-100 text-green-700" :
-                          row.status === "expired" ? "bg-gray-100 text-gray-500" :
-                          row.status === "cancelled" ? "bg-red-100 text-red-600" :
-                          "bg-blue-100 text-blue-700"
+                          row.status === "active" ? "bg-status-success/15 text-status-success" :
+                          row.status === "expired" ? "bg-ink-light text-ink-caption" :
+                          row.status === "cancelled" ? "bg-status-error/15 text-status-error" :
+                          "bg-status-info/15 text-status-info"
                         }`}>
                           {row.status}
                         </span>
@@ -342,7 +342,7 @@ const AdminTokenEconomy: React.FC = () => {
               </table>
             </div>
           ) : (
-            <div className="py-12 text-center text-sm text-gray-400">No transactions yet</div>
+            <div className="py-12 text-center text-sm text-ink-caption">No transactions yet</div>
           )}
         </div>
       )}
@@ -351,35 +351,35 @@ const AdminTokenEconomy: React.FC = () => {
       {activeTab === "slots" && (
         <div className="space-y-3">
           {slotError && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-red-600 text-xs">
+            <div className="flex items-center gap-2 bg-status-error/10 border border-status-error/25 rounded-xl px-4 py-2.5 text-status-error text-xs">
               <AlertCircle size={13} /> {slotError}
             </div>
           )}
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-5 h-5 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-brand-yellow border-t-transparent rounded-full animate-spin" />
             </div>
           ) : slots.length > 0 ? slots.map((slot) => {
             const fillPct = slot.totalSlots > 0 ? Math.round((slot.occupiedSlots / slot.totalSlots) * 100) : 0;
             const statusLabel = slot.occupiedSlots >= slot.totalSlots ? "Full" : slot.occupiedSlots > 0 ? "Partial" : "Available";
             const statusColor = slot.occupiedSlots >= slot.totalSlots
-              ? "bg-yellow-50 text-yellow-700"
-              : slot.occupiedSlots > 0 ? "bg-blue-50 text-blue-700" : "bg-green-50 text-green-700";
+              ? "bg-surface-main text-brand-gold"
+              : slot.occupiedSlots > 0 ? "bg-status-info/10 text-status-info" : "bg-status-success/10 text-status-success";
             return (
-              <div key={slot.slotId} className="bg-white rounded-xl border border-gray-200 p-4">
+              <div key={slot.slotId} className="bg-surface-card rounded-xl border border-ink-light p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-sm font-bold text-gray-900">{slot.slotLabel}</span>
-                      <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{slot.slotId}</span>
+                      <span className="text-sm font-bold text-ink">{slot.slotLabel}</span>
+                      <span className="text-[10px] font-bold text-ink-caption bg-ink-light px-1.5 py-0.5 rounded">{slot.slotId}</span>
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-ink-caption">
                       {slot.occupiedSlots}/{slot.totalSlots} slots · {slot.costPerDay} ₮/day
-                      {slot.holder && slot.holder !== "admin@dronetv.in" && <> · booked by <span className="text-gray-700 font-medium">{slot.holder}</span></>}
+                      {slot.holder && slot.holder !== "admin@dronetv.in" && <> · booked by <span className="text-ink-paragraph font-medium">{slot.holder}</span></>}
                       {slot.holder === "admin@dronetv.in" && <> · set by admin (free)</>}
                     </div>
-                    <div className="mt-2 h-1.5 bg-gray-100 rounded-full w-32 overflow-hidden">
-                      <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${fillPct}%` }} />
+                    <div className="mt-2 h-1.5 bg-ink-light rounded-full w-32 overflow-hidden">
+                      <div className="h-full bg-brand-yellow rounded-full" style={{ width: `${fillPct}%` }} />
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0 ml-4">
@@ -392,27 +392,27 @@ const AdminTokenEconomy: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-3 flex items-start gap-3 bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <div className="mt-3 flex items-start gap-3 bg-ink-offwhite border border-ink-light rounded-lg p-3">
                   {slot.imageUrl ? (
-                    <img src={slot.imageUrl} alt={`${slot.slotLabel} banner`} className="w-24 h-14 object-cover rounded border border-gray-200 flex-shrink-0" />
+                    <img src={slot.imageUrl} alt={`${slot.slotLabel} banner`} className="w-24 h-14 object-cover rounded border border-ink-light flex-shrink-0" />
                   ) : (
-                    <div className="w-24 h-14 flex items-center justify-center bg-white rounded border border-dashed border-gray-300 flex-shrink-0">
-                      <ImageIcon size={16} className="text-gray-300" />
+                    <div className="w-24 h-14 flex items-center justify-center bg-surface-card rounded border border-dashed border-ink-light flex-shrink-0">
+                      <ImageIcon size={16} className="text-ink-light" />
                     </div>
                   )}
                   <div className="flex-1 min-w-0 space-y-2">
                     {!slot.imageUrl && (
-                      <p className="text-xs text-amber-600">No ad banner set — this slot shows the default placeholder on the live site.</p>
+                      <p className="text-xs text-brand-gold">No ad banner set — this slot shows the default placeholder on the live site.</p>
                     )}
                     <div className="flex items-center gap-2">
                       <div className="relative flex-1">
-                        <LinkIcon size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300" />
+                        <LinkIcon size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-light" />
                         <input
                           type="url"
                           placeholder="Click-through link (optional)"
                           defaultValue={slot.linkUrl || ""}
                           onChange={(e) => setLinkDraft(prev => ({ ...prev, [slot.slotId]: e.target.value }))}
-                          className="w-full pl-7 pr-2 py-1.5 bg-white border border-gray-200 rounded text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-yellow-400"
+                          className="w-full pl-7 pr-2 py-1.5 bg-surface-card border border-ink-light rounded text-xs text-ink placeholder-ink-caption focus:outline-none focus:border-brand-yellow"
                         />
                       </div>
                       <input
@@ -429,10 +429,10 @@ const AdminTokenEconomy: React.FC = () => {
                       <button
                         onClick={() => fileInputRefs.current[slot.slotId]?.click()}
                         disabled={uploadingFor === slot.slotId}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-yellow-700 border border-yellow-400/50 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors disabled:opacity-40 whitespace-nowrap"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-brand-gold border border-brand-yellow/50 bg-surface-main rounded-lg hover:bg-brand-yellow-soft transition-colors disabled:opacity-40 whitespace-nowrap"
                       >
                         {uploadingFor === slot.slotId
-                          ? <div className="w-3 h-3 border border-yellow-600 border-t-transparent rounded-full animate-spin" />
+                          ? <div className="w-3 h-3 border border-brand-gold border-t-transparent rounded-full animate-spin" />
                           : <Upload size={12} />}
                         {slot.imageUrl ? "Change Banner" : "Upload Banner"}
                       </button>
@@ -442,7 +442,7 @@ const AdminTokenEconomy: React.FC = () => {
               </div>
             );
           }) : (
-            <div className="py-12 text-center text-sm text-gray-400">No slots data</div>
+            <div className="py-12 text-center text-sm text-ink-caption">No slots data</div>
           )}
         </div>
       )}
@@ -450,34 +450,34 @@ const AdminTokenEconomy: React.FC = () => {
       {/* Phase Gate */}
       {activeTab === "phase-gate" && (
         <div className="space-y-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <h3 className="text-sm font-bold text-gray-700 mb-1">
+          <div className="bg-surface-card rounded-xl border border-ink-light p-5">
+            <h3 className="text-sm font-bold text-ink-paragraph mb-1">
               Token Economy Activation — Phase Gate
             </h3>
-            <p className="text-xs text-gray-500 mb-4">
+            <p className="text-xs text-ink-caption mb-4">
               Token economy activates automatically at 250 active listings. You can also force-activate manually.
             </p>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-bold text-gray-900">
+              <span className="text-sm font-bold text-ink">
                 {PHASE_GATE_DEFAULTS.current} / {PHASE_GATE_DEFAULTS.threshold} active listings
               </span>
-              <span className="text-sm font-black text-orange-600">{PHASE_GATE_DEFAULTS.readiness}% ready</span>
+              <span className="text-sm font-black text-status-warning">{PHASE_GATE_DEFAULTS.readiness}% ready</span>
             </div>
-            <div className="h-4 bg-gray-100 rounded-full overflow-hidden mb-5">
+            <div className="h-4 bg-ink-light rounded-full overflow-hidden mb-5">
               <div
-                className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all"
+                className="h-full bg-gradient-to-r from-brand-yellow to-status-warning rounded-full transition-all"
                 style={{ width: `${PHASE_GATE_DEFAULTS.readiness}%` }}
               />
             </div>
             {phaseActivated ? (
-              <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-green-700 text-sm font-bold">
-                <CheckCircle size={16} className="text-green-500" />
+              <div className="flex items-center gap-2 bg-status-success/10 border border-status-success/25 rounded-xl px-4 py-3 text-status-success text-sm font-bold">
+                <CheckCircle size={16} className="text-status-success" />
                 Token Economy is LIVE — all features enabled
               </div>
             ) : (
               <button
                 onClick={handleActivate}
-                className="px-4 py-2.5 rounded-xl bg-yellow-400 text-black text-sm font-black hover:bg-yellow-300 transition-colors flex items-center gap-2"
+                className="px-4 py-2.5 rounded-xl bg-brand-yellow text-ink text-sm font-black hover:bg-brand-yellow-soft transition-colors flex items-center gap-2"
               >
                 <Coins size={15} />
                 Activate Token Economy Now
@@ -485,17 +485,17 @@ const AdminTokenEconomy: React.FC = () => {
             )}
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <h3 className="text-sm font-bold text-gray-700 mb-3">Feature Controls</h3>
+          <div className="bg-surface-card rounded-xl border border-ink-light p-4">
+            <h3 className="text-sm font-bold text-ink-paragraph mb-3">Feature Controls</h3>
             <div className="space-y-2">
               {phaseControls.map((ctrl, idx) => (
-                <div key={ctrl.label} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                  <span className="text-sm text-gray-700">{ctrl.label}</span>
+                <div key={ctrl.label} className="flex items-center justify-between py-2 border-b border-ink-light last:border-0">
+                  <span className="text-sm text-ink-paragraph">{ctrl.label}</span>
                   <button
                     onClick={() => toggleControl(idx)}
-                    className={`w-10 h-5 rounded-full transition-all relative ${ctrl.active ? "bg-green-500" : "bg-gray-200"}`}
+                    className={`w-10 h-5 rounded-full transition-all relative ${ctrl.active ? "bg-status-success" : "bg-ink-light"}`}
                   >
-                    <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform shadow ${ctrl.active ? "translate-x-5" : "translate-x-0"}`} />
+                    <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-surface-card transition-transform shadow ${ctrl.active ? "translate-x-5" : "translate-x-0"}`} />
                   </button>
                 </div>
               ))}

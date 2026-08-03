@@ -294,13 +294,13 @@ const Step3SectorsServed: React.FC<StepProps> = ({
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'Drone':
-        return { bg: 'bg-yellow-50', text: 'text-amber-900', border: 'border-amber-200' };
+        return { bg: 'bg-surface-main', text: 'text-brand-gold', border: 'border-brand-yellow-soft' };
       case 'AI':
-        return { bg: 'bg-amber-50', text: 'text-amber-900', border: 'border-amber-200' };
+        return { bg: 'bg-surface-main', text: 'text-brand-gold', border: 'border-brand-yellow-soft' };
       case 'GIS':
-        return { bg: 'bg-yellow-100', text: 'text-amber-900', border: 'border-amber-200' };
+        return { bg: 'bg-brand-yellow-soft', text: 'text-brand-gold', border: 'border-brand-yellow-soft' };
       default:
-        return { bg: 'bg-yellow-50', text: 'text-amber-900', border: 'border-amber-200' };
+        return { bg: 'bg-surface-main', text: 'text-brand-gold', border: 'border-brand-yellow-soft' };
     }
   };
 
@@ -322,7 +322,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
               key={cat}
               type="button"
               onClick={() => openEditModal(cat)}
-              className="inline-flex gap-1 items-center px-2 py-1 text-xs rounded-lg border hover:bg-white"
+              className="inline-flex gap-1 items-center px-2 py-1 text-xs rounded-lg border hover:bg-surface-card"
             >
               ✏️ Edit {cat} Options
             </button>
@@ -342,9 +342,9 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                   {sectors.map((sector) => (
                     <label
                       key={sector}
-                      className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-slate-50 text-xs ${formData.sectorsServed.includes(sector)
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-slate-300'
+                      className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-ink-offwhite text-xs ${formData.sectorsServed.includes(sector)
+                        ? 'border-status-info bg-status-info/10 text-status-info'
+                        : 'border-ink-light'
                         }`}
                     >
                       <input
@@ -365,8 +365,8 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                       />
                       <div
                         className={`w-3 h-3 rounded border-2 mr-2 flex items-center justify-center ${formData.sectorsServed.includes(sector)
-                          ? 'border-blue-500 bg-blue-500'
-                          : 'border-slate-300'
+                          ? 'border-status-info bg-status-info'
+                          : 'border-ink-light'
                           }`}
                       >
                         {formData.sectorsServed.includes(sector) && (
@@ -390,32 +390,32 @@ const Step3SectorsServed: React.FC<StepProps> = ({
 
         {/* Edit Modal */}
         {isEditModalOpen && (
-          <div className="flex fixed inset-0 z-50 justify-center items-center backdrop-blur-sm bg-black/60">
-            <div className="bg-white rounded-xl shadow-xl w-11/12 max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="flex fixed inset-0 z-50 justify-center items-center backdrop-blur-sm bg-ink/60">
+            <div className="bg-surface-card rounded-xl shadow-xl w-11/12 max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
               {/* Modal Header */}
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="flex gap-2 items-center text-xl font-bold text-gray-900">
+              <div className="p-6 border-b border-ink-light">
+                <h3 className="flex gap-2 items-center text-xl font-bold text-ink">
                   ✏️ Edit {currentEditingCategory} Options
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">Add or remove options for {currentEditingCategory}</p>
+                <p className="mt-1 text-sm text-ink-caption">Add or remove options for {currentEditingCategory}</p>
               </div>
 
               {/* Modal Body */}
               <div className="overflow-y-auto flex-1 p-6">
                 <div className="mb-6">
-                  <h4 className="mb-3 font-medium text-gray-700">Current Options</h4>
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <h4 className="mb-3 font-medium text-ink-paragraph">Current Options</h4>
+                  <div className="p-4 bg-ink-offwhite rounded-lg border border-ink-light">
                     {editableOptions.length > 0 ? (
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                         {editableOptions.map((option, index) => (
                           <div
                             key={index}
-                            className="flex justify-between items-center px-3 py-2 bg-white rounded-lg border border-gray-200"
+                            className="flex justify-between items-center px-3 py-2 bg-surface-card rounded-lg border border-ink-light"
                           >
                             {editingIndex === index ? (
                               <div className="flex flex-1 gap-2 items-center">
                                 <input
-                                  className="flex-1 px-2 py-1 text-sm rounded border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  className="flex-1 px-2 py-1 text-sm rounded border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                                   value={editingValue}
                                   onChange={(e) => setEditingValue(e.target.value)}
                                   onKeyDown={(e) => {
@@ -426,7 +426,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                                 />
                                 <button
                                   type="button"
-                                  className="px-2 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50"
+                                  className="px-2 py-1 text-xs text-white bg-status-info rounded hover:bg-status-info disabled:opacity-50"
                                   onClick={saveEditing}
                                   disabled={isSubmitting}
                                 >
@@ -434,7 +434,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                                 </button>
                                 <button
                                   type="button"
-                                  className="px-2 py-1 text-xs text-gray-600 rounded hover:text-gray-900"
+                                  className="px-2 py-1 text-xs text-ink-paragraph rounded hover:text-ink"
                                   onClick={cancelEditing}
                                   disabled={isSubmitting}
                                 >
@@ -446,7 +446,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                                 <span className="text-sm">{option}</span>
                                 <button
                                   type="button"
-                                  className="text-xs text-blue-600 hover:text-blue-800"
+                                  className="text-xs text-status-info hover:text-status-info"
                                   onClick={() => startEditing(index)}
                                   disabled={isSubmitting}
                                 >
@@ -456,7 +456,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                             )}
                             <button
                               type="button"
-                              className="text-red-500 transition-colors hover:text-red-700"
+                              className="text-status-error transition-colors hover:text-status-error"
                               onClick={() => handleRemoveOption(index)}
                               disabled={isSubmitting}
                             >
@@ -466,25 +466,25 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                         ))}
                       </div>
                     ) : (
-                      <p className="py-3 text-sm text-center text-gray-500">No options added yet</p>
+                      <p className="py-3 text-sm text-center text-ink-caption">No options added yet</p>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="mb-3 font-medium text-gray-700">Add New Option</h4>
+                  <h4 className="mb-3 font-medium text-ink-paragraph">Add New Option</h4>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       placeholder="Enter new option"
-                      className="flex-1 px-4 py-2 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="flex-1 px-4 py-2 rounded-lg border border-ink-light outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
                       value={newOption}
                       onChange={(e) => setNewOption(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddOption()}
                     />
                     <button
                       type="button"
-                      className="flex gap-1 items-center px-4 py-2 text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600"
+                      className="flex gap-1 items-center px-4 py-2 text-white bg-status-info rounded-lg transition-colors hover:bg-status-info"
                       onClick={handleAddOption}
                     >
                       ➕ Add
@@ -494,17 +494,17 @@ const Step3SectorsServed: React.FC<StepProps> = ({
               </div>
 
               {/* Modal Footer */}
-              <div className="flex gap-3 justify-end p-6 bg-gray-50 border-t border-gray-200">
+              <div className="flex gap-3 justify-end p-6 bg-ink-offwhite border-t border-ink-light">
                 <button
                   type="button"
-                  className="px-4 py-2 font-medium text-gray-700 rounded-lg transition-colors hover:text-gray-900"
+                  className="px-4 py-2 font-medium text-ink-paragraph rounded-lg transition-colors hover:text-ink"
                   onClick={() => setIsEditModalOpen(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className="flex gap-1 items-center px-4 py-2 font-medium text-white bg-blue-600 rounded-lg transition-colors hover:bg-blue-700"
+                  className="flex gap-1 items-center px-4 py-2 font-medium text-white bg-status-info rounded-lg transition-colors hover:bg-status-info"
                   onClick={handleSaveOptions}
                 >
                   ✅ Save Changes

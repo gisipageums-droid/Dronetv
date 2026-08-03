@@ -17,29 +17,29 @@ export function Dashboard({ plans, tokenPriceINR }: DashboardProps) {
       label: 'Total Plans',
       value: totalPlans,
       icon: ShoppingCart,
-      color: 'from-yellow-400 to-amber-500',
-      bgColor: 'from-yellow-400/20 to-amber-400/20'
+      color: 'from-brand-yellow to-brand-gold',
+      bgColor: 'from-brand-yellow/20 to-brand-yellow/20'
     },
     {
       label: 'Total Tokens',
       value: totalTokens.toLocaleString(),
       icon: Coins,
-      color: 'from-amber-400 to-orange-500',
-      bgColor: 'from-amber-400/20 to-orange-400/20'
+      color: 'from-brand-yellow to-status-warning',
+      bgColor: 'from-brand-yellow/20 to-status-warning/20'
     },
     {
       label: 'Avg Plan Price',
       value: `₹${avgPrice.toFixed(0)}`,
       icon: TrendingUp,
-      color: 'from-yellow-500 to-amber-600',
-      bgColor: 'from-yellow-400/20 to-amber-500/20'
+      color: 'from-brand-gold to-brand-gold',
+      bgColor: 'from-brand-yellow/20 to-brand-gold/20'
     },
     {
       label: 'Token Price',
       value: `₹${tokenPriceINR}`,
       icon: Users,
-      color: 'from-orange-400 to-red-500',
-      bgColor: 'from-orange-400/20 to-red-400/20'
+      color: 'from-status-warning to-status-error',
+      bgColor: 'from-status-warning/20 to-status-error/20'
     }
   ];
 
@@ -53,9 +53,9 @@ export function Dashboard({ plans, tokenPriceINR }: DashboardProps) {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs font-bold tracking-widest text-yellow-500 uppercase mb-1">Admin</p>
-        <h1 className="text-xl font-extrabold text-gray-900 mb-1">Dashboard Overview</h1>
-        <p className="text-sm text-gray-500">Monitor your token plans and pricing at a glance</p>
+        <p className="text-xs font-bold tracking-widest text-brand-gold uppercase mb-1">Admin</p>
+        <h1 className="text-xl font-extrabold text-ink mb-1">Dashboard Overview</h1>
+        <p className="text-sm text-ink-caption">Monitor your token plans and pricing at a glance</p>
       </div>
 
       {/* Stats Grid */}
@@ -63,14 +63,14 @@ export function Dashboard({ plans, tokenPriceINR }: DashboardProps) {
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div key={index} className="bg-surface-card border border-ink-light rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-black" />
+                <div className="w-10 h-10 rounded-xl bg-brand-yellow flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-ink" />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">{stat.label}</p>
-              <p className="text-xl font-extrabold text-gray-900">{stat.value}</p>
+              <p className="text-xs text-ink-caption font-semibold uppercase tracking-wide mb-1">{stat.label}</p>
+              <p className="text-xl font-extrabold text-ink">{stat.value}</p>
             </div>
           );
         })}
@@ -78,43 +78,43 @@ export function Dashboard({ plans, tokenPriceINR }: DashboardProps) {
 
       {/* Plans Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-          <h3 className="text-sm font-bold text-gray-900 mb-4">Plans by Type</h3>
+        <div className="bg-surface-card border border-ink-light rounded-xl p-5 shadow-sm">
+          <h3 className="text-sm font-bold text-ink mb-4">Plans by Type</h3>
           <div className="space-y-3">
             {Object.entries(plansByType).map(([type, count]) => (
               <div key={type} className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 capitalize w-24">{type}</span>
+                <span className="text-sm text-ink-paragraph capitalize w-24">{type}</span>
                 <div className="flex items-center gap-3 flex-1 mx-3">
-                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="flex-1 h-2 bg-ink-light rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-yellow-400 rounded-full transition-all"
+                      className="h-full bg-brand-yellow rounded-full transition-all"
                       style={{ width: `${totalPlans > 0 ? (count / totalPlans) * 100 : 0}%` }}
                     />
                   </div>
-                  <span className="text-sm font-bold text-gray-900 min-w-[2rem] text-right">{count}</span>
+                  <span className="text-sm font-bold text-ink min-w-[2rem] text-right">{count}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-          <h3 className="text-sm font-bold text-gray-900 mb-4">Recent Plans</h3>
+        <div className="bg-surface-card border border-ink-light rounded-xl p-5 shadow-sm">
+          <h3 className="text-sm font-bold text-ink mb-4">Recent Plans</h3>
           <div className="space-y-2">
             {plans.slice(0, 4).map((plan) => (
-              <div key={plan.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={plan.id} className="flex items-center justify-between p-3 bg-ink-offwhite rounded-lg">
                 <div>
-                  <p className="text-sm font-bold text-gray-900">{plan.name}</p>
-                  <p className="text-xs text-gray-500 capitalize">{plan.type}</p>
+                  <p className="text-sm font-bold text-ink">{plan.name}</p>
+                  <p className="text-xs text-ink-caption capitalize">{plan.type}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-gray-900">₹{plan.price}</p>
-                  <p className="text-xs text-gray-500">{plan.tokens} tokens</p>
+                  <p className="text-sm font-bold text-ink">₹{plan.price}</p>
+                  <p className="text-xs text-ink-caption">{plan.tokens} tokens</p>
                 </div>
               </div>
             ))}
             {plans.length === 0 && (
-              <p className="text-center text-gray-400 text-sm py-8">No plans created yet</p>
+              <p className="text-center text-ink-caption text-sm py-8">No plans created yet</p>
             )}
           </div>
         </div>

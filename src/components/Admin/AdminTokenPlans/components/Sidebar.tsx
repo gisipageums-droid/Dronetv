@@ -72,7 +72,7 @@ export function Sidebar({
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-ink/20 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -81,27 +81,27 @@ export function Sidebar({
       <aside
         className={`
         fixed lg:static inset-y-0 left-0 z-50
-        w-64 bg-gray-900 border-r border-gray-800
+        w-64 bg-ink border-r border-ink-charcoal
         transform transition-transform duration-300 ease-in-out
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-5 border-b border-gray-800">
+          <div className="p-5 border-b border-ink-charcoal">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-yellow-400 flex items-center justify-center font-extrabold text-black text-sm">
+                <div className="w-9 h-9 rounded-xl bg-brand-yellow flex items-center justify-center font-extrabold text-ink text-sm">
                   ₹
                 </div>
                 <div>
                   <p className="text-white font-bold text-sm">Token Admin</p>
-                  <p className="text-xs text-gray-500">Plan Dashboard</p>
+                  <p className="text-xs text-ink-caption">Plan Dashboard</p>
                 </div>
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden text-gray-400 hover:text-white"
+                className="lg:hidden text-ink-caption hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -126,8 +126,8 @@ export function Sidebar({
                     transition-all duration-150
                     ${
                       isActive
-                        ? "bg-yellow-400 text-black font-bold"
-                        : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                        ? "bg-brand-yellow text-ink font-bold"
+                        : "text-ink-caption hover:bg-ink-charcoal hover:text-white"
                     }
                   `}
                 >
@@ -137,8 +137,8 @@ export function Sidebar({
               );
             })}
 
-            <div className="my-3 border-t border-gray-800"></div>
-            <div className="px-3 mb-2 text-xs font-bold text-gray-600 uppercase tracking-wider">
+            <div className="my-3 border-t border-ink-charcoal"></div>
+            <div className="px-3 mb-2 text-xs font-bold text-ink-paragraph uppercase tracking-wider">
               Other Dashboards
             </div>
 
@@ -153,7 +153,7 @@ export function Sidebar({
                         window.location.href = item.path;
                       }
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 text-gray-400 hover:bg-gray-800 hover:text-white"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 text-ink-caption hover:bg-ink-charcoal hover:text-white"
                   >
                     <Icon className="w-4 h-4" />
                     <span>{item.label}</span>

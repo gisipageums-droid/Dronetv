@@ -84,7 +84,7 @@ export default function AdminLogin() {
         }}
       >
         {/* Yellow top strip */}
-        <div className="h-1 w-full bg-yellow-400" />
+        <div className="h-1 w-full bg-brand-yellow" />
 
         <div className="p-8">
           {/* Logo inside card */}
@@ -143,7 +143,7 @@ export default function AdminLogin() {
                   type="button"
                   tabIndex={-1}
                   onClick={() => setShowPassword(p => !p)}
-                  className="px-3 text-white/25 hover:text-yellow-400 transition-colors"
+                  className="px-3 text-white/25 hover:text-brand-yellow transition-colors"
                 >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
@@ -153,7 +153,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 font-bold text-black bg-yellow-400 rounded-xl hover:bg-yellow-300 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm mt-2"
+              className="w-full py-3 font-bold text-ink bg-brand-yellow rounded-xl hover:bg-brand-yellow-soft active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm mt-2"
               style={{ boxShadow: "0 4px 20px rgba(250,204,21,0.25)" }}
             >
               {isLoading ? (

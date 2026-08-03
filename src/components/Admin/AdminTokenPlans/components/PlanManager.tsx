@@ -54,14 +54,14 @@ export function PlanManager({ type, plans, addPlan, updatePlan, deletePlan, toke
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <p className="text-xs font-bold tracking-widest text-yellow-500 uppercase mb-1">Plans</p>
-          <h1 className="text-xl font-extrabold text-gray-900 mb-1">{typeLabels[type]} Plans</h1>
-          <p className="text-sm text-gray-500">Manage your {typeLabels[type].toLowerCase()} token plans</p>
+          <p className="text-xs font-bold tracking-widest text-brand-gold uppercase mb-1">Plans</p>
+          <h1 className="text-xl font-extrabold text-ink mb-1">{typeLabels[type]} Plans</h1>
+          <p className="text-sm text-ink-caption">Manage your {typeLabels[type].toLowerCase()} token plans</p>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-yellow-400 text-black font-bold py-2.5 px-5 rounded-xl hover:bg-yellow-300 transition-colors flex items-center justify-center gap-2 text-sm"
+          className="bg-brand-yellow text-ink font-bold py-2.5 px-5 rounded-xl hover:bg-brand-yellow-soft transition-colors flex items-center justify-center gap-2 text-sm"
         >
           <Plus className="w-4 h-4" />
           Create New Plan

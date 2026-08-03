@@ -21,25 +21,25 @@ interface Company {
 
 function AdminHeader({ title, subtitle, onBack }: { title: string; subtitle?: string; onBack: () => void }) {
   return (
-    <div className="bg-gray-900 px-4 sm:px-6 py-4 flex items-center gap-3 flex-shrink-0">
+    <div className="bg-ink px-4 sm:px-6 py-4 flex items-center gap-3 flex-shrink-0">
       <button
         onClick={onBack}
-        className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm transition-colors flex-shrink-0"
+        className="flex items-center gap-1.5 text-ink-caption hover:text-white text-sm transition-colors flex-shrink-0"
       >
         <ArrowLeft size={15} />
         <span className="hidden sm:inline">Back to Users</span>
         <span className="sm:hidden">Back</span>
       </button>
-      <div className="h-4 w-px bg-gray-700 flex-shrink-0" />
+      <div className="h-4 w-px bg-ink-paragraph flex-shrink-0" />
       <div className="min-w-0 flex items-center gap-2">
-        <Building2 size={16} className="text-yellow-400 flex-shrink-0" />
+        <Building2 size={16} className="text-brand-yellow flex-shrink-0" />
         <div className="min-w-0">
           <p className="text-white font-semibold text-sm truncate">{title}</p>
-          {subtitle && <p className="text-gray-500 text-xs truncate">{subtitle}</p>}
+          {subtitle && <p className="text-ink-caption text-xs truncate">{subtitle}</p>}
         </div>
       </div>
       <div className="ml-auto flex-shrink-0">
-        <span className="px-2.5 py-1 rounded-full bg-yellow-400/10 text-yellow-400 text-xs font-semibold border border-yellow-400/20">
+        <span className="px-2.5 py-1 rounded-full bg-brand-yellow/10 text-brand-yellow text-xs font-semibold border border-brand-yellow/20">
           Admin Edit
         </span>
       </div>
@@ -151,12 +151,12 @@ const AdminCompanyEdit: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col">
+      <div className="min-h-screen bg-ink-light flex flex-col">
         <AdminHeader title="Loading..." onBack={goBack} />
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
-            <p className="text-gray-500 text-sm">Loading company data...</p>
+            <Loader2 className="w-8 h-8 animate-spin text-brand-gold" />
+            <p className="text-ink-caption text-sm">Loading company data...</p>
           </div>
         </div>
       </div>
@@ -165,20 +165,20 @@ const AdminCompanyEdit: React.FC = () => {
 
   if (!company) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col">
+      <div className="min-h-screen bg-ink-light flex flex-col">
         <AdminHeader title="Company Not Found" subtitle={userId} onBack={goBack} />
         <div className="flex-1 flex items-center justify-center px-4">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center max-w-sm w-full">
-            <div className="w-14 h-14 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center mx-auto mb-4">
-              <Building2 size={24} className="text-gray-400" />
+          <div className="bg-surface-card rounded-2xl border border-ink-light shadow-sm p-8 text-center max-w-sm w-full">
+            <div className="w-14 h-14 rounded-full bg-ink-light border border-ink-light flex items-center justify-center mx-auto mb-4">
+              <Building2 size={24} className="text-ink-caption" />
             </div>
-            <h3 className="text-gray-900 font-bold text-base mb-1">No Company Found</h3>
-            <p className="text-gray-500 text-sm mb-5">
+            <h3 className="text-ink font-bold text-base mb-1">No Company Found</h3>
+            <p className="text-ink-caption text-sm mb-5">
               This user hasn't registered a company yet, or the company ID doesn't match.
             </p>
             <button
               onClick={goBack}
-              className="w-full px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold text-sm rounded-xl transition-colors"
+              className="w-full px-4 py-2.5 bg-ink hover:bg-ink-charcoal text-white font-semibold text-sm rounded-xl transition-colors"
             >
               Back to Users
             </button>
@@ -190,27 +190,27 @@ const AdminCompanyEdit: React.FC = () => {
 
   if (done) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col">
+      <div className="min-h-screen bg-ink-light flex flex-col">
         <AdminHeader title={company.companyName} subtitle={company.userId} onBack={goBack} />
         <div className="flex-1 flex items-center justify-center px-4">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center max-w-sm w-full">
-            <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle size={24} className="text-green-600" />
+          <div className="bg-surface-card rounded-2xl border border-ink-light shadow-sm p-8 text-center max-w-sm w-full">
+            <div className="w-14 h-14 rounded-full bg-status-success/15 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle size={24} className="text-status-success" />
             </div>
-            <h3 className="text-gray-900 font-bold text-base mb-1">Details Saved</h3>
-            <p className="text-gray-500 text-sm mb-5">
+            <h3 className="text-ink font-bold text-base mb-1">Details Saved</h3>
+            <p className="text-ink-caption text-sm mb-5">
               Company details updated. The user will see these when they log in.
             </p>
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => setDone(false)}
-                className="w-full px-4 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold text-sm rounded-xl transition-colors"
+                className="w-full px-4 py-2.5 bg-brand-yellow hover:bg-brand-gold text-ink font-bold text-sm rounded-xl transition-colors"
               >
                 Edit Again
               </button>
               <button
                 onClick={goBack}
-                className="w-full px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl border border-gray-200 transition-colors"
+                className="w-full px-4 py-2.5 bg-surface-card hover:bg-ink-offwhite text-ink-paragraph font-semibold text-sm rounded-xl border border-ink-light transition-colors"
               >
                 Back to Users
               </button>
@@ -223,12 +223,12 @@ const AdminCompanyEdit: React.FC = () => {
 
   if (submitting) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col">
+      <div className="min-h-screen bg-ink-light flex flex-col">
         <AdminHeader title={company.companyName} subtitle={company.userId} onBack={goBack} />
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
-            <p className="text-gray-500 text-sm">Saving company details...</p>
+            <Loader2 className="w-8 h-8 animate-spin text-brand-gold" />
+            <p className="text-ink-caption text-sm">Saving company details...</p>
           </div>
         </div>
       </div>
@@ -236,12 +236,12 @@ const AdminCompanyEdit: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-ink-light flex flex-col">
       <AdminHeader title={company.companyName} subtitle={`${company.userId} · ${company.location || "—"}`} onBack={goBack} />
 
-      <div className="mx-4 sm:mx-6 mt-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2">
-        <span className="text-amber-500 mt-0.5 flex-shrink-0">⚠</span>
-        <p className="text-amber-800 text-sm font-medium">
+      <div className="mx-4 sm:mx-6 mt-4 px-4 py-3 bg-surface-main border border-brand-yellow-soft rounded-xl flex items-start gap-2">
+        <span className="text-brand-gold mt-0.5 flex-shrink-0">⚠</span>
+        <p className="text-brand-gold text-sm font-medium">
           Admin editing mode — fill in the company details below. The user will see these when they log in and can then publish their listing.
         </p>
       </div>
