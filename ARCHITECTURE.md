@@ -2,6 +2,8 @@
 
 This document provides a comprehensive overview of the project's architecture, designed to help new developers understand the codebase and its underlying principles.
 
+> **Design system is locked.** All colors, typography, spacing, and component styling must strictly follow [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) — no new colors or branding outside that file.
+
 ## 1. Frontend Architecture
 
 The frontend is a single-page application (SPA) built with **React** and **Vite**, using **TypeScript** for type safety. It follows a component-based architecture, with a clear separation of concerns between different modules.
