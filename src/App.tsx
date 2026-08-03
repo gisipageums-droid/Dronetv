@@ -185,6 +185,10 @@ const HomePage = () => (
     </div>
     <PopularVideos />
     <UpcomingEvents />
+    {/* "Sponsored Article" paid placement (HP-4) — booked via User Dashboard > Page Placements */}
+    <div className="max-w-6xl mx-auto px-4 py-2">
+      <PagePlacementSlot slotId="HP-4" aspect="4/1" minHeight={90} className="w-full" />
+    </div>
     <BrowseByTopic />
     <FeaturedCompanies />
     <OurPartners />
