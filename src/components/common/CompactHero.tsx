@@ -1,13 +1,13 @@
 import React from 'react';
 
 export const COMPACT_HERO_CSS = `
-.ch-hero { background: #0A0A0A; color: #fff; border-bottom: 2px solid #F5C518; }
+.ch-hero { background: #111111; color: #fff; border-bottom: 2px solid #F8C400; }
 .ch-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .ch-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; }
-.ch-hero h1 span { color: #F5C518; }
+.ch-hero h1 span { color: #F8C400; }
 .ch-right { display: flex; align-items: center; gap: 14px; margin-left: auto; }
 .ch-stats { display: flex; gap: 18px; flex-wrap: wrap; }
-.ch-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
+.ch-stat-n { font-size: 15px; font-weight: 900; color: #F8C400; line-height: 1; }
 .ch-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
 @media (max-width: 640px) {
   .ch-hero-i { padding: 8px 14px; gap: 10px; }

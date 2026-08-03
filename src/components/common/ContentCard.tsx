@@ -16,7 +16,8 @@ interface ContentCardProps {
 // only has to happen once instead of drifting across ~26 near-duplicate
 // implementations. Callers own their own title/description/footer markup as
 // children — end it with a `mt-auto pt-3 border-t border-gray-100` row so the
-// footer bottom-aligns regardless of how much content is above it.
+// footer bottom-aligns regardless of how much content is above it. Use
+// `border-surface-cardborder` for that divider — design-system card border.
 export default function ContentCard({
   image,
   imageAlt = '',
@@ -29,12 +30,12 @@ export default function ContentCard({
   return (
     <div
       onClick={onClick}
-      className={`flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      className={`flex flex-col bg-surface-card rounded-[20px] border border-surface-cardborder shadow-sm hover:shadow-md transition-shadow overflow-hidden ${onClick ? 'cursor-pointer' : ''} ${className}`}
     >
       {image ? (
         <img src={image} alt={imageAlt} className={`w-full ${imgHeight} object-cover flex-shrink-0`} />
       ) : imageFallback ? (
-        <div className={`w-full ${imgHeight} bg-zinc-900 flex items-center justify-center flex-shrink-0`}>{imageFallback}</div>
+        <div className={`w-full ${imgHeight} bg-surface-darksection flex items-center justify-center flex-shrink-0`}>{imageFallback}</div>
       ) : null}
       <div className="p-5 flex-1 flex flex-col">
         {children}

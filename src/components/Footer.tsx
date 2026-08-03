@@ -24,13 +24,13 @@ const legalLinks = [
 
 const FooterColumn = ({ title, indexPath, items }: { title: string; indexPath: string; items: NavItem[] }) => (
   <div>
-    <Link to={indexPath} className="text-sm font-bold text-black uppercase tracking-wide hover:text-gray-700 transition-colors">
+    <Link to={indexPath} className="text-sm font-bold text-white uppercase tracking-wide hover:text-brand-yellow transition-colors">
       {title}
     </Link>
     <ul className="mt-3 space-y-1.5">
       {items.map((item) => (
         <li key={item.path}>
-          <Link to={item.path} className="text-sm text-black/70 hover:text-black transition-colors">
+          <Link to={item.path} className="text-sm text-white/70 hover:text-white transition-colors">
             {item.label}
           </Link>
         </li>
@@ -45,11 +45,11 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 relative overflow-hidden">
+    <footer className="bg-surface-darksection relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-10 left-10 w-64 h-64 bg-yellow-200/20 rounded-full animate-pulse blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-yellow-600/20 rounded-full animate-pulse blur-3xl" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-10 left-10 w-64 h-64 bg-brand-yellow/10 rounded-full animate-pulse blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-brand-gold/10 rounded-full animate-pulse blur-3xl" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -60,7 +60,7 @@ const Footer = () => {
             <Link to="/">
               <img src="/images/logo.png" alt="Drone TV" className="h-9 w-auto" />
             </Link>
-            <p className="mt-3 text-sm text-black/70 leading-relaxed max-w-sm">
+            <p className="mt-3 text-sm text-white/70 leading-relaxed max-w-sm">
               India's drone industry platform — connecting manufacturers, pilots, GIS &amp; AI companies, buyers, and policymakers across the ecosystem.
             </p>
 
@@ -74,7 +74,7 @@ const Footer = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.name}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-black hover:bg-white/30 transition-colors"
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-colors"
                   >
                     <Icon className="h-3.5 w-3.5" />
                   </a>
@@ -85,7 +85,7 @@ const Footer = () => {
             <ul className="flex flex-wrap gap-x-5 gap-y-1.5 mt-4">
               {plainNavItems.map((item) => (
                 <li key={item.path}>
-                  <Link to={item.path} className="text-sm text-black/70 hover:text-black transition-colors">
+                  <Link to={item.path} className="text-sm text-white/70 hover:text-white transition-colors">
                     {item.label}
                   </Link>
                 </li>
@@ -99,21 +99,21 @@ const Footer = () => {
           <FooterColumn title="Partnerships" indexPath="/partnerships" items={partnershipsItems} />
         </div>
 
-        <div className="mt-6 pt-5 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="flex items-center gap-1.5 text-xs text-black/70 text-center sm:text-left">
-            &copy; {new Date().getFullYear()} Drone TV. Built with <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500" /> for the global drone community.
+        <div className="mt-6 pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="flex items-center gap-1.5 text-xs text-white/70 text-center sm:text-left">
+            &copy; {new Date().getFullYear()} Drone TV. Built with <Heart className="h-3.5 w-3.5 text-brand-yellow fill-brand-yellow" /> for the global drone community.
           </p>
 
           <div className="flex items-center gap-6">
             {legalLinks.map((link) => (
-              <Link key={link.name} to={link.href} className="text-xs text-black/70 hover:text-black transition-colors">
+              <Link key={link.name} to={link.href} className="text-xs text-white/70 hover:text-white transition-colors">
                 {link.name}
               </Link>
             ))}
             <button
               onClick={scrollToTop}
               aria-label="Back to top"
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-black/20 backdrop-blur-sm border border-black/30 text-black hover:bg-black/30 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-colors"
             >
               <ArrowUp className="h-4 w-4" />
             </button>

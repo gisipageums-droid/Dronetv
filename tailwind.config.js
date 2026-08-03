@@ -26,6 +26,7 @@ export default {
           main: '#FFF8D6',
           alt: '#FFF3B0',
           card: '#FFFFFF',
+          cardborder: '#EFEFEF',
           premium: '#1C1C1C',
           darksection: '#111111',
         },
@@ -34,6 +35,10 @@ export default {
           warning: '#F59E0B',
           error: '#DC2626',
           info: '#2563EB',
+        },
+        badge: {
+          premium: '#FFF1C2',
+          'premium-text': '#A66A00',
         },
       },
     },

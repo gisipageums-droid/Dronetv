@@ -32,10 +32,10 @@ export default function AdSlot({ image, href, alt = 'Advertisement', width, heig
 
   const inner = (
     <div
-      className={`relative rounded-xl overflow-hidden border border-gray-200 bg-white flex-shrink-0 ${className}`}
+      className={`relative rounded-xl overflow-hidden border border-ink-light bg-surface-card flex-shrink-0 ${className}`}
       style={style}
     >
-      <span className="absolute top-1.5 left-1.5 z-10 bg-black/60 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wide">
+      <span className="absolute top-1.5 left-1.5 z-10 bg-ink/60 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wide">
         Ad
       </span>
       {image ? (
@@ -51,15 +51,15 @@ export default function AdSlot({ image, href, alt = 'Advertisement', width, heig
         <img
           src={image}
           alt={alt}
-          className={useNaturalHeight ? "max-w-full h-auto block mx-auto" : "w-full h-full object-contain bg-white"}
+          className={useNaturalHeight ? "max-w-full h-auto block mx-auto" : "w-full h-full object-contain bg-surface-card"}
           style={useNaturalHeight ? { maxHeight: 320 } : undefined}
         />
       ) : children ? (
         children
       ) : (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 text-center p-3">
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Advertise Here</span>
-          {(width || height) && <span className="text-[10px] text-gray-400 mt-1">{width}×{height}</span>}
+        <div className="w-full h-full flex flex-col items-center justify-center bg-surface-alt text-center p-3">
+          <span className="text-xs font-semibold text-ink-caption uppercase tracking-wide">Advertise Here</span>
+          {(width || height) && <span className="text-[10px] text-ink-caption mt-1">{width}×{height}</span>}
         </div>
       )}
     </div>

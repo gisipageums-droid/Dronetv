@@ -26,7 +26,7 @@ export default function AdStickyStrip() {
   const realAd = getAdsFor('sticky', pathname)[0];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[9999998] border-t-2 border-yellow-400 bg-white/95 backdrop-blur-sm">
+    <div className="fixed bottom-0 left-0 right-0 z-[9999998] border-t-2 border-brand-yellow bg-surface-card/95 backdrop-blur-sm">
       <div className="max-w-6xl mx-auto px-4 py-2 flex items-center gap-4">
         {realAd ? (
           <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} aspect="1200/64" minHeight={40} className="flex-1 min-w-0" />
@@ -36,7 +36,7 @@ export default function AdStickyStrip() {
         <button
           onClick={() => setDismissed(true)}
           aria-label="Close advertisement"
-          className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-900 text-white flex items-center justify-center hover:bg-gray-700 transition-colors"
+          className="flex-shrink-0 w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center hover:bg-ink-charcoal transition-colors"
         >
           <X className="w-3.5 h-3.5" />
         </button>

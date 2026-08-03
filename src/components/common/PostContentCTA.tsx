@@ -102,24 +102,24 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
   return (
     <>
       {variant === 'cta' ? (
-        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-surface-darksection rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white text-base mb-1">Have a {typeLabel.toLowerCase()} to share?</h3>
             <p className="text-sm text-white/60 max-w-lg">
               {ctaDescription || `Post your ${typeLabel.toLowerCase()} on DroneTv.in and reach thousands of drone professionals.`}
             </p>
-            <p className="text-xs text-yellow-400/80 mt-1 flex items-center gap-1">
+            <p className="text-xs text-brand-yellow/80 mt-1 flex items-center gap-1">
               <Coins className="w-3 h-3" /> Costs {cost} tokens per submission
             </p>
           </div>
           <div className="flex-shrink-0">
             {userId ? (
               <button onClick={openModal}
-                className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                className="flex items-center gap-2 px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
                 <Plus className="w-4 h-4" /> {ctaTitle || `Post Your ${typeLabel}`}
               </button>
             ) : (
-              <a href="/login" className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+              <a href="/login" className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
                 Login to Post
               </a>
             )}
@@ -128,103 +128,103 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
       ) : (
         userId ? (
           <button onClick={openModal}
-            className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
+            className="flex items-center gap-2 bg-brand-yellow text-ink font-bold px-4 py-2 rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm">
             <Plus className="w-4 h-4" /> Add Content
           </button>
         ) : (
-          <a href="/login" className="flex items-center gap-2 bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
+          <a href="/login" className="flex items-center gap-2 bg-brand-yellow text-ink font-bold px-4 py-2 rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm">
             Login to Post
           </a>
         )
       )}
 
       {open && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg my-auto">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base font-bold text-gray-900">Post Your {typeLabel}</h2>
-              <button onClick={() => setOpen(false)} className="p-1.5 rounded hover:bg-gray-100"><X className="w-5 h-5 text-gray-500" /></button>
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/60 p-4 overflow-y-auto">
+          <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-lg my-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
+              <h2 className="text-base font-bold text-ink">Post Your {typeLabel}</h2>
+              <button onClick={() => setOpen(false)} className="p-1.5 rounded hover:bg-ink-light"><X className="w-5 h-5 text-ink-caption" /></button>
             </div>
             <div className="px-6 py-5 max-h-[70vh] overflow-y-auto">
               {!submitted ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="flex items-center justify-between bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
-                    <span className="text-xs font-semibold text-yellow-800 flex items-center gap-1.5">
+                  <div className="flex items-center justify-between bg-surface-main border border-brand-yellow-soft rounded-lg px-3 py-2">
+                    <span className="text-xs font-semibold text-ink flex items-center gap-1.5">
                       <Coins className="w-3.5 h-3.5" /> This post costs {cost} tokens
                     </span>
                     {balance !== null && (
-                      <span className={`text-xs font-bold ${balance < cost ? 'text-red-600' : 'text-gray-600'}`}>
+                      <span className={`text-xs font-bold ${balance < cost ? 'text-status-error' : 'text-ink-dark'}`}>
                         Balance: {balance}
                       </span>
                     )}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Title *</label>
+                    <label className="block text-xs font-semibold text-ink-paragraph mb-1">Title *</label>
                     <input type="text" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                       placeholder={`e.g. My ${typeLabel}`}
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-yellow-400" />
+                      className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm text-ink placeholder-ink-caption focus:outline-none focus:border-brand-yellow" />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Description</label>
+                    <label className="block text-xs font-semibold text-ink-paragraph mb-1">Description</label>
                     <textarea rows={3} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                       placeholder="Describe it..."
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-yellow-400 resize-none" />
+                      className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm text-ink placeholder-ink-caption focus:outline-none focus:border-brand-yellow resize-none" />
                   </div>
 
                   {extraFields.length > 0 && (
                     <div className="grid grid-cols-2 gap-3">
                       {extraFields.filter(k => k !== 'targetPages').map(key => (
                         <div key={key}>
-                          <label className="block text-xs font-semibold text-gray-700 mb-1">{fieldLabel(key)}</label>
+                          <label className="block text-xs font-semibold text-ink-paragraph mb-1">{fieldLabel(key)}</label>
                           <input
                             type={FIELD_TYPE[key] === 'date' ? 'date' : 'text'}
                             value={form[key] || ''}
                             onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
                             placeholder={FIELD_PLACEHOLDER[key]}
-                            className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-yellow-400" />
+                            className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm text-ink placeholder-ink-caption focus:outline-none focus:border-brand-yellow" />
                         </div>
                       ))}
                     </div>
                   )}
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Image URL <span className="text-gray-400 font-normal">(optional)</span></label>
+                    <label className="block text-xs font-semibold text-ink-paragraph mb-1">Image URL <span className="text-ink-caption font-normal">(optional)</span></label>
                     <input type="url" value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
                       placeholder="https://example.com/image.jpg"
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-yellow-400" />
+                      className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm text-ink placeholder-ink-caption focus:outline-none focus:border-brand-yellow" />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">External Link <span className="text-gray-400 font-normal">(optional)</span></label>
+                    <label className="block text-xs font-semibold text-ink-paragraph mb-1">External Link <span className="text-ink-caption font-normal">(optional)</span></label>
                     <input type="url" value={form.externalLink} onChange={e => setForm(f => ({ ...f, externalLink: e.target.value }))}
                       placeholder="https://..."
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-yellow-400" />
+                      className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm text-ink placeholder-ink-caption focus:outline-none focus:border-brand-yellow" />
                   </div>
 
-                  <label className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 cursor-pointer">
+                  <label className="flex items-center gap-2 bg-ink-offwhite border border-ink-light rounded-lg px-3 py-2.5 cursor-pointer">
                     <input type="checkbox" checked={form.isPublished}
                       onChange={e => setForm(f => ({ ...f, isPublished: e.target.checked }))}
-                      className="w-4 h-4 accent-yellow-400" />
-                    <span className="text-sm font-semibold text-gray-700">Publish immediately</span>
-                    <span className="text-xs text-gray-400">(leave unchecked to save as draft)</span>
+                      className="w-4 h-4 accent-brand-yellow" />
+                    <span className="text-sm font-semibold text-ink-paragraph">Publish immediately</span>
+                    <span className="text-xs text-ink-caption">(leave unchecked to save as draft)</span>
                   </label>
 
-                  {errorMsg && <p className="text-xs text-red-600 font-medium">{errorMsg}</p>}
+                  {errorMsg && <p className="text-xs text-status-error font-medium">{errorMsg}</p>}
                   <button type="submit" disabled={submitting}
-                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
+                    className="w-full bg-brand-yellow hover:bg-brand-gold text-ink font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
                     {submitting ? 'Submitting...' : `Submit (${cost} tokens)`}
                   </button>
                 </form>
               ) : (
                 <div className="text-center py-6">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-status-success/15 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-2xl">✓</span>
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-2">Submitted!</h3>
-                  <p className="text-sm text-gray-500 mb-4">
+                  <h3 className="font-bold text-ink mb-2">Submitted!</h3>
+                  <p className="text-sm text-ink-caption mb-4">
                     {cost} tokens deducted. {form.isPublished ? 'Your post is live now.' : `Saved as draft — publish it anytime from your dashboard.`}
                   </p>
                   <button onClick={() => setOpen(false)}
-                    className="px-6 py-2 bg-yellow-400 text-black font-bold rounded-lg text-sm hover:bg-yellow-500">
+                    className="px-6 py-2 bg-brand-yellow text-ink font-bold rounded-lg text-sm hover:bg-brand-gold">
                     Close
                   </button>
                 </div>
