@@ -42,10 +42,17 @@ export default function AdSlot({ image, href, alt = 'Advertisement', width, heig
         // object-contain (not cover) — real uploaded creatives can be any aspect
         // ratio and shouldn't get aggressively cropped into an unrecognizable
         // sliver just to fill a slot with a different shape.
+        // For fluid `aspect` slots: `max-w-full` (not `w-full`) so a small
+        // low-res upload is shown at its own size instead of being stretched
+        // to fill the whole container and coming out huge and blurry; a wide
+        // real banner still shrinks to fit the container exactly as before.
+        // `maxHeight` is a safety net against an accidentally very tall upload
+        // dominating the page's layout height.
         <img
           src={image}
           alt={alt}
-          className={useNaturalHeight ? "w-full h-auto block" : "w-full h-full object-contain bg-white"}
+          className={useNaturalHeight ? "max-w-full h-auto block mx-auto" : "w-full h-full object-contain bg-white"}
+          style={useNaturalHeight ? { maxHeight: 320 } : undefined}
         />
       ) : children ? (
         children

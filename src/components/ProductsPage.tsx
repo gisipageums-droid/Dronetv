@@ -294,7 +294,6 @@ const ProductsPage: React.FC = () => {
               <PagePlacementSlot slotId="cat-gis" aspect="3/1" minHeight={72} />
               <PagePlacementSlot slotId="cat-agri" aspect="3/1" minHeight={72} />
               <PagePlacementSlot slotId="cat-defence" aspect="3/1" minHeight={72} />
-              <PagePlacementSlot slotId="cat-training" aspect="3/1" minHeight={72} />
             </div>
           </div>
 

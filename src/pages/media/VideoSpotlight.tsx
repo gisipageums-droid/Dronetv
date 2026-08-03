@@ -3,6 +3,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
 import PostContentCTA from '../../components/common/PostContentCTA';
+import PagePlacementSlot from '../../components/common/PagePlacementSlot';
 
 function getYoutubeEmbed(url: string): string | null {
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
@@ -109,6 +110,8 @@ export default function VideoSpotlightPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-8 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0 space-y-8">
+        <PagePlacementSlot slotId="media-video" aspect="4/1" minHeight={90} className="w-full" />
+
         <div className="flex flex-wrap gap-2">
           {categories.map(f => (
             <button key={f} onClick={() => setActiveFilter(f)}
