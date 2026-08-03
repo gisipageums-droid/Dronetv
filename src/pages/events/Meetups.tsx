@@ -42,7 +42,7 @@ export default function MeetupsPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Industry Meetups and <span>Networking</span></>}
         stats={[
@@ -53,21 +53,21 @@ export default function MeetupsPage() {
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0 space-y-8">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Upcoming</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Upcoming</span>
             Meetups
           </h2>
           {loading ? (
-            <div className="text-center py-10 text-gray-400">Loading meetups...</div>
+            <div className="text-center py-10 text-ink-caption">Loading meetups...</div>
           ) : items.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center">
-              <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="font-semibold text-gray-500 mb-1">No meetups currently listed</p>
-              <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
+            <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-10 text-center">
+              <Users className="w-10 h-10 text-ink-light mx-auto mb-3" />
+              <p className="font-semibold text-ink-caption mb-1">No meetups currently listed</p>
+              <p className="text-sm text-ink-caption mb-4 max-w-md mx-auto">
                 Organising a drone, GIS, or AI industry meetup, community flyin, or B2B roundtable in India? Submit it here for free listing on DroneTv.in.
               </p>
               <a href="mailto:bd@dronetv.in?subject=Submit Meetup"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                className="inline-flex items-center gap-2 px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
                 Submit Your Meetup
               </a>
             </div>
@@ -78,27 +78,27 @@ export default function MeetupsPage() {
                   key={item.contentId}
                   image={item.imageUrl}
                   imageAlt={item.title}
-                  imageFallback={<Users className="w-10 h-10 text-yellow-400" />}
+                  imageFallback={<Users className="w-10 h-10 text-brand-yellow" />}
                 >
-                  {item.price && <span className={`text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start ${item.price.toLowerCase() === 'free' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{item.price}</span>}
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                  {item.price && <span className={`text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start ${item.price.toLowerCase() === 'free' ? 'bg-status-success/15 text-status-success' : 'bg-brand-yellow-soft text-brand-gold'}`}>{item.price}</span>}
+                  <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{item.title}</h3>
                   {item.description && (
                     <div className="mb-3">
-                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
                       {item.description.length > 140 && (
-                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                           {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
                         </button>
                       )}
                     </div>
                   )}
-                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                  <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
                     <div className="space-y-1">
-                      {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}
-                      {item.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{item.location}</div>}
+                      {item.date && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}
+                      {item.location && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><MapPin className="w-3 h-3 flex-shrink-0" />{item.location}</div>}
                     </div>
                     {item.externalLink && (
-                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">
+                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-brand-gold hover:text-brand-yellow whitespace-nowrap">
                         Join Meetup <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
@@ -110,38 +110,38 @@ export default function MeetupsPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Types</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Types</span>
             Meetup Types Listed on DroneTv.in
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {meetupTypes.map((type, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <div key={i} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-5">
                 <div className="text-2xl mb-3">{type.icon}</div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2">{type.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{type.desc}</p>
+                <h3 className="font-bold text-ink text-sm mb-2">{type.title}</h3>
+                <p className="text-xs text-ink-caption leading-relaxed">{type.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Benefits</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Benefits</span>
             Why Attend Drone Meetups
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {whyAttend.map((item, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <div key={i} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-5">
                 <div className="text-2xl mb-3">{item.icon}</div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-ink text-sm mb-2">{item.title}</h3>
+                <p className="text-xs text-ink-caption leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-ink rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white text-base mb-1">VirelbBiz — Connect, Collaborate, Grow</h3>
             <p className="text-sm text-white/60 max-w-lg">
@@ -151,7 +151,7 @@ export default function MeetupsPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0">
             <a href="mailto:bd@dronetv.in?subject=Submit Meetup"
-              className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+              className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
               Submit Your Meetup
             </a>
             <a href="https://wa.me/917520123555" target="_blank" rel="noopener noreferrer"

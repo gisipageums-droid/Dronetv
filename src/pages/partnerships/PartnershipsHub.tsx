@@ -70,7 +70,7 @@ const packages = [
 
 export default function PartnershipsHubPage() {
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Partner with <span>DroneTv.in</span></>}
         stats={[
@@ -82,8 +82,8 @@ export default function PartnershipsHubPage() {
       <div className="max-w-6xl mx-auto px-6 py-8 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0 space-y-8">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Explore</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Explore</span>
             Partner Categories
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -91,22 +91,22 @@ export default function PartnershipsHubPage() {
               <Link
                 key={c.to}
                 to={c.to}
-                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
+                className="bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
               >
-                <div className="bg-black px-5 py-4 flex items-center gap-3">
+                <div className="bg-ink px-5 py-4 flex items-center gap-3">
                   <span className="text-2xl">{c.icon}</span>
                   <div>
-                    <h3 className="text-white font-bold text-sm group-hover:text-yellow-400 transition-colors">{c.title}</h3>
+                    <h3 className="text-white font-bold text-sm group-hover:text-brand-yellow transition-colors">{c.title}</h3>
                     <p className="text-white/40 text-xs">{c.count}</p>
                   </div>
                 </div>
                 <div className="px-5 py-4">
-                  <p className="text-sm text-gray-500 leading-relaxed mb-3">{c.desc}</p>
-                  <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2 py-0.5 rounded">{c.tag}</span>
+                  <p className="text-sm text-ink-caption leading-relaxed mb-3">{c.desc}</p>
+                  <span className="bg-brand-yellow-soft text-brand-gold text-xs font-semibold px-2 py-0.5 rounded">{c.tag}</span>
                 </div>
-                <div className="border-t border-gray-100 px-5 py-3 flex items-center justify-between">
-                  <span className="text-xs text-gray-400">Explore section</span>
-                  <span className="text-yellow-400 font-bold group-hover:translate-x-1 transition-transform inline-block">→</span>
+                <div className="border-t border-ink-light px-5 py-3 flex items-center justify-between">
+                  <span className="text-xs text-ink-caption">Explore section</span>
+                  <span className="text-brand-yellow font-bold group-hover:translate-x-1 transition-transform inline-block">→</span>
                 </div>
               </Link>
             ))}
@@ -114,78 +114,78 @@ export default function PartnershipsHubPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Packages</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Packages</span>
             Partnership Tiers
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {packages.map((p) => (
               <div
                 key={p.name}
-                className={`bg-white rounded-xl border shadow-sm p-5 ${
-                  p.highlight ? 'border-yellow-400' : 'border-gray-200'
+                className={`bg-surface-card rounded-xl border shadow-sm p-5 ${
+                  p.highlight ? 'border-brand-yellow' : 'border-ink-light'
                 }`}
               >
                 {p.highlight && (
-                  <span className="bg-yellow-400 text-black text-xs font-extrabold px-2 py-0.5 rounded mb-3 inline-block">POPULAR</span>
+                  <span className="bg-brand-yellow text-ink text-xs font-extrabold px-2 py-0.5 rounded mb-3 inline-block">POPULAR</span>
                 )}
-                <h3 className="font-extrabold text-gray-900 text-lg">{p.name}</h3>
-                <p className="text-xl font-extrabold text-yellow-500 mb-2">{p.price}</p>
-                <p className="text-xs text-gray-500 leading-relaxed mb-4">{p.headline}</p>
+                <h3 className="font-extrabold text-ink text-lg">{p.name}</h3>
+                <p className="text-xl font-extrabold text-brand-gold mb-2">{p.price}</p>
+                <p className="text-xs text-ink-caption leading-relaxed mb-4">{p.headline}</p>
                 <Link
                   to="/partnerships/benefits"
-                  className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors"
+                  className="text-xs font-bold text-brand-gold hover:text-brand-yellow transition-colors"
                 >
                   See full features →
                 </Link>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-3 text-center">All prices exclusive of GST. 100% advance payment. 12-month term.</p>
+          <p className="text-xs text-ink-caption mt-3 text-center">All prices exclusive of GST. 100% advance payment. 12-month term.</p>
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Why</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Why</span>
             Why Partner with DroneTv.in
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {whyPartner.map((item, i) => (
               <ContentCard key={i}>
                 <div className="text-2xl mb-3">{item.icon}</div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-ink text-sm mb-2">{item.title}</h3>
+                <p className="text-xs text-ink-caption leading-relaxed">{item.desc}</p>
               </ContentCard>
             ))}
           </div>
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Reviews</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Reviews</span>
             Partner Testimonials
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {testimonials.map((t, i) => (
               <ContentCard key={i}>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4 italic">"{t.quote}"</p>
+                <p className="text-sm text-ink-paragraph leading-relaxed mb-4 italic">"{t.quote}"</p>
                 <div className="mt-auto">
-                  <p className="text-sm font-bold text-gray-900">{t.name}</p>
-                  <p className="text-xs text-gray-400">{t.role}</p>
+                  <p className="text-sm font-bold text-ink">{t.name}</p>
+                  <p className="text-xs text-ink-caption">{t.role}</p>
                 </div>
               </ContentCard>
             ))}
           </div>
         </div>
 
-        <div className="bg-yellow-400 rounded-xl p-8 text-center">
-          <h3 className="font-extrabold text-black text-2xl mb-2">Ready to join India's drone industry platform?</h3>
-          <p className="text-black/70 text-sm mb-6 max-w-xl mx-auto">
+        <div className="bg-brand-yellow rounded-xl p-8 text-center">
+          <h3 className="font-extrabold text-ink text-2xl mb-2">Ready to join India's drone industry platform?</h3>
+          <p className="text-ink/70 text-sm mb-6 max-w-xl mx-auto">
             Submit your enquiry and our BD team will respond within 48 hours. Go live in 2 weeks.
           </p>
           <Link
             to="/partnerships/become-a-partner"
-            className="inline-block bg-black text-white font-extrabold text-base px-8 py-3.5 rounded-xl hover:bg-gray-900 transition-colors"
+            className="inline-block bg-ink text-white font-extrabold text-base px-8 py-3.5 rounded-xl hover:bg-ink-charcoal transition-colors"
           >
             Become a Partner →
           </Link>

@@ -67,7 +67,7 @@ export default function ExposPage() {
   );
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone <span>Expos</span></>}
         stats={[
@@ -78,18 +78,18 @@ export default function ExposPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-5">
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-caption" />
           <input type="text" placeholder="Search expos..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400" />
+            className="w-full pl-9 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:border-brand-yellow" />
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
         {loading ? (
-          <div className="text-center py-16 text-gray-400">Loading expos...</div>
+          <div className="text-center py-16 text-ink-caption">Loading expos...</div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">No expos found.</div>
+          <div className="text-center py-16 text-ink-caption">No expos found.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {withInlineAds(filtered, event => (
@@ -97,19 +97,19 @@ export default function ExposPage() {
                 key={event.eventId}
                 image={getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage) || undefined}
                 imageAlt={event.eventName}
-                imageFallback={<span className="text-yellow-400 text-4xl">🏛️</span>}
+                imageFallback={<span className="text-brand-yellow text-4xl">🏛️</span>}
                 onClick={() => {
                   let slug = event.cleanUrl || event.urlSlug || '';
                   if (slug.startsWith('http')) slug = slug.split('/').pop() || slug;
                   navigate(`/event/${slug}`);
                 }}
               >
-                <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">Expo</span>
-                <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{event.eventName}</h3>
-                {event.shortDescription && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.shortDescription}</p>}
-                <div className="mt-auto pt-3 border-t border-gray-100 space-y-1">
-                  {event.eventDate && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{event.eventDate}</div>}
-                  {event.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{event.location}</div>}
+                <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">Expo</span>
+                <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{event.eventName}</h3>
+                {event.shortDescription && <p className="text-xs text-ink-caption leading-relaxed mb-3 line-clamp-2">{event.shortDescription}</p>}
+                <div className="mt-auto pt-3 border-t border-ink-light space-y-1">
+                  {event.eventDate && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><Calendar className="w-3 h-3 flex-shrink-0" />{event.eventDate}</div>}
+                  {event.location && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><MapPin className="w-3 h-3 flex-shrink-0" />{event.location}</div>}
                 </div>
               </ContentCard>
             ))}

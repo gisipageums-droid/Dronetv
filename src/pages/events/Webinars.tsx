@@ -80,7 +80,7 @@ export default function WebinarsPage() {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone Industry <span>Webinars</span></>}
         stats={[
@@ -91,21 +91,21 @@ export default function WebinarsPage() {
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0 space-y-8">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Upcoming</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Upcoming</span>
             Webinars
           </h2>
           {loading ? (
-            <div className="text-center py-10 text-gray-400">Loading webinars...</div>
+            <div className="text-center py-10 text-ink-caption">Loading webinars...</div>
           ) : items.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-10 text-center">
-              <Monitor className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="font-semibold text-gray-500 mb-1">No webinars currently listed</p>
-              <p className="text-sm text-gray-400 mb-4 max-w-md mx-auto">
+            <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-10 text-center">
+              <Monitor className="w-10 h-10 text-ink-light mx-auto mb-3" />
+              <p className="font-semibold text-ink-caption mb-1">No webinars currently listed</p>
+              <p className="text-sm text-ink-caption mb-4 max-w-md mx-auto">
                 Hosting a drone, GIS, or AI webinar? Submit it here for free listing and promotion to DroneTv.in's audience.
               </p>
               <a href="mailto:bd@dronetv.in?subject=Submit Webinar"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                className="inline-flex items-center gap-2 px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
                 Submit Your Webinar
               </a>
             </div>
@@ -116,32 +116,32 @@ export default function WebinarsPage() {
                   key={item.contentId}
                   image={item.imageUrl}
                   imageAlt={item.title}
-                  imageFallback={<Monitor className="w-10 h-10 text-yellow-400" />}
+                  imageFallback={<Monitor className="w-10 h-10 text-brand-yellow" />}
                 >
                   <div className="flex items-center justify-between mb-3">
                     {item.price ? (
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.price.toLowerCase() === 'free' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{item.price}</span>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.price.toLowerCase() === 'free' ? 'bg-status-success/15 text-status-success' : 'bg-status-info/15 text-status-info'}`}>{item.price}</span>
                     ) : <span />}
-                    {item.date && <span className="text-xs font-bold text-gray-500">{item.date}</span>}
+                    {item.date && <span className="text-xs font-bold text-ink-caption">{item.date}</span>}
                   </div>
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{item.title}</h3>
-                  {item.platform && <p className="text-xs text-gray-400 mb-3">{item.platform}</p>}
-                  {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                  <h3 className="text-sm font-bold text-ink leading-snug mb-1 line-clamp-2">{item.title}</h3>
+                  {item.platform && <p className="text-xs text-ink-caption mb-3">{item.platform}</p>}
+                  {item.description && <p className="text-xs text-ink-caption leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
                   {item.source && (
                     <div className="mb-3">
-                      <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Speaker</p>
-                      <p className="text-xs text-gray-500">— {item.source}</p>
+                      <p className="text-xs font-bold text-ink-paragraph uppercase tracking-wide mb-1">Speaker</p>
+                      <p className="text-xs text-ink-caption">— {item.source}</p>
                     </div>
                   )}
-                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                  <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
                     {item.tags && item.tags.length > 0 ? (
                       <div className="flex flex-wrap gap-1.5">
                         {item.tags.slice(0, 2).map(tag => (
-                          <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>
+                          <span key={tag} className="bg-ink-light text-ink-paragraph text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>
                         ))}
                       </div>
                     ) : <span />}
-                    <button onClick={() => openModal(item)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">
+                    <button onClick={() => openModal(item)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow whitespace-nowrap">
                       Register to Attend →
                     </button>
                   </div>
@@ -152,38 +152,38 @@ export default function WebinarsPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Topics</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Topics</span>
             Webinar Topics Covered on DroneTv.in
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {topicSections.map((topic, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <div key={i} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-5">
                 <div className="text-2xl mb-3">{topic.icon}</div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2">{topic.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{topic.desc}</p>
+                <h3 className="font-bold text-ink text-sm mb-2">{topic.title}</h3>
+                <p className="text-xs text-ink-caption leading-relaxed">{topic.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Guide</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Guide</span>
             What to Expect at Drone Webinars
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {expectItems.map((item, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <div key={i} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-5">
                 <div className="text-2xl mb-3">{item.icon}</div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-ink text-sm mb-2">{item.title}</h3>
+                <p className="text-xs text-ink-caption leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-ink rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white text-base mb-1">Promote Your Webinar on DroneTv.in</h3>
             <p className="text-sm text-white/60 max-w-lg">
@@ -193,7 +193,7 @@ export default function WebinarsPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0">
             <a href="mailto:bd@dronetv.in?subject=Submit Webinar"
-              className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+              className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
               Submit Webinar
             </a>
             <a href="/packages"
@@ -212,59 +212,59 @@ export default function WebinarsPage() {
 
       {/* Registration Modal */}
       {modal.open && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base font-bold text-gray-900">Register to Attend</h2>
-              <button onClick={closeModal} className="p-1.5 rounded hover:bg-gray-100">
-                <X className="w-5 h-5 text-gray-500" />
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/60 p-4">
+          <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-md">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
+              <h2 className="text-base font-bold text-ink">Register to Attend</h2>
+              <button onClick={closeModal} className="p-1.5 rounded hover:bg-ink-light">
+                <X className="w-5 h-5 text-ink-caption" />
               </button>
             </div>
             <div className="px-6 py-5">
               {!submitted ? (
                 <>
-                  <p className="text-sm font-semibold text-gray-800 mb-1">{modal.item?.title}</p>
-                  {modal.item?.date && <p className="text-xs text-gray-400 mb-4">{modal.item.date}</p>}
+                  <p className="text-sm font-semibold text-ink-charcoal mb-1">{modal.item?.title}</p>
+                  {modal.item?.date && <p className="text-xs text-ink-caption mb-4">{modal.item.date}</p>}
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Full Name *</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Full Name *</label>
                       <input type="text" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                         placeholder="Your full name"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Email *</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Email *</label>
                       <input type="email" required value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                         placeholder="Your email address"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Phone *</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Phone *</label>
                       <input type="tel" required value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                         placeholder="+91 XXXXX XXXXX"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                     </div>
                     {submitError && (
-                      <p className="text-xs text-red-600 font-medium">
+                      <p className="text-xs text-status-error font-medium">
                         Registration failed. Please check your connection and try again.
                       </p>
                     )}
                     <button type="submit" disabled={submitting}
-                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
+                      className="w-full bg-brand-yellow hover:bg-brand-gold text-ink font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
                       {submitting ? 'Registering...' : 'Confirm Registration'}
                     </button>
                   </form>
                 </>
               ) : (
                 <div className="text-center py-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-status-success/15 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-2xl">✓</span>
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-2">You're registered!</h3>
-                  <p className="text-sm text-gray-500 mb-4">We'll send you the details at {form.email}.</p>
+                  <h3 className="font-bold text-ink mb-2">You're registered!</h3>
+                  <p className="text-sm text-ink-caption mb-4">We'll send you the details at {form.email}.</p>
                   {modal.item?.externalLink && (
                     <a href={modal.item.externalLink} target="_blank" rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-black text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-gray-900 transition-colors">
+                      className="inline-flex items-center gap-2 bg-ink text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-ink-charcoal transition-colors">
                       Join Webinar →
                     </a>
                   )}

@@ -90,7 +90,7 @@ export default function CompetitionsPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone Competitions and <span>UAV Challenges</span></>}
         stats={[
@@ -102,8 +102,8 @@ export default function CompetitionsPage() {
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12 space-y-8">
         {!loading && cmsItems.length > 0 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Listed</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Listed</span>
               Competition Listings
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -112,28 +112,28 @@ export default function CompetitionsPage() {
                   key={item.contentId}
                   image={item.imageUrl}
                   imageAlt={item.title}
-                  imageFallback={<Trophy className="w-10 h-10 text-yellow-400" />}
+                  imageFallback={<Trophy className="w-10 h-10 text-brand-yellow" />}
                 >
-                  {item.category && <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                  {item.category && <span className="bg-status-warning/15 text-status-warning text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                  <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{item.title}</h3>
                   {item.description && (
                     <div className="mb-3">
-                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
                       {item.description.length > 180 && (
-                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                           {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
                         </button>
                       )}
                     </div>
                   )}
-                  {item.price && <div className="text-xs font-bold text-green-700 mb-2">{item.price}</div>}
-                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                  {item.price && <div className="text-xs font-bold text-status-success mb-2">{item.price}</div>}
+                  <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
                     <div className="space-y-1">
-                      {item.date && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}
-                      {item.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{item.location}</div>}
+                      {item.date && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><Calendar className="w-3 h-3 flex-shrink-0" />{item.date}</div>}
+                      {item.location && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><MapPin className="w-3 h-3 flex-shrink-0" />{item.location}</div>}
                     </div>
                     {item.externalLink && (
-                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">
+                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-brand-gold hover:text-brand-yellow whitespace-nowrap">
                         Register <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
@@ -145,30 +145,30 @@ export default function CompetitionsPage() {
         )}
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">2026</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">2026</span>
             Active Competition Series
           </h2>
           <div className="space-y-4">
             {staticCompetitions.map((comp, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+              <div key={i} className="bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow p-5">
                 <div className="flex flex-col md:flex-row md:items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center text-2xl">{comp.icon}</div>
+                  <div className="flex-shrink-0 w-12 h-12 bg-ink rounded-xl flex items-center justify-center text-2xl">{comp.icon}</div>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded">{comp.badge}</span>
-                      <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded">{comp.status}</span>
+                      <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded">{comp.badge}</span>
+                      <span className="bg-status-success/15 text-status-success text-xs font-bold px-2 py-0.5 rounded">{comp.status}</span>
                     </div>
-                    <h3 className="font-bold text-gray-900 text-base leading-snug mb-0.5">{comp.title}</h3>
-                    <p className="text-xs text-gray-500 mb-2">{comp.organiser}</p>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-3">{comp.desc}</p>
-                    <div className="flex flex-wrap gap-4 text-xs text-gray-500 mb-3">
-                      <span><span className="font-semibold text-gray-700">Open to:</span> {comp.openTo}</span>
+                    <h3 className="font-bold text-ink text-base leading-snug mb-0.5">{comp.title}</h3>
+                    <p className="text-xs text-ink-caption mb-2">{comp.organiser}</p>
+                    <p className="text-sm text-ink-paragraph leading-relaxed mb-3">{comp.desc}</p>
+                    <div className="flex flex-wrap gap-4 text-xs text-ink-caption mb-3">
+                      <span><span className="font-semibold text-ink-paragraph">Open to:</span> {comp.openTo}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">Format: {comp.format}</span>
+                      <span className="bg-ink-light text-ink-paragraph text-xs font-semibold px-2 py-0.5 rounded">Format: {comp.format}</span>
                       <a href={comp.link} target="_blank" rel="noopener noreferrer"
-                        className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                        className="text-xs font-bold text-brand-gold hover:text-brand-yellow flex items-center gap-1">
                         Official Website <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>
@@ -180,22 +180,22 @@ export default function CompetitionsPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Guide</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Guide</span>
             What to Expect at Drone Competitions
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {expectItems.map((item, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <div key={i} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-5">
                 <div className="text-2xl mb-3">{item.icon}</div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-ink text-sm mb-2">{item.title}</h3>
+                <p className="text-xs text-ink-caption leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-ink rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white text-base mb-1">List Your Event</h3>
             <p className="text-sm text-white/60">Submit any drone, GIS &amp; AI industry event for free listing on DroneTv.in.</p>
@@ -203,7 +203,7 @@ export default function CompetitionsPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0">
             <a href="mailto:bd@dronetv.in?subject=Submit Event"
-              className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+              className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
               Submit Event
             </a>
             <a href="mailto:bd@dronetv.in?subject=Media Partner"

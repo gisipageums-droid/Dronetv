@@ -17,7 +17,7 @@ const pathways = [
     skills: ['Basic flight operations', 'DGCA regulations', 'Safety protocols', 'Mission planning', 'Emergency procedures'],
     cost: 'Rs. 50,000–80,000',
     duration: '5 Days',
-    colorClass: 'border-l-green-400',
+    colorClass: 'border-l-status-success',
   },
   {
     level: 'Level 02',
@@ -28,7 +28,7 @@ const pathways = [
     skills: ['Photogrammetry (Pix4D / Agisoft)', 'LiDAR data processing', 'QGIS and ArcGIS', 'Survey-grade accuracy', 'Client deliverable formats'],
     cost: 'Rs. 30,000–80,000',
     duration: '15–30 Days',
-    colorClass: 'border-l-blue-400',
+    colorClass: 'border-l-status-info',
   },
   {
     level: 'Level 03',
@@ -39,7 +39,7 @@ const pathways = [
     skills: ['NDVI mapping and analysis', 'Precision spraying calibration', 'Crop health interpretation', 'Nozzle and spray management', 'State-specific regulations'],
     cost: 'Rs. 20,000–50,000',
     duration: '5–10 Days',
-    colorClass: 'border-l-yellow-400',
+    colorClass: 'border-l-brand-yellow',
   },
   {
     level: 'Level 04',
@@ -50,7 +50,7 @@ const pathways = [
     skills: ['Instructor certification from DGCA', 'Curriculum development', 'Student assessment methods', 'Simulator instruction', 'RPTO quality management'],
     cost: 'DGCA approval required',
     duration: '10–15 Days',
-    colorClass: 'border-l-purple-400',
+    colorClass: 'border-l-brand-gold',
   },
 ];
 
@@ -118,7 +118,7 @@ export default function TrainingPage() {
     : [];
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone Training <span>Pathways</span> India</>}
         stats={[
@@ -132,8 +132,8 @@ export default function TrainingPage() {
         <PagePlacementSlot slotId="cat-training" aspect="4/1" minHeight={90} className="w-full" />
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Pathways</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Pathways</span>
             Career Training Pathways
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -142,22 +142,22 @@ export default function TrainingPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-2xl">{p.icon}</span>
                   <div>
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">{p.level} — {p.levelLabel}</span>
-                    <h3 className="font-bold text-gray-900 text-base leading-snug">{p.title}</h3>
+                    <span className="text-xs font-bold text-ink-caption uppercase tracking-wide">{p.level} — {p.levelLabel}</span>
+                    <h3 className="font-bold text-ink text-base leading-snug">{p.title}</h3>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed mb-3">{p.desc}</p>
+                <p className="text-sm text-ink-paragraph leading-relaxed mb-3">{p.desc}</p>
                 <ul className="space-y-1 mb-4">
                   {p.skills.map((skill, j) => (
-                    <li key={j} className="flex items-center gap-2 text-xs text-gray-500">
-                      <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full flex-shrink-0" />
+                    <li key={j} className="flex items-center gap-2 text-xs text-ink-caption">
+                      <span className="w-1.5 h-1.5 bg-brand-yellow rounded-full flex-shrink-0" />
                       {skill}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
-                  <span className="text-xs font-bold text-yellow-700">{p.cost}</span>
-                  <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{p.duration}</span>
+                <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between">
+                  <span className="text-xs font-bold text-brand-gold">{p.cost}</span>
+                  <span className="bg-ink-light text-ink-paragraph text-xs font-semibold px-2 py-0.5 rounded">{p.duration}</span>
                 </div>
               </ContentCard>
             ))}
@@ -169,13 +169,13 @@ export default function TrainingPage() {
             <div className="flex gap-2 flex-wrap mb-5">
               {categories.map(cat => (
                 <button key={cat} onClick={() => setActiveCategory(cat)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-brand-yellow border-brand-yellow text-ink' : 'border-ink-light text-ink-caption hover:border-brand-yellow'}`}>
                   {cat}
                 </button>
               ))}
             </div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">RPTO</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">RPTO</span>
               Training Programs
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -184,25 +184,25 @@ export default function TrainingPage() {
                   key={item.contentId}
                   image={item.imageUrl}
                   imageAlt={item.title}
-                  imageFallback={<BookOpen className="w-10 h-10 text-yellow-400" />}
+                  imageFallback={<BookOpen className="w-10 h-10 text-brand-yellow" />}
                 >
-                  {item.category && <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                  {item.category && <span className="bg-status-success/15 text-status-success text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                  <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{item.title}</h3>
                   {item.description && (
                     <div className="mb-3">
-                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
                       {item.description.length > 180 && (
-                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                           {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
                         </button>
                       )}
                     </div>
                   )}
-                  {item.price && <div className="text-xs font-bold text-yellow-700 mb-2">{item.price}</div>}
-                  <div className="mt-auto pt-3 border-t border-gray-100">
-                    {item.location && <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1"><MapPin className="w-3 h-3" />{item.location}</div>}
+                  {item.price && <div className="text-xs font-bold text-brand-gold mb-2">{item.price}</div>}
+                  <div className="mt-auto pt-3 border-t border-ink-light">
+                    {item.location && <div className="flex items-center gap-1.5 text-xs text-ink-caption mb-1"><MapPin className="w-3 h-3" />{item.location}</div>}
                     {item.externalLink && (
-                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                      <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-bold text-brand-gold hover:text-brand-yellow">
                         Enroll <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
@@ -214,30 +214,30 @@ export default function TrainingPage() {
         )}
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">RPTOs</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">RPTOs</span>
             Featured RPTOs on DroneTv.in
-            <span className="text-xs font-normal text-gray-400">240+ Approved Nationwide</span>
+            <span className="text-xs font-normal text-ink-caption">240+ Approved Nationwide</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {featuredRPTOs.map((rpto, i) => (
               <ContentCard key={i}>
                 <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 bg-zinc-900 rounded-lg flex items-center justify-center text-xl flex-shrink-0">{rpto.icon}</div>
+                  <div className="w-10 h-10 bg-ink rounded-lg flex items-center justify-center text-xl flex-shrink-0">{rpto.icon}</div>
                   <div>
                     <div className="flex items-center gap-2 mb-0.5">
-                      <h3 className="font-bold text-gray-900 text-sm">{rpto.name}</h3>
+                      <h3 className="font-bold text-ink text-sm">{rpto.name}</h3>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                    <div className="flex items-center gap-1.5 text-xs text-ink-caption">
                       <MapPin className="w-3 h-3 flex-shrink-0" />{rpto.location}
                     </div>
-                    <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded mt-1 inline-block">{rpto.badge}</span>
+                    <span className="bg-status-success/15 text-status-success text-xs font-bold px-2 py-0.5 rounded mt-1 inline-block">{rpto.badge}</span>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 leading-relaxed mb-3">{rpto.desc}</p>
+                <p className="text-xs text-ink-caption leading-relaxed mb-3">{rpto.desc}</p>
                 <div className="flex flex-wrap gap-1.5 mt-auto pt-2">
                   {rpto.tags.map((tag, j) => (
-                    <span key={j} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{tag}</span>
+                    <span key={j} className="bg-ink-light text-ink-paragraph text-xs font-semibold px-2 py-0.5 rounded">{tag}</span>
                   ))}
                 </div>
               </ContentCard>
@@ -245,7 +245,7 @@ export default function TrainingPage() {
           </div>
         </div>
 
-        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-ink rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white text-base mb-1">List Your RPTO on DroneTv.in</h3>
             <p className="text-sm text-white/60 max-w-lg">
@@ -255,7 +255,7 @@ export default function TrainingPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0">
             <a href="mailto:bd@dronetv.in?subject=List RPTO"
-              className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+              className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
               List Your RPTO Free
             </a>
             <a href="/professionals/certifications"

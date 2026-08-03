@@ -45,7 +45,7 @@ export default function DroneManufacturersPage() {
   });
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone <span>Manufacturers</span></>}
         stats={[
@@ -56,14 +56,14 @@ export default function DroneManufacturersPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row gap-3 flex-wrap">
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-caption" />
           <input type="text" placeholder="Search manufacturers..." value={search} onChange={e => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-full" />
+            className="pl-9 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:border-brand-yellow w-full" />
         </div>
         <div className="flex gap-2 flex-wrap">
           {categories.map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-brand-yellow border-brand-yellow text-ink' : 'border-ink-light text-ink-caption hover:border-brand-yellow'}`}>
               {cat}
             </button>
           ))}
@@ -72,30 +72,30 @@ export default function DroneManufacturersPage() {
 
       <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Listed</span>
+        <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+          <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Listed</span>
           Drone Manufacturers
         </h2>
         {loading ? (
-          <div className="text-center py-16 text-gray-400">Loading manufacturers...</div>
+          <div className="text-center py-16 text-ink-caption">Loading manufacturers...</div>
         ) : items.length > 0 ? (
           filtered.length === 0
-            ? <div className="text-center py-8 text-gray-400">No manufacturers match your search.</div>
+            ? <div className="text-center py-8 text-ink-caption">No manufacturers match your search.</div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {withInlineAds(filtered, item => (
                   <ContentCard
                     key={item.contentId}
                     image={item.imageUrl}
                     imageAlt={item.title}
-                    imageFallback={<Building2 className="w-10 h-10 text-yellow-400" />}
+                    imageFallback={<Building2 className="w-10 h-10 text-brand-yellow" />}
                   >
-                    {item.category && <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                    {item.category && <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                    <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{item.title}</h3>
                     {item.description && (
                       <div className="mb-3">
-                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                        <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
                         {item.description.length > 180 && (
-                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                             {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
                           </button>
                         )}
@@ -103,13 +103,13 @@ export default function DroneManufacturersPage() {
                     )}
                     {item.tags && item.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-3">
-                        {item.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
+                        {item.tags.map(tag => <span key={tag} className="bg-ink-light text-ink-paragraph text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
                       </div>
                     )}
-                    <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
-                      {item.location && <span className="flex items-center gap-1 text-xs text-gray-400"><MapPin className="w-3 h-3" />{item.location}</span>}
+                    <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
+                      {item.location && <span className="flex items-center gap-1 text-xs text-ink-caption"><MapPin className="w-3 h-3" />{item.location}</span>}
                       {item.externalLink && (
-                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1 whitespace-nowrap">
+                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-brand-gold hover:text-brand-yellow flex items-center gap-1 whitespace-nowrap">
                           Visit <ExternalLink className="w-3 h-3" />
                         </a>
                       )}
@@ -119,41 +119,41 @@ export default function DroneManufacturersPage() {
               </div>
         ) : (
           <>
-            <p className="text-xs text-gray-400 mb-4">India has 180+ active drone manufacturers. Featured companies below.</p>
+            <p className="text-xs text-ink-caption mb-4">India has 180+ active drone manufacturers. Featured companies below.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {withInlineAds(staticManufacturers, (m, i) => (
                 <ContentCard key={i}>
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-xl flex-shrink-0">{m.icon}</div>
+                    <div className="w-10 h-10 bg-ink rounded-xl flex items-center justify-center text-xl flex-shrink-0">{m.icon}</div>
                     <div>
-                      <h3 className="font-bold text-gray-900 text-sm leading-snug">{m.name}</h3>
-                      <p className="text-xs text-gray-400">{m.hq}</p>
+                      <h3 className="font-bold text-ink text-sm leading-snug">{m.name}</h3>
+                      <p className="text-xs text-ink-caption">{m.hq}</p>
                     </div>
                   </div>
                   <div className="mb-3">
-                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(String(i)) ? '' : 'line-clamp-3'}`}>{m.desc}</p>
+                    <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(String(i)) ? '' : 'line-clamp-3'}`}>{m.desc}</p>
                     {m.desc.length > 140 && (
-                      <button onClick={() => toggleExpanded(String(i))} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                      <button onClick={() => toggleExpanded(String(i))} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                         {expandedIds.has(String(i)) ? 'Show less' : 'Read more'}
                       </button>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-1 mb-3">
-                    {m.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
+                    {m.tags.map(tag => <span key={tag} className="bg-ink-light text-ink-paragraph text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>
-                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
-                    <span className="text-xs text-yellow-700 font-bold">{m.sector}</span>
-                    <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">Partner with DroneTv →</a>
+                  <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
+                    <span className="text-xs text-brand-gold font-bold">{m.sector}</span>
+                    <a href="/partnerships/become-a-partner" className="text-xs font-bold text-brand-gold hover:text-brand-yellow whitespace-nowrap">Partner with DroneTv →</a>
                   </div>
                 </ContentCard>
               ))}
             </div>
-            <div className="mt-6 bg-zinc-900 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="mt-6 bg-ink rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <h3 className="font-bold text-white text-sm mb-1">India Has 515+ Drone Companies — Stand Out on DroneTv.in</h3>
                 <p className="text-xs text-white/60 max-w-lg">With the Indian drone market set to reach Rs. 29,080 crore by 2030, DroneTv.in is where India's drone buyers search for suppliers, watch product videos, and submit enquiries.</p>
               </div>
-              <a href="/partnerships/become-a-partner" className="flex-shrink-0 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">Apply for Partnership</a>
+              <a href="/partnerships/become-a-partner" className="flex-shrink-0 px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">Apply for Partnership</a>
             </div>
           </>
         )}

@@ -176,7 +176,7 @@ export default function JobBoardPage() {
   });
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone, GIS &amp; AI <span>Job Board</span></>}
         stats={[
@@ -187,14 +187,14 @@ export default function JobBoardPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row gap-3 flex-wrap">
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-caption" />
           <input type="text" placeholder="Search jobs, companies, locations..." value={search} onChange={e => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-full" />
+            className="pl-9 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:border-brand-yellow w-full" />
         </div>
         <div className="flex gap-2 flex-wrap">
           {categories.map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
-              className={`relative px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
+              className={`relative px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-brand-yellow border-brand-yellow text-ink' : 'border-ink-light text-ink-caption hover:border-brand-yellow'}`}>
               {cat}
               {cat === SPONSORED_CATEGORY && <SponsorBadge />}
             </button>
@@ -205,12 +205,12 @@ export default function JobBoardPage() {
       <div className="max-w-6xl mx-auto px-6 mb-8 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0 space-y-8">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Open</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Open</span>
             Active Job Listings {items.length === 0 && 'June 2026'}
           </h2>
           {loading ? (
-            <div className="text-center py-10 text-gray-400">Loading jobs...</div>
+            <div className="text-center py-10 text-ink-caption">Loading jobs...</div>
           ) : items.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {withInlineAds(filteredCms, item => (
@@ -218,19 +218,19 @@ export default function JobBoardPage() {
                   key={item.contentId}
                   image={item.imageUrl}
                   imageAlt={item.title}
-                  imageFallback={<Briefcase className="w-10 h-10 text-yellow-400" />}
-                  className="border-l-4 border-l-yellow-400"
+                  imageFallback={<Briefcase className="w-10 h-10 text-brand-yellow" />}
+                  className="border-l-4 border-l-brand-yellow"
                 >
-                  {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{item.title}</h3>
-                  {item.company && <p className="text-xs text-gray-500 mb-2">{item.company}{item.location ? ` · ${item.location}` : ''}</p>}
-                  {item.description && <p className="text-xs text-gray-400 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
-                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                  {item.category && <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                  <h3 className="text-sm font-bold text-ink leading-snug mb-1 line-clamp-2">{item.title}</h3>
+                  {item.company && <p className="text-xs text-ink-caption mb-2">{item.company}{item.location ? ` · ${item.location}` : ''}</p>}
+                  {item.description && <p className="text-xs text-ink-caption leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                  <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      {item.salary && <span className="text-sm font-bold text-gray-700 truncate">{item.salary}</span>}
-                      {item.platform && <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded flex-shrink-0">{item.platform}</span>}
+                      {item.salary && <span className="text-sm font-bold text-ink-paragraph truncate">{item.salary}</span>}
+                      {item.platform && <span className="bg-ink-light text-ink-paragraph text-xs font-semibold px-2 py-0.5 rounded flex-shrink-0">{item.platform}</span>}
                     </div>
-                    <button onClick={() => openApply(item)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex-shrink-0">Apply →</button>
+                    <button onClick={() => openApply(item)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow flex-shrink-0">Apply →</button>
                   </div>
                 </ContentCard>
               ))}
@@ -238,19 +238,19 @@ export default function JobBoardPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {withInlineAds(filteredStatic, (job, i) => (
-                <ContentCard key={i} imageFallback={<span className="text-4xl">{job.icon}</span>} className="border-l-4 border-l-yellow-400">
+                <ContentCard key={i} imageFallback={<span className="text-4xl">{job.icon}</span>} className="border-l-4 border-l-brand-yellow">
                   <div className="flex flex-wrap gap-1.5 mb-2">
-                    <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">{job.category}</span>
-                    <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-2 py-0.5 rounded">{job.type}</span>
+                    <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded">{job.category}</span>
+                    <span className="bg-ink-light text-ink-paragraph text-xs font-semibold px-2 py-0.5 rounded">{job.type}</span>
                   </div>
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{job.title}</h3>
-                  <p className="text-xs text-gray-500 mb-2">{job.company}</p>
-                  <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <h3 className="text-sm font-bold text-ink leading-snug mb-1 line-clamp-2">{job.title}</h3>
+                  <p className="text-xs text-ink-caption mb-2">{job.company}</p>
+                  <div className="flex items-center gap-1 text-xs text-ink-caption">
                     <MapPin className="w-3 h-3 flex-shrink-0" />{job.location}
                   </div>
-                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
-                    <span className="text-sm font-bold text-gray-700">{job.salary}</span>
-                    <a href="mailto:bd@dronetv.in?subject=Job Application" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Apply →</a>
+                  <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
+                    <span className="text-sm font-bold text-ink-paragraph">{job.salary}</span>
+                    <a href="mailto:bd@dronetv.in?subject=Job Application" className="text-xs font-bold text-brand-gold hover:text-brand-yellow">Apply →</a>
                   </div>
                 </ContentCard>
               ))}
@@ -262,16 +262,16 @@ export default function JobBoardPage() {
         <AdDetailBanner />
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Salary</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Salary</span>
             Salary Guide — India 2026 Verified Data
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {salaryGuide.map((g, i) => (
               <ContentCard key={i}>
-                <div className="text-xl font-extrabold text-yellow-500 mb-1">{g.range}</div>
-                <div className="text-sm font-bold text-gray-900 mb-2">{g.level}</div>
-                <p className="text-xs text-gray-500 leading-relaxed">{g.desc}</p>
+                <div className="text-xl font-extrabold text-brand-gold mb-1">{g.range}</div>
+                <div className="text-sm font-bold text-ink mb-2">{g.level}</div>
+                <p className="text-xs text-ink-caption leading-relaxed">{g.desc}</p>
               </ContentCard>
             ))}
           </div>
@@ -285,25 +285,25 @@ export default function JobBoardPage() {
       <div className="max-w-6xl mx-auto px-6 pb-12 space-y-8">
         {myJobs.length > 0 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-4 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">My</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-4 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">My</span>
               My Posted Jobs
             </h2>
             <div className="space-y-2">
               {myJobs.map(j => (
-                <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+                <div key={j.contentId} className="bg-surface-card rounded-xl border border-ink-light p-4 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Briefcase className="w-4 h-4 text-yellow-600" />
+                    <div className="w-8 h-8 bg-surface-main rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Briefcase className="w-4 h-4 text-brand-gold" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{j.title}</p>
-                      <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')} · {j.isPublished ? 'Live on Job Board' : 'Pending admin review'}</p>
+                      <p className="text-sm font-semibold text-ink">{j.title}</p>
+                      <p className="text-xs text-ink-caption">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')} · {j.isPublished ? 'Live on Job Board' : 'Pending admin review'}</p>
                     </div>
                   </div>
                   {j.isPublished
-                    ? <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
-                    : <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
+                    ? <span className="text-xs bg-status-success/15 text-status-success font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
+                    : <span className="text-xs bg-brand-yellow-soft text-brand-gold font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
                   }
                 </div>
               ))}
@@ -311,7 +311,7 @@ export default function JobBoardPage() {
           </div>
         )}
 
-        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-ink rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white text-base mb-1">Post a Job on DroneTv.in</h3>
             <p className="text-sm text-white/60 max-w-lg">
@@ -322,12 +322,12 @@ export default function JobBoardPage() {
           <div className="flex gap-3 flex-shrink-0">
             {userId ? (
               <button onClick={() => { setPostJobForm({ ...EMPTY_POST, company: companies[0]?.companyName || '' }); setPostSubmitted(false); setPostSubmitError(false); setPostJobModal(true); }}
-                className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                className="flex items-center gap-2 px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
                 <Plus className="w-4 h-4" /> Post a Job
               </button>
             ) : (
               <a href="/login"
-                className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
                 Login to Post a Job
               </a>
             )}
@@ -340,105 +340,105 @@ export default function JobBoardPage() {
       </div>
 
       {postJobModal && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg my-auto">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2"><Briefcase className="w-4 h-4 text-yellow-500" />Post a Job</h2>
-              <button onClick={() => setPostJobModal(false)} className="p-1.5 rounded hover:bg-gray-100"><X className="w-5 h-5 text-gray-500" /></button>
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/60 p-4 overflow-y-auto">
+          <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-lg my-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
+              <h2 className="text-base font-bold text-ink flex items-center gap-2"><Briefcase className="w-4 h-4 text-brand-gold" />Post a Job</h2>
+              <button onClick={() => setPostJobModal(false)} className="p-1.5 rounded hover:bg-ink-light"><X className="w-5 h-5 text-ink-caption" /></button>
             </div>
             <div className="px-6 py-5">
               {!postSubmitted ? (
                 <form onSubmit={handlePostJob} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Job Title *</label>
+                    <label className="block text-xs font-semibold text-ink-paragraph mb-1">Job Title *</label>
                     <input type="text" required value={postJobForm.title} onChange={e => setPostJobForm(f => ({ ...f, title: e.target.value }))}
                       placeholder="e.g. Agriculture Drone Pilot"
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                      className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Company Name *</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Company Name *</label>
                       {companies.length > 0 ? (
                         <select required value={postJobForm.company} onChange={e => setPostJobForm(f => ({ ...f, company: e.target.value }))}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400">
+                          className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow">
                           <option value="">Select your company</option>
                           {companies.map(c => <option key={c.publishedId} value={c.companyName}>{c.companyName}</option>)}
                         </select>
                       ) : (
                         <input type="text" required value={postJobForm.company} onChange={e => setPostJobForm(f => ({ ...f, company: e.target.value }))}
                           placeholder="Your company"
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                          className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                       )}
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Location</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Location</label>
                       <input type="text" value={postJobForm.location} onChange={e => setPostJobForm(f => ({ ...f, location: e.target.value }))}
                         placeholder="e.g. Hyderabad"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Category</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Category</label>
                       <select value={postJobForm.category} onChange={e => setPostJobForm(f => ({ ...f, category: e.target.value }))}
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400">
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow">
                         <option value="">Select category</option>
                         {JOB_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Job Type</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Job Type</label>
                       <select value={postJobForm.jobType} onChange={e => setPostJobForm(f => ({ ...f, jobType: e.target.value }))}
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400">
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow">
                         {['Full-Time', 'Part-Time', 'Contract', 'Internship'].map(t => <option key={t} value={t}>{t}</option>)}
                       </select>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Salary / Compensation</label>
+                    <label className="block text-xs font-semibold text-ink-paragraph mb-1">Salary / Compensation</label>
                     <input type="text" value={postJobForm.salary} onChange={e => setPostJobForm(f => ({ ...f, salary: e.target.value }))}
                       placeholder="e.g. Rs. 40,000–60,000/mo"
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                      className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-1">Job Description</label>
+                    <label className="block text-xs font-semibold text-ink-paragraph mb-1">Job Description</label>
                     <textarea rows={3} value={postJobForm.description} onChange={e => setPostJobForm(f => ({ ...f, description: e.target.value }))}
                       placeholder="Describe the role, requirements, and responsibilities..."
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
+                      className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow resize-none" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Job Image URL <span className="text-gray-400 font-normal">(optional)</span></label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Job Image URL <span className="text-ink-caption font-normal">(optional)</span></label>
                       <input type="url" value={postJobForm.imageUrl} onChange={e => setPostJobForm(f => ({ ...f, imageUrl: e.target.value }))}
                         placeholder="https://example.com/image.jpg"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Application Deadline</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Application Deadline</label>
                       <input type="date" value={postJobForm.applicationDeadline} onChange={e => setPostJobForm(f => ({ ...f, applicationDeadline: e.target.value }))}
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                     </div>
                   </div>
-                  <p className="text-xs text-gray-400">Your job will be reviewed by DroneTv team before going live on the job board.</p>
+                  <p className="text-xs text-ink-caption">Your job will be reviewed by DroneTv team before going live on the job board.</p>
                   {postSubmitError && (
-                    <p className="text-xs text-red-600 font-medium">
+                    <p className="text-xs text-status-error font-medium">
                       Submission failed. Please check your connection and try again.
                     </p>
                   )}
                   <button type="submit" disabled={postSubmitting}
-                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
+                    className="w-full bg-brand-yellow hover:bg-brand-gold text-ink font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
                     {postSubmitting ? 'Submitting...' : 'Submit Job Listing'}
                   </button>
                 </form>
               ) : (
                 <div className="text-center py-6">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-status-success/15 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-2xl">✓</span>
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-2">Job Submitted!</h3>
-                  <p className="text-sm text-gray-500 mb-4">Your job listing is pending review. It will appear on the job board once approved.</p>
+                  <h3 className="font-bold text-ink mb-2">Job Submitted!</h3>
+                  <p className="text-sm text-ink-caption mb-4">Your job listing is pending review. It will appear on the job board once approved.</p>
                   <button onClick={() => setPostJobModal(false)}
-                    className="px-6 py-2 bg-yellow-400 text-black font-bold rounded-lg text-sm hover:bg-yellow-500">
+                    className="px-6 py-2 bg-brand-yellow text-ink font-bold rounded-lg text-sm hover:bg-brand-gold">
                     Close
                   </button>
                 </div>
@@ -449,45 +449,45 @@ export default function JobBoardPage() {
       )}
 
       {applyModal.open && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base font-bold text-gray-900">Apply for this Role</h2>
-              <button onClick={closeApply} className="p-1.5 rounded hover:bg-gray-100"><X className="w-5 h-5 text-gray-500" /></button>
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/60 p-4 overflow-y-auto">
+          <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-md">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
+              <h2 className="text-base font-bold text-ink">Apply for this Role</h2>
+              <button onClick={closeApply} className="p-1.5 rounded hover:bg-ink-light"><X className="w-5 h-5 text-ink-caption" /></button>
             </div>
             <div className="px-6 py-5">
               {!submitted ? (
                 <>
-                  <p className="text-sm font-semibold text-gray-800 mb-1">{applyModal.item?.title}</p>
-                  {applyModal.item?.company && <p className="text-xs text-gray-400 mb-4">{applyModal.item.company}</p>}
+                  <p className="text-sm font-semibold text-ink-charcoal mb-1">{applyModal.item?.title}</p>
+                  {applyModal.item?.company && <p className="text-xs text-ink-caption mb-4">{applyModal.item.company}</p>}
                   <form onSubmit={handleApply} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Full Name *</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Full Name *</label>
                       <input type="text" required value={applyForm.name} onChange={e => setApplyForm(f => ({ ...f, name: e.target.value }))}
                         placeholder="Your full name"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Email *</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Email *</label>
                       <input type="email" required value={applyForm.email} onChange={e => setApplyForm(f => ({ ...f, email: e.target.value }))}
                         placeholder="Your email address"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Phone *</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Phone *</label>
                       <input type="tel" required value={applyForm.phone} onChange={e => setApplyForm(f => ({ ...f, phone: e.target.value }))}
                         placeholder="+91 XXXXX XXXXX"
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Brief message / experience</label>
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Brief message / experience</label>
                       <textarea rows={3} value={applyForm.message} onChange={e => setApplyForm(f => ({ ...f, message: e.target.value }))}
                         placeholder="Tell us briefly about your experience..."
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400 resize-none" />
+                        className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow resize-none" />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Resume <span className="text-gray-400 font-normal">(optional, PDF)</span></label>
-                      <label className="flex items-center gap-2 px-3 py-2.5 border border-dashed border-gray-300 rounded-lg text-sm text-gray-500 cursor-pointer hover:border-yellow-400">
+                      <label className="block text-xs font-semibold text-ink-paragraph mb-1">Resume <span className="text-ink-caption font-normal">(optional, PDF)</span></label>
+                      <label className="flex items-center gap-2 px-3 py-2.5 border border-dashed border-ink-light rounded-lg text-sm text-ink-caption cursor-pointer hover:border-brand-yellow">
                         <Paperclip className="w-4 h-4 flex-shrink-0" />
                         <span className="truncate">{applyForm.resume ? applyForm.resume.name : 'Upload your resume'}</span>
                         <input type="file" accept=".pdf,.doc,.docx" className="hidden"
@@ -495,23 +495,23 @@ export default function JobBoardPage() {
                       </label>
                     </div>
                     {submitError && (
-                      <p className="text-xs text-red-600 font-medium">
+                      <p className="text-xs text-status-error font-medium">
                         Submission failed. Please check your connection and try again.
                       </p>
                     )}
                     <button type="submit" disabled={submitting}
-                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
+                      className="w-full bg-brand-yellow hover:bg-brand-gold text-ink font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
                       {submitting ? 'Submitting...' : 'Submit Application'}
                     </button>
                   </form>
                 </>
               ) : (
                 <div className="text-center py-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-status-success/15 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-2xl">✓</span>
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-2">Application Submitted!</h3>
-                  <p className="text-sm text-gray-500">We'll review your application and get back to you at {applyForm.email}.</p>
+                  <h3 className="font-bold text-ink mb-2">Application Submitted!</h3>
+                  <p className="text-sm text-ink-caption">We'll review your application and get back to you at {applyForm.email}.</p>
                 </div>
               )}
             </div>

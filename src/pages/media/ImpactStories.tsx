@@ -38,7 +38,7 @@ export default function ImpactStoriesPage() {
   const filtered = activeCategory === 'All' ? items : items.filter(i => (i.category || 'General') === activeCategory);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone <span>Impact Stories</span></>}
         stats={[
@@ -51,7 +51,7 @@ export default function ImpactStoriesPage() {
         <div className="flex gap-2 flex-wrap">
           {categories.map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-brand-yellow border-brand-yellow text-ink' : 'border-ink-light text-ink-caption hover:border-brand-yellow'}`}>
               {cat}
             </button>
           ))}
@@ -60,25 +60,25 @@ export default function ImpactStoriesPage() {
 
       <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Stories</span>
+        <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+          <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Stories</span>
           Real-World Impact
         </h2>
         {loading ? (
-          <div className="text-center py-16 text-gray-400">Loading stories...</div>
+          <div className="text-center py-16 text-ink-caption">Loading stories...</div>
         ) : items.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {withInlineAds(filtered, item => (
               <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title}>
-                {item.category && <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
-                {item.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
-                <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-3 text-xs text-gray-400">
+                {item.category && <span className="bg-status-success/15 text-status-success text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                {item.description && <p className="text-xs text-ink-caption leading-relaxed mb-3 line-clamp-3">{item.description}</p>}
+                <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-3 text-xs text-ink-caption">
                     {item.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{item.location}</span>}
                     {item.source && <span>{item.source}</span>}
                   </div>
-                  <Link to={`/media/impact-stories/${item.contentId}`} state={{ item }} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 whitespace-nowrap">
+                  <Link to={`/media/impact-stories/${item.contentId}`} state={{ item }} className="text-xs font-bold text-brand-gold hover:text-brand-yellow whitespace-nowrap">
                     Read More →
                   </Link>
                 </div>
@@ -87,57 +87,57 @@ export default function ImpactStoriesPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-hidden">
               <div className="flex flex-col md:flex-row">
-                <div className="bg-zinc-900 md:w-56 flex-shrink-0 flex flex-col items-center justify-center p-8 gap-6">
+                <div className="bg-ink md:w-56 flex-shrink-0 flex flex-col items-center justify-center p-8 gap-6">
                   {[{num:'4x',label:'Coverage per hour'},{num:'40%',label:'Cost reduction/acre'},{num:'3',label:'Districts served'}].map(s => (
                     <div key={s.num} className="text-center">
-                      <span className="text-3xl font-extrabold text-yellow-400 block leading-none">{s.num}</span>
+                      <span className="text-3xl font-extrabold text-brand-yellow block leading-none">{s.num}</span>
                       <span className="text-xs text-white/50 mt-1 block">{s.label}</span>
                     </div>
                   ))}
                 </div>
                 <div className="p-6">
-                  <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-3 inline-block">Agriculture</span>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight">From Manual Spraying to 8 Acres Per Hour — A Drone Service Provider's Journey</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3 italic">"We went from 2 acres per hour manually to 8 acres per hour with drone spraying. The cost per acre dropped by 40%."</p>
-                  <p className="text-sm text-gray-600 leading-relaxed">Sreenivas Prasad, featured in DroneTv's Drone Expo 2025 coverage, runs an agricultural drone services business in Telangana. After completing DGCA RPC certification and acquiring two agriculture drones, he transitioned from manual labour-intensive spraying to drone-based precision operations, multiplying his daily coverage and reducing operational cost per acre significantly.</p>
-                  <p className="text-xs text-gray-400 mt-3">Sreenivas Prasad — Drone Service Provider, Telangana · DroneTv Drone Expo 2025</p>
+                  <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-3 inline-block">Agriculture</span>
+                  <h3 className="text-lg font-bold text-ink mb-2 leading-tight">From Manual Spraying to 8 Acres Per Hour — A Drone Service Provider's Journey</h3>
+                  <p className="text-xs text-ink-caption leading-relaxed mb-3 italic">"We went from 2 acres per hour manually to 8 acres per hour with drone spraying. The cost per acre dropped by 40%."</p>
+                  <p className="text-sm text-ink-paragraph leading-relaxed">Sreenivas Prasad, featured in DroneTv's Drone Expo 2025 coverage, runs an agricultural drone services business in Telangana. After completing DGCA RPC certification and acquiring two agriculture drones, he transitioned from manual labour-intensive spraying to drone-based precision operations, multiplying his daily coverage and reducing operational cost per acre significantly.</p>
+                  <p className="text-xs text-ink-caption mt-3">Sreenivas Prasad — Drone Service Provider, Telangana · DroneTv Drone Expo 2025</p>
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {withInlineAds(staticStories, story => (
                 <ContentCard key={story.id}>
-                  <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded mb-3 inline-block self-start">{story.category}</span>
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{story.title}</h3>
+                  <span className="bg-status-success/15 text-status-success text-xs font-bold px-2 py-0.5 rounded mb-3 inline-block self-start">{story.category}</span>
+                  <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{story.title}</h3>
                   <div className="mb-3">
-                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(story.id) ? '' : 'line-clamp-3'}`}>{story.text}</p>
+                    <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(story.id) ? '' : 'line-clamp-3'}`}>{story.text}</p>
                     {story.text.length > 140 && (
-                      <button onClick={() => toggleExpanded(story.id)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                      <button onClick={() => toggleExpanded(story.id)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                         {expandedIds.has(story.id) ? 'Show less' : 'Read more'}
                       </button>
                     )}
                   </div>
-                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between">
                     <div>
-                      <span className="text-2xl font-extrabold text-yellow-500 block leading-none">{story.metric}</span>
-                      <span className="text-xs text-gray-400">{story.metricLabel}</span>
+                      <span className="text-2xl font-extrabold text-brand-gold block leading-none">{story.metric}</span>
+                      <span className="text-xs text-ink-caption">{story.metricLabel}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                    <div className="flex items-center gap-1 text-xs text-ink-caption">
                       <MapPin className="w-3 h-3" />{story.location}
                     </div>
                   </div>
                 </ContentCard>
               ))}
             </div>
-            <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="bg-ink rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <h3 className="font-bold text-white text-base mb-1">Share Your Impact Story</h3>
                 <p className="text-sm text-white/60 max-w-lg">Has your company achieved measurable results using drones — yield improvement, time savings, cost reduction, or business growth? DroneTv.in publishes verified impact stories from across India's drone ecosystem.</p>
               </div>
               <div className="flex gap-3 flex-shrink-0">
-                <a href="mailto:bd@dronetv.in?subject=Submit Impact Story" className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">Share Your Story</a>
+                <a href="mailto:bd@dronetv.in?subject=Submit Impact Story" className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">Share Your Story</a>
                 <a href="/media/video-spotlight" className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">Video Interviews →</a>
               </div>
             </div>

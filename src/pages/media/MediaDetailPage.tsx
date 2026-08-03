@@ -26,18 +26,18 @@ export default function MediaDetailPage({ contentType, backPath, backLabel, exte
 
   if (loading) {
     return (
-      <div className="pt-[104px] min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-yellow-400" />
+      <div className="pt-[104px] min-h-screen bg-ink-offwhite flex items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-yellow" />
       </div>
     );
   }
 
   if (!item) {
     return (
-      <div className="pt-[104px] min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="pt-[104px] min-h-screen bg-ink-offwhite flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-900 mb-3">Content Not Found</h2>
-          <Link to={backPath} className="text-yellow-600 font-bold text-sm hover:text-yellow-700">← Back to {backLabel}</Link>
+          <h2 className="text-xl font-bold text-ink mb-3">Content Not Found</h2>
+          <Link to={backPath} className="text-brand-gold font-bold text-sm hover:text-brand-yellow">← Back to {backLabel}</Link>
         </div>
       </div>
     );
@@ -51,14 +51,14 @@ export default function MediaDetailPage({ contentType, backPath, backLabel, exte
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
-      <div className="bg-black text-white">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+      <div className="bg-ink text-white">
         <div className="max-w-4xl mx-auto px-6 py-8">
-          <Link to={backPath} className="flex items-center gap-2 text-white/50 hover:text-yellow-400 text-sm font-semibold mb-5 transition-colors w-fit">
+          <Link to={backPath} className="flex items-center gap-2 text-white/50 hover:text-brand-yellow text-sm font-semibold mb-5 transition-colors w-fit">
             <ArrowLeft className="w-4 h-4" /> Back to {backLabel}
           </Link>
           {item.category && (
-            <p className="text-xs font-bold text-yellow-400 uppercase tracking-widest mb-3">{item.category}</p>
+            <p className="text-xs font-bold text-brand-yellow uppercase tracking-widest mb-3">{item.category}</p>
           )}
           <h1 className="text-2xl md:text-3xl font-extrabold text-white leading-tight">{item.title}</h1>
           <div className="flex flex-wrap items-center gap-5 mt-4">
@@ -90,26 +90,26 @@ export default function MediaDetailPage({ contentType, backPath, backLabel, exte
         )}
 
         {item.description ? (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-6">
-            <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-wrap">{item.description}</p>
+          <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-8 mb-6">
+            <p className="text-ink-paragraph leading-relaxed text-sm whitespace-pre-wrap">{item.description}</p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-6">
-            <p className="text-gray-400 text-sm italic">No description available.</p>
+          <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-8 mb-6">
+            <p className="text-ink-caption text-sm italic">No description available.</p>
           </div>
         )}
 
         {item.tags && item.tags.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap mb-6">
-            <Tag className="w-4 h-4 text-gray-400" />
+            <Tag className="w-4 h-4 text-ink-caption" />
             {item.tags.map(tag => (
-              <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">{tag}</span>
+              <span key={tag} className="bg-ink-light text-ink-paragraph text-xs font-semibold px-3 py-1 rounded-full">{tag}</span>
             ))}
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-          <Link to={backPath} className="flex items-center gap-2 text-gray-600 hover:text-yellow-600 text-sm font-semibold transition-colors">
+        <div className="flex items-center justify-between pt-4 border-t border-ink-light">
+          <Link to={backPath} className="flex items-center gap-2 text-ink-paragraph hover:text-brand-yellow text-sm font-semibold transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to {backLabel}
           </Link>
           {item.externalLink && (
@@ -117,7 +117,7 @@ export default function MediaDetailPage({ contentType, backPath, backLabel, exte
               href={item.externalLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
+              className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-ink font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
             >
               {externalLinkLabel} <ExternalLink className="w-4 h-4" />
             </a>

@@ -44,7 +44,7 @@ export default function BecomePartnerPage() {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Become a Partner <span>on DroneTv.in</span></>}
         stats={[
@@ -53,12 +53,12 @@ export default function BecomePartnerPage() {
         ]}
       />
 
-      <div className="bg-black/5 border-b border-gray-200">
+      <div className="bg-ink/5 border-b border-ink-light">
         <div className="max-w-6xl mx-auto px-6 py-3 flex flex-wrap gap-6 justify-center">
           {stats.map((s) => (
             <div key={s.label} className="text-center">
-              <span className="font-extrabold text-yellow-600 text-base block">{s.value}</span>
-              <span className="text-xs text-gray-500">{s.label}</span>
+              <span className="font-extrabold text-brand-gold text-base block">{s.value}</span>
+              <span className="text-xs text-ink-caption">{s.label}</span>
             </div>
           ))}
         </div>
@@ -67,62 +67,62 @@ export default function BecomePartnerPage() {
       <div className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Process</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Process</span>
               How it Works
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {steps.map((s) => (
-                <div key={s.num} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-black font-extrabold text-base mb-3">
+                <div key={s.num} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-5">
+                  <div className="w-10 h-10 bg-brand-yellow rounded-full flex items-center justify-center text-ink font-extrabold text-base mb-3">
                     {s.num}
                   </div>
-                  <h3 className="font-bold text-gray-900 text-sm mb-2">{s.title}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed">{s.desc}</p>
+                  <h3 className="font-bold text-ink text-sm mb-2">{s.title}</h3>
+                  <p className="text-xs text-ink-caption leading-relaxed">{s.desc}</p>
                 </div>
               ))}
             </div>
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Enquiry</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Enquiry</span>
               Submit Your Interest
             </h2>
             {submitted ? (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+              <div className="bg-status-success/10 border border-status-success/25 rounded-xl p-8 text-center">
                 <p className="text-2xl mb-3">✅</p>
-                <h3 className="font-bold text-green-800 text-lg mb-2">Thank you!</h3>
-                <p className="text-sm text-green-700 mb-1">Our team will contact you within 48 hours.</p>
-                <p className="text-sm font-bold text-green-800">Email: bd@dronetv.in</p>
+                <h3 className="font-bold text-status-success text-lg mb-2">Thank you!</h3>
+                <p className="text-sm text-status-success mb-1">Our team will contact you within 48 hours.</p>
+                <p className="text-sm font-bold text-status-success">Email: bd@dronetv.in</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
+              <form onSubmit={handleSubmit} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-6 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">Company Name *</label>
+                    <label className="block text-xs font-bold text-ink-paragraph mb-1">Company Name *</label>
                     <input
                       name="companyName"
                       value={form.companyName}
                       onChange={handleChange}
                       required
                       placeholder="Your company name"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-yellow"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">Your Name *</label>
+                    <label className="block text-xs font-bold text-ink-paragraph mb-1">Your Name *</label>
                     <input
                       name="yourName"
                       value={form.yourName}
                       onChange={handleChange}
                       required
                       placeholder="Your full name"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-yellow"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">Email *</label>
+                    <label className="block text-xs font-bold text-ink-paragraph mb-1">Email *</label>
                     <input
                       name="email"
                       type="email"
@@ -130,39 +130,39 @@ export default function BecomePartnerPage() {
                       onChange={handleChange}
                       required
                       placeholder="your@company.com"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-yellow"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">Phone</label>
+                    <label className="block text-xs font-bold text-ink-paragraph mb-1">Phone</label>
                     <input
                       name="phone"
                       value={form.phone}
                       onChange={handleChange}
                       placeholder="+91 XXXXX XXXXX"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-yellow"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">Company Type *</label>
+                    <label className="block text-xs font-bold text-ink-paragraph mb-1">Company Type *</label>
                     <select
                       name="companyType"
                       value={form.companyType}
                       onChange={handleChange}
                       required
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-yellow"
                     >
                       <option value="">Select type...</option>
                       {companyTypes.map((t) => <option key={t}>{t}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">Preferred Package</label>
+                    <label className="block text-xs font-bold text-ink-paragraph mb-1">Preferred Package</label>
                     <select
                       name="preferredPackage"
                       value={form.preferredPackage}
                       onChange={handleChange}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-yellow-400"
+                      className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-yellow"
                     >
                       <option value="">Select package...</option>
                       {packages.map((p) => <option key={p}>{p}</option>)}
@@ -170,23 +170,23 @@ export default function BecomePartnerPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Message</label>
+                  <label className="block text-xs font-bold text-ink-paragraph mb-1">Message</label>
                   <textarea
                     name="message"
                     value={form.message}
                     onChange={handleChange}
                     placeholder="Tell us about your company and what you're looking to achieve..."
                     rows={4}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-yellow-400 resize-none"
+                    className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-yellow resize-none"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-yellow-400 text-black font-bold text-sm py-3 rounded-lg hover:bg-yellow-500 transition-colors"
+                  className="w-full bg-brand-yellow text-ink font-bold text-sm py-3 rounded-lg hover:bg-brand-gold transition-colors"
                 >
                   Submit Partnership Enquiry →
                 </button>
-                <p className="text-xs text-gray-400 text-center">We respond within 48 hours · bd@dronetv.in · 100% advance required</p>
+                <p className="text-xs text-ink-caption text-center">We respond within 48 hours · bd@dronetv.in · 100% advance required</p>
               </form>
             )}
           </div>
@@ -194,32 +194,32 @@ export default function BecomePartnerPage() {
 
         <div className="space-y-4">
           <div>
-            <div className="bg-black px-4 py-3 rounded-t-xl">
+            <div className="bg-ink px-4 py-3 rounded-t-xl">
               <h3 className="text-white font-bold text-sm">Contact Us Directly</h3>
             </div>
-            <div className="bg-white border border-gray-200 rounded-b-xl px-4 py-4">
-              <p className="text-xs text-gray-500 mb-3">Prefer to talk? Reach our BD team directly:</p>
-              <a href="mailto:bd@dronetv.in" className="block text-sm font-bold text-yellow-600 hover:text-yellow-700 mb-3">bd@dronetv.in</a>
-              <p className="text-xs text-gray-400">Response within 48 hours on business days.</p>
+            <div className="bg-surface-card border border-ink-light rounded-b-xl px-4 py-4">
+              <p className="text-xs text-ink-caption mb-3">Prefer to talk? Reach our BD team directly:</p>
+              <a href="mailto:bd@dronetv.in" className="block text-sm font-bold text-brand-gold hover:text-brand-yellow mb-3">bd@dronetv.in</a>
+              <p className="text-xs text-ink-caption">Response within 48 hours on business days.</p>
             </div>
           </div>
 
           <div>
-            <div className="bg-black px-4 py-3 rounded-t-xl">
+            <div className="bg-ink px-4 py-3 rounded-t-xl">
               <h3 className="text-white font-bold text-sm">Package Summary</h3>
             </div>
-            <div className="bg-white border border-gray-200 rounded-b-xl px-4 py-4 space-y-3">
+            <div className="bg-surface-card border border-ink-light rounded-b-xl px-4 py-4 space-y-3">
               {[
                 { name: 'Reach', price: 'Rs.25,000/yr', highlight: false },
                 { name: 'Scale', price: 'Rs.75,000/yr', highlight: true },
                 { name: 'Brand', price: 'Rs.1,50,000/yr', highlight: false },
               ].map((p) => (
-                <div key={p.name} className={`flex items-center justify-between py-2 px-3 rounded-lg ${p.highlight ? 'bg-yellow-50 border border-yellow-200' : ''}`}>
-                  <span className="text-sm font-bold text-gray-900">{p.name}</span>
-                  <span className={`text-xs font-bold ${p.highlight ? 'text-yellow-600' : 'text-gray-500'}`}>{p.price}</span>
+                <div key={p.name} className={`flex items-center justify-between py-2 px-3 rounded-lg ${p.highlight ? 'bg-surface-main border border-brand-yellow-soft' : ''}`}>
+                  <span className="text-sm font-bold text-ink">{p.name}</span>
+                  <span className={`text-xs font-bold ${p.highlight ? 'text-brand-gold' : 'text-ink-caption'}`}>{p.price}</span>
                 </div>
               ))}
-              <p className="text-xs text-gray-400 pt-1">All + GST. 100% advance. 12-month term.</p>
+              <p className="text-xs text-ink-caption pt-1">All + GST. 100% advance. 12-month term.</p>
             </div>
           </div>
         </div>

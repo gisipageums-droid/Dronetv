@@ -21,7 +21,7 @@ function VideoCard({ item }: { item: MediaItem }) {
   const thumb = item.imageUrl || (item.videoUrl ? getYoutubeThumbnail(item.videoUrl) : null);
 
   return (
-    <div className="flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <div className="flex flex-col bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow overflow-hidden">
       <div className="relative w-full flex-shrink-0" style={{ paddingTop: '56.25%' }}>
         {playing && embedUrl ? (
           <iframe
@@ -32,24 +32,24 @@ function VideoCard({ item }: { item: MediaItem }) {
           />
         ) : (
           <div
-            className="absolute inset-0 bg-zinc-900 cursor-pointer"
+            className="absolute inset-0 bg-ink cursor-pointer"
             onClick={() => embedUrl && setPlaying(true)}
           >
             {thumb ? (
               <img src={thumb} alt={item.title} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-brand-yellow rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 text-ink ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
               </div>
             )}
             {embedUrl && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors">
-                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
-                  <svg className="w-5 h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+              <div className="absolute inset-0 flex items-center justify-center bg-ink/30 hover:bg-ink-charcoal/20 transition-colors">
+                <div className="w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center shadow-lg">
+                  <svg className="w-5 h-5 text-ink ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
@@ -60,13 +60,13 @@ function VideoCard({ item }: { item: MediaItem }) {
       </div>
       <div className="p-4 flex-1 flex flex-col">
         {item.category && (
-          <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>
+          <span className="bg-brand-gold/15 text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>
         )}
-        <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{item.title}</h3>
-        {item.description && <p className="text-xs text-gray-500 mb-3 line-clamp-3">{item.description}</p>}
+        <h3 className="text-sm font-bold text-ink leading-snug mb-1 line-clamp-2">{item.title}</h3>
+        {item.description && <p className="text-xs text-ink-caption mb-3 line-clamp-3">{item.description}</p>}
         {item.externalLink && (
           <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
-            className="mt-auto pt-2 text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors">
+            className="mt-auto pt-2 text-xs font-bold text-brand-gold hover:text-brand-yellow transition-colors">
             Watch on YouTube →
           </a>
         )}
@@ -99,7 +99,7 @@ export default function VideoSpotlightPage() {
     : items.filter(i => i.category === activeFilter);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>DroneTv <span>Video Spotlight</span></>}
         stats={[
@@ -117,8 +117,8 @@ export default function VideoSpotlightPage() {
             <button key={f} onClick={() => setActiveFilter(f)}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
                 activeFilter === f
-                  ? 'bg-yellow-400 border-yellow-400 text-black'
-                  : 'border-gray-200 text-gray-500 hover:border-yellow-400 hover:text-gray-900'
+                  ? 'bg-brand-yellow border-brand-yellow text-ink'
+                  : 'border-ink-light text-ink-caption hover:border-brand-yellow hover:text-ink'
               }`}>
               {f}
             </button>
@@ -126,37 +126,37 @@ export default function VideoSpotlightPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Episodes</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Episodes</span>
             Video Interviews
           </h2>
           {loading ? (
-            <div className="text-center py-16 text-gray-400">Loading videos...</div>
+            <div className="text-center py-16 text-ink-caption">Loading videos...</div>
           ) : items.length > 0 ? (
             filtered.length === 0
-              ? <div className="text-center py-8 text-gray-400">No videos in this category.</div>
+              ? <div className="text-center py-8 text-ink-caption">No videos in this category.</div>
               : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {withInlineAds(filtered, item => <VideoCard key={item.contentId} item={item} />)}
                 </div>
           ) : (
             <div className="space-y-6">
-              <p className="text-sm text-gray-500">Drone Expo 2025 — Mumbai Interviews <span className="font-bold text-yellow-600">40+ Videos</span></p>
+              <p className="text-sm text-ink-caption">Drone Expo 2025 — Mumbai Interviews <span className="font-bold text-brand-gold">40+ Videos</span></p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {withInlineAds(staticVideos, v => (
-                  <div key={v.id} className="flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                    <div className="bg-zinc-900 aspect-video flex items-center justify-center relative flex-shrink-0">
-                      <span className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">{v.ep}</span>
+                  <div key={v.id} className="flex flex-col bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <div className="bg-ink aspect-video flex items-center justify-center relative flex-shrink-0">
+                      <span className="absolute top-2 left-2 bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">{v.ep}</span>
                       <a href={v.link} target="_blank" rel="noopener noreferrer"
-                        className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center hover:bg-yellow-300 transition-colors">
-                        <svg className="w-5 h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                        className="w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center hover:bg-brand-yellow-soft transition-colors">
+                        <svg className="w-5 h-5 text-ink ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                       </a>
                     </div>
                     <div className="p-4 flex-1 flex flex-col">
-                      <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{v.tag}</span>
-                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{v.title}</h3>
-                      <p className="text-xs text-gray-500">{v.person} — {v.company}</p>
+                      <span className="bg-brand-gold/15 text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{v.tag}</span>
+                      <h3 className="text-sm font-bold text-ink leading-snug mb-1 line-clamp-2">{v.title}</h3>
+                      <p className="text-xs text-ink-caption">{v.person} — {v.company}</p>
                       <a href={v.link} target="_blank" rel="noopener noreferrer"
-                        className="mt-auto pt-2 text-xs font-bold text-yellow-600 hover:text-yellow-700 block">
+                        className="mt-auto pt-2 text-xs font-bold text-brand-gold hover:text-brand-yellow block">
                         Watch on YouTube →
                       </a>
                     </div>
@@ -167,13 +167,13 @@ export default function VideoSpotlightPage() {
           )}
         </div>
 
-        <div className="bg-yellow-400 rounded-xl p-6 flex items-center justify-between gap-4">
+        <div className="bg-brand-yellow rounded-xl p-6 flex items-center justify-between gap-4">
           <div>
-            <h3 className="font-extrabold text-black text-lg mb-1">Watch the full series on YouTube</h3>
-            <p className="text-black/70 text-sm">50+ interviews with India's drone industry leaders. New episodes added regularly.</p>
+            <h3 className="font-extrabold text-ink text-lg mb-1">Watch the full series on YouTube</h3>
+            <p className="text-ink/70 text-sm">50+ interviews with India's drone industry leaders. New episodes added regularly.</p>
           </div>
           <a href="https://www.youtube.com/@indiadronetv" target="_blank" rel="noopener noreferrer"
-            className="bg-black text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-gray-900 transition-colors whitespace-nowrap">
+            className="bg-ink text-white font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-ink-charcoal transition-colors whitespace-nowrap">
             Visit Channel →
           </a>
         </div>

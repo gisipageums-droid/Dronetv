@@ -23,17 +23,17 @@ const staticNews = [
 ];
 
 const BADGE_MAP: Record<string, string> = {
-  market: 'bg-blue-100 text-blue-700',
-  defence: 'bg-orange-100 text-orange-700',
-  policy: 'bg-green-100 text-green-700',
-  agriculture: 'bg-amber-100 text-amber-700',
-  technology: 'bg-purple-100 text-purple-700',
-  training: 'bg-pink-100 text-pink-700',
+  market: 'bg-status-info/15 text-status-info',
+  defence: 'bg-status-warning/15 text-status-warning',
+  policy: 'bg-status-success/15 text-status-success',
+  agriculture: 'bg-brand-yellow-soft text-brand-gold',
+  technology: 'bg-brand-gold/15 text-brand-gold',
+  training: 'bg-status-error/15 text-status-error',
 };
 
 function badgeClass(category?: string): string {
-  if (!category) return 'bg-gray-100 text-gray-600';
-  return BADGE_MAP[category.toLowerCase()] ?? 'bg-gray-100 text-gray-600';
+  if (!category) return 'bg-ink-light text-ink-paragraph';
+  return BADGE_MAP[category.toLowerCase()] ?? 'bg-ink-light text-ink-paragraph';
 }
 
 export default function NewsPulsePage() {
@@ -60,7 +60,7 @@ export default function NewsPulsePage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone Industry <span>News Pulse</span></>}
         stats={[
@@ -78,8 +78,8 @@ export default function NewsPulsePage() {
                 onClick={() => setActive(f)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
                   active === f
-                    ? 'bg-yellow-400 border-yellow-400 text-black'
-                    : 'border-gray-200 text-gray-500 hover:border-yellow-400 hover:text-gray-900'
+                    ? 'bg-brand-yellow border-brand-yellow text-ink'
+                    : 'border-ink-light text-ink-caption hover:border-brand-yellow hover:text-ink'
                 }`}
               >
                 {f}
@@ -88,26 +88,26 @@ export default function NewsPulsePage() {
           </div>
 
           {(active === 'All News' || active === 'Market') && <div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Featured</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Featured</span>
               Top Story
             </h2>
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-hidden">
               <div className="flex flex-col md:flex-row">
-                <div className="bg-black md:w-56 flex-shrink-0 flex flex-col items-center justify-center p-8">
-                  <span className="text-3xl font-extrabold text-yellow-400 leading-none">Rs.29,080Cr</span>
+                <div className="bg-ink md:w-56 flex-shrink-0 flex flex-col items-center justify-center p-8">
+                  <span className="text-3xl font-extrabold text-brand-yellow leading-none">Rs.29,080Cr</span>
                   <span className="text-xs text-white/50 font-semibold uppercase tracking-wide mt-2 text-center">Projected Market by 2030</span>
                 </div>
                 <div className="p-6">
-                  <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">Market</span>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 leading-tight">
+                  <span className="bg-status-info/15 text-status-info text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block">Market</span>
+                  <h3 className="text-xl font-bold text-ink mb-2 leading-tight">
                     India Drone Market to Reach Rs. 29,080 Crore by 2030 at 21.51% CAGR
                   </h3>
-                  <p className="text-sm text-gray-500 mb-3 leading-relaxed">
+                  <p className="text-sm text-ink-caption mb-3 leading-relaxed">
                     India's drone market is on a steep growth trajectory driven by government PLI schemes, defence procurement, and widespread adoption in agriculture and infrastructure monitoring. The sector is projected to grow from Rs.10,977 Crore in 2025 to Rs.29,080 Crore by 2030.
                   </p>
-                  <div className="flex items-center gap-3 text-xs text-gray-400">
-                    <span className="font-semibold text-gray-700">IBEF</span>
+                  <div className="flex items-center gap-3 text-xs text-ink-caption">
+                    <span className="font-semibold text-ink-paragraph">IBEF</span>
                     <span>•</span>
                     <span>Jun 2026</span>
                   </div>
@@ -120,26 +120,26 @@ export default function NewsPulsePage() {
             {/* "News Pulse Spot" paid placement — booked via User Dashboard > Page Placements */}
             <PagePlacementSlot slotId="media-news" aspect="4/1" minHeight={90} className="mb-5 w-full" />
 
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Latest</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Latest</span>
               News Grid
             </h2>
             {(() => {
               if (news.length > 0) {
                 const filtered = news.filter(item => active === 'All News' || (item.category || '').toLowerCase().includes(active.toLowerCase()));
-                if (filtered.length === 0) return <p className="text-sm text-gray-400 text-center py-8">No {active} articles found.</p>;
+                if (filtered.length === 0) return <p className="text-sm text-ink-caption text-center py-8">No {active} articles found.</p>;
                 return (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {withInlineAds(filtered, item => (
                       <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title}>
                         <div className="flex items-center justify-between mb-3">
                           <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category || 'News'}</span>
-                          <span className="text-xs text-gray-400">{item.date ? new Date(item.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}</span>
+                          <span className="text-xs text-ink-caption">{item.date ? new Date(item.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}</span>
                         </div>
-                        <h3 className="text-sm font-bold text-gray-900 leading-snug mb-3 line-clamp-2">{item.title}</h3>
-                        <div className="mt-auto pt-3 border-t border-gray-100">
-                          <p className="text-xs text-gray-500 font-semibold">{item.source}</p>
-                          <Link to={`/media/news/${item.contentId}`} state={{ item }} className="text-xs text-yellow-600 font-bold hover:text-yellow-700 mt-2 block">Read more →</Link>
+                        <h3 className="text-sm font-bold text-ink leading-snug mb-3 line-clamp-2">{item.title}</h3>
+                        <div className="mt-auto pt-3 border-t border-ink-light">
+                          <p className="text-xs text-ink-caption font-semibold">{item.source}</p>
+                          <Link to={`/media/news/${item.contentId}`} state={{ item }} className="text-xs text-brand-gold font-bold hover:text-brand-yellow mt-2 block">Read more →</Link>
                         </div>
                       </ContentCard>
                     ))}
@@ -154,18 +154,18 @@ export default function NewsPulsePage() {
                     <ContentCard key={item.id}>
                       <div className="flex items-center justify-between mb-3">
                         <span className={`text-xs font-bold px-2 py-0.5 rounded ${badgeClass(item.category)}`}>{item.category}</span>
-                        <span className="text-xs text-gray-400">{item.date}</span>
+                        <span className="text-xs text-ink-caption">{item.date}</span>
                       </div>
-                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{item.title}</h3>
+                      <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{item.title}</h3>
                       <div className="mb-2">
-                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.id) ? '' : 'line-clamp-3'}`}>{item.excerpt}</p>
+                        <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.id) ? '' : 'line-clamp-3'}`}>{item.excerpt}</p>
                         {item.excerpt.length > 140 && (
-                          <button onClick={() => toggleExpanded(item.id)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          <button onClick={() => toggleExpanded(item.id)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                             {expandedIds.has(item.id) ? 'Show less' : 'Read more'}
                           </button>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 font-semibold mt-auto pt-3 border-t border-gray-100">Source: {item.source}</p>
+                      <p className="text-xs text-ink-caption font-semibold mt-auto pt-3 border-t border-ink-light">Source: {item.source}</p>
                     </ContentCard>
                   ))}
                 </div>
@@ -173,14 +173,14 @@ export default function NewsPulsePage() {
             })()}
           </div>
 
-          <div className="bg-yellow-400 rounded-xl p-6 flex items-start gap-4">
+          <div className="bg-brand-yellow rounded-xl p-6 flex items-start gap-4">
             <div className="text-2xl">📰</div>
             <div>
-              <h3 className="font-bold text-black mb-1">Submit a News Story or Press Release</h3>
-              <p className="text-sm text-black/70 mb-3">Share industry news, announcements, or press releases with India's drone community.</p>
+              <h3 className="font-bold text-ink mb-1">Submit a News Story or Press Release</h3>
+              <p className="text-sm text-ink/70 mb-3">Share industry news, announcements, or press releases with India's drone community.</p>
               <Link
                 to="/media/press-releases"
-                className="inline-block bg-black text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-gray-900 transition-colors"
+                className="inline-block bg-ink text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-ink-charcoal transition-colors"
               >
                 Go to Press Releases →
               </Link>
@@ -190,24 +190,24 @@ export default function NewsPulsePage() {
 
         <div className="space-y-4">
           <div>
-            <div className="bg-black px-4 py-3 rounded-t-xl">
+            <div className="bg-ink px-4 py-3 rounded-t-xl">
               <h3 className="text-white font-bold text-sm">Subscribe for Updates</h3>
             </div>
-            <div className="bg-white border border-gray-200 rounded-b-xl px-4 py-4">
-              <p className="text-xs text-gray-500 mb-3">Get the week's top drone industry news in your inbox every Friday.</p>
+            <div className="bg-surface-card border border-ink-light rounded-b-xl px-4 py-4">
+              <p className="text-xs text-ink-caption mb-3">Get the week's top drone industry news in your inbox every Friday.</p>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your email address"
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:border-yellow-400"
+                className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:border-brand-yellow"
               />
               {subscribed ? (
-                <p className="text-xs text-green-600 font-bold text-center py-1">Subscribed! ✓</p>
+                <p className="text-xs text-status-success font-bold text-center py-1">Subscribed! ✓</p>
               ) : (
                 <button
                   onClick={() => { if (email) setSubscribed(true); }}
-                  className="w-full bg-yellow-400 text-black font-bold text-xs py-2 rounded-lg hover:bg-yellow-500 transition-colors"
+                  className="w-full bg-brand-yellow text-ink font-bold text-xs py-2 rounded-lg hover:bg-brand-gold transition-colors"
                 >
                   Subscribe Free
                 </button>
@@ -216,10 +216,10 @@ export default function NewsPulsePage() {
           </div>
 
           <div>
-            <div className="bg-black px-4 py-3 rounded-t-xl">
+            <div className="bg-ink px-4 py-3 rounded-t-xl">
               <h3 className="text-white font-bold text-sm">Media Hub</h3>
             </div>
-            <div className="bg-white border border-gray-200 rounded-b-xl px-4 py-4 space-y-2">
+            <div className="bg-surface-card border border-ink-light rounded-b-xl px-4 py-4 space-y-2">
               {[
                 { label: 'Magazine', to: '/media/magazine' },
                 { label: 'Video Spotlight', to: '/media/video-spotlight' },
@@ -232,17 +232,17 @@ export default function NewsPulsePage() {
                 <Link
                   key={l.to}
                   to={l.to}
-                  className="flex items-center justify-between py-1.5 text-sm text-gray-700 hover:text-yellow-600 font-medium group"
+                  className="flex items-center justify-between py-1.5 text-sm text-ink-paragraph hover:text-brand-yellow font-medium group"
                 >
                   {l.label}
-                  <span className="text-gray-300 group-hover:text-yellow-400">→</span>
+                  <span className="text-ink-light group-hover:text-brand-yellow">→</span>
                 </Link>
               ))}
             </div>
           </div>
 
           <div>
-            <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
+            <span className="block text-center text-[10px] font-semibold text-ink-caption uppercase tracking-widest mb-2">Advertisement</span>
             {sidebarAds[0] ? (
               <AdSlot image={sidebarAds[0].imageUrl} href={sidebarAds[0].externalLink} alt={sidebarAds[0].title} width={300} height={250} className="mx-auto" />
             ) : (
@@ -250,7 +250,7 @@ export default function NewsPulsePage() {
             )}
           </div>
           <div>
-            <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
+            <span className="block text-center text-[10px] font-semibold text-ink-caption uppercase tracking-widest mb-2">Advertisement</span>
             {sidebarAds[1] ? (
               <AdSlot image={sidebarAds[1].imageUrl} href={sidebarAds[1].externalLink} alt={sidebarAds[1].title} width={300} height={250} className="mx-auto" />
             ) : (

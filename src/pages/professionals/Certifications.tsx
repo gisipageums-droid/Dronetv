@@ -114,7 +114,7 @@ export default function CertificationsPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>DGCA Drone <span>Certifications</span> India 2026</>}
         stats={[
@@ -127,28 +127,28 @@ export default function CertificationsPage() {
       <div className="max-w-6xl mx-auto px-6 py-8 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0 space-y-10">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Categories</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Categories</span>
             Choose Your Certification Category
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {certCategories.map((cat) => (
-              <ContentCard key={cat.title} className={`relative ${cat.popular ? 'border-yellow-400 border-2' : ''}`}>
+              <ContentCard key={cat.title} className={`relative ${cat.popular ? 'border-brand-yellow border-2' : ''}`}>
                 {cat.popular && (
-                  <span className="absolute -top-3 left-5 bg-yellow-400 text-black text-xs font-bold px-3 py-0.5 rounded-full">Most Popular</span>
+                  <span className="absolute -top-3 left-5 bg-brand-yellow text-ink text-xs font-bold px-3 py-0.5 rounded-full">Most Popular</span>
                 )}
                 <div className="text-3xl mb-3">{cat.icon}</div>
-                <h3 className="font-extrabold text-gray-900 text-lg mb-1">{cat.title}</h3>
-                <p className="text-xs text-gray-500 mb-3">{cat.subtitle}</p>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4">{cat.desc}</p>
-                <div className="mt-auto pt-4 border-t border-gray-100 space-y-1">
+                <h3 className="font-extrabold text-ink text-lg mb-1">{cat.title}</h3>
+                <p className="text-xs text-ink-caption mb-3">{cat.subtitle}</p>
+                <p className="text-sm text-ink-paragraph leading-relaxed mb-4">{cat.desc}</p>
+                <div className="mt-auto pt-4 border-t border-ink-light space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 font-semibold">Course Cost</span>
-                    <span className="text-sm font-extrabold text-gray-900">{cat.cost}</span>
+                    <span className="text-xs text-ink-caption font-semibold">Course Cost</span>
+                    <span className="text-sm font-extrabold text-ink">{cat.cost}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500 font-semibold">Duration</span>
-                    <span className="text-xs font-bold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded">{cat.duration}</span>
+                    <span className="text-xs text-ink-caption font-semibold">Duration</span>
+                    <span className="text-xs font-bold text-brand-gold bg-surface-main px-2 py-0.5 rounded">{cat.duration}</span>
                   </div>
                 </div>
               </ContentCard>
@@ -157,26 +157,26 @@ export default function CertificationsPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Process</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Process</span>
             Step-by-Step Certification Path
           </h2>
           <div className="space-y-4">
             {steps.map((s) => (
-              <div key={s.step} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-col md:flex-row gap-4">
+              <div key={s.step} className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-5 flex flex-col md:flex-row gap-4">
                 <div className="flex-shrink-0 flex items-start gap-4">
-                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-black font-extrabold text-sm flex-shrink-0">
+                  <div className="w-10 h-10 bg-brand-yellow rounded-full flex items-center justify-center text-ink font-extrabold text-sm flex-shrink-0">
                     {s.step}
                   </div>
                   <div className="text-2xl">{s.icon}</div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-gray-900 text-base leading-snug mb-0.5">{s.title}</h3>
-                  <p className="text-xs font-semibold text-yellow-600 uppercase tracking-wide mb-2">{s.subtitle}</p>
-                  <p className="text-sm text-gray-600 leading-relaxed mb-3">{s.desc}</p>
+                  <h3 className="font-bold text-ink text-base leading-snug mb-0.5">{s.title}</h3>
+                  <p className="text-xs font-semibold text-brand-gold uppercase tracking-wide mb-2">{s.subtitle}</p>
+                  <p className="text-sm text-ink-paragraph leading-relaxed mb-3">{s.desc}</p>
                   <div className="flex flex-wrap gap-3">
                     {s.bullets.map((b, i) => (
-                      <span key={i} className="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">{b}</span>
+                      <span key={i} className="bg-ink-light text-ink-paragraph text-xs font-semibold px-3 py-1 rounded-full">{b}</span>
                     ))}
                   </div>
                 </div>
@@ -186,8 +186,8 @@ export default function CertificationsPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">RPTOs</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">RPTOs</span>
             Top Training Organisations
           </h2>
           {cmsItems.length > 0 ? (
@@ -195,31 +195,31 @@ export default function CertificationsPage() {
               {withInlineAds(cmsItems, item => (
                 <ContentCard key={item.contentId}>
                   {item.imageUrl && (
-                    <div className="w-full h-32 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-32 bg-ink-light rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                       <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain" />
                     </div>
                   )}
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="font-bold text-gray-900 text-sm leading-snug line-clamp-2">{item.title}</h3>
-                    {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded flex-shrink-0">{item.category}</span>}
+                    <h3 className="font-bold text-ink text-sm leading-snug line-clamp-2">{item.title}</h3>
+                    {item.category && <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded flex-shrink-0">{item.category}</span>}
                   </div>
-                  {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
-                  {item.location && <p className="text-xs text-gray-400 mb-2">{item.location}</p>}
+                  {item.company && <p className="text-xs text-ink-caption mb-1">{item.company}</p>}
+                  {item.location && <p className="text-xs text-ink-caption mb-2">{item.location}</p>}
                   {item.description && (
                     <div className="mb-3">
-                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
                       {item.description.length > 180 && (
-                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                           {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
                         </button>
                       )}
                     </div>
                   )}
-                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
-                    {item.price && <span className="text-xs font-semibold text-gray-600">{item.price}</span>}
+                  <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between">
+                    {item.price && <span className="text-xs font-semibold text-ink-paragraph">{item.price}</span>}
                     {item.externalLink && (
                       <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
-                        className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1 ml-auto">
+                        className="text-xs font-bold text-brand-gold hover:text-brand-yellow flex items-center gap-1 ml-auto">
                         Learn More <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
@@ -228,27 +228,27 @@ export default function CertificationsPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-hidden">
               {rptOs.map((r, i) => (
-                <div key={i} className={`flex items-center justify-between px-5 py-3.5 ${i < rptOs.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                <div key={i} className={`flex items-center justify-between px-5 py-3.5 ${i < rptOs.length - 1 ? 'border-b border-ink-light' : ''}`}>
                   <div>
-                    <p className="font-bold text-gray-900 text-sm">{r.name}</p>
-                    <p className="text-xs text-gray-500">{r.specialty}</p>
+                    <p className="font-bold text-ink text-sm">{r.name}</p>
+                    <p className="text-xs text-ink-caption">{r.specialty}</p>
                   </div>
-                  <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">{r.city}</span>
+                  <span className="bg-ink-light text-ink-paragraph text-xs font-semibold px-3 py-1 rounded-full">{r.city}</span>
                 </div>
               ))}
             </div>
           )}
           <div className="mt-4 text-center">
             <a href="https://digitalsky.dgca.gov.in" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-bold text-yellow-600 hover:text-yellow-700 transition-colors">
+              className="inline-flex items-center gap-2 text-sm font-bold text-brand-gold hover:text-brand-yellow transition-colors">
               View all 240+ approved RPTOs on DGCA DigitalSky <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
         </div>
 
-        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-ink rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white text-base mb-1">Drone Academy Private Limited — DGCA-Approved Training</h3>
             <p className="text-sm text-white/60 max-w-lg">
@@ -257,7 +257,7 @@ export default function CertificationsPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0">
             <a href="mailto:bd@dronetv.in?subject=RPTO Guidance"
-              className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+              className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
               Find an RPTO
             </a>
             <a href="/professionals/job-board"

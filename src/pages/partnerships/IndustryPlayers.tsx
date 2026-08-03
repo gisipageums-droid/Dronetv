@@ -45,7 +45,7 @@ export default function IndustryPlayersPage() {
   });
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Industry <span>Players</span></>}
         stats={[
@@ -56,14 +56,14 @@ export default function IndustryPlayersPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row gap-3 flex-wrap">
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-caption" />
           <input type="text" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-full" />
+            className="pl-9 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:border-brand-yellow w-full" />
         </div>
         <div className="flex gap-2 flex-wrap">
           {categories.map(cat => (
             <button key={cat} onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-brand-yellow border-brand-yellow text-ink' : 'border-ink-light text-ink-caption hover:border-brand-yellow'}`}>
               {cat}
             </button>
           ))}
@@ -72,39 +72,39 @@ export default function IndustryPlayersPage() {
 
       <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Key</span>
+        <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+          <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Key</span>
           Industry Players
         </h2>
         {loading ? (
-          <div className="text-center py-16 text-gray-400">Loading industry players...</div>
+          <div className="text-center py-16 text-ink-caption">Loading industry players...</div>
         ) : items.length > 0 ? (
           filtered.length === 0
-            ? <div className="text-center py-8 text-gray-400">No players match your search.</div>
+            ? <div className="text-center py-8 text-ink-caption">No players match your search.</div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {withInlineAds(filtered, item => (
                   <ContentCard
                     key={item.contentId}
                     image={item.imageUrl}
                     imageAlt={item.title}
-                    imageFallback={<Layers className="w-10 h-10 text-yellow-400" />}
+                    imageFallback={<Layers className="w-10 h-10 text-brand-yellow" />}
                   >
-                    {item.category && <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                    <h3 className="text-sm font-bold text-gray-900 mb-2 line-clamp-2">{item.title}</h3>
+                    {item.category && <span className="bg-status-warning/15 text-status-warning text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                    <h3 className="text-sm font-bold text-ink mb-2 line-clamp-2">{item.title}</h3>
                     {item.description && (
                       <div className="mb-3">
-                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                        <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
                         {item.description.length > 140 && (
-                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                             {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
                           </button>
                         )}
                       </div>
                     )}
-                    <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
-                      {item.location && <span className="flex items-center gap-1 text-xs text-gray-400"><MapPin className="w-3 h-3" />{item.location}</span>}
+                    <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
+                      {item.location && <span className="flex items-center gap-1 text-xs text-ink-caption"><MapPin className="w-3 h-3" />{item.location}</span>}
                       {item.externalLink && (
-                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1 whitespace-nowrap">
+                        <a href={item.externalLink} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-brand-gold hover:text-brand-yellow flex items-center gap-1 whitespace-nowrap">
                           Visit <ExternalLink className="w-3 h-3" />
                         </a>
                       )}
@@ -114,36 +114,36 @@ export default function IndustryPlayersPage() {
               </div>
         ) : (
           <>
-            <p className="text-xs text-gray-400 mb-4">Types of industry players that partner with DroneTv.in — from service operators to defence contractors.</p>
+            <p className="text-xs text-ink-caption mb-4">Types of industry players that partner with DroneTv.in — from service operators to defence contractors.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {withInlineAds(playerTypes, (p, i) => (
                 <ContentCard key={i}>
                   <div className="text-3xl mb-3">{p.icon}</div>
-                  <h3 className="font-bold text-gray-900 text-sm mb-2">{p.title}</h3>
+                  <h3 className="font-bold text-ink text-sm mb-2">{p.title}</h3>
                   <div className="mb-3">
-                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(String(i)) ? '' : 'line-clamp-3'}`}>{p.desc}</p>
+                    <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(String(i)) ? '' : 'line-clamp-3'}`}>{p.desc}</p>
                     {p.desc.length > 140 && (
-                      <button onClick={() => toggleExpanded(String(i))} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                      <button onClick={() => toggleExpanded(String(i))} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                         {expandedIds.has(String(i)) ? 'Show less' : 'Read more'}
                       </button>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-1 mb-3">
-                    {p.tags.map(tag => <span key={tag} className="bg-orange-50 text-orange-700 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
+                    {p.tags.map(tag => <span key={tag} className="bg-status-warning/10 text-status-warning text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>
-                  <div className="mt-auto pt-3 border-t border-gray-100">
-                    <a href="/partnerships/become-a-partner" className="text-xs font-bold text-yellow-600 hover:text-yellow-700">Partner with DroneTv →</a>
+                  <div className="mt-auto pt-3 border-t border-ink-light">
+                    <a href="/partnerships/become-a-partner" className="text-xs font-bold text-brand-gold hover:text-brand-yellow">Partner with DroneTv →</a>
                   </div>
                 </ContentCard>
               ))}
             </div>
-            <div className="mt-6 bg-zinc-900 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="mt-6 bg-ink rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <h3 className="font-bold text-white text-sm mb-1">Get Found by Buyers Actively Looking for Your Services</h3>
                 <p className="text-xs text-white/60 max-w-lg">DroneTv.in's B2B marketplace connects verified buyers with drone service providers. Unlike generic directories, every visitor on DroneTv.in is from the drone industry — which means every lead is a qualified prospect for your services.</p>
               </div>
               <div className="flex gap-3 flex-shrink-0">
-                <a href="/partnerships/become-a-partner" className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">Apply Now</a>
+                <a href="/partnerships/become-a-partner" className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">Apply Now</a>
                 <a href="/partnerships/partner-benefits" className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">Compare Packages →</a>
               </div>
             </div>

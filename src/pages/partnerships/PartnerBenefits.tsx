@@ -66,7 +66,7 @@ const packages = [
 
 export default function PartnerBenefitsPage() {
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Partnership Benefits <span>and Packages</span></>}
         stats={[
@@ -80,27 +80,27 @@ export default function PartnerBenefitsPage() {
           {packages.map((p) => (
             <div
               key={p.name}
-              className={`bg-white rounded-xl border shadow-sm overflow-hidden ${
-                p.popular ? 'border-yellow-400 shadow-lg' : 'border-gray-200'
+              className={`bg-surface-card rounded-xl border shadow-sm overflow-hidden ${
+                p.popular ? 'border-brand-yellow shadow-lg' : 'border-ink-light'
               }`}
             >
               {p.popular && (
-                <div className="bg-yellow-400 px-5 py-2 text-center">
-                  <p className="text-black font-extrabold text-xs uppercase tracking-widest">Most Popular</p>
+                <div className="bg-brand-yellow px-5 py-2 text-center">
+                  <p className="text-ink font-extrabold text-xs uppercase tracking-widest">Most Popular</p>
                 </div>
               )}
-              <div className="bg-black px-5 py-5">
+              <div className="bg-ink px-5 py-5">
                 <h3 className="text-white font-extrabold text-xl mb-1">{p.name}</h3>
-                <p className="text-yellow-400 font-extrabold text-2xl">{p.price}<span className="text-sm font-normal text-white/40">{p.period}</span></p>
+                <p className="text-brand-yellow font-extrabold text-2xl">{p.price}<span className="text-sm font-normal text-white/40">{p.period}</span></p>
               </div>
               <div className="p-5">
                 <ul className="space-y-2.5">
                   {p.features.map((f) => (
                     <li key={f.text} className="flex items-start gap-2.5">
-                      <span className={`mt-0.5 flex-shrink-0 font-bold text-sm ${f.included ? 'text-green-600' : 'text-gray-300'}`}>
+                      <span className={`mt-0.5 flex-shrink-0 font-bold text-sm ${f.included ? 'text-status-success' : 'text-ink-light'}`}>
                         {f.included ? '✓' : '✗'}
                       </span>
-                      <span className={`text-xs leading-snug ${f.included ? 'text-gray-700' : 'text-gray-400'}`}>{f.text}</span>
+                      <span className={`text-xs leading-snug ${f.included ? 'text-ink-paragraph' : 'text-ink-caption'}`}>{f.text}</span>
                     </li>
                   ))}
                 </ul>
@@ -108,8 +108,8 @@ export default function PartnerBenefitsPage() {
                   to="/partnerships/become-a-partner"
                   className={`block w-full text-center font-bold text-sm py-2.5 rounded-lg mt-5 transition-colors ${
                     p.popular
-                      ? 'bg-yellow-400 text-black hover:bg-yellow-500'
-                      : 'bg-black text-white hover:bg-gray-900'
+                      ? 'bg-brand-yellow text-ink hover:bg-brand-gold'
+                      : 'bg-ink text-white hover:bg-ink-charcoal'
                   }`}
                 >
                   Choose {p.name} →
@@ -119,8 +119,8 @@ export default function PartnerBenefitsPage() {
           ))}
         </div>
 
-        <div className="bg-gray-100 rounded-xl p-5 text-center">
-          <p className="text-sm text-gray-600">
+        <div className="bg-ink-light rounded-xl p-5 text-center">
+          <p className="text-sm text-ink-paragraph">
             All prices exclusive of GST. 100% advance payment required before onboarding begins. Packages are annual (12 months).
           </p>
         </div>

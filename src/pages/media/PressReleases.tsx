@@ -33,7 +33,7 @@ export default function PressReleasesPage() {
   );
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Press <span>Releases</span></>}
         stats={[
@@ -44,46 +44,46 @@ export default function PressReleasesPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-5">
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-caption" />
           <input type="text" placeholder="Search press releases..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400" />
+            className="w-full pl-9 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:border-brand-yellow" />
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Latest</span>
+        <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+          <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Latest</span>
           Press Releases
         </h2>
         {loading ? (
-          <div className="text-center py-16 text-gray-400">Loading press releases...</div>
+          <div className="text-center py-16 text-ink-caption">Loading press releases...</div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">No press releases yet.</div>
+          <div className="text-center py-16 text-ink-caption">No press releases yet.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {withInlineAds(filtered, item => (
               <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title}>
-                {item.category && <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-2">{item.title}</h3>
+                {item.category && <span className="bg-status-info/15 text-status-info text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                <h3 className="text-sm font-bold text-ink mb-1 line-clamp-2">{item.title}</h3>
                 {item.description && (
                   <div className="mb-3">
-                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                    <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
                     {item.description.length > 140 && (
-                      <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                      <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                         {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
                       </button>
                     )}
                   </div>
                 )}
-                <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
-                  <div className="flex flex-wrap items-center gap-x-2 text-xs text-gray-400 min-w-0">
-                    {item.company && <span className="font-semibold text-gray-700 truncate">{item.company}</span>}
+                <div className="mt-auto pt-3 border-t border-ink-light flex items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-x-2 text-xs text-ink-caption min-w-0">
+                    {item.company && <span className="font-semibold text-ink-paragraph truncate">{item.company}</span>}
                     {item.date && <span className="flex items-center gap-1 flex-shrink-0"><Calendar className="w-3 h-3" />{item.date}</span>}
                   </div>
                   {item.externalLink && (
                     <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
-                      className="flex-shrink-0 text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                      className="flex-shrink-0 text-xs font-bold text-brand-gold hover:text-brand-yellow flex items-center gap-1">
                       View <ExternalLink className="w-3 h-3" />
                     </a>
                   )}

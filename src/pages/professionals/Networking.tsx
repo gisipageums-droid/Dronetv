@@ -78,7 +78,7 @@ const threads = [
     replies: 23,
     author: 'Amit Singh, Delhi',
     category: 'Regulation',
-    categoryClass: 'bg-green-100 text-green-700',
+    categoryClass: 'bg-status-success/15 text-status-success',
     time: '2 days ago',
   },
   {
@@ -86,7 +86,7 @@ const threads = [
     replies: 14,
     author: 'Rajesh Kumar, Hyderabad',
     category: 'Jobs',
-    categoryClass: 'bg-blue-100 text-blue-700',
+    categoryClass: 'bg-status-info/15 text-status-info',
     time: '4 days ago',
   },
   {
@@ -94,7 +94,7 @@ const threads = [
     replies: 31,
     author: 'Sunita Reddy, Bengaluru',
     category: 'Equipment',
-    categoryClass: 'bg-purple-100 text-purple-700',
+    categoryClass: 'bg-brand-gold/15 text-brand-gold',
     time: '1 week ago',
   },
   {
@@ -102,7 +102,7 @@ const threads = [
     replies: 8,
     author: 'Mohammed Farhan, Hyderabad',
     category: 'Regulation',
-    categoryClass: 'bg-green-100 text-green-700',
+    categoryClass: 'bg-status-success/15 text-status-success',
     time: '1 week ago',
   },
 ];
@@ -128,7 +128,7 @@ export default function NetworkingPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone Professional <span>Networking</span></>}
         stats={[
@@ -139,8 +139,8 @@ export default function NetworkingPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Channels</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Channels</span>
             Networking Channels
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -148,12 +148,12 @@ export default function NetworkingPage() {
               <ContentCard key={i}>
                 <div className="flex items-start gap-3 mb-3">
                   <span className="text-2xl">{ch.icon}</span>
-                  <h3 className="font-bold text-gray-900 text-sm leading-snug">{ch.title}</h3>
+                  <h3 className="font-bold text-ink text-sm leading-snug">{ch.title}</h3>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed mb-2">{ch.desc}</p>
-                <p className="text-xs text-gray-400 italic mb-3">{ch.stat}</p>
+                <p className="text-sm text-ink-paragraph leading-relaxed mb-2">{ch.desc}</p>
+                <p className="text-xs text-ink-caption italic mb-3">{ch.stat}</p>
                 <a href={ch.link} target={ch.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
-                  className="mt-auto text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                  className="mt-auto text-xs font-bold text-brand-gold hover:text-brand-yellow">
                   {ch.cta} →
                 </a>
               </ContentCard>
@@ -162,20 +162,20 @@ export default function NetworkingPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Events</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Events</span>
             Upcoming Networking Events India 2026
           </h2>
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-hidden">
             {upcomingEvents.map((ev, i) => (
-              <div key={i} className={`flex items-start gap-4 px-5 py-4 ${i < upcomingEvents.length - 1 ? 'border-b border-gray-100' : ''}`}>
+              <div key={i} className={`flex items-start gap-4 px-5 py-4 ${i < upcomingEvents.length - 1 ? 'border-b border-ink-light' : ''}`}>
                 <div className="flex-shrink-0 text-center min-w-[60px]">
-                  <span className="text-xs font-extrabold text-yellow-600 block leading-tight">{ev.date}</span>
-                  <span className={`text-xs font-bold px-1.5 py-0.5 rounded mt-1 inline-block ${ev.type === 'Online' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>{ev.type}</span>
+                  <span className="text-xs font-extrabold text-brand-gold block leading-tight">{ev.date}</span>
+                  <span className={`text-xs font-bold px-1.5 py-0.5 rounded mt-1 inline-block ${ev.type === 'Online' ? 'bg-status-info/15 text-status-info' : 'bg-status-success/15 text-status-success'}`}>{ev.type}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-0.5">{ev.title}</h3>
-                  <p className="text-xs text-gray-500">📍 {ev.location} · {ev.detail}</p>
+                  <h3 className="text-sm font-bold text-ink leading-snug mb-0.5">{ev.title}</h3>
+                  <p className="text-xs text-ink-caption">📍 {ev.location} · {ev.detail}</p>
                 </div>
               </div>
             ))}
@@ -186,23 +186,23 @@ export default function NetworkingPage() {
         <div className="lg:col-span-2 space-y-6">
           {cmsItems.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-                <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Featured</span>
+              <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+                <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Featured</span>
                 Networking Groups
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {withInlineAds(cmsItems, item => (
                   <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title} imgHeight="h-32">
-                    {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                    <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h3>
-                    {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
-                    {item.location && <p className="text-xs text-gray-400 mb-2">📍 {item.location}</p>}
-                    {item.date && <p className="text-xs text-gray-400 mb-2">📅 {item.date}</p>}
+                    {item.category && <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                    <h3 className="font-bold text-ink text-sm mb-1 line-clamp-2">{item.title}</h3>
+                    {item.company && <p className="text-xs text-ink-caption mb-1">{item.company}</p>}
+                    {item.location && <p className="text-xs text-ink-caption mb-2">📍 {item.location}</p>}
+                    {item.date && <p className="text-xs text-ink-caption mb-2">📅 {item.date}</p>}
                     {item.description && (
                       <div className="mb-3">
-                        <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                        <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
                         {item.description.length > 220 && (
-                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                          <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                             {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
                           </button>
                         )}
@@ -210,7 +210,7 @@ export default function NetworkingPage() {
                     )}
                     {item.externalLink && (
                       <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
-                        className="mt-auto text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                        className="mt-auto text-xs font-bold text-brand-gold hover:text-brand-yellow flex items-center gap-1">
                         Join Group <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
@@ -220,21 +220,21 @@ export default function NetworkingPage() {
             </div>
           )}
           <div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">City</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">City</span>
               Local Chapters
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {chapters.map((c) => (
-                <div key={c.city} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  <div className="bg-black px-4 py-3">
-                    <p className="text-yellow-400 font-extrabold">{c.city}</p>
+                <div key={c.city} className="bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                  <div className="bg-ink px-4 py-3">
+                    <p className="text-brand-yellow font-extrabold">{c.city}</p>
                     <p className="text-white/40 text-xs">{c.members}</p>
                   </div>
                   <div className="p-4">
-                    <p className="text-xs text-gray-500 mb-1">📅 {c.schedule}</p>
-                    <p className="text-xs font-semibold text-gray-700 mb-3">Focus: {c.focus}</p>
-                    <Link to="/events/meetups" className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors">
+                    <p className="text-xs text-ink-caption mb-1">📅 {c.schedule}</p>
+                    <p className="text-xs font-semibold text-ink-paragraph mb-3">Focus: {c.focus}</p>
+                    <Link to="/events/meetups" className="text-xs font-bold text-brand-gold hover:text-brand-yellow transition-colors">
                       Join Chapter →
                     </Link>
                   </div>
@@ -244,24 +244,24 @@ export default function NetworkingPage() {
           </div>
 
           <div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Forum</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Forum</span>
               Recent Discussions
             </h2>
             <div className="space-y-3">
               {threads.map((t, i) => (
-                <div key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-4">
+                <div key={i} className="bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className={`text-xs font-bold px-2 py-0.5 rounded ${t.categoryClass}`}>{t.category}</span>
                       </div>
-                      <h3 className="text-sm font-bold text-gray-900 mb-1">{t.title}</h3>
-                      <p className="text-xs text-gray-500">{t.author} · {t.time}</p>
+                      <h3 className="text-sm font-bold text-ink mb-1">{t.title}</h3>
+                      <p className="text-xs text-ink-caption">{t.author} · {t.time}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-sm font-extrabold text-gray-700">{t.replies}</p>
-                      <p className="text-xs text-gray-400">replies</p>
+                      <p className="text-sm font-extrabold text-ink-paragraph">{t.replies}</p>
+                      <p className="text-xs text-ink-caption">replies</p>
                     </div>
                   </div>
                 </div>
@@ -275,18 +275,18 @@ export default function NetworkingPage() {
 
         <div className="space-y-4">
           <div>
-            <div className="bg-black px-4 py-3 rounded-t-xl">
+            <div className="bg-ink px-4 py-3 rounded-t-xl">
               <h3 className="text-white font-bold text-sm">LinkedIn Community</h3>
             </div>
-            <div className="bg-white border border-gray-200 rounded-b-xl px-4 py-4">
-              <p className="text-xs text-gray-500 mb-3">India's largest drone professional community on LinkedIn.</p>
-              <p className="text-base font-extrabold text-gray-900 mb-1">@indiaDroneTv</p>
-              <p className="text-xs text-yellow-600 font-bold mb-3">6,000+ members</p>
+            <div className="bg-surface-card border border-ink-light rounded-b-xl px-4 py-4">
+              <p className="text-xs text-ink-caption mb-3">India's largest drone professional community on LinkedIn.</p>
+              <p className="text-base font-extrabold text-ink mb-1">@indiaDroneTv</p>
+              <p className="text-xs text-brand-gold font-bold mb-3">6,000+ members</p>
               <a
                 href="https://www.linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full bg-blue-600 text-white font-bold text-xs py-2 rounded-lg hover:bg-blue-700 transition-colors text-center"
+                className="block w-full bg-status-info text-white font-bold text-xs py-2 rounded-lg hover:bg-status-info transition-colors text-center"
               >
                 Join on LinkedIn →
               </a>
@@ -294,10 +294,10 @@ export default function NetworkingPage() {
           </div>
 
           <div>
-            <div className="bg-black px-4 py-3 rounded-t-xl">
+            <div className="bg-ink px-4 py-3 rounded-t-xl">
               <h3 className="text-white font-bold text-sm">Quick Links</h3>
             </div>
-            <div className="bg-white border border-gray-200 rounded-b-xl px-4 py-4 space-y-2">
+            <div className="bg-surface-card border border-ink-light rounded-b-xl px-4 py-4 space-y-2">
               {[
                 { label: 'Job Board', to: '/professionals/job-board' },
                 { label: 'Pilot Directory', to: '/professionals/pilot-directory' },
@@ -305,16 +305,16 @@ export default function NetworkingPage() {
                 { label: 'Training', to: '/professionals/training' },
                 { label: 'Upcoming Meetups', to: '/events/meetups' },
               ].map((l) => (
-                <Link key={l.to} to={l.to} className="flex items-center justify-between py-1.5 text-sm text-gray-700 hover:text-yellow-600 font-medium group">
+                <Link key={l.to} to={l.to} className="flex items-center justify-between py-1.5 text-sm text-ink-paragraph hover:text-brand-yellow font-medium group">
                   {l.label}
-                  <span className="text-gray-300 group-hover:text-yellow-400">→</span>
+                  <span className="text-ink-light group-hover:text-brand-yellow">→</span>
                 </Link>
               ))}
             </div>
           </div>
 
           <div>
-            <span className="text-xs text-gray-400 font-semibold block mb-2">Advertisement</span>
+            <span className="text-xs text-ink-caption font-semibold block mb-2">Advertisement</span>
             {sidebarAds[0] ? (
               <AdSlot image={sidebarAds[0].imageUrl} href={sidebarAds[0].externalLink} alt={sidebarAds[0].title} width={300} height={250} />
             ) : (
@@ -322,7 +322,7 @@ export default function NetworkingPage() {
             )}
           </div>
           <div>
-            <span className="text-xs text-gray-400 font-semibold block mb-2">Advertisement</span>
+            <span className="text-xs text-ink-caption font-semibold block mb-2">Advertisement</span>
             {sidebarAds[1] ? (
               <AdSlot image={sidebarAds[1].imageUrl} href={sidebarAds[1].externalLink} alt={sidebarAds[1].title} width={300} height={250} />
             ) : (

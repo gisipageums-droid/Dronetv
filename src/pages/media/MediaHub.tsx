@@ -100,7 +100,7 @@ export default function MediaHubPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>DroneTv <span>Media Hub</span></>}
         stats={[
@@ -111,8 +111,8 @@ export default function MediaHubPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-8 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-6 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Explore</span>
+        <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-6 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+          <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Explore</span>
           All Sections
         </h2>
 
@@ -121,12 +121,12 @@ export default function MediaHubPage() {
             <Link
               key={h.to}
               to={h.to}
-              className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
+              className="bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
             >
-              <div className="bg-black px-5 py-4 flex items-center gap-3">
+              <div className="bg-ink px-5 py-4 flex items-center gap-3">
                 <span className="text-2xl">{h.icon}</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm group-hover:text-yellow-400 transition-colors">{h.title}</h3>
+                  <h3 className="text-white font-bold text-sm group-hover:text-brand-yellow transition-colors">{h.title}</h3>
                   <p className="text-white/40 text-xs">
                     {h.countType
                       ? (counts[h.countType] !== undefined ? h.countLabel!(counts[h.countType]!) : '…')
@@ -135,16 +135,16 @@ export default function MediaHubPage() {
                 </div>
               </div>
               <div className="px-5 py-4">
-                <p className="text-sm text-gray-600 leading-relaxed mb-3">{h.desc}</p>
+                <p className="text-sm text-ink-paragraph leading-relaxed mb-3">{h.desc}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {h.tags.map((t) => (
-                    <span key={t} className="bg-gray-100 text-gray-500 text-xs font-semibold px-2 py-0.5 rounded-full">{t}</span>
+                    <span key={t} className="bg-ink-light text-ink-caption text-xs font-semibold px-2 py-0.5 rounded-full">{t}</span>
                   ))}
                 </div>
               </div>
-              <div className="border-t border-gray-100 px-5 py-3 flex items-center justify-between">
-                <span className="text-xs text-gray-400">Explore section</span>
-                <span className="text-yellow-400 font-bold text-sm group-hover:translate-x-1 transition-transform inline-block">→</span>
+              <div className="border-t border-ink-light px-5 py-3 flex items-center justify-between">
+                <span className="text-xs text-ink-caption">Explore section</span>
+                <span className="text-brand-yellow font-bold text-sm group-hover:translate-x-1 transition-transform inline-block">→</span>
               </div>
             </Link>
           ))}

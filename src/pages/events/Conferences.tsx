@@ -82,7 +82,7 @@ export default function ConferencesPage() {
   );
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Drone <span>Conferences</span></>}
         stats={[
@@ -93,56 +93,56 @@ export default function ConferencesPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-5">
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-caption" />
           <input type="text" placeholder="Search conferences..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400" />
+            className="w-full pl-9 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:border-brand-yellow" />
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
         {loading ? (
-          <div className="text-center py-16 text-gray-400">Loading conferences...</div>
+          <div className="text-center py-16 text-ink-caption">Loading conferences...</div>
         ) : events.length === 0 ? (
           <div className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {withInlineAds(staticConferences, conf => (
-                <ContentCard key={conf.id} imageFallback={<span className="text-yellow-400 text-4xl">🎤</span>}>
+                <ContentCard key={conf.id} imageFallback={<span className="text-brand-yellow text-4xl">🎤</span>}>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded">Conference</span>
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${conf.type === 'India' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{conf.badge}</span>
+                    <span className="bg-status-info/15 text-status-info text-xs font-bold px-2 py-0.5 rounded">Conference</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${conf.type === 'India' ? 'bg-status-success/15 text-status-success' : 'bg-ink-light text-ink-paragraph'}`}>{conf.badge}</span>
                   </div>
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{conf.title}</h3>
+                  <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{conf.title}</h3>
                   <div className="mb-3">
-                    <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(conf.id) ? '' : 'line-clamp-3'}`}>{conf.desc}</p>
+                    <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(conf.id) ? '' : 'line-clamp-3'}`}>{conf.desc}</p>
                     {conf.desc.length > 140 && (
-                      <button onClick={() => toggleExpanded(conf.id)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                      <button onClick={() => toggleExpanded(conf.id)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                         {expandedIds.has(conf.id) ? 'Show less' : 'Read more'}
                       </button>
                     )}
                   </div>
-                  <div className="mt-auto pt-3 border-t border-gray-100">
+                  <div className="mt-auto pt-3 border-t border-ink-light">
                     <div className="space-y-1 mb-2">
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{conf.date}</div>
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{conf.location}</div>
+                      <div className="flex items-center gap-1.5 text-xs text-ink-caption"><Calendar className="w-3 h-3 flex-shrink-0" />{conf.date}</div>
+                      <div className="flex items-center gap-1.5 text-xs text-ink-caption"><MapPin className="w-3 h-3 flex-shrink-0" />{conf.location}</div>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      {conf.tags.map(tag => <span key={tag} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
+                      {conf.tags.map(tag => <span key={tag} className="bg-ink-light text-ink-paragraph text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
                     </div>
                   </div>
                 </ContentCard>
               ))}
             </div>
-            <div className="bg-zinc-900 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="bg-ink rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <h3 className="font-bold text-white text-sm mb-1">DroneTv.in Covers Every Major Conference</h3>
                 <p className="text-xs text-white/60 max-w-lg">DroneTv.in publishes post-conference summaries, video interviews with speakers, and press releases from major drone policy events.</p>
               </div>
-              <a href="mailto:bd@dronetv.in?subject=Submit Conference" className="flex-shrink-0 px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">Submit a Conference</a>
+              <a href="mailto:bd@dronetv.in?subject=Submit Conference" className="flex-shrink-0 px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">Submit a Conference</a>
             </div>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-8 text-gray-400">No conferences match your search.</div>
+          <div className="text-center py-8 text-ink-caption">No conferences match your search.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {withInlineAds(filtered, event => (
@@ -150,19 +150,19 @@ export default function ConferencesPage() {
                 key={event.eventId}
                 image={getEventImage(event.previewImage, event.thumbnailUrl, event.heroBannerImage) || undefined}
                 imageAlt={event.eventName}
-                imageFallback={<span className="text-yellow-400 text-4xl">🎤</span>}
+                imageFallback={<span className="text-brand-yellow text-4xl">🎤</span>}
                 onClick={() => {
                   let slug = event.cleanUrl || event.urlSlug || '';
                   if (slug.startsWith('http')) slug = slug.split('/').pop() || slug;
                   navigate(`/event/${slug}`);
                 }}
               >
-                <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">Conference</span>
-                <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{event.eventName}</h3>
-                {event.shortDescription && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.shortDescription}</p>}
-                <div className="mt-auto pt-3 border-t border-gray-100 space-y-1">
-                  {event.eventDate && <div className="flex items-center gap-1.5 text-xs text-gray-500"><Calendar className="w-3 h-3 flex-shrink-0" />{event.eventDate}</div>}
-                  {event.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3 flex-shrink-0" />{event.location}</div>}
+                <span className="bg-status-info/15 text-status-info text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">Conference</span>
+                <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{event.eventName}</h3>
+                {event.shortDescription && <p className="text-xs text-ink-caption leading-relaxed mb-3 line-clamp-2">{event.shortDescription}</p>}
+                <div className="mt-auto pt-3 border-t border-ink-light space-y-1">
+                  {event.eventDate && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><Calendar className="w-3 h-3 flex-shrink-0" />{event.eventDate}</div>}
+                  {event.location && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><MapPin className="w-3 h-3 flex-shrink-0" />{event.location}</div>}
                 </div>
               </ContentCard>
             ))}

@@ -70,7 +70,7 @@ export default function PilotDirectoryPage() {
   });
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>Pilot <span>Directory</span></>}
         stats={[
@@ -82,14 +82,14 @@ export default function PilotDirectoryPage() {
       <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col gap-3">
         <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-caption" />
             <input type="text" placeholder="Search pilots, locations..." value={search} onChange={e => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-yellow-400 w-full" />
+              className="pl-9 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:border-brand-yellow w-full" />
           </div>
           <div className="flex gap-2 flex-wrap">
             {categories.map(cat => (
               <button key={cat} onClick={() => setActiveCategory(cat)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-yellow-400 border-yellow-400 text-black' : 'border-gray-200 text-gray-500 hover:border-yellow-400'}`}>
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${activeCategory === cat ? 'bg-brand-yellow border-brand-yellow text-ink' : 'border-ink-light text-ink-caption hover:border-brand-yellow'}`}>
                 {cat}
               </button>
             ))}
@@ -99,7 +99,7 @@ export default function PilotDirectoryPage() {
           <div className="flex gap-2 flex-wrap">
             {cities.map(city => (
               <button key={city} onClick={() => setSearch(city)}
-                className="px-3 py-1 rounded-full text-xs font-semibold border border-dashed border-gray-300 text-gray-500 hover:border-yellow-400 hover:text-yellow-700 transition-colors">
+                className="px-3 py-1 rounded-full text-xs font-semibold border border-dashed border-ink-light text-ink-caption hover:border-brand-yellow hover:text-brand-yellow transition-colors">
                 📍 {city}
               </button>
             ))}
@@ -109,49 +109,49 @@ export default function PilotDirectoryPage() {
 
       <div className="max-w-6xl mx-auto px-6 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Certified</span>
+        <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+          <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Certified</span>
           Drone Pilots
         </h2>
         {loading ? (
-          <div className="text-center py-10 text-gray-400">Loading pilots...</div>
+          <div className="text-center py-10 text-ink-caption">Loading pilots...</div>
         ) : items.length === 0 ? (
           <div className="space-y-4">
-            <div className="bg-white rounded-xl border border-dashed border-gray-300 p-6 text-center mb-4">
-              <User className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-              <p className="font-semibold text-gray-500 mb-1">Are you a DGCA-certified drone pilot?</p>
-              <p className="text-sm text-gray-400 mb-3">Add your profile to DroneTv.in's Pilot Directory for free. Drone companies, service operators, and recruiters search here when they need pilots.</p>
+            <div className="bg-surface-card rounded-xl border border-dashed border-ink-light p-6 text-center mb-4">
+              <User className="w-8 h-8 text-ink-light mx-auto mb-2" />
+              <p className="font-semibold text-ink-caption mb-1">Are you a DGCA-certified drone pilot?</p>
+              <p className="text-sm text-ink-caption mb-3">Add your profile to DroneTv.in's Pilot Directory for free. Drone companies, service operators, and recruiters search here when they need pilots.</p>
               <button onClick={() => navigate('/professional/form')}
-                className="bg-yellow-400 text-black font-bold px-5 py-2 rounded-lg hover:bg-yellow-300 transition-colors text-sm">
+                className="bg-brand-yellow text-ink font-bold px-5 py-2 rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm">
                 Add Your Profile →
               </button>
             </div>
-            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide">Sample Pilot Profiles</h3>
+            <h3 className="text-sm font-bold text-ink-caption uppercase tracking-wide">Sample Pilot Profiles</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {withInlineAds(samplePilots, (pilot, i) => (
                 <ContentCard key={i} className="opacity-80">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center text-xl flex-shrink-0">{pilot.icon}</div>
+                    <div className="w-12 h-12 rounded-full bg-ink flex items-center justify-center text-xl flex-shrink-0">{pilot.icon}</div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <h3 className="text-sm font-bold text-gray-900">{pilot.name}</h3>
-                        <span className="bg-green-100 text-green-700 text-xs font-bold px-1.5 py-0.5 rounded">✓ DGCA</span>
+                        <h3 className="text-sm font-bold text-ink">{pilot.name}</h3>
+                        <span className="bg-status-success/15 text-status-success text-xs font-bold px-1.5 py-0.5 rounded">✓ DGCA</span>
                       </div>
-                      <p className="text-xs text-gray-500">{pilot.badge}</p>
+                      <p className="text-xs text-ink-caption">{pilot.badge}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-2"><MapPin className="w-3 h-3" />{pilot.location}</div>
-                  <p className="text-xs text-gray-500 mb-2">{pilot.experience}</p>
+                  <div className="flex items-center gap-1.5 text-xs text-ink-caption mb-2"><MapPin className="w-3 h-3" />{pilot.location}</div>
+                  <p className="text-xs text-ink-caption mb-2">{pilot.experience}</p>
                   <div className="flex flex-wrap gap-1 mt-auto pt-2">
-                    {pilot.tags.map((tag, j) => <span key={j} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
+                    {pilot.tags.map((tag, j) => <span key={j} className="bg-ink-light text-ink-paragraph text-xs px-2 py-0.5 rounded-full">{tag}</span>)}
                   </div>
-                  <button className="mt-3 text-xs font-bold text-yellow-600 hover:text-yellow-700 self-start">Contact →</button>
+                  <button className="mt-3 text-xs font-bold text-brand-gold hover:text-brand-yellow self-start">Contact →</button>
                 </ContentCard>
               ))}
             </div>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-10 text-gray-400">No pilots match your search.</div>
+          <div className="text-center py-10 text-ink-caption">No pilots match your search.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {withInlineAds(filtered, item => (
@@ -160,25 +160,25 @@ export default function PilotDirectoryPage() {
                   {item.previewImage ? (
                     <img src={item.previewImage} alt={item.professionalName || item.fullName} className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center flex-shrink-0">
-                      <User className="w-6 h-6 text-yellow-400" />
+                    <div className="w-12 h-12 rounded-full bg-ink flex items-center justify-center flex-shrink-0">
+                      <User className="w-6 h-6 text-brand-yellow" />
                     </div>
                   )}
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900">{item.professionalName || item.fullName}</h3>
+                    <h3 className="text-sm font-bold text-ink">{item.professionalName || item.fullName}</h3>
                     {item.categories && item.categories.length > 0 && (
-                      <span className="text-xs text-gray-500">{item.categories[0]}</span>
+                      <span className="text-xs text-ink-caption">{item.categories[0]}</span>
                     )}
                   </div>
                 </div>
                 {item.professionalDescription && (
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{item.professionalDescription}</p>
+                  <p className="text-xs text-ink-caption leading-relaxed mb-3 line-clamp-2">{item.professionalDescription}</p>
                 )}
                 <div className="mt-auto pt-2 space-y-1">
-                  {item.location && <div className="flex items-center gap-1.5 text-xs text-gray-500"><MapPin className="w-3 h-3" />{item.location}</div>}
+                  {item.location && <div className="flex items-center gap-1.5 text-xs text-ink-caption"><MapPin className="w-3 h-3" />{item.location}</div>}
                   {item.categories && item.categories.length > 1 && (
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {item.categories.slice(1).map(cat => <span key={cat} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{cat}</span>)}
+                      {item.categories.slice(1).map(cat => <span key={cat} className="bg-ink-light text-ink-paragraph text-xs px-2 py-0.5 rounded-full">{cat}</span>)}
                     </div>
                   )}
                   {(item.urlSlug || item.userName) && (
@@ -186,7 +186,7 @@ export default function PilotDirectoryPage() {
                       href={`${item.templateSelection === "template-2" ? "/professionals" : "/professional"}/${item.urlSlug || item.userName}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-xs font-bold text-yellow-600 hover:text-yellow-700"
+                      className="block text-xs font-bold text-brand-gold hover:text-brand-yellow"
                     >
                       View Profile →
                     </a>

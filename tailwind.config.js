@@ -10,6 +10,7 @@ export default {
           yellow: '#F8C400',
           'yellow-soft': '#FFD84D',
           gold: '#E8B400',
+          herostart: '#FFFBEA',
         },
         ink: {
           DEFAULT: '#111111',
@@ -21,6 +22,7 @@ export default {
           paragraph: '#666666',
           caption: '#8B8B8B',
           link: '#C98F00',
+          premiumend: '#2A2A2A',
         },
         surface: {
           main: '#FFF8D6',

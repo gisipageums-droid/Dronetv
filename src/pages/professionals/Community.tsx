@@ -23,7 +23,7 @@ const channels = [
     desc: 'India\'s drone professional community. Job listings, regulatory updates, event announcements, and industry news shared weekly.',
     cta: 'Join on LinkedIn',
     link: 'https://www.linkedin.com/company/indiadronetv',
-    bgColor: 'bg-blue-600',
+    bgColor: 'bg-status-info',
     icon: '💼',
   },
   {
@@ -33,7 +33,7 @@ const channels = [
     desc: 'Full interview series from Drone Expo 2025 Mumbai. Industry leader conversations, product reviews, and event coverage.',
     cta: 'Subscribe on YouTube',
     link: 'https://www.youtube.com/@indiadronetv',
-    bgColor: 'bg-red-600',
+    bgColor: 'bg-status-error',
     icon: '🎬',
   },
   {
@@ -43,7 +43,7 @@ const channels = [
     desc: 'State and vertical-specific WhatsApp groups for drone pilots, GIS professionals, AI & analytics specialists, and industry players. Agriculture, GIS & mapping, DGCA updates, and job alerts.',
     cta: 'Join Your State Group',
     link: 'https://wa.me/917520123555',
-    bgColor: 'bg-green-600',
+    bgColor: 'bg-status-success',
     icon: '💬',
   },
 ];
@@ -77,7 +77,7 @@ export default function CommunityPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
       <CompactHero
         title={<>India's Drone <span>Community</span></>}
         stats={[
@@ -90,22 +90,22 @@ export default function CommunityPage() {
         <div className="flex-1 min-w-0 space-y-8">
         {cmsItems.length > 0 && (
           <div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-              <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Featured</span>
+            <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+              <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Featured</span>
               Community Highlights
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {withInlineAds(cmsItems, item => (
                 <ContentCard key={item.contentId} image={item.imageUrl} imageAlt={item.title} imgHeight="h-36">
-                  {item.category && <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
-                  <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h3>
-                  {item.company && <p className="text-xs text-gray-500 mb-1">{item.company}</p>}
-                  {item.location && <p className="text-xs text-gray-400 mb-2">{item.location}</p>}
+                  {item.category && <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">{item.category}</span>}
+                  <h3 className="font-bold text-ink text-sm mb-1 line-clamp-2">{item.title}</h3>
+                  {item.company && <p className="text-xs text-ink-caption mb-1">{item.company}</p>}
+                  {item.location && <p className="text-xs text-ink-caption mb-2">{item.location}</p>}
                   {item.description && (
                     <div className="mb-3">
-                      <p className={`text-xs text-gray-500 leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
+                      <p className={`text-xs text-ink-caption leading-relaxed ${expandedIds.has(item.contentId) ? '' : 'line-clamp-3'}`}>{item.description}</p>
                       {item.description.length > 220 && (
-                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-yellow-600 hover:text-yellow-700 mt-1">
+                        <button onClick={() => toggleExpanded(item.contentId)} className="text-xs font-bold text-brand-gold hover:text-brand-yellow mt-1">
                           {expandedIds.has(item.contentId) ? 'Show less' : 'Read more'}
                         </button>
                       )}
@@ -113,7 +113,7 @@ export default function CommunityPage() {
                   )}
                   {item.externalLink && (
                     <a href={item.externalLink} target="_blank" rel="noopener noreferrer"
-                      className="mt-auto pt-3 border-t border-gray-100 text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                      className="mt-auto pt-3 border-t border-ink-light text-xs font-bold text-brand-gold hover:text-brand-yellow flex items-center gap-1">
                       Join Now <ExternalLink className="w-3 h-3" />
                     </a>
                   )}
@@ -124,8 +124,8 @@ export default function CommunityPage() {
         )}
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Spaces</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Spaces</span>
             Community Spaces
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -133,12 +133,12 @@ export default function CommunityPage() {
               <ContentCard key={i}>
                 <div className="flex items-start justify-between mb-3">
                   <span className="text-2xl">{space.icon}</span>
-                  <span className="text-xs font-bold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded">{space.stat}</span>
+                  <span className="text-xs font-bold text-brand-gold bg-surface-main px-2 py-0.5 rounded">{space.stat}</span>
                 </div>
-                <h3 className="font-bold text-gray-900 text-sm mb-2">{space.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed mb-3">{space.desc}</p>
+                <h3 className="font-bold text-ink text-sm mb-2">{space.title}</h3>
+                <p className="text-xs text-ink-caption leading-relaxed mb-3">{space.desc}</p>
                 <a href={space.link} target={space.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
-                  className="mt-auto text-xs font-bold text-yellow-600 hover:text-yellow-700 flex items-center gap-1">
+                  className="mt-auto text-xs font-bold text-brand-gold hover:text-brand-yellow flex items-center gap-1">
                   {space.cta} →
                 </a>
               </ContentCard>
@@ -147,25 +147,25 @@ export default function CommunityPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Active</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Active</span>
             Discussions Community Forum
           </h2>
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-hidden">
             {discussions.map((d, i) => (
-              <div key={i} className={`px-5 py-4 flex items-start gap-4 hover:bg-gray-50 transition-colors ${i < discussions.length - 1 ? 'border-b border-gray-100' : ''}`}>
+              <div key={i} className={`px-5 py-4 flex items-start gap-4 hover:bg-ink-offwhite transition-colors ${i < discussions.length - 1 ? 'border-b border-ink-light' : ''}`}>
                 <span className="text-xl flex-shrink-0 mt-0.5">{d.icon}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 text-sm leading-snug mb-1">{d.title}</p>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-gray-400">
+                  <p className="font-semibold text-ink text-sm leading-snug mb-1">{d.title}</p>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-ink-caption">
                     <span>Posted by {d.author}</span>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-ink-light">|</span>
                     <span>{d.group}</span>
                   </div>
                 </div>
                 <div className="flex-shrink-0 text-center">
-                  <span className="text-lg font-extrabold text-yellow-500 block leading-none">{d.replies}</span>
-                  <span className="text-xs text-gray-400">Replies</span>
+                  <span className="text-lg font-extrabold text-brand-gold block leading-none">{d.replies}</span>
+                  <span className="text-xs text-ink-caption">Replies</span>
                 </div>
               </div>
             ))}
@@ -173,13 +173,13 @@ export default function CommunityPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
-            <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Join</span>
+          <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
+            <span className="bg-brand-yellow text-ink text-xs font-bold px-2 py-0.5 rounded">Join</span>
             Community Channels
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {channels.map((c) => (
-              <div key={c.platform} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+              <div key={c.platform} className="bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                 <div className={`${c.bgColor} px-5 py-5 flex items-center gap-3`}>
                   <span className="text-3xl">{c.icon}</span>
                   <div>
@@ -188,8 +188,8 @@ export default function CommunityPage() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <p className="text-xl font-extrabold text-gray-900 mb-1">{c.stat}</p>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-4">{c.desc}</p>
+                  <p className="text-xl font-extrabold text-ink mb-1">{c.stat}</p>
+                  <p className="text-sm text-ink-caption leading-relaxed mb-4">{c.desc}</p>
                   <a href={c.link} target="_blank" rel="noopener noreferrer"
                     className={`block w-full ${c.bgColor} text-white font-bold text-xs py-2.5 rounded-lg hover:opacity-90 transition-opacity text-center`}>
                     {c.cta} →
@@ -200,7 +200,7 @@ export default function CommunityPage() {
           </div>
         </div>
 
-        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="bg-ink rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white text-base mb-1">Join India's Drone, GIS &amp; AI Professional Community</h3>
             <p className="text-sm text-white/60 max-w-lg">
@@ -209,7 +209,7 @@ export default function CommunityPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0">
             <a href="https://wa.me/917520123555" target="_blank" rel="noopener noreferrer"
-              className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+              className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
               Join the Community
             </a>
             <a href="/events/meetups"

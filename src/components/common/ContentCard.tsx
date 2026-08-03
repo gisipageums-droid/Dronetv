@@ -15,7 +15,7 @@ interface ContentCardProps {
 // slot + equal-height flex behavior here means a card-height/consistency fix
 // only has to happen once instead of drifting across ~26 near-duplicate
 // implementations. Callers own their own title/description/footer markup as
-// children — end it with a `mt-auto pt-3 border-t border-gray-100` row so the
+// children — end it with a `mt-auto pt-3 border-t border-ink-light` row so the
 // footer bottom-aligns regardless of how much content is above it. Use
 // `border-surface-cardborder` for that divider — design-system card border.
 export default function ContentCard({
