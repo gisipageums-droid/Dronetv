@@ -27,7 +27,7 @@ export default function AdSlot({ image, href, alt = 'Advertisement', width, heig
   // placeholder / dummy-creative state, which does need a defined box.
   const useNaturalHeight = !!(image && aspect);
   const style = useNaturalHeight
-    ? { minHeight }
+    ? {}
     : aspect ? { aspectRatio: aspect, minHeight } : { width, height };
 
   const inner = (
