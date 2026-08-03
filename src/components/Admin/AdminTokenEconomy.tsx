@@ -1,13 +1,17 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Coins, TrendingUp, Gavel, History, Layers, ShieldCheck,
   IndianRupee, CheckCircle, AlertCircle, ArrowUpRight, RefreshCw,
+  Upload, ImageIcon, Link as LinkIcon,
 } from "lucide-react";
 import axios from "axios";
 import { LAMBDA } from "../../lib/apiConfig";
+import { SLOT_DEFINITIONS } from "../UserDashboard/pages/PagePlacements";
 
 const TOKEN_SPEND = LAMBDA.tokenSpend;
+const ADS_UPLOAD_API = `${LAMBDA.eventsImageUpload}/upload/ads`;
+const SLOT_LABELS: Record<string, string> = Object.fromEntries(SLOT_DEFINITIONS.map(s => [s.id, s.label]));
 
 interface AdminStats {
   totalTokensSpent: number;
@@ -31,6 +35,7 @@ interface Slot {
   slotId: string; slotLabel: string; costPerDay: number;
   totalSlots: number; occupiedSlots: number; available: boolean;
   occupants?: { userId: string; expiresAt: string }[];
+  holder?: string | null; imageUrl?: string | null; linkUrl?: string | null;
 }
 
 const PHASE_GATE_DEFAULTS = { current: 248, threshold: 250, readiness: 99.2 };
@@ -57,6 +62,10 @@ const AdminTokenEconomy: React.FC = () => {
     { label: "Professional Boosts", active: false },
   ]);
   const [phaseActivated, setPhaseActivated] = useState(false);
+  const [uploadingFor, setUploadingFor] = useState<string | null>(null);
+  const [linkDraft, setLinkDraft] = useState<Record<string, string>>({});
+  const [slotError, setSlotError] = useState("");
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   useEffect(() => { setActiveTab(tabFromPath(location.pathname)); }, [location.pathname]);
 
@@ -73,11 +82,14 @@ const AdminTokenEconomy: React.FC = () => {
       const rawSlots = slotsR.data?.slots ?? {};
       const converted: Slot[] = Object.entries(rawSlots).map(([id, v]: [string, any]) => ({
         slotId: id,
-        slotLabel: id,
+        slotLabel: v.slotLabel || SLOT_LABELS[id] || id,
         costPerDay: v.costPerDay ?? 0,
         totalSlots: 1,
         occupiedSlots: v.available === false ? 1 : 0,
         available: v.available !== false,
+        holder: v.holder ?? null,
+        imageUrl: v.imageUrl ?? null,
+        linkUrl: v.linkUrl ?? null,
       }));
       setSlots(converted);
     } catch {}
@@ -85,6 +97,40 @@ const AdminTokenEconomy: React.FC = () => {
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  const handleAdminUploadCreative = async (slotId: string, slotLabel: string, file: File) => {
+    if (!file.type.startsWith("image/")) {
+      setSlotError("Please choose an image file for the ad banner.");
+      return;
+    }
+    setUploadingFor(slotId);
+    setSlotError("");
+    try {
+      const formData = new FormData();
+      formData.append("userId", "admin@dronetv.in");
+      formData.append("fieldName", "placementBanner");
+      formData.append("file", file);
+
+      const uploadRes = await axios.post(ADS_UPLOAD_API, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (!uploadRes.data?.success) throw new Error(uploadRes.data?.error || "Upload failed");
+
+      const imageUrl = uploadRes.data.s3Url;
+      const linkUrl = linkDraft[slotId] || "";
+
+      const saveRes = await axios.put(`${TOKEN_SPEND}/admin/placement-creative`, {
+        slotId, slotLabel, imageUrl, linkUrl,
+      });
+      if (!saveRes.data?.success) throw new Error(saveRes.data?.message || "Could not save creative");
+
+      await fetchData();
+    } catch (e: any) {
+      setSlotError(e.response?.data?.message || e.message || "Failed to upload ad banner");
+    } finally {
+      setUploadingFor(null);
+    }
+  };
 
   const toggleControl = (idx: number) =>
     setPhaseControls(prev => prev.map((c, i) => i === idx ? { ...c, active: !c.active } : c));
@@ -304,6 +350,11 @@ const AdminTokenEconomy: React.FC = () => {
       {/* Slot Management */}
       {activeTab === "slots" && (
         <div className="space-y-3">
+          {slotError && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-red-600 text-xs">
+              <AlertCircle size={13} /> {slotError}
+            </div>
+          )}
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="w-5 h-5 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
@@ -315,26 +366,78 @@ const AdminTokenEconomy: React.FC = () => {
               ? "bg-yellow-50 text-yellow-700"
               : slot.occupiedSlots > 0 ? "bg-blue-50 text-blue-700" : "bg-green-50 text-green-700";
             return (
-              <div key={slot.slotId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-bold text-gray-900">{slot.slotLabel}</span>
-                    <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{slot.slotId}</span>
+              <div key={slot.slotId} className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-sm font-bold text-gray-900">{slot.slotLabel}</span>
+                      <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{slot.slotId}</span>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {slot.occupiedSlots}/{slot.totalSlots} slots · {slot.costPerDay} ₮/day
+                      {slot.holder && slot.holder !== "admin@dronetv.in" && <> · booked by <span className="text-gray-700 font-medium">{slot.holder}</span></>}
+                      {slot.holder === "admin@dronetv.in" && <> · set by admin (free)</>}
+                    </div>
+                    <div className="mt-2 h-1.5 bg-gray-100 rounded-full w-32 overflow-hidden">
+                      <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${fillPct}%` }} />
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-500">
-                    {slot.occupiedSlots}/{slot.totalSlots} slots · {slot.costPerDay} ₮/day
-                  </div>
-                  <div className="mt-2 h-1.5 bg-gray-100 rounded-full w-32 overflow-hidden">
-                    <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${fillPct}%` }} />
+                  <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                    <span className={`text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1 ${statusColor}`}>
+                      {statusLabel === "Full" || statusLabel === "Partial"
+                        ? <AlertCircle size={11} />
+                        : <CheckCircle size={11} />}
+                      {statusLabel}
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-                  <span className={`text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1 ${statusColor}`}>
-                    {statusLabel === "Full" || statusLabel === "Partial"
-                      ? <AlertCircle size={11} />
-                      : <CheckCircle size={11} />}
-                    {statusLabel}
-                  </span>
+
+                <div className="mt-3 flex items-start gap-3 bg-gray-50 border border-gray-200 rounded-lg p-3">
+                  {slot.imageUrl ? (
+                    <img src={slot.imageUrl} alt={`${slot.slotLabel} banner`} className="w-24 h-14 object-cover rounded border border-gray-200 flex-shrink-0" />
+                  ) : (
+                    <div className="w-24 h-14 flex items-center justify-center bg-white rounded border border-dashed border-gray-300 flex-shrink-0">
+                      <ImageIcon size={16} className="text-gray-300" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0 space-y-2">
+                    {!slot.imageUrl && (
+                      <p className="text-xs text-amber-600">No ad banner set — this slot shows the default placeholder on the live site.</p>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <LinkIcon size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300" />
+                        <input
+                          type="url"
+                          placeholder="Click-through link (optional)"
+                          defaultValue={slot.linkUrl || ""}
+                          onChange={(e) => setLinkDraft(prev => ({ ...prev, [slot.slotId]: e.target.value }))}
+                          className="w-full pl-7 pr-2 py-1.5 bg-white border border-gray-200 rounded text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-yellow-400"
+                        />
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        ref={(el) => { fileInputRefs.current[slot.slotId] = el; }}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleAdminUploadCreative(slot.slotId, slot.slotLabel, file);
+                          e.target.value = "";
+                        }}
+                      />
+                      <button
+                        onClick={() => fileInputRefs.current[slot.slotId]?.click()}
+                        disabled={uploadingFor === slot.slotId}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-yellow-700 border border-yellow-400/50 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors disabled:opacity-40 whitespace-nowrap"
+                      >
+                        {uploadingFor === slot.slotId
+                          ? <div className="w-3 h-3 border border-yellow-600 border-t-transparent rounded-full animate-spin" />
+                          : <Upload size={12} />}
+                        {slot.imageUrl ? "Change Banner" : "Upload Banner"}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             );

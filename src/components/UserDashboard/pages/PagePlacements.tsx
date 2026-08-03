@@ -15,7 +15,7 @@ const DURATION_OPTIONS = [
   { days: 30, label: "1 Month", discount: "Save 20%" },
 ];
 
-const SLOT_DEFINITIONS = [
+export const SLOT_DEFINITIONS = [
   { id: "HP-1", label: "Homepage Hero Banner",       category: "Homepage",   costPerDay: 0,   description: "Brand subscribers only — full-width hero" },
   { id: "HP-2", label: "Featured Strip — Slot A",    category: "Homepage",   costPerDay: 100, description: "Top featured strip, left position" },
   { id: "HP-3", label: "Featured Strip — Slot B",    category: "Homepage",   costPerDay: 100, description: "Top featured strip, right position" },
