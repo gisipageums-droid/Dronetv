@@ -260,21 +260,21 @@ const EventTemplate1: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-ink-offwhite flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-status-info"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ink-offwhite flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Error Loading Page</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-ink-paragraph mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            className="bg-status-info text-white px-4 py-2 rounded-lg"
           >
             Try Again
           </button>
@@ -285,10 +285,10 @@ const EventTemplate1: React.FC = () => {
 
   if (!finalTemplate || !finalTemplate.content) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ink-offwhite flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">No Data Found</h2>
-          <p className="text-gray-600">
+          <p className="text-ink-paragraph">
             The requested event page could not be loaded.
           </p>
         </div>
@@ -297,7 +297,7 @@ const EventTemplate1: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-ink-offwhite">
       <Navigation headerData={finalTemplate.content.header} />
       <HeroSection heroData={finalTemplate.content.hero} />
       <AboutSection aboutData={finalTemplate.content.about} />

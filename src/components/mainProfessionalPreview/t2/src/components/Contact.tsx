@@ -145,7 +145,7 @@ export function Contact({ contactData, professionalId }: ContactProps) {
   };
 
   return (
-    <section id="contact" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section id="contact" className="py-20 bg-surface-main dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -189,7 +189,7 @@ export function Contact({ contactData, professionalId }: ContactProps) {
                 >
                   <label htmlFor={field.name} className="block text-foreground mb-2">
                     {field.label}
-                    {field.required && <span className="text-red-500 ml-1">*</span>}
+                    {field.required && <span className="text-status-error ml-1">*</span>}
                   </label>
 
                   {/* Field input rendering */}
@@ -201,7 +201,7 @@ export function Contact({ contactData, professionalId }: ContactProps) {
                       value={formData[field.name] || ''}
                       onChange={(e) => handleFormChange(field.name, e.target.value)}
                       rows={field.rows || 4}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 resize-none bg-background text-foreground"
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent transition-all duration-300 resize-none bg-background text-foreground"
                       required={field.required}
                     />
                   ) : field.type === 'select' ? (
@@ -210,7 +210,7 @@ export function Contact({ contactData, professionalId }: ContactProps) {
                       name={field.name}
                       value={formData[field.name] || ''}
                       onChange={(e) => handleFormChange(field.name, e.target.value)}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent transition-all duration-300 bg-background text-foreground"
                       required={field.required}
                     >
                       <option value="">Select a subject</option>
@@ -228,7 +228,7 @@ export function Contact({ contactData, professionalId }: ContactProps) {
                       placeholder={field.placeholder}
                       value={formData[field.name] || ''}
                       onChange={(e) => handleFormChange(field.name, e.target.value)}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 bg-background text-foreground"
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent transition-all duration-300 bg-background text-foreground"
                       required={field.required}
                     />
                   )}

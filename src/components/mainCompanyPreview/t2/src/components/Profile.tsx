@@ -67,7 +67,7 @@ const Profile = ({ profileData }) => {
   return (
     <section
       id="our-team"
-      className={`py-20 theme-transition ${theme === "dark" ? "bg-black text-gray-100" : "bg-gray-50 text-gray-900"
+      className={`py-20 theme-transition ${theme === "dark" ? "bg-ink text-ink-light" : "bg-ink-offwhite text-ink"
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,7 +84,7 @@ const Profile = ({ profileData }) => {
             return (
               <motion.div
                 key={member.id}
-                className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-gray-900" : "bg-white"
+                className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-ink" : "bg-surface-card"
                   }`}
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.2 }}
@@ -104,7 +104,7 @@ const Profile = ({ profileData }) => {
                 <div className="p-6 text-center">
                   {/* Show prefix if available */}
                   {prefixDisplay && (
-                    <div className="text-sm text-gray-500 mb-1">
+                    <div className="text-sm text-ink-caption mb-1">
                       {prefixDisplay}
                     </div>
                   )}
@@ -114,7 +114,7 @@ const Profile = ({ profileData }) => {
                     {member.role}
                   </p>
                   <p
-                    className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                    className={`text-sm ${theme === "dark" ? "text-ink-light" : "text-ink-paragraph"
                       } text-justify`}
                   >
                     {member.bio}

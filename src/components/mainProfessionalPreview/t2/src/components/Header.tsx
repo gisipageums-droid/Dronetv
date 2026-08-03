@@ -22,8 +22,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants: Record<string, string> = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes: Record<string, string> = {
     sm: "h-8 px-3 text-sm",
@@ -91,7 +91,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
             <div className='flex items-center gap-4'>
               {/* Display Mode - Only Avatar (No Text) */}
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+                <div className="w-14 h-14 rounded-full bg-brand-yellow-soft flex items-center justify-center text-ink font-bold text-lg border-2 border-brand-yellow-soft shadow-lg">
                   {getAvatarLetter(data.logoText)}
                 </div>
                 {/* Logo Text displayed to the right of avatar */}
@@ -109,7 +109,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
                 <a
                   key={index}
                   href={link.href}
-                  className="transition-all duration-300 text-muted-foreground hover:text-yellow-500 hover:scale-110"
+                  className="transition-all duration-300 text-muted-foreground hover:text-brand-yellow hover:scale-110"
                 >
                   {link.label}
                 </a>
@@ -124,7 +124,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="transition-all duration-300 md:hidden text-muted-foreground hover:text-yellow-500 hover:scale-110"
+                className="transition-all duration-300 md:hidden text-muted-foreground hover:text-brand-yellow hover:scale-110"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
@@ -140,7 +140,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
                 key={index}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 transition-colors duration-300 text-muted-foreground hover:text-yellow-500"
+                className="block py-2 transition-colors duration-300 text-muted-foreground hover:text-brand-yellow"
               >
                 {link.label}
               </a>

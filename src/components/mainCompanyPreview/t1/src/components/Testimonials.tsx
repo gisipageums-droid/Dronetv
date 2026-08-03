@@ -53,7 +53,7 @@ export default function EditableTestimonials({
       stars.push(
         <span
           key={i}
-          className={i <= rate ? "text-yellow-400" : "text-gray-300"}
+          className={i <= rate ? "text-brand-yellow" : "text-ink-light"}
         >
           ★
         </span>
@@ -65,17 +65,17 @@ export default function EditableTestimonials({
   return (
     <section
       id="testimonials"
-      className="bg-gray-50 py-16 scroll-mt-20"
+      className="bg-ink-offwhite py-16 scroll-mt-20"
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-12">
           <div className="mb-4">
-            <h2 className="text-3xl font-bold text-gray-900">
+            <h2 className="text-3xl font-bold text-ink">
               {testimonialsData.headline.title}
             </h2>
           </div>
           
-          <p className="text-gray-600 max-w-2xl mx-auto text-base">
+          <p className="text-ink-paragraph max-w-2xl mx-auto text-base">
             {testimonialsData.headline.description}
           </p>
         </div>
@@ -87,17 +87,17 @@ export default function EditableTestimonials({
           >
             {testimonialsData.testimonials.map((testimonial, index) => (
               <div key={index} className="w-full flex-shrink-0">
-                <div className="mx-4 bg-white shadow-lg border-0 rounded-lg">
+                <div className="mx-4 bg-surface-card shadow-lg border-0 rounded-lg">
                   <div className="p-8 text-center">
                     <div className="mb-6">
-                      <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
+                      <div className="w-16 h-16 bg-status-info rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
                         <img
                           src={testimonial.image || (testimonial.gender === "male" ? maleAvatar : femaleAvatar)}
                           alt={testimonial.name}
                           className="w-full h-full object-cover scale-110"
                         />
                       </div>
-                      <h3 className="font-semibold text-xl text-gray-900 mb-2">
+                      <h3 className="font-semibold text-xl text-ink mb-2">
                         {testimonial.name}
                       </h3>
                       
@@ -107,13 +107,13 @@ export default function EditableTestimonials({
                     </div>
 
                     <div className="mb-6">
-                      <blockquote className="text-lg text-gray-700 italic text-justify">
+                      <blockquote className="text-lg text-ink-paragraph italic text-justify">
                         "{testimonial.quote}"
                       </blockquote>
                     </div>
 
                     <div className="border-t pt-6">
-                      <p className="text-gray-600 text-justify">
+                      <p className="text-ink-paragraph text-justify">
                         {testimonial.role}
                       </p>
                     </div>
@@ -134,8 +134,8 @@ export default function EditableTestimonials({
                   onClick={() => setCurrent(index)}
                   className={`w-3 h-3 rounded-full transition-colors duration-200 ${
                     index === current
-                      ? "bg-blue-600"
-                      : "bg-gray-300 hover:bg-gray-400"
+                      ? "bg-status-info"
+                      : "bg-ink-light hover:bg-ink-caption"
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />

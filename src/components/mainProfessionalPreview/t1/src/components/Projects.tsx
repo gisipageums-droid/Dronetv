@@ -60,7 +60,7 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
   };
 
   return (
-    <section id="projects" className="py-20 bg-white dark:bg-gray-900">
+    <section id="projects" className="py-20 bg-surface-card dark:bg-gray-900">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
@@ -73,13 +73,13 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
             variants={itemVariants}
             className="relative mb-16 text-center"
           >
-            <h2 className="mb-4 text-4xl font-bold text-gray-900 lg:text-5xl dark:text-white">
+            <h2 className="mb-4 text-4xl font-bold text-ink lg:text-5xl dark:text-white">
               {projectContent.heading.split(" ")[0]}{" "}
-              <span className="text-orange-500">
+              <span className="text-status-warning">
                 {projectContent.heading.split(" ").slice(1).join(" ")}
               </span>
             </h2>
-            <p className="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-400 text-center">
+            <p className="mx-auto max-w-3xl text-xl text-ink-paragraph dark:text-gray-400 text-center">
               {projectContent.description}
             </p>
           </motion.div>
@@ -87,7 +87,7 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
           {/* Projects Grid */}
           {projectContent.projects.length === 0 ? (
             <div className="py-20 text-center">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
+              <p className="text-lg text-ink-caption dark:text-gray-400">
                 No projects to display yet.
               </p>
             </div>
@@ -98,7 +98,7 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
                   key={project.id}
                   variants={itemVariants}
                   whileHover={{ y: -10 }}
-                  className="overflow-hidden relative bg-gray-50 rounded-2xl shadow-lg transition-all duration-300 group dark:bg-gray-800 hover:shadow-2xl"
+                  className="overflow-hidden relative bg-ink-offwhite rounded-2xl shadow-lg transition-all duration-300 group dark:bg-gray-800 hover:shadow-2xl"
                 >
                   {/* Image */}
                   <div className="overflow-hidden relative">
@@ -112,21 +112,21 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
                   {/* Content */}
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-3">
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center text-sm text-ink-caption dark:text-gray-400">
                         <Calendar className="mr-1 w-4 h-4" />
                         {project.date}
                       </div>
-                      <div className="flex items-center text-sm text-orange-500">
+                      <div className="flex items-center text-sm text-status-warning">
                         <Tag className="mr-1 w-4 h-4" />
                         {project.category}
                       </div>
                     </div>
 
-                    <h3 className="mb-3 text-xl font-bold text-gray-900 transition-colors duration-200 dark:text-white group-hover:text-orange-500">
+                    <h3 className="mb-3 text-xl font-bold text-ink transition-colors duration-200 dark:text-white group-hover:text-status-warning">
                       {project.title}
                     </h3>
 
-                    <p className="mb-4 leading-relaxed text-gray-600 dark:text-gray-300 text-justify">
+                    <p className="mb-4 leading-relaxed text-ink-paragraph dark:text-gray-300 text-justify">
                       {project.description}
                     </p>
 
@@ -135,7 +135,7 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
                       {project.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 text-sm font-medium text-orange-500 bg-gradient-to-r rounded-full border from-yellow-500/10 to-orange-500/10 border-orange-500/30"
+                          className="px-3 py-1 text-sm font-medium text-status-warning bg-gradient-to-r rounded-full border from-brand-gold/10 to-status-warning/10 border-status-warning/30"
                         >
                           {tag}
                         </span>

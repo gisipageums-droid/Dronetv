@@ -47,15 +47,15 @@
 //   const aboutContent = aboutData || defaultAboutContent;
 
 //   return (
-//     <section id="about" className="py-20 bg-white">
+//     <section id="about" className="py-20 bg-surface-card">
 //       <div className="container max-w-7xl mx-auto px-4">
 //         {/* Heading */}
 //         <div className="text-center mb-16">
-//           <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+//           <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
 //             {aboutContent.heading}
 //           </h2>
 //           <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-//           <p className="text-gray-600 text-lg max-w-4xl mx-auto leading-relaxed text-justify">
+//           <p className="text-ink-paragraph text-lg max-w-4xl mx-auto leading-relaxed text-justify">
 //             {aboutContent.subText}
 //           </p>
 //         </div>
@@ -66,13 +66,13 @@
 //             {aboutContent.features.map((item, index) => (
 //               <div
 //                 key={index}
-//                 className="bg-gray-50 p-6 rounded-xl border-[solid] border-[black] border-[1px] shadow-md hover:bg-[#FFD400] hover:text-black transition-all duration-300"
+//                 className="bg-ink-offwhite p-6 rounded-xl border-[solid] border-[black] border-[1px] shadow-md hover:bg-[#FFD400] hover:text-ink transition-all duration-300"
 //               >
 //                 <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#FF0000] text-white mb-4 text-xl font-bold">
 //                   {item.title.charAt(0).toUpperCase()}
 //                 </div>
 //                 <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
-//                 <p className="text-gray-600">{item.description}</p>
+//                 <p className="text-ink-paragraph">{item.description}</p>
 //               </div>
 //             ))}
 //           </div>
@@ -80,10 +80,10 @@
 
 //         {/* Zones Section */}
 //         <div className="text-center mb-16">
-//           <h3 className="text-3xl font-bold text-black mb-4">
+//           <h3 className="text-3xl font-bold text-ink mb-4">
 //             <span className="text-[#FFD400]">{aboutContent.zonesTitle}</span> {aboutContent.zonesTitleHighlight}
 //           </h3>
-//           <p className="text-gray-600 text-lg max-w-3xl mx-auto text-justify">
+//           <p className="text-ink-paragraph text-lg max-w-3xl mx-auto text-justify">
 //             {aboutContent.zonesSubtitle}
 //           </p>
 //         </div>
@@ -93,12 +93,12 @@
 //             {aboutContent.zones.map((zone, index) => (
 //               <div
 //                 key={index}
-//                 className="bg-white p-6 rounded-2xl shadow-md border-[solid] border-[1px] border-yellow-400 hover:shadow-xl transition-all"
+//                 className="bg-surface-card p-6 rounded-2xl shadow-md border-[solid] border-[1px] border-brand-yellow hover:shadow-xl transition-all"
 //               >
 //                 <h4 className="text-xl font-semibold text-[#FF0000] mb-2">
 //                   {zone.title}
 //                 </h4>
-//                 <p className="text-gray-700 leading-relaxed">{zone.description}</p>
+//                 <p className="text-ink-paragraph leading-relaxed">{zone.description}</p>
 //               </div>
 //             ))}
 //           </div>
@@ -191,15 +191,15 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData }) => {
   };
 
   return (
-    <section id="about" className="py-20 bg-white text-justify">
+    <section id="about" className="py-20 bg-surface-card text-justify">
       <div className="container max-w-7xl mx-auto px-4">
         {/* Heading */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
             {aboutContent.heading}
           </h2>
           <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p className="text-gray-600 text-lg max-w-4xl mx-auto leading-relaxed text-center">
+          <p className="text-ink-paragraph text-lg max-w-4xl mx-auto leading-relaxed text-center">
             {aboutContent.subText}
           </p>
         </div>
@@ -210,7 +210,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData }) => {
             {aboutContent.features.map((item, index) => (
               <div
                 key={index}
-                className="bg-gray-50 p-6 rounded-xl border-[solid] border-[black] border-[1px] shadow-md hover:bg-[#FFD400] hover:text-black transition-all duration-300"
+                className="bg-ink-offwhite p-6 rounded-xl border-[solid] border-[black] border-[1px] shadow-md hover:bg-[#FFD400] hover:text-ink transition-all duration-300"
               >
                 {/* Logo Image for Feature */}
                 <div className="w-16 h-16 flex items-center justify-center mb-4">
@@ -225,7 +225,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData }) => {
                 </div>
                 
                 <h4 className="text-xl font-semibold mb-2 text-center">{item.title}</h4>
-                <p className="text-gray-600 text-center">{item.description}</p>
+                <p className="text-ink-paragraph text-center">{item.description}</p>
               </div>
             ))}
           </div>
@@ -233,10 +233,10 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData }) => {
 
         {/* Zones Section */}
         <div className="text-center mb-16">
-          <h3 className="text-3xl font-bold text-black mb-4">
+          <h3 className="text-3xl font-bold text-ink mb-4">
             <span className="text-[#FFD400]">{aboutContent.zonesTitle}</span> {aboutContent.zonesTitleHighlight}
           </h3>
-          <p className="text-gray-600 text-lg max-w-3xl mx-auto text-center">
+          <p className="text-ink-paragraph text-lg max-w-3xl mx-auto text-center">
             {aboutContent.zonesSubtitle}
           </p>
         </div>
@@ -246,12 +246,12 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData }) => {
             {aboutContent.zones.map((zone, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-2xl shadow-md border-[solid] border-[1px] border-yellow-400 hover:shadow-xl transition-all"
+                className="bg-surface-card p-6 rounded-2xl shadow-md border-[solid] border-[1px] border-brand-yellow hover:shadow-xl transition-all"
               >
                 <h4 className="text-xl font-semibold text-[#FF0000] mb-2 text-center">
                   {zone.title}
                 </h4>
-                <p className="text-gray-700 leading-relaxed text-center">{zone.description}</p>
+                <p className="text-ink-paragraph leading-relaxed text-center">{zone.description}</p>
               </div>
             ))}
           </div>

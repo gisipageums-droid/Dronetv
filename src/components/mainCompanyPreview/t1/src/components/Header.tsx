@@ -65,7 +65,7 @@ export default function Header({
           <div className="flex items-center justify-between py-[1px] mx-auto max-w-7xl">
             {/* Logo + Company Name */}
             <motion.div
-              className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
+              className="flex flex-row items-center gap-2 text-xl font-bold text-status-error transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
               whileHover={{ scale: 1.05 }}
             >
               {/* Enhanced Logo with Animations */}
@@ -131,7 +131,7 @@ export default function Header({
                 <a
                   key={index}
                   href={`#${item.toLowerCase()}`}
-                  className="text-sm font-medium text-black transition-colors duration-300 hover:text-yellow-600 lg:text-base"
+                  className="text-sm font-medium text-ink transition-colors duration-300 hover:text-brand-yellow lg:text-base"
                 >
                   {item}
                 </a>
@@ -142,7 +142,7 @@ export default function Header({
             <div className="flex items-center space-x-2 md:hidden">
               <button
                 onClick={toggleMobileMenu}
-                className="p-2 transition-colors duration-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="p-2 transition-colors duration-200 rounded-md hover:bg-ink-light dark:hover:bg-gray-700"
               >
                 <svg
                   className="w-6 h-6 transition-transform duration-200"
@@ -188,7 +188,7 @@ export default function Header({
             <a
               key={index}
               href={`#${item.toLowerCase()}`}
-              className="px-3 py-2 font-medium text-black transition-colors duration-300 rounded-lg hover:text-yellow-600 hover:bg-gray-50"
+              className="px-3 py-2 font-medium text-ink transition-colors duration-300 rounded-lg hover:text-brand-yellow hover:bg-ink-offwhite"
               onClick={closeMobileMenu}
             >
               {item}

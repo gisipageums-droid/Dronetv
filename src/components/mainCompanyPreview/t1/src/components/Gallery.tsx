@@ -68,7 +68,7 @@ export default function GallerySection({ galleryData }) {
         <section
             id='gallery'
             ref={sectionRef}
-            className='py-24 bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20'
+            className='py-24 bg-gradient-to-b from-surface-main/30 via-white to-surface-main/20 scroll-mt-20'
         >
             <div className='max-w-7xl mx-auto px-6'>
                 {/* Section Header */}
@@ -79,7 +79,7 @@ export default function GallerySection({ galleryData }) {
                         transition={{ duration: 0.6, ease: "easeOut" }}
                         className='inline-block mb-4'
                     >
-                        <Badge className="bg-[#ffeb3b] text-gray-900 px-5 py-2 shadow-md">
+                        <Badge className="bg-[#ffeb3b] text-ink px-5 py-2 shadow-md">
                             Our Gallery
                         </Badge>
                     </motion.div>
@@ -88,7 +88,7 @@ export default function GallerySection({ galleryData }) {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isVisible ? { opacity: 1, y: 0 } : {}}
                         transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
-                        className="text-3xl md:text-4xl font-extrabold text-gray-900"
+                        className="text-3xl md:text-4xl font-extrabold text-ink"
                     >
                         {galleryData.heading.title}
                     </motion.h2>
@@ -97,7 +97,7 @@ export default function GallerySection({ galleryData }) {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isVisible ? { opacity: 1, y: 0 } : {}}
                         transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-                        className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg "
+                        className="text-ink-paragraph mt-4 max-w-2xl mx-auto text-lg "
                     >
                         {galleryData.heading.description}
                     </motion.p>
@@ -119,7 +119,7 @@ export default function GallerySection({ galleryData }) {
                                 y: -5,
                                 scale: 1.02
                             }}
-                            className="overflow-hidden rounded-lg shadow-md cursor-pointer group bg-white"
+                            className="overflow-hidden rounded-lg shadow-md cursor-pointer group bg-surface-card"
                             onClick={() => openLightbox(index)}
                         >
                             <div className="relative overflow-hidden">
@@ -133,12 +133,12 @@ export default function GallerySection({ galleryData }) {
                                         }}
                                     />
                                 ) : (
-                                    <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                                        <span className="text-gray-500">No image</span>
+                                    <div className="w-full h-64 bg-ink-light flex items-center justify-center">
+                                        <span className="text-ink-caption">No image</span>
                                     </div>
                                 )}
 
-                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
+                                <div className="absolute inset-0 bg-ink bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
                                     <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
                                         <h3 className="font-semibold">{image.title}</h3>
                                         <p className="text-sm">{image.category}</p>
@@ -157,14 +157,14 @@ export default function GallerySection({ galleryData }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+                    className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
                     onClick={closeLightbox}
                 >
                     {/* Close button */}
                     <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
-                        className="absolute top-3 right-3 text-white rounded-full bg-black/60 hover:bg-black/80 z-10 flex items-center justify-center"
+                        className="absolute top-3 right-3 text-white rounded-full bg-ink/60 hover:bg-ink-charcoal/80 z-10 flex items-center justify-center"
                         style={{ minWidth: 44, minHeight: 44 }}
                         aria-label="Close lightbox"
                     >
@@ -175,7 +175,7 @@ export default function GallerySection({ galleryData }) {
                     <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); goToPrev(); }}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 text-white rounded-full bg-black/60 hover:bg-black/80 z-10 flex items-center justify-center"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 text-white rounded-full bg-ink/60 hover:bg-ink-charcoal/80 z-10 flex items-center justify-center"
                         style={{ minWidth: 44, minHeight: 44 }}
                         aria-label="Previous image"
                     >
@@ -186,7 +186,7 @@ export default function GallerySection({ galleryData }) {
                     <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); goToNext(); }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-white rounded-full bg-black/60 hover:bg-black/80 z-10 flex items-center justify-center"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-white rounded-full bg-ink/60 hover:bg-ink-charcoal/80 z-10 flex items-center justify-center"
                         style={{ minWidth: 44, minHeight: 44 }}
                         aria-label="Next image"
                     >
@@ -204,8 +204,8 @@ export default function GallerySection({ galleryData }) {
                         />
                         <div className="text-white text-center mt-4 px-10">
                             <h3 className="text-lg sm:text-xl font-semibold">{galleryData.images[selectedImage].title}</h3>
-                            <p className="text-gray-300 text-sm">{galleryData.images[selectedImage].category}</p>
-                            <p className="text-gray-400 text-xs mt-1">{galleryData.images[selectedImage].description}</p>
+                            <p className="text-ink-light text-sm">{galleryData.images[selectedImage].category}</p>
+                            <p className="text-ink-caption text-xs mt-1">{galleryData.images[selectedImage].description}</p>
                         </div>
                     </div>
                 </motion.div>

@@ -166,14 +166,14 @@ export default function About({ aboutData }) {
         {/* Vision Section - Centrally Aligned and Justified */}
         <motion.div className="text-center mb-16 mt-16">
           <motion.div className="flex flex-col items-center justify-center mb-6">
-            <Eye className="w-12 h-12 text-red-500 mb-3" />
+            <Eye className="w-12 h-12 text-status-error mb-3" />
 
             <motion.div
               whileInView={{ opacity: [0, 1], y: [-20, 0] }}
               transition={{ duration: 0.5, ease: "backInOut" }}
               className="px-4 py-2 bg-red-accent/10 rounded-full"
             >
-              <span className="font-medium text-red-500 text-lg">
+              <span className="font-medium text-status-error text-lg">
                 {aboutState.visionBadge}
               </span>
             </motion.div>

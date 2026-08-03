@@ -91,7 +91,7 @@ export default function Services({ serviceData }) {
             {visibleServices.length > 0 && (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {visibleServices.map((service, index) => (
-                  <Card key={index} className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl shadow-gray-500">
+                  <Card key={index} className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl shadow-ink-caption">
                     <div className="h-40 overflow-hidden relative flex-shrink-0" style={{ background: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)' }}>
                       {service.image && /^https?:\/\//.test(service.image) ? (
                         <img
@@ -119,7 +119,7 @@ export default function Services({ serviceData }) {
                         <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem] text-justify">
                           {decodeHTML(service.description)}
                         </p>
-                        <p className="text-xs mt-1 italic text-gray-500">
+                        <p className="text-xs mt-1 italic text-ink-caption">
                           Category: {service.category}
                         </p>
                       </div>
@@ -159,7 +159,7 @@ export default function Services({ serviceData }) {
           <AnimatePresence>
             {isModalOpen && selectedServiceIndex !== null && (
               <motion.div
-                className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[99999999999999]"
+                className="fixed inset-0 bg-ink/50 flex items-center justify-center p-4 z-[99999999999999]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -175,7 +175,7 @@ export default function Services({ serviceData }) {
                 >
                   <button
                     onClick={closeModal}
-                    className="absolute top-3 right-3 bg-gray-500 hover:bg-gray-600 rounded-full p-1.5 transition-colors"
+                    className="absolute top-3 right-3 bg-ink-caption hover:bg-ink-paragraph rounded-full p-1.5 transition-colors"
                   >
                     <X className="w-4 h-4 text-white" />
                   </button>
@@ -197,7 +197,7 @@ export default function Services({ serviceData }) {
                       <ul className="space-y-1.5">
                         {serviceData.services[selectedServiceIndex].benefits.map((b, bi) => (
                           <li key={bi} className="flex gap-2 text-sm">
-                            <CheckCircle className="w-3.5 h-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+                            <CheckCircle className="w-3.5 h-3.5 text-status-success mt-0.5 flex-shrink-0" />
                             <span className="leading-tight text-justify">{b}</span>
                           </li>
                         ))}

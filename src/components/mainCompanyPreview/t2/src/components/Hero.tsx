@@ -83,10 +83,10 @@ export default function Hero({ heroData }) {
               {/* Badge - Using heroData.badgeText */}
               {heroState.badgeText && (
                 <motion.div
-                  className="inline-flex  items-center px-4 py-2 bg-yellow-400 rounded-xl text-primary border border-primary/20 mb-4"
+                  className="inline-flex  items-center px-4 py-2 bg-brand-yellow rounded-xl text-primary border border-primary/20 mb-4"
                   variants={itemVariants}
                 >
-                  <span className="font-bold text-lg text-black uppercase">
+                  <span className="font-bold text-lg text-ink uppercase">
                     {heroState.badgeText}
                   </span>
                 </motion.div>
@@ -101,7 +101,7 @@ export default function Hero({ heroData }) {
 
               {/* Description */}
               <motion.div variants={itemVariants} className="max-w-lg text-justify">
-                <p className="text-xl text-gray-700 dark:text-gray-300">
+                <p className="text-xl text-ink-paragraph dark:text-gray-300">
                   {heroState.description}
                 </p>
               </motion.div>
@@ -115,7 +115,7 @@ export default function Hero({ heroData }) {
               >
                 <button
                   size="lg"
-                  className="bg-yellow-100 text-primary-foreground shadow-xl px-6 py-3 rounded-lg flex items-center"
+                  className="bg-brand-yellow-soft text-primary-foreground shadow-xl px-6 py-3 rounded-lg flex items-center"
                 >
                   <a href="#contact">{heroState.primaryBtn}</a>
                 </button>
@@ -190,8 +190,8 @@ export default function Hero({ heroData }) {
                         }}
                       />
                     ) : (
-                      <div className="w-full max-w-full h-64 bg-gray-200 rounded-3xl shadow-2xl flex items-center justify-center">
-                        <span className="text-gray-500">Hero Image</span>
+                      <div className="w-full max-w-full h-64 bg-ink-light rounded-3xl shadow-2xl flex items-center justify-center">
+                        <span className="text-ink-caption">Hero Image</span>
                       </div>
                     )}
                   </div>
@@ -207,11 +207,11 @@ export default function Hero({ heroData }) {
                         <img
                           src={heroState.hero3Image}
                           alt="Additional business context"
-                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"
+                          className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-surface-card"
                         />
                       ) : (
-                        <div className="block w-32 h-24 bg-gray-200 rounded-2xl shadow-xl border-4 border-white flex items-center justify-center">
-                          <span className="text-gray-500 text-xs">Small Image</span>
+                        <div className="block w-32 h-24 bg-ink-light rounded-2xl shadow-xl border-4 border-white flex items-center justify-center">
+                          <span className="text-ink-caption text-xs">Small Image</span>
                         </div>
                       )}
                     </div>
@@ -219,7 +219,7 @@ export default function Hero({ heroData }) {
 
                   {/* Decorative circle */}
                   <motion.div
-                    className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80"
+                    className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-brand-yellow rounded-full opacity-80"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.6, type: "spring", stiffness: 300 }}

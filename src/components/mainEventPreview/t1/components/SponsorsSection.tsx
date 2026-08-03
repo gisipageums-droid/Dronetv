@@ -35,15 +35,15 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
   const sponsorsContent = sponsorsData || defaultSponsorsContent;
 
   return (
-    <section id="sponsors" className="py-20 bg-white">
+    <section id="sponsors" className="py-20 bg-surface-card">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-          {sponsorsContent.title} <span className="text-red-600">{sponsorsContent.titleHighlight}</span>
+        <h2 className="text-4xl md:text-5xl font-bold text-ink mb-6">
+          {sponsorsContent.title} <span className="text-status-error">{sponsorsContent.titleHighlight}</span>
         </h2>
 
         <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-10"></div>
 
-        <div className="max-w-6xl mx-auto rounded-[28px] bg-white shadow-xl p-8">
+        <div className="max-w-6xl mx-auto rounded-[28px] bg-surface-card shadow-xl p-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-12">
             {sponsorsContent.partners.map((partner) => (
               <div key={partner.id} className="text-center flex flex-col items-center gap-4">

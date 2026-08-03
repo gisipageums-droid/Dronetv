@@ -77,7 +77,7 @@ export default function Product({ productData }) {
                 {productData.products.slice(0, visibleCount).map((product, index) => (
                   <Card
                     key={index}
-                    className="group h-full relative overflow-hidden flex flex-col border-2 shadow-lg hover:shadow-xl  shadow-gray-500"
+                    className="group h-full relative overflow-hidden flex flex-col border-2 shadow-lg hover:shadow-xl  shadow-ink-caption"
                   >
                     <div className="relative h-32 overflow-hidden flex-shrink-0">
                       <ImageWithFallback
@@ -85,7 +85,7 @@ export default function Product({ productData }) {
                         alt={product.title}
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-ink/20 to-transparent" />
                       <div className="absolute top-2 left-2">
                         <Badge
                           className={`${product.categoryColor} border-0 text-xs`}
@@ -162,7 +162,7 @@ export default function Product({ productData }) {
           <AnimatePresence>
             {isModalOpen && selectedProductIndex !== null && (
               <motion.div
-                className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50"
+                className="fixed inset-0 bg-ink/50 flex items-center justify-center p-6 z-50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -174,7 +174,7 @@ export default function Product({ productData }) {
                 >
                   <button
                     onClick={closeModal}
-                    className="absolute top-4 right-4 bg-white rounded-full p-2"
+                    className="absolute top-4 right-4 bg-surface-card rounded-full p-2"
                   >
                     <X className="w-5 h-5" />
                   </button>

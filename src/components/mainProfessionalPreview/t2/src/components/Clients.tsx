@@ -31,23 +31,23 @@ export function Clients({ clientData }: ClientsProps) {
       <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="h-8 bg-gray-300 rounded w-1/3 mx-auto mb-4"></div>
-            <div className="h-4 bg-gray-300 rounded w-2/3 mx-auto"></div>
+            <div className="h-8 bg-ink-light rounded w-1/3 mx-auto mb-4"></div>
+            <div className="h-4 bg-ink-light rounded w-2/3 mx-auto"></div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
             {[...Array(4)].map((_, index) => (
               <div key={index} className="animate-pulse text-center">
-                <div className="h-12 bg-gray-300 rounded w-16 mx-auto mb-2"></div>
-                <div className="h-4 bg-gray-300 rounded w-20 mx-auto"></div>
+                <div className="h-12 bg-ink-light rounded w-16 mx-auto mb-2"></div>
+                <div className="h-4 bg-ink-light rounded w-20 mx-auto"></div>
               </div>
             ))}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
             {[...Array(6)].map((_, index) => (
-              <div key={index} className="animate-pulse bg-gray-300 rounded-xl h-24"></div>
+              <div key={index} className="animate-pulse bg-ink-light rounded-xl h-24"></div>
             ))}
           </div>
-          <div className="animate-pulse bg-gray-300 rounded-2xl p-8 h-48"></div>
+          <div className="animate-pulse bg-ink-light rounded-2xl p-8 h-48"></div>
         </div>
       </section>
     );
@@ -113,7 +113,7 @@ export function Clients({ clientData }: ClientsProps) {
                 whileHover={{ scale: 1.05 }}
                 className="text-center transition-transform duration-300"
               >
-                <div className="text-3xl sm:text-4xl text-yellow-500 mb-2">{stat.number}</div>
+                <div className="text-3xl sm:text-4xl text-brand-gold mb-2">{stat.number}</div>
                 <p className="text-muted-foreground">{stat.label}</p>
               </motion.div>
             ))}
@@ -137,10 +137,10 @@ export function Clients({ clientData }: ClientsProps) {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-yellow-50 dark:hover:bg-yellow-900/20 transition-all duration-300"
+                className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-surface-main dark:hover:bg-yellow-900/20 transition-all duration-300"
               >
                 <div className="text-center">
-                  <div className="text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1">
+                  <div className="text-lg text-foreground group-hover:text-brand-yellow transition-colors duration-300 mb-1">
                     {client.name}
                   </div>
                   {client.industry && (
@@ -165,7 +165,7 @@ export function Clients({ clientData }: ClientsProps) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
             viewport={{ once: true }}
-            className="text-center bg-gradient-to-r from-yellow-50 to-card dark:from-yellow-900/20 dark:to-card rounded-2xl p-8"
+            className="text-center bg-gradient-to-r from-surface-main to-card dark:from-yellow-900/20 dark:to-card rounded-2xl p-8"
           >
             {clientData.cta.title && (
               <h3 className="text-2xl text-foreground mb-4">

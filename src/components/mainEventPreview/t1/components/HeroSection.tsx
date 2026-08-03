@@ -197,7 +197,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-900 via-black to-gray-900"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-ink to-ink-premiumend"
     >
       {/* YouTube Video BG */}
       {convertToEmbedUrl(heroContent.videoUrl) && (
@@ -220,13 +220,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
             allow="autoplay; encrypted-media; fullscreen"
             allowFullScreen
           />
-          <div className="absolute inset-0 bg-black/60 z-10"></div>
+          <div className="absolute inset-0 bg-ink/60 z-10"></div>
         </div>
       )}
 {/* Mute / Unmute Button */}
 <button
   onClick={toggleMute}
-  className="z-30 absolute bottom-6 right-6 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-md border border-white/20 transition"
+  className="z-30 absolute bottom-6 right-6 bg-ink/50 hover:bg-ink-charcoal/70 text-white p-3 rounded-full backdrop-blur-md border border-white/20 transition"
 >
   {isMuted ? (
     // Mute Icon
@@ -276,8 +276,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
           <div className="mb-8">
             {countdown.isEventExpired ? (
               <div className="text-center">
-                <div className="inline-block bg-orange-300/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-red-400/30">
-                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">
+                <div className="inline-block bg-status-warning/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-status-error/30">
+                  <h3 className="text-2xl md:text-3xl font-bold text-status-success mb-2">
                     ✅ Event has been completed
                   </h3>
                   <p className="text-white text-lg">This event has ended</p>
@@ -285,8 +285,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
               </div>
             ) : countdown.isEventStarted ? (
               <div className="text-center">
-                <div className="inline-block bg-green-500/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-green-400/30">
-                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">
+                <div className="inline-block bg-status-success/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-status-success/30">
+                  <h3 className="text-2xl md:text-3xl font-bold text-status-success mb-2">
                     🎉 Event is Live!
                   </h3>
                   <p className="text-white text-lg">Join us now at the event</p>
@@ -298,7 +298,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
                   Event Starts In
                 </h3>
                 <div className="flex justify-center gap-4 md:gap-6">
-                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                  <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
                     <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
                       {countdown.days}
                     </div>
@@ -306,7 +306,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
                       Days
                     </div>
                   </div>
-                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                  <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
                     <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
                       {countdown.hours}
                     </div>
@@ -314,7 +314,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
                       Hours
                     </div>
                   </div>
-                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                  <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
                     <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
                       {countdown.minutes}
                     </div>
@@ -322,7 +322,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
                       Minutes
                     </div>
                   </div>
-                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                  <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
                     <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
                       {countdown.seconds}
                     </div>

@@ -71,13 +71,13 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-[99999999] flex items-center justify-center bg-black/70 p-4"
+      className="fixed inset-0 z-[99999999] flex items-center justify-center bg-ink/70 p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto"
+        className="bg-surface-card dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
 
@@ -88,10 +88,10 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
             className="w-full h-48 object-cover rounded-t-xl"
             alt={blog.title}
           />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-ink/70 to-transparent p-4">
             <div className="flex justify-between items-center">
               <div className="text-white">
-                <span className="text-xs bg-indigo-600 px-2 py-1 rounded-full">
+                <span className="text-xs bg-status-info px-2 py-1 rounded-full">
                   {blog.category}
                 </span>
                 <p className="text-xs mt-1 opacity-90">
@@ -104,27 +104,27 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
 
         {/* Content */}
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-2xl font-bold text-ink dark:text-white mb-4">
             {blog.title}
           </h1>
 
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 leading-relaxed ">
+          <p className="text-lg text-ink-paragraph dark:text-gray-300 mb-6 leading-relaxed ">
             {blog.excerpt}
           </p>
 
           {/* Blog Outline if available */}
           {blog.outline && blog.outline.length > 0 && (
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+            <div className="bg-ink-offwhite dark:bg-gray-700 p-4 rounded-lg mb-6">
+              <h3 className="text-lg font-semibold text-ink dark:text-white mb-3">
                 In this article:
               </h3>
               <ul className="space-y-1 text-sm">
                 {blog.outline.map((item: string, index: number) => (
                   <li key={index} className="flex items-start">
-                    <span className="text-indigo-600 dark:text-indigo-400 mr-2 mt-1">
+                    <span className="text-status-info dark:text-indigo-400 mr-2 mt-1">
                       •
                     </span>
-                    <span className="text-gray-700 dark:text-gray-300">
+                    <span className="text-ink-paragraph dark:text-gray-300">
                       {item}
                     </span>
                   </li>
@@ -134,7 +134,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
           )}
 
           {/* Main Content */}
-          <div className="text-gray-700 dark:text-gray-300 leading-7 space-y-4 text-sm ">
+          <div className="text-ink-paragraph dark:text-gray-300 leading-7 space-y-4 text-sm ">
             {blog.content ? (
               <div dangerouslySetInnerHTML={{ __html: blog.content }} />
             ) : (
@@ -154,7 +154,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
                   reduced resource consumption.
                 </p>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6 mb-3">
+                <h3 className="text-lg font-semibold text-ink dark:text-white mt-6 mb-3">
                   The Future of Drone Technology
                 </h3>
 
@@ -172,15 +172,15 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
 
           {/* Keywords if available */}
           {blog.keywords && blog.keywords.length > 0 && (
-            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <h4 className="text-xs font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="mt-6 pt-4 border-t border-ink-light dark:border-gray-700">
+              <h4 className="text-xs font-semibold text-ink dark:text-white mb-2">
                 Keywords:
               </h4>
               <div className="flex flex-wrap gap-1">
                 {blog.keywords.map((keyword: string, index: number) => (
                   <span
                     key={index}
-                    className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-xs rounded-full"
+                    className="px-2 py-0.5 bg-status-info/15 dark:bg-indigo-900 text-status-info dark:text-indigo-200 text-xs rounded-full"
                   >
                     #{keyword}
                   </span>
@@ -195,7 +195,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
       <button
         type="button"
         onClick={(e) => { e.stopPropagation(); onClose(); }}
-        className="absolute top-3 right-3 bg-white rounded-full shadow-xl flex items-center justify-center"
+        className="absolute top-3 right-3 bg-surface-card rounded-full shadow-xl flex items-center justify-center"
         style={{ minWidth: 44, minHeight: 44, zIndex: 10 }}
         aria-label="Close modal"
       >
@@ -250,7 +250,7 @@ export default function Blog({ blogData }: { blogData?: any }) {
       <>
         <motion.section
           id="blog"
-          className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative"
+          className="py-20 bg-ink-offwhite dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -264,10 +264,10 @@ export default function Blog({ blogData }: { blogData?: any }) {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-3xl font-bold text-ink dark:text-white">
                 {content.header.title}
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mt-4 ">
+              <p className="text-ink-paragraph dark:text-gray-300 mt-4 ">
                 {content.header.desc}
               </p>
             </motion.div>
@@ -304,23 +304,23 @@ export default function Blog({ blogData }: { blogData?: any }) {
                           />
                         </div>
                         <CardContent className="p-6 space-y-3">
-                          <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex justify-between items-center text-sm text-ink-caption dark:text-gray-400">
                             <span>{b.date}</span>
                             <motion.span
-                              className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                              className="bg-status-info/15 text-status-info text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
                               whileHover={{ scale: 1.05 }}
                             >
                               {b.category}
                             </motion.span>
                           </div>
-                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                          <h3 className="text-xl font-semibold text-ink dark:text-white mb-2">
                             {b.title}
                           </h3>
-                          <p className="text-gray-600 dark:text-gray-300 h-full overflow-auto ">
+                          <p className="text-ink-paragraph dark:text-gray-300 h-full overflow-auto ">
                             {b.excerpt}
                           </p>
                           <div className="flex justify-between items-center mt-4 absolute bottom-4">
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                            <div className="text-sm text-ink-caption dark:text-gray-400">
                               <span>{b.author}</span>
                               <span className="mx-2">•</span>
                               <span>{b.readTime}</span>
@@ -331,7 +331,7 @@ export default function Blog({ blogData }: { blogData?: any }) {
                             >
                               <Button
                                 variant="ghost"
-                                className="text-red-500 dark:text-red-400 hover:text-red-600"
+                                className="text-status-error dark:text-red-400 hover:text-status-error"
                                 onClick={() => setSelectedBlog(b)}
                               >
                                 Read More →

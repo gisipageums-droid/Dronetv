@@ -79,9 +79,9 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
   };
 
   const getCharCountColor = (current: number, max: number) => {
-    if (current >= max) return "text-red-500";
-    if (current >= max * 0.9) return "text-yellow-500";
-    return "text-gray-500";
+    if (current >= max) return "text-status-error";
+    if (current >= max * 0.9) return "text-brand-gold";
+    return "text-ink-caption";
   };
 
   useEffect(() => {
@@ -104,7 +104,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
   return (
     <section
       id="contact"
-      className="py-20 transition-colors duration-300 bg-gray-50 dark:bg-gray-900"
+      className="py-20 transition-colors duration-300 bg-ink-offwhite dark:bg-gray-900"
     >
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Content */}
@@ -116,13 +116,13 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
         >
           {/* Header */}
           <motion.div variants={itemVariants} className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-gray-800 lg:text-5xl dark:text-gray-100">
+            <h2 className="mb-4 text-4xl font-bold text-ink-charcoal lg:text-5xl dark:text-gray-100">
               {contactContent?.heading.split(" ").slice(0, -1).join(" ")}{" "}
-              <span className="text-orange-500">
+              <span className="text-status-warning">
                 {contactContent?.heading.split(" ").slice(-1)}
               </span>
             </h2>
-            <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-300">
+            <p className="max-w-3xl mx-auto text-xl text-ink-paragraph dark:text-gray-300">
               {contactContent?.description}
             </p>
           </motion.div>
@@ -130,8 +130,8 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
           <div className="max-w-2xl mx-auto">
             {/* Contact Form */}
             <motion.div variants={itemVariants}>
-              <div className="p-8 transition-colors duration-300 bg-white border border-gray-200 dark:bg-gray-800 backdrop-blur-sm rounded-2xl dark:border-gray-700">
-                <h3 className="mb-6 text-2xl font-bold text-orange-500">
+              <div className="p-8 transition-colors duration-300 bg-surface-card border border-ink-light dark:bg-gray-800 backdrop-blur-sm rounded-2xl dark:border-gray-700">
+                <h3 className="mb-6 text-2xl font-bold text-status-warning">
                   Send Me a Message
                 </h3>
 
@@ -140,7 +140,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                     <div className="space-y-1">
                       <label
                         htmlFor="name"
-                        className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                        className="block mb-2 font-medium text-ink-paragraph dark:text-gray-300"
                       >
                         Full Name *
                       </label>
@@ -152,7 +152,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                         onChange={handleFormChange}
                         maxLength={CHAR_LIMITS.formName}
                         required
-                        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                        className="w-full px-4 py-3 text-ink placeholder-ink-caption transition-all duration-200 bg-ink-light border border-ink-light rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-status-warning focus:ring-2 focus:ring-status-warning/20 focus:outline-none"
                         placeholder="Rahul sharma"
                       />
                       <div
@@ -168,7 +168,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                     <div className="space-y-1">
                       <label
                         htmlFor="email"
-                        className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                        className="block mb-2 font-medium text-ink-paragraph dark:text-gray-300"
                       >
                         Email Address *
                       </label>
@@ -180,7 +180,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                         onChange={handleFormChange}
                         maxLength={CHAR_LIMITS.formEmail}
                         required
-                        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                        className="w-full px-4 py-3 text-ink placeholder-ink-caption transition-all duration-200 bg-ink-light border border-ink-light rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-status-warning focus:ring-2 focus:ring-status-warning/20 focus:outline-none"
                         placeholder="rahulsharma@example.com"
                       />
                       <div
@@ -198,7 +198,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                     <div className="space-y-1">
                       <label
                         htmlFor="email"
-                        className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                        className="block mb-2 font-medium text-ink-paragraph dark:text-gray-300"
                       >
                         Phone No *
                       </label>
@@ -210,7 +210,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                         onChange={handleFormChange}
                         maxLength={CHAR_LIMITS.formPhone}
                         required
-                        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                        className="w-full px-4 py-3 text-ink placeholder-ink-caption transition-all duration-200 bg-ink-light border border-ink-light rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-status-warning focus:ring-2 focus:ring-status-warning/20 focus:outline-none"
                         placeholder="9876543210"
                       />
                       <div
@@ -226,7 +226,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                     <div className="space-y-1">
                       <label
                         htmlFor="subject"
-                        className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                        className="block mb-2 font-medium text-ink-paragraph dark:text-gray-300"
                       >
                         Subject *
                       </label>
@@ -237,7 +237,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                         value={formData.subject}
                         onChange={handleFormChange}
                         required
-                        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                        className="w-full px-4 py-3 text-ink placeholder-ink-caption transition-all duration-200 bg-ink-light border border-ink-light rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-status-warning focus:ring-2 focus:ring-status-warning/20 focus:outline-none"
                       >
                         <option>General Inquiry</option>
                         <option>Sales Inquiry</option>
@@ -259,7 +259,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                   <div className="space-y-1">
                     <label
                       htmlFor="message"
-                      className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                      className="block mb-2 font-medium text-ink-paragraph dark:text-gray-300"
                     >
                       Message *
                     </label>
@@ -271,7 +271,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                       maxLength={CHAR_LIMITS.formMessage}
                       required
                       rows={5}
-                      className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                      className="w-full px-4 py-3 text-ink placeholder-ink-caption transition-all duration-200 bg-ink-light border border-ink-light rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-status-warning focus:ring-2 focus:ring-status-warning/20 focus:outline-none"
                       placeholder="Tell me about your project..."
                     />
                     <div
@@ -291,8 +291,8 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                       animate={{ opacity: 1, y: 0 }}
                       className={`flex items-center p-4 rounded-lg ${
                         submitStatus === "success"
-                          ? "bg-green-100 dark:bg-green-500/20 border border-green-400 dark:border-green-500/30 text-green-700 dark:text-green-400"
-                          : "bg-red-100 dark:bg-red-500/20 border border-red-400 dark:border-red-500/30 text-red-700 dark:text-red-400"
+                          ? "bg-status-success/15 dark:bg-green-500/20 border border-status-success dark:border-green-500/30 text-status-success dark:text-green-400"
+                          : "bg-status-error/15 dark:bg-red-500/20 border border-status-error dark:border-red-500/30 text-status-error dark:text-red-400"
                       }`}
                     >
                       {submitStatus === "success" ? (
@@ -313,7 +313,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                     whileTap={{ scale: 0.98 }}
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex items-center justify-center w-full px-6 py-4 font-semibold text-white transition-all duration-200 bg-orange-500 rounded-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center justify-center w-full px-6 py-4 font-semibold text-white transition-all duration-200 bg-status-warning rounded-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <motion.div
@@ -323,7 +323,7 @@ const Contact: React.FC<ContactProps> = ({ content, professionalId }) => {
                           repeat: Infinity,
                           ease: "linear",
                         }}
-                        className="w-5 h-5 mr-2 border-2 border-black rounded-full border-t-transparent"
+                        className="w-5 h-5 mr-2 border-2 border-ink rounded-full border-t-transparent"
                       />
                     ) : (
                       <Send className="w-5 h-5 mr-2" />

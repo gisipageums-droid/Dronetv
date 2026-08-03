@@ -75,8 +75,8 @@ export default function Header({
   return (
     <motion.header
       className={`fixed top-16 left-0 right-0 border-b z-10 ${theme === "dark"
-        ? "bg-gray-800 border-gray-700 text-gray-300"
-        : "bg-white border-gray-200"
+        ? "bg-ink-charcoal border-ink-paragraph text-ink-light"
+        : "bg-surface-card border-ink-light"
         }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -101,7 +101,7 @@ export default function Header({
                 />
               ) : (
                 <span
-                  className="text-lg font-bold text-black flex items-center justify-center min-w-[77px] max-w-[200px]"
+                  className="text-lg font-bold text-ink flex items-center justify-center min-w-[77px] max-w-[200px]"
                   style={{
                     height: '65px',
                   }}
@@ -120,8 +120,8 @@ export default function Header({
                   key={item.id}
                   href={item.href}
                   className={`font-medium relative group whitespace-nowrap ${theme === "dark"
-                    ? "text-gray-300 hover:text-gray-200"
-                    : "text-gray-700 hover:text-primary"
+                    ? "text-ink-light hover:text-ink-light"
+                    : "text-ink-paragraph hover:text-primary"
                     }`}
                   whileHover={{ y: -2 }}
                   onClick={(e) => {
@@ -143,7 +143,7 @@ export default function Header({
           <div className="flex items-center flex-shrink-0 space-x-1">
             <div className="hidden md:flex">
               <Button
-                className="text-black transition-all duration-300 shadow-lg bg-primary hover:bg-primary/90 whitespace-nowrap "
+                className="text-ink transition-all duration-300 shadow-lg bg-primary hover:bg-primary/90 whitespace-nowrap "
                 onClick={() => handleNavClick("#contact")}
               >
                 {content.ctaText}
@@ -157,8 +157,8 @@ export default function Header({
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={`hover:text-primary transition-colors p-2 ${theme === "dark"
-                  ? "text-gray-300 hover:text-gray-200"
-                  : "text-gray-700 hover:text-primary"
+                  ? "text-ink-light hover:text-ink-light"
+                  : "text-ink-paragraph hover:text-primary"
                   }`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -177,7 +177,7 @@ export default function Header({
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className={`lg:hidden border-t border-gray-200 overflow-hidden ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white"
+              className={`lg:hidden border-t border-ink-light overflow-hidden ${theme === "dark" ? "bg-ink-charcoal text-white" : "bg-surface-card"
                 }`}
               variants={menuVariants}
               initial="closed"
@@ -201,7 +201,7 @@ export default function Header({
                   </motion.a>
                 ))}
                 <Button
-                  className="w-full mt-4 text-black shadow-lg bg-primary hover:bg-primary/90"
+                  className="w-full mt-4 text-ink shadow-lg bg-primary hover:bg-primary/90"
                   onClick={() => handleNavClick("#contact")}
                 >
                   {content.ctaText}

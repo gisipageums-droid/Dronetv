@@ -72,7 +72,7 @@ export function Services({ serviceData }: ServicesProps) {
             return (
                 <>
                     {words[0]}{' '}
-                    <span className="text-red-500">
+                    <span className="text-status-error">
                         {words.slice(1).join(' ')}
                     </span>
                 </>
@@ -84,25 +84,25 @@ export function Services({ serviceData }: ServicesProps) {
     // Loading state
     if (!serviceData) {
         return (
-            <section id="services" className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
+            <section id="services" className="py-20 bg-gradient-to-br from-status-error/10 to-background dark:from-red-900/20 dark:to-background">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <div className="flex items-center justify-center mb-4">
-                            <Briefcase className="w-8 h-8 text-red-500 mr-3" />
-                            <div className="h-10 bg-gray-300 rounded w-48 mx-auto"></div>
+                            <Briefcase className="w-8 h-8 text-status-error mr-3" />
+                            <div className="h-10 bg-ink-light rounded w-48 mx-auto"></div>
                         </div>
-                        <div className="h-6 bg-gray-300 rounded w-32 mx-auto mb-2"></div>
-                        <div className="h-4 bg-gray-300 rounded w-64 mx-auto"></div>
+                        <div className="h-6 bg-ink-light rounded w-32 mx-auto mb-2"></div>
+                        <div className="h-4 bg-ink-light rounded w-64 mx-auto"></div>
                     </div>
                     <div className="relative max-w-5xl mx-auto">
-                        <div className="relative h-96 overflow-hidden rounded-2xl bg-gray-200 animate-pulse">
+                        <div className="relative h-96 overflow-hidden rounded-2xl bg-ink-light animate-pulse">
                             <div className="w-full h-full flex">
-                                <div className="w-1/2 bg-gray-300"></div>
+                                <div className="w-1/2 bg-ink-light"></div>
                                 <div className="w-1/2 p-8 flex flex-col justify-center">
-                                    <div className="h-8 bg-gray-300 rounded w-3/4 mx-auto mb-4"></div>
-                                    <div className="h-4 bg-gray-300 rounded w-full mb-4"></div>
-                                    <div className="h-6 bg-gray-300 rounded w-1/2 mx-auto mb-2"></div>
-                                    <div className="h-4 bg-gray-300 rounded w-1/3 mx-auto"></div>
+                                    <div className="h-8 bg-ink-light rounded w-3/4 mx-auto mb-4"></div>
+                                    <div className="h-4 bg-ink-light rounded w-full mb-4"></div>
+                                    <div className="h-6 bg-ink-light rounded w-1/2 mx-auto mb-2"></div>
+                                    <div className="h-4 bg-ink-light rounded w-1/3 mx-auto"></div>
                                 </div>
                             </div>
                         </div>
@@ -113,7 +113,7 @@ export function Services({ serviceData }: ServicesProps) {
     }
 
     return (
-        <section id="services" className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
+        <section id="services" className="py-20 bg-gradient-to-br from-status-error/10 to-background dark:from-red-900/20 dark:to-background">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <motion.div
@@ -124,7 +124,7 @@ export function Services({ serviceData }: ServicesProps) {
                     transition={{ duration: 0.6 }}
                 >
                     <div className="flex items-center justify-center mb-4">
-                        <Briefcase className="w-8 h-8 text-red-500 mr-3" />
+                        <Briefcase className="w-8 h-8 text-status-error mr-3" />
                         <h2 className="text-3xl sm:text-4xl lg:text-5xl text-foreground">
                             {renderHeading()}
                         </h2>
@@ -135,7 +135,7 @@ export function Services({ serviceData }: ServicesProps) {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
                             viewport={{ once: true }}
-                            className="text-lg text-red-500 mb-2"
+                            className="text-lg text-status-error mb-2"
                         >
                             {serviceData.subtitle}
                         </motion.p>
@@ -172,7 +172,7 @@ export function Services({ serviceData }: ServicesProps) {
                                     className="absolute inset-0 flex items-center justify-center"
                                 >
                                     {/* Service Card Content */}
-                                    <div className="w-full h-full flex bg-gradient-to-br from-card to-red-50 dark:from-card dark:to-red-900/20">
+                                    <div className="w-full h-full flex bg-gradient-to-br from-card to-status-error/10 dark:from-card dark:to-red-900/20">
                                         {/* Service Image */}
                                         <div className="w-1/2 relative">
                                             <motion.div transition={{ duration: 0.3 }}>
@@ -214,7 +214,7 @@ export function Services({ serviceData }: ServicesProps) {
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: 0.3 }}
                                             >
-                                                <p className="text-lg text-red-600 dark:text-red-400">
+                                                <p className="text-lg text-status-error dark:text-red-400">
                                                     {services[currentIndex].issuer}
                                                 </p>
                                                 <p className="text-muted-foreground">
@@ -232,13 +232,13 @@ export function Services({ serviceData }: ServicesProps) {
                             <>
                                 <button
                                     onClick={prevSlide}
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-red-600 transition-all duration-300 hover:scale-110 z-10"
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-status-error transition-all duration-300 hover:scale-110 z-10"
                                 >
                                     <ChevronLeft className="w-6 h-6" />
                                 </button>
                                 <button
                                     onClick={nextSlide}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-red-600 transition-all duration-300 hover:scale-110 z-10"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-status-error transition-all duration-300 hover:scale-110 z-10"
                                 >
                                     <ChevronRight className="w-6 h-6" />
                                 </button>
@@ -250,8 +250,8 @@ export function Services({ serviceData }: ServicesProps) {
                                             key={index}
                                             onClick={() => goToSlide(index)}
                                             className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
-                                                    ? 'bg-red-500 scale-125'
-                                                    : 'bg-gray-300 hover:bg-gray-400'
+                                                    ? 'bg-status-error scale-125'
+                                                    : 'bg-ink-light hover:bg-ink-caption'
                                                 }`}
                                         />
                                     ))}
@@ -262,7 +262,7 @@ export function Services({ serviceData }: ServicesProps) {
                 ) : (
                     // Empty state when no services are available
                     <div className="text-center py-12">
-                        <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                        <Briefcase className="w-16 h-16 text-ink-caption mx-auto mb-4" />
                         <h3 className="text-xl text-muted-foreground mb-2">
                             No services available
                         </h3>

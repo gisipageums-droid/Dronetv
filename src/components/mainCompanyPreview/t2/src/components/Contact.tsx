@@ -221,7 +221,7 @@ export default function Contact({ contactData, publishedId }) {
                       id="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 text-black text-justify"
+                      className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 text-ink text-justify"
                     >
                       {subjectOptions.map((option, index) => (
                         <option key={index} value={option} className="text-justify">

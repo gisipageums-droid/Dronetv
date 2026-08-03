@@ -63,7 +63,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
           {/* Event Name */}
           <div className="flex items-center flex-1 mr-4">
             <h1 className={`text-lg md:text-xl lg:text-2xl font-bold transition-colors duration-300 truncate ${
-              isScrolled ? "text-black" : "text-white"
+              isScrolled ? "text-ink" : "text-white"
             }`}>
               {navContent.eventName}
             </h1>
@@ -77,7 +77,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
                   onClick={() => scrollToSection(item.href)}
                   className={`relative font-medium transition-colors duration-300 group text-sm xl:text-base ${
                     isScrolled
-                      ? "text-black hover:text-[#FF0000]"
+                      ? "text-ink hover:text-[#FF0000]"
                       : "text-white hover:text-[#FFD400]"
                   }`}
                 >
@@ -102,7 +102,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={`lg:hidden p-2 ${
-              isScrolled ? "text-black" : "text-white"
+              isScrolled ? "text-ink" : "text-white"
             }`}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -116,7 +116,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
               <button
                 key={index}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-4 py-3 text-black hover:text-[#FF0000] hover:bg-gray-100 transition-colors"
+                className="block w-full text-left px-4 py-3 text-ink hover:text-[#FF0000] hover:bg-ink-light transition-colors"
               >
                 {item.name}
               </button>

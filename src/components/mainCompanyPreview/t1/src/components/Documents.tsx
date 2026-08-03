@@ -17,11 +17,11 @@ export default function Documents({ documents }: { documents?: Record<string, st
   if (entries.length === 0) return null;
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-ink-offwhite">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-gray-900">Documents & Downloads</h2>
-          <p className="text-gray-500 mt-2">Certificates, brochures, and company resources</p>
+          <h2 className="text-3xl font-bold text-ink">Documents & Downloads</h2>
+          <p className="text-ink-caption mt-2">Certificates, brochures, and company resources</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {entries.map(([key, url]) => {
@@ -35,27 +35,27 @@ export default function Documents({ documents }: { documents?: Record<string, st
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:border-yellow-400"
+                className="group flex flex-col bg-surface-card border border-ink-light rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:border-brand-yellow"
               >
                 {isImage ? (
-                  <div className="h-36 overflow-hidden bg-gray-100">
+                  <div className="h-36 overflow-hidden bg-ink-light">
                     <img src={url} alt={meta.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
                   </div>
                 ) : isVideo ? (
-                  <div className="h-36 bg-gray-900 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center">
+                  <div className="h-36 bg-ink flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-brand-yellow flex items-center justify-center">
                       <Play size={20} className="text-white ml-1" />
                     </div>
                   </div>
                 ) : (
-                  <div className="h-36 bg-gradient-to-br from-yellow-50 to-yellow-100 flex items-center justify-center">
-                    <div className="text-yellow-500 opacity-60">{meta.icon}</div>
-                    <FileText size={48} className="text-yellow-400 ml-2" />
+                  <div className="h-36 bg-gradient-to-br from-surface-main to-brand-yellow-soft flex items-center justify-center">
+                    <div className="text-brand-gold opacity-60">{meta.icon}</div>
+                    <FileText size={48} className="text-brand-yellow ml-2" />
                   </div>
                 )}
                 <div className="p-3 flex items-center justify-between gap-2">
-                  <span className="text-sm font-medium text-gray-800 leading-tight">{meta.label}</span>
-                  <Download size={14} className="text-gray-400 group-hover:text-yellow-500 flex-shrink-0 transition-colors" />
+                  <span className="text-sm font-medium text-ink-charcoal leading-tight">{meta.label}</span>
+                  <Download size={14} className="text-ink-caption group-hover:text-brand-yellow flex-shrink-0 transition-colors" />
                 </div>
               </a>
             );

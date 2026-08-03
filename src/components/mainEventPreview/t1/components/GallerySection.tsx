@@ -84,22 +84,22 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData }) => {
   };
 
   return (
-    <section id="gallery" className="py-20 bg-white">
+    <section id="gallery" className="py-20 bg-surface-card">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
             {galleryContent.title} <span className="text-[#FF0000]">{galleryContent.titleHighlight}</span>
           </h2>
           <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto text-justify">
+          <p className="text-ink-paragraph text-lg max-w-2xl mx-auto text-justify">
             {galleryContent.subtitle}
           </p>
         </div>
 
         <div className="relative">
           {galleryContent.items.length === 0 ? (
-            <div className="text-center py-16 bg-gray-100 rounded-2xl">
-              <p className="text-gray-500 text-lg">No videos available</p>
+            <div className="text-center py-16 bg-ink-light rounded-2xl">
+              <p className="text-ink-caption text-lg">No videos available</p>
             </div>
           ) : (
             <>
@@ -112,7 +112,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData }) => {
                   allowFullScreen
                   className="w-full h-[530px] rounded-xl"
                 ></iframe>
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent">
                   <h3 className="text-white font-semibold text-lg">{galleryContent.items[currentSlide]?.title}</h3>
                 </div>
               </div>
@@ -120,13 +120,13 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData }) => {
                 <>
                   <button
                     onClick={prevSlide}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-ink-charcoal text-white p-3 rounded-full shadow-lg hover:bg-ink-paragraph transition-colors"
                   >
                     <ChevronLeft size={24} />
                   </button>
                   <button
                     onClick={nextSlide}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-ink-charcoal text-white p-3 rounded-full shadow-lg hover:bg-ink-paragraph transition-colors"
                   >
                     <ChevronRight size={24} />
                   </button>
@@ -136,7 +136,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData }) => {
                         key={index}
                         onClick={() => setCurrentSlide(index)}
                         className={`w-3 h-3 rounded-full transition-colors ${
-                          currentSlide === index ? 'bg-white' : 'bg-white/50'
+                          currentSlide === index ? 'bg-surface-card' : 'bg-white/50'
                         }`}
                       />
                     ))}

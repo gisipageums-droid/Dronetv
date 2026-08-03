@@ -114,10 +114,10 @@ export default function EditableHero({
       }}
     >
       {isLoading && (
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
-          <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-            <div className="w-5 h-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
-            <span className="text-gray-700">Loading content...</span>
+        <div className="absolute inset-0 bg-ink/60 flex items-center justify-center z-30">
+          <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3">
+            <div className="w-5 h-5 animate-spin rounded-full border-2 border-status-info border-t-transparent"></div>
+            <span className="text-ink-paragraph">Loading content...</span>
           </div>
         </div>
       )}
@@ -139,13 +139,13 @@ export default function EditableHero({
               variants={itemVariants}
             >
               {heroState.heading}
-              <span className="block text-yellow-400 mt-2">
+              <span className="block text-brand-yellow mt-2">
                 {heroState.subheading}
               </span>
             </motion.h1>
 
             <motion.p
-              className="text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed"
+              className="text-base sm:text-md lg:text-md text-ink-light max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed"
               variants={itemVariants}
             >
               {heroState.description}
@@ -157,7 +157,7 @@ export default function EditableHero({
             >
               <a
                 href="#contact"
-                className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block text-center"
+                className="bg-brand-yellow hover:bg-brand-yellow-soft text-ink rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block text-center"
               >
                 {heroState.primaryBtn}
               </a>
@@ -213,7 +213,7 @@ export default function EditableHero({
                   </div>
                 </motion.div>
                 <motion.div
-                  className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80"
+                  className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-brand-yellow rounded-full opacity-80"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
