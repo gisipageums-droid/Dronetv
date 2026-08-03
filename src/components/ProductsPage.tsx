@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
+import PagePlacementSlot from './common/PagePlacementSlot';
 
 interface Product {
   id: string;
@@ -283,6 +284,19 @@ const ProductsPage: React.FC = () => {
         </section>
 
         <div className="pr-wrap">
+
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+              Sponsored Categories
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+              <PagePlacementSlot slotId="cat-drones" aspect="3/1" minHeight={72} />
+              <PagePlacementSlot slotId="cat-gis" aspect="3/1" minHeight={72} />
+              <PagePlacementSlot slotId="cat-agri" aspect="3/1" minHeight={72} />
+              <PagePlacementSlot slotId="cat-defence" aspect="3/1" minHeight={72} />
+              <PagePlacementSlot slotId="cat-training" aspect="3/1" minHeight={72} />
+            </div>
+          </div>
 
           <div className="pr-search-bar">
             <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
