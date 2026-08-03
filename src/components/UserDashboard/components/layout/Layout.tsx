@@ -9,14 +9,14 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
-    <div className="flex fixed inset-0 pt-20 bg-gray-950 text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
+    <div className="flex fixed inset-0 pt-20 bg-ink text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
       {/* Sidebar fills full height */}
       <div className="hidden lg:flex flex-shrink-0 h-full">
         <Sidebar />
       </div>
 
       {/* Scrollable content area */}
-      <div className="flex-1 min-w-0 overflow-y-auto pb-20 lg:pb-0 overscroll-contain bg-gray-950">
+      <div className="flex-1 min-w-0 overflow-y-auto pb-20 lg:pb-0 overscroll-contain bg-ink">
         {children}
       </div>
 

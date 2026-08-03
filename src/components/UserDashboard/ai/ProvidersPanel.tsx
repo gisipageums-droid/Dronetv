@@ -15,7 +15,7 @@ import { providersApi, type ProviderConnection, type ProviderPayload } from "./e
 // ---------- Not connected guard ----------
 function NotConnected() {
   return (
-    <div className="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+    <div className="flex flex-col items-center justify-center h-full py-20 text-ink-caption">
       <p className="text-sm font-medium">Not connected</p>
       <p className="text-xs mt-1">Go to the Authentication tab first.</p>
     </div>
@@ -28,10 +28,10 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-        isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+        isActive ? "bg-status-success/15 text-status-success" : "bg-ink-light text-ink-caption"
       }`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-500" : "bg-gray-400"}`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-status-success" : "bg-ink-caption"}`} />
       {isActive ? "Active" : status}
     </span>
   );
@@ -113,15 +113,15 @@ function ConnectModal({ onClose, onConnected }: ConnectModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-4">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
           <div className="flex items-center gap-2">
-            <Plug size={20} className="text-amber-600" />
-            <h3 className="text-base font-bold text-gray-900">Connect Provider</h3>
+            <Plug size={20} className="text-brand-gold" />
+            <h3 className="text-base font-bold text-ink">Connect Provider</h3>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-ink-caption hover:text-ink-paragraph transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -129,7 +129,7 @@ function ConnectModal({ onClose, onConnected }: ConnectModalProps) {
         {/* Form */}
         <div className="overflow-y-auto flex-1 px-6 py-5 space-y-4">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+            <div className="flex items-center gap-2 p-3 bg-status-error/10 border border-status-error/25 rounded-lg text-sm text-status-error">
               <AlertTriangle size={15} className="shrink-0" />
               {error}
             </div>
@@ -137,11 +137,11 @@ function ConnectModal({ onClose, onConnected }: ConnectModalProps) {
 
           {/* Provider select */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Provider *</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Provider *</label>
             <select
               value={form.provider}
               onChange={(e) => set("provider", e.target.value)}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+              className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card"
             >
               {KNOWN_PROVIDERS.map((p) => (
                 <option key={p} value={p}>{capitalize(p)}</option>
@@ -152,47 +152,47 @@ function ConnectModal({ onClose, onConnected }: ConnectModalProps) {
           {/* Custom provider text input */}
           {isCustom && (
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Custom Provider Name *</label>
+              <label className="block text-xs font-semibold text-ink-paragraph mb-1">Custom Provider Name *</label>
               <input
                 value={form._customProvider}
                 onChange={(e) => set("_customProvider", e.target.value)}
                 placeholder="e.g. bandwidth"
-                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
               />
             </div>
           )}
 
           {/* Account SID */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Account SID</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Account SID</label>
             <input
               value={form.account_sid}
               onChange={(e) => set("account_sid", e.target.value)}
               placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           {/* Auth token */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Auth Token</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Auth Token</label>
             <input
               type="password"
               value={form.auth_token}
               onChange={(e) => set("auth_token", e.target.value)}
               placeholder="Your auth token"
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           {/* Phone number */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Phone Number</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Phone Number</label>
             <input
               value={form.phone_number}
               onChange={(e) => set("phone_number", e.target.value)}
               placeholder="+1 555 000 0000"
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
@@ -200,22 +200,22 @@ function ConnectModal({ onClose, onConnected }: ConnectModalProps) {
           {!isTwilio && (
             <>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">API Key</label>
+                <label className="block text-xs font-semibold text-ink-paragraph mb-1">API Key</label>
                 <input
                   value={form.api_key}
                   onChange={(e) => set("api_key", e.target.value)}
                   placeholder="Your API key"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">API Secret</label>
+                <label className="block text-xs font-semibold text-ink-paragraph mb-1">API Secret</label>
                 <input
                   type="password"
                   value={form.api_secret}
                   onChange={(e) => set("api_secret", e.target.value)}
                   placeholder="Your API secret"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
             </>
@@ -223,31 +223,31 @@ function ConnectModal({ onClose, onConnected }: ConnectModalProps) {
 
           {/* Metadata JSON */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">
-              Metadata <span className="font-normal text-gray-400">(optional JSON)</span>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">
+              Metadata <span className="font-normal text-ink-caption">(optional JSON)</span>
             </label>
             <textarea
               value={metaJson}
               onChange={(e) => setMetaJson(e.target.value)}
               rows={3}
               placeholder='{"region": "us-east-1"}'
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none font-mono"
+              className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow resize-none font-mono"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-ink-light">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-ink-paragraph hover:text-ink-charcoal transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={submit}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
             Connect
@@ -284,29 +284,29 @@ function DisconnectConfirm({
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-4">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-sm p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-            <Trash2 size={20} className="text-red-500" />
+          <div className="w-10 h-10 bg-status-error/15 rounded-xl flex items-center justify-center">
+            <Trash2 size={20} className="text-status-error" />
           </div>
           <div>
-            <h3 className="font-bold text-gray-900 text-sm">Disconnect Provider</h3>
-            <p className="text-xs text-gray-500 mt-0.5">This action cannot be undone.</p>
+            <h3 className="font-bold text-ink text-sm">Disconnect Provider</h3>
+            <p className="text-xs text-ink-caption mt-0.5">This action cannot be undone.</p>
           </div>
         </div>
-        <p className="text-sm text-gray-700 mb-5">
+        <p className="text-sm text-ink-paragraph mb-5">
           Are you sure you want to disconnect <span className="font-semibold">{capitalize(connection.provider)}</span>?
         </p>
-        {error && <p className="text-xs text-red-500 mb-3">{error}</p>}
+        {error && <p className="text-xs text-status-error mb-3">{error}</p>}
         <div className="flex gap-3 justify-end">
-          <button onClick={onCancel} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">
+          <button onClick={onCancel} className="px-4 py-2 text-sm text-ink-paragraph hover:text-ink-charcoal">
             Cancel
           </button>
           <button
             onClick={confirm}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-4 py-2 bg-status-error hover:bg-status-error text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
             Disconnect
@@ -358,12 +358,12 @@ const ProvidersPanel: React.FC = () => {
       {/* Top bar */}
       <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center">
-            <Server size={20} className="text-amber-700" />
+          <div className="w-9 h-9 bg-brand-yellow-soft rounded-xl flex items-center justify-center">
+            <Server size={20} className="text-brand-gold" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-900">Providers</h1>
-            <p className="text-xs text-gray-500">
+            <h1 className="text-lg font-bold text-ink">Providers</h1>
+            <p className="text-xs text-ink-caption">
               {connections.length > 0
                 ? `${connections.length} provider${connections.length === 1 ? "" : "s"} connected`
                 : "Manage your telephony providers"}
@@ -373,14 +373,14 @@ const ProvidersPanel: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={fetchConnections}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 text-ink-caption hover:text-ink-paragraph hover:bg-ink-light rounded-lg transition-colors"
             title="Refresh"
           >
             <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg transition-colors"
           >
             <Plus size={15} />
             Connect Provider
@@ -390,21 +390,21 @@ const ProvidersPanel: React.FC = () => {
 
       {/* Error */}
       {fetchError && (
-        <div className="flex items-center gap-2 p-3 mb-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="flex items-center gap-2 p-3 mb-4 bg-status-error/10 border border-status-error/25 rounded-lg text-sm text-status-error">
           <AlertTriangle size={15} className="shrink-0" />
           {fetchError}
-          <button onClick={fetchConnections} className="ml-auto text-red-500 underline text-xs">Retry</button>
+          <button onClick={fetchConnections} className="ml-auto text-status-error underline text-xs">Retry</button>
         </div>
       )}
 
       {/* Connections list */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="flex items-center justify-center py-20 text-gray-400">
+          <div className="flex items-center justify-center py-20 text-ink-caption">
             <Loader2 size={28} className="animate-spin" />
           </div>
         ) : connections.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-20 text-ink-caption">
             <Server size={36} className="mb-3 opacity-40" />
             <p className="text-sm font-medium">No providers connected</p>
             <p className="text-xs mt-1">Connect a telephony provider to start making calls.</p>
@@ -414,17 +414,17 @@ const ProvidersPanel: React.FC = () => {
             {connections.map((conn) => (
               <div
                 key={conn.id}
-                className="flex items-start gap-4 p-4 bg-white border border-gray-100 rounded-xl hover:border-amber-200 hover:shadow-sm transition-all"
+                className="flex items-start gap-4 p-4 bg-surface-card border border-ink-light rounded-xl hover:border-brand-yellow-soft hover:shadow-sm transition-all"
               >
-                <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
-                  <Plug size={20} className="text-amber-600" />
+                <div className="w-10 h-10 bg-surface-main rounded-xl flex items-center justify-center shrink-0 mt-0.5">
+                  <Plug size={20} className="text-brand-gold" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-gray-900">{capitalize(conn.provider)}</span>
+                    <span className="text-sm font-semibold text-ink">{capitalize(conn.provider)}</span>
                     <StatusBadge status={conn.status} />
                   </div>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-ink-caption mt-0.5">
                     Connected {new Date(conn.connected_at).toLocaleDateString()}
                     {conn.updated_at && conn.updated_at !== conn.connected_at && (
                       <> &middot; Updated {new Date(conn.updated_at).toLocaleDateString()}</>
@@ -433,7 +433,7 @@ const ProvidersPanel: React.FC = () => {
                   {conn.metadata && Object.keys(conn.metadata).length > 0 && (
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {Object.entries(conn.metadata).map(([k, v]) => (
-                        <span key={k} className="text-xs bg-gray-50 border border-gray-200 rounded-md px-2 py-0.5 text-gray-500">
+                        <span key={k} className="text-xs bg-ink-offwhite border border-ink-light rounded-md px-2 py-0.5 text-ink-caption">
                           {k}: {v}
                         </span>
                       ))}
@@ -443,7 +443,7 @@ const ProvidersPanel: React.FC = () => {
                 <div className="shrink-0">
                   <button
                     onClick={() => setDisconnectTarget(conn)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-500 border border-red-200 hover:bg-red-50 rounded-lg transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-status-error border border-status-error/25 hover:bg-status-error/10 rounded-lg transition-colors"
                   >
                     <Trash2 size={13} />
                     Disconnect

@@ -25,14 +25,14 @@ function Toast({ toasts, dismiss }: { toasts: ToastMsg[]; dismiss: (id: number) 
           key={t.id}
           className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium pointer-events-auto transition-all ${
             t.type === "success"
-              ? "bg-green-50 text-green-800 border border-green-200"
-              : "bg-red-50 text-red-800 border border-red-200"
+              ? "bg-status-success/10 text-status-success border border-status-success/25"
+              : "bg-status-error/10 text-status-error border border-status-error/25"
           }`}
         >
           {t.type === "success" ? (
-            <CheckCircle2 size={16} className="text-green-600 shrink-0" />
+            <CheckCircle2 size={16} className="text-status-success shrink-0" />
           ) : (
-            <AlertTriangle size={16} className="text-red-500 shrink-0" />
+            <AlertTriangle size={16} className="text-status-error shrink-0" />
           )}
           <span>{t.text}</span>
           <button onClick={() => dismiss(t.id)} className="ml-2 opacity-50 hover:opacity-100">
@@ -104,43 +104,43 @@ function GroupModal({ initial, onClose, onSaved, addToast }: GroupModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <h2 className="text-base font-bold text-gray-900">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-4">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-ink-light">
+          <h2 className="text-base font-bold text-ink">
             {isEdit ? "Edit Group" : "New Contact Group"}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-ink-caption hover:text-ink-paragraph transition-colors">
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Title *</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Title *</label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => set("title", e.target.value)}
               placeholder="e.g. VIP Customers"
               required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Description</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Description</label>
             <input
               type="text"
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
               placeholder="Short description (optional)"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">
               Contact IDs, comma-separated
             </label>
             <textarea
@@ -148,16 +148,16 @@ function GroupModal({ initial, onClose, onSaved, addToast }: GroupModalProps) {
               onChange={(e) => set("contact_ids_raw", e.target.value)}
               rows={3}
               placeholder="1, 2, 3, 45"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow resize-none"
             />
           </div>
         </form>
 
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-ink-light">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-ink-paragraph hover:text-ink-charcoal transition-colors"
           >
             Cancel
           </button>
@@ -165,7 +165,7 @@ function GroupModal({ initial, onClose, onSaved, addToast }: GroupModalProps) {
             type="button"
             onClick={(e) => handleSubmit(e as unknown as React.FormEvent)}
             disabled={saving}
-            className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
           >
             {saving ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
             {isEdit ? "Save Changes" : "Create Group"}
@@ -180,7 +180,7 @@ function GroupModal({ initial, onClose, onSaved, addToast }: GroupModalProps) {
 export default function WaContactGroupsPanel() {
   if (!localStorage.getItem("echoleads_api_key")) {
     return (
-      <div className="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+      <div className="flex flex-col items-center justify-center h-full py-20 text-ink-caption">
         <p className="text-sm font-medium">Not connected</p>
         <p className="text-xs mt-1">Go to Authentication tab first.</p>
       </div>
@@ -288,19 +288,19 @@ export default function WaContactGroupsPanel() {
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between px-6 pt-5 pb-4">
         <div className="flex items-center gap-2 flex-1 max-w-sm">
           <div className="relative flex-1">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-caption pointer-events-none" />
             <input
               type="text"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setSelected(new Set()); }}
               placeholder="Search groups…"
-              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full pl-9 pr-3 py-2 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
           <button
             onClick={load}
             title="Refresh"
-            className="p-2 rounded-lg border border-gray-200 text-gray-400 hover:text-amber-500 hover:border-amber-200 transition-colors"
+            className="p-2 rounded-lg border border-ink-light text-ink-caption hover:text-brand-yellow hover:border-brand-yellow-soft transition-colors"
           >
             <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
           </button>
@@ -311,7 +311,7 @@ export default function WaContactGroupsPanel() {
             <button
               onClick={handleBulkDelete}
               disabled={bulkDeleting}
-              className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-600 text-sm font-semibold rounded-lg hover:bg-red-50 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-status-error/25 text-status-error text-sm font-semibold rounded-lg hover:bg-status-error/10 disabled:opacity-50 transition-colors"
             >
               {bulkDeleting ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
               Delete Selected ({selected.size})
@@ -319,7 +319,7 @@ export default function WaContactGroupsPanel() {
           )}
           <button
             onClick={() => { setEditing(null); setShowModal(true); }}
-            className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors"
+            className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors"
           >
             <Plus size={16} />
             New Group
@@ -330,11 +330,11 @@ export default function WaContactGroupsPanel() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 pb-6">
         {loading ? (
-          <div className="flex items-center justify-center py-20 text-gray-400">
+          <div className="flex items-center justify-center py-20 text-ink-caption">
             <Loader2 size={24} className="animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-20 text-ink-caption">
             <UsersRound size={36} className="mb-3 opacity-30" />
             <p className="text-sm font-medium">
               {search ? "No groups match your search" : "No contact groups yet"}
@@ -347,12 +347,12 @@ export default function WaContactGroupsPanel() {
           <>
             {filtered.length > 1 && (
               <div className="flex items-center gap-2 mb-3">
-                <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer select-none">
+                <label className="flex items-center gap-2 text-xs text-ink-caption cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={selected.size === filtered.length && filtered.length > 0}
                     onChange={toggleSelectAll}
-                    className="rounded accent-amber-400"
+                    className="rounded accent-brand-yellow"
                   />
                   Select all ({filtered.length})
                 </label>
@@ -363,8 +363,8 @@ export default function WaContactGroupsPanel() {
               {filtered.map((g) => (
                 <div
                   key={g.id}
-                  className={`bg-white border rounded-xl p-4 hover:border-amber-200 hover:shadow-sm transition-all ${
-                    selected.has(g.id) ? "border-amber-300 bg-amber-50/30" : "border-gray-100"
+                  className={`bg-surface-card border rounded-xl p-4 hover:border-brand-yellow-soft hover:shadow-sm transition-all ${
+                    selected.has(g.id) ? "border-brand-yellow-soft bg-surface-main/30" : "border-ink-light"
                   }`}
                 >
                   <div className="flex items-start gap-3 mb-3">
@@ -372,28 +372,28 @@ export default function WaContactGroupsPanel() {
                       type="checkbox"
                       checked={selected.has(g.id)}
                       onChange={() => toggleSelect(g.id)}
-                      className="mt-0.5 rounded accent-amber-400 shrink-0"
+                      className="mt-0.5 rounded accent-brand-yellow shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 truncate">{g.title}</p>
+                      <p className="text-sm font-semibold text-ink truncate">{g.title}</p>
                       {g.description && (
-                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{g.description}</p>
+                        <p className="text-xs text-ink-caption mt-0.5 line-clamp-1">{g.description}</p>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 mb-3 text-xs text-gray-500">
+                  <div className="flex items-center gap-4 mb-3 text-xs text-ink-caption">
                     <span className="flex items-center gap-1">
-                      <UsersRound size={12} className="text-amber-400" />
+                      <UsersRound size={12} className="text-brand-yellow" />
                       {g.contact_ids?.length ?? 0} contacts
                     </span>
                     <span>{formatDate(g.created_at)}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                  <div className="flex items-center gap-2 pt-3 border-t border-ink-light">
                     <button
                       onClick={() => { setEditing(g); setShowModal(true); }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 text-xs font-semibold rounded-lg transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-ink-offwhite hover:bg-surface-main text-ink-paragraph hover:text-brand-yellow text-xs font-semibold rounded-lg transition-colors"
                     >
                       <Pencil size={12} />
                       Edit
@@ -402,7 +402,7 @@ export default function WaContactGroupsPanel() {
                     <button
                       onClick={() => handleDelete(g.id)}
                       disabled={deletingId === g.id}
-                      className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
+                      className="p-1.5 text-ink-caption hover:text-status-error rounded-lg hover:bg-status-error/10 transition-colors disabled:opacity-50"
                     >
                       {deletingId === g.id ? (
                         <Loader2 size={14} className="animate-spin" />

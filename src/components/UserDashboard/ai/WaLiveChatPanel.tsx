@@ -72,57 +72,57 @@ function TemplateModal({ contactId, onClose }: TemplateModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-800">Send WhatsApp Template</h3>
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-ink-light">
+          <h3 className="text-sm font-semibold text-ink-charcoal">Send WhatsApp Template</h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-1 rounded-full hover:bg-ink-light text-ink-caption hover:text-ink-paragraph transition-colors"
           >
             <X size={16} />
           </button>
         </div>
         <div className="px-5 py-4 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">
-              Template Name <span className="text-red-400">*</span>
+            <label className="block text-xs font-medium text-ink-paragraph mb-1">
+              Template Name <span className="text-status-error">*</span>
             </label>
             <input
               type="text"
               value={templateName}
               onChange={(e) => setTemplateName(e.target.value)}
               placeholder="e.g. welcome_message"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-3 py-2 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Language</label>
+            <label className="block text-xs font-medium text-ink-paragraph mb-1">Language</label>
             <input
               type="text"
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
               placeholder="en_US"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-3 py-2 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">
+            <label className="block text-xs font-medium text-ink-paragraph mb-1">
               Parameters{" "}
-              <span className="text-gray-400 font-normal">(comma-separated)</span>
+              <span className="text-ink-caption font-normal">(comma-separated)</span>
             </label>
             <textarea
               value={parametersRaw}
               onChange={(e) => setParametersRaw(e.target.value)}
               placeholder="John, Order #123, $50"
               rows={3}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+              className="w-full px-3 py-2 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow resize-none"
             />
           </div>
           {result && (
             <div
               className={`flex items-center gap-2 text-xs rounded-lg px-3 py-2 ${
-                result.ok ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"
+                result.ok ? "bg-status-success/10 text-status-success" : "bg-status-error/10 text-status-error"
               }`}
             >
               {result.ok ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
@@ -130,17 +130,17 @@ function TemplateModal({ contactId, onClose }: TemplateModalProps) {
             </div>
           )}
         </div>
-        <div className="px-5 py-3 border-t border-gray-100 flex justify-end gap-2">
+        <div className="px-5 py-3 border-t border-ink-light flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            className="px-4 py-2 text-sm text-ink-caption hover:text-ink-paragraph transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSend}
             disabled={sending || !templateName.trim()}
-            className="px-4 py-2 bg-amber-400 hover:bg-amber-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
           >
             {sending && <Loader2 size={14} className="animate-spin" />}
             Send Template
@@ -167,7 +167,7 @@ export default function WaLiveChatPanel() {
 
   if (!apiKey) {
     return (
-      <div className="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+      <div className="flex flex-col items-center justify-center h-full py-20 text-ink-caption">
         <p className="text-sm font-medium">Not connected</p>
         <p className="text-xs mt-1">Go to Authentication tab first.</p>
       </div>
@@ -260,26 +260,26 @@ export default function WaLiveChatPanel() {
 
       <div className="flex h-full overflow-hidden">
         {/* Left column */}
-        <div className="w-72 shrink-0 flex flex-col bg-gray-50 border-r border-gray-100 overflow-hidden">
+        <div className="w-72 shrink-0 flex flex-col bg-ink-offwhite border-r border-ink-light overflow-hidden">
           {/* Search + Refresh */}
-          <div className="flex items-center gap-2 px-3 py-3 border-b border-gray-100">
+          <div className="flex items-center gap-2 px-3 py-3 border-b border-ink-light">
             <div className="relative flex-1">
               <Search
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-caption"
               />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search…"
-                className="w-full pl-8 pr-3 py-2 text-xs border border-gray-200 rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full pl-8 pr-3 py-2 text-xs border border-ink-light rounded-full bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow"
               />
             </div>
             <button
               onClick={fetchConversations}
               disabled={loadingConversations}
-              className="p-2 rounded-full hover:bg-amber-50 text-gray-400 hover:text-amber-500 transition-colors disabled:opacity-50"
+              className="p-2 rounded-full hover:bg-surface-main text-ink-caption hover:text-brand-yellow transition-colors disabled:opacity-50"
               title="Refresh"
             >
               {loadingConversations ? (
@@ -293,7 +293,7 @@ export default function WaLiveChatPanel() {
           {/* Conversation list */}
           <div className="flex-1 overflow-y-auto">
             {filtered.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-12 text-ink-caption">
                 <MessageCircle size={28} strokeWidth={1.5} />
                 <p className="text-xs mt-2">No conversations</p>
               </div>
@@ -311,28 +311,28 @@ export default function WaLiveChatPanel() {
                 <div
                   key={conv.id}
                   onClick={() => handleSelectConversation(conv)}
-                  className={`p-3 cursor-pointer hover:bg-amber-50 transition-colors border-b border-gray-50 flex items-center gap-3 ${
-                    isActive ? "bg-amber-50 border-l-4 border-l-amber-500" : ""
+                  className={`p-3 cursor-pointer hover:bg-surface-main transition-colors border-b border-ink-offwhite flex items-center gap-3 ${
+                    isActive ? "bg-surface-main border-l-4 border-l-brand-gold" : ""
                   }`}
                 >
                   {/* Avatar */}
-                  <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-semibold shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-brand-yellow-soft text-brand-gold flex items-center justify-center text-xs font-semibold shrink-0">
                     {initials}
                   </div>
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1">
-                      <span className="text-xs font-semibold text-gray-800 truncate">
+                      <span className="text-xs font-semibold text-ink-charcoal truncate">
                         {displayName}
                       </span>
-                      <span className="text-[10px] text-gray-400 shrink-0">
+                      <span className="text-[10px] text-ink-caption shrink-0">
                         {formatRelativeTime(conv.last_message_time ?? conv.created_at)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between mt-0.5">
-                      <p className="text-[11px] text-gray-400 truncate">{preview}</p>
+                      <p className="text-[11px] text-ink-caption truncate">{preview}</p>
                       {conv.unread_count && conv.unread_count > 0 ? (
-                        <span className="ml-1 shrink-0 min-w-[18px] h-[18px] bg-amber-400 text-black text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                        <span className="ml-1 shrink-0 min-w-[18px] h-[18px] bg-brand-yellow text-ink text-[10px] font-bold rounded-full flex items-center justify-center px-1">
                           {conv.unread_count > 99 ? "99+" : conv.unread_count}
                         </span>
                       ) : null}
@@ -345,27 +345,27 @@ export default function WaLiveChatPanel() {
         </div>
 
         {/* Right column */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-white">
+        <div className="flex-1 flex flex-col overflow-hidden bg-surface-card">
           {!selectedConversation ? (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400">
+            <div className="flex flex-col items-center justify-center h-full text-ink-caption">
               <MessageCircle size={40} strokeWidth={1.2} />
               <p className="text-sm mt-3 font-medium">Select a conversation</p>
             </div>
           ) : (
             <>
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white shrink-0">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-ink-light bg-surface-card shrink-0">
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">
+                  <p className="text-sm font-semibold text-ink-charcoal">
                     {selectedConversation.user_name || selectedConversation.phone_number}
                   </p>
                   {selectedConversation.user_name && (
-                    <p className="text-xs text-gray-400">{selectedConversation.phone_number}</p>
+                    <p className="text-xs text-ink-caption">{selectedConversation.phone_number}</p>
                   )}
                 </div>
                 <button
                   onClick={() => setShowTemplateModal(true)}
-                  className="px-3 py-1.5 text-xs font-medium border border-amber-400 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs font-medium border border-brand-yellow text-brand-gold hover:bg-surface-main rounded-lg transition-colors"
                 >
                   Send Template
                 </button>
@@ -374,11 +374,11 @@ export default function WaLiveChatPanel() {
               {/* Messages */}
               <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2">
                 {loadingMessages ? (
-                  <div className="flex items-center justify-center h-full text-gray-400">
+                  <div className="flex items-center justify-center h-full text-ink-caption">
                     <Loader2 size={24} className="animate-spin" />
                   </div>
                 ) : messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                  <div className="flex flex-col items-center justify-center h-full text-ink-caption">
                     <MessageCircle size={28} strokeWidth={1.5} />
                     <p className="text-xs mt-2">No messages yet</p>
                   </div>
@@ -393,13 +393,13 @@ export default function WaLiveChatPanel() {
                         <div
                           className={
                             incoming
-                              ? "max-w-[75%] px-4 py-2.5 bg-white border border-gray-100 rounded-2xl rounded-tl-none text-sm text-gray-800"
-                              : "max-w-[75%] px-4 py-2.5 bg-amber-400 text-black rounded-2xl rounded-tr-none text-sm ml-auto"
+                              ? "max-w-[75%] px-4 py-2.5 bg-surface-card border border-ink-light rounded-2xl rounded-tl-none text-sm text-ink-charcoal"
+                              : "max-w-[75%] px-4 py-2.5 bg-brand-yellow text-ink rounded-2xl rounded-tr-none text-sm ml-auto"
                           }
                         >
                           {msg.message}
                         </div>
-                        <span className="text-[10px] text-gray-400 mt-1 px-1">
+                        <span className="text-[10px] text-ink-caption mt-1 px-1">
                           {new Date(msg.created_at).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -413,19 +413,19 @@ export default function WaLiveChatPanel() {
               </div>
 
               {/* Input bar */}
-              <div className="flex items-center gap-2 p-3 border-t border-gray-100 bg-white shrink-0">
+              <div className="flex items-center gap-2 p-3 border-t border-ink-light bg-surface-card shrink-0">
                 <input
                   type="text"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   placeholder="Type a message…"
-                  className="flex-1 px-4 py-2.5 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="flex-1 px-4 py-2.5 border border-ink-light rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
                 <button
                   onClick={handleSend}
                   disabled={sending || !messageInput.trim()}
-                  className="p-2.5 bg-amber-400 hover:bg-amber-500 text-white rounded-full transition-colors disabled:opacity-50"
+                  className="p-2.5 bg-brand-yellow hover:bg-brand-gold text-white rounded-full transition-colors disabled:opacity-50"
                 >
                   {sending ? (
                     <Loader2 size={16} className="animate-spin" />

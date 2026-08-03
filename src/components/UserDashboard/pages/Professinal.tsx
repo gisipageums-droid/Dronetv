@@ -116,26 +116,26 @@ const Card: React.FC<ProfessinalCardProps> = ({
     switch (statusLower) {
       case "active":
         return {
-          bg: "bg-yellow-200",
-          text: "text-yellow-900",
+          bg: "bg-brand-yellow-soft",
+          text: "text-brand-gold",
           label: "Under Review",
         };
       case "approved":
         return {
-          bg: "bg-green-100",
-          text: "text-green-800",
+          bg: "bg-status-success/15",
+          text: "text-status-success",
           label: "Published",
         };
       case "rejected":
         return {
-          bg: "bg-red-100",
-          text: "text-red-800",
+          bg: "bg-status-error/15",
+          text: "text-status-error",
           label: "Rejected",
         };
       default:
         return {
-          bg: "bg-yellow-100",
-          text: "text-yellow-900",
+          bg: "bg-brand-yellow-soft",
+          text: "text-brand-gold",
           label: "Published",
         };
     }
@@ -144,14 +144,14 @@ const Card: React.FC<ProfessinalCardProps> = ({
   const statusStyle = getStatusBadge(professional?.reviewStatus || "default");
 
   return (
-    <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-yellow-400 group">
+    <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 hover:shadow-xl hover:border-brand-yellow group">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             {/* Company Image */}
-            <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110">
-              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-yellow-600">
+            <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-surface-main p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-brand-yellow-soft transition-all duration-300 group-hover:scale-110">
+              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-brand-gold">
                 {professional.previewImage ? (
                   <img
                     src={placeholderImg}
@@ -166,11 +166,11 @@ const Card: React.FC<ProfessinalCardProps> = ({
 
             {/* Company Info */}
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
+              <h3 className="text-lg font-bold text-ink line-clamp-2">
                 {professional?.fullName || "Unnamed Company"}
               </h3>
-              <div className="flex items-center text-gray-600 mt-1">
-                <MapPin className="w-4 h-4 mr-1 text-yellow-500" />
+              <div className="flex items-center text-ink-paragraph mt-1">
+                <MapPin className="w-4 h-4 mr-1 text-brand-gold" />
                 <span className="text-sm">
                   {professional?.location || "Location not specified"}
                 </span>
@@ -198,7 +198,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
             ).map((sector, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full border border-yellow-200"
+                className="px-3 py-1 bg-brand-yellow-soft text-brand-gold text-xs font-medium rounded-full border border-brand-yellow-soft"
               >
                 {sector}
               </span>
@@ -208,13 +208,13 @@ const Card: React.FC<ProfessinalCardProps> = ({
 
         {/* Date and Actions */}
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
-            <span className="font-semibold text-yellow-700 text-sm">
+          <div className="flex items-center gap-2 bg-surface-main rounded-lg px-4 py-2 border border-brand-yellow-soft">
+            <span className="font-semibold text-brand-gold text-sm">
               {professional?.publishedDate
                 ? formatDate(professional?.publishedDate)
                 : "Date not available"}
             </span>
-            <span className="text-xs text-yellow-600">Published</span>
+            <span className="text-xs text-brand-gold">Published</span>
           </div>
 
           {/* Action Buttons */}
@@ -231,7 +231,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
                     professional.templateSelection
                   );
               }}
-              className="flex-1 px-3 py-2 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-500 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-500"
+              className="flex-1 px-3 py-2 bg-brand-yellow text-brand-gold rounded-lg hover:bg-brand-gold transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-gold"
             >
               <Edit className="w-4 h-4" />
               Edit
@@ -249,7 +249,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
                 )}/${professional.professionalId}`
               )
             }
-            className="flex-1 px-3 py-2 bg-green-100 text-green-900 rounded-lg hover:bg-green-200 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-green-400"
+            className="flex-1 px-3 py-2 bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-status-success"
           >
             <Users className="w-4 h-4" />
             Leads
@@ -260,7 +260,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
                 `/professional/form/${professional.userId}/${professional.professionalId}`
               )
             }
-            className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
+            className="flex-1 px-3 py-2 bg-brand-yellow-soft text-brand-gold rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-yellow"
           >
             <Edit className="w-4 h-4" />
             Edit form
@@ -272,7 +272,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
                 `/professional/form/${professional.userId}/${professional.professionalId}`
               )
             }
-            className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
+            className="flex-1 px-3 py-2 bg-brand-yellow-soft text-brand-gold rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-yellow"
           >
             <Edit className="w-4 h-4" />
             Edit Form
@@ -280,8 +280,8 @@ const Card: React.FC<ProfessinalCardProps> = ({
         </div>
 
         {/* Published ID */}
-        {/* <div className="mt-4 pt-4 border-t border-yellow-200">
-          <div className="text-xs text-gray-500">
+        {/* <div className="mt-4 pt-4 border-t border-brand-yellow-soft">
+          <div className="text-xs text-ink-caption">
             ID: {professional?.professionalId || "No ID"}
           </div>
         </div> */}
@@ -414,61 +414,61 @@ const Professinal: React.FC = () => {
 
   // Skeleton Loading
   const SkeletonCard: React.FC = () => (
-    <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 group animate-pulse p-6">
+    <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 group animate-pulse p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-yellow-100 p-2 flex items-center justify-center" />
+          <div className="w-16 h-16 rounded-xl bg-brand-yellow-soft p-2 flex items-center justify-center" />
           <div className="flex-1">
-            <div className="h-5 bg-yellow-100 rounded w-3/4 mb-2" />
-            <div className="h-3 bg-yellow-100 rounded w-1/2" />
+            <div className="h-5 bg-brand-yellow-soft rounded w-3/4 mb-2" />
+            <div className="h-3 bg-brand-yellow-soft rounded w-1/2" />
           </div>
         </div>
 
-        <div className="w-24 h-7 bg-yellow-100 rounded-full" />
+        <div className="w-24 h-7 bg-brand-yellow-soft rounded-full" />
       </div>
 
       {/* Sectors */}
       <div className="mb-6">
         <div className="flex flex-wrap gap-2">
-          <div className="h-6 bg-yellow-100 rounded-full w-20" />
-          <div className="h-6 bg-yellow-100 rounded-full w-16" />
-          <div className="h-6 bg-yellow-100 rounded-full w-24" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-20" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-16" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-24" />
         </div>
       </div>
 
       {/* Date and Actions */}
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
-          <div className="h-4 bg-yellow-100 rounded w-32" />
-          <div className="h-3 bg-yellow-100 rounded w-16 ml-auto" />
+        <div className="flex items-center gap-2 bg-surface-main rounded-lg px-4 py-2 border border-brand-yellow-soft">
+          <div className="h-4 bg-brand-yellow-soft rounded w-32" />
+          <div className="h-3 bg-brand-yellow-soft rounded w-16 ml-auto" />
         </div>
 
         <div className="flex gap-2 justify-between">
-          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
-          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
-          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
+          <div className="flex-1 h-10 bg-brand-yellow-soft rounded-lg" />
+          <div className="flex-1 h-10 bg-brand-yellow-soft rounded-lg" />
+          <div className="flex-1 h-10 bg-brand-yellow-soft rounded-lg" />
         </div>
 
-        <div className="h-10 bg-yellow-100 rounded-lg mt-2" />
+        <div className="h-10 bg-brand-yellow-soft rounded-lg mt-2" />
       </div>
 
       {/* Published ID */}
-      <div className="mt-4 pt-4 border-t border-yellow-200">
-        <div className="h-3 bg-yellow-100 rounded w-1/3" />
+      <div className="mt-4 pt-4 border-t border-brand-yellow-soft">
+        <div className="h-3 bg-brand-yellow-soft rounded w-1/3" />
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-amber-50 p-4 md:p-8">
+    <div className="min-h-screen bg-surface-main p-4 md:p-8">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between mb-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-ink mb-1 flex items-center gap-2">
             <Users className="w-6 h-6 shrink-0" />
             Professional Directory
           </h1>
-          <p className="text-gray-600 mb-2">
+          <p className="text-ink-paragraph mb-2">
             Browse and manage professional submissions
           </p>
           <ListingLimitBanner count={professionals?.cards?.length ?? 0} type="professional" label="Professionals" />
@@ -480,7 +480,7 @@ const Professinal: React.FC = () => {
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}
-              className="bg-gray-100 text-sm font-medium text-gray-500 flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 border border-gray-300 cursor-not-allowed self-start sm:self-auto"
+              className="bg-ink-light text-sm font-medium text-ink-caption flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 border border-ink-light cursor-not-allowed self-start sm:self-auto"
               title={`Plan limit reached. Upgrade to add more.`}
             >
               <Plus className="w-5 h-5" />
@@ -492,7 +492,7 @@ const Professinal: React.FC = () => {
                 try { localStorage.removeItem("professionalFormDraft"); } catch { /* ignore */ }
                 navigate("/professional/select");
               }}
-              className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 hover:bg-yellow-600 hover:scale-110 transition-all duration-200 self-start sm:self-auto"
+              className="bg-brand-gold text-sm font-medium text-white flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 hover:bg-brand-gold hover:scale-110 transition-all duration-200 self-start sm:self-auto"
             >
               <Plus className="w-5 h-5" />
               Add New Professional
@@ -503,14 +503,14 @@ const Professinal: React.FC = () => {
 
       <div className="mb-6 relative">
         <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
-          <Search className="h-5 w-5 text-yellow-500" />
+          <Search className="h-5 w-5 text-brand-gold" />
         </div>
         <input
           type="text"
           placeholder="Search by professional name, location, or sector..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-6 py-3 bg-white border-2 border-yellow-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+          className="w-full pl-12 pr-6 py-3 bg-surface-card border-2 border-brand-yellow-soft rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-brand-yellow"
         />
       </div>
 
@@ -534,8 +534,8 @@ const Professinal: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 text-gray-500">
-          <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
+        <div className="text-center py-20 text-ink-caption">
+          <Search className="w-16 h-16 text-brand-yellow-soft mx-auto mb-4" />
           {searchTerm
             ? `No professionals found matching “${searchTerm}”`
             : 'No professional profiles found. Click Add New Professional to create one.'

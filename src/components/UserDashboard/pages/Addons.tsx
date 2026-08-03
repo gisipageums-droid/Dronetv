@@ -41,7 +41,7 @@ const ADDONS: Addon[] = [
     desc: "CEO/founder interview produced and published on YouTube. Embedded on your DroneTv company profile.",
     tokens: 200,
     tag: "Video",
-    tagColor: "bg-red-100 text-red-700",
+    tagColor: "bg-status-error/15 text-status-error",
     popular: true,
   },
   {
@@ -51,7 +51,7 @@ const ADDONS: Addon[] = [
     desc: "Product / service reel published on Instagram, Facebook and LinkedIn simultaneously.",
     tokens: 100,
     tag: "Video",
-    tagColor: "bg-red-100 text-red-700",
+    tagColor: "bg-status-error/15 text-status-error",
   },
   {
     id: "editorial_article",
@@ -60,7 +60,7 @@ const ADDONS: Addon[] = [
     desc: "600–1000 word article about your company published on DroneTv.in and promoted on social channels.",
     tokens: 80,
     tag: "Article",
-    tagColor: "bg-green-100 text-green-700",
+    tagColor: "bg-status-success/15 text-status-success",
   },
   {
     id: "promo_posts",
@@ -69,7 +69,7 @@ const ADDONS: Addon[] = [
     desc: "3 company posts published across LinkedIn, Instagram and Facebook with your brand tagged.",
     tokens: 50,
     tag: "Social",
-    tagColor: "bg-blue-100 text-blue-700",
+    tagColor: "bg-status-info/15 text-status-info",
   },
   {
     id: "press_release",
@@ -78,7 +78,7 @@ const ADDONS: Addon[] = [
     desc: "Press release written and published on DroneTv.in for announcements, launches or milestones.",
     tokens: 150,
     tag: "PR",
-    tagColor: "bg-purple-100 text-purple-700",
+    tagColor: "bg-brand-gold/15 text-brand-gold",
   },
   {
     id: "news_post",
@@ -87,7 +87,7 @@ const ADDONS: Addon[] = [
     desc: "Short platform news post for your announcement, product launch or certification achievement.",
     tokens: 40,
     tag: "News",
-    tagColor: "bg-teal-100 text-teal-700",
+    tagColor: "bg-status-info/15 text-status-info",
   },
   {
     id: "magazine_half",
@@ -96,7 +96,7 @@ const ADDONS: Addon[] = [
     desc: "Half-page advertisement in DroneTv quarterly print & digital magazine reaching industry decision-makers.",
     tokens: 300,
     tag: "Magazine",
-    tagColor: "bg-yellow-100 text-yellow-700",
+    tagColor: "bg-brand-yellow-soft text-brand-gold",
     popular: true,
   },
   {
@@ -106,7 +106,7 @@ const ADDONS: Addon[] = [
     desc: "Your company featured on the DroneTv homepage and category pages with priority search ranking for 30 days.",
     tokens: 500,
     tag: "Featured",
-    tagColor: "bg-orange-100 text-orange-700",
+    tagColor: "bg-status-warning/15 text-status-warning",
     positionEffect: "Your listings appear at the TOP of all category and search pages with a FEATURED badge.",
   },
   {
@@ -116,7 +116,7 @@ const ADDONS: Addon[] = [
     desc: "Appear at the top of all relevant search results and category pages within your sector for 3 months.",
     tokens: 400,
     tag: "Visibility",
-    tagColor: "bg-indigo-100 text-indigo-700",
+    tagColor: "bg-status-info/15 text-status-info",
     positionEffect: "Your listing ranks above standard results in search and category pages for 3 months.",
   },
 ];
@@ -196,30 +196,30 @@ const Addons: React.FC = () => {
     <div className="p-6 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">ADDONS</p>
-        <h1 className="text-2xl font-black text-gray-900">Premium Add-on Services</h1>
-        <p className="text-sm text-gray-500 mt-1">Purchase individual media and marketing services using your token balance.</p>
+        <p className="text-xs font-bold tracking-widest text-brand-yellow uppercase mb-1">ADDONS</p>
+        <h1 className="text-2xl font-black text-ink">Premium Add-on Services</h1>
+        <p className="text-sm text-ink-caption mt-1">Purchase individual media and marketing services using your token balance.</p>
       </div>
 
       {/* Token balance bar */}
-      <div className="bg-gray-900 rounded-2xl px-5 py-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-ink rounded-2xl px-5 py-4 mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-yellow-400/15 flex items-center justify-center">
-            <Coins size={20} className="text-yellow-400" />
+          <div className="w-10 h-10 rounded-xl bg-brand-yellow/15 flex items-center justify-center">
+            <Coins size={20} className="text-brand-yellow" />
           </div>
           <div>
             <p className="text-xs text-white/50 uppercase tracking-wide">Token Balance</p>
-            <p className="text-2xl font-black text-yellow-400">{loading ? "…" : tokenBalance.toLocaleString()}</p>
+            <p className="text-2xl font-black text-brand-yellow">{loading ? "…" : tokenBalance.toLocaleString()}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           {activeIds.length > 0 && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-400/15 text-yellow-400 text-xs font-bold">
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-yellow/15 text-brand-yellow text-xs font-bold">
               <Package size={13} />
               {activeIds.length} active
             </span>
           )}
-          <a href="/user-recharge" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-400 text-black text-sm font-bold hover:bg-yellow-500 transition-colors">
+          <a href="/user-recharge" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-yellow text-ink text-sm font-bold hover:bg-brand-gold transition-colors">
             <Coins size={15} />
             Top Up
           </a>
@@ -228,12 +228,12 @@ const Addons: React.FC = () => {
 
       {/* Position effect banner */}
       {positionAddons.length > 0 && (
-        <div className="mb-5 p-4 rounded-xl border border-yellow-300 bg-yellow-50 flex items-start gap-3">
-          <Star size={18} className="text-yellow-500 flex-shrink-0 mt-0.5" />
+        <div className="mb-5 p-4 rounded-xl border border-brand-yellow-soft bg-surface-main flex items-start gap-3">
+          <Star size={18} className="text-brand-gold flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-bold text-yellow-800">Active Positioning</p>
+            <p className="text-sm font-bold text-brand-gold">Active Positioning</p>
             {positionAddons.map(a => (
-              <p key={a.id} className="text-xs text-yellow-700 mt-0.5">{a.positionEffect}</p>
+              <p key={a.id} className="text-xs text-brand-gold mt-0.5">{a.positionEffect}</p>
             ))}
           </div>
         </div>
@@ -246,7 +246,7 @@ const Addons: React.FC = () => {
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-              tab === t ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+              tab === t ? "bg-ink text-white" : "bg-ink-light text-ink-caption hover:bg-ink-light"
             }`}
           >
             {t === "store" ? "Services" : `Active (${activeIds.length})`}
@@ -258,11 +258,11 @@ const Addons: React.FC = () => {
       {tab === "active" && (
         <div>
           {activeAddons.length === 0 ? (
-            <div className="text-center py-14 bg-white rounded-2xl border border-dashed border-gray-200">
-              <Package size={32} className="mx-auto text-gray-200 mb-3" />
-              <p className="font-bold text-gray-500">No active addons yet</p>
-              <p className="text-sm text-gray-400 mt-1 mb-4">Browse the Services tab to purchase your first addon.</p>
-              <button onClick={() => setTab("store")} className="flex items-center gap-1.5 mx-auto px-4 py-2 rounded-xl bg-yellow-400 text-black text-sm font-bold hover:bg-yellow-500 transition-colors">
+            <div className="text-center py-14 bg-surface-card rounded-2xl border border-dashed border-ink-light">
+              <Package size={32} className="mx-auto text-ink-light mb-3" />
+              <p className="font-bold text-ink-caption">No active addons yet</p>
+              <p className="text-sm text-ink-caption mt-1 mb-4">Browse the Services tab to purchase your first addon.</p>
+              <button onClick={() => setTab("store")} className="flex items-center gap-1.5 mx-auto px-4 py-2 rounded-xl bg-brand-yellow text-ink text-sm font-bold hover:bg-brand-gold transition-colors">
                 Browse Services <ChevronRight size={14} />
               </button>
             </div>
@@ -271,21 +271,21 @@ const Addons: React.FC = () => {
               {activeAddons.map(addon => {
                 const Icon = addon.icon;
                 return (
-                  <div key={addon.id} className="bg-white border border-green-200 rounded-xl px-5 py-4 flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
-                      <Icon size={18} className="text-green-600" />
+                  <div key={addon.id} className="bg-surface-card border border-status-success/25 rounded-xl px-5 py-4 flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-status-success/10 flex items-center justify-center flex-shrink-0">
+                      <Icon size={18} className="text-status-success" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-sm text-gray-900">{addon.title}</span>
+                        <span className="font-bold text-sm text-ink">{addon.title}</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide ${addon.tagColor}`}>{addon.tag}</span>
-                        <span className="flex items-center gap-1 text-[11px] text-green-600 font-semibold">
+                        <span className="flex items-center gap-1 text-[11px] text-status-success font-semibold">
                           <CheckCircle2 size={12} />Active
                         </span>
                       </div>
                       {addon.positionEffect && (
-                        <p className="text-xs text-gray-500 mt-1 flex items-start gap-1">
-                          <Star size={11} className="text-yellow-500 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-ink-caption mt-1 flex items-start gap-1">
+                          <Star size={11} className="text-brand-gold flex-shrink-0 mt-0.5" />
                           {addon.positionEffect}
                         </p>
                       )}
@@ -310,36 +310,36 @@ const Addons: React.FC = () => {
             return (
               <div
                 key={addon.id}
-                className={`bg-white rounded-2xl border shadow-sm flex flex-col ${isPurchased ? "border-green-300" : "border-gray-200"}`}
+                className={`bg-surface-card rounded-2xl border shadow-sm flex flex-col ${isPurchased ? "border-status-success/40" : "border-ink-light"}`}
               >
                 {addon.popular && (
                   <div className="px-4 pt-3 pb-0">
-                    <span className="text-[10px] font-bold bg-yellow-400 text-black px-2 py-0.5 rounded-full uppercase tracking-wide">Popular</span>
+                    <span className="text-[10px] font-bold bg-brand-yellow text-ink px-2 py-0.5 rounded-full uppercase tracking-wide">Popular</span>
                   </div>
                 )}
                 <div className="p-5 flex-1 flex flex-col">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-yellow-400/10 flex items-center justify-center">
-                      <Icon size={20} className="text-yellow-600" />
+                    <div className="w-10 h-10 rounded-xl bg-brand-yellow/10 flex items-center justify-center">
+                      <Icon size={20} className="text-brand-gold" />
                     </div>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide ${addon.tagColor}`}>{addon.tag}</span>
                   </div>
-                  <h3 className="font-bold text-gray-900 text-sm mb-1">{addon.title}</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-3">{addon.desc}</p>
+                  <h3 className="font-bold text-ink text-sm mb-1">{addon.title}</h3>
+                  <p className="text-xs text-ink-caption leading-relaxed mb-3">{addon.desc}</p>
                   {addon.positionEffect && (
-                    <p className="text-[11px] text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-2.5 py-1.5 mb-3 flex items-start gap-1">
+                    <p className="text-[11px] text-brand-gold bg-surface-main border border-brand-yellow-soft rounded-lg px-2.5 py-1.5 mb-3 flex items-start gap-1">
                       <Star size={11} className="flex-shrink-0 mt-0.5" />
                       {addon.positionEffect}
                     </p>
                   )}
                   <div className="flex items-center justify-between mt-auto">
                     <div className="flex items-center gap-1">
-                      <Coins size={14} className="text-yellow-500" />
-                      <span className="text-base font-black text-gray-900">{addon.tokens}</span>
-                      <span className="text-xs text-gray-400">tokens</span>
+                      <Coins size={14} className="text-brand-gold" />
+                      <span className="text-base font-black text-ink">{addon.tokens}</span>
+                      <span className="text-xs text-ink-caption">tokens</span>
                     </div>
                     {isPurchased ? (
-                      <div className="flex items-center gap-1 text-green-600 text-sm font-semibold">
+                      <div className="flex items-center gap-1 text-status-success text-sm font-semibold">
                         <CheckCircle2 size={16} />
                         Active
                       </div>
@@ -349,8 +349,8 @@ const Addons: React.FC = () => {
                         disabled={isProcessing || loading}
                         className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-bold transition-colors ${
                           canAfford
-                            ? "bg-gray-900 text-white hover:bg-gray-700"
-                            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            ? "bg-ink text-white hover:bg-ink-paragraph"
+                            : "bg-ink-light text-ink-caption cursor-not-allowed"
                         }`}
                       >
                         {isProcessing ? (
@@ -365,7 +365,7 @@ const Addons: React.FC = () => {
                     )}
                   </div>
                   {!canAfford && !isPurchased && (
-                    <p className="text-[10px] text-red-500 mt-1.5 flex items-center gap-1">
+                    <p className="text-[10px] text-status-error mt-1.5 flex items-center gap-1">
                       <AlertTriangle size={10} />
                       Need {addon.tokens - tokenBalance} more tokens
                     </p>
@@ -379,34 +379,34 @@ const Addons: React.FC = () => {
 
       {/* Confirm modal */}
       {confirmAddon && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
+          <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-gray-900">Confirm Purchase</h3>
-              <button onClick={() => setConfirmAddon(null)} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
-                <X size={18} className="text-gray-500" />
+              <h3 className="font-bold text-ink">Confirm Purchase</h3>
+              <button onClick={() => setConfirmAddon(null)} className="p-1 rounded-lg hover:bg-ink-light transition-colors">
+                <X size={18} className="text-ink-caption" />
               </button>
             </div>
-            <div className="bg-gray-50 rounded-xl p-4 mb-4">
-              <p className="font-semibold text-gray-900 text-sm">{confirmAddon.title}</p>
+            <div className="bg-ink-offwhite rounded-xl p-4 mb-4">
+              <p className="font-semibold text-ink text-sm">{confirmAddon.title}</p>
               <div className="flex items-center gap-1 mt-2">
-                <Coins size={15} className="text-yellow-500" />
-                <span className="font-black text-gray-900">{confirmAddon.tokens} tokens</span>
-                <span className="text-gray-400 text-sm ml-2">→ Balance: {tokenBalance - confirmAddon.tokens}</span>
+                <Coins size={15} className="text-brand-gold" />
+                <span className="font-black text-ink">{confirmAddon.tokens} tokens</span>
+                <span className="text-ink-caption text-sm ml-2">→ Balance: {tokenBalance - confirmAddon.tokens}</span>
               </div>
               {confirmAddon.positionEffect && (
-                <p className="text-xs text-yellow-700 mt-2 flex items-start gap-1">
+                <p className="text-xs text-brand-gold mt-2 flex items-start gap-1">
                   <Star size={11} className="flex-shrink-0 mt-0.5" />
                   {confirmAddon.positionEffect}
                 </p>
               )}
             </div>
-            <p className="text-xs text-gray-500 mb-5">Our team will contact you within 24 hours to initiate this service.</p>
+            <p className="text-xs text-ink-caption mb-5">Our team will contact you within 24 hours to initiate this service.</p>
             <div className="flex gap-3">
-              <button onClick={() => setConfirmAddon(null)} className="flex-1 px-4 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+              <button onClick={() => setConfirmAddon(null)} className="flex-1 px-4 py-2 rounded-xl border border-ink-light text-sm font-semibold text-ink-paragraph hover:bg-ink-offwhite transition-colors">
                 Cancel
               </button>
-              <button onClick={confirmPurchase} className="flex-1 px-4 py-2 rounded-xl bg-yellow-400 text-black text-sm font-bold hover:bg-yellow-500 transition-colors">
+              <button onClick={confirmPurchase} className="flex-1 px-4 py-2 rounded-xl bg-brand-yellow text-ink text-sm font-bold hover:bg-brand-gold transition-colors">
                 Confirm
               </button>
             </div>

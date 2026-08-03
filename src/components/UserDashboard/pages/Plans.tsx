@@ -51,9 +51,9 @@ const SUBSCRIPTION_PLANS = [
 ];
 
 const colorMap: Record<string, { bg: string; border: string; text: string; badge: string; btn: string }> = {
-  blue:   { bg: 'bg-blue-500/10',   border: 'border-blue-500/30',   text: 'text-blue-400',   badge: 'bg-blue-500/20 text-blue-300',   btn: 'bg-blue-500 hover:bg-blue-400 text-white' },
-  yellow: { bg: 'bg-yellow-400/10', border: 'border-yellow-400/30', text: 'text-yellow-400', badge: 'bg-yellow-400/20 text-yellow-300', btn: 'bg-yellow-400 hover:bg-yellow-300 text-black' },
-  purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400', badge: 'bg-purple-500/20 text-purple-300', btn: 'bg-purple-500 hover:bg-purple-400 text-white' },
+  blue:   { bg: 'bg-status-info/10',   border: 'border-status-info/30',   text: 'text-status-info',   badge: 'bg-status-info/20 text-status-info/40',   btn: 'bg-status-info hover:bg-status-info text-white' },
+  yellow: { bg: 'bg-brand-yellow/10', border: 'border-brand-yellow/30', text: 'text-brand-yellow', badge: 'bg-brand-yellow/20 text-brand-yellow-soft', btn: 'bg-brand-yellow hover:bg-brand-yellow-soft text-ink' },
+  purple: { bg: 'bg-brand-gold/10', border: 'border-brand-gold/30', text: 'text-brand-gold', badge: 'bg-brand-gold/20 text-brand-gold/40', btn: 'bg-brand-gold hover:bg-brand-gold text-white' },
 };
 
 const RechargePlans: React.FC = () => {
@@ -167,26 +167,26 @@ const RechargePlans: React.FC = () => {
   const filteredPlans = plans.filter(p => selectedFilter === 'All' || p.type.toLowerCase() === selectedFilter.toLowerCase());
 
   return (
-    <div className="min-h-screen bg-gray-950 p-4 sm:p-6">
+    <div className="min-h-screen bg-ink p-4 sm:p-6">
       <div className="max-w-6xl mx-auto">
 
         {/* Header + Balance */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-black text-white flex items-center gap-2">
-              <Wallet size={22} className="text-yellow-400" />
+              <Wallet size={22} className="text-brand-yellow" />
               Token Wallet
             </h1>
             <p className="text-sm text-white/40 mt-0.5">Choose a subscription plan or top-up anytime</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="bg-yellow-400/10 border border-yellow-400/20 rounded-xl px-4 py-3 text-center min-w-[120px]">
+            <div className="bg-brand-yellow/10 border border-brand-yellow/20 rounded-xl px-4 py-3 text-center min-w-[120px]">
               <div className="text-[10px] text-white/40 uppercase tracking-widest mb-0.5">Balance</div>
-              <div className="text-xl font-black text-yellow-400">{tokenBalance.toLocaleString()} ₮</div>
+              <div className="text-xl font-black text-brand-yellow">{tokenBalance.toLocaleString()} ₮</div>
             </div>
             <button
               onClick={() => navigate('/user-bid-keywords')}
-              className="flex items-center gap-1.5 px-4 py-2 bg-yellow-400/10 border border-yellow-400/20 rounded-xl text-yellow-400 text-xs font-bold hover:bg-yellow-400/20 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-brand-yellow/10 border border-brand-yellow/20 rounded-xl text-brand-yellow text-xs font-bold hover:bg-brand-yellow/20 transition-colors"
             >
               <Target size={13} />
               Bid Keywords
@@ -199,20 +199,20 @@ const RechargePlans: React.FC = () => {
           {TOKEN_USES.map(u => {
             const Icon = u.icon;
             return (
-              <div key={u.label} className="bg-gray-900 border border-white/8 rounded-xl p-3">
+              <div key={u.label} className="bg-ink border border-white/8 rounded-xl p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Icon size={13} className="text-yellow-400" />
+                  <Icon size={13} className="text-brand-yellow" />
                   <span className="text-xs font-bold text-white">{u.label}</span>
                 </div>
                 <p className="text-[10px] text-white/40 leading-relaxed mb-1.5">{u.desc}</p>
-                <span className="text-[10px] font-black text-yellow-400">{u.cost}</span>
+                <span className="text-[10px] font-black text-brand-yellow">{u.cost}</span>
               </div>
             );
           })}
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-1 bg-gray-900 border border-white/8 rounded-xl p-1 mb-6 w-fit">
+        <div className="flex gap-1 bg-ink border border-white/8 rounded-xl p-1 mb-6 w-fit">
           {[
             { key: 'subscription', label: 'Annual Plans' },
             { key: 'topup', label: 'Top-up Packs' },
@@ -222,7 +222,7 @@ const RechargePlans: React.FC = () => {
               onClick={() => setActiveTab(t.key as any)}
               className={`px-5 py-2 rounded-lg text-sm font-bold transition-all ${
                 activeTab === t.key
-                  ? 'bg-yellow-400 text-black'
+                  ? 'bg-brand-yellow text-ink'
                   : 'text-white/50 hover:text-white'
               }`}
             >
@@ -241,14 +241,14 @@ const RechargePlans: React.FC = () => {
               return (
                 <div
                   key={pkg.id}
-                  className={`relative rounded-2xl border p-5 flex flex-col ${c.bg} ${isCurrent ? 'border-green-400/60' : c.border}`}
+                  className={`relative rounded-2xl border p-5 flex flex-col ${c.bg} ${isCurrent ? 'border-status-success/60' : c.border}`}
                 >
                   {isCurrent ? (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-black bg-green-400 text-black px-3 py-1 rounded-full whitespace-nowrap">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-black bg-status-success text-ink px-3 py-1 rounded-full whitespace-nowrap">
                       Current Plan
                     </span>
                   ) : pkg.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-black bg-yellow-400 text-black px-3 py-1 rounded-full whitespace-nowrap">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-black bg-brand-yellow text-ink px-3 py-1 rounded-full whitespace-nowrap">
                       Most Popular
                     </span>
                   )}
@@ -266,7 +266,7 @@ const RechargePlans: React.FC = () => {
                   <div className="flex-1 space-y-1.5 mb-5">
                     {pkg.features.map(f => (
                       <div key={f} className="flex items-start gap-1.5">
-                        <CheckCircle size={12} className="text-green-400 flex-shrink-0 mt-0.5" />
+                        <CheckCircle size={12} className="text-status-success flex-shrink-0 mt-0.5" />
                         <span className="text-xs text-white/70">{f}</span>
                       </div>
                     ))}
@@ -275,7 +275,7 @@ const RechargePlans: React.FC = () => {
                     onClick={() => setConfirmPkg(pkg)}
                     disabled={isCurrent}
                     className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                      isCurrent ? 'bg-green-400/20 border border-green-400/40 text-green-300' : c.btn
+                      isCurrent ? 'bg-status-success/20 border border-status-success/40 text-status-success/40' : c.btn
                     }`}
                   >
                     {isCurrent ? (
@@ -300,8 +300,8 @@ const RechargePlans: React.FC = () => {
                   onClick={() => setSelectedFilter(f)}
                   className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
                     selectedFilter === f
-                      ? 'bg-yellow-400 text-black border-yellow-400'
-                      : 'bg-gray-900 text-white/50 border-white/10 hover:border-yellow-400/30 hover:text-white'
+                      ? 'bg-brand-yellow text-ink border-brand-yellow'
+                      : 'bg-ink text-white/50 border-white/10 hover:border-brand-yellow/30 hover:text-white'
                   }`}
                 >
                   {f}
@@ -311,7 +311,7 @@ const RechargePlans: React.FC = () => {
 
             {loading ? (
               <div className="flex items-center justify-center py-20">
-                <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-2 border-brand-yellow border-t-transparent rounded-full animate-spin" />
               </div>
             ) : filteredPlans.length === 0 ? (
               <div className="text-center py-16 text-white/30 text-sm">No plans available for this filter</div>
@@ -320,29 +320,29 @@ const RechargePlans: React.FC = () => {
                 {filteredPlans.map(plan => (
                   <div
                     key={plan.id}
-                    className={`relative bg-gray-900 rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-yellow-400/10 ${
-                      plan.discount > 0 ? 'border-yellow-400/40' : 'border-white/8'
+                    className={`relative bg-ink rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-yellow/10 ${
+                      plan.discount > 0 ? 'border-brand-yellow/40' : 'border-white/8'
                     }`}
                   >
                     {plan.discount > 0 && (
-                      <div className="absolute top-3 right-3 bg-yellow-400 text-black text-[10px] font-black px-2 py-0.5 rounded-full">
+                      <div className="absolute top-3 right-3 bg-brand-yellow text-ink text-[10px] font-black px-2 py-0.5 rounded-full">
                         {plan.discount}% OFF
                       </div>
                     )}
                     <div className="p-5">
                       <div className="text-center mb-4">
                         <h2 className="text-base font-black text-white mb-1">{plan.name}</h2>
-                        <div className="text-3xl font-black text-yellow-400">₹{plan.price}</div>
+                        <div className="text-3xl font-black text-brand-yellow">₹{plan.price}</div>
                         <div className="text-xs text-white/40 mt-0.5 uppercase tracking-wider">{plan.type}</div>
-                        <div className="inline-flex items-center gap-1 mt-2 bg-yellow-400/10 border border-yellow-400/20 px-3 py-1 rounded-full">
-                          <Coins size={11} className="text-yellow-400" />
-                          <span className="text-xs font-black text-yellow-400">{plan.tokens} Tokens</span>
+                        <div className="inline-flex items-center gap-1 mt-2 bg-brand-yellow/10 border border-brand-yellow/20 px-3 py-1 rounded-full">
+                          <Coins size={11} className="text-brand-yellow" />
+                          <span className="text-xs font-black text-brand-yellow">{plan.tokens} Tokens</span>
                         </div>
                       </div>
                       <div className="space-y-1.5 mb-5">
                         {plan.features.map((f, i) => (
                           <div key={i} className="flex items-start gap-2">
-                            <CheckCircle size={12} className="text-green-400 flex-shrink-0 mt-0.5" />
+                            <CheckCircle size={12} className="text-status-success flex-shrink-0 mt-0.5" />
                             <span className="text-xs text-white/60">{f}</span>
                           </div>
                         ))}
@@ -352,7 +352,7 @@ const RechargePlans: React.FC = () => {
                         disabled={processingPlanId === plan.id}
                         className={`w-full py-2.5 font-black rounded-xl text-sm transition-all flex items-center justify-center gap-2 ${
                           plan.discount > 0
-                            ? 'bg-yellow-400 text-black hover:bg-yellow-300'
+                            ? 'bg-brand-yellow text-ink hover:bg-brand-yellow-soft'
                             : 'bg-white/10 text-white hover:bg-white/15'
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                       >
@@ -372,14 +372,14 @@ const RechargePlans: React.FC = () => {
             )}
 
             {/* Custom top-up CTA */}
-            <div className="mt-6 bg-gray-900 border border-yellow-400/20 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="mt-6 bg-ink border border-brand-yellow/20 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <div className="text-sm font-bold text-white mb-0.5">Need a custom amount?</div>
                 <p className="text-xs text-white/40">Buy any amount at ₹10 = 1 token. No minimum order.</p>
               </div>
               <button
                 onClick={() => navigate('/user-buy')}
-                className="flex items-center gap-2 px-5 py-2.5 bg-yellow-400 text-black rounded-xl font-black text-sm hover:bg-yellow-300 transition-colors whitespace-nowrap"
+                className="flex items-center gap-2 px-5 py-2.5 bg-brand-yellow text-ink rounded-xl font-black text-sm hover:bg-brand-yellow-soft transition-colors whitespace-nowrap"
               >
                 <Coins size={15} />
                 Custom Buy
@@ -395,8 +395,8 @@ const RechargePlans: React.FC = () => {
         const tokenCost = Math.round(confirmPkg.price / TOKEN_RATE);
         const insufficient = tokenBalance < tokenCost;
         return (
-          <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4" onClick={() => !upgrading && setConfirmPkg(null)}>
-            <div className={`bg-gray-900 border rounded-2xl p-6 max-w-md w-full ${c.border}`} onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/60 p-4" onClick={() => !upgrading && setConfirmPkg(null)}>
+            <div className={`bg-ink border rounded-2xl p-6 max-w-md w-full ${c.border}`} onClick={(e) => e.stopPropagation()}>
               <h3 className="text-lg font-black text-white mb-1">Upgrade to {confirmPkg.name}</h3>
               <p className="text-xs text-white/50 mb-4">
                 ₹{(confirmPkg.price / 1000).toFixed(0)}K/year · {confirmPkg.tokens.toLocaleString()} tokens included
@@ -405,8 +405,8 @@ const RechargePlans: React.FC = () => {
               <div className="space-y-1.5 mb-4">
                 {confirmPkg.features.map((f) => (
                   <div key={f} className="flex items-center gap-2">
-                    <CheckCircle size={13} className="text-green-400 flex-shrink-0" />
-                    <span className="text-xs text-gray-200">{f}</span>
+                    <CheckCircle size={13} className="text-status-success flex-shrink-0" />
+                    <span className="text-xs text-ink-light">{f}</span>
                   </div>
                 ))}
               </div>
@@ -414,16 +414,16 @@ const RechargePlans: React.FC = () => {
               <div className="rounded-xl bg-white/5 border border-white/10 p-3 mb-4">
                 <div className="flex items-center justify-between text-sm mb-1">
                   <span className="text-white/60">Cost</span>
-                  <span className="font-black text-yellow-400">{tokenCost.toLocaleString()} ₮</span>
+                  <span className="font-black text-brand-yellow">{tokenCost.toLocaleString()} ₮</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-white/60">Your balance</span>
-                  <span className={`font-black ${insufficient ? 'text-red-400' : 'text-white'}`}>{tokenBalance.toLocaleString()} ₮</span>
+                  <span className={`font-black ${insufficient ? 'text-status-error' : 'text-white'}`}>{tokenBalance.toLocaleString()} ₮</span>
                 </div>
               </div>
 
               {insufficient && (
-                <p className="text-xs text-red-400 mb-4">
+                <p className="text-xs text-status-error mb-4">
                   Not enough tokens for this upgrade. You need {(tokenCost - tokenBalance).toLocaleString()} more — top up first.
                 </p>
               )}

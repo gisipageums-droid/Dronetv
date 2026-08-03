@@ -140,11 +140,11 @@ const ContactedPeople: React.FC = () => {
   const getRoleBadgeColor = (role: UserRole) => {
     switch (role.type) {
       case "company":
-        return "bg-blue-100 text-blue-800";
+        return "bg-status-info/15 text-status-info";
       case "lead":
-        return "bg-green-100 text-green-800";
+        return "bg-status-success/15 text-status-success";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-ink-light text-ink-charcoal";
     }
   };
 
@@ -177,21 +177,21 @@ const ContactedPeople: React.FC = () => {
     switch (type?.toLowerCase()) {
       case "company":
       case "companies":
-        return "bg-blue-100 text-blue-800";
+        return "bg-status-info/15 text-status-info";
       case "service":
       case "services":
-        return "bg-green-100 text-green-800";
+        return "bg-status-success/15 text-status-success";
       case "product":
       case "products":
-        return "bg-purple-100 text-purple-800";
+        return "bg-brand-gold/15 text-brand-gold";
       case "professional":
       case "professionals":
-        return "bg-orange-100 text-orange-800";
+        return "bg-status-warning/15 text-status-warning";
       case "event":
       case "events":
-        return "bg-red-100 text-red-800";
+        return "bg-status-error/15 text-status-error";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-ink-light text-ink-charcoal";
     }
   };
 
@@ -392,28 +392,28 @@ const ContactedPeople: React.FC = () => {
     <div className="p-6">
       {/* ----------------------- HEADER ----------------------- */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-ink mb-2">
           Contacted People
         </h1>
-        <p className="text-gray-600">
+        <p className="text-ink-paragraph">
           Manage your connections with companies, services, products, and
           professionals.
         </p>
       </div>
 
       {/* ----------------------- FILTERS ----------------------- */}
-      <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+      <div className="bg-surface-card rounded-lg shadow-sm border p-4 mb-6">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-caption w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search contacts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 text-gray-900"
+                className="w-full pl-10 pr-4 py-2 border border-ink-light rounded-lg focus:ring-2 focus:ring-brand-yellow text-ink"
               />
             </div>
           </div>
@@ -422,7 +422,7 @@ const ContactedPeople: React.FC = () => {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 text-gray-900"
+            className="px-4 py-2 border border-ink-light rounded-lg focus:ring-2 focus:ring-brand-yellow text-ink"
           >
             {categories.map((cat) => (
               <option key={cat}>{cat}</option>
@@ -435,8 +435,8 @@ const ContactedPeople: React.FC = () => {
               onClick={() => setViewMode("card")}
               className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
                 viewMode === "card"
-                  ? "bg-yellow-400 text-black"
-                  : "bg-gray-100 text-gray-700"
+                  ? "bg-brand-yellow text-ink"
+                  : "bg-ink-light text-ink-paragraph"
               }`}
             >
               <Grid className="w-4 h-4" /> Card
@@ -445,8 +445,8 @@ const ContactedPeople: React.FC = () => {
               onClick={() => setViewMode("table")}
               className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
                 viewMode === "table"
-                  ? "bg-yellow-400 text-black"
-                  : "bg-gray-100 text-gray-700"
+                  ? "bg-brand-yellow text-ink"
+                  : "bg-ink-light text-ink-paragraph"
               }`}
             >
               <Table className="w-4 h-4" /> Table
@@ -458,8 +458,8 @@ const ContactedPeople: React.FC = () => {
       {/* ----------------------- LOADING ----------------------- */}
       {loading && (
         <div className="text-center py-8">
-          <div className="animate-spin h-12 w-12 rounded-full border-b-2 border-yellow-400 mx-auto"></div>
-          <p className="text-gray-500 mt-2">Loading conversations…</p>
+          <div className="animate-spin h-12 w-12 rounded-full border-b-2 border-brand-yellow mx-auto"></div>
+          <p className="text-ink-caption mt-2">Loading conversations…</p>
         </div>
       )}
 
@@ -467,7 +467,7 @@ const ContactedPeople: React.FC = () => {
       {!loading && viewMode === "card" && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredContacts.length === 0 ? (
-            <div className="col-span-full text-center py-12 text-gray-500">
+            <div className="col-span-full text-center py-12 text-ink-caption">
               No contacts found.
             </div>
           ) : (
@@ -477,7 +477,7 @@ const ContactedPeople: React.FC = () => {
               return (
                 <div
                   key={contact.leadId}
-                  className="bg-white border rounded-lg shadow-sm hover:shadow-md transition p-6"
+                  className="bg-surface-card border rounded-lg shadow-sm hover:shadow-md transition p-6"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
@@ -490,12 +490,12 @@ const ContactedPeople: React.FC = () => {
                       </div>
 
                       <div>
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-ink">
                           {getDisplayName(contact)}
                         </h3>
 
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-sm text-gray-500 capitalize">
+                          <span className="text-sm text-ink-caption capitalize">
                             {contact.category || "Contact"}
                           </span>
 
@@ -512,19 +512,19 @@ const ContactedPeople: React.FC = () => {
                     </div>
 
                     {contact.unreadCount > 0 && (
-                      <span className="text-xs bg-red-500 text-white px-2 py-1 rounded-full">
+                      <span className="text-xs bg-status-error text-white px-2 py-1 rounded-full">
                         {contact.unreadCount}
                       </span>
                     )}
                   </div>
 
                   {/* Message Preview */}
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  <p className="text-sm text-ink-paragraph mb-3 line-clamp-2">
                     {contact.lastMessage?.message || "No messages yet"}
                   </p>
 
                   {/* Footer */}
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                  <div className="flex items-center justify-between text-sm text-ink-caption mb-4">
                     <div className="flex items-center gap-1">
                       <Clock className="w-4 h-4" />
                       {formatDate(
@@ -540,7 +540,7 @@ const ContactedPeople: React.FC = () => {
 
                   <button
                     onClick={() => handleChat(contact)}
-                    className="w-full bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-500 transition flex items-center justify-center gap-2"
+                    className="w-full bg-brand-yellow text-ink px-4 py-2 rounded-lg hover:bg-brand-gold transition flex items-center justify-center gap-2"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Chat
@@ -554,9 +554,9 @@ const ContactedPeople: React.FC = () => {
 
       {/* ----------------------- TABLE VIEW ----------------------- */}
       {!loading && viewMode === "table" && (
-        <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-surface-card border rounded-lg shadow-sm overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 text-gray-600 text-xs uppercase">
+            <thead className="bg-ink-offwhite text-ink-paragraph text-xs uppercase">
               <tr>
                 <th className="px-6 py-3 text-left">Name</th>
                 <th className="px-6 py-3 text-left">Type</th>
@@ -568,12 +568,12 @@ const ContactedPeople: React.FC = () => {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-ink-light">
               {filteredContacts.length === 0 ? (
                 <tr>
                   <td
                     colSpan={7}
-                    className="text-center py-10 text-gray-500"
+                    className="text-center py-10 text-ink-caption"
                   >
                     No contacts found.
                   </td>
@@ -585,7 +585,7 @@ const ContactedPeople: React.FC = () => {
                   return (
                     <tr
                       key={contact.leadId}
-                      className="hover:bg-gray-50 transition"
+                      className="hover:bg-ink-offwhite transition"
                     >
                       {/* Name */}
                       <td className="px-6 py-4">
@@ -602,7 +602,7 @@ const ContactedPeople: React.FC = () => {
                             <div className="font-medium">
                               {getDisplayName(contact)}
                             </div>
-                            <div className="text-gray-500 text-sm">
+                            <div className="text-ink-caption text-sm">
                               {contact.email}
                             </div>
                           </div>
@@ -645,7 +645,7 @@ const ContactedPeople: React.FC = () => {
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleChat(contact)}
-                          className="bg-yellow-400 text-black px-3 py-1 rounded text-sm hover:bg-yellow-500"
+                          className="bg-brand-yellow text-ink px-3 py-1 rounded text-sm hover:bg-brand-gold"
                         >
                           Chat
                         </button>
@@ -661,8 +661,8 @@ const ContactedPeople: React.FC = () => {
 
       {/* ----------------------- CHAT MODAL ----------------------- */}
       {selectedContact && (
-        <div className="fixed inset-0 bg-black/50 z-[10000000] flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl flex flex-col max-h-[85vh]">
+        <div className="fixed inset-0 bg-ink/50 z-[10000000] flex items-center justify-center p-4">
+          <div className="bg-surface-card rounded-lg shadow-xl w-full max-w-2xl flex flex-col max-h-[85vh]">
             
             {/* Header */}
             <div className="flex items-center justify-between bg-[#075e54] text-white p-4 rounded-t-lg">
@@ -698,7 +698,7 @@ const ContactedPeople: React.FC = () => {
             {/* Body */}
             <div className="flex-1 overflow-y-auto p-4 bg-[#e5ddd5]">
               {chatMessages.length === 0 && (
-                <p className="text-center text-gray-500 mt-10">
+                <p className="text-center text-ink-caption mt-10">
                   No messages yet
                 </p>
               )}
@@ -715,13 +715,13 @@ const ContactedPeople: React.FC = () => {
                     <div
                       className={`max-w-xs p-3 rounded-lg ${
                         mine
-                          ? "bg-[#dcf8c6] text-gray-800"
-                          : "bg-white text-gray-700 shadow"
+                          ? "bg-[#dcf8c6] text-ink-charcoal"
+                          : "bg-surface-card text-ink-paragraph shadow"
                       }`}
                     >
                       <p className="text-sm">{msg.message}</p>
 
-                      <div className="text-xs text-gray-600 flex justify-end gap-1 mt-1">
+                      <div className="text-xs text-ink-paragraph flex justify-end gap-1 mt-1">
                         {new Date(msg.timestamp).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -732,7 +732,7 @@ const ContactedPeople: React.FC = () => {
                             {!msg.delivered ? (
                               <Clock className="w-3 h-3" />
                             ) : msg.seen ? (
-                              <CheckCheck className="w-3 h-3 text-blue-500" />
+                              <CheckCheck className="w-3 h-3 text-status-info" />
                             ) : (
                               <Check className="w-3 h-3" />
                             )}
@@ -748,13 +748,13 @@ const ContactedPeople: React.FC = () => {
             </div>
 
             {/* Input */}
-            <div className="p-3 bg-white border-t rounded-b-lg flex items-center gap-2">
+            <div className="p-3 bg-surface-card border-t rounded-b-lg flex items-center gap-2">
               <input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 placeholder="Type a message..."
-                className="flex-1 px-4 py-2 bg-gray-100 rounded-full focus:ring-2 focus:ring-[#075e54] text-gray-900"
+                className="flex-1 px-4 py-2 bg-ink-light rounded-full focus:ring-2 focus:ring-[#075e54] text-ink"
               />
 
               <button

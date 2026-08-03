@@ -52,7 +52,7 @@ const MobileBottomNav: React.FC = () => {
       {/* Backdrop */}
       {menuOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          className="fixed inset-0 bg-ink/40 z-40 lg:hidden"
           onClick={() => setMenuOpen(false)}
         />
       )}
@@ -83,7 +83,7 @@ const MobileBottomNav: React.FC = () => {
                 className={({ isActive }) =>
                   `flex flex-col items-center gap-1 p-3 rounded-xl border transition-all text-center ${
                     isActive
-                      ? "bg-yellow-400/15 text-yellow-400 border-yellow-400/40 font-semibold"
+                      ? "bg-brand-yellow/15 text-brand-yellow border-brand-yellow/40 font-semibold"
                       : "border-white/10 text-white/60 hover:bg-white/6 hover:text-white"
                   }`
                 }
@@ -95,7 +95,7 @@ const MobileBottomNav: React.FC = () => {
           </div>
           <button
             onClick={handleLogout}
-            className="mt-3 w-full flex items-center justify-center gap-2 p-2.5 rounded-xl border border-red-500/20 text-red-400 hover:bg-red-500/10 text-sm font-medium transition-all"
+            className="mt-3 w-full flex items-center justify-center gap-2 p-2.5 rounded-xl border border-status-error/20 text-status-error hover:bg-status-error/10 text-sm font-medium transition-all"
           >
             <LogOut size={16} />
             Logout
@@ -112,16 +112,16 @@ const MobileBottomNav: React.FC = () => {
               to={href}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all min-w-0 ${
-                  isActive ? "text-yellow-400" : "text-white/40 hover:text-white"
+                  isActive ? "text-brand-yellow" : "text-white/40 hover:text-white"
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <div className={`p-1.5 rounded-xl transition-all ${isActive ? "bg-yellow-400/15" : ""}`}>
-                    <Icon size={20} className={isActive ? "text-yellow-400" : ""} />
+                  <div className={`p-1.5 rounded-xl transition-all ${isActive ? "bg-brand-yellow/15" : ""}`}>
+                    <Icon size={20} className={isActive ? "text-brand-yellow" : ""} />
                   </div>
-                  <span className={`text-xs font-medium truncate max-w-[52px] ${isActive ? "text-yellow-400" : ""}`}>
+                  <span className={`text-xs font-medium truncate max-w-[52px] ${isActive ? "text-brand-yellow" : ""}`}>
                     {label}
                   </span>
                 </>
@@ -132,13 +132,13 @@ const MobileBottomNav: React.FC = () => {
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all ${
-              menuOpen ? "text-yellow-400" : "text-white/40 hover:text-white"
+              menuOpen ? "text-brand-yellow" : "text-white/40 hover:text-white"
             }`}
           >
-            <div className={`p-1.5 rounded-xl transition-all ${menuOpen ? "bg-yellow-400/15" : ""}`}>
-              <Grid3X3 size={20} className={menuOpen ? "text-yellow-400" : ""} />
+            <div className={`p-1.5 rounded-xl transition-all ${menuOpen ? "bg-brand-yellow/15" : ""}`}>
+              <Grid3X3 size={20} className={menuOpen ? "text-brand-yellow" : ""} />
             </div>
-            <span className={`text-xs font-medium ${menuOpen ? "text-yellow-400" : ""}`}>More</span>
+            <span className={`text-xs font-medium ${menuOpen ? "text-brand-yellow" : ""}`}>More</span>
           </button>
         </div>
       </div>

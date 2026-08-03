@@ -40,7 +40,7 @@ const CONTENT_TYPES: ContentLimit[] = [
     type: "promo_post",
     label: "Promotional Post",
     icon: Share2,
-    color: "bg-blue-100 text-blue-700",
+    color: "bg-status-info/15 text-status-info",
     reach: 2, scale: 6, brand: 12,
     placeholder: "Write your promotional post content. Will be published on LinkedIn, Instagram & Facebook...",
     maxChars: 500,
@@ -49,7 +49,7 @@ const CONTENT_TYPES: ContentLimit[] = [
     type: "article",
     label: "Editorial Article",
     icon: FileText,
-    color: "bg-green-100 text-green-700",
+    color: "bg-status-success/15 text-status-success",
     reach: 0, scale: 1, brand: 3,
     placeholder: "Provide the topic and key points for your article. DroneTv team will write and publish a 600–1000 word piece...",
     maxChars: 1000,
@@ -58,7 +58,7 @@ const CONTENT_TYPES: ContentLimit[] = [
     type: "news_post",
     label: "DroneTv News Post",
     icon: Newspaper,
-    color: "bg-teal-100 text-teal-700",
+    color: "bg-status-info/15 text-status-info",
     reach: 0, scale: 0, brand: 6,
     placeholder: "Describe the announcement, launch, certification or milestone you want to cover...",
     maxChars: 600,
@@ -67,7 +67,7 @@ const CONTENT_TYPES: ContentLimit[] = [
     type: "press_release",
     label: "Press Release",
     icon: Megaphone,
-    color: "bg-purple-100 text-purple-700",
+    color: "bg-brand-gold/15 text-brand-gold",
     reach: 0, scale: 0, brand: 6,
     placeholder: "Provide the press release details: headline, key facts, quotes, and contact info...",
     maxChars: 1500,
@@ -114,18 +114,18 @@ function savePosts(email: string, posts: Post[]) {
 }
 
 const statusBadge: Record<Post["status"], { label: string; cls: string; icon: React.ElementType }> = {
-  submitted: { label: "Submitted",  cls: "bg-blue-100 text-blue-700",    icon: Clock },
-  in_review: { label: "In Review",  cls: "bg-yellow-100 text-yellow-700", icon: Clock },
-  published: { label: "Published",  cls: "bg-green-100 text-green-700",  icon: CheckCircle2 },
-  rejected:  { label: "Rejected",   cls: "bg-red-100 text-red-700",      icon: XCircle },
+  submitted: { label: "Submitted",  cls: "bg-status-info/15 text-status-info",    icon: Clock },
+  in_review: { label: "In Review",  cls: "bg-brand-yellow-soft text-brand-gold", icon: Clock },
+  published: { label: "Published",  cls: "bg-status-success/15 text-status-success",  icon: CheckCircle2 },
+  rejected:  { label: "Rejected",   cls: "bg-status-error/15 text-status-error",      icon: XCircle },
 };
 
 const TIER_LABEL: Record<string, string> = { free: "Free", reach: "Reach", scale: "Scale", brand: "Brand" };
 const TIER_COLOR: Record<string, string> = {
-  free:  "bg-gray-100 text-gray-600",
-  reach: "bg-blue-100 text-blue-700",
-  scale: "bg-yellow-100 text-yellow-700",
-  brand: "bg-purple-100 text-purple-700",
+  free:  "bg-ink-light text-ink-paragraph",
+  reach: "bg-status-info/15 text-status-info",
+  scale: "bg-brand-yellow-soft text-brand-gold",
+  brand: "bg-brand-gold/15 text-brand-gold",
 };
 
 const EDITABLE_STATUSES: Post["status"][] = ["submitted", "rejected"];
@@ -299,9 +299,9 @@ const UserPosts: React.FC = () => {
     <div className="p-4 sm:p-6 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">CONTENT</p>
-        <h1 className="text-2xl font-black text-gray-900">My Posts & Content</h1>
-        <p className="text-sm text-gray-500 mt-1">Submit content for DroneTv to publish on your behalf.</p>
+        <p className="text-xs font-bold tracking-widest text-brand-yellow uppercase mb-1">CONTENT</p>
+        <h1 className="text-2xl font-black text-ink">My Posts & Content</h1>
+        <p className="text-sm text-ink-caption mt-1">Submit content for DroneTv to publish on your behalf.</p>
       </div>
 
       {/* Plan + featured banner */}
@@ -311,11 +311,11 @@ const UserPosts: React.FC = () => {
             {TIER_LABEL[tier]} Plan
           </span>
           {isFeatured ? (
-            <span className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-yellow-400 text-black">
+            <span className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-brand-yellow text-ink">
               <Star size={12} />Featured Placement Active
             </span>
           ) : (
-            <a href="/user-addons" className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+            <a href="/user-addons" className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-ink-light text-ink-paragraph hover:bg-ink-light transition-colors">
               <Star size={12} />Get Featured Placement<ChevronRight size={12} />
             </a>
           )}
@@ -334,23 +334,23 @@ const UserPosts: React.FC = () => {
               key={ct2.type}
               onClick={() => { setActiveType(ct2.type); if (!editingPost) setShowForm(false); }}
               className={`p-3 rounded-xl border text-left transition-all ${
-                isActive ? "border-yellow-400 bg-yellow-50" : "border-gray-200 bg-white hover:border-gray-300"
+                isActive ? "border-brand-yellow bg-surface-main" : "border-ink-light bg-surface-card hover:border-ink-light"
               }`}
             >
               <div className="flex items-center gap-2 mb-1.5">
-                <Icon size={13} className={isActive ? "text-yellow-600" : "text-gray-400"} />
-                <span className={`text-[11px] font-bold leading-tight ${isActive ? "text-yellow-700" : "text-gray-600"}`}>{ct2.label}</span>
+                <Icon size={13} className={isActive ? "text-brand-gold" : "text-ink-caption"} />
+                <span className={`text-[11px] font-bold leading-tight ${isActive ? "text-brand-gold" : "text-ink-paragraph"}`}>{ct2.label}</span>
               </div>
               {lim === 0 ? (
-                <p className="text-[10px] text-gray-400">Not in your plan</p>
+                <p className="text-[10px] text-ink-caption">Not in your plan</p>
               ) : (
                 <div>
                   <div className="flex justify-between text-[10px] mb-0.5">
-                    <span className="text-gray-500">{used}/{lim} used</span>
-                    {used >= lim && <span className="text-red-500 font-semibold">Limit reached</span>}
+                    <span className="text-ink-caption">{used}/{lim} used</span>
+                    {used >= lim && <span className="text-status-error font-semibold">Limit reached</span>}
                   </div>
-                  <div className="h-1 bg-gray-200 rounded-full">
-                    <div className={`h-1 rounded-full ${used >= lim ? "bg-red-400" : "bg-yellow-400"}`} style={{ width: `${Math.min((used / lim) * 100, 100)}%` }} />
+                  <div className="h-1 bg-ink-light rounded-full">
+                    <div className={`h-1 rounded-full ${used >= lim ? "bg-status-error" : "bg-brand-yellow"}`} style={{ width: `${Math.min((used / lim) * 100, 100)}%` }} />
                   </div>
                 </div>
               )}
@@ -364,33 +364,33 @@ const UserPosts: React.FC = () => {
         {!showForm ? (
           <button
             onClick={openNewForm}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-yellow-400 text-black font-bold text-sm hover:bg-yellow-500 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-yellow text-ink font-bold text-sm hover:bg-brand-gold transition-colors"
           >
             <Plus size={16} />
             Submit New {ct.label}
           </button>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 sm:p-5">
+          <div className="bg-surface-card border border-ink-light rounded-2xl shadow-sm p-4 sm:p-5">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-gray-900 text-sm">
+              <h3 className="font-bold text-ink text-sm">
                 {editingPost ? `Edit ${currentCt.label}` : `New ${currentCt.label}`}
               </h3>
-              <button onClick={closeForm} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                <X size={16} className="text-gray-400" />
+              <button onClick={closeForm} className="p-1.5 rounded-lg hover:bg-ink-light transition-colors">
+                <X size={16} className="text-ink-caption" />
               </button>
             </div>
 
             {isFeatured && !editingPost && (
-              <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-yellow-50 border border-yellow-200">
-                <Star size={13} className="text-yellow-500 flex-shrink-0" />
-                <span className="text-xs font-semibold text-yellow-700">Featured Placement active — this post will be promoted at the top</span>
+              <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-surface-main border border-brand-yellow-soft">
+                <Star size={13} className="text-brand-gold flex-shrink-0" />
+                <span className="text-xs font-semibold text-brand-gold">Featured Placement active — this post will be promoted at the top</span>
               </div>
             )}
 
             {editingPost && (
-              <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-blue-50 border border-blue-200">
-                <Pencil size={13} className="text-blue-500 flex-shrink-0" />
-                <span className="text-xs font-semibold text-blue-700">Editing — post will be resubmitted for review after saving</span>
+              <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-status-info/10 border border-status-info/25">
+                <Pencil size={13} className="text-status-info flex-shrink-0" />
+                <span className="text-xs font-semibold text-status-info">Editing — post will be resubmitted for review after saving</span>
               </div>
             )}
 
@@ -399,7 +399,7 @@ const UserPosts: React.FC = () => {
               placeholder="Title"
               value={title}
               onChange={e => setTitle(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
+              className="w-full border border-ink-light rounded-xl px-4 py-2.5 text-sm mb-3 text-ink placeholder-ink-caption focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none"
             />
             <textarea
               placeholder={currentCt.placeholder}
@@ -407,19 +407,19 @@ const UserPosts: React.FC = () => {
               onChange={e => setContent(e.target.value)}
               maxLength={currentCt.maxChars}
               rows={5}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm resize-none text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent outline-none"
+              className="w-full border border-ink-light rounded-xl px-4 py-2.5 text-sm resize-none text-ink placeholder-ink-caption focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none"
             />
             <div className="flex items-center justify-between mt-1 mb-4">
-              <span className="text-xs text-gray-400">{content.length}/{currentCt.maxChars} characters</span>
+              <span className="text-xs text-ink-caption">{content.length}/{currentCt.maxChars} characters</span>
             </div>
             <div className="flex gap-3">
-              <button onClick={closeForm} className="flex-1 px-4 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+              <button onClick={closeForm} className="flex-1 px-4 py-2 rounded-xl border border-ink-light text-sm font-semibold text-ink-paragraph hover:bg-ink-offwhite transition-colors">
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="flex-1 px-4 py-2 rounded-xl bg-yellow-400 text-black text-sm font-bold hover:bg-yellow-500 transition-colors disabled:opacity-60"
+                className="flex-1 px-4 py-2 rounded-xl bg-brand-yellow text-ink text-sm font-bold hover:bg-brand-gold transition-colors disabled:opacity-60"
               >
                 {submitting ? "Saving…" : editingPost ? "Save & Resubmit" : "Submit for Publishing"}
               </button>
@@ -430,14 +430,14 @@ const UserPosts: React.FC = () => {
 
       {/* Posts list */}
       {posts.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
-          <Share2 size={32} className="mx-auto text-gray-200 mb-3" />
-          <h3 className="font-bold text-gray-600 mb-1">No posts yet</h3>
-          <p className="text-sm text-gray-400">Submit your first content piece above.</p>
+        <div className="text-center py-12 bg-surface-card rounded-2xl border border-dashed border-ink-light">
+          <Share2 size={32} className="mx-auto text-ink-light mb-3" />
+          <h3 className="font-bold text-ink-paragraph mb-1">No posts yet</h3>
+          <p className="text-sm text-ink-caption">Submit your first content piece above.</p>
         </div>
       ) : (
         <div className="space-y-3">
-          <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Submitted Content</h2>
+          <h2 className="text-xs font-bold text-ink-caption uppercase tracking-widest mb-2">Submitted Content</h2>
           {posts.map(p => {
             const typeDef = CONTENT_TYPES.find(c => c.type === p.type)!;
             const Icon = typeDef?.icon || FileText;
@@ -446,29 +446,29 @@ const UserPosts: React.FC = () => {
             const canEdit = EDITABLE_STATUSES.includes(p.status);
 
             return (
-              <div key={p.id} className="bg-white border border-gray-200 rounded-xl px-4 py-3.5 flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon size={15} className="text-gray-500" />
+              <div key={p.id} className="bg-surface-card border border-ink-light rounded-xl px-4 py-3.5 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-ink-offwhite border border-ink-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Icon size={15} className="text-ink-caption" />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-                        <span className="font-semibold text-sm text-gray-900 truncate">{p.title}</span>
+                        <span className="font-semibold text-sm text-ink truncate">{p.title}</span>
                         {p.featured && (
-                          <span className="flex items-center gap-0.5 text-[10px] font-bold bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                          <span className="flex items-center gap-0.5 text-[10px] font-bold bg-brand-yellow-soft text-brand-gold px-1.5 py-0.5 rounded-full flex-shrink-0">
                             <Star size={8} />Featured
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 line-clamp-1 mb-2">{p.content}</p>
+                      <p className="text-xs text-ink-caption line-clamp-1 mb-2">{p.content}</p>
                       <div className="flex items-center flex-wrap gap-2">
                         <span className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${badge.cls}`}>
                           <BadgeIcon size={10} />{badge.label}
                         </span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${typeDef?.color}`}>{typeDef?.label}</span>
-                        <span className="text-[10px] text-gray-400">
+                        <span className="text-[10px] text-ink-caption">
                           {p.updatedAt ? `Edited ${new Date(p.updatedAt).toLocaleDateString("en-IN")}` : new Date(p.createdAt).toLocaleDateString("en-IN")}
                         </span>
                       </div>
@@ -480,7 +480,7 @@ const UserPosts: React.FC = () => {
                         <button
                           onClick={() => openEditForm(p)}
                           title="Edit post"
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 transition-colors"
+                          className="p-1.5 rounded-lg text-ink-caption hover:text-brand-yellow hover:bg-surface-main transition-colors"
                         >
                           <Pencil size={14} />
                         </button>
@@ -488,7 +488,7 @@ const UserPosts: React.FC = () => {
                       <button
                         onClick={() => setDeleteConfirm(p)}
                         title="Delete post"
-                        className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                        className="p-1.5 rounded-lg text-ink-caption hover:text-status-error hover:bg-status-error/10 transition-colors"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -503,11 +503,11 @@ const UserPosts: React.FC = () => {
 
       {/* Free plan upgrade */}
       {tier === "free" && (
-        <div className="mt-6 p-4 rounded-xl bg-gray-900 text-center">
-          <AlertTriangle size={20} className="text-yellow-400 mx-auto mb-2" />
+        <div className="mt-6 p-4 rounded-xl bg-ink text-center">
+          <AlertTriangle size={20} className="text-brand-yellow mx-auto mb-2" />
           <p className="text-white text-sm font-semibold mb-1">No content included in Free plan</p>
           <p className="text-white/50 text-xs mb-3">Upgrade to Reach (500+ tokens) to start submitting promotional posts.</p>
-          <a href="/user-recharge" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-yellow-400 text-black text-sm font-bold hover:bg-yellow-500 transition-colors">
+          <a href="/user-recharge" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-yellow text-ink text-sm font-bold hover:bg-brand-gold transition-colors">
             <Coins size={14} />Top Up & Upgrade
           </a>
         </div>
@@ -515,31 +515,31 @@ const UserPosts: React.FC = () => {
 
       {/* Delete confirm modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
+          <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-sm p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
-                <Trash2 size={18} className="text-red-500" />
+              <div className="w-10 h-10 rounded-xl bg-status-error/10 flex items-center justify-center flex-shrink-0">
+                <Trash2 size={18} className="text-status-error" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-sm">Delete Post?</h3>
-                <p className="text-xs text-gray-500 mt-0.5">This cannot be undone.</p>
+                <h3 className="font-bold text-ink text-sm">Delete Post?</h3>
+                <p className="text-xs text-ink-caption mt-0.5">This cannot be undone.</p>
               </div>
             </div>
-            <div className="bg-gray-50 rounded-xl px-4 py-3 mb-4">
-              <p className="text-sm font-semibold text-gray-900 truncate">{deleteConfirm.title}</p>
-              <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{deleteConfirm.content}</p>
+            <div className="bg-ink-offwhite rounded-xl px-4 py-3 mb-4">
+              <p className="text-sm font-semibold text-ink truncate">{deleteConfirm.title}</p>
+              <p className="text-xs text-ink-caption mt-0.5 line-clamp-1">{deleteConfirm.content}</p>
             </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="flex-1 px-4 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 rounded-xl border border-ink-light text-sm font-semibold text-ink-paragraph hover:bg-ink-offwhite transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleDelete(deleteConfirm)}
-                className="flex-1 px-4 py-2 rounded-xl bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-colors"
+                className="flex-1 px-4 py-2 rounded-xl bg-status-error text-white text-sm font-bold hover:bg-status-error transition-colors"
               >
                 Delete
               </button>

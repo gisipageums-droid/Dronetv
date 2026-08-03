@@ -74,22 +74,22 @@ const PACKAGES = [
 
 const colorMap: Record<string, { bg: string; border: string; text: string; badge: string }> = {
   blue: {
-    bg: "bg-blue-500/15",
-    border: "border-blue-500/40",
-    text: "text-blue-400",
-    badge: "bg-blue-500/25 text-blue-300",
+    bg: "bg-status-info/15",
+    border: "border-status-info/40",
+    text: "text-status-info",
+    badge: "bg-status-info/25 text-status-info/40",
   },
   yellow: {
-    bg: "bg-yellow-400/15",
-    border: "border-yellow-400/40",
-    text: "text-yellow-400",
-    badge: "bg-yellow-400/25 text-yellow-300",
+    bg: "bg-brand-yellow/15",
+    border: "border-brand-yellow/40",
+    text: "text-brand-yellow",
+    badge: "bg-brand-yellow/25 text-brand-yellow-soft",
   },
   purple: {
-    bg: "bg-purple-500/15",
-    border: "border-purple-500/40",
-    text: "text-purple-400",
-    badge: "bg-purple-500/25 text-purple-300",
+    bg: "bg-brand-gold/15",
+    border: "border-brand-gold/40",
+    text: "text-brand-gold",
+    badge: "bg-brand-gold/25 text-brand-gold/40",
   },
 };
 
@@ -158,7 +158,7 @@ const MyPackage: React.FC = () => {
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center min-h-[200px]">
-        <div className="w-6 h-6 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-brand-yellow border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -167,7 +167,7 @@ const MyPackage: React.FC = () => {
     <div className="p-4 sm:p-6 max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-2 mb-6">
-        <Package size={20} className="text-yellow-400" />
+        <Package size={20} className="text-brand-yellow" />
         <h1 className="text-xl font-black text-white">My Package</h1>
       </div>
 
@@ -191,8 +191,8 @@ const MyPackage: React.FC = () => {
             </div>
             <div className="text-right">
               <div className="flex items-center gap-1.5 mb-0.5">
-                <Coins size={14} className="text-yellow-400" />
-                <span className="text-sm font-black text-yellow-400">
+                <Coins size={14} className="text-brand-yellow" />
+                <span className="text-sm font-black text-brand-yellow">
                   {(profile?.tokenBalance ?? 0).toLocaleString()} ₮
                 </span>
               </div>
@@ -204,8 +204,8 @@ const MyPackage: React.FC = () => {
           <div className="grid sm:grid-cols-2 gap-1.5">
             {currentPkg.benefits.map((b) => (
               <div key={b} className="flex items-center gap-2">
-                <CheckCircle size={13} className="text-green-400 flex-shrink-0" />
-                <span className="text-xs text-gray-200">{b}</span>
+                <CheckCircle size={13} className="text-status-success flex-shrink-0" />
+                <span className="text-xs text-ink-light">{b}</span>
               </div>
             ))}
           </div>
@@ -263,7 +263,7 @@ const MyPackage: React.FC = () => {
                   className={`rounded-xl border p-4 relative ${c.bg} ${c.border}`}
                 >
                   {pkg.popular && (
-                    <span className="absolute -top-2.5 left-4 text-[10px] font-black bg-yellow-400 text-black px-2 py-0.5 rounded-full">
+                    <span className="absolute -top-2.5 left-4 text-[10px] font-black bg-brand-yellow text-ink px-2 py-0.5 rounded-full">
                       Most Popular
                     </span>
                   )}
@@ -272,18 +272,18 @@ const MyPackage: React.FC = () => {
                     <span className={`text-sm font-black ${c.text}`}>{pkg.name}</span>
                     <span className="text-xs font-bold text-white/40 ml-auto">{formatINR(pkg.price)}/yr</span>
                   </div>
-                  <p className="text-xs text-gray-300 mb-3">
+                  <p className="text-xs text-ink-light mb-3">
                     {pkg.tokens.toLocaleString()} tokens + {pkg.benefits.length} benefits included
                   </p>
                   <div className="space-y-1 mb-4">
                     {pkg.benefits.slice(0, 4).map((b) => (
                       <div key={b} className="flex items-center gap-1.5">
-                        <CheckCircle size={11} className="text-green-400 flex-shrink-0" />
-                        <span className="text-xs text-gray-200">{b}</span>
+                        <CheckCircle size={11} className="text-status-success flex-shrink-0" />
+                        <span className="text-xs text-ink-light">{b}</span>
                       </div>
                     ))}
                     {pkg.benefits.length > 4 && (
-                      <span className="text-xs text-gray-400">+{pkg.benefits.length - 4} more benefits</span>
+                      <span className="text-xs text-ink-caption">+{pkg.benefits.length - 4} more benefits</span>
                     )}
                   </div>
                   <button
@@ -328,16 +328,16 @@ const MyPackage: React.FC = () => {
         const balance = profile?.tokenBalance ?? 0;
         const insufficient = balance < tokenCost;
         return (
-          <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4" onClick={() => !upgrading && setConfirmPkg(null)}>
-            <div className={`bg-gray-900 border rounded-2xl p-6 max-w-md w-full ${c.border}`} onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/60 p-4" onClick={() => !upgrading && setConfirmPkg(null)}>
+            <div className={`bg-ink border rounded-2xl p-6 max-w-md w-full ${c.border}`} onClick={(e) => e.stopPropagation()}>
               <h3 className="text-lg font-black text-white mb-1">Upgrade to {confirmPkg.name}</h3>
               <p className="text-xs text-white/50 mb-4">{formatINR(confirmPkg.price)}/year · {confirmPkg.tokens.toLocaleString()} tokens included</p>
 
               <div className="space-y-1.5 mb-4">
                 {confirmPkg.benefits.map((b) => (
                   <div key={b} className="flex items-center gap-2">
-                    <CheckCircle size={13} className="text-green-400 flex-shrink-0" />
-                    <span className="text-xs text-gray-200">{b}</span>
+                    <CheckCircle size={13} className="text-status-success flex-shrink-0" />
+                    <span className="text-xs text-ink-light">{b}</span>
                   </div>
                 ))}
               </div>
@@ -345,16 +345,16 @@ const MyPackage: React.FC = () => {
               <div className="rounded-xl bg-white/5 border border-white/10 p-3 mb-4">
                 <div className="flex items-center justify-between text-sm mb-1">
                   <span className="text-white/60">Cost</span>
-                  <span className="font-black text-yellow-400">{tokenCost.toLocaleString()} ₮</span>
+                  <span className="font-black text-brand-yellow">{tokenCost.toLocaleString()} ₮</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-white/60">Your balance</span>
-                  <span className={`font-black ${insufficient ? "text-red-400" : "text-white"}`}>{balance.toLocaleString()} ₮</span>
+                  <span className={`font-black ${insufficient ? "text-status-error" : "text-white"}`}>{balance.toLocaleString()} ₮</span>
                 </div>
               </div>
 
               {insufficient && (
-                <p className="text-xs text-red-400 mb-4">
+                <p className="text-xs text-status-error mb-4">
                   Not enough tokens for this upgrade. You need {(tokenCost - balance).toLocaleString()} more.
                 </p>
               )}

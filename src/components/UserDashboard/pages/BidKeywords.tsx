@@ -122,12 +122,12 @@ const BidKeywordsPage: React.FC = () => {
   const expiredBids = myBids.filter(b => b.status === "expired" || b.status === "cancelled");
 
   return (
-    <div className="min-h-screen bg-gray-950 p-4 sm:p-6">
+    <div className="min-h-screen bg-ink p-4 sm:p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-black text-white flex items-center gap-3">
-            <Target size={24} className="text-yellow-400" />
+            <Target size={24} className="text-brand-yellow" />
             Bid for Keywords
           </h1>
           <p className="text-sm text-white/50 mt-1">
@@ -136,17 +136,17 @@ const BidKeywordsPage: React.FC = () => {
         </div>
 
         {/* Token Balance Banner */}
-        <div className="flex items-center justify-between bg-yellow-400/10 border border-yellow-400/20 rounded-xl px-5 py-4 mb-6">
+        <div className="flex items-center justify-between bg-brand-yellow/10 border border-brand-yellow/20 rounded-xl px-5 py-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center">
-              <span className="text-black font-black text-sm">₮</span>
+            <div className="w-10 h-10 rounded-full bg-brand-yellow flex items-center justify-center">
+              <span className="text-ink font-black text-sm">₮</span>
             </div>
             <div>
               <div className="text-xs text-white/50 uppercase tracking-widest">Token Balance</div>
-              <div className="text-2xl font-black text-yellow-400">{tokenBalance.toLocaleString()} ₮</div>
+              <div className="text-2xl font-black text-brand-yellow">{tokenBalance.toLocaleString()} ₮</div>
             </div>
           </div>
-          <a href="/user-buy" className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+          <a href="/user-buy" className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
             Buy More
           </a>
         </div>
@@ -154,8 +154,8 @@ const BidKeywordsPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Bid Simulator */}
           <div className="lg:col-span-2 space-y-5">
-            <div className="bg-gray-900 border border-yellow-400/20 rounded-xl p-5">
-              <h2 className="text-base font-bold text-yellow-400 flex items-center gap-2 mb-5">
+            <div className="bg-ink border border-brand-yellow/20 rounded-xl p-5">
+              <h2 className="text-base font-bold text-brand-yellow flex items-center gap-2 mb-5">
                 <TrendingUp size={16} /> Place a Keyword Bid
               </h2>
 
@@ -169,8 +169,8 @@ const BidKeywordsPage: React.FC = () => {
                       onClick={() => setSelectedKeyword(kw)}
                       className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                         selectedKeyword === kw
-                          ? "bg-yellow-400/15 border-yellow-400 text-yellow-400"
-                          : "bg-gray-800 border-white/10 text-white/50 hover:border-yellow-400/30 hover:text-white"
+                          ? "bg-brand-yellow/15 border-brand-yellow text-brand-yellow"
+                          : "bg-ink-charcoal border-white/10 text-white/50 hover:border-brand-yellow/30 hover:text-white"
                       }`}
                     >
                       {kw}
@@ -188,9 +188,9 @@ const BidKeywordsPage: React.FC = () => {
                     type="range" min={50} max={500} step={10}
                     value={bidAmount}
                     onChange={e => setBidAmount(Number(e.target.value))}
-                    className="flex-1 accent-yellow-400"
+                    className="flex-1 accent-brand-yellow"
                   />
-                  <span className="text-lg font-black text-yellow-400 min-w-[60px] text-right">{bidAmount} ₮</span>
+                  <span className="text-lg font-black text-brand-yellow min-w-[60px] text-right">{bidAmount} ₮</span>
                 </div>
               </div>
 
@@ -204,8 +204,8 @@ const BidKeywordsPage: React.FC = () => {
                       onClick={() => setSelectedDuration(i)}
                       className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${
                         selectedDuration === i
-                          ? "bg-yellow-400/15 border-yellow-400 text-yellow-400"
-                          : "bg-gray-800 border-white/10 text-white/50 hover:border-yellow-400/30 hover:text-white"
+                          ? "bg-brand-yellow/15 border-brand-yellow text-brand-yellow"
+                          : "bg-ink-charcoal border-white/10 text-white/50 hover:border-brand-yellow/30 hover:text-white"
                       }`}
                     >
                       {d.label}
@@ -215,10 +215,10 @@ const BidKeywordsPage: React.FC = () => {
               </div>
 
               {/* Summary */}
-              <div className="bg-gray-800 rounded-lg p-4 flex items-center justify-between mb-4">
+              <div className="bg-ink-charcoal rounded-lg p-4 flex items-center justify-between mb-4">
                 <div>
                   <div className="text-xs text-white/50 mb-1">Total Cost</div>
-                  <div className="text-2xl font-black text-yellow-400">{totalCost} ₮</div>
+                  <div className="text-2xl font-black text-brand-yellow">{totalCost} ₮</div>
                   {selectedKeyword && (
                     <div className="text-xs text-white/40 mt-1">
                       {selectedKeyword} · {dur.label} · {bidAmount} ₮/day
@@ -227,24 +227,24 @@ const BidKeywordsPage: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <div className="text-xs text-white/50 mb-1">After Bid</div>
-                  <div className={`text-lg font-bold ${tokenBalance - totalCost >= 0 ? "text-white" : "text-red-400"}`}>
+                  <div className={`text-lg font-bold ${tokenBalance - totalCost >= 0 ? "text-white" : "text-status-error"}`}>
                     {(tokenBalance - totalCost).toLocaleString()} ₮
                   </div>
                 </div>
               </div>
 
               {success && (
-                <div className="flex items-center gap-2 bg-green-500/15 border border-green-500/30 rounded-lg px-4 py-3 mb-3 text-green-400 text-sm">
+                <div className="flex items-center gap-2 bg-status-success/15 border border-status-success/30 rounded-lg px-4 py-3 mb-3 text-status-success text-sm">
                   <CheckCircle size={16} /> Bid placed! You're now bidding on "{selectedKeyword || "your keyword"}".
                 </div>
               )}
               {error && (
-                <div className="flex items-center gap-2 bg-red-500/15 border border-red-500/30 rounded-lg px-4 py-3 mb-3 text-red-400 text-sm">
+                <div className="flex items-center gap-2 bg-status-error/15 border border-status-error/30 rounded-lg px-4 py-3 mb-3 text-status-error text-sm">
                   <AlertCircle size={16} /> {error}
                 </div>
               )}
               {!canBid && selectedKeyword && tokenBalance < totalCost && (
-                <div className="flex items-center gap-2 bg-red-500/15 border border-red-500/30 rounded-lg px-4 py-3 mb-3 text-red-400 text-sm">
+                <div className="flex items-center gap-2 bg-status-error/15 border border-status-error/30 rounded-lg px-4 py-3 mb-3 text-status-error text-sm">
                   <AlertCircle size={16} /> Insufficient tokens. <a href="/user-buy" className="underline ml-1">Buy more</a>
                 </div>
               )}
@@ -252,17 +252,17 @@ const BidKeywordsPage: React.FC = () => {
               <button
                 onClick={handlePlaceBid}
                 disabled={!canBid || placing}
-                className="w-full py-3 rounded-lg font-bold text-sm transition-all bg-yellow-400 text-black hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-lg font-bold text-sm transition-all bg-brand-yellow text-ink hover:bg-brand-yellow-soft disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {placing
-                  ? <><div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> Placing...</>
+                  ? <><div className="w-4 h-4 border-2 border-ink border-t-transparent rounded-full animate-spin" /> Placing...</>
                   : `⚡ Place Bid — Reserve ${totalCost} ₮`
                 }
               </button>
             </div>
 
             {/* My Active Bids */}
-            <div className="bg-gray-900 border border-white/8 rounded-xl overflow-hidden">
+            <div className="bg-ink border border-white/8 rounded-xl overflow-hidden">
               <div className="px-5 py-4 border-b border-white/8 flex items-center justify-between">
                 <span className="font-bold text-white text-sm">My Active Bids ({activeBids.length})</span>
                 <button onClick={fetchBids} className="p-1.5 text-white/30 hover:text-white rounded-lg hover:bg-white/8 transition-colors">
@@ -271,7 +271,7 @@ const BidKeywordsPage: React.FC = () => {
               </div>
               {loadingBids ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="w-5 h-5 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-brand-yellow border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : activeBids.length === 0 ? (
                 <div className="py-10 text-center text-white/30 text-sm">No active bids — place your first bid above</div>
@@ -279,7 +279,7 @@ const BidKeywordsPage: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-gray-950">
+                      <tr className="bg-ink">
                         {["Keyword", "Bid", "Duration", "Status", "Expires", ""].map(h => (
                           <th key={h} className="px-4 py-3 text-left text-[10px] font-bold text-white/40 uppercase tracking-wider">{h}</th>
                         ))}
@@ -291,10 +291,10 @@ const BidKeywordsPage: React.FC = () => {
                         return (
                           <tr key={b.bidId} className="border-t border-white/5 hover:bg-white/2">
                             <td className="px-4 py-3 text-sm font-semibold text-white">{b.keyword}</td>
-                            <td className="px-4 py-3 text-sm text-yellow-400 font-bold">{b.bidAmount} ₮/day</td>
+                            <td className="px-4 py-3 text-sm text-brand-yellow font-bold">{b.bidAmount} ₮/day</td>
                             <td className="px-4 py-3 text-sm text-white/70">{b.durationDays}d</td>
                             <td className="px-4 py-3">
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-green-500/15 text-green-400">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-status-success/15 text-status-success">
                                 <CheckCircle size={11} /> Active
                               </span>
                             </td>
@@ -305,7 +305,7 @@ const BidKeywordsPage: React.FC = () => {
                               <button
                                 onClick={() => handleCancelBid(b.bidId)}
                                 disabled={cancelling === b.bidId}
-                                className="p-1 text-white/30 hover:text-red-400 transition-colors disabled:opacity-40"
+                                className="p-1 text-white/30 hover:text-status-error transition-colors disabled:opacity-40"
                                 title="Cancel bid (partial refund)"
                               >
                                 {cancelling === b.bidId ? <div className="w-3 h-3 border border-white/40 border-t-transparent rounded-full animate-spin" /> : <X size={13} />}
@@ -322,7 +322,7 @@ const BidKeywordsPage: React.FC = () => {
 
             {/* Past bids */}
             {expiredBids.length > 0 && (
-              <div className="bg-gray-900 border border-white/8 rounded-xl overflow-hidden">
+              <div className="bg-ink border border-white/8 rounded-xl overflow-hidden">
                 <div className="px-5 py-3 border-b border-white/8">
                   <span className="text-sm font-bold text-white/40">Past Bids ({expiredBids.length})</span>
                 </div>
@@ -335,7 +335,7 @@ const BidKeywordsPage: React.FC = () => {
                           <td className="px-4 py-2.5 text-sm text-white/40">{b.bidAmount} ₮/day · {b.durationDays}d</td>
                           <td className="px-4 py-2.5">
                             <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                              b.status === "cancelled" ? "bg-gray-500/20 text-gray-400" : "bg-gray-500/20 text-gray-400"
+                              b.status === "cancelled" ? "bg-ink-caption/20 text-ink-caption" : "bg-ink-caption/20 text-ink-caption"
                             }`}>{b.status}</span>
                           </td>
                         </tr>
@@ -349,23 +349,23 @@ const BidKeywordsPage: React.FC = () => {
 
           {/* Right: info panel */}
           <div className="space-y-4">
-            <div className="bg-yellow-400/8 border border-yellow-400/20 rounded-xl p-4">
+            <div className="bg-brand-yellow/8 border border-brand-yellow/20 rounded-xl p-4">
               <div className="flex items-start gap-2">
-                <Info size={14} className="text-yellow-400 flex-shrink-0 mt-0.5" />
+                <Info size={14} className="text-brand-yellow flex-shrink-0 mt-0.5" />
                 <div className="text-xs text-white/60 leading-relaxed">
-                  <strong className="text-yellow-400">How bidding works:</strong><br />
+                  <strong className="text-brand-yellow">How bidding works:</strong><br />
                   Top 3 bidders win sponsored placement for that keyword. Bids run for the chosen duration and tokens are deducted upfront. Cancel anytime for a partial refund.
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-900 border border-white/8 rounded-xl p-4">
+            <div className="bg-ink border border-white/8 rounded-xl p-4">
               <div className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">Token cost breakdown</div>
               <div className="space-y-2 text-xs">
                 {DURATIONS.map(d => (
                   <div key={d.label} className="flex items-center justify-between">
                     <span className="text-white/50">{d.label} @ 50 ₮/day</span>
-                    <span className="font-bold text-yellow-400">{Math.round(50 * d.multiplier)} ₮</span>
+                    <span className="font-bold text-brand-yellow">{Math.round(50 * d.multiplier)} ₮</span>
                   </div>
                 ))}
               </div>

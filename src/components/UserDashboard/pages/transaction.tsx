@@ -334,14 +334,14 @@ const TransactionHistory: React.FC = () => {
             case 'CAPTURED':
             case 'COMPLETED':
             case 'SUCCESS':
-                return 'bg-emerald-100 text-emerald-800';
+                return 'bg-status-success/15 text-status-success';
             case 'PENDING':
-                return 'bg-amber-100 text-amber-800';
+                return 'bg-brand-yellow-soft text-brand-gold';
             case 'FAILED':
             case 'CANCELLED':
-                return 'bg-red-100 text-red-800';
+                return 'bg-status-error/15 text-status-error';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-ink-light text-ink-charcoal';
         }
     };
 
@@ -364,24 +364,24 @@ const TransactionHistory: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-amber-50 p-4 md:p-6 flex items-center justify-center">
+            <div className="min-h-screen bg-surface-main p-4 md:p-6 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
-                    <p className="text-amber-700 mt-4">Loading your transactions...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+                    <p className="text-brand-gold mt-4">Loading your transactions...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-amber-50 p-4 md:p-6">
+        <div className="min-h-screen bg-surface-main p-4 md:p-6">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="mb-6 text-center">
-                    <h1 className="text-2xl md:text-4xl font-bold text-amber-900">Transaction History</h1>
-                    <p className="text-amber-700 mt-1 text-sm md:text-base">Review your token purchase history</p>
+                    <h1 className="text-2xl md:text-4xl font-bold text-brand-gold">Transaction History</h1>
+                    <p className="text-brand-gold mt-1 text-sm md:text-base">Review your token purchase history</p>
                     {error && (
-                        <div className="mt-3 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg max-w-md mx-auto text-sm">
+                        <div className="mt-3 p-3 bg-status-error/15 border border-status-error/40 text-status-error rounded-lg max-w-md mx-auto text-sm">
                             {error}
                         </div>
                     )}
@@ -390,37 +390,37 @@ const TransactionHistory: React.FC = () => {
                 {/* Stats Summary */}
                 {transactions.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
-                        <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
-                            <div className="text-xl md:text-2xl font-bold text-amber-700">{transactions.length}</div>
-                            <div className="text-amber-600 text-xs md:text-sm">Total</div>
+                        <div className="bg-surface-card rounded-xl shadow-sm p-3 md:p-4 text-center border border-brand-yellow-soft">
+                            <div className="text-xl md:text-2xl font-bold text-brand-gold">{transactions.length}</div>
+                            <div className="text-brand-gold text-xs md:text-sm">Total</div>
                         </div>
-                        <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
-                            <div className="text-xl md:text-2xl font-bold text-emerald-700">
+                        <div className="bg-surface-card rounded-xl shadow-sm p-3 md:p-4 text-center border border-brand-yellow-soft">
+                            <div className="text-xl md:text-2xl font-bold text-status-success">
                                 {formatTokens(transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').reduce((sum, tx) => sum + (tx.tokenCount || 0), 0))}
                             </div>
-                            <div className="text-amber-600 text-xs md:text-sm">Purchased</div>
+                            <div className="text-brand-gold text-xs md:text-sm">Purchased</div>
                         </div>
-                        <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 text-center border border-amber-200">
-                            <div className="text-xl md:text-2xl font-bold text-amber-700">
+                        <div className="bg-surface-card rounded-xl shadow-sm p-3 md:p-4 text-center border border-brand-yellow-soft">
+                            <div className="text-xl md:text-2xl font-bold text-brand-gold">
                                 {transactions.filter(tx => tx.paymentStatus === 'CAPTURED' || tx.paymentStatus === 'COMPLETED' || tx.paymentStatus === 'SUCCESS').length}
                             </div>
-                            <div className="text-amber-600 text-xs md:text-sm">Completed</div>
+                            <div className="text-brand-gold text-xs md:text-sm">Completed</div>
                         </div>
-                        <div className="bg-gray-900 rounded-xl shadow-sm p-3 md:p-4 text-center border border-yellow-400">
-                            <div className="text-xl md:text-2xl font-bold text-yellow-400">
+                        <div className="bg-ink rounded-xl shadow-sm p-3 md:p-4 text-center border border-brand-yellow">
+                            <div className="text-xl md:text-2xl font-bold text-brand-yellow">
                                 {profileBalance === null ? '…' : formatTokens(profileBalance)}
                             </div>
-                            <div className="text-yellow-600 text-xs md:text-sm">Balance</div>
+                            <div className="text-brand-gold text-xs md:text-sm">Balance</div>
                         </div>
                     </div>
                 )}
 
                 {/* Search and Filter Bar */}
-                <div className="bg-white rounded-xl shadow-lg p-4 md:p-6 mb-6 border border-amber-200">
+                <div className="bg-surface-card rounded-xl shadow-lg p-4 md:p-6 mb-6 border border-brand-yellow-soft">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Search Bar */}
                         <div>
-                            <label htmlFor="search" className="block text-sm font-medium text-amber-800 mb-1">
+                            <label htmlFor="search" className="block text-sm font-medium text-brand-gold mb-1">
                                 Search Transactions
                             </label>
                             <div className="relative">
@@ -430,10 +430,10 @@ const TransactionHistory: React.FC = () => {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     placeholder="Search by description, amount, or status..."
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white text-amber-900 placeholder-amber-400"
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-brand-yellow-soft focus:ring-2 focus:ring-brand-gold focus:border-transparent bg-surface-card text-brand-gold placeholder-brand-yellow"
                                 />
                                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
@@ -442,7 +442,7 @@ const TransactionHistory: React.FC = () => {
 
                         {/* Date Filter */}
                         <div>
-                            <label htmlFor="dateFilter" className="block text-sm font-medium text-amber-800 mb-1">
+                            <label htmlFor="dateFilter" className="block text-sm font-medium text-brand-gold mb-1">
                                 Filter by Date
                             </label>
                             <div className="relative">
@@ -451,10 +451,10 @@ const TransactionHistory: React.FC = () => {
                                     id="dateFilter"
                                     value={dateFilter}
                                     onChange={(e) => setDateFilter(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-white text-amber-900"
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-brand-yellow-soft focus:ring-2 focus:ring-brand-gold focus:border-transparent bg-surface-card text-brand-gold"
                                 />
                                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                 </div>
@@ -464,11 +464,11 @@ const TransactionHistory: React.FC = () => {
                 </div>
 
                 {/* Transaction List */}
-                <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-amber-200">
+                <div className="bg-surface-card rounded-xl shadow-lg overflow-hidden border border-brand-yellow-soft">
                     {filteredTransactions.length === 0 ? (
-                        <div className="text-center py-12 text-amber-700">
+                        <div className="text-center py-12 text-brand-gold">
                             <svg
-                                className="w-16 h-16 mx-auto text-amber-400 mb-4"
+                                className="w-16 h-16 mx-auto text-brand-yellow mb-4"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -479,21 +479,21 @@ const TransactionHistory: React.FC = () => {
                             <p className="mt-2">Try adjusting your search or filter criteria</p>
                         </div>
                     ) : (
-                        <ul className="divide-y divide-amber-100">
+                        <ul className="divide-y divide-brand-yellow-soft">
                             {filteredTransactions.map((transaction) => (
                                 <li
                                     key={transaction.id}
-                                    className="p-3 md:p-5 hover:bg-amber-50 transition-colors duration-200"
+                                    className="p-3 md:p-5 hover:bg-surface-main transition-colors duration-200"
                                 >
                                     <div className="flex items-start gap-3">
                                         {/* Status icon */}
                                         <div
                                             className={`flex-shrink-0 h-9 w-9 md:h-11 md:w-11 rounded-full flex items-center justify-center mt-0.5 ${
                                                 transaction.paymentStatus === 'CAPTURED' || transaction.paymentStatus === 'COMPLETED' || transaction.paymentStatus === 'SUCCESS'
-                                                    ? 'bg-emerald-100 text-emerald-700'
+                                                    ? 'bg-status-success/15 text-status-success'
                                                     : transaction.paymentStatus === 'FAILED' || transaction.paymentStatus === 'CANCELLED'
-                                                    ? 'bg-red-100 text-red-600'
-                                                    : 'bg-amber-100 text-amber-600'
+                                                    ? 'bg-status-error/15 text-status-error'
+                                                    : 'bg-brand-yellow-soft text-brand-gold'
                                             }`}
                                         >
                                             {transaction.paymentStatus === 'CAPTURED' || transaction.paymentStatus === 'COMPLETED' || transaction.paymentStatus === 'SUCCESS' ? (
@@ -515,11 +515,11 @@ const TransactionHistory: React.FC = () => {
                                         <div className="flex-1 min-w-0">
                                             {/* Description + Amount on same row */}
                                             <div className="flex items-start justify-between gap-2">
-                                                <p className="text-sm md:text-base font-semibold text-amber-900 break-words leading-snug flex-1 min-w-0">
+                                                <p className="text-sm md:text-base font-semibold text-brand-gold break-words leading-snug flex-1 min-w-0">
                                                     {transaction.description}
                                                 </p>
                                                 <span className={`flex-shrink-0 text-sm md:text-base font-bold whitespace-nowrap ${
-                                                    transaction.type === 'credit' ? 'text-emerald-700' : 'text-amber-800'
+                                                    transaction.type === 'credit' ? 'text-status-success' : 'text-brand-gold'
                                                 }`}>
                                                     {transaction.type === 'credit' ? '+' : '-'}{formatTokens(getDisplayTokens(transaction))} tokens
                                                 </span>
@@ -527,7 +527,7 @@ const TransactionHistory: React.FC = () => {
 
                                             {/* Badges — wrap on mobile */}
                                             <div className="flex flex-wrap items-center gap-1 mt-1.5">
-                                                <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded">
+                                                <span className="text-xs text-brand-gold bg-brand-yellow-soft px-2 py-0.5 rounded">
                                                     {transaction.category}
                                                 </span>
                                                 {transaction.paymentStatus && (
@@ -536,14 +536,14 @@ const TransactionHistory: React.FC = () => {
                                                     </span>
                                                 )}
                                                 {transaction.currency && (
-                                                    <span className="text-xs text-amber-500 bg-amber-50 px-2 py-0.5 rounded">
+                                                    <span className="text-xs text-brand-gold bg-surface-main px-2 py-0.5 rounded">
                                                         {transaction.currency}
                                                     </span>
                                                 )}
                                             </div>
 
                                             {/* Date */}
-                                            <p className="text-xs text-amber-400 mt-1.5">
+                                            <p className="text-xs text-brand-yellow mt-1.5">
                                                 {formatDate(transaction.date)}
                                             </p>
                                         </div>

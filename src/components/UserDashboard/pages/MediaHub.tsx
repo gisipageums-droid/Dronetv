@@ -105,12 +105,12 @@ const deliverables: DeliverableItem[] = [
 ];
 
 const categoryColor: Record<string, string> = {
-  Video: "bg-red-900/30 text-red-400",
-  Social: "bg-blue-900/30 text-blue-400",
-  Article: "bg-green-900/30 text-green-400",
-  News: "bg-teal-900/30 text-teal-400",
-  PR: "bg-purple-900/30 text-purple-400",
-  Magazine: "bg-yellow-900/30 text-yellow-400",
+  Video: "bg-status-error/30 text-status-error",
+  Social: "bg-status-info/30 text-status-info",
+  Article: "bg-status-success/30 text-status-success",
+  News: "bg-status-info/30 text-status-info",
+  PR: "bg-brand-gold/30 text-brand-gold",
+  Magazine: "bg-brand-gold/30 text-brand-yellow",
 };
 
 const mockStatuses: Record<string, DelivStatus> = {
@@ -119,9 +119,9 @@ const mockStatuses: Record<string, DelivStatus> = {
 };
 
 function statusBadge(s: DelivStatus) {
-  if (s === "delivered") return <span className="flex items-center gap-1 text-xs font-semibold text-green-400"><CheckCircle2 size={13} />Delivered</span>;
-  if (s === "in_progress") return <span className="flex items-center gap-1 text-xs font-semibold text-yellow-400"><Clock size={13} />In Progress</span>;
-  return <span className="flex items-center gap-1 text-xs font-semibold text-gray-400"><AlertCircle size={13} />Pending</span>;
+  if (s === "delivered") return <span className="flex items-center gap-1 text-xs font-semibold text-status-success"><CheckCircle2 size={13} />Delivered</span>;
+  if (s === "in_progress") return <span className="flex items-center gap-1 text-xs font-semibold text-brand-yellow"><Clock size={13} />In Progress</span>;
+  return <span className="flex items-center gap-1 text-xs font-semibold text-ink-caption"><AlertCircle size={13} />Pending</span>;
 }
 
 const MediaHub: React.FC = () => {
@@ -164,10 +164,10 @@ const MediaHub: React.FC = () => {
 
   const tierLabel: Record<string, string> = { free: "Free", reach: "Reach", scale: "Scale", brand: "Brand" };
   const tierColor: Record<string, string> = {
-    free: "bg-gray-700 text-gray-300",
-    reach: "bg-blue-900/40 text-blue-300",
-    scale: "bg-yellow-900/40 text-yellow-300",
-    brand: "bg-purple-900/40 text-purple-300",
+    free: "bg-ink-paragraph text-ink-light",
+    reach: "bg-status-info/40 text-status-info/40",
+    scale: "bg-brand-gold/40 text-brand-yellow-soft",
+    brand: "bg-brand-gold/40 text-brand-gold/40",
   };
 
   const included = deliverables.filter(d => getStatus(d) === "included");
@@ -177,9 +177,9 @@ const MediaHub: React.FC = () => {
     <div className="p-6 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">MEDIA HUB</p>
-        <h1 className="text-2xl font-black text-gray-900">Your Media Deliverables</h1>
-        <p className="text-sm text-gray-500 mt-1">Track and manage all media content produced for your company by DroneTv.</p>
+        <p className="text-xs font-bold tracking-widest text-brand-yellow uppercase mb-1">MEDIA HUB</p>
+        <h1 className="text-2xl font-black text-ink">Your Media Deliverables</h1>
+        <p className="text-sm text-ink-caption mt-1">Track and manage all media content produced for your company by DroneTv.</p>
       </div>
 
       {/* Plan badge + token balance */}
@@ -188,11 +188,11 @@ const MediaHub: React.FC = () => {
           <div className={`px-3 py-1.5 rounded-full text-xs font-bold ${tierColor[tier]}`}>
             {tierLabel[tier]} Plan
           </div>
-          <div className="px-3 py-1.5 rounded-full bg-gray-100 text-xs font-semibold text-gray-600">
+          <div className="px-3 py-1.5 rounded-full bg-ink-light text-xs font-semibold text-ink-paragraph">
             {tokenBalance.toLocaleString()} tokens available
           </div>
           {tier === "free" && (
-            <a href="/user-recharge" className="px-3 py-1.5 rounded-full bg-yellow-400 text-black text-xs font-bold hover:bg-yellow-500 transition-colors">
+            <a href="/user-recharge" className="px-3 py-1.5 rounded-full bg-brand-yellow text-ink text-xs font-bold hover:bg-brand-gold transition-colors">
               Upgrade Plan →
             </a>
           )}
@@ -202,40 +202,40 @@ const MediaHub: React.FC = () => {
       {/* Included deliverables */}
       {included.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-3">Included in Your Plan</h2>
+          <h2 className="text-sm font-bold text-ink-paragraph uppercase tracking-wider mb-3">Included in Your Plan</h2>
           <div className="space-y-2">
             {included.map(d => {
               const Icon = d.icon;
               const delivStatus = mockStatuses[d.id] ?? "pending";
               const isOpen = expanded === d.id;
               return (
-                <div key={d.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div key={d.id} className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-hidden">
                   <button
-                    className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+                    className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-ink-offwhite transition-colors"
                     onClick={() => setExpanded(isOpen ? null : d.id)}
                   >
-                    <div className="w-9 h-9 rounded-lg bg-yellow-400/15 flex items-center justify-center flex-shrink-0">
-                      <Icon size={18} className="text-yellow-600" />
+                    <div className="w-9 h-9 rounded-lg bg-brand-yellow/15 flex items-center justify-center flex-shrink-0">
+                      <Icon size={18} className="text-brand-gold" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-sm text-gray-900">{d.title}</span>
+                        <span className="font-semibold text-sm text-ink">{d.title}</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide ${categoryColor[d.category]}`}>{d.category}</span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-0.5 truncate">{getAllocation(d)}</p>
+                      <p className="text-xs text-ink-caption mt-0.5 truncate">{getAllocation(d)}</p>
                     </div>
                     <div className="flex items-center gap-3 flex-shrink-0">
                       {statusBadge(delivStatus)}
-                      {isOpen ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+                      {isOpen ? <ChevronUp size={16} className="text-ink-caption" /> : <ChevronDown size={16} className="text-ink-caption" />}
                     </div>
                   </button>
                   {isOpen && (
-                    <div className="px-5 pb-4 border-t border-gray-100">
-                      <p className="text-sm text-gray-600 mt-3 mb-3">{d.desc}</p>
+                    <div className="px-5 pb-4 border-t border-ink-light">
+                      <p className="text-sm text-ink-paragraph mt-3 mb-3">{d.desc}</p>
                       <div className="flex items-center gap-3">
                         <a
                           href={`mailto:media@dronetv.in?subject=${encodeURIComponent("Media Request: " + d.title)}&body=${encodeURIComponent("Hi DroneTv team,\n\nI'd like to initiate my " + d.title + " deliverable.\n\nMy email: " + userId)}`}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-400 text-black text-xs font-bold hover:bg-yellow-500 transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-yellow text-ink text-xs font-bold hover:bg-brand-gold transition-colors"
                         >
                           <Mail size={13} />
                           Request Now
@@ -253,23 +253,23 @@ const MediaHub: React.FC = () => {
       {/* Not included */}
       {notIncluded.length > 0 && (
         <div>
-          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Upgrade to Unlock</h2>
+          <h2 className="text-sm font-bold text-ink-caption uppercase tracking-wider mb-3">Upgrade to Unlock</h2>
           <div className="space-y-2">
             {notIncluded.map(d => {
               const Icon = d.icon;
               return (
-                <div key={d.id} className="bg-white rounded-xl border border-gray-200 shadow-sm px-5 py-4 flex items-center gap-4 opacity-60">
-                  <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                    <Icon size={18} className="text-gray-400" />
+                <div key={d.id} className="bg-surface-card rounded-xl border border-ink-light shadow-sm px-5 py-4 flex items-center gap-4 opacity-60">
+                  <div className="w-9 h-9 rounded-lg bg-ink-light flex items-center justify-center flex-shrink-0">
+                    <Icon size={18} className="text-ink-caption" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-sm text-gray-500">{d.title}</span>
+                      <span className="font-semibold text-sm text-ink-caption">{d.title}</span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide ${categoryColor[d.category]}`}>{d.category}</span>
                     </div>
-                    <p className="text-xs text-gray-400 mt-0.5">Scale: {d.scale} &nbsp;|&nbsp; Brand: {d.brand}</p>
+                    <p className="text-xs text-ink-caption mt-0.5">Scale: {d.scale} &nbsp;|&nbsp; Brand: {d.brand}</p>
                   </div>
-                  <a href="/user-recharge" className="flex-shrink-0 text-xs font-bold text-yellow-600 hover:underline">Upgrade</a>
+                  <a href="/user-recharge" className="flex-shrink-0 text-xs font-bold text-brand-gold hover:underline">Upgrade</a>
                 </div>
               );
             })}
@@ -279,11 +279,11 @@ const MediaHub: React.FC = () => {
 
       {/* Empty state */}
       {tier === "free" && included.length === 0 && (
-        <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
-          <Video size={40} className="mx-auto text-gray-300 mb-3" />
-          <h3 className="font-bold text-gray-700 mb-1">No Media Deliverables Yet</h3>
-          <p className="text-sm text-gray-400 mb-4">Upgrade your plan to unlock video interviews, articles, social posts and more.</p>
-          <a href="/user-recharge" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-400 text-black text-sm font-bold hover:bg-yellow-500 transition-colors">
+        <div className="text-center py-16 bg-surface-card rounded-2xl border border-dashed border-ink-light">
+          <Video size={40} className="mx-auto text-ink-light mb-3" />
+          <h3 className="font-bold text-ink-paragraph mb-1">No Media Deliverables Yet</h3>
+          <p className="text-sm text-ink-caption mb-4">Upgrade your plan to unlock video interviews, articles, social posts and more.</p>
+          <a href="/user-recharge" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-yellow text-ink text-sm font-bold hover:bg-brand-gold transition-colors">
             View Plans
           </a>
         </div>

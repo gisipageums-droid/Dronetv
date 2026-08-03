@@ -170,21 +170,21 @@ const BuyTokenPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 p-4 sm:p-6">
+    <div className="min-h-screen bg-ink p-4 sm:p-6">
       <div className="max-w-4xl mx-auto">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-black text-white flex items-center gap-2">
-              <Coins size={22} className="text-yellow-400" />
+              <Coins size={22} className="text-brand-yellow" />
               Buy Tokens
             </h1>
             <p className="text-sm text-white/40 mt-0.5">₹10 = 1 token · No expiry · Instant credit</p>
           </div>
           <div className="text-right">
             <div className="text-[10px] text-white/40 uppercase tracking-widest mb-0.5">Current Balance</div>
-            <div className="text-xl font-black text-yellow-400">{currentBalance.toLocaleString()} ₮</div>
+            <div className="text-xl font-black text-brand-yellow">{currentBalance.toLocaleString()} ₮</div>
           </div>
         </div>
 
@@ -194,11 +194,11 @@ const BuyTokenPage: React.FC = () => {
           <div className="lg:col-span-2 space-y-4">
 
             {/* Top-up packs (same catalog as Token Wallet's Top-up Packs tab) */}
-            <div className="bg-gray-900 border border-white/8 rounded-xl p-5">
+            <div className="bg-ink border border-white/8 rounded-xl p-5">
               <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-4">Select a Pack</div>
               {loadingPlans ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="w-6 h-6 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-brand-yellow border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : plans.length === 0 ? (
                 <div className="text-center py-6 text-white/30 text-sm mb-4">No packs available right now — use the custom amount below.</div>
@@ -210,16 +210,16 @@ const BuyTokenPage: React.FC = () => {
                       onClick={() => { setSelectedPlan(p); setCustomAmount(''); }}
                       className={`relative rounded-xl border p-3 text-left transition-all ${
                         selectedPlan?.id === p.id
-                          ? 'border-yellow-400 bg-yellow-400/10'
-                          : 'border-white/10 bg-gray-800 hover:border-yellow-400/30'
+                          ? 'border-brand-yellow bg-brand-yellow/10'
+                          : 'border-white/10 bg-ink-charcoal hover:border-brand-yellow/30'
                       }`}
                     >
                       {p.discount > 0 && (
-                        <span className="absolute -top-2 left-2 text-[9px] font-black bg-yellow-400 text-black px-1.5 py-0.5 rounded-full">
+                        <span className="absolute -top-2 left-2 text-[9px] font-black bg-brand-yellow text-ink px-1.5 py-0.5 rounded-full">
                           {p.discount}% OFF
                         </span>
                       )}
-                      <div className={`text-base font-black ${selectedPlan?.id === p.id ? 'text-yellow-400' : 'text-white'}`}>
+                      <div className={`text-base font-black ${selectedPlan?.id === p.id ? 'text-brand-yellow' : 'text-white'}`}>
                         ₹{p.price.toLocaleString()}
                       </div>
                       <div className="text-xs text-white/50 mt-0.5">{p.tokens.toLocaleString()} tokens · {p.name}</div>
@@ -239,23 +239,23 @@ const BuyTokenPage: React.FC = () => {
                   value={customAmount}
                   onChange={e => { setCustomAmount(e.target.value); setSelectedPlan(null); }}
                   placeholder="Min ₹10"
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/50 text-sm"
+                  className="w-full pl-10 pr-4 py-3 bg-ink-charcoal border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-brand-yellow/50 text-sm"
                 />
               </div>
 
               {/* Preview */}
               {finalAmount > 0 && (
                 <div className={`mt-3 flex items-center justify-between rounded-lg px-4 py-3 ${
-                  isValid ? 'bg-green-500/10 border border-green-500/20' : 'bg-red-500/10 border border-red-500/20'
+                  isValid ? 'bg-status-success/10 border border-status-success/20' : 'bg-status-error/10 border border-status-error/20'
                 }`}>
                   {isValid ? (
                     <>
                       <span className="text-sm text-white/70">You get</span>
-                      <span className="text-lg font-black text-yellow-400">{tokens} tokens</span>
-                      <span className="text-sm text-green-400 font-bold">₹{finalAmount.toLocaleString()}</span>
+                      <span className="text-lg font-black text-brand-yellow">{tokens} tokens</span>
+                      <span className="text-sm text-status-success font-bold">₹{finalAmount.toLocaleString()}</span>
                     </>
                   ) : (
-                    <span className="text-sm text-red-400">Minimum purchase is ₹10 (1 token)</span>
+                    <span className="text-sm text-status-error">Minimum purchase is ₹10 (1 token)</span>
                   )}
                 </div>
               )}
@@ -263,7 +263,7 @@ const BuyTokenPage: React.FC = () => {
 
             {/* Error */}
             {errorMessage && (
-              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-sm">
+              <div className="flex items-center gap-2 bg-status-error/10 border border-status-error/20 rounded-xl px-4 py-3 text-status-error text-sm">
                 {errorMessage}
               </div>
             )}
@@ -272,11 +272,11 @@ const BuyTokenPage: React.FC = () => {
             <button
               onClick={handlePayNow}
               disabled={!isValid || isProcessing}
-              className="w-full py-4 rounded-xl font-black text-base transition-all bg-yellow-400 text-black hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-xl font-black text-base transition-all bg-brand-yellow text-ink hover:bg-brand-yellow-soft disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isProcessing ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-ink border-t-transparent rounded-full animate-spin" />
                   Processing...
                 </>
               ) : (
@@ -293,11 +293,11 @@ const BuyTokenPage: React.FC = () => {
           {/* RIGHT — How tokens work */}
           <div className="space-y-4">
             {/* Conversion table */}
-            <div className="bg-gray-900 border border-yellow-400/20 rounded-xl overflow-hidden">
+            <div className="bg-ink border border-brand-yellow/20 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-white/8">
                 <div className="flex items-center gap-2">
-                  <Info size={13} className="text-yellow-400" />
-                  <span className="text-xs font-bold text-yellow-400 uppercase tracking-wider">Token Rate</span>
+                  <Info size={13} className="text-brand-yellow" />
+                  <span className="text-xs font-bold text-brand-yellow uppercase tracking-wider">Token Rate</span>
                 </div>
               </div>
               <div className="divide-y divide-white/5">
@@ -311,17 +311,17 @@ const BuyTokenPage: React.FC = () => {
                   <div key={r.inr} className="flex items-center justify-between px-4 py-2.5">
                     <span className="text-sm font-semibold text-white">{r.inr}</span>
                     <ArrowRight size={12} className="text-white/20" />
-                    <span className="text-sm font-black text-yellow-400">{r.tokens}</span>
+                    <span className="text-sm font-black text-brand-yellow">{r.tokens}</span>
                   </div>
                 ))}
               </div>
-              <div className="px-4 py-3 bg-yellow-400/5 text-[11px] text-white/40 text-center">
+              <div className="px-4 py-3 bg-brand-yellow/5 text-[11px] text-white/40 text-center">
                 ₹10 = 1 token · No expiry · Instant credit
               </div>
             </div>
 
             {/* How to use */}
-            <div className="bg-gray-900 border border-white/8 rounded-xl overflow-hidden">
+            <div className="bg-ink border border-white/8 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-white/8">
                 <span className="text-xs font-bold text-white/50 uppercase tracking-wider">What tokens unlock</span>
               </div>
@@ -331,11 +331,11 @@ const BuyTokenPage: React.FC = () => {
                   return (
                     <div key={u.label} className="px-4 py-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <Icon size={13} className="text-yellow-400 flex-shrink-0" />
+                        <Icon size={13} className="text-brand-yellow flex-shrink-0" />
                         <span className="text-xs font-bold text-white">{u.label}</span>
                       </div>
                       <p className="text-[11px] text-white/40 leading-relaxed mb-1">{u.desc}</p>
-                      <span className="text-[10px] font-bold text-yellow-400/70">{u.tokens}</span>
+                      <span className="text-[10px] font-bold text-brand-yellow/70">{u.tokens}</span>
                     </div>
                   );
                 })}
@@ -348,7 +348,7 @@ const BuyTokenPage: React.FC = () => {
 
       {/* Success toast */}
       {showSuccess && (
-        <div className="fixed top-4 right-4 z-50 flex items-center gap-3 bg-green-500 text-white px-5 py-3 rounded-xl shadow-lg">
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-3 bg-status-success text-white px-5 py-3 rounded-xl shadow-lg">
           <CheckCircle size={18} />
           <span className="font-bold text-sm">{tokens} tokens added to your wallet!</span>
         </div>

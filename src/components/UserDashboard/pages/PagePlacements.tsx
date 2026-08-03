@@ -161,20 +161,20 @@ const PagePlacements: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 p-4 sm:p-6">
+    <div className="min-h-screen bg-ink p-4 sm:p-6">
       <div className="max-w-6xl mx-auto">
 
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-black text-white flex items-center gap-2">
-              <Layout size={22} className="text-yellow-400" /> Page Placements
+              <Layout size={22} className="text-brand-yellow" /> Page Placements
             </h1>
             <p className="text-sm text-white/40 mt-0.5">Book premium slots on DroneTv.in pages</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">
               <div className="text-[10px] text-white/40 uppercase tracking-widest">Balance</div>
-              <div className="text-lg font-black text-yellow-400">{tokenBalance.toLocaleString()} ₮</div>
+              <div className="text-lg font-black text-brand-yellow">{tokenBalance.toLocaleString()} ₮</div>
             </div>
             <button onClick={fetchAll} className="p-2 text-white/30 hover:text-white rounded-lg hover:bg-white/8 transition-colors">
               <RefreshCw size={14} />
@@ -183,20 +183,20 @@ const PagePlacements: React.FC = () => {
         </div>
 
         {success && (
-          <div className="flex items-center gap-2 bg-green-500/15 border border-green-500/30 rounded-xl px-5 py-3 mb-5 text-green-400 text-sm">
+          <div className="flex items-center gap-2 bg-status-success/15 border border-status-success/30 rounded-xl px-5 py-3 mb-5 text-status-success text-sm">
             <CheckCircle size={15} /> {success}
           </div>
         )}
         {error && (
-          <div className="flex items-center gap-2 bg-red-500/15 border border-red-500/30 rounded-xl px-5 py-3 mb-5 text-red-400 text-sm">
+          <div className="flex items-center gap-2 bg-status-error/15 border border-status-error/30 rounded-xl px-5 py-3 mb-5 text-status-error text-sm">
             <AlertCircle size={15} /> {error}
           </div>
         )}
 
         {activePlacements.length > 0 && (
-          <div className="bg-gray-900 border border-yellow-400/20 rounded-xl overflow-hidden mb-6">
+          <div className="bg-ink border border-brand-yellow/20 rounded-xl overflow-hidden mb-6">
             <div className="px-5 py-3 border-b border-white/8">
-              <span className="text-sm font-bold text-yellow-400">Active Placements ({activePlacements.length})</span>
+              <span className="text-sm font-bold text-brand-yellow">Active Placements ({activePlacements.length})</span>
             </div>
             <div className="divide-y divide-white/5">
               {activePlacements.map(p => (
@@ -209,16 +209,16 @@ const PagePlacements: React.FC = () => {
                     <button
                       onClick={() => handleCancel(p.placementId)}
                       disabled={cancelling === p.placementId}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-red-400 border border-red-400/20 rounded-lg hover:bg-red-400/10 transition-colors disabled:opacity-40"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-status-error border border-status-error/20 rounded-lg hover:bg-status-error/10 transition-colors disabled:opacity-40"
                     >
                       {cancelling === p.placementId
-                        ? <div className="w-3 h-3 border border-red-400 border-t-transparent rounded-full animate-spin" />
+                        ? <div className="w-3 h-3 border border-status-error border-t-transparent rounded-full animate-spin" />
                         : <X size={12} />}
                       Cancel
                     </button>
                   </div>
 
-                  <div className="mt-3 flex items-start gap-3 bg-black/30 border border-white/8 rounded-lg p-3">
+                  <div className="mt-3 flex items-start gap-3 bg-ink/30 border border-white/8 rounded-lg p-3">
                     {p.imageUrl ? (
                       <img src={p.imageUrl} alt={`${p.slotLabel} banner`} className="w-24 h-14 object-cover rounded border border-white/10 flex-shrink-0" />
                     ) : (
@@ -228,7 +228,7 @@ const PagePlacements: React.FC = () => {
                     )}
                     <div className="flex-1 min-w-0 space-y-2">
                       {!p.imageUrl && (
-                        <p className="text-xs text-amber-400/90">No ad banner uploaded yet — this slot won't show anything until you add one.</p>
+                        <p className="text-xs text-brand-yellow/90">No ad banner uploaded yet — this slot won't show anything until you add one.</p>
                       )}
                       <div className="flex items-center gap-2">
                         <div className="relative flex-1">
@@ -238,7 +238,7 @@ const PagePlacements: React.FC = () => {
                             placeholder="Click-through link (optional)"
                             defaultValue={p.linkUrl || ""}
                             onChange={(e) => setLinkDraft(prev => ({ ...prev, [p.placementId]: e.target.value }))}
-                            className="w-full pl-7 pr-2 py-1.5 bg-white/5 border border-white/10 rounded text-xs text-white placeholder-white/30 focus:outline-none focus:border-yellow-400/50"
+                            className="w-full pl-7 pr-2 py-1.5 bg-white/5 border border-white/10 rounded text-xs text-white placeholder-white/30 focus:outline-none focus:border-brand-yellow/50"
                           />
                         </div>
                         <input
@@ -255,10 +255,10 @@ const PagePlacements: React.FC = () => {
                         <button
                           onClick={() => fileInputRefs.current[p.placementId]?.click()}
                           disabled={uploadingFor === p.placementId}
-                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-yellow-400 border border-yellow-400/30 rounded-lg hover:bg-yellow-400/10 transition-colors disabled:opacity-40 whitespace-nowrap"
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-brand-yellow border border-brand-yellow/30 rounded-lg hover:bg-brand-yellow/10 transition-colors disabled:opacity-40 whitespace-nowrap"
                         >
                           {uploadingFor === p.placementId
-                            ? <div className="w-3 h-3 border border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                            ? <div className="w-3 h-3 border border-brand-yellow border-t-transparent rounded-full animate-spin" />
                             : <Upload size={12} />}
                           {p.imageUrl ? "Change Banner" : "Upload Banner"}
                         </button>
@@ -275,7 +275,7 @@ const PagePlacements: React.FC = () => {
           <div className="lg:col-span-2 space-y-6">
             {loading ? (
               <div className="flex items-center justify-center py-20">
-                <div className="w-7 h-7 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                <div className="w-7 h-7 border-2 border-brand-yellow border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
               categories.map(cat => (
@@ -295,35 +295,35 @@ const PagePlacements: React.FC = () => {
                             disabled={!isAvail || isDisabled}
                             onClick={() => setSelectedSlot(isSelected ? null : slot.id)}
                             className={`w-full text-left rounded-xl border p-4 transition-all ${
-                              isSelected              ? "border-yellow-400 bg-yellow-400/10"
-                              : isMine                ? "border-green-500/40 bg-green-500/8"
-                              : isAvail && !isDisabled ? "border-white/10 bg-gray-900 hover:border-yellow-400/30 hover:bg-white/3"
-                                                       : "border-white/5 bg-gray-900/50 opacity-60 cursor-not-allowed"
+                              isSelected              ? "border-brand-yellow bg-brand-yellow/10"
+                              : isMine                ? "border-status-success/40 bg-status-success/8"
+                              : isAvail && !isDisabled ? "border-white/10 bg-ink hover:border-brand-yellow/30 hover:bg-white/3"
+                                                       : "border-white/5 bg-ink/50 opacity-60 cursor-not-allowed"
                             }`}
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <span className={`text-sm font-bold ${isSelected ? "text-yellow-400" : "text-white"}`}>{slot.label}</span>
+                                  <span className={`text-sm font-bold ${isSelected ? "text-brand-yellow" : "text-white"}`}>{slot.label}</span>
                                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                                    isMine         ? "bg-green-500/20 text-green-400"
-                                    : isDisabled   ? "bg-purple-500/20 text-purple-400"
-                                    : isAvail      ? "bg-green-500/15 text-green-400"
-                                                   : "bg-red-500/15 text-red-400"
+                                    isMine         ? "bg-status-success/20 text-status-success"
+                                    : isDisabled   ? "bg-brand-gold/20 text-brand-gold"
+                                    : isAvail      ? "bg-status-success/15 text-status-success"
+                                                   : "bg-status-error/15 text-status-error"
                                   }`}>
                                     {isMine ? "Yours" : isDisabled ? slot.disabledReason : isAvail ? "Available" : "Occupied"}
                                   </span>
                                 </div>
                                 <p className="text-xs text-white/40 mt-0.5">{slot.description}</p>
                                 {!isAvail && status?.expiresAt && (
-                                  <p className="text-[10px] text-red-400/60 mt-1">
+                                  <p className="text-[10px] text-status-error/60 mt-1">
                                     Free on {new Date(status.expiresAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
                                   </p>
                                 )}
                               </div>
                               {(slotStatus[slot.id]?.costPerDay ?? slot.costPerDay) > 0 && (
                                 <div className="text-right flex-shrink-0">
-                                  <div className="text-sm font-black text-yellow-400">{slotStatus[slot.id]?.costPerDay ?? slot.costPerDay} ₮</div>
+                                  <div className="text-sm font-black text-brand-yellow">{slotStatus[slot.id]?.costPerDay ?? slot.costPerDay} ₮</div>
                                   <div className="text-[10px] text-white/30">per day</div>
                                 </div>
                               )}
@@ -337,7 +337,7 @@ const PagePlacements: React.FC = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="text-[10px] font-semibold text-yellow-400/80 hover:text-yellow-400 underline"
+                                className="text-[10px] font-semibold text-brand-yellow/80 hover:text-brand-yellow underline"
                               >
                                 View page where this shows →
                               </a>
@@ -353,7 +353,7 @@ const PagePlacements: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <div className={`bg-gray-900 border rounded-xl p-5 transition-all ${selectedSlot ? "border-yellow-400/30" : "border-white/8"}`}>
+            <div className={`bg-ink border rounded-xl p-5 transition-all ${selectedSlot ? "border-brand-yellow/30" : "border-white/8"}`}>
               <h3 className="text-sm font-bold text-white mb-4">
                 {selectedSlot ? `Book: ${slotDef?.label}` : "Select a slot to book"}
               </h3>
@@ -369,40 +369,40 @@ const PagePlacements: React.FC = () => {
                           onClick={() => setSelectedDuration(i)}
                           className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg border text-sm transition-all ${
                             selectedDuration === i
-                              ? "border-yellow-400 bg-yellow-400/10 text-yellow-400"
-                              : "border-white/10 bg-gray-800 text-white/60 hover:border-yellow-400/30"
+                              ? "border-brand-yellow bg-brand-yellow/10 text-brand-yellow"
+                              : "border-white/10 bg-ink-charcoal text-white/60 hover:border-brand-yellow/30"
                           }`}
                         >
                           <span className="font-semibold">{d.label}</span>
                           <div className="text-right">
                             <div className="font-black">{cost} ₮</div>
-                            {d.discount && <div className="text-[10px] text-green-400">{d.discount}</div>}
+                            {d.discount && <div className="text-[10px] text-status-success">{d.discount}</div>}
                           </div>
                         </button>
                       );
                     })}
                   </div>
 
-                  <div className="bg-gray-800 rounded-lg p-3 mb-4 flex items-center justify-between">
+                  <div className="bg-ink-charcoal rounded-lg p-3 mb-4 flex items-center justify-between">
                     <div>
                       <div className="text-xs text-white/50">Total</div>
-                      <div className="text-xl font-black text-yellow-400">{bookCost} ₮</div>
+                      <div className="text-xl font-black text-brand-yellow">{bookCost} ₮</div>
                     </div>
                     <div className="text-right">
                       <div className="text-xs text-white/50">After</div>
-                      <div className={`text-sm font-bold ${tokenBalance - bookCost >= 0 ? "text-white" : "text-red-400"}`}>
+                      <div className={`text-sm font-bold ${tokenBalance - bookCost >= 0 ? "text-white" : "text-status-error"}`}>
                         {(tokenBalance - bookCost).toLocaleString()} ₮
                       </div>
                     </div>
                   </div>
 
                   {!hasPackage && (
-                    <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 text-red-400 text-xs mb-3">
+                    <div className="flex items-center gap-2 bg-status-error/10 border border-status-error/20 rounded-lg px-3 py-2 text-status-error text-xs mb-3">
                       <AlertCircle size={12} /> Requires an active package. <a href="/user-recharge" className="underline ml-1">Upgrade</a>
                     </div>
                   )}
                   {hasPackage && tokenBalance < bookCost && (
-                    <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 text-red-400 text-xs mb-3">
+                    <div className="flex items-center gap-2 bg-status-error/10 border border-status-error/20 rounded-lg px-3 py-2 text-status-error text-xs mb-3">
                       <AlertCircle size={12} /> Insufficient. <a href="/user-buy" className="underline ml-1">Buy tokens</a>
                     </div>
                   )}
@@ -410,10 +410,10 @@ const PagePlacements: React.FC = () => {
                   <button
                     onClick={handleBook}
                     disabled={booking || !hasPackage || tokenBalance < bookCost}
-                    className="w-full py-3 rounded-xl font-black text-sm bg-yellow-400 text-black hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl font-black text-sm bg-brand-yellow text-ink hover:bg-brand-yellow-soft disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {booking
-                      ? <><div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> Booking...</>
+                      ? <><div className="w-4 h-4 border-2 border-ink border-t-transparent rounded-full animate-spin" /> Booking...</>
                       : `Confirm — Deduct ${bookCost} ₮`}
                   </button>
                   <p className="text-[10px] text-white/30 text-center mt-2">Cancel anytime for a partial refund</p>
@@ -426,9 +426,9 @@ const PagePlacements: React.FC = () => {
               )}
             </div>
 
-            <div className="bg-gray-900 border border-white/8 rounded-xl p-4">
+            <div className="bg-ink border border-white/8 rounded-xl p-4">
               <div className="flex items-start gap-2">
-                <Info size={13} className="text-yellow-400 flex-shrink-0 mt-0.5" />
+                <Info size={13} className="text-brand-yellow flex-shrink-0 mt-0.5" />
                 <div className="text-xs text-white/50 leading-relaxed space-y-1.5">
                   <p><strong className="text-white">HP-1</strong> — Brand subscribers only.</p>
                   <p><strong className="text-white">HP-5</strong> — Coming soon, not bookable yet.</p>

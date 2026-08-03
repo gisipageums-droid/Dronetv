@@ -30,17 +30,17 @@ function formatStage(stage: string): string {
 function stageColor(stage: string): { header: string; badge: string; border: string } {
   switch (stage) {
     case "lead-qualification":
-      return { header: "bg-blue-500", badge: "bg-blue-100 text-blue-700", border: "border-blue-200" };
+      return { header: "bg-status-info", badge: "bg-status-info/15 text-status-info", border: "border-status-info/25" };
     case "proposal":
-      return { header: "bg-amber-700", badge: "bg-amber-100 text-amber-700", border: "border-amber-200" };
+      return { header: "bg-brand-gold", badge: "bg-brand-yellow-soft text-brand-gold", border: "border-brand-yellow-soft" };
     case "negotiation":
-      return { header: "bg-purple-500", badge: "bg-purple-100 text-purple-700", border: "border-purple-200" };
+      return { header: "bg-brand-gold", badge: "bg-brand-gold/15 text-brand-gold", border: "border-brand-gold/25" };
     case "closed-won":
-      return { header: "bg-green-500", badge: "bg-green-100 text-green-700", border: "border-green-200" };
+      return { header: "bg-status-success", badge: "bg-status-success/15 text-status-success", border: "border-status-success/25" };
     case "closed-lost":
-      return { header: "bg-red-500", badge: "bg-red-100 text-red-700", border: "border-red-200" };
+      return { header: "bg-status-error", badge: "bg-status-error/15 text-status-error", border: "border-status-error/25" };
     default:
-      return { header: "bg-gray-600", badge: "bg-gray-100 text-gray-600", border: "border-gray-200" };
+      return { header: "bg-ink-paragraph", badge: "bg-ink-light text-ink-paragraph", border: "border-ink-light" };
   }
 }
 
@@ -87,43 +87,43 @@ function MoveModal({ onClose, onMoved }: MoveModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-            <Plus size={18} className="text-amber-600" />
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-4">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
+          <h3 className="text-base font-bold text-ink flex items-center gap-2">
+            <Plus size={18} className="text-brand-gold" />
             Move Lead to Stage
           </h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-ink-caption hover:text-ink-paragraph transition-colors">
             <X size={20} />
           </button>
         </div>
 
         <div className="px-6 py-5 space-y-4">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+            <div className="flex items-center gap-2 p-3 bg-status-error/10 border border-status-error/25 rounded-lg text-sm text-status-error">
               <AlertTriangle size={15} className="shrink-0" />
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Contact ID *</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Contact ID *</label>
             <input
               type="number"
               value={contactId}
               onChange={(e) => setContactId(e.target.value)}
               placeholder="e.g. 42"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Funnel Stage *</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Funnel Stage *</label>
             <select
               value={stage}
               onChange={(e) => setStage(e.target.value as Stage)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+              className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card"
             >
               {STAGES.map((s) => (
                 <option key={s} value={s}>{formatStage(s)}</option>
@@ -132,39 +132,39 @@ function MoveModal({ onClose, onMoved }: MoveModalProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Value ($)</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Value ($)</label>
             <input
               type="number"
               value={value}
               onChange={(e) => setValue(e.target.value)}
               placeholder="e.g. 5000"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Notes</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Notes</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
               placeholder="Optional notes..."
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+              className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow resize-none"
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-ink-light">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-ink-paragraph hover:text-ink-charcoal transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={submit}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-brand-yellow hover:bg-brand-gold text-ink text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
             Move Lead
@@ -208,29 +208,29 @@ function EditModal({ lead, onClose, onSaved }: EditModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h3 className="text-base font-bold text-gray-900">Edit Lead #{lead.contact_id}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-4">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
+          <h3 className="text-base font-bold text-ink">Edit Lead #{lead.contact_id}</h3>
+          <button onClick={onClose} className="text-ink-caption hover:text-ink-paragraph transition-colors">
             <X size={20} />
           </button>
         </div>
 
         <div className="px-6 py-5 space-y-4">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+            <div className="flex items-center gap-2 p-3 bg-status-error/10 border border-status-error/25 rounded-lg text-sm text-status-error">
               <AlertTriangle size={15} className="shrink-0" />
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Funnel Stage</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Funnel Stage</label>
             <select
               value={stage}
               onChange={(e) => setStage(e.target.value as Stage)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+              className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card"
             >
               {STAGES.map((s) => (
                 <option key={s} value={s}>{formatStage(s)}</option>
@@ -239,38 +239,38 @@ function EditModal({ lead, onClose, onSaved }: EditModalProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Value ($)</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Value ($)</label>
             <input
               type="number"
               value={value}
               onChange={(e) => setValue(e.target.value)}
               placeholder="e.g. 5000"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Notes</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1">Notes</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+              className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow resize-none"
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-ink-light">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-ink-paragraph hover:text-ink-charcoal transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={submit}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-brand-yellow hover:bg-brand-gold text-ink text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={15} className="animate-spin" /> : null}
             Save Changes
@@ -291,27 +291,27 @@ interface LeadCardProps {
 function LeadCard({ lead, onEdit, onDelete }: LeadCardProps) {
   return (
     <div
-      className="bg-white border border-gray-100 rounded-xl hover:border-amber-200 transition-all p-3 cursor-pointer group"
+      className="bg-surface-card border border-ink-light rounded-xl hover:border-brand-yellow-soft transition-all p-3 cursor-pointer group"
       onClick={() => onEdit(lead)}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold text-gray-700">#{lead.contact_id}</p>
+          <p className="text-xs font-semibold text-ink-paragraph">#{lead.contact_id}</p>
           {lead.value != null && (
-            <p className="text-sm font-bold text-amber-600 mt-0.5">{formatValue(lead.value)}</p>
+            <p className="text-sm font-bold text-brand-gold mt-0.5">{formatValue(lead.value)}</p>
           )}
           {lead.notes && (
-            <p className="text-xs text-gray-400 mt-1 line-clamp-2">{lead.notes}</p>
+            <p className="text-xs text-ink-caption mt-1 line-clamp-2">{lead.notes}</p>
           )}
           {lead.created_at && (
-            <p className="text-xs text-gray-300 mt-1">
+            <p className="text-xs text-ink-light mt-1">
               {new Date(lead.created_at).toLocaleDateString()}
             </p>
           )}
         </div>
         <button
           onClick={(e) => { e.stopPropagation(); onDelete(lead); }}
-          className="p-1.5 text-gray-300 hover:text-red-400 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+          className="p-1.5 text-ink-light hover:text-status-error hover:bg-status-error/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
           title="Delete"
         >
           <Trash2 size={13} />
@@ -345,29 +345,29 @@ function DeleteConfirm({ lead, onCancel, onDeleted }: DeleteConfirmProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-4">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-sm p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-            <Trash2 size={20} className="text-red-500" />
+          <div className="w-10 h-10 bg-status-error/15 rounded-xl flex items-center justify-center">
+            <Trash2 size={20} className="text-status-error" />
           </div>
           <div>
-            <h3 className="font-bold text-gray-900 text-sm">Delete Lead</h3>
-            <p className="text-xs text-gray-500 mt-0.5">Contact #{lead.contact_id}</p>
+            <h3 className="font-bold text-ink text-sm">Delete Lead</h3>
+            <p className="text-xs text-ink-caption mt-0.5">Contact #{lead.contact_id}</p>
           </div>
         </div>
-        <p className="text-sm text-gray-700 mb-5">
+        <p className="text-sm text-ink-paragraph mb-5">
           Remove this lead from the funnel permanently?
         </p>
-        {error && <p className="text-xs text-red-500 mb-3">{error}</p>}
+        {error && <p className="text-xs text-status-error mb-3">{error}</p>}
         <div className="flex gap-3 justify-end">
-          <button onClick={onCancel} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">
+          <button onClick={onCancel} className="px-4 py-2 text-sm text-ink-paragraph hover:text-ink-charcoal">
             Cancel
           </button>
           <button
             onClick={confirm}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-4 py-2 bg-status-error hover:bg-status-error text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60"
           >
             {loading ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
             Delete
@@ -382,7 +382,7 @@ function DeleteConfirm({ lead, onCancel, onDeleted }: DeleteConfirmProps) {
 const FunnelPanel: React.FC = () => {
   if (!localStorage.getItem("echoleads_api_key")) {
     return (
-      <div className="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+      <div className="flex flex-col items-center justify-center h-full py-20 text-ink-caption">
         <p className="text-sm font-medium">Not connected</p>
         <p className="text-xs mt-1">Go to Authentication tab first.</p>
       </div>
@@ -434,20 +434,20 @@ const FunnelPanel: React.FC = () => {
       {/* Top bar */}
       <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
         <div>
-          <h1 className="text-lg font-bold text-gray-900">Sales Funnel</h1>
-          <p className="text-xs text-gray-500">{totalLeads} total leads</p>
+          <h1 className="text-lg font-bold text-ink">Sales Funnel</h1>
+          <p className="text-xs text-ink-caption">{totalLeads} total leads</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={fetchLeads}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 text-ink-caption hover:text-ink-paragraph hover:bg-ink-light rounded-lg transition-colors"
             title="Refresh"
           >
             <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
           </button>
           <button
             onClick={() => setShowMoveModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-black text-sm font-semibold rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink text-sm font-semibold rounded-lg transition-colors"
           >
             <Plus size={15} />
             Move Lead
@@ -457,16 +457,16 @@ const FunnelPanel: React.FC = () => {
 
       {/* Error */}
       {fetchError && (
-        <div className="flex items-center gap-2 p-3 mb-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="flex items-center gap-2 p-3 mb-4 bg-status-error/10 border border-status-error/25 rounded-lg text-sm text-status-error">
           <AlertTriangle size={15} className="shrink-0" />
           {fetchError}
-          <button onClick={fetchLeads} className="ml-auto text-red-500 underline text-xs">Retry</button>
+          <button onClick={fetchLeads} className="ml-auto text-status-error underline text-xs">Retry</button>
         </div>
       )}
 
       {/* Loading overlay for board */}
       {loading && (
-        <div className="flex items-center justify-center py-20 text-gray-400">
+        <div className="flex items-center justify-center py-20 text-ink-caption">
           <Loader2 size={28} className="animate-spin" />
         </div>
       )}
@@ -490,9 +490,9 @@ const FunnelPanel: React.FC = () => {
                 </div>
 
                 {/* Cards area */}
-                <div className={`flex-1 border-x border-b ${colors.border} rounded-b-xl bg-gray-50 p-2 space-y-2 min-h-[120px]`}>
+                <div className={`flex-1 border-x border-b ${colors.border} rounded-b-xl bg-ink-offwhite p-2 space-y-2 min-h-[120px]`}>
                   {leads.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-8 text-gray-300">
+                    <div className="flex flex-col items-center justify-center py-8 text-ink-light">
                       <ChevronDown size={20} className="mb-1 opacity-40" />
                       <p className="text-xs">No leads</p>
                     </div>

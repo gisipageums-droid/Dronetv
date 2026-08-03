@@ -324,9 +324,9 @@ const ProfessionalLeads: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-amber-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-amber-400 border-t-transparent"></div>
-        <p className="mt-4 text-amber-800 font-semibold text-lg">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-surface-main">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-brand-yellow border-t-transparent"></div>
+        <p className="mt-4 text-brand-gold font-semibold text-lg">
           Loading your data...
         </p>
       </div>
@@ -334,19 +334,19 @@ const ProfessionalLeads: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-amber-50 p-4 md:p-6">
+    <div className="min-h-screen bg-surface-main p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-amber-900">
+            <h1 className="text-3xl md:text-4xl font-bold text-brand-gold">
               {professionalName} Professional Leads
             </h1>
-            <h2 className="text-xl font-semibold text-amber-800 mt-1">
+            <h2 className="text-xl font-semibold text-brand-gold mt-1">
               Leads Management
             </h2>
           </div>
-          <div className="mt-4 sm:mt-0 bg-amber-700 rounded-xl px-6 py-3 shadow-md">
+          <div className="mt-4 sm:mt-0 bg-brand-gold rounded-xl px-6 py-3 shadow-md">
             <div className="flex items-center">
               <Coins size={20} className="text-white mr-2" />
               <span className="text-white font-bold text-lg">
@@ -362,17 +362,17 @@ const ProfessionalLeads: React.FC = () => {
             <input
               type="text"
               placeholder="Search leads..."
-              className="pl-10 pr-4 py-2.5 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white w-full text-gray-900"
+              className="pl-10 pr-4 py-2.5 rounded-lg border border-brand-yellow-soft focus:outline-none focus:ring-2 focus:ring-brand-gold bg-surface-card w-full text-ink"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-              <Search size={14} className="text-amber-500" />
+              <Search size={14} className="text-brand-gold" />
             </div>
           </div>
 
           <select
-            className="px-4 py-2.5 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-gray-900"
+            className="px-4 py-2.5 rounded-lg border border-brand-yellow-soft focus:outline-none focus:ring-2 focus:ring-brand-gold bg-surface-card text-ink"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
@@ -384,10 +384,10 @@ const ProfessionalLeads: React.FC = () => {
 
         {/* Leads Table */}
         {filteredLeads.length > 0 ? (
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-amber-200">
+        <div className="bg-surface-card rounded-2xl shadow-lg overflow-hidden border border-brand-yellow-soft">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-amber-100">
-              <thead className="bg-amber-700">
+            <table className="min-w-full divide-y divide-brand-yellow-soft">
+              <thead className="bg-brand-gold">
                 <tr>
                   {["Company", "Name", "Subject", "Status", "Action"].map(
                     (header) => (
@@ -401,14 +401,14 @@ const ProfessionalLeads: React.FC = () => {
                   )}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-amber-100">
+              <tbody className="bg-surface-card divide-y divide-brand-yellow-soft">
                 {filteredLeads.map((lead) => (
                     <tr
                       key={lead.leadId}
-                      className="hover:bg-amber-50 transition-colors"
+                      className="hover:bg-surface-main transition-colors"
                     >
                       <td
-                        className={`px-6 py-4 text-sm font-medium text-amber-900 ${
+                        className={`px-6 py-4 text-sm font-medium text-brand-gold ${
                           lead.viewed ? "" : "blur-sm select-none"
                         }`}
                       >
@@ -416,23 +416,23 @@ const ProfessionalLeads: React.FC = () => {
                       </td>
 
                       <td
-                        className={`px-6 py-4 text-sm text-amber-800 ${
+                        className={`px-6 py-4 text-sm text-brand-gold ${
                           lead.viewed ? "" : "blur-sm select-none"
                         }`}
                       >
                         {lead.firstName} {lead.lastName}
                       </td>
 
-                      <td className="px-6 py-4 text-sm text-amber-800">
+                      <td className="px-6 py-4 text-sm text-brand-gold">
                         {lead.subject}
                       </td>
 
-                      <td className="px-6 py-4 text-sm text-amber-800">
+                      <td className="px-6 py-4 text-sm text-brand-gold">
                         <span
                           className={`px-2 py-1 text-xs font-medium rounded-full ${
                             lead.viewed
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
+                              ? "bg-status-success/15 text-status-success"
+                              : "bg-brand-yellow-soft text-brand-gold"
                           }`}
                         >
                           {lead.viewed ? "Viewed" : "New"}
@@ -444,13 +444,13 @@ const ProfessionalLeads: React.FC = () => {
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleViewMessage(lead)}
-                              className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm"
+                              className="px-3 py-2 bg-status-info hover:bg-status-info text-white rounded-lg text-sm"
                             >
                               Details
                             </button>
                             <button
                               onClick={() => handleChatWithLead(lead)}
-                              className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm flex items-center gap-1"
+                              className="px-3 py-2 bg-status-success hover:bg-status-success text-white rounded-lg text-sm flex items-center gap-1"
                             >
                               <MessageCircle className="w-3 h-3" />
                               Chat
@@ -459,7 +459,7 @@ const ProfessionalLeads: React.FC = () => {
                         ) : (
                           <button
                             onClick={() => handleViewClick(lead.leadId)}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm flex items-center"
+                            className="px-4 py-2 bg-brand-gold hover:bg-brand-gold text-white rounded-lg text-sm flex items-center"
                           >
                             <Eye size={14} className="mr-2" /> {hasFreeLeads ? "View (Free)" : "View (10 tokens)"}
                           </button>
@@ -473,20 +473,20 @@ const ProfessionalLeads: React.FC = () => {
           </div>
         </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-lg border border-amber-200 px-6 py-16 text-center">
+          <div className="bg-surface-card rounded-2xl shadow-lg border border-brand-yellow-soft px-6 py-16 text-center">
             <div className="flex flex-col items-center justify-center">
-              <div className="bg-amber-100 rounded-full p-4 mb-4">
-                <MessageCircle className="w-8 h-8 text-amber-500" />
+              <div className="bg-brand-yellow-soft rounded-full p-4 mb-4">
+                <MessageCircle className="w-8 h-8 text-brand-gold" />
               </div>
-              <h3 className="text-lg font-semibold text-amber-900 mb-2">No leads found</h3>
-              <p className="text-amber-700 text-sm max-w-sm">
+              <h3 className="text-lg font-semibold text-brand-gold mb-2">No leads found</h3>
+              <p className="text-brand-gold text-sm max-w-sm">
                 {searchTerm || selectedCategory !== "All"
                   ? "Try adjusting your search or filter criteria to find more leads."
                   : "You haven't received any leads yet. When people contact you through your professional page, they'll appear here."}
               </p>
               {!searchTerm && selectedCategory === "All" && (
-                <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200 max-w-xs">
-                  <p className="text-xs text-amber-600">
+                <div className="mt-4 p-4 bg-surface-main rounded-lg border border-brand-yellow-soft max-w-xs">
+                  <p className="text-xs text-brand-gold">
                     <strong>Tip:</strong> Share your professional page to start receiving leads from potential customers.
                   </p>
                 </div>
@@ -498,28 +498,28 @@ const ProfessionalLeads: React.FC = () => {
 
       {/* Token Modal */}
       {showTokenModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+        <div className="fixed inset-0 bg-ink bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
+          <div className="bg-surface-card rounded-2xl shadow-xl w-full max-w-md p-6">
             <div className="flex justify-center mb-4">
-              <div className="bg-amber-100 rounded-full p-3">
-                <AlertTriangle size={24} className="text-amber-600" />
+              <div className="bg-brand-yellow-soft rounded-full p-3">
+                <AlertTriangle size={24} className="text-brand-gold" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-center text-amber-900 mb-2">
+            <h3 className="text-xl font-bold text-center text-brand-gold mb-2">
               Insufficient Tokens
             </h3>
-            <p className="text-amber-700 text-center mb-6">
+            <p className="text-brand-gold text-center mb-6">
               You need at least 10 tokens to view lead details. Current balance:{" "}
               <span className="font-bold">{totalTokens}</span>
             </p>
             <div className="flex space-x-3">
               <button
                 onClick={closeTokenModal}
-                className="flex-1 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg"
+                className="flex-1 py-2 bg-brand-yellow-soft hover:bg-brand-yellow-soft text-brand-gold rounded-lg"
               >
                 Cancel
               </button>
-              <button className="flex-1 py-2 bg-amber-700 text-white rounded-lg">
+              <button className="flex-1 py-2 bg-brand-gold text-white rounded-lg">
                 Buy Tokens
               </button>
             </div>
@@ -529,15 +529,15 @@ const ProfessionalLeads: React.FC = () => {
 
       {/* Message Modal */}
       {showMessageModal && selectedLead && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
-          <div className="bg-white rounded-2xl shadow-xl w-full h-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-ink bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
+          <div className="bg-surface-card rounded-2xl shadow-xl w-full h-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="bg-amber-700 px-6 py-4 rounded-t-2xl">
+            <div className="bg-brand-gold px-6 py-4 rounded-t-2xl">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold text-white">Lead Details</h3>
                 <button
                   onClick={closeMessageModal}
-                  className="text-white hover:text-amber-200 transition-colors"
+                  className="text-white hover:text-brand-yellow-soft transition-colors"
                 >
                   <X size={20} />
                 </button>
@@ -548,64 +548,64 @@ const ProfessionalLeads: React.FC = () => {
             <div className="p-6">
               {/* Lead Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                  <h4 className="font-semibold text-amber-800 mb-2">
+                <div className="bg-surface-main rounded-lg p-4 border border-brand-yellow-soft">
+                  <h4 className="font-semibold text-brand-gold mb-2">
                     Lead Information
                   </h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-amber-600">Name:</span>
-                      <span className="font-medium text-amber-800">
+                      <span className="text-brand-gold">Name:</span>
+                      <span className="font-medium text-brand-gold">
                         {selectedLead.firstName} {selectedLead.lastName}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-amber-600">Email:</span>
-                      <span className="font-medium text-amber-800">
+                      <span className="text-brand-gold">Email:</span>
+                      <span className="font-medium text-brand-gold">
                         {selectedLead.email}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-amber-600">Subject:</span>
-                      <span className="font-medium text-amber-800">
+                      <span className="text-brand-gold">Subject:</span>
+                      <span className="font-medium text-brand-gold">
                         {selectedLead.subject}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-amber-600">Message:</span>
-                      <span className="font-medium text-amber-800">
+                      <span className="text-brand-gold">Message:</span>
+                      <span className="font-medium text-brand-gold">
                         {selectedLead.message}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                  <h4 className="font-semibold text-amber-800 mb-2">
+                <div className="bg-surface-main rounded-lg p-4 border border-brand-yellow-soft">
+                  <h4 className="font-semibold text-brand-gold mb-2">
                     Timeline
                   </h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-amber-600">Submitted:</span>
-                      <span className="font-medium text-amber-800">
+                      <span className="text-brand-gold">Submitted:</span>
+                      <span className="font-medium text-brand-gold">
                         {formatDate(selectedLead.submittedAt)}
                       </span>
                     </div>
                     {selectedLead.viewedAt && (
                       <div className="flex justify-between">
-                        <span className="text-amber-600">Viewed:</span>
-                        <span className="font-medium text-amber-800">
+                        <span className="text-brand-gold">Viewed:</span>
+                        <span className="font-medium text-brand-gold">
                           {formatDate(selectedLead.viewedAt)}
                         </span>
                       </div>
                     )}
                     <div className="flex justify-between">
-                      <span className="text-amber-600">Status:</span>
+                      <span className="text-brand-gold">Status:</span>
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${
                           selectedLead.viewed
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
+                            ? "bg-status-success/15 text-status-success"
+                            : "bg-brand-yellow-soft text-brand-gold"
                         }`}
                       >
                         {selectedLead.viewed ? "Viewed" : "New"}
@@ -616,20 +616,20 @@ const ProfessionalLeads: React.FC = () => {
               </div>
 
               {/* Message Section */}
-              <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                <h4 className="font-semibold text-amber-800 mb-3">
+              <div className="bg-surface-main rounded-lg p-4 border border-brand-yellow-soft">
+                <h4 className="font-semibold text-brand-gold mb-3">
                   Message from Lead
                 </h4>
-                <div className="bg-white rounded-lg p-4 border border-amber-100 min-h-[120px]">
-                  <p className="text-amber-800 leading-relaxed whitespace-pre-wrap">
+                <div className="bg-surface-card rounded-lg p-4 border border-brand-yellow-soft min-h-[120px]">
+                  <p className="text-brand-gold leading-relaxed whitespace-pre-wrap">
                     {selectedLead.message || "No message provided."}
                   </p>
                 </div>
               </div>
 
               {/* Privacy Notice */}
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-xs text-blue-700">
+              <div className="mt-4 p-3 bg-status-info/10 rounded-lg border border-status-info/25">
+                <p className="text-xs text-status-info">
                   <strong>Privacy Notice:</strong> Contact information (email,
                   phone) is hidden for privacy protection. Use the chat feature
                   to communicate with this lead.
@@ -637,10 +637,10 @@ const ProfessionalLeads: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-3 mt-6 pt-4 border-t border-amber-200">
+              <div className="flex justify-end space-x-3 mt-6 pt-4 border-t border-brand-yellow-soft">
                 <button
                   onClick={closeMessageModal}
-                  className="px-6 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg font-medium transition-colors"
+                  className="px-6 py-2 bg-brand-yellow-soft hover:bg-brand-yellow-soft text-brand-gold rounded-lg font-medium transition-colors"
                 >
                   Close
                 </button>
@@ -649,7 +649,7 @@ const ProfessionalLeads: React.FC = () => {
                     closeMessageModal();
                     handleChatWithLead(selectedLead);
                   }}
-                  className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                  className="px-6 py-2 bg-status-success hover:bg-status-success text-white rounded-lg font-medium transition-colors flex items-center gap-2"
                 >
                   <MessageCircle className="w-4 h-4" />
                   Start Chat
@@ -662,8 +662,8 @@ const ProfessionalLeads: React.FC = () => {
 
       {/* Chat Modal */}
       {showChatModal && selectedLead && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000000] p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[75vh] flex flex-col">
+        <div className="fixed inset-0 bg-ink bg-opacity-50 flex items-center justify-center z-[10000000] p-4">
+          <div className="bg-surface-card rounded-lg shadow-xl w-full max-w-2xl max-h-[75vh] flex flex-col">
             {/* Chat Header */}
             <div className="flex items-center justify-between p-3 bg-[#075e54] text-white rounded-t-lg flex-shrink-0">
               <div className="flex items-center gap-3">
@@ -694,47 +694,47 @@ const ProfessionalLeads: React.FC = () => {
             </div>
 
             {/* Lead Contact Info Bar */}
-            <div className="bg-gray-50 px-4 py-3 border-b flex-shrink-0">
+            <div className="bg-ink-offwhite px-4 py-3 border-b flex-shrink-0">
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <span className="text-gray-500 text-xs">Name:</span>
-                    <p className="font-medium text-gray-900">
+                    <span className="text-ink-caption text-xs">Name:</span>
+                    <p className="font-medium text-ink">
                       {selectedLead.firstName} {selectedLead.lastName}
                     </p>
                   </div>
                   <div>
-                    <span className="text-gray-500 text-xs">Email:</span>
-                    <p className="font-medium text-gray-900">
+                    <span className="text-ink-caption text-xs">Email:</span>
+                    <p className="font-medium text-ink">
                       {selectedLead.email}
                     </p>
                   </div>
                   <div>
-                    <span className="text-gray-500 text-xs">Subject:</span>
-                    <p className="font-medium text-gray-900">
+                    <span className="text-ink-caption text-xs">Subject:</span>
+                    <p className="font-medium text-ink">
                       {selectedLead.subject}
                     </p>
                   </div>
                   <div>
-                    <span className="text-gray-500 text-xs">Subject:</span>
-                    <p className="font-medium text-gray-900">
+                    <span className="text-ink-caption text-xs">Subject:</span>
+                    <p className="font-medium text-ink">
                       {selectedLead.subject}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 text-sm">
-                    <span className="text-gray-500 text-xs">
+                    <span className="text-ink-caption text-xs">
                       Received: {formatDate(selectedLead.submittedAt)}
                     </span>
-                    <span className="text-gray-500 text-xs">
+                    <span className="text-ink-caption text-xs">
                       Lead ID: {selectedLead.leadId}
                     </span>
                   </div>
                 </div>
-                <div className="bg-white rounded-lg p-3 border border-gray-200">
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    <span className="font-medium text-gray-900">
+                <div className="bg-surface-card rounded-lg p-3 border border-ink-light">
+                  <p className="text-sm text-ink-paragraph leading-relaxed">
+                    <span className="font-medium text-ink">
                       Original Message:
                     </span>{" "}
                     {selectedLead.message || "No message provided."}
@@ -757,16 +757,16 @@ const ProfessionalLeads: React.FC = () => {
                       <div
                         className={`relative px-4 py-2 rounded-2xl ${
                           msg.sender === "user"
-                            ? "bg-[#dcf8c6] text-gray-800 rounded-br-sm"
-                            : "bg-white text-gray-800 rounded-bl-sm shadow-sm"
+                            ? "bg-[#dcf8c6] text-ink-charcoal rounded-br-sm"
+                            : "bg-surface-card text-ink-charcoal rounded-bl-sm shadow-sm"
                         }`}
                       >
                         <p className="text-sm break-words">{msg.message}</p>
                         <div
                           className={`flex items-center justify-end gap-1 mt-1 text-xs ${
                             msg.sender === "user"
-                              ? "text-gray-500"
-                              : "text-gray-400"
+                              ? "text-ink-caption"
+                              : "text-ink-caption"
                           }`}
                         >
                           <span>
@@ -782,7 +782,7 @@ const ProfessionalLeads: React.FC = () => {
                               ) : !msg.seen ? (
                                 <Check className="w-3 h-3" />
                               ) : (
-                                <CheckCheck className="w-3 h-3 text-blue-500" />
+                                <CheckCheck className="w-3 h-3 text-status-info" />
                               )}
                             </span>
                           )}
@@ -796,7 +796,7 @@ const ProfessionalLeads: React.FC = () => {
             </div>
 
             {/* Chat Input */}
-            <div className="p-3 bg-white border-t rounded-b-lg flex-shrink-0">
+            <div className="p-3 bg-surface-card border-t rounded-b-lg flex-shrink-0">
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -804,7 +804,7 @@ const ProfessionalLeads: React.FC = () => {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && sendChatMessage()}
                   placeholder="Type a message..."
-                  className="flex-1 px-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-[#075e54] text-sm text-gray-900 placeholder-gray-400"
+                  className="flex-1 px-4 py-2 bg-ink-light border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-[#075e54] text-sm text-ink placeholder-ink-caption"
                 />
                 <button
                   onClick={sendChatMessage}

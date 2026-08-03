@@ -188,26 +188,26 @@ const EventCard: React.FC<EventCardProps> = ({
     switch (statusLower) {
       case "active":
         return {
-          bg: "bg-yellow-200",
-          text: "text-yellow-900",
+          bg: "bg-brand-yellow-soft",
+          text: "text-brand-gold",
           label: "Upcoming",
         };
       case "approved":
         return {
-          bg: "bg-green-100",
-          text: "text-green-800",
+          bg: "bg-status-success/15",
+          text: "text-status-success",
           label: "Live",
         };
       case "rejected":
         return {
-          bg: "bg-red-100",
-          text: "text-red-800",
+          bg: "bg-status-error/15",
+          text: "text-status-error",
           label: "Cancelled",
         };
       default:
         return {
-          bg: "bg-yellow-100",
-          text: "text-yellow-900",
+          bg: "bg-brand-yellow-soft",
+          text: "text-brand-gold",
           label: "Scheduled",
         };
     }
@@ -216,13 +216,13 @@ const EventCard: React.FC<EventCardProps> = ({
   const statusStyle = getStatusBadge(event?.reviewStatus || "default");
 
   return (
-    <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-yellow-400 group">
+    <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 hover:shadow-xl hover:border-brand-yellow group">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             {/* Event Image */}
-            <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110 cursor-pointer" onClick={() => { setThumbUrl(isCustomImageUrl(event.thumbnailUrl) ? event.thumbnailUrl! : ''); setThumbModal(true); }}>
+            <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-md bg-surface-main flex items-center justify-center group-hover:shadow-lg group-hover:bg-brand-yellow-soft transition-all duration-300 group-hover:scale-110 cursor-pointer" onClick={() => { setThumbUrl(isCustomImageUrl(event.thumbnailUrl) ? event.thumbnailUrl! : ''); setThumbModal(true); }}>
               {(isCustomImageUrl(event.thumbnailUrl) || isCustomImageUrl(event.previewImage) || isCustomImageUrl(event.heroBannerImage)) ? (
                 <img
                   src={event.thumbnailUrl || event.previewImage || event.heroBannerImage}
@@ -231,28 +231,28 @@ const EventCard: React.FC<EventCardProps> = ({
                   onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               ) : (
-                <span className="text-2xl font-bold text-yellow-600">{placeholderImg}</span>
+                <span className="text-2xl font-bold text-brand-gold">{placeholderImg}</span>
               )}
-              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <div className="absolute inset-0 bg-ink/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                 <Image className="w-5 h-5 text-white" />
               </div>
             </div>
 
             {/* Event Info */}
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 line-clamp-2 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-ink line-clamp-2 flex items-center gap-2">
                 <span>{event?.eventName || "Unnamed Event"}</span>
                 <button
                   type="button"
                   onClick={() => { setTitleValue(event.eventName || ''); setTitleModal(true); }}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-yellow-600 flex-shrink-0"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity text-ink-caption hover:text-brand-yellow flex-shrink-0"
                   title="Edit event title"
                 >
                   <Edit className="w-4 h-4" />
                 </button>
               </h3>
-              <div className="flex items-center text-gray-600 mt-1">
-                <MapPin className="w-4 h-4 mr-1 text-yellow-500" />
+              <div className="flex items-center text-ink-paragraph mt-1">
+                <MapPin className="w-4 h-4 mr-1 text-brand-gold" />
                 <span className="text-sm">
                   {event?.location || "Venue not specified"}
                 </span>
@@ -282,25 +282,25 @@ const EventCard: React.FC<EventCardProps> = ({
 
         {/* Stats */}
         {/* <div className="flex gap-4 mb-4">
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <Users className="w-4 h-4 text-yellow-500" />
+          <div className="flex items-center gap-1 text-sm text-ink-paragraph">
+            <Users className="w-4 h-4 text-brand-gold" />
             <span>{event.attendeesCount || 0} attendees</span>
           </div>
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <Building2 className="w-4 h-4 text-yellow-500" />
+          <div className="flex items-center gap-1 text-sm text-ink-paragraph">
+            <Building2 className="w-4 h-4 text-brand-gold" />
             <span>{event.sessionsCount || 0} sessions</span>
           </div>
         </div> */}
 
         {/* Date and Actions */}
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
-            <span className="font-semibold text-yellow-700 text-sm">
+          <div className="flex items-center gap-2 bg-surface-main rounded-lg px-4 py-2 border border-brand-yellow-soft">
+            <span className="font-semibold text-brand-gold text-sm">
               {event?.createdAt
                 ? formatDate(event?.createdAt)
                 : "Date not available"}
             </span>
-            <span className="text-xs text-yellow-600">Created Date</span>
+            <span className="text-xs text-brand-gold">Created Date</span>
           </div>
 
           {/* Action Buttons */}
@@ -311,7 +311,7 @@ const EventCard: React.FC<EventCardProps> = ({
                 if (event?.eventId && event.templateSelection)
                   onEdit(event.submissionId || event.eventId, event.templateSelection);
               }}
-              className="flex-1 px-3 py-2 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-500 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-500"
+              className="flex-1 px-3 py-2 bg-brand-yellow text-brand-gold rounded-lg hover:bg-brand-gold transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-gold"
             >
               <Edit className="w-4 h-4" />
               Edit
@@ -327,7 +327,7 @@ const EventCard: React.FC<EventCardProps> = ({
                 `/event/form/${event.userId}/${event.eventId}`
               )
             }
-            className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
+            className="flex-1 px-3 py-2 bg-brand-yellow-soft text-brand-gold rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-yellow"
           >
             <Edit className="w-4 h-4" />
             Edit form
@@ -339,7 +339,7 @@ const EventCard: React.FC<EventCardProps> = ({
                 `/event/leads/${event.eventName}/${event.eventId}`
               )
             }
-            className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
+            className="flex-1 px-3 py-2 bg-brand-yellow-soft text-brand-gold rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-yellow"
           >
             <Eye className="w-4 h-4" />
             View leads
@@ -350,20 +350,20 @@ const EventCard: React.FC<EventCardProps> = ({
 
       {/* Thumbnail update modal */}
       {thumbModal && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60" onClick={() => setThumbModal(false)}>
-          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-5" onClick={e => e.stopPropagation()}>
-            <p className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2"><Image className="w-4 h-4 text-yellow-500" /> Update Event Thumbnail</p>
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-ink/60" onClick={() => setThumbModal(false)}>
+          <div className="bg-surface-card rounded-xl shadow-xl max-w-sm w-full p-5" onClick={e => e.stopPropagation()}>
+            <p className="text-sm font-bold text-ink mb-3 flex items-center gap-2"><Image className="w-4 h-4 text-brand-gold" /> Update Event Thumbnail</p>
             <input
               type="url"
               value={thumbUrl}
               onChange={e => setThumbUrl(e.target.value)}
               placeholder="https://... (image URL)"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-3"
+              className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow mb-3"
             />
             {thumbUrl && <img src={thumbUrl} alt="preview" className="w-full h-32 object-cover rounded-lg mb-3" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
             <div className="flex gap-2 justify-end">
-              <button onClick={() => setThumbModal(false)} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-              <button onClick={handleSaveThumbnail} disabled={thumbSaving || !thumbUrl.trim()} className="px-4 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg disabled:opacity-60">
+              <button onClick={() => setThumbModal(false)} className="px-3 py-1.5 text-sm text-ink-paragraph border border-ink-light rounded-lg hover:bg-ink-offwhite">Cancel</button>
+              <button onClick={handleSaveThumbnail} disabled={thumbSaving || !thumbUrl.trim()} className="px-4 py-1.5 text-sm bg-brand-yellow hover:bg-brand-gold text-white font-semibold rounded-lg disabled:opacity-60">
                 {thumbSaving ? 'Saving…' : 'Save'}
               </button>
             </div>
@@ -373,19 +373,19 @@ const EventCard: React.FC<EventCardProps> = ({
 
       {/* Title update modal */}
       {titleModal && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60" onClick={() => setTitleModal(false)}>
-          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-5" onClick={e => e.stopPropagation()}>
-            <p className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2"><Edit className="w-4 h-4 text-yellow-500" /> Edit Event Title</p>
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-ink/60" onClick={() => setTitleModal(false)}>
+          <div className="bg-surface-card rounded-xl shadow-xl max-w-sm w-full p-5" onClick={e => e.stopPropagation()}>
+            <p className="text-sm font-bold text-ink mb-3 flex items-center gap-2"><Edit className="w-4 h-4 text-brand-gold" /> Edit Event Title</p>
             <input
               type="text"
               value={titleValue}
               onChange={e => setTitleValue(e.target.value)}
               placeholder="Event title"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-3"
+              className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow mb-3"
             />
             <div className="flex gap-2 justify-end">
-              <button onClick={() => setTitleModal(false)} className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-              <button onClick={handleSaveTitle} disabled={titleSaving || !titleValue.trim()} className="px-4 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg disabled:opacity-60">
+              <button onClick={() => setTitleModal(false)} className="px-3 py-1.5 text-sm text-ink-paragraph border border-ink-light rounded-lg hover:bg-ink-offwhite">Cancel</button>
+              <button onClick={handleSaveTitle} disabled={titleSaving || !titleValue.trim()} className="px-4 py-1.5 text-sm bg-brand-yellow hover:bg-brand-gold text-white font-semibold rounded-lg disabled:opacity-60">
                 {titleSaving ? 'Saving…' : 'Save'}
               </button>
             </div>
@@ -471,67 +471,67 @@ const Events: React.FC = () => {
 
   // Skeleton Loading
   const SkeletonCard: React.FC = () => (
-    <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 group animate-pulse p-6">
+    <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 group animate-pulse p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-yellow-100 p-2 flex items-center justify-center" />
+          <div className="w-16 h-16 rounded-xl bg-brand-yellow-soft p-2 flex items-center justify-center" />
           <div className="flex-1">
-            <div className="h-5 bg-yellow-100 rounded w-3/4 mb-2" />
-            <div className="h-3 bg-yellow-100 rounded w-1/2" />
+            <div className="h-5 bg-brand-yellow-soft rounded w-3/4 mb-2" />
+            <div className="h-3 bg-brand-yellow-soft rounded w-1/2" />
           </div>
         </div>
 
-        <div className="w-24 h-7 bg-yellow-100 rounded-full" />
+        <div className="w-24 h-7 bg-brand-yellow-soft rounded-full" />
       </div>
 
       {/* Categories */}
       <div className="mb-6">
         <div className="flex flex-wrap gap-2">
-          <div className="h-6 bg-yellow-100 rounded-full w-20" />
-          <div className="h-6 bg-yellow-100 rounded-full w-16" />
-          <div className="h-6 bg-yellow-100 rounded-full w-24" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-20" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-16" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-24" />
         </div>
       </div>
 
       {/* Stats */}
       <div className="flex gap-4 mb-4">
-        <div className="h-4 bg-yellow-100 rounded w-20" />
-        <div className="h-4 bg-yellow-100 rounded w-16" />
+        <div className="h-4 bg-brand-yellow-soft rounded w-20" />
+        <div className="h-4 bg-brand-yellow-soft rounded w-16" />
       </div>
 
       {/* Date and Actions */}
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
-          <div className="h-4 bg-yellow-100 rounded w-32" />
-          <div className="h-3 bg-yellow-100 rounded w-16 ml-auto" />
+        <div className="flex items-center gap-2 bg-surface-main rounded-lg px-4 py-2 border border-brand-yellow-soft">
+          <div className="h-4 bg-brand-yellow-soft rounded w-32" />
+          <div className="h-3 bg-brand-yellow-soft rounded w-16 ml-auto" />
         </div>
 
         <div className="flex gap-2 justify-between">
-          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
-          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
-          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
+          <div className="flex-1 h-10 bg-brand-yellow-soft rounded-lg" />
+          <div className="flex-1 h-10 bg-brand-yellow-soft rounded-lg" />
+          <div className="flex-1 h-10 bg-brand-yellow-soft rounded-lg" />
         </div>
 
-        <div className="h-10 bg-yellow-100 rounded-lg mt-2" />
+        <div className="h-10 bg-brand-yellow-soft rounded-lg mt-2" />
       </div>
 
       {/* Event ID */}
-      <div className="mt-4 pt-4 border-t border-yellow-200">
-        <div className="h-3 bg-yellow-100 rounded w-1/3" />
+      <div className="mt-4 pt-4 border-t border-brand-yellow-soft">
+        <div className="h-3 bg-brand-yellow-soft rounded w-1/3" />
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-amber-50 p-4 sm:p-8">
+    <div className="min-h-screen bg-surface-main p-4 sm:p-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 flex items-center gap-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink mb-1 sm:mb-2 flex items-center gap-2">
             <Users className="w-6 h-6 flex-shrink-0" />
             {viewLabel}
           </h1>
-          <p className="text-gray-600 mb-2">
+          <p className="text-ink-paragraph mb-2">
             Browse and manage your events and registrations
           </p>
           <ListingLimitBanner count={events?.length ?? 0} type="event" label="Events" />
@@ -543,7 +543,7 @@ const Events: React.FC = () => {
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}
-              className="bg-gray-100 text-sm font-medium text-gray-500 flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto border border-gray-300 cursor-not-allowed whitespace-nowrap"
+              className="bg-ink-light text-sm font-medium text-ink-caption flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto border border-ink-light cursor-not-allowed whitespace-nowrap"
               title="Plan limit reached. Upgrade to add more."
             >
               <Plus className="w-5 h-5" />
@@ -552,7 +552,7 @@ const Events: React.FC = () => {
           ) : (
             <button
               onClick={() => navigate("/event/select", viewFilter !== "all" ? { state: { eventType: viewFilter.slice(0, -1) } } : undefined)}
-              className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto hover:bg-yellow-600 hover:scale-110 transition-all duration-200 whitespace-nowrap"
+              className="bg-brand-gold text-sm font-medium text-white flex items-center gap-2 px-4 py-2.5 sm:py-4 rounded-lg self-start sm:self-auto hover:bg-brand-gold hover:scale-110 transition-all duration-200 whitespace-nowrap"
             >
               <Plus className="w-5 h-5" />
               {viewFilter === "expos" ? "Add New Expo" : viewFilter === "conferences" ? "Add New Conference" : viewFilter === "workshops" ? "Add New Workshop" : "Create New Event"}
@@ -562,7 +562,7 @@ const Events: React.FC = () => {
       </div>
 
       {/* View tabs — same categories as the admin event dashboard */}
-      <div className="flex gap-0 border-b-2 border-yellow-200 mb-4 overflow-x-auto">
+      <div className="flex gap-0 border-b-2 border-brand-yellow-soft mb-4 overflow-x-auto">
         {VIEW_TABS.map(tab => (
           <button
             key={tab.id}
@@ -571,7 +571,7 @@ const Events: React.FC = () => {
               else prev.set("view", tab.id);
               return prev;
             }, { replace: true })}
-            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-500" : "text-gray-500 border-transparent hover:text-gray-700"}`}
+            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-ink border-brand-gold" : "text-ink-caption border-transparent hover:text-ink-paragraph"}`}
           >
             {tab.label}
           </button>
@@ -580,14 +580,14 @@ const Events: React.FC = () => {
 
       <div className="mb-8 relative">
         <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
-          <Search className="h-5 w-5 text-yellow-500" />
+          <Search className="h-5 w-5 text-brand-gold" />
         </div>
         <input
           type="text"
           placeholder="Search by event name, location, or category..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-6 py-3 bg-white border-2 border-yellow-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+          className="w-full pl-12 pr-6 py-3 bg-surface-card border-2 border-brand-yellow-soft rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-brand-yellow"
         />
       </div>
 
@@ -611,8 +611,8 @@ const Events: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 text-gray-500">
-          <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
+        <div className="text-center py-20 text-ink-caption">
+          <Search className="w-16 h-16 text-brand-yellow-soft mx-auto mb-4" />
           {searchTerm
             ? `No events found matching "${searchTerm}"`
             : viewFilter !== "all"

@@ -212,13 +212,13 @@ const Sidebar: React.FC = () => {
       >
         {/* Header */}
         <div className="flex items-center gap-3 px-4 border-b border-white/10 flex-shrink-0" style={{ paddingTop: "16px", paddingBottom: "16px" }}>
-          <div className="w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center flex-shrink-0">
-            <Tv size={16} className="text-black" />
+          <div className="w-8 h-8 rounded-lg bg-brand-yellow flex items-center justify-center flex-shrink-0">
+            <Tv size={16} className="text-ink" />
           </div>
           {isOpen && (
             <div className="flex-1 min-w-0">
               <div className="text-base font-black text-white leading-tight">
-                Drone<span className="text-yellow-400">Tv</span>.in
+                Drone<span className="text-brand-yellow">Tv</span>.in
               </div>
               <div className="text-[9px] text-white/35 uppercase tracking-widest">Member Portal</div>
             </div>
@@ -243,7 +243,7 @@ const Sidebar: React.FC = () => {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 border-l-[3px] ${
                 isActive
-                  ? "bg-yellow-400/15 text-yellow-400 border-yellow-400"
+                  ? "bg-brand-yellow/15 text-brand-yellow border-brand-yellow"
                   : "text-white/60 hover:bg-white/6 hover:text-white border-transparent"
               }`
             }
@@ -264,11 +264,11 @@ const Sidebar: React.FC = () => {
                   <button
                     onClick={() => { setIsOpen(true); setOpenGroups(prev => ({ ...prev, [group.id]: true })); }}
                     className={`w-full flex items-center justify-center py-2.5 rounded-lg transition-all border-l-[3px] ${
-                      isGroupActive ? "bg-yellow-400/15 border-yellow-400" : "border-transparent hover:bg-white/6"
+                      isGroupActive ? "bg-brand-yellow/15 border-brand-yellow" : "border-transparent hover:bg-white/6"
                     }`}
                     title={group.label}
                   >
-                    <GroupIcon size={18} className={isGroupActive ? "text-yellow-400" : "text-white/60"} />
+                    <GroupIcon size={18} className={isGroupActive ? "text-brand-yellow" : "text-white/60"} />
                   </button>
                 </div>
               );
@@ -280,7 +280,7 @@ const Sidebar: React.FC = () => {
                   onClick={() => toggleGroup(group.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all border-l-[3px] ${
                     isGroupActive && !isGroupOpen
-                      ? "bg-yellow-400/10 text-yellow-400 border-yellow-400"
+                      ? "bg-brand-yellow/10 text-brand-yellow border-brand-yellow"
                       : "text-white/50 hover:text-white/80 hover:bg-white/5 border-transparent"
                   }`}
                 >
@@ -308,7 +308,7 @@ const Sidebar: React.FC = () => {
                           className={
                             `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all border-l-[2px] ${
                               isItemActive
-                                ? "bg-yellow-400/15 text-yellow-400 border-yellow-400"
+                                ? "bg-brand-yellow/15 text-brand-yellow border-brand-yellow"
                                 : "text-white/50 hover:bg-white/6 hover:text-white border-transparent"
                             }`
                           }
@@ -332,7 +332,7 @@ const Sidebar: React.FC = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 border-l-[3px] ${
                   isActive
-                    ? "bg-yellow-400/15 text-yellow-400 border-yellow-400"
+                    ? "bg-brand-yellow/15 text-brand-yellow border-brand-yellow"
                     : "text-white/60 hover:bg-white/6 hover:text-white border-transparent"
                 }`
               }
@@ -347,20 +347,20 @@ const Sidebar: React.FC = () => {
         {isOpen && tokenBalance !== null && (
           <NavLink
             to="/user-recharge"
-            className="mx-3 mb-1 flex items-center justify-between px-3 py-2 rounded-lg bg-yellow-400/10 border border-yellow-400/20 hover:bg-yellow-400/20 transition-colors"
+            className="mx-3 mb-1 flex items-center justify-between px-3 py-2 rounded-lg bg-brand-yellow/10 border border-brand-yellow/20 hover:bg-brand-yellow/20 transition-colors"
           >
             <div className="flex items-center gap-2">
-              <Coins size={14} className="text-yellow-400 flex-shrink-0" />
+              <Coins size={14} className="text-brand-yellow flex-shrink-0" />
               <span className="text-xs text-white/60">Tokens</span>
             </div>
-            <span className="text-sm font-black text-yellow-400">{tokenBalance.toLocaleString()}</span>
+            <span className="text-sm font-black text-brand-yellow">{tokenBalance.toLocaleString()}</span>
           </NavLink>
         )}
         {!isOpen && tokenBalance !== null && (
           <NavLink to="/user-recharge" className="flex justify-center mb-1 px-2" title={`${tokenBalance} tokens`}>
             <div className="flex flex-col items-center gap-0.5">
-              <Coins size={16} className="text-yellow-400" />
-              <span className="text-[9px] font-black text-yellow-400">{tokenBalance > 999 ? `${Math.floor(tokenBalance / 1000)}k` : tokenBalance}</span>
+              <Coins size={16} className="text-brand-yellow" />
+              <span className="text-[9px] font-black text-brand-yellow">{tokenBalance > 999 ? `${Math.floor(tokenBalance / 1000)}k` : tokenBalance}</span>
             </div>
           </NavLink>
         )}
@@ -368,8 +368,8 @@ const Sidebar: React.FC = () => {
         {/* Profile */}
         <div className="flex-shrink-0 border-t border-white/10 p-3">
           <NavLink to="/user-profile" className="flex items-center gap-2 min-w-0 mb-2">
-            <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center flex-shrink-0">
-              <span className="text-[11px] font-black text-black">
+            <div className="w-8 h-8 rounded-full bg-brand-yellow flex items-center justify-center flex-shrink-0">
+              <span className="text-[11px] font-black text-ink">
                 {user?.userData?.fullName?.[0]?.toUpperCase() || "U"}
               </span>
             </div>
@@ -383,7 +383,7 @@ const Sidebar: React.FC = () => {
           {isOpen && (
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-white/6 transition-all text-sm"
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/40 hover:text-status-error hover:bg-white/6 transition-all text-sm"
             >
               <LogOut size={15} />
               <span>Logout</span>

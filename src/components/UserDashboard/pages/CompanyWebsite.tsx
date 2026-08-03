@@ -325,25 +325,25 @@ const CompanyWebsite: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="h-full bg-amber-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
+      <div className="h-full bg-surface-main flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-brand-gold" />
       </div>
     );
   }
 
   if (!company) {
     return (
-      <div className="h-full bg-amber-50 flex flex-col items-center justify-center px-4 text-center pb-20 lg:pb-0">
-        <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mb-5">
-          <Globe className="w-10 h-10 text-amber-500" />
+      <div className="h-full bg-surface-main flex flex-col items-center justify-center px-4 text-center pb-20 lg:pb-0">
+        <div className="w-20 h-20 rounded-full bg-brand-yellow-soft flex items-center justify-center mb-5">
+          <Globe className="w-10 h-10 text-brand-gold" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">No Website Yet</h2>
-        <p className="text-gray-500 max-w-sm mb-6">
+        <h2 className="text-2xl font-bold text-ink mb-2">No Website Yet</h2>
+        <p className="text-ink-caption max-w-sm mb-6">
           You haven't created your company website yet. Register your company to get a public listing page.
         </p>
         <button
           onClick={() => navigate("/form")}
-          className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition-colors shadow-md"
+          className="px-6 py-3 bg-brand-gold hover:bg-brand-gold text-white font-semibold rounded-xl transition-colors shadow-md"
         >
           Create Your Website
         </button>
@@ -352,20 +352,20 @@ const CompanyWebsite: React.FC = () => {
   }
 
   return (
-    <div className="h-full bg-amber-50 flex flex-col overflow-y-auto">
+    <div className="h-full bg-surface-main flex flex-col overflow-y-auto">
 
       {/* Edit Confirmation Modal */}
       <AnimatePresence>
         {showEditModal && (
           <motion.div
-            className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowEditModal(false)}
           >
             <motion.div
-              className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+              className="bg-surface-card rounded-xl shadow-2xl max-w-md w-full p-6"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -373,29 +373,29 @@ const CompanyWebsite: React.FC = () => {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Edit className="text-amber-600 w-6 h-6" />
-                  <h3 className="text-xl font-semibold text-gray-900">Edit Website</h3>
+                  <Edit className="text-brand-gold w-6 h-6" />
+                  <h3 className="text-xl font-semibold text-ink">Edit Website</h3>
                 </div>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  className="p-1 rounded-full hover:bg-ink-light transition-colors"
                 >
-                  <X size={20} className="text-gray-500" />
+                  <X size={20} className="text-ink-caption" />
                 </button>
               </div>
-              <p className="text-gray-600 mb-6">
+              <p className="text-ink-paragraph mb-6">
                 You'll be redirected to the editor where you can update your website content and publish the changes.
               </p>
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 text-ink-paragraph font-medium rounded-lg border border-ink-light bg-surface-card hover:bg-ink-offwhite transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmEdit}
-                  className="px-4 py-2 text-white font-medium rounded-lg bg-amber-600 hover:bg-amber-700 transition-colors shadow-md"
+                  className="px-4 py-2 text-white font-medium rounded-lg bg-brand-gold hover:bg-brand-gold transition-colors shadow-md"
                 >
                   Edit Website
                 </button>
@@ -410,14 +410,14 @@ const CompanyWebsite: React.FC = () => {
         <div className="min-w-0 flex-1">
           {allCompanies.length > 1 ? (
             <div className="mb-1">
-              <label className="text-xs text-gray-500 font-medium mb-1 block">Select Company</label>
+              <label className="text-xs text-ink-caption font-medium mb-1 block">Select Company</label>
               <select
                 value={company.publishedId}
                 onChange={(e) => {
                   const selected = allCompanies.find(c => c.publishedId === e.target.value);
                   if (selected) { setCompany(selected); setCurrentLogo(""); setShowPublish(false); setIframeKey(k => k + 1); }
                 }}
-                className="text-sm font-semibold text-gray-900 border border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 max-w-xs w-full"
+                className="text-sm font-semibold text-ink border border-ink-light rounded-lg px-3 py-1.5 bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow max-w-xs w-full"
               >
                 {allCompanies.map(c => (
                   <option key={c.publishedId} value={c.publishedId}>{c.companyName}</option>
@@ -426,15 +426,15 @@ const CompanyWebsite: React.FC = () => {
             </div>
           ) : (
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">{company.companyName}</h1>
-              {isVerified && <BadgeCheck className="w-5 h-5 text-green-600 flex-shrink-0" title="Verified" />}
+              <h1 className="text-xl sm:text-2xl font-bold text-ink leading-tight">{company.companyName}</h1>
+              {isVerified && <BadgeCheck className="w-5 h-5 text-status-success flex-shrink-0" title="Verified" />}
             </div>
           )}
-          <p className="text-sm text-gray-500 mt-0.5 truncate">{company.location}</p>
+          <p className="text-sm text-ink-caption mt-0.5 truncate">{company.location}</p>
         </div>
         <button
           onClick={() => setShowEditModal(true)}
-          className="flex items-center gap-1.5 px-3 py-2 sm:px-4 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors shadow-sm flex-shrink-0 text-sm"
+          className="flex items-center gap-1.5 px-3 py-2 sm:px-4 bg-brand-gold text-white font-semibold rounded-lg hover:bg-brand-gold transition-colors shadow-sm flex-shrink-0 text-sm"
         >
           <Edit className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Edit Website</span>
@@ -443,13 +443,13 @@ const CompanyWebsite: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 px-6 bg-white">
+      <div className="flex border-b border-ink-light px-6 bg-surface-card">
         <button
           onClick={() => setActiveTab("preview")}
           className={`px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
             activeTab === "preview"
-              ? "border-amber-500 text-amber-600"
-              : "border-transparent text-gray-500 hover:text-gray-700"
+              ? "border-brand-gold text-brand-gold"
+              : "border-transparent text-ink-caption hover:text-ink-paragraph"
           }`}
         >
           Website Preview
@@ -458,8 +458,8 @@ const CompanyWebsite: React.FC = () => {
           onClick={() => setActiveTab("details")}
           className={`px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
             activeTab === "details"
-              ? "border-amber-500 text-amber-600"
-              : "border-transparent text-gray-500 hover:text-gray-700"
+              ? "border-brand-gold text-brand-gold"
+              : "border-transparent text-ink-caption hover:text-ink-paragraph"
           }`}
         >
           Update Details
@@ -471,26 +471,26 @@ const CompanyWebsite: React.FC = () => {
         <div className="flex flex-col gap-4 p-4 sm:p-6 pb-6 lg:pb-6">
           {/* Status Banner */}
           {isVerified ? (
-            <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-xl">
-              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
+            <div className="flex items-center gap-3 p-4 bg-status-success/10 border border-status-success/25 rounded-xl">
+              <CheckCircle className="w-6 h-6 text-status-success flex-shrink-0" />
               <div>
-                <p className="font-semibold text-green-800">Your company is live and verified</p>
-                <p className="text-sm text-green-600">It's publicly listed with a verified badge in the Companies directory.</p>
+                <p className="font-semibold text-status-success">Your company is live and verified</p>
+                <p className="text-sm text-status-success">It's publicly listed with a verified badge in the Companies directory.</p>
               </div>
             </div>
           ) : (
-            <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-300 rounded-xl">
-              <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 bg-surface-main border border-brand-yellow-soft rounded-xl">
+              <AlertCircle className="w-6 h-6 text-brand-gold flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="font-semibold text-yellow-800">Verification pending</p>
-                <p className="text-sm text-yellow-700 mt-0.5">
+                <p className="font-semibold text-brand-gold">Verification pending</p>
+                <p className="text-sm text-brand-gold mt-0.5">
                   Your company is listed. Our team will review and verify your listing shortly.
                 </p>
               </div>
               <button
                 onClick={handleRefreshStatus}
                 disabled={statusRefreshing}
-                className="flex items-center gap-1 text-xs font-medium text-yellow-700 border border-yellow-400 bg-yellow-100 hover:bg-yellow-200 rounded-lg px-2.5 py-1.5 transition-colors disabled:opacity-50 flex-shrink-0"
+                className="flex items-center gap-1 text-xs font-medium text-brand-gold border border-brand-yellow bg-brand-yellow-soft hover:bg-brand-yellow-soft rounded-lg px-2.5 py-1.5 transition-colors disabled:opacity-50 flex-shrink-0"
                 title="Check latest status"
               >
                 <Loader2 className={`w-3 h-3 ${statusRefreshing ? 'animate-spin' : 'hidden'}`} />
@@ -500,23 +500,23 @@ const CompanyWebsite: React.FC = () => {
           )}
 
           {/* Logo Upload */}
-          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center gap-3 sm:gap-5">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+          <div className="bg-surface-card border border-ink-light rounded-xl p-4 shadow-sm flex items-center gap-3 sm:gap-5">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg border border-ink-light bg-ink-offwhite flex items-center justify-center overflow-hidden flex-shrink-0">
               {currentLogo ? (
                 <img src={currentLogo} alt="Logo" className="w-full h-full object-contain" />
               ) : (
-                <span className="text-[10px] text-gray-400 text-center leading-tight px-1">No Logo</span>
+                <span className="text-[10px] text-ink-caption text-center leading-tight px-1">No Logo</span>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-800">Company Logo</p>
-              <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">Shown in your website header. PNG, JPG, or SVG.</p>
-              <p className="text-xs text-gray-400 mt-0.5 sm:hidden">PNG, JPG, or SVG</p>
+              <p className="text-sm font-semibold text-ink-charcoal">Company Logo</p>
+              <p className="text-xs text-ink-caption mt-0.5 hidden sm:block">Shown in your website header. PNG, JPG, or SVG.</p>
+              <p className="text-xs text-ink-caption mt-0.5 sm:hidden">PNG, JPG, or SVG</p>
             </div>
             <button
               onClick={() => logoInputRef.current?.click()}
               disabled={logoUploading}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-white bg-status-info rounded-lg hover:bg-status-info transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             >
               {logoUploading ? (
                 <><Loader2 className="w-3.5 h-3.5 animate-spin" /><span className="hidden sm:inline">Uploading...</span></>
@@ -538,19 +538,19 @@ const CompanyWebsite: React.FC = () => {
           </div>
 
           {/* Website Preview */}
-          <div className="rounded-xl overflow-hidden border border-yellow-200 shadow-lg bg-white">
-            <div className="flex items-center justify-between px-4 py-2 bg-gray-100 border-b border-gray-200">
+          <div className="rounded-xl overflow-hidden border border-brand-yellow-soft shadow-lg bg-surface-card">
+            <div className="flex items-center justify-between px-4 py-2 bg-ink-light border-b border-ink-light">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-400" />
-                <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                <div className="w-3 h-3 rounded-full bg-green-400" />
+                <div className="w-3 h-3 rounded-full bg-status-error" />
+                <div className="w-3 h-3 rounded-full bg-brand-yellow" />
+                <div className="w-3 h-3 rounded-full bg-status-success" />
               </div>
-              <span className="text-xs text-gray-500 font-medium">Website Preview</span>
+              <span className="text-xs text-ink-caption font-medium">Website Preview</span>
               <a
                 href={previewUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                className="flex items-center gap-1 text-xs text-status-info hover:text-status-info font-medium"
               >
                 <ExternalLink className="w-3 h-3" />
                 Full Screen
@@ -574,40 +574,40 @@ const CompanyWebsite: React.FC = () => {
         <div className="flex-1">
           {submitting ? (
             <div className="flex flex-col items-center justify-center py-16 px-6 gap-4">
-              <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
-              <p className="text-gray-600 font-medium">Saving your details...</p>
+              <Loader2 className="w-8 h-8 animate-spin text-brand-gold" />
+              <p className="text-ink-paragraph font-medium">Saving your details...</p>
             </div>
           ) : showPublish ? (
             <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
               {isVerified ? (
                 <>
-                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-5">
-                    <CheckCircle className="w-10 h-10 text-green-600" />
+                  <div className="w-20 h-20 rounded-full bg-status-success/15 flex items-center justify-center mb-5">
+                    <CheckCircle className="w-10 h-10 text-status-success" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Details Updated!</h3>
-                  <p className="text-gray-500 max-w-sm mb-8">
+                  <h3 className="text-2xl font-bold text-ink mb-2">Details Updated!</h3>
+                  <p className="text-ink-caption max-w-sm mb-8">
                     Your company is already live. The updated details are now saved to your listing.
                   </p>
                   <button
                     onClick={() => { setShowPublish(false); setActiveTab("preview"); }}
-                    className="flex items-center gap-2 px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-base rounded-xl transition-colors shadow-md"
+                    className="flex items-center gap-2 px-8 py-3.5 bg-brand-gold hover:bg-brand-gold text-white font-bold text-base rounded-xl transition-colors shadow-md"
                   >
                     <Globe className="w-5 h-5" /> View My Website
                   </button>
                 </>
               ) : (
                 <>
-                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-5">
-                    <CheckCircle className="w-10 h-10 text-green-600" />
+                  <div className="w-20 h-20 rounded-full bg-status-success/15 flex items-center justify-center mb-5">
+                    <CheckCircle className="w-10 h-10 text-status-success" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Details Saved!</h3>
-                  <p className="text-gray-500 max-w-sm mb-8">
+                  <h3 className="text-2xl font-bold text-ink mb-2">Details Saved!</h3>
+                  <p className="text-ink-caption max-w-sm mb-8">
                     Your company details are ready. Publish now to make your company live and visible to everyone.
                   </p>
                   <button
                     onClick={handlePublish}
                     disabled={publishing}
-                    className="flex items-center gap-2 px-8 py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold text-base rounded-xl transition-colors shadow-lg disabled:opacity-60"
+                    className="flex items-center gap-2 px-8 py-3.5 bg-status-success hover:bg-status-success text-white font-bold text-base rounded-xl transition-colors shadow-lg disabled:opacity-60"
                   >
                     {publishing
                       ? <><Loader2 className="w-5 h-5 animate-spin" /> Publishing...</>
@@ -616,7 +616,7 @@ const CompanyWebsite: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setShowPublish(false)}
-                    className="mt-4 text-sm text-gray-400 hover:text-gray-600 underline"
+                    className="mt-4 text-sm text-ink-caption hover:text-ink-paragraph underline"
                   >
                     Go back and review
                   </button>

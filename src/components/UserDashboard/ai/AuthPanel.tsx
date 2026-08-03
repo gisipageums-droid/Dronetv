@@ -17,8 +17,8 @@ function getStoredUser(): EchoUser | null {
 function StatusBadge({ status }: { status: string }) {
   const isActive = status === "active";
   return (
-    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full ${isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-500" : "bg-gray-400"}`} />
+    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full ${isActive ? "bg-status-success/15 text-status-success" : "bg-ink-light text-ink-caption"}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-status-success" : "bg-ink-caption"}`} />
       {status}
     </span>
   );
@@ -85,42 +85,42 @@ const AuthPanel: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-full py-16 px-6">
         <div className="w-full max-w-sm space-y-4">
-          <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-xl">
-            <CheckCircle2 size={18} className="text-green-600 shrink-0" />
-            <span className="text-sm font-semibold text-green-700">Connected</span>
+          <div className="flex items-center gap-3 p-3 bg-status-success/10 border border-status-success/25 rounded-xl">
+            <CheckCircle2 size={18} className="text-status-success shrink-0" />
+            <span className="text-sm font-semibold text-status-success">Connected</span>
           </div>
-          <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+          <div className="bg-surface-card border border-ink-light rounded-2xl p-5 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                <User size={22} className="text-amber-600" />
+              <div className="w-11 h-11 bg-brand-yellow-soft rounded-xl flex items-center justify-center shrink-0">
+                <User size={22} className="text-brand-gold" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-bold text-gray-900 truncate">{user.name}</p>
-                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                <p className="text-sm font-bold text-ink truncate">{user.name}</p>
+                <p className="text-xs text-ink-caption truncate">{user.email}</p>
               </div>
               <div className="ml-auto shrink-0">
                 <StatusBadge status={user.status} />
               </div>
             </div>
-            <div className="border-t border-gray-100 pt-4 space-y-2.5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Account Details</p>
+            <div className="border-t border-ink-light pt-4 space-y-2.5">
+              <p className="text-xs font-semibold text-ink-caption uppercase tracking-wide mb-3">Account Details</p>
               <div className="flex justify-between text-xs">
-                <span className="text-gray-500">User ID</span>
-                <span className="font-medium text-gray-700">#{user.id}</span>
+                <span className="text-ink-caption">User ID</span>
+                <span className="font-medium text-ink-paragraph">#{user.id}</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-gray-500">Connected since</span>
-                <span className="font-medium text-gray-700">{connectedAt}</span>
+                <span className="text-ink-caption">Connected since</span>
+                <span className="font-medium text-ink-paragraph">{connectedAt}</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-gray-500">Status</span>
-                <span className="font-medium text-gray-700 capitalize">{user.status}</span>
+                <span className="text-ink-caption">Status</span>
+                <span className="font-medium text-ink-paragraph capitalize">{user.status}</span>
               </div>
             </div>
           </div>
           <button
             onClick={handleDisconnect}
-            className="flex items-center justify-center gap-2 w-full py-2.5 border border-red-200 text-red-500 text-sm font-semibold rounded-xl hover:bg-red-50 transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-2.5 border border-status-error/25 text-status-error text-sm font-semibold rounded-xl hover:bg-status-error/10 transition-colors"
           >
             <LogOut size={15} />
             Disconnect
@@ -134,20 +134,20 @@ const AuthPanel: React.FC = () => {
     <div className="flex flex-col items-center justify-center h-full py-16 px-6">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-6">
-          <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center mb-4">
-            <ShieldCheck size={28} className="text-amber-600" />
+          <div className="w-14 h-14 bg-brand-yellow-soft rounded-2xl flex items-center justify-center mb-4">
+            <ShieldCheck size={28} className="text-brand-gold" />
           </div>
-          <h2 className="text-lg font-bold text-gray-900 text-center">Connect AI Account</h2>
-          <p className="text-sm text-gray-500 mt-1 text-center">Sign in to enable AI-powered lead management.</p>
+          <h2 className="text-lg font-bold text-ink text-center">Connect AI Account</h2>
+          <p className="text-sm text-ink-caption mt-1 text-center">Sign in to enable AI-powered lead management.</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex bg-gray-100 rounded-xl p-1 mb-5">
+        <div className="flex bg-ink-light rounded-xl p-1 mb-5">
           {(["login", "register"] as const).map((t) => (
             <button
               key={t}
               onClick={() => { setTab(t); resetForm(); }}
-              className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-all ${tab === t ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-all ${tab === t ? "bg-surface-card text-ink shadow-sm" : "text-ink-caption hover:text-ink-paragraph"}`}
             >
               {t === "login" ? "Sign In" : "Register"}
             </button>
@@ -155,13 +155,13 @@ const AuthPanel: React.FC = () => {
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 p-3 mb-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+          <div className="flex items-center gap-2 p-3 mb-4 bg-status-error/10 border border-status-error/25 rounded-xl text-sm text-status-error">
             <AlertTriangle size={15} className="shrink-0" />
             {error}
           </div>
         )}
         {success && (
-          <div className="flex items-center gap-2 p-3 mb-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-600">
+          <div className="flex items-center gap-2 p-3 mb-4 bg-status-success/10 border border-status-success/25 rounded-xl text-sm text-status-success">
             <CheckCircle2 size={15} className="shrink-0" />
             {success}
           </div>
@@ -170,45 +170,45 @@ const AuthPanel: React.FC = () => {
         <div className="space-y-3">
           {tab === "register" && (
             <div className="relative">
-              <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-caption pointer-events-none" />
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Full name"
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                className="w-full pl-10 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card"
               />
             </div>
           )}
 
           <div className="relative">
-            <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-caption pointer-events-none" />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && tab === "login" && handleLogin()}
               placeholder="Email address"
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+              className="w-full pl-10 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card"
             />
           </div>
 
           <div className="relative">
-            <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-caption pointer-events-none" />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && tab === "login" && handleLogin()}
               placeholder="Password"
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+              className="w-full pl-10 pr-4 py-2.5 border border-ink-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card"
             />
           </div>
 
           <button
             onClick={tab === "login" ? handleLogin : handleRegister}
             disabled={loading || !email.trim() || !password || (tab === "register" && !name.trim())}
-            className="flex items-center justify-center gap-2 w-full py-2.5 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-2 w-full py-2.5 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
           >
             {loading ? <Loader2 size={16} className="animate-spin" /> : tab === "login" ? "Sign In" : "Create Account"}
           </button>

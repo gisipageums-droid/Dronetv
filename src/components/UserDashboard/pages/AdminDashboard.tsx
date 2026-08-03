@@ -71,19 +71,19 @@ const AdminDashboard: React.FC = () => {
       label: "Total Companies",
       value: companyCount,
       icon: Briefcase,
-      color: "bg-blue-500",
+      color: "bg-status-info",
     },
     {
       label: "Professionals",
       value: professionalCount,
       icon: Users,
-      color: "bg-purple-500",
+      color: "bg-brand-gold",
     },
     {
       label: "Events",
       value: eventCount,
       icon: Calendar,
-      color: "bg-green-500",
+      color: "bg-status-success",
     },
   ];
 
@@ -241,8 +241,8 @@ const AdminDashboard: React.FC = () => {
 
   const getStatusColor = (viewed: boolean) => {
     return viewed
-      ? "bg-green-100 text-green-800"
-      : "bg-gray-100 text-gray-600";
+      ? "bg-status-success/15 text-status-success"
+      : "bg-ink-light text-ink-paragraph";
   };
 
   const formatDate = (dateString: string) => {
@@ -259,26 +259,26 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-full bg-gray-100 p-6 md:p-8">
+    <div className="min-h-full bg-ink-light p-6 md:p-8">
       {/* Header */}
       <div className="mb-8">
-        <p className="text-xs font-bold tracking-widest text-yellow-500 uppercase mb-1">Dashboard</p>
-        <h1 className="text-2xl font-extrabold text-gray-900 mb-1">
+        <p className="text-xs font-bold tracking-widest text-brand-gold uppercase mb-1">Dashboard</p>
+        <h1 className="text-2xl font-extrabold text-ink mb-1">
           Welcome back, {userDetails?.fullName?.split(" ")[0] || "there"} 👋
         </h1>
-        <p className="text-sm text-gray-500">Here's your business overview.</p>
+        <p className="text-sm text-ink-caption">Here's your business overview.</p>
       </div>
 
       {/* Search Bar */}
       <div className="mb-8">
         <div className="relative max-w-lg">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-caption w-4 h-4" />
           <input
             type="text"
             placeholder="Search by company name, location, or sector..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-6 py-2.5 bg-white border border-gray-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 transition-all"
+            className="w-full pl-11 pr-6 py-2.5 bg-surface-card border border-ink-light rounded-xl text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow transition-all"
           />
         </div>
       </div>
@@ -288,30 +288,30 @@ const AdminDashboard: React.FC = () => {
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
-            <div key={idx} className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div key={idx} className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-1">{stat.label}</p>
-                  <p className="text-3xl font-extrabold text-gray-900">{stat.value}</p>
+                  <p className="text-ink-caption text-xs font-semibold uppercase tracking-wide mb-1">{stat.label}</p>
+                  <p className="text-3xl font-extrabold text-ink">{stat.value}</p>
                 </div>
-                <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center">
-                  <Icon size={22} className="text-black" />
+                <div className="w-12 h-12 bg-brand-yellow rounded-xl flex items-center justify-center">
+                  <Icon size={22} className="text-ink" />
                 </div>
               </div>
             </div>
           );
         })}
         {/* Token balance card */}
-        <a href="/user-recharge" className="bg-gray-900 border border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow block">
+        <a href="/user-recharge" className="bg-ink border border-ink-paragraph rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow block">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Token Balance</p>
-              <p className="text-3xl font-extrabold text-yellow-400">
+              <p className="text-3xl font-extrabold text-brand-yellow">
                 {tokenBalance === null ? "…" : tokenBalance.toLocaleString()}
               </p>
             </div>
-            <div className="w-12 h-12 bg-yellow-400/15 rounded-xl flex items-center justify-center">
-              <Coins size={22} className="text-yellow-400" />
+            <div className="w-12 h-12 bg-brand-yellow/15 rounded-xl flex items-center justify-center">
+              <Coins size={22} className="text-brand-yellow" />
             </div>
           </div>
         </a>
@@ -320,8 +320,8 @@ const AdminDashboard: React.FC = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
         {/* Pie Chart */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-sm font-bold text-gray-900 mb-4">
+        <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm">
+          <h2 className="text-sm font-bold text-ink mb-4">
             Visitors by Source
           </h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -349,8 +349,8 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Bar Chart - Leads */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-sm font-bold text-gray-900 mb-4">
+        <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm">
+          <h2 className="text-sm font-bold text-ink mb-4">
             Leads & Visits by Month
           </h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -385,8 +385,8 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Line Chart - Trends */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">
+      <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm mb-6">
+        <h2 className="text-sm font-bold text-ink mb-4">
           Lead & Visit Trends
         </h2>
         <ResponsiveContainer width="100%" height={300}>
@@ -424,20 +424,20 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Recent Companies Leads List */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">
+      <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm mb-6">
+        <h2 className="text-sm font-bold text-ink mb-4">
           Recent Companies Leads ({recentLeads.length})
         </h2>
 
         {loading && (
           <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">Loading leads...</p>
+            <p className="text-ink-caption text-sm">Loading leads...</p>
           </div>
         )}
 
         {error && (
           <div className="text-center py-4">
-            <p className="text-red-400">Error: {error}</p>
+            <p className="text-status-error">Error: {error}</p>
           </div>
         )}
 
@@ -445,20 +445,20 @@ const AdminDashboard: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                <tr className="border-b border-ink-light">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Name
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Category
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Subject
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Status
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Date
                   </th>
                 </tr>
@@ -467,15 +467,15 @@ const AdminDashboard: React.FC = () => {
                 {recentLeads.map((lead) => (
                   <tr
                     key={lead.leadId}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                    className="border-b border-ink-light hover:bg-ink-offwhite transition-colors"
                   >
-                    <td className="py-3 px-4 text-gray-900 text-sm">
+                    <td className="py-3 px-4 text-ink text-sm">
                       {lead.firstName} {lead.lastName}
                     </td>
-                    <td className="py-3 px-4 text-gray-500 text-sm">
+                    <td className="py-3 px-4 text-ink-caption text-sm">
                       {lead.category}
                     </td>
-                    <td className="py-3 px-4 text-gray-500 text-sm">{lead.subject}</td>
+                    <td className="py-3 px-4 text-ink-caption text-sm">{lead.subject}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -485,7 +485,7 @@ const AdminDashboard: React.FC = () => {
                         {getStatusText(lead.viewed)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-gray-400 text-sm">
+                    <td className="py-3 px-4 text-ink-caption text-sm">
                       {formatDate(lead.submittedAt)}
                     </td>
                   </tr>
@@ -497,26 +497,26 @@ const AdminDashboard: React.FC = () => {
 
         {!loading && !error && recentLeads.length === 0 && (
           <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">No leads found</p>
+            <p className="text-ink-caption text-sm">No leads found</p>
           </div>
         )}
       </div>
 
       {/* Recent Professional Leads List */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">
+      <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm mb-6">
+        <h2 className="text-sm font-bold text-ink mb-4">
           Recent Professional Leads ({recentProfessional.length})
         </h2>
 
         {professionalLoading && (
           <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">Loading professional leads...</p>
+            <p className="text-ink-caption text-sm">Loading professional leads...</p>
           </div>
         )}
 
         {professionalError && (
           <div className="text-center py-4">
-            <p className="text-red-400">Error: {professionalError}</p>
+            <p className="text-status-error">Error: {professionalError}</p>
           </div>
         )}
 
@@ -524,20 +524,20 @@ const AdminDashboard: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                <tr className="border-b border-ink-light">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Name
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Phone
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Subject
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Status
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Date
                   </th>
                 </tr>
@@ -546,11 +546,11 @@ const AdminDashboard: React.FC = () => {
                 {recentProfessional.map((lead) => (
                   <tr
                     key={lead.leadId}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                    className="border-b border-ink-light hover:bg-ink-offwhite transition-colors"
                   >
-                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.firstName} </td>
-                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.phone}</td>
-                    <td className="py-3 px-4 text-gray-500 text-sm">{lead.subject}</td>
+                    <td className="py-3 px-4 text-ink text-sm">{lead.firstName} </td>
+                    <td className="py-3 px-4 text-ink text-sm">{lead.phone}</td>
+                    <td className="py-3 px-4 text-ink-caption text-sm">{lead.subject}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -560,7 +560,7 @@ const AdminDashboard: React.FC = () => {
                         {getStatusText(lead.viewed)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-gray-400 text-sm">
+                    <td className="py-3 px-4 text-ink-caption text-sm">
                       {formatDate(lead.submittedAt)}
                     </td>
                   </tr>
@@ -574,26 +574,26 @@ const AdminDashboard: React.FC = () => {
           !professionalError &&
           recentProfessional.length === 0 && (
             <div className="text-center py-4">
-              <p className="text-gray-400 text-sm">No professional leads found</p>
+              <p className="text-ink-caption text-sm">No professional leads found</p>
             </div>
           )}
       </div>
 
       {/* Recent Events Leads List */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">
+      <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm mb-6">
+        <h2 className="text-sm font-bold text-ink mb-4">
           Recent Event Leads ({recentEvent.length})
         </h2>
 
         {eventLoading && (
           <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">Loading event leads...</p>
+            <p className="text-ink-caption text-sm">Loading event leads...</p>
           </div>
         )}
 
         {eventError && (
           <div className="text-center py-4">
-            <p className="text-red-400">Error: {eventError}</p>
+            <p className="text-status-error">Error: {eventError}</p>
           </div>
         )}
 
@@ -601,20 +601,20 @@ const AdminDashboard: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                <tr className="border-b border-ink-light">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Name
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Phone
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Subject
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Status
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
+                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
                     Date
                   </th>
                 </tr>
@@ -623,11 +623,11 @@ const AdminDashboard: React.FC = () => {
                 {recentEvent.map((lead) => (
                   <tr
                     key={lead.leadId}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                    className="border-b border-ink-light hover:bg-ink-offwhite transition-colors"
                   >
-                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.firstName} </td>
-                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.phone}</td>
-                    <td className="py-3 px-4 text-gray-500 text-sm">{lead.subject}</td>
+                    <td className="py-3 px-4 text-ink text-sm">{lead.firstName} </td>
+                    <td className="py-3 px-4 text-ink text-sm">{lead.phone}</td>
+                    <td className="py-3 px-4 text-ink-caption text-sm">{lead.subject}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -637,7 +637,7 @@ const AdminDashboard: React.FC = () => {
                         {getStatusText(lead.viewed)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-gray-400 text-sm">
+                    <td className="py-3 px-4 text-ink-caption text-sm">
                       {formatDate(lead.submittedAt)}
                     </td>
                   </tr>
@@ -649,7 +649,7 @@ const AdminDashboard: React.FC = () => {
 
         {!eventLoading && !eventError && recentEvent.length === 0 && (
           <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">No event leads found</p>
+            <p className="text-ink-caption text-sm">No event leads found</p>
           </div>
         )}
       </div>

@@ -202,8 +202,8 @@ export default function MyContentManager() {
     <div className="min-h-screen bg-[#F4F5F7] p-4 md:p-6">
       <div className="mb-5 flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-extrabold text-gray-900">{activeType === 'all' ? 'My Content' : `My ${typeLabel}s`}</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{items.length} items · Manage what you've posted — create new, edit, publish, or remove.</p>
+          <h1 className="text-xl font-extrabold text-ink">{activeType === 'all' ? 'My Content' : `My ${typeLabel}s`}</h1>
+          <p className="text-sm text-ink-caption mt-0.5">{items.length} items · Manage what you've posted — create new, edit, publish, or remove.</p>
         </div>
         <PostContentCTA contentType={contentType} typeLabel={typeLabel} onSuccess={load} variant="button" />
       </div>
@@ -211,16 +211,16 @@ export default function MyContentManager() {
       {/* Section tab bar — same pattern as AdminMediaDashboard.tsx, lets you switch
           between related content types in place instead of only via the sidebar. */}
       {group && (
-        <div className="flex gap-0 bg-gray-900 rounded-t-lg mb-4 overflow-x-auto">
+        <div className="flex gap-0 bg-ink rounded-t-lg mb-4 overflow-x-auto">
           <button onClick={() => setActiveType('all')}
-            className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === 'all' ? 'text-white border-yellow-400' : 'text-gray-400 border-transparent hover:text-white'}`}>
+            className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === 'all' ? 'text-white border-brand-yellow' : 'text-ink-caption border-transparent hover:text-white'}`}>
             All ({groupItems.length})
           </button>
           {group.types.map(t => {
             const count = groupItems.filter(i => i.contentType === t.value).length;
             return (
               <button key={t.value} onClick={() => setActiveType(t.value)}
-                className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === t.value ? 'text-white border-yellow-400' : 'text-gray-400 border-transparent hover:text-white'}`}>
+                className={`px-4 py-2.5 text-sm font-semibold whitespace-nowrap border-b-[3px] transition-all ${activeType === t.value ? 'text-white border-brand-yellow' : 'text-ink-caption border-transparent hover:text-white'}`}>
                 {t.label}{count > 0 ? ` (${count})` : ''}
               </button>
             );
@@ -230,70 +230,70 @@ export default function MyContentManager() {
 
       {!loading && items.length > 0 && (
         <div className="relative w-full max-w-xs mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-caption" />
           <input type="text" placeholder="Search content..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+            className="w-full pl-9 pr-4 py-2 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow" />
         </div>
       )}
 
       {loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm text-center py-16 text-gray-400">Loading...</div>
+        <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm text-center py-16 text-ink-caption">Loading...</div>
       ) : items.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm text-center py-16 text-gray-400">
+        <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm text-center py-16 text-ink-caption">
           No content yet. Click "Add Content" to create your first item.
         </div>
       ) : filteredItems.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm text-center py-16 text-gray-400">
+        <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm text-center py-16 text-ink-caption">
           No content found matching "{search}"
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+        <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-x-auto">
           <table className="w-full min-w-[600px] text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-ink-offwhite border-b border-ink-light">
               <tr>
-                <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Title</th>
-                {activeType === 'all' && <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Type</th>}
-                <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Source</th>
-                <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Date</th>
-                <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Status</th>
-                <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Actions</th>
+                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Title</th>
+                {activeType === 'all' && <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Type</th>}
+                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Source</th>
+                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Date</th>
+                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Status</th>
+                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-ink-light">
               {filteredItems.map(item => (
-                <tr key={item.contentId} className="hover:bg-gray-50 transition-colors">
+                <tr key={item.contentId} className="hover:bg-ink-offwhite transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {item.imageUrl && <img src={item.imageUrl} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />}
-                      <span className="font-medium text-gray-900 line-clamp-1">{item.title}</span>
+                      <span className="font-medium text-ink line-clamp-1">{item.title}</span>
                     </div>
                   </td>
                   {activeType === 'all' && (
                     <td className="px-4 py-3">
-                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700 capitalize">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-ink-light text-ink-paragraph capitalize">
                         {TYPE_LABELS[item.contentType] || item.contentType}
                       </span>
                     </td>
                   )}
-                  <td className="px-4 py-3 text-gray-500 text-xs">{item.source || item.company || '—'}</td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">{item.date || new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
+                  <td className="px-4 py-3 text-ink-caption text-xs">{item.source || item.company || '—'}</td>
+                  <td className="px-4 py-3 text-ink-caption text-xs">{item.date || new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.isPublished ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.isPublished ? 'bg-status-success/15 text-status-success' : 'bg-ink-light text-ink-caption'}`}>
                       {item.isPublished ? 'Published' : 'Draft'}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <button onClick={() => togglePublish(item)} title={item.isPublished ? 'Unpublish' : 'Publish'}
-                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-green-600 transition-colors">
+                        className="p-1.5 rounded hover:bg-ink-light text-ink-caption hover:text-status-success transition-colors">
                         {item.isPublished ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                       <button onClick={() => openEdit(item)} title="Edit"
-                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-colors">
+                        className="p-1.5 rounded hover:bg-ink-light text-ink-caption hover:text-status-info transition-colors">
                         <Edit className="w-4 h-4" />
                       </button>
                       <button onClick={() => handleDelete(item)} title="Delete"
-                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-red-600 transition-colors">
+                        className="p-1.5 rounded hover:bg-ink-light text-ink-caption hover:text-status-error transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -306,24 +306,24 @@ export default function MyContentManager() {
       )}
 
       {editItem && editForm && (
-        <div className="fixed inset-0 z-[10000000] flex items-start justify-center bg-black/60 overflow-y-auto py-8">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 my-auto">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900">Edit {TYPE_LABELS[editItem.contentType] || editItem.contentType}</h2>
-              <button onClick={closeEdit} className="p-1.5 rounded hover:bg-gray-100"><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 z-[10000000] flex items-start justify-center bg-ink/60 overflow-y-auto py-8">
+          <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-lg mx-4 my-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
+              <h2 className="text-lg font-bold text-ink">Edit {TYPE_LABELS[editItem.contentType] || editItem.contentType}</h2>
+              <button onClick={closeEdit} className="p-1.5 rounded hover:bg-ink-light"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={handleSaveEdit}>
               <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Title *</label>
+                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Title *</label>
                   <input value={editForm.title} onChange={e => setEditForm(f => f && ({ ...f, title: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                    className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                     placeholder="Content title" required />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Description</label>
+                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Description</label>
                   <textarea value={editForm.description} onChange={e => setEditForm(f => f && ({ ...f, description: e.target.value }))}
-                    rows={3} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400 resize-none"
+                    rows={3} className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow resize-none"
                     placeholder="Short description or summary" />
                 </div>
 
@@ -331,46 +331,46 @@ export default function MyContentManager() {
                   <div className="grid grid-cols-2 gap-4">
                     {(FIELD_CONFIG[editItem.contentType as ContentType] || []).filter(k => k !== 'targetPages').map(key => (
                       <div key={key}>
-                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">{fieldLabelFor(editItem.contentType as ContentType, key)}</label>
+                        <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">{fieldLabelFor(editItem.contentType as ContentType, key)}</label>
                         <input
                           type={FIELD_TYPE[key] === 'date' ? 'date' : 'text'}
                           value={editForm[key] || ''}
                           onChange={e => setEditForm(f => f && ({ ...f, [key]: e.target.value }))}
                           placeholder={FIELD_PLACEHOLDER[key]}
-                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400" />
+                          className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow" />
                       </div>
                     ))}
                   </div>
                 )}
 
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">Image URL</label>
+                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Image URL</label>
                   <input value={editForm.imageUrl} onChange={e => setEditForm(f => f && ({ ...f, imageUrl: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                    className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                     placeholder="https://..." />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1">External Link</label>
+                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">External Link</label>
                   <input value={editForm.externalLink} onChange={e => setEditForm(f => f && ({ ...f, externalLink: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:border-yellow-400"
+                    className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                     placeholder="https://..." />
                 </div>
 
                 <div className="flex items-center gap-2">
                   <button type="button" onClick={() => setEditForm(f => f && ({ ...f, isPublished: !f.isPublished }))}
-                    className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${editForm.isPublished ? 'bg-green-500' : 'bg-gray-300'}`}>
-                    <div className={`w-4 h-4 bg-white rounded-full mx-1 transition-transform ${editForm.isPublished ? 'translate-x-4' : 'translate-x-0'}`} />
+                    className={`w-10 h-6 rounded-full transition-colors flex-shrink-0 ${editForm.isPublished ? 'bg-status-success' : 'bg-ink-light'}`}>
+                    <div className={`w-4 h-4 bg-surface-card rounded-full mx-1 transition-transform ${editForm.isPublished ? 'translate-x-4' : 'translate-x-0'}`} />
                   </button>
-                  <span className="text-sm font-medium text-gray-700">{editForm.isPublished ? 'Published (visible on site)' : 'Draft (hidden from public)'}</span>
+                  <span className="text-sm font-medium text-ink-paragraph">{editForm.isPublished ? 'Published (visible on site)' : 'Draft (hidden from public)'}</span>
                 </div>
               </div>
 
-              <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
-                <button type="button" onClick={closeEdit} className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <div className="px-6 py-4 border-t border-ink-light flex justify-end gap-3">
+                <button type="button" onClick={closeEdit} className="px-4 py-2 border border-ink-light rounded-lg text-sm font-medium text-ink-paragraph hover:bg-ink-offwhite">
                   Cancel
                 </button>
                 <button type="submit" disabled={saving}
-                  className="flex items-center gap-2 px-5 py-2 bg-yellow-400 text-black font-bold rounded-lg text-sm hover:bg-yellow-300 transition-colors disabled:opacity-50">
+                  className="flex items-center gap-2 px-5 py-2 bg-brand-yellow text-ink font-bold rounded-lg text-sm hover:bg-brand-yellow-soft transition-colors disabled:opacity-50">
                   {saving ? 'Saving...' : <><Check className="w-4 h-4" /> Update</>}
                 </button>
               </div>
