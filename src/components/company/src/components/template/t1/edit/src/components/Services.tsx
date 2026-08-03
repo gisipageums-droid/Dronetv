@@ -655,11 +655,11 @@ const handleSave = async () => {
         maxLength = null,
       }) => {
         const baseClasses =
-          "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+          "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none";
 
         // Show character count if maxLength is provided
         const charCount = maxLength ? (
-          <div className="text-xs text-gray-500 text-right mt-1">
+          <div className="text-xs text-ink-caption text-right mt-1">
             {value.length}/{maxLength}
           </div>
         ) : null;
@@ -721,18 +721,18 @@ const handleSave = async () => {
           <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
             {isSaving ? (
               <>
-                <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
-                <span className="text-xs text-gray-700">Saving...</span>
+                <Loader2 className="w-3 h-3 animate-spin text-status-info" />
+                <span className="text-xs text-ink-paragraph">Saving...</span>
               </>
             ) : unsavedChanges ? (
               <>
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-gray-700">Unsaved changes</span>
+                <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                <span className="text-xs text-ink-paragraph">Unsaved changes</span>
               </>
             ) : (
               <>
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-xs text-gray-700">
+                <div className="w-2 h-2 bg-status-success rounded-full"></div>
+                <span className="text-xs text-ink-paragraph">
                   Saved {lastSaved && `at ${lastSaved}`}
                 </span>
               </>
@@ -748,7 +748,7 @@ const handleSave = async () => {
             onClick={handleEdit}
             variant="outline"
             size="sm"
-            className="bg-white hover:bg-gray-50 shadow-md"
+            className="bg-surface-card hover:bg-ink-offwhite shadow-md"
           >
             <Edit2 className="w-4 h-4 mr-2" />
             Edit
@@ -758,7 +758,7 @@ const handleSave = async () => {
             <Button
               onClick={handleSave}
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+              className="bg-status-success hover:bg-status-success text-white shadow-md"
               disabled={isSaving || isUploading}
             >
               {isSaving ? (
@@ -772,7 +772,7 @@ const handleSave = async () => {
               onClick={handleCancel}
               variant="outline"
               size="sm"
-              className="bg-white hover:bg-gray-50 shadow-md"
+              className="bg-surface-card hover:bg-ink-offwhite shadow-md"
               disabled={isSaving || isUploading}
             >
               <X className="w-4 h-4 mr-2" />
@@ -807,14 +807,14 @@ const handleSave = async () => {
             <>
               {servicesSection?.services &&
                 servicesSection?.services.length > 0 && (
-                  <span className="inline-block mx-auto px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
+                  <span className="inline-block mx-auto px-4 py-1.5 bg-status-info/15 text-status-info rounded-full text-sm font-medium mb-4">
                     Our Services
                   </span>
                 )}
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
                 {displayContent.heading.head}
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="text-lg text-ink-paragraph max-w-2xl mx-auto">
                 {displayContent.heading.desc}
               </p>
             </>
@@ -833,7 +833,7 @@ const handleSave = async () => {
                       updateCategory(i, e.target.value);
                     }
                   }}
-                  className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                  className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
                   maxLength={50}
                 />
               ) : (
@@ -843,8 +843,8 @@ const handleSave = async () => {
                     setActiveCategory(cat);
                   }}
                   className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${activeCategory === cat
-                    ? "bg-orange-400 text-white shadow-lg scale-105"
-                    : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                    ? "bg-status-warning text-white shadow-lg scale-105"
+                    : "bg-surface-card text-ink-paragraph hover:bg-ink-offwhite shadow-md hover:shadow-lg"
                     }`}
                 >
                   {cat}
@@ -853,7 +853,7 @@ const handleSave = async () => {
               {isEditing && cat !== "All" && (
                 <button
                   onClick={() => removeCategory(cat)}
-                  className="text-red-500 text-xs"
+                  className="text-status-error text-xs"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -865,7 +865,7 @@ const handleSave = async () => {
               onClick={addCategory}
               size="sm"
               variant="outline"
-              className="bg-green-50 hover:bg-green-100 text-green-700"
+              className="bg-status-success/10 hover:bg-status-success/15 text-status-success"
             >
               <Plus className="w-3 h-3 mr-1" />
               Add Category
@@ -876,7 +876,7 @@ const handleSave = async () => {
         {/* Services Grid */}
         <div className="flex flex-wrap justify-center gap-2 md:gap-3">
           {filteredServices.map((service, index) => (
-            <Card key={index} className="relative overflow-hidden w-[220px] min-h-[360px] rounded-2xl shadow-md border border-gray-100 bg-white flex flex-col">
+            <Card key={index} className="relative overflow-hidden w-[220px] min-h-[360px] rounded-2xl shadow-md border border-ink-light bg-surface-card flex flex-col">
               <div className="h-32 overflow-hidden relative rounded-t-2xl" style={{ background: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)' }}>
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 pointer-events-none">
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" /></svg>
@@ -891,7 +891,7 @@ const handleSave = async () => {
                   />
                 )}
                 <div className="absolute top-3 right-3">
-                  <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full shadow">
+                  <span className="px-3 py-1 bg-status-warning text-white text-xs font-medium rounded-full shadow">
                     {service.category}
                   </span>
                 </div>
@@ -947,7 +947,7 @@ const handleSave = async () => {
                       // maxLength={1000}
                     />
                     <div className="mt-2 space-y-2">
-                      <label className="block text-xs font-medium text-gray-700">
+                      <label className="block text-xs font-medium text-ink-paragraph">
                         Category
                       </label>
                       <select
@@ -962,7 +962,7 @@ const handleSave = async () => {
                             setAddingCategoryFor(null);
                           }
                         }}
-                        className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-sm"
+                        className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded p-1 text-sm"
                       >
                         {displayContent.categories.map((c, i) => (
                           <option key={i} value={c}>
@@ -979,7 +979,7 @@ const handleSave = async () => {
                               if (e.target.value.length <= 50) setNewCategoryName(e.target.value);
                             }}
                             placeholder="New category name"
-                            className="flex-1 bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-sm"
+                            className="flex-1 bg-white/80 border-2 border-dashed border-status-info/40 rounded p-1 text-sm"
                             maxLength={50}
                           />
                           <Button
@@ -1010,7 +1010,7 @@ const handleSave = async () => {
                   </>
                 ) : (
                   <>
-                    <p className="text-sm text-gray-600 mb-3 flex-1 h-[64px] overflow-auto">
+                    <p className="text-sm text-ink-paragraph mb-3 flex-1 h-[64px] overflow-auto">
                       {service.description}
                     </p>
                   </>
@@ -1018,7 +1018,7 @@ const handleSave = async () => {
 
                 <div className="mt-auto flex gap-2 ">
                   <Button
-                    className={` ${isEditing ? "" : "w-full"} bg-orange-400 hover:bg-orange-500 text-white rounded-md`}
+                    className={` ${isEditing ? "" : "w-full"} bg-status-warning hover:bg-status-warning text-white rounded-md`}
                     size="sm"
                     onClick={() => openModal(service, index)}
                   >
@@ -1043,7 +1043,7 @@ const handleSave = async () => {
             <Card className="flex items-center justify-center border-dashed">
               <Button
                 onClick={addService}
-                className="text-green-600 cursor-pointer"
+                className="text-status-success cursor-pointer"
               >
                 <Plus className="w-4 h-4 mr-1" />
                 Add Service
@@ -1057,7 +1057,7 @@ const handleSave = async () => {
       <AnimatePresence>
         {isModalOpen && selectedServiceIndex !== null && (
           <motion.div
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-[9999999] max-h-[90vh] overflow-y-auto"
+            className="fixed inset-0 bg-ink/50 flex items-center justify-center p-6 z-[9999999] max-h-[90vh] overflow-y-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -1069,7 +1069,7 @@ const handleSave = async () => {
             >
               <button
                 onClick={closeModal}
-                className="absolute top-4 right-4 bg-gray-500 rounded-full p-2"
+                className="absolute top-4 right-4 bg-ink-caption rounded-full p-2"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1125,7 +1125,7 @@ const handleSave = async () => {
                 {displayContent.services[selectedServiceIndex].benefits.map(
                   (b, bi) => (
                     <li key={bi} className="flex gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
+                      <CheckCircle className="w-4 h-4 text-status-success mt-1" />
                       {isEditing ? (
                         <div className="flex gap-2 w-full">
                           <input
@@ -1140,7 +1140,7 @@ const handleSave = async () => {
                                 );
                               }
                             }}
-                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                            className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
                             maxLength={50}
                           />
                           <Button
@@ -1153,7 +1153,7 @@ const handleSave = async () => {
                             }
                             size="sm"
                             variant="outline"
-                            className="bg-red-50 hover:bg-red-100 text-red-700"
+                            className="bg-status-error/10 hover:bg-status-error/15 text-status-error"
                           >
                             <Trash2 className="w-3 h-3" />
                           </Button>
@@ -1170,7 +1170,7 @@ const handleSave = async () => {
                   onClick={() => addToList(selectedServiceIndex, "benefits")}
                   size="sm"
                   variant="outline"
-                  className="bg-green-50 hover:bg-green-100 text-green-700 mb-4"
+                  className="bg-status-success/10 hover:bg-status-success/15 text-status-success mb-4"
                 >
                   <Plus className="w-3 h-3 mr-1" />
                   Add Benefit
@@ -1198,7 +1198,7 @@ const handleSave = async () => {
                                 );
                               }
                             }}
-                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                            className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
                             maxLength={50}
                           />
                           <Button
@@ -1211,7 +1211,7 @@ const handleSave = async () => {
                             }
                             size="sm"
                             variant="outline"
-                            className="bg-red-50 hover:bg-red-100 text-red-700"
+                            className="bg-status-error/10 hover:bg-status-error/15 text-status-error"
                           >
                             <Trash2 className="w-3 h-3" />
                           </Button>
@@ -1228,7 +1228,7 @@ const handleSave = async () => {
                   onClick={() => addToList(selectedServiceIndex, "process")}
                   size="sm"
                   variant="outline"
-                  className="bg-green-50 hover:bg-green-100 text-green-700 mb-4"
+                  className="bg-status-success/10 hover:bg-status-success/15 text-status-success mb-4"
                 >
                   <Plus className="w-3 h-3 mr-1" />
                   Add Step
@@ -1292,28 +1292,28 @@ const handleSave = async () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Service Image
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={cropImage}
@@ -1345,18 +1345,18 @@ const handleSave = async () => {
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     1:1 (Square)
@@ -1364,8 +1364,8 @@ const handleSave = async () => {
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     4:3 (Standard)
@@ -1373,8 +1373,8 @@ const handleSave = async () => {
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     16:9 (Widescreen)
@@ -1385,14 +1385,14 @@ const handleSave = async () => {
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -1403,19 +1403,19 @@ const handleSave = async () => {
                     max={4}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     +
                   </button>
                   <button
                     type="button"
                     onClick={() => setZoom(1)}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     1x
                   </button>
@@ -1426,20 +1426,20 @@ const handleSave = async () => {
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isUploading ? (
                     <>

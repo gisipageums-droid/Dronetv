@@ -191,7 +191,7 @@ export default function About() {
                   onClick={() =>
                     setFeatures((prev) => [...prev, "New Feature"])
                   }
-                  className='text-green-600 text-sm mt-2'
+                  className='text-status-success text-sm mt-2'
                 >
                   + Add Feature
                 </button>
@@ -258,9 +258,9 @@ export default function About() {
             />
           ) : (
             <>
-              <Eye className='w-12 h-12 text-red-500 mx-auto mb-4' />
+              <Eye className='w-12 h-12 text-status-error mx-auto mb-4' />
               <div className='inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6'>
-                <span className='font-medium text-red-500 text-lg'>{visionBadge}</span>
+                <span className='font-medium text-status-error text-lg'>{visionBadge}</span>
               </div>
             </>
           )}

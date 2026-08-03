@@ -425,30 +425,30 @@ export default function Testimonials({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="text-lg font-semibold text-ink-charcoal">
                   Crop Testimonial Image
                 </h3>
               </div>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -484,18 +484,18 @@ export default function Testimonials({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     1:1 (Square)
@@ -503,8 +503,8 @@ export default function Testimonials({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     4:3 (Standard)
@@ -512,8 +512,8 @@ export default function Testimonials({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     16:9 (Widescreen)
@@ -524,11 +524,11 @@ export default function Testimonials({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     <ZoomIn className="w-4 h-4" />
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -537,7 +537,7 @@ export default function Testimonials({
                   max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -545,13 +545,13 @@ export default function Testimonials({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm"
                 >
                   Cancel
                 </button>
@@ -559,8 +559,8 @@ export default function Testimonials({
                   onClick={applyCrop}
                   disabled={isUploading}
                   className={`w-full rounded py-2 text-sm ${isUploading
-                      ? "bg-gray-400 cursor-not-allowed text-white"
-                      : "bg-green-600 hover:bg-green-700 text-white"
+                      ? "bg-ink-caption cursor-not-allowed text-white"
+                      : "bg-status-success hover:bg-status-success text-white"
                     }`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
@@ -589,8 +589,8 @@ export default function Testimonials({
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
+                    ? "bg-ink-caption cursor-not-allowed"
+                    : "bg-status-success hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save & Exit"}
@@ -600,7 +600,7 @@ export default function Testimonials({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
+                className="bg-brand-gold text-ink px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit
               </motion.button>
@@ -609,7 +609,7 @@ export default function Testimonials({
 
           {/* Auto-update status indicator */}
           {isEditing && (
-            <div className="flex items-center justify-end mb-4 text-sm text-green-600">
+            <div className="flex items-center justify-end mb-4 text-sm text-status-success">
               <CheckCircle className="w-4 h-4 mr-1" />
               Auto-saving changes...
             </div>
@@ -631,14 +631,14 @@ export default function Testimonials({
                     onChange={(e) => updateHeadline("title", e.target.value)}
                     maxLength={80}
                     className={`text-3xl md:text-4xl text-foreground mb-4 w-full text-center bg-transparent border-b font-bold ${testimonialsSection.headline.title.length >= 80
-                        ? "border-red-500"
+                        ? "border-status-error"
                         : ""
                       }`}
                   />
-                  <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
+                  <div className="text-right text-xs text-ink-caption -mt-2 mb-2">
                     {testimonialsSection.headline.title.length}/80
                     {testimonialsSection.headline.title.length >= 80 && (
-                      <span className="ml-2 text-red-500 font-bold">
+                      <span className="ml-2 text-status-error font-bold">
                         Character limit reached!
                       </span>
                     )}
@@ -651,15 +651,15 @@ export default function Testimonials({
                     onChange={(e) => updateHeadline("description", e.target.value)}
                     maxLength={200}
                     className={`text-lg text-muted-foreground w-full text-center bg-transparent border-b ${testimonialsSection.headline.description.length >= 200
-                        ? "border-red-500"
+                        ? "border-status-error"
                         : ""
                       }`}
                     rows={2}
                   />
-                  <div className="text-right text-xs text-gray-500 mt-1">
+                  <div className="text-right text-xs text-ink-caption mt-1">
                     {testimonialsSection.headline.description.length}/200
                     {testimonialsSection.headline.description.length >= 200 && (
-                      <span className="ml-2 text-red-500 font-bold">
+                      <span className="ml-2 text-status-error font-bold">
                         Character limit reached!
                       </span>
                     )}
@@ -703,7 +703,7 @@ export default function Testimonials({
               >
                 <Button
                   onClick={addTestimonial}
-                  className="text-green-600 cursor-pointer"
+                  className="text-status-success cursor-pointer"
                 >
                   + Add Testimonial
                 </Button>
@@ -826,14 +826,14 @@ function TestimonialCard({
                     updateTestimonial(index, "quote", e.target.value)
                   }
                   maxLength={300}
-                  className={`text-card-foreground leading-relaxed w-full border-b bg-transparent min-h-[120px] ${testimonial.quote.length >= 300 ? "border-red-500" : ""
+                  className={`text-card-foreground leading-relaxed w-full border-b bg-transparent min-h-[120px] ${testimonial.quote.length >= 300 ? "border-status-error" : ""
                     }`}
                   rows={4}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1">
+                <div className="text-right text-xs text-ink-caption mt-1">
                   {testimonial.quote.length}/300
                   {testimonial.quote.length >= 300 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Character limit reached!
                     </span>
                   )}
@@ -861,7 +861,7 @@ function TestimonialCard({
                 className="w-full h-full object-cover"
               />
               {isEditing && (
-                <label className="absolute font-bold inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                <label className="absolute font-bold inset-0 bg-ink/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
                   <svg
                     className="w-4 h-4 text-white"
                     fill="none"
@@ -891,7 +891,7 @@ function TestimonialCard({
               )}
               {hasPendingImage && (
                 <div
-                  className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"
+                  className="absolute -top-1 -right-1 w-4 h-4 bg-status-success rounded-full border-2 border-white"
                   title="Image ready for upload"
                 />
               )}
@@ -906,13 +906,13 @@ function TestimonialCard({
                         updateTestimonial(index, "name", e.target.value)
                       }
                       maxLength={50}
-                      className={`font-medium text-card-foreground w-full border-b bg-transparent ${testimonial.name.length >= 50 ? "border-red-500" : ""
+                      className={`font-medium text-card-foreground w-full border-b bg-transparent ${testimonial.name.length >= 50 ? "border-status-error" : ""
                         }`}
                     />
-                    <div className="text-right text-xs text-gray-500 mt-1">
+                    <div className="text-right text-xs text-ink-caption mt-1">
                       {testimonial.name.length}/50
                       {testimonial.name.length >= 50 && (
-                        <span className="ml-2 text-red-500 font-bold">
+                        <span className="ml-2 text-status-error font-bold">
                           Limit reached!
                         </span>
                       )}
@@ -926,13 +926,13 @@ function TestimonialCard({
                         updateTestimonial(index, "role", e.target.value)
                       }
                       maxLength={60}
-                      className={`text-sm text-muted-foreground w-full border-b bg-transparent mt-1 ${testimonial.role.length >= 60 ? "border-red-500" : ""
+                      className={`text-sm text-muted-foreground w-full border-b bg-transparent mt-1 ${testimonial.role.length >= 60 ? "border-status-error" : ""
                         }`}
                     />
-                    <div className="text-right text-xs text-gray-500 mt-1">
+                    <div className="text-right text-xs text-ink-caption mt-1">
                       {testimonial.role.length}/60
                       {testimonial.role.length >= 60 && (
-                        <span className="ml-2 text-red-500 font-bold">
+                        <span className="ml-2 text-status-error font-bold">
                           Limit reached!
                         </span>
                       )}

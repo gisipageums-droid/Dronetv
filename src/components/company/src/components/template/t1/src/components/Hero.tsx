@@ -64,13 +64,13 @@ export default function Hero() {
               variants={itemVariants}
             >
               Shaping Tomorrow with Innovation Today,
-              <span className='block text-yellow-400 mt-2'>
+              <span className='block text-brand-yellow mt-2'>
                 Empowering Ideas, Transforming the Future
               </span>
             </motion.h1>
 
             <motion.p
-              className='text-base sm:text-lg lg:text-lg text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed'
+              className='text-base sm:text-lg lg:text-lg text-ink-light max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed'
               variants={itemVariants}
             >
               We believe in turning bold ideas into lasting impact. Our
@@ -85,13 +85,13 @@ export default function Hero() {
             >
               <a
                 href='#contact'
-                className='bg-[#ffeb3b] hover:bg-yellow-300 text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block'
+                className='bg-[#ffeb3b] hover:bg-brand-yellow-soft text-ink rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block'
               >
                 Get Started
               </a>
               <a
                 href='#about'
-                className='text-red-500 border border-white hover:bg-white hover:text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 inline-block'
+                className='text-status-error border border-white hover:bg-surface-card hover:text-ink rounded-full px-8 py-4 font-semibold transition-all duration-300 inline-block'
               >
                 Learn More
               </a>
@@ -165,7 +165,7 @@ export default function Hero() {
 
                 {/* Optional: Add a decorative element */}
                 <motion.div
-                  className='absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80'
+                  className='absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-brand-yellow rounded-full opacity-80'
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
@@ -179,15 +179,15 @@ export default function Hero() {
 
       {/* Decorative Elements */}
       <div
-        className='absolute top-32 left-10 w-2 h-2 sm:w-3 sm:h-3 bg-yellow-400 rounded-full opacity-60 animate-pulse'
+        className='absolute top-32 left-10 w-2 h-2 sm:w-3 sm:h-3 bg-brand-yellow rounded-full opacity-60 animate-pulse'
         style={{ zIndex: 2 }}
       />
       <div
-        className='absolute bottom-32 right-10 w-2 h-2 sm:w-3 sm:h-3 bg-yellow-400 rounded-full opacity-60 animate-pulse'
+        className='absolute bottom-32 right-10 w-2 h-2 sm:w-3 sm:h-3 bg-brand-yellow rounded-full opacity-60 animate-pulse'
         style={{ zIndex: 2 }}
       />
       <div
-        className='absolute top-1/2 left-5 w-1 h-1 sm:w-2 sm:h-2 bg-white rounded-full opacity-40 animate-bounce'
+        className='absolute top-1/2 left-5 w-1 h-1 sm:w-2 sm:h-2 bg-surface-card rounded-full opacity-40 animate-bounce'
         style={{ zIndex: 2 }}
       />
     </section>

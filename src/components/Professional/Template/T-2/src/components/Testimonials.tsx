@@ -54,7 +54,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-20 bg-yellow-50">
+    <section className="py-20 bg-surface-main">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -64,10 +64,10 @@ export function Testimonials() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl text-gray-900 mb-4">
-            What <span className="text-yellow-500">Clients Say</span>
+          <h2 className="text-3xl sm:text-4xl text-ink mb-4">
+            What <span className="text-brand-gold">Clients Say</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-ink-paragraph max-w-2xl mx-auto">
             Don't just take my word for it. Here's what my clients have to say
             about working with me and the results we've achieved together.
           </p>
@@ -83,7 +83,7 @@ export function Testimonials() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -10 }}
-              className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-surface-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
             >
               {/* Quote Icon */}
               <motion.div
@@ -91,9 +91,9 @@ export function Testimonials() {
                 whileInView={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
                 viewport={{ once: true }}
-                className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mb-4"
+                className="w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center mb-4"
               >
-                <Quote className="w-6 h-6 text-gray-900" />
+                <Quote className="w-6 h-6 text-ink" />
               </motion.div>
 
               {/* Stars */}
@@ -106,13 +106,13 @@ export function Testimonials() {
                     transition={{ duration: 0.3, delay: index * 0.1 + 0.3 + i * 0.1 }}
                     viewport={{ once: true }}
                   >
-                    <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                    <Star className="w-5 h-5 text-brand-yellow fill-current" />
                   </motion.div>
                 ))}
               </div>
 
               {/* Review */}
-              <p className="text-gray-600 leading-relaxed mb-6">
+              <p className="text-ink-paragraph leading-relaxed mb-6">
                 "{testimonial.review}"
               </p>
 
@@ -123,17 +123,17 @@ export function Testimonials() {
                   className="relative"
                 >
                   <div className="w-12 h-12 rounded-full overflow-hidden">
-                    <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
-                      <span className="text-gray-900 text-lg">
+                    <div className="w-full h-full bg-gradient-to-br from-brand-yellow to-brand-gold flex items-center justify-center">
+                      <span className="text-ink text-lg">
                         {testimonial.name.charAt(0)}
                       </span>
                     </div>
                   </div>
                 </motion.div>
                 <div>
-                  <h4 className="text-gray-900 mb-1">{testimonial.name}</h4>
-                  <p className="text-sm text-gray-600">{testimonial.position}</p>
-                  <p className="text-sm text-yellow-600">{testimonial.company}</p>
+                  <h4 className="text-ink mb-1">{testimonial.name}</h4>
+                  <p className="text-sm text-ink-paragraph">{testimonial.position}</p>
+                  <p className="text-sm text-brand-gold">{testimonial.company}</p>
                 </div>
               </div>
             </motion.div>
@@ -147,11 +147,11 @@ export function Testimonials() {
           viewport={{ once: true }}
           className="text-center mt-16"
         >
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg transition-colors duration-500">
-            <h3 className="text-2xl text-gray-900 dark:text-white mb-4">
+          <div className="bg-surface-card dark:bg-gray-800 rounded-2xl p-8 shadow-lg transition-colors duration-500">
+            <h3 className="text-2xl text-ink dark:text-white mb-4">
               Ready to be the next success story?
             </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-xl mx-auto">
+            <p className="text-ink-paragraph dark:text-gray-300 mb-6 max-w-xl mx-auto">
               Join the growing list of satisfied clients who have transformed
               their businesses with innovative digital solutions.
             </p>
@@ -159,7 +159,7 @@ export function Testimonials() {
               href="#contact"
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center px-8 py-3 bg-yellow-400 dark:bg-yellow-500 text-gray-900 dark:text-gray-900 rounded-lg hover:bg-yellow-500 dark:hover:bg-yellow-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center px-8 py-3 bg-brand-yellow dark:bg-yellow-500 text-ink dark:text-gray-900 rounded-lg hover:bg-brand-gold dark:hover:bg-yellow-600 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Start Your Success Story
             </motion.a>

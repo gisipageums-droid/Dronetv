@@ -67,7 +67,7 @@ const Testimonials: React.FC = () => {
   ];
 
   return (
-    <section id="testimonials" className="py-20 bg-white dark:bg-gray-900">
+    <section id="testimonials" className="py-20 bg-surface-card dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -77,10 +77,10 @@ const Testimonials: React.FC = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            What Clients <span className="text-orange-400">Say</span>
+          <h2 className="text-4xl lg:text-5xl font-bold text-ink dark:text-white mb-4">
+            What Clients <span className="text-status-warning">Say</span>
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          <p className="text-xl text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto">
             Don't just take my word for it. Here's what my clients have to say
             about working with me.
           </p>
@@ -96,17 +96,17 @@ const Testimonials: React.FC = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -10, scale: 1.02 }}
-              className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300"
+              className="bg-gradient-to-br from-ink-offwhite to-ink-light dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300"
             >
               {/* Quote Icon */}
               <div className="flex justify-end mb-4">
                 <div className="w-10 h-10 bg-gradient-to-r from-accent-yellow to-accent-orange rounded-full flex items-center justify-center">
-                  <Quote className="w-5 h-5 text-black dark:text-white" />
+                  <Quote className="w-5 h-5 text-ink dark:text-white" />
                 </div>
               </div>
 
               {/* Testimonial Content */}
-              <blockquote className="text-gray-700 dark:text-gray-300 mb-6 italic leading-relaxed">
+              <blockquote className="text-ink-paragraph dark:text-gray-300 mb-6 italic leading-relaxed">
                 "{testimonial.content}"
               </blockquote>
 
@@ -115,7 +115,7 @@ const Testimonials: React.FC = () => {
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <Star
                     key={i}
-                    className="w-4 h-4 text-yellow-500 fill-yellow-500"
+                    className="w-4 h-4 text-brand-gold fill-brand-gold"
                   />
                 ))}
               </div>
@@ -128,22 +128,22 @@ const Testimonials: React.FC = () => {
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 dark:text-white">
+                  <h3 className="font-bold text-ink dark:text-white">
                     {testimonial.name}
                   </h3>
-                  <p className="text-orange-500 font-medium text-sm">
+                  <p className="text-status-warning font-medium text-sm">
                     {testimonial.position}
                   </p>
-                  <p className="text-gray-600 dark:text-gray-400 text-xs">
+                  <p className="text-ink-paragraph dark:text-gray-400 text-xs">
                     {testimonial.company}
                   </p>
                 </div>
               </div>
 
               {/* Project Tag */}
-              <div className="mt-4 pt-4 border-t border-orange-500 dark:border-gray-700">
-                <div className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-accent-yellow/20 to-accent-orange/20 border border-orange-500 rounded-full">
-                  <span className="text-orange-500 font-medium text-sm">
+              <div className="mt-4 pt-4 border-t border-status-warning dark:border-gray-700">
+                <div className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-accent-yellow/20 to-accent-orange/20 border border-status-warning rounded-full">
+                  <span className="text-status-warning font-medium text-sm">
                     {testimonial.project}
                   </span>
                 </div>
@@ -160,7 +160,7 @@ const Testimonials: React.FC = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+          <h3 className="text-2xl font-bold text-ink dark:text-white mb-8">
             Trusted by Amazing Companies
           </h3>
 
@@ -175,7 +175,7 @@ const Testimonials: React.FC = () => {
               <motion.div
                 key={index}
                 whileHover={{ scale: 1.1, opacity: 1 }}
-                className="px-6 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg font-bold text-gray-700 dark:text-gray-300"
+                className="px-6 py-3 bg-ink-light dark:bg-gray-800 rounded-lg font-bold text-ink-paragraph dark:text-gray-300"
               >
                 {company}
               </motion.div>

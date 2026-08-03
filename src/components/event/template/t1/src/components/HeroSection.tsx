@@ -46,7 +46,7 @@ const HeroSection: React.FC = () => {
           allowFullScreen
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black/60 z-10"></div>
+        <div className="absolute inset-0 bg-ink/60 z-10"></div>
       </div>
 
       {/* Content */}
@@ -98,9 +98,9 @@ const HeroSection: React.FC = () => {
               { label: 'Minutes', value: timeLeft.minutes },
               { label: 'Seconds', value: timeLeft.seconds }
             ].map((item, index) => (
-              <div key={index} className="bg-black/50 backdrop-blur-sm rounded-lg p-4 border border-[#FFD400]/30">
+              <div key={index} className="bg-ink/50 backdrop-blur-sm rounded-lg p-4 border border-[#FFD400]/30">
                 <div className="text-2xl font-bold text-[#FFD400]">{item.value.toString().padStart(2, '0')}</div>
-                <div className="text-sm text-gray-300">{item.label}</div>
+                <div className="text-sm text-ink-light">{item.label}</div>
               </div>
             ))}
           </div>

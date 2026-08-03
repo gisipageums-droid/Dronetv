@@ -59,7 +59,7 @@ export default function Services({ serviceData }) {
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {visibleServices.map((service, index) => (
-            <Card key={index} className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl  shadow-gray-500">
+            <Card key={index} className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl  shadow-ink-caption">
               <div className="h-40 overflow-hidden relative flex-shrink-0">
                 <img
                   src={service.image}
@@ -75,7 +75,7 @@ export default function Services({ serviceData }) {
                   <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
                     {service.description}
                   </p>
-                  <p className="text-xs mt-1 italic text-gray-500">
+                  <p className="text-xs mt-1 italic text-ink-caption">
                     Category: {service.category}
                   </p>
                 </div>
@@ -112,7 +112,7 @@ export default function Services({ serviceData }) {
       <AnimatePresence>
         {isModalOpen && selectedServiceIndex !== null && (
           <motion.div
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50"
+            className="fixed inset-0 bg-ink/50 flex items-center justify-center p-6 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -124,7 +124,7 @@ export default function Services({ serviceData }) {
             >
               <button
                 onClick={closeModal}
-                className="absolute top-4 right-4 bg-gray-500 rounded-full p-2"
+                className="absolute top-4 right-4 bg-ink-caption rounded-full p-2"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -139,7 +139,7 @@ export default function Services({ serviceData }) {
               <ul className="space-y-2 mb-4">
                 {serviceData.services[selectedServiceIndex].benefits.map((b, bi) => (
                   <li key={bi} className="flex gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
+                    <CheckCircle className="w-4 h-4 text-status-success mt-1" />
                     <span>{b}</span>
                   </li>
                 ))}

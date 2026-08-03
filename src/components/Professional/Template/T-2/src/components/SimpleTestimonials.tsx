@@ -23,12 +23,12 @@ const testimonials = [
 
 export function SimpleTestimonials() {
   return (
-    <section className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section className="py-20 bg-surface-main dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
-            What <span className="text-yellow-500">Clients Say</span>
+            What <span className="text-brand-gold">Clients Say</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Don't just take my word for it. Here's what my clients have to say 
@@ -44,14 +44,14 @@ export function SimpleTestimonials() {
               className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
             >
               {/* Quote Icon */}
-              <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mb-4">
-                <Quote className="w-6 h-6 text-gray-900" />
+              <div className="w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center mb-4">
+                <Quote className="w-6 h-6 text-ink" />
               </div>
 
               {/* Stars */}
               <div className="flex space-x-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                  <Star key={i} className="w-5 h-5 text-brand-yellow fill-current" />
                 ))}
               </div>
 
@@ -62,8 +62,8 @@ export function SimpleTestimonials() {
 
               {/* Client Info */}
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
-                  <span className="text-gray-900 text-lg">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-yellow to-brand-gold flex items-center justify-center">
+                  <span className="text-ink text-lg">
                     {testimonial.name.charAt(0)}
                   </span>
                 </div>
@@ -88,7 +88,7 @@ export function SimpleTestimonials() {
             </p>
             <a
               href="#contact"
-              className="inline-flex items-center px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500 hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center px-8 py-3 bg-brand-yellow text-ink rounded-lg hover:bg-brand-gold hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Start Your Success Story
             </a>

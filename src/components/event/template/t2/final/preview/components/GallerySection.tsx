@@ -86,16 +86,16 @@ export function GallerySection({ galleryData }: GalleryProps) {
   };
 
   return (
-    <section id="gallery" className="py-16 sm:py-20 md:py-24 bg-white">
+    <section id="gallery" className="py-16 sm:py-20 md:py-24 bg-surface-card">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
-              <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+            <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
+              <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
             </div>
-            <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+            <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+            <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
               {displayData.description}
             </p>
           </div>
@@ -115,9 +115,9 @@ export function GallerySection({ galleryData }: GalleryProps) {
                 />
                 
                 {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-                    <span className="inline-block px-2 py-1 bg-blue-500 text-white text-xs rounded capitalize mb-2">
+                    <span className="inline-block px-2 py-1 bg-status-info text-white text-xs rounded capitalize mb-2">
                       {image.category}
                     </span>
                     <p className="text-white text-sm sm:text-base">{image.caption}</p>
@@ -131,11 +131,11 @@ export function GallerySection({ galleryData }: GalleryProps) {
           {displayData.images.length === 0 && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <div className="w-8 h-8 text-gray-400">📷</div>
+                <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 text-ink-caption">📷</div>
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Images Added</h4>
-                <p className="text-gray-600">Add images to showcase your event gallery.</p>
+                <h4 className="text-lg font-semibold text-ink mb-2">No Images Added</h4>
+                <p className="text-ink-paragraph">Add images to showcase your event gallery.</p>
               </div>
             </div>
           )}
@@ -143,7 +143,7 @@ export function GallerySection({ galleryData }: GalleryProps) {
           {/* Lightbox */}
           {selectedImage !== null && (
             <div
-              className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+              className="fixed inset-0 bg-ink/95 z-50 flex items-center justify-center p-4"
               onClick={() => setSelectedImage(null)}
             >
               <button
@@ -180,7 +180,7 @@ export function GallerySection({ galleryData }: GalleryProps) {
                   className="max-w-full max-h-[80vh] object-contain rounded-lg"
                 />
                 <div className="text-center mt-4 sm:mt-6">
-                  <span className="inline-block px-3 py-1 bg-blue-500 text-white text-sm rounded-full capitalize mb-2">
+                  <span className="inline-block px-3 py-1 bg-status-info text-white text-sm rounded-full capitalize mb-2">
                     {displayData.images[selectedImage].category}
                   </span>
                   <p className="text-white text-base sm:text-lg">

@@ -42,13 +42,13 @@ export default function Hero({ heroData }) {
               variants={itemVariants}
             >
               {heroData.heading}
-              <span className='block text-yellow-400 mt-2'>
+              <span className='block text-brand-yellow mt-2'>
                 {heroData.subheading}
               </span>
             </motion.h1>
 
             <motion.p
-              className='text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed'
+              className='text-base sm:text-md lg:text-md text-ink-light max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed'
               variants={itemVariants}
             >
               {heroData.description}
@@ -61,13 +61,13 @@ export default function Hero({ heroData }) {
             >
               <a
                 href={heroData.primaryButtonLink}
-                className='bg-yellow-400 hover:bg-yellow-300 text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block text-center'
+                className='bg-brand-yellow hover:bg-brand-yellow-soft text-ink rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block text-center'
               >
                 {heroData.primaryBtn}
               </a>
               <a
                 href={heroData.secondaryButtonLink}
-                className='text-white border border-white hover:bg-white hover:text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 inline-block text-center'
+                className='text-white border border-white hover:bg-surface-card hover:text-ink rounded-full px-8 py-4 font-semibold transition-all duration-300 inline-block text-center'
               >
                 {heroData.secondaryBtn}
               </a>
@@ -125,7 +125,7 @@ export default function Hero({ heroData }) {
                   </div>
                 </motion.div>
                 <motion.div
-                  className='absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80'
+                  className='absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-brand-yellow rounded-full opacity-80'
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.6, type: "spring", stiffness: 300 }}

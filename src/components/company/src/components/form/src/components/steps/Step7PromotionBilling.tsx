@@ -13,20 +13,20 @@ const TermsModal: React.FC<{
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-ink bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-surface-card rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
         <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-bold text-slate-900">{title}</h2>
+          <h2 className="text-xl font-bold text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-700 text-2xl font-bold"
+            className="text-ink-caption hover:text-ink-paragraph text-2xl font-bold"
           >
             ×
           </button>
         </div>
         <div className="p-6 overflow-y-auto max-h-[70vh]">
           <div className="prose prose-slate max-w-none">
-            <pre className="whitespace-pre-wrap font-sans text-sm text-slate-700">
+            <pre className="whitespace-pre-wrap font-sans text-sm text-ink-paragraph">
               {content}
             </pre>
           </div>
@@ -34,7 +34,7 @@ const TermsModal: React.FC<{
         <div className="flex justify-end p-6 border-t">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors"
           >
             Close
           </button>
@@ -252,8 +252,8 @@ Email: privacy@dronetv.in`;
         embedded={embedded}
       >
         <div className="space-y-8">
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6">
-            <h3 className="text-lg font-bold text-orange-900 mb-4">Promotion Preferences</h3>
+          <div className="bg-gradient-to-r from-surface-main to-status-warning/10 rounded-lg p-6">
+            <h3 className="text-lg font-bold text-status-warning mb-4">Promotion Preferences</h3>
             <MultiSelect
               label="Select Promotion Formats"
               options={promoFormatOptions}
@@ -262,15 +262,15 @@ Email: privacy@dronetv.in`;
             />
             
             {formData.promoFormats.length > 0 && (
-              <div className="mt-4 p-4 bg-orange-100 rounded-lg">
-                <h4 className="font-semibold text-orange-900 mb-2">Selected Formats:</h4>
+              <div className="mt-4 p-4 bg-status-warning/15 rounded-lg">
+                <h4 className="font-semibold text-status-warning mb-2">Selected Formats:</h4>
                 <ul className="space-y-1">
                   {formData.promoFormats.map((format) => (
-                    <li key={format} className="flex items-center text-orange-800">
-                      <span className="w-2 h-2 bg-orange-600 rounded-full mr-3"></span>
+                    <li key={format} className="flex items-center text-status-warning">
+                      <span className="w-2 h-2 bg-status-warning rounded-full mr-3"></span>
                       {format}
                       {(format.includes('Premium') || format.includes('Paid')) && (
-                        <span className="ml-2 px-2 py-1 bg-orange-200 text-orange-800 text-xs rounded-full">
+                        <span className="ml-2 px-2 py-1 bg-status-warning/25 text-status-warning text-xs rounded-full">
                           Paid Service
                         </span>
                       )}
@@ -281,8 +281,8 @@ Email: privacy@dronetv.in`;
             )}
           </div>
 
-          <div className="bg-slate-50 rounded-lg p-6">
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Terms & Conditions</h3>
+          <div className="bg-ink-offwhite rounded-lg p-6">
+            <h3 className="text-lg font-bold text-ink mb-4">Terms & Conditions</h3>
             
             <div className="space-y-4">
               <label className="flex items-start">
@@ -290,20 +290,20 @@ Email: privacy@dronetv.in`;
                   type="checkbox"
                   checked={formData.acceptTerms}
                   onChange={(e) => updateFormData({ acceptTerms: e.target.checked })}
-                  className="mt-1 mr-3 w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                  className="mt-1 mr-3 w-4 h-4 text-status-info border-ink-light rounded focus:ring-status-info"
                 />
-                <span className="text-slate-700">
+                <span className="text-ink-paragraph">
                   <span className="font-semibold">I accept the </span>
                   <button
                     type="button"
                     onClick={() => setIsTermsModalOpen(true)}
-                    className="text-blue-600 underline hover:text-blue-800 font-semibold"
+                    className="text-status-info underline hover:text-status-info font-semibold"
                   >
                     Terms & Conditions
                   </button>
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                   <br />
-                  <span className="text-sm text-slate-600">
+                  <span className="text-sm text-ink-paragraph">
                     I agree to the terms of service, data processing, and promotional activities as outlined in the DroneTV platform agreement.
                   </span>
                 </span>
@@ -314,20 +314,20 @@ Email: privacy@dronetv.in`;
                   type="checkbox"
                   checked={formData.acceptPrivacy}
                   onChange={(e) => updateFormData({ acceptPrivacy: e.target.checked })}
-                  className="mt-1 mr-3 w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                  className="mt-1 mr-3 w-4 h-4 text-status-info border-ink-light rounded focus:ring-status-info"
                 />
-                <span className="text-slate-700">
+                <span className="text-ink-paragraph">
                   <span className="font-semibold">I accept the </span>
                   <button
                     type="button"
                     onClick={() => setIsPrivacyModalOpen(true)}
-                    className="text-blue-600 underline hover:text-blue-800 font-semibold"
+                    className="text-status-info underline hover:text-status-info font-semibold"
                   >
                     Privacy Policy
                   </button>
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                   <br />
-                  <span className="text-sm text-slate-600">
+                  <span className="text-sm text-ink-paragraph">
                     I understand how my data will be collected, processed, and used for website generation and promotional purposes.
                   </span>
                 </span>
@@ -335,8 +335,8 @@ Email: privacy@dronetv.in`;
             </div>
             
             {(!formData.acceptTerms || !formData.acceptPrivacy) && (
-              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-700 text-sm">
+              <div className="mt-4 p-3 bg-status-error/10 border border-status-error/25 rounded-lg">
+                <p className="text-status-error text-sm">
                   Please accept both Terms & Conditions and Privacy Policy to continue.
                 </p>
               </div>

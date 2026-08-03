@@ -41,9 +41,9 @@ const partners = [
 
 const SponsorsSection: React.FC = () => {
   return (
-    <section id="sponsors" className="py-20 bg-gray-50">
+    <section id="sponsors" className="py-20 bg-ink-offwhite">
       <div className="container mx-auto px-4 text-center">
-        <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black mb-6">
+        <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink mb-6">
           Our <span className="text-[#FF0000]">Partners</span>
         </h2>
         <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-14"></div>
@@ -54,7 +54,7 @@ const SponsorsSection: React.FC = () => {
               key={index}
               data-aos="zoom-in"
               data-aos-delay={index * 80}
-              className="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center justify-center gap-3 hover:shadow-xl transition-all duration-300"
+              className="bg-surface-card rounded-2xl shadow-md p-5 flex flex-col items-center justify-center gap-3 hover:shadow-xl transition-all duration-300"
             >
               <img
                 src={partner.logo}
@@ -64,7 +64,7 @@ const SponsorsSection: React.FC = () => {
                   (e.currentTarget as HTMLImageElement).style.display = 'none';
                 }}
               />
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-center">
+              <span className="text-xs font-semibold text-ink-caption uppercase tracking-wide text-center">
                 {partner.category}
               </span>
             </div>

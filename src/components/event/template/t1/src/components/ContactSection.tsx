@@ -43,12 +43,12 @@ const ContactSection: React.FC = () => {
   */
 
   return (
-    <section id="contact" className="py-20 bg-gray-50">
+    <section id="contact" className="py-20 bg-ink-offwhite">
       {/* Header */}
       <div className="text-center mb-16">
         <h2
           data-aos="fade-up"
-          className="text-4xl md:text-5xl font-bold text-black mb-4"
+          className="text-4xl md:text-5xl font-bold text-ink mb-4"
         >
           Register & <span className="text-[#FF0000]">Contact</span>
         </h2>
@@ -60,7 +60,7 @@ const ContactSection: React.FC = () => {
         <p
           data-aos="fade-up"
           data-aos-delay="400"
-          className="text-gray-600 text-lg max-w-2xl mx-auto"
+          className="text-ink-paragraph text-lg max-w-2xl mx-auto"
         >
           All visitor registrations and exhibitor enquiries are handled exclusively through the official Drone Expo website.
         </p>
@@ -69,22 +69,22 @@ const ContactSection: React.FC = () => {
       {/* Content Grid */}
       <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-16">
         {/* Left Card - Contact Info */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 relative">
+        <div className="bg-surface-card rounded-2xl shadow-lg p-8 relative">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">{contactInfo.company}</h2>
           </div>
 
-          <div className="space-y-3 text-sm text-gray-700">
+          <div className="space-y-3 text-sm text-ink-paragraph">
             <p>
-              <Phone className="inline-block mr-2 text-blue-600" size={16} />
+              <Phone className="inline-block mr-2 text-status-info" size={16} />
               {contactInfo.phones}
             </p>
             <p>
-              <Mail className="inline-block mr-2 text-red-500" size={16} />
+              <Mail className="inline-block mr-2 text-status-error" size={16} />
               {contactInfo.email}
             </p>
             <p>
-              <MapPin className="inline-block mr-2 text-green-600" size={16} />
+              <MapPin className="inline-block mr-2 text-status-success" size={16} />
               {contactInfo.address}
             </p>
           </div>
@@ -92,15 +92,15 @@ const ContactSection: React.FC = () => {
           <hr className="my-6" />
 
           <h3 className="text-md font-semibold mb-2">For China Enquiries</h3>
-          <div className="space-y-3 text-sm text-gray-700">
+          <div className="space-y-3 text-sm text-ink-paragraph">
             {contactInfo.chinaContacts.map((c, i) => (
               <p key={i}>
-                <User className="inline-block mr-2 text-purple-600" size={16} />
+                <User className="inline-block mr-2 text-brand-gold" size={16} />
                 {c.name} | {c.phone} | {c.email}
               </p>
             ))}
             <p>
-              <MapPin className="inline-block mr-2 text-green-600" size={16} />
+              <MapPin className="inline-block mr-2 text-status-success" size={16} />
               {contactInfo.chinaAddress}
             </p>
           </div>
@@ -110,7 +110,7 @@ const ContactSection: React.FC = () => {
         {/* ORIGINAL FORM — commented out, redirect now active as per MOU
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-lg p-8 space-y-6"
+          className="bg-surface-card rounded-2xl shadow-lg p-8 space-y-6"
         >
           <div>
             <label className="block mb-1 font-medium">Company Name *</label>
@@ -119,7 +119,7 @@ const ContactSection: React.FC = () => {
               value={formData.companyName}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-ink-light rounded-lg px-4 py-2 focus:ring-2 focus:ring-status-info"
             />
           </div>
 
@@ -130,14 +130,14 @@ const ContactSection: React.FC = () => {
               value={formData.fullName}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-ink-light rounded-lg px-4 py-2 focus:ring-2 focus:ring-status-info"
             />
           </div>
 
           <div>
             <label className="block mb-1 font-medium">Mobile *</label>
             <div className="flex gap-2">
-              <select className="border border-gray-300 rounded-lg px-2">
+              <select className="border border-ink-light rounded-lg px-2">
                 <option>India (+91)</option>
               </select>
               <input
@@ -145,7 +145,7 @@ const ContactSection: React.FC = () => {
                 value={formData.mobile}
                 onChange={handleChange}
                 required
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+                className="flex-1 border border-ink-light rounded-lg px-4 py-2 focus:ring-2 focus:ring-status-info"
               />
             </div>
           </div>
@@ -158,7 +158,7 @@ const ContactSection: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-ink-light rounded-lg px-4 py-2 focus:ring-2 focus:ring-status-info"
             />
           </div>
 
@@ -168,7 +168,7 @@ const ContactSection: React.FC = () => {
               name="website"
               value={formData.website}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-ink-light rounded-lg px-4 py-2 focus:ring-2 focus:ring-status-info"
             />
           </div>
 
@@ -178,7 +178,7 @@ const ContactSection: React.FC = () => {
               name="enquiryType"
               value={formData.enquiryType}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-ink-light rounded-lg px-4 py-2 focus:ring-2 focus:ring-status-info"
             >
               <option value="">Select Enquiry Type</option>
               <option value="general">General</option>
@@ -195,21 +195,21 @@ const ContactSection: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full bg-[#003D73] text-white font-semibold py-3 rounded-lg hover:bg-blue-900 transition-all"
+            className="w-full bg-[#003D73] text-white font-semibold py-3 rounded-lg hover:bg-status-info transition-all"
           >
             Submit
           </button>
         </form>
         */}
 
-        <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center text-center space-y-6">
+        <div className="bg-surface-card rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center text-center space-y-6">
           <div className="w-16 h-16 bg-[#FF0000]/10 rounded-full flex items-center justify-center">
             <ExternalLink size={32} className="text-[#FF0000]" />
           </div>
-          <h3 className="text-2xl font-bold text-black">
+          <h3 className="text-2xl font-bold text-ink">
             Register on the Official Drone Expo Website
           </h3>
-          <p className="text-gray-600 text-base max-w-sm">
+          <p className="text-ink-paragraph text-base max-w-sm">
             As per the MOU, all exhibitor queries and registration forms are redirected to the official Drone Expo website. Please use the links below to register or submit your enquiry.
           </p>
 
@@ -232,7 +232,7 @@ const ContactSection: React.FC = () => {
             </a>
           </div>
 
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-ink-caption">
             You will be redirected to{" "}
             <a
               href="https://www.droneexpo.in"

@@ -37,8 +37,8 @@ const CustomButton = ({
 }) => {
   const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -154,13 +154,13 @@ const EditableText = ({
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
           placeholder={placeholder}
           rows={rows}
           maxLength={charLimit}
         />
         {charLimit && (
-          <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+          <div className="absolute bottom-2 right-2 text-xs text-ink-caption">
             {value.length}/{charLimit}
           </div>
         )}
@@ -171,12 +171,12 @@ const EditableText = ({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
           placeholder={placeholder}
           maxLength={charLimit}
         />
         {charLimit && (
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
             {value.length}/{charLimit}
           </div>
         )}
@@ -503,7 +503,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
   const duplicatedExhibitors = [...displayData.exhibitors, ...displayData.exhibitors];
 
   return (
-    <section id="exhibitors" className="py-16 sm:py-20 md:py-24 bg-yellow-50 overflow-hidden">
+    <section id="exhibitors" className="py-16 sm:py-20 md:py-24 bg-surface-main overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto mb-12 sm:mb-16">
           {/* Edit Controls */}
@@ -512,7 +512,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
               <CustomButton
                 onClick={handleEdit}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                className="bg-status-error hover:bg-status-error shadow-md text-white"
               >
                 <Edit2 className="w-4 h-4 mr-2" />
                 Edit Exhibitors
@@ -522,7 +522,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                 <CustomButton
                   onClick={handleSave}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                  className="bg-status-success hover:bg-status-success text-white shadow-md"
                   disabled={isSaving || isUploading}
                 >
                   {isUploading ? (
@@ -537,7 +537,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                 <CustomButton
                   onClick={handleCancel}
                   size="sm"
-                  className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+                  className="bg-status-error hover:bg-status-error text-white shadow-md"
                   disabled={isSaving || isUploading}
                 >
                   <X className="w-4 h-4 mr-2" />
@@ -547,7 +547,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                   onClick={addExhibitor}
                   variant="outline"
                   size="sm"
-                  className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                  className="bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Exhibitor
@@ -560,11 +560,11 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
           <div className="text-center">
             {isEditing ? (
               <>
-                <div className="inline-block mb-4 px-4 py-2 bg-white rounded-full border border-amber-200 shadow-sm">
+                <div className="inline-block mb-4 px-4 py-2 bg-surface-card rounded-full border border-brand-yellow-soft shadow-sm">
                   <EditableText
                     value={displayData.subtitle}
                     onChange={(value) => updateField('subtitle', value)}
-                    className="text-red-700 text-xl font-semibold text-center"
+                    className="text-status-error text-xl font-semibold text-center"
                     placeholder="Section subtitle"
                     charLimit={TEXT_LIMITS.SUBTITLE}
                   />
@@ -572,7 +572,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                 <EditableText
                     value={displayData.heading}
                     onChange={(value) => updateField('heading', value)}
-                    className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
+                    className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
                     placeholder="Section heading"
                     charLimit={TEXT_LIMITS.HEADING}
                   />
@@ -580,7 +580,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                   value={displayData.description}
                   onChange={(value) => updateField('description', value)}
                   multiline
-                  className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4 text-center"
+                  className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4 text-center"
                   placeholder="Section description"
                   charLimit={TEXT_LIMITS.DESCRIPTION}
                   rows={2}
@@ -588,11 +588,11 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
               </>
             ) : (
               <>
-                <div className="inline-block mb-4 px-4 py-2 bg-white rounded-full border border-amber-200 shadow-sm">
-                  <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+                <div className="inline-block mb-4 px-4 py-2 bg-surface-card rounded-full border border-brand-yellow-soft shadow-sm">
+                  <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
                 </div>
-                <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-                <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+                <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+                <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
                   {displayData.description}
                 </p>
               </>
@@ -610,21 +610,21 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
               {displayData.exhibitors.map((exhibitor) => (
                 <div
                   key={exhibitor.id}
-                  className="group bg-white p-6 sm:p-8 rounded-2xl border-2 border-amber-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 relative"
+                  className="group bg-surface-card p-6 sm:p-8 rounded-2xl border-2 border-brand-yellow-soft hover:border-brand-yellow hover:shadow-xl transition-all duration-300 relative"
                 >
                   {/* Edit Controls Overlay */}
                   <div className="absolute top-2 right-2 z-10 flex gap-1">
                     <CustomButton
                       onClick={() => removeExhibitor(exhibitor.id)}
                       size="sm"
-                      className="bg-red-500 hover:bg-red-600 text-white p-1"
+                      className="bg-status-error hover:bg-status-error text-white p-1"
                     >
                       <Trash2 className="w-3 h-3" />
                     </CustomButton>
                   </div>
 
                   <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
+                    <div className="w-12 h-12 bg-brand-yellow rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
                       {exhibitor.logo ? (
                         <img
                           src={exhibitor.logo}
@@ -636,7 +636,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                       )}
                       
                       {/* Logo Upload */}
-                      <label className="absolute inset-0 cursor-pointer bg-black/0 hover:bg-black/30 flex items-center justify-center transition-colors">
+                      <label className="absolute inset-0 cursor-pointer bg-ink/0 hover:bg-ink-charcoal/30 flex items-center justify-center transition-colors">
                         <Upload className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                         <input 
                           type="file" 
@@ -650,7 +650,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                     <EditableText
                       value={exhibitor.booth}
                       onChange={(value) => updateExhibitor(exhibitor.id, 'booth', value)}
-                      className="px-3 py-1 bg-yellow-100 text-amber-700 rounded-full text-xs sm:text-sm text-center"
+                      className="px-3 py-1 bg-brand-yellow-soft text-brand-gold rounded-full text-xs sm:text-sm text-center"
                       placeholder="Booth number"
                       charLimit={TEXT_LIMITS.EXHIBITOR_BOOTH}
                     />
@@ -660,14 +660,14 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                     <EditableText
                       value={exhibitor.name}
                       onChange={(value) => updateExhibitor(exhibitor.id, 'name', value)}
-                      className="text-gray-900 text-lg sm:text-xl font-semibold"
+                      className="text-ink text-lg sm:text-xl font-semibold"
                       placeholder="Exhibitor name"
                       charLimit={TEXT_LIMITS.EXHIBITOR_NAME}
                     />
                     <EditableText
                       value={exhibitor.category}
                       onChange={(value) => updateExhibitor(exhibitor.id, 'category', value)}
-                      className="text-amber-600 text-sm sm:text-base"
+                      className="text-brand-gold text-sm sm:text-base"
                       placeholder="Category"
                       charLimit={TEXT_LIMITS.EXHIBITOR_CATEGORY}
                     />
@@ -675,7 +675,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                       value={exhibitor.description || ''}
                       onChange={(value) => updateExhibitor(exhibitor.id, 'description', value)}
                       multiline
-                      className="text-gray-600 text-sm"
+                      className="text-ink-paragraph text-sm"
                       placeholder="Description (optional)"
                       rows={2}
                     />
@@ -736,9 +736,9 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                   transition={{ duration: 0.3 }}
                   className="flex-shrink-0 w-80 sm:w-96"
                 >
-                  <div className="group bg-white p-6 sm:p-8 rounded-2xl border-2 border-amber-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 relative h-full">
+                  <div className="group bg-surface-card p-6 sm:p-8 rounded-2xl border-2 border-brand-yellow-soft hover:border-brand-yellow hover:shadow-xl transition-all duration-300 relative h-full">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
+                      <div className="w-12 h-12 bg-brand-yellow rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
                         {exhibitor.logo ? (
                           <img
                             src={exhibitor.logo}
@@ -750,17 +750,17 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
                         )}
                       </div>
                       
-                      <span className="px-3 py-1 bg-yellow-100 text-amber-700 rounded-full text-xs sm:text-sm">
+                      <span className="px-3 py-1 bg-brand-yellow-soft text-brand-gold rounded-full text-xs sm:text-sm">
                         {exhibitor.booth}
                       </span>
                     </div>
                     
-                    <h3 className="text-gray-900 mb-2 text-lg sm:text-xl group-hover:text-amber-600 transition-colors">
+                    <h3 className="text-ink mb-2 text-lg sm:text-xl group-hover:text-brand-yellow transition-colors">
                       {exhibitor.name}
                     </h3>
-                    <p className="text-amber-600 mb-4 text-sm sm:text-base">{exhibitor.category}</p>
+                    <p className="text-brand-gold mb-4 text-sm sm:text-base">{exhibitor.category}</p>
                     {exhibitor.description && (
-                      <p className="text-gray-600 text-sm mb-4">{exhibitor.description}</p>
+                      <p className="text-ink-paragraph text-sm mb-4">{exhibitor.description}</p>
                     )}
                   </div>
                 </motion.div>
@@ -774,14 +774,14 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
       {displayData.exhibitors.length === 0 && !isEditing && (
         <div className="text-center py-12">
           <div className="max-w-md mx-auto">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <Building2 className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+              <Building2 className="w-8 h-8 text-ink-caption" />
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">No Exhibitors Added</h4>
-            <p className="text-gray-600 mb-6">Add exhibitors to showcase your event partners.</p>
+            <h4 className="text-lg font-semibold text-ink mb-2">No Exhibitors Added</h4>
+            <p className="text-ink-paragraph mb-6">Add exhibitors to showcase your event partners.</p>
             <CustomButton
               onClick={handleEdit}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white"
+              className="bg-brand-gold hover:bg-brand-gold text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Exhibitors
@@ -792,11 +792,11 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
 
       {/* Cropper Modal */}
       {showCropper && (
-        <div className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
+        <div className="fixed inset-0 bg-ink/90 z-[9999] flex items-center justify-center p-4">
+          <div className="bg-surface-card rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="text-lg font-semibold">Crop Exhibitor Logo</h3>
-              <button onClick={cancelCrop} className="p-1 hover:bg-gray-200 rounded">
+              <button onClick={cancelCrop} className="p-1 hover:bg-ink-light rounded">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -812,7 +812,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
               />
             </div>
             <div className="p-4 border-t flex gap-4 items-center">
-              <span className="text-sm text-gray-600">Zoom:</span>
+              <span className="text-sm text-ink-paragraph">Zoom:</span>
               <input
                 type="range"
                 value={zoom}
@@ -824,7 +824,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
               />
               <button 
                 onClick={applyCrop} 
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                className="px-4 py-2 bg-status-success text-white rounded hover:bg-status-success"
               >
                 Apply Crop
               </button>

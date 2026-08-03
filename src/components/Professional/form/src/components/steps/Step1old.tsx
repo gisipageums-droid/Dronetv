@@ -48,7 +48,7 @@
 
 //   // Render input field based on type
 //   const renderInputField = (f: any, section: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
+//     const baseClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm";
 
 //     // Handle country and state fields with dynamic API
 //     if ((f.id === "country" || f.id === "state") && (section.id === "basicInfo" || section.id === "addressInformation")) {
@@ -134,7 +134,7 @@
 //         placeholder={f.placeholder || ""}
 //         className={`${baseClasses} ${
 //           section.id === "basicInfo" && f.id === "user_name" && usernameAvailable === false
-//             ? "border-red-500 focus:ring-red-300"
+//             ? "border-status-error focus:ring-status-error/40"
 //             : ""
 //         }`}
 //         value={data[section.id]?.[f.id] || ""}
@@ -154,8 +154,8 @@
 //     const useTwoColumns = section.id === "socialMediaLinks" || section.id === "alternateContact";
     
 //     return (
-//       <div key={section.id} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6">
-//         <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
+//       <div key={section.id} className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md mb-6">
+//         <h3 className="text-lg font-semibold text-ink border-b border-brand-yellow-soft pb-2">
 //           {section.title}
 //         </h3>
         
@@ -177,9 +177,9 @@
 //               return (
 //                 <div key={f.id} className="flex flex-col">
 //                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="mb-1 font-medium text-ink-charcoal text-sm">
 //                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
+//                       {f.required && <span className="text-status-error ml-1">*</span>}
 //                     </label>
 //                   )}
 //                   {renderInputField(f, section)}
@@ -225,16 +225,16 @@
 //               return (
 //                 <div key={f.id} className="flex flex-col">
 //                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="mb-1 font-medium text-ink-charcoal text-sm">
 //                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
+//                       {f.required && <span className="text-status-error ml-1">*</span>}
 //                     </label>
 //                   )}
 //                   {renderInputField(f, section)}
 //                   {section.id === "basicInfo" && f.id === "user_name" && data.basicInfo?.user_name && (
 //                     <span className={`text-xs mt-1 ${
-//                       usernameAvailable === false ? 'text-red-600' : 
-//                       usernameAvailable === true ? 'text-green-600' : 'text-gray-600'
+//                       usernameAvailable === false ? 'text-status-error' : 
+//                       usernameAvailable === true ? 'text-status-success' : 'text-ink-paragraph'
 //                     }`}>
 //                       {checking
 //                         ? "Checking availability..."
@@ -286,14 +286,14 @@
 
 //   return (
 //     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+//       <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
 //         {step.title}
 //       </h2>
 
 //       {step.categories && (
 //         <div className="mb-8">
-//           <h3 className="text-lg font-semibold text-slate-900 mb-3">Professional Category</h3>
-//           <p className="text-sm text-slate-600 mb-4">
+//           <h3 className="text-lg font-semibold text-ink mb-3">Professional Category</h3>
+//           <p className="text-sm text-ink-paragraph mb-4">
 //             Select your Professional's main business category (you can select multiple)
 //           </p>
 //           <div className="flex justify-center">
@@ -312,19 +312,19 @@
 //         getOrderedSections().map(renderSection)
 //       ) : (
 //         /* Fallback for old structure - render only basicInfo */
-//         <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
+//         <div className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md">
 //           <div className="space-y-4">
 //             {step.basicInfo?.fields.map((f: any) => (
 //               <div key={f.id} className="flex flex-col">
-//                 <label className="mb-1 font-semibold text-slate-900 text-sm">{f.label}</label>
+//                 <label className="mb-1 font-semibold text-ink text-sm">{f.label}</label>
 //                 <input
 //                   type={f.type}
 //                   required={f.required}
 //                   placeholder={f.placeholder || ""}
-//                   className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm
+//                   className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm
 //                     ${
 //                       f.id === "user_name" && usernameAvailable === false
-//                         ? "border-red-500 focus:ring-red-300"
+//                         ? "border-status-error focus:ring-status-error/40"
 //                         : ""
 //                     }`}
 //                   value={data.basicInfo?.[f.id] || ""}
@@ -404,7 +404,7 @@
 
 //   // Render input field based on type
 //   const renderInputField = (f: any, section: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
+//     const baseClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm";
 
 //     // Handle country and state fields with dynamic API
 //     if ((f.id === "country" || f.id === "state") && (section.id === "basicInfo" || section.id === "addressInformation")) {
@@ -512,7 +512,7 @@
 //         placeholder={f.placeholder || ""}
 //         className={`${baseClasses} ${
 //           section.id === "basicInfo" && f.id === "user_name" && usernameAvailable === false
-//             ? "border-red-500 focus:ring-red-300"
+//             ? "border-status-error focus:ring-status-error/40"
 //             : ""
 //         }`}
 //         value={data[section.id]?.[f.id] || ""}
@@ -532,8 +532,8 @@
 //     const useTwoColumns = section.id === "socialMediaLinks" || section.id === "alternateContact";
     
 //     return (
-//       <div key={section.id} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6">
-//         <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
+//       <div key={section.id} className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md mb-6">
+//         <h3 className="text-lg font-semibold text-ink border-b border-brand-yellow-soft pb-2">
 //           {section.title}
 //         </h3>
         
@@ -555,9 +555,9 @@
 //               return (
 //                 <div key={f.id} className="flex flex-col">
 //                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="mb-1 font-medium text-ink-charcoal text-sm">
 //                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
+//                       {f.required && <span className="text-status-error ml-1">*</span>}
 //                     </label>
 //                   )}
 //                   {renderInputField(f, section)}
@@ -603,16 +603,16 @@
 //               return (
 //                 <div key={f.id} className="flex flex-col">
 //                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="mb-1 font-medium text-ink-charcoal text-sm">
 //                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
+//                       {f.required && <span className="text-status-error ml-1">*</span>}
 //                     </label>
 //                   )}
 //                   {renderInputField(f, section)}
 //                   {section.id === "basicInfo" && f.id === "user_name" && data.basicInfo?.user_name && (
 //                     <span className={`text-xs mt-1 ${
-//                       usernameAvailable === false ? 'text-red-600' : 
-//                       usernameAvailable === true ? 'text-green-600' : 'text-gray-600'
+//                       usernameAvailable === false ? 'text-status-error' : 
+//                       usernameAvailable === true ? 'text-status-success' : 'text-ink-paragraph'
 //                     }`}>
 //                       {checking
 //                         ? "Checking availability..."
@@ -664,14 +664,14 @@
 
 //   return (
 //     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+//       <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
 //         {step.title}
 //       </h2>
 
 //       {step.categories && (
 //         <div className="mb-8">
-//           <h3 className="text-lg font-semibold text-slate-900 mb-3">Professional Category</h3>
-//           <p className="text-sm text-slate-600 mb-4">
+//           <h3 className="text-lg font-semibold text-ink mb-3">Professional Category</h3>
+//           <p className="text-sm text-ink-paragraph mb-4">
 //             Select your Professional's main business category (you can select multiple)
 //           </p>
 //           <div className="flex justify-center">
@@ -690,19 +690,19 @@
 //         getOrderedSections().map(renderSection)
 //       ) : (
 //         /* Fallback for old structure - render only basicInfo */
-//         <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
+//         <div className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md">
 //           <div className="space-y-4">
 //             {step.basicInfo?.fields.map((f: any) => (
 //               <div key={f.id} className="flex flex-col">
-//                 <label className="mb-1 font-semibold text-slate-900 text-sm">{f.label}</label>
+//                 <label className="mb-1 font-semibold text-ink text-sm">{f.label}</label>
 //                 <input
 //                   type={f.type}
 //                   required={f.required}
 //                   placeholder={f.placeholder || ""}
-//                   className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm
+//                   className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm
 //                     ${
 //                       f.id === "user_name" && usernameAvailable === false
-//                         ? "border-red-500 focus:ring-red-300"
+//                         ? "border-status-error focus:ring-status-error/40"
 //                         : ""
 //                     }`}
 //                   value={data.basicInfo?.[f.id] || ""}
@@ -800,7 +800,7 @@
 
 //   // Render input field based on type
 //   const renderInputField = (f: any, section: any) => {
-//     const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
+//     const baseClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm";
 
 //     // Handle country and state fields with dynamic API
 //     if ((f.id === "country" || f.id === "state") && (section.id === "basicInfo" || section.id === "addressInformation")) {
@@ -908,7 +908,7 @@
 //         placeholder={f.placeholder || ""}
 //         className={`${baseClasses} ${
 //           section.id === "basicInfo" && f.id === "user_name" && usernameAvailable === false
-//             ? "border-red-500 focus:ring-red-300"
+//             ? "border-status-error focus:ring-status-error/40"
 //             : ""
 //         }`}
 //         value={data[section.id]?.[f.id] || ""}
@@ -928,8 +928,8 @@
 //     const useTwoColumns = section.id === "socialMediaLinks" || section.id === "alternateContact";
     
 //     return (
-//       <div key={section.id} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6">
-//         <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
+//       <div key={section.id} className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md mb-6">
+//         <h3 className="text-lg font-semibold text-ink border-b border-brand-yellow-soft pb-2">
 //           {section.title}
 //         </h3>
         
@@ -951,9 +951,9 @@
 //               return (
 //                 <div key={f.id} className="flex flex-col">
 //                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="mb-1 font-medium text-ink-charcoal text-sm">
 //                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
+//                       {f.required && <span className="text-status-error ml-1">*</span>}
 //                     </label>
 //                   )}
 //                   {renderInputField(f, section)}
@@ -999,16 +999,16 @@
 //               return (
 //                 <div key={f.id} className="flex flex-col">
 //                   {!isDateField && (
-//                     <label className="mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="mb-1 font-medium text-ink-charcoal text-sm">
 //                       {f.label}
-//                       {f.required && <span className="text-red-500 ml-1">*</span>}
+//                       {f.required && <span className="text-status-error ml-1">*</span>}
 //                     </label>
 //                   )}
 //                   {renderInputField(f, section)}
 //                   {section.id === "basicInfo" && f.id === "user_name" && data.basicInfo?.user_name && (
 //                     <span className={`text-xs mt-1 ${
-//                       usernameAvailable === false ? 'text-red-600' : 
-//                       usernameAvailable === true ? 'text-green-600' : 'text-gray-600'
+//                       usernameAvailable === false ? 'text-status-error' : 
+//                       usernameAvailable === true ? 'text-status-success' : 'text-ink-paragraph'
 //                     }`}>
 //                       {checking
 //                         ? "Checking availability..."
@@ -1062,14 +1062,14 @@
 
 //   return (
 //     <>
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+//       <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
 //         {step.title}
 //       </h2>
 
 //       {step.categories && (
 //         <div className="mb-8">
-//           <h3 className="text-lg font-semibold text-slate-900 mb-3">Professional Category</h3>
-//           <p className="text-sm text-slate-600 mb-4">
+//           <h3 className="text-lg font-semibold text-ink mb-3">Professional Category</h3>
+//           <p className="text-sm text-ink-paragraph mb-4">
 //             Select your Professional's main business category (you can select multiple)
 //           </p>
 //           <div className="flex justify-center">
@@ -1088,19 +1088,19 @@
 //         getOrderedSections().map(renderSection)
 //       ) : (
 //         /* Fallback for old structure - render only basicInfo */
-//         <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
+//         <div className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md">
 //           <div className="space-y-4">
 //             {step.basicInfo?.fields.map((f: any) => (
 //               <div key={f.id} className="flex flex-col">
-//                 <label className="mb-1 font-semibold text-slate-900 text-sm">{f.label}</label>
+//                 <label className="mb-1 font-semibold text-ink text-sm">{f.label}</label>
 //                 <input
 //                   type={f.type}
 //                   required={f.required}
 //                   placeholder={f.placeholder || ""}
-//                   className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm
+//                   className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm
 //                     ${
 //                       f.id === "user_name" && usernameAvailable === false
-//                         ? "border-red-500 focus:ring-red-300"
+//                         ? "border-status-error focus:ring-status-error/40"
 //                         : ""
 //                     }`}
 //                   value={data.basicInfo?.[f.id] || ""}
@@ -1110,9 +1110,9 @@
 //                 />
 //                 {f.id === "user_name" && data.basicInfo?.user_name && (
 //                   <span className={`text-xs mt-1 ${
-//                     usernameAvailable === false ? 'text-red-600' : 
+//                     usernameAvailable === false ? 'text-status-error' : 
 //                     usernameAvailable === true && originalUsername && data.basicInfo.user_name === originalUsername
-//                     ? 'text-green-600' : 'text-gray-600'
+//                     ? 'text-status-success' : 'text-ink-paragraph'
 //                   }`}>
 //                     {checking
 //                       ? "Checking availability..."
@@ -1206,7 +1206,7 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
 
   // Render input field based on type
   const renderInputField = (f: any, section: any) => {
-    const baseClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
+    const baseClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm";
 
     // Handle country and state fields with dynamic API
     if ((f.id === "country" || f.id === "state") && (section.id === "basicInfo" || section.id === "addressInformation")) {
@@ -1316,7 +1316,7 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
           placeholder={f.placeholder || ""}
           className={`${baseClasses} ${
             usernameAvailable === false
-              ? "border-red-500 focus:ring-red-300"
+              ? "border-status-error focus:ring-status-error/40"
               : ""
           }`}
           value={data[section.id]?.[f.id] || ""}
@@ -1355,8 +1355,8 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
     const useTwoColumns = section.id === "socialMediaLinks" || section.id === "alternateContact";
     
     return (
-      <div key={section.id} className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6">
-        <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
+      <div key={section.id} className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md mb-6">
+        <h3 className="text-lg font-semibold text-ink border-b border-brand-yellow-soft pb-2">
           {section.title}
         </h3>
         
@@ -1378,9 +1378,9 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
               return (
                 <div key={f.id} className="flex flex-col">
                   {!isDateField && (
-                    <label className="mb-1 font-medium text-slate-800 text-sm">
+                    <label className="mb-1 font-medium text-ink-charcoal text-sm">
                       {f.label}
-                      {f.required && <span className="text-red-500 ml-1">*</span>}
+                      {f.required && <span className="text-status-error ml-1">*</span>}
                     </label>
                   )}
                   {renderInputField(f, section)}
@@ -1426,16 +1426,16 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
               return (
                 <div key={f.id} className="flex flex-col">
                   {!isDateField && (
-                    <label className="mb-1 font-medium text-slate-800 text-sm">
+                    <label className="mb-1 font-medium text-ink-charcoal text-sm">
                       {f.label}
-                      {f.required && <span className="text-red-500 ml-1">*</span>}
+                      {f.required && <span className="text-status-error ml-1">*</span>}
                     </label>
                   )}
                   {renderInputField(f, section)}
                   {section.id === "basicInfo" && f.id === "user_name" && data.basicInfo?.user_name && (
                     <span className={`text-xs mt-1 ${
-                      usernameAvailable === false ? 'text-red-600' : 
-                      usernameAvailable === true ? 'text-green-600' : 'text-gray-600'
+                      usernameAvailable === false ? 'text-status-error' : 
+                      usernameAvailable === true ? 'text-status-success' : 'text-ink-paragraph'
                     }`}>
                       {checking
                         ? "Checking availability..."
@@ -1489,14 +1489,14 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
 
   return (
     <>
-      <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+      <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
         {step.title}
       </h2>
 
       {step.categories && (
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-slate-900 mb-3">Professional Category</h3>
-          <p className="text-sm text-slate-600 mb-4">
+          <h3 className="text-lg font-semibold text-ink mb-3">Professional Category</h3>
+          <p className="text-sm text-ink-paragraph mb-4">
             Select your Professional's main business category (you can select multiple)
           </p>
           <div className="flex justify-center">
@@ -1515,19 +1515,19 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
         getOrderedSections().map(renderSection)
       ) : (
         /* Fallback for old structure - render only basicInfo */
-        <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
+        <div className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md">
           <div className="space-y-4">
             {step.basicInfo?.fields.map((f: any) => (
               <div key={f.id} className="flex flex-col">
-                <label className="mb-1 font-semibold text-slate-900 text-sm">{f.label}</label>
+                <label className="mb-1 font-semibold text-ink text-sm">{f.label}</label>
                 <input
                   type={f.type}
                   required={f.required}
                   placeholder={f.placeholder || ""}
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm
+                  className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm
                     ${
                       f.id === "user_name" && usernameAvailable === false
-                        ? "border-red-500 focus:ring-red-300"
+                        ? "border-status-error focus:ring-status-error/40"
                         : ""
                     }`}
                   value={data.basicInfo?.[f.id] || ""}
@@ -1542,9 +1542,9 @@ export const Step1 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                 />
                 {f.id === "user_name" && data.basicInfo?.user_name && (
                   <span className={`text-xs mt-1 ${
-                    usernameAvailable === false ? 'text-red-600' : 
+                    usernameAvailable === false ? 'text-status-error' : 
                     usernameAvailable === true && originalUsername && data.basicInfo.user_name === originalUsername
-                    ? 'text-green-600' : 'text-gray-600'
+                    ? 'text-status-success' : 'text-ink-paragraph'
                   }`}>
                     {checking
                       ? "Checking availability..."

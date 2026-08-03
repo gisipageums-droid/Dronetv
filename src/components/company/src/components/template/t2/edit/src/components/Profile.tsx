@@ -432,33 +432,33 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
 //               <div>
-//                 <h3 className="text-lg font-semibold text-gray-800">
+//                 <h3 className="text-lg font-semibold text-ink-charcoal">
 //                   Crop Profile Image
 //                 </h3>
-//                 <p className="text-sm text-gray-600 mt-1">
+//                 <p className="text-sm text-ink-paragraph mt-1">
 //                   Recommended: 100×100px (1:1 ratio) - square
 //                 </p>
 //               </div>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+//             <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
 //               <Cropper
 //                 image={imageToCrop}
 //                 crop={crop}
@@ -494,18 +494,18 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Buttons */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">
 //                   Aspect Ratio:
 //                 </p>
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     4:3 (Standard)
@@ -516,18 +516,18 @@
 //               {/* Zoom Control */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="flex items-center gap-2 text-gray-700">
+//                   <span className="flex items-center gap-2 text-ink-paragraph">
 //                     <ZoomIn className="w-4 h-4" />
 //                     Zoom
 //                   </span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <div className="flex items-center gap-3">
 //                   <button
 //                     type="button"
 //                     aria-label="Zoom out"
 //                     onClick={() => setZoom((z) => Math.max(minZoomDynamic, parseFloat((z - 0.1).toFixed(2))))}
-//                     className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+//                     className="px-3 py-1 border rounded text-ink-paragraph hover:bg-ink-light"
 //                   >
 //                     −
 //                   </button>
@@ -538,13 +538,13 @@
 //                     max={5}
 //                     step={0.1}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                   />
 //                   <button
 //                     type="button"
 //                     aria-label="Zoom in"
 //                     onClick={() => setZoom((z) => Math.min(5, parseFloat((z + 0.1).toFixed(2))))}
-//                     className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+//                     className="px-3 py-1 border rounded text-ink-paragraph hover:bg-ink-light"
 //                   >
 //                     +
 //                   </button>
@@ -555,20 +555,20 @@
 //               <div className="grid grid-cols-3 gap-3">
 //                 <button
 //                   onClick={resetCropSettings}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm"
 //                 >
 //                   Reset
 //                 </button>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={applyCrop}
 //                   disabled={isUploading}
-//                   className={`w-full ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm`}
+//                   className={`w-full ${isUploading ? 'bg-ink-caption cursor-not-allowed' : 'bg-status-success hover:bg-status-success'} text-white rounded py-2 text-sm`}
 //                 >
 //                   {isUploading ? "Uploading..." : "Apply Crop"}
 //                 </button>
@@ -582,8 +582,8 @@
 //       <section
 //         id="our-team"
 //         className={`py-20 theme-transition ${theme === "dark"
-//             ? "bg-black text-gray-100"
-//             : "bg-gray-50 text-gray-900"
+//             ? "bg-ink text-ink-light"
+//             : "bg-ink-offwhite text-ink"
 //           }`}
 //       >
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -596,8 +596,8 @@
 //                 onClick={handleSave}
 //                 disabled={isUploading}
 //                 className={`${isUploading
-//                     ? "bg-gray-400 cursor-not-allowed"
-//                     : "bg-green-600 hover:shadow-2xl"
+//                     ? "bg-ink-caption cursor-not-allowed"
+//                     : "bg-status-success hover:shadow-2xl"
 //                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
 //               >
 //                 <Save size={16} />
@@ -608,7 +608,7 @@
 //                 whileTap={{ scale: 0.9 }}
 //                 whileHover={{ y: -1, scaleX: 1.1 }}
 //                 onClick={() => setIsEditing(true)}
-//                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold flex items-center gap-2"
+//                 className="bg-brand-gold text-ink px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold flex items-center gap-2"
 //               >
 //                 <Edit size={16} />
 //                 Edit
@@ -618,7 +618,7 @@
 
 //           {/* Auto-update status indicator */}
 //           {isEditing && (
-//             <div className="flex items-center justify-end mb-4 text-sm text-green-600">
+//             <div className="flex items-center justify-end mb-4 text-sm text-status-success">
 //               <CheckCircle className="w-4 h-4 mr-1" />
 //               Auto-saving changes...
 //             </div>
@@ -632,13 +632,13 @@
 //                   value={contentState.heading}
 //                   onChange={(e) => updateHeading(e.target.value)}
 //                   maxLength={100}
-//                   className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full ${contentState.heading.length >= 100 ? "border-red-500" : ""
+//                   className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full ${contentState.heading.length >= 100 ? "border-status-error" : ""
 //                     }`}
 //                 />
-//                 <div className="text-right text-xs text-gray-500 mt-1">
+//                 <div className="text-right text-xs text-ink-caption mt-1">
 //                   {contentState.heading.length}/100
 //                   {contentState.heading.length >= 100 && (
-//                     <span className="ml-2 text-red-500 font-bold">
+//                     <span className="ml-2 text-status-error font-bold">
 //                       Character limit reached!
 //                     </span>
 //                   )}
@@ -657,14 +657,14 @@
 //                   onChange={(e) => updateSubheading(e.target.value)}
 //                   maxLength={200}
 //                   className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${contentState.subheading.length >= 200
-//                       ? "border-red-500"
+//                       ? "border-status-error"
 //                       : ""
 //                     }`}
 //                 />
-//                 <div className="text-right text-xs text-gray-500 mt-1">
+//                 <div className="text-right text-xs text-ink-caption mt-1">
 //                   {contentState.subheading.length}/200
 //                   {contentState.subheading.length >= 200 && (
-//                     <span className="ml-2 text-red-500 font-bold">
+//                     <span className="ml-2 text-status-error font-bold">
 //                       Character limit reached!
 //                     </span>
 //                   )}
@@ -681,7 +681,7 @@
 //             {contentState.teamMembers.map((member, index) => (
 //               <motion.div
 //                 key={member.id}
-//                 className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-gray-900" : "bg-white"
+//                 className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-ink" : "bg-surface-card"
 //                   }`}
 //                 whileHover={{ y: -5 }}
 //                 transition={{ duration: 0.2 }}
@@ -701,7 +701,7 @@
 //                       transition={{ duration: 0.3 }}
 //                       className="absolute mx-2 bottom-2 left-2 z-50 bg-white/80 p-1 rounded"
 //                     >
-//                       <div className="text-xs text-gray-600 mb-1">
+//                       <div className="text-xs text-ink-paragraph mb-1">
 //                         Recommended: 100×100px (1:1)
 //                       </div>
 //                       <input
@@ -711,7 +711,7 @@
 //                         onChange={(e) => handleTeamMemberImageSelect(index, e)}
 //                       />
 //                       {pendingImages[index] && (
-//                         <p className="text-xs text-green-600 mt-1">
+//                         <p className="text-xs text-status-success mt-1">
 //                           ✓ Image cropped and ready to upload
 //                         </p>
 //                       )}
@@ -727,13 +727,13 @@
 //                           updateTeamMemberField(index, "name", e.target.value)
 //                         }
 //                         maxLength={50}
-//                         className={`text-xl font-semibold mb-1 border-b bg-transparent text-center w-full ${member.name.length >= 50 ? "border-red-500" : ""
+//                         className={`text-xl font-semibold mb-1 border-b bg-transparent text-center w-full ${member.name.length >= 50 ? "border-status-error" : ""
 //                           }`}
 //                       />
-//                       <div className="text-right text-xs text-gray-500 mt-1">
+//                       <div className="text-right text-xs text-ink-caption mt-1">
 //                         {member.name.length}/50
 //                         {member.name.length >= 50 && (
-//                           <span className="ml-2 text-red-500 font-bold">
+//                           <span className="ml-2 text-status-error font-bold">
 //                             Character limit reached!
 //                           </span>
 //                         )}
@@ -753,14 +753,14 @@
 //                           updateTeamMemberField(index, "role", e.target.value)
 //                         }
 //                         maxLength={60}
-//                         className={`font-medium mb-3 border-b bg-transparent text-center w-full ${member.role.length >= 60 ? "border-red-500" : ""
+//                         className={`font-medium mb-3 border-b bg-transparent text-center w-full ${member.role.length >= 60 ? "border-status-error" : ""
 //                           }`}
 //                         style={{ color: "#facc15" }}
 //                       />
-//                       <div className="text-right text-xs text-gray-500 mt-1">
+//                       <div className="text-right text-xs text-ink-caption mt-1">
 //                         {member.role.length}/60
 //                         {member.role.length >= 60 && (
-//                           <span className="ml-2 text-red-500 font-bold">
+//                           <span className="ml-2 text-status-error font-bold">
 //                             Character limit reached!
 //                           </span>
 //                         )}
@@ -782,17 +782,17 @@
 //                         updateTeamMemberField(index, "bio", e.target.value)
 //                       }
 //                       maxLength={200}
-//                       className={`text-sm border-b bg-transparent text-center w-full ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+//                       className={`text-sm border-b bg-transparent text-center w-full ${theme === "dark" ? "text-ink-light" : "text-ink-paragraph"
 //                         } ${member.bio.length >= 200
-//                           ? "border-red-500"
+//                           ? "border-status-error"
 //                           : member.bio.length >= 180
-//                             ? "border-orange-500"
+//                             ? "border-status-warning"
 //                             : ""
 //                         }`}
 //                     />
 //                   ) : (
 //                     <p
-//                       className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+//                       className={`text-sm ${theme === "dark" ? "text-ink-light" : "text-ink-paragraph"
 //                         } text-justify`}
 //                     >
 //                       {member.bio}
@@ -831,7 +831,7 @@
 //                       whileHover={{ scale: 1.1 }}
 //                       whileTap={{ scale: 0.9 }}
 //                       onClick={() => removeTeamMember(index)}
-//                       className="mt-4 text-red-500 text-sm flex items-center justify-center gap-1 mx-auto"
+//                       className="mt-4 text-status-error text-sm flex items-center justify-center gap-1 mx-auto"
 //                     >
 //                       <Trash2 size={14} />
 //                       Remove
@@ -844,14 +844,14 @@
 //             {isEditing && (
 //               <motion.div
 //                 className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
-//                     ? "bg-gray-900 border-gray-700"
-//                     : "bg-white border-gray-300"
+//                     ? "bg-ink border-ink-paragraph"
+//                     : "bg-surface-card border-ink-light"
 //                   } border-2`}
 //                 whileHover={{ scale: 1.02 }}
 //               >
 //                 <motion.button
 //                   onClick={addTeamMember}
-//                   className="flex flex-col items-center p-6 text-green-600"
+//                   className="flex flex-col items-center p-6 text-status-success"
 //                   whileHover={{ scale: 1.1 }}
 //                   whileTap={{ scale: 0.9 }}
 //                 >
@@ -1425,33 +1425,33 @@ const Profile = ({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="text-lg font-semibold text-ink-charcoal">
                   Crop Profile Image
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-ink-paragraph mt-1">
                   Recommended: 100×100px (1:1 ratio) - square
                 </p>
               </div>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -1487,18 +1487,18 @@ const Profile = ({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     4:3 (Standard)
@@ -1509,18 +1509,18 @@ const Profile = ({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     <ZoomIn className="w-4 h-4" />
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     aria-label="Zoom out"
                     onClick={() => setZoom((z) => Math.max(minZoomDynamic, parseFloat((z - 0.1).toFixed(2))))}
-                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                    className="px-3 py-1 border rounded text-ink-paragraph hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -1531,13 +1531,13 @@ const Profile = ({
                     max={5}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     aria-label="Zoom in"
                     onClick={() => setZoom((z) => Math.min(5, parseFloat((z + 0.1).toFixed(2))))}
-                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                    className="px-3 py-1 border rounded text-ink-paragraph hover:bg-ink-light"
                   >
                     +
                   </button>
@@ -1548,20 +1548,20 @@ const Profile = ({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className={`w-full ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm`}
+                  className={`w-full ${isUploading ? 'bg-ink-caption cursor-not-allowed' : 'bg-status-success hover:bg-status-success'} text-white rounded py-2 text-sm`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
@@ -1575,8 +1575,8 @@ const Profile = ({
       <section
         id="our-team"
         className={`py-20 theme-transition ${theme === "dark"
-            ? "bg-black text-gray-100"
-            : "bg-gray-50 text-gray-900"
+            ? "bg-ink text-ink-light"
+            : "bg-ink-offwhite text-ink"
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1589,8 +1589,8 @@ const Profile = ({
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
+                    ? "bg-ink-caption cursor-not-allowed"
+                    : "bg-status-success hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
               >
                 <Save size={16} />
@@ -1601,7 +1601,7 @@ const Profile = ({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold flex items-center gap-2"
+                className="bg-brand-gold text-ink px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold flex items-center gap-2"
               >
                 <Edit size={16} />
                 Edit
@@ -1611,7 +1611,7 @@ const Profile = ({
 
           {/* Auto-update status indicator */}
           {isEditing && (
-            <div className="flex items-center justify-end mb-4 text-sm text-green-600">
+            <div className="flex items-center justify-end mb-4 text-sm text-status-success">
               <CheckCircle className="w-4 h-4 mr-1" />
               Auto-saving changes...
             </div>
@@ -1619,20 +1619,20 @@ const Profile = ({
 
           {/* Profile-Level Director Prefix Editor (Only in Edit Mode) */}
           {isEditing && (
-            <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <div className="mb-6 p-4 bg-ink-light dark:bg-gray-800 rounded-lg">
               <label className="block text-sm font-medium mb-2">
                 Default Director Prefix (for new team members):
               </label>
               <select
                 value={contentState.directorPrefix?.toLowerCase().replace('.', '') || "mrs"}
                 onChange={(e) => updateDirectorPrefix(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 bg-transparent px-3 py-2 rounded"
+                className="border border-ink-light dark:border-gray-600 bg-transparent px-3 py-2 rounded"
               >
                 <option value="mr">Mr.</option>
                 <option value="mrs">Mrs.</option>
                 <option value="ms">Ms.</option>
               </select>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-ink-caption mt-1">
                 This prefix will be used as default for new team members
               </p>
             </div>
@@ -1646,13 +1646,13 @@ const Profile = ({
                   value={contentState.heading}
                   onChange={(e) => updateHeading(e.target.value)}
                   maxLength={100}
-                  className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full ${contentState.heading.length >= 100 ? "border-red-500" : ""
+                  className={`text-3xl font-bold mb-4 border-b bg-transparent text-center w-full ${contentState.heading.length >= 100 ? "border-status-error" : ""
                     }`}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1">
+                <div className="text-right text-xs text-ink-caption mt-1">
                   {contentState.heading.length}/100
                   {contentState.heading.length >= 100 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Character limit reached!
                     </span>
                   )}
@@ -1671,14 +1671,14 @@ const Profile = ({
                   onChange={(e) => updateSubheading(e.target.value)}
                   maxLength={200}
                   className={`text-lg max-w-3xl mx-auto border-b bg-transparent text-center w-full ${contentState.subheading.length >= 200
-                      ? "border-red-500"
+                      ? "border-status-error"
                       : ""
                     }`}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1">
+                <div className="text-right text-xs text-ink-caption mt-1">
                   {contentState.subheading.length}/200
                   {contentState.subheading.length >= 200 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Character limit reached!
                     </span>
                   )}
@@ -1695,7 +1695,7 @@ const Profile = ({
             {contentState.teamMembers.map((member, index) => (
               <motion.div
                 key={member.id}
-                className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-gray-900" : "bg-white"
+                className={`rounded-lg overflow-hidden shadow-lg ${theme === "dark" ? "bg-ink" : "bg-surface-card"
                   }`}
                 whileHover={{ y: -5 }}
                 transition={{ duration: 0.2 }}
@@ -1721,7 +1721,7 @@ const Profile = ({
                         transition={{ duration: 0.3 }}
                         className="absolute mx-2 bottom-2 left-2 z-50 bg-white/80 p-1 rounded"
                       >
-                        <div className="text-xs text-gray-600 mb-1">
+                        <div className="text-xs text-ink-paragraph mb-1">
                           Recommended: 100×100px (1:1)
                         </div>
                         <input
@@ -1731,7 +1731,7 @@ const Profile = ({
                           onChange={(e) => handleTeamMemberImageSelect(index, e)}
                         />
                         {pendingImages[index] && (
-                          <p className="text-xs text-green-600 mt-1">
+                          <p className="text-xs text-status-success mt-1">
                             ✓ Image cropped and ready to upload
                           </p>
                         )}
@@ -1742,7 +1742,7 @@ const Profile = ({
                         animate={{ opacity: [0, 1], scale: [0.8, 1] }}
                         className="absolute mx-2 top-2 right-2 z-50 bg-white/80 p-2 rounded"
                       >
-                        <label className="text-xs text-gray-600 mb-1 block">Title:</label>
+                        <label className="text-xs text-ink-paragraph mb-1 block">Title:</label>
                         <select
                           value={member.prefix?.toLowerCase().replace('.', '') || "mr"}
                           onChange={(e) => updateTeamMemberField(index, "prefix", e.target.value)}
@@ -1759,7 +1759,7 @@ const Profile = ({
                 <div className="p-6 text-center">
                   {/* Show prefix in non-edit mode */}
                   {!isEditing && member.prefix && (
-                    <div className="text-sm text-gray-500 mb-1">
+                    <div className="text-sm text-ink-caption mb-1">
                       {getPrefixDisplayName(member.prefix)}
                     </div>
                   )}
@@ -1774,14 +1774,14 @@ const Profile = ({
                             updateTeamMemberField(index, "name", e.target.value)
                           }
                           maxLength={50}
-                          className={`text-xl font-semibold mb-1 border-b bg-transparent text-center w-full ${member.name.length >= 50 ? "border-red-500" : ""
+                          className={`text-xl font-semibold mb-1 border-b bg-transparent text-center w-full ${member.name.length >= 50 ? "border-status-error" : ""
                             }`}
                           placeholder="Full Name"
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {member.name.length}/50
                           {member.name.length >= 50 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Character limit reached!
                             </span>
                           )}
@@ -1802,15 +1802,15 @@ const Profile = ({
                           updateTeamMemberField(index, "role", e.target.value)
                         }
                         maxLength={60}
-                        className={`font-medium mb-3 border-b bg-transparent text-center w-full ${member.role.length >= 60 ? "border-red-500" : ""
+                        className={`font-medium mb-3 border-b bg-transparent text-center w-full ${member.role.length >= 60 ? "border-status-error" : ""
                           }`}
                         style={{ color: "#facc15" }}
                         placeholder="Position/Role"
                       />
-                      <div className="text-right text-xs text-gray-500 mt-1">
+                      <div className="text-right text-xs text-ink-caption mt-1">
                         {member.role.length}/60
                         {member.role.length >= 60 && (
-                          <span className="ml-2 text-red-500 font-bold">
+                          <span className="ml-2 text-status-error font-bold">
                             Character limit reached!
                           </span>
                         )}
@@ -1832,18 +1832,18 @@ const Profile = ({
                         updateTeamMemberField(index, "bio", e.target.value)
                       }
                       maxLength={200}
-                      className={`text-sm border-b bg-transparent text-center w-full h-20 ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                      className={`text-sm border-b bg-transparent text-center w-full h-20 ${theme === "dark" ? "text-ink-light" : "text-ink-paragraph"
                         } ${member.bio.length >= 200
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : member.bio.length >= 180
-                            ? "border-orange-500"
+                            ? "border-status-warning"
                             : ""
                         }`}
                       placeholder="Bio/Description"
                     />
                   ) : (
                     <p
-                      className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                      className={`text-sm ${theme === "dark" ? "text-ink-light" : "text-ink-paragraph"
                         } text-justify`}
                     >
                       {member.bio}
@@ -1882,7 +1882,7 @@ const Profile = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => removeTeamMember(index)}
-                      className="mt-4 text-red-500 text-sm flex items-center justify-center gap-1 mx-auto"
+                      className="mt-4 text-status-error text-sm flex items-center justify-center gap-1 mx-auto"
                     >
                       <Trash2 size={14} />
                       Remove
@@ -1895,14 +1895,14 @@ const Profile = ({
             {isEditing && (
               <motion.div
                 className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
-                    ? "bg-gray-900 border-gray-700"
-                    : "bg-white border-gray-300"
+                    ? "bg-ink border-ink-paragraph"
+                    : "bg-surface-card border-ink-light"
                   } border-2`}
                 whileHover={{ scale: 1.02 }}
               >
                 <motion.button
                   onClick={addTeamMember}
-                  className="flex flex-col items-center p-6 text-green-600"
+                  className="flex flex-col items-center p-6 text-status-success"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >

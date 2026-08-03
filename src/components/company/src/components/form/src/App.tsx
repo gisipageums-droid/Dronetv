@@ -1037,12 +1037,12 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
 
   if (isApiLoading) {
     return (
-      <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-status-info flex items-center justify-center z-50">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-white mb-2">
             Loading form data...
           </h1>
-          <p className="text-blue-200 text-lg">
+          <p className="text-status-info/25 text-lg">
             Please wait while we prefill your form
           </p>
         </div>
@@ -1053,8 +1053,8 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
   if (isDraftLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <span className="w-10 h-10 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
-        <p className="text-gray-500 text-sm font-medium">Loading your company data…</p>
+        <span className="w-10 h-10 border-4 border-brand-yellow border-t-transparent rounded-full animate-spin" />
+        <p className="text-ink-caption text-sm font-medium">Loading your company data…</p>
       </div>
     );
   }

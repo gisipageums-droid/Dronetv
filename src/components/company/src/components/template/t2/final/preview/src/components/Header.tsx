@@ -83,8 +83,8 @@ export default function Header({ headerData }) {
   return (
     <motion.header
       className={`fixed top-[4rem] left-0 right-0 border-b z-50 ${theme == "dark"
-        ? "bg-gray-800 border-gray-700 text-white"
-        : "bg-white border-gray-200 text-black"
+        ? "bg-ink-charcoal border-ink-paragraph text-white"
+        : "bg-surface-card border-ink-light text-ink"
         }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -105,10 +105,10 @@ export default function Header({ headerData }) {
                 className="w-full h-full object-contain"
               />
             </motion.div>
-            <motion.span className={`text-xl font-bold text-black truncate
+            <motion.span className={`text-xl font-bold text-ink truncate
               ${theme == "dark"
-                ? "bg-gray-800 border-gray-700 text-white"
-                : "bg-white border-gray-200 text-black"
+                ? "bg-ink-charcoal border-ink-paragraph text-white"
+                : "bg-surface-card border-ink-light text-ink"
               }`}>
               {safeHeaderData.companyName || "Company Name"}
             </ motion.span>
@@ -123,8 +123,8 @@ export default function Header({ headerData }) {
                   href={item.href}
                   onClick={(e) => handleDesktopNavigation(e, item.href)}
                   className={`font-medium relative group whitespace-nowrap ${theme == "dark"
-                    ? "text-white hover:text-gray-200"
-                    : "text-gray-700 hover:text-primary"
+                    ? "text-white hover:text-ink-light"
+                    : "text-ink-paragraph hover:text-primary"
                     }`}
                   whileHover={{ y: -2 }}
                 >
@@ -140,7 +140,7 @@ export default function Header({ headerData }) {
 
           {/* Right side - Fixed width to prevent shifting */}
           <div className="flex items-center space-x-4 flex-shrink-0">
-            <Button className="bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap">
+            <Button className="bg-primary text-ink hover:bg-primary/90 shadow-lg transition-all duration-300 whitespace-nowrap">
               <a
                 href="#contact"
                 onClick={(e) => handleDesktopNavigation(e, '#contact')}
@@ -156,7 +156,7 @@ export default function Header({ headerData }) {
           <motion.div className="lg:hidden flex-shrink-0">
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`transition-colors p-2 ${theme === "dark" ? "text-gray-300 hover:text-gray-200" : "text-gray-700 hover:text-primary"}`}
+              className={`transition-colors p-2 ${theme === "dark" ? "text-ink-light hover:text-ink-light" : "text-ink-paragraph hover:text-primary"}`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               animate={{ rotate: isMenuOpen ? 180 : 0 }}
@@ -174,7 +174,7 @@ export default function Header({ headerData }) {
           {
             isMenuOpen && (
               <motion.div
-                className="lg:hidden border-t border-gray-200 overflow-hidden"
+                className="lg:hidden border-t border-ink-light overflow-hidden"
                 variants={menuVariants}
                 initial="closed"
                 animate="open"
@@ -186,8 +186,8 @@ export default function Header({ headerData }) {
                       key={item.id}
                       onClick={() => handleScrollToSection(item.href)}
                       className={`text-left hover:text-${item.color} transition-colors py-2 px-4 rounded-lg hover:bg-${item.color}/10 ${theme === "dark"
-                        ? "text-gray-300 hover:text-gray-200"
-                        : "text-gray-700 hover:text-primary"
+                        ? "text-ink-light hover:text-ink-light"
+                        : "text-ink-paragraph hover:text-primary"
                         }`}
                       variants={itemVariants}
                       whileHover={{ x: 10, scale: 1.02 }}
@@ -196,7 +196,7 @@ export default function Header({ headerData }) {
                     </motion.button>
                   ))}
                   <Button
-                    className="bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg"
+                    className="bg-primary text-ink hover:bg-primary/90 w-full mt-4 shadow-lg"
                     onClick={() => handleScrollToSection('#contact')}
                   >
                     {safeHeaderData.ctaText || "Get Started"}

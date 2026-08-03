@@ -34,8 +34,8 @@
 //     const baseClasses =
 //         "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //     const variants = {
-//         outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//         default: "bg-blue-600 text-white hover:bg-blue-700",
+//         outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//         default: "bg-status-info text-white hover:bg-status-info",
 //     };
 //     const sizes = {
 //         sm: "h-8 px-3 text-sm",
@@ -671,14 +671,14 @@
 //     // No data state - show empty state with option to add data
 //     if (!isEditing && !hasData) {
 //         return (
-//             <section ref={servicesRef} id="services" className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
+//             <section ref={servicesRef} id="services" className="py-20 bg-gradient-to-br from-status-error/10 to-background dark:from-red-900/20 dark:to-background">
 //                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 //                     {/* Edit Controls */}
 //                     <div className='text-right mb-8'>
 //                         <Button
 //                             onClick={handleEdit}
 //                             size='sm'
-//                             className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                             className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                         >
 //                             <Edit2 className='w-4 h-4 mr-2' />
 //                             Add Services
@@ -690,38 +690,38 @@
 //     }
 
 //     return (
-//         <section ref={servicesRef} id="services" className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
+//         <section ref={servicesRef} id="services" className="py-20 bg-gradient-to-br from-status-error/10 to-background dark:from-red-900/20 dark:to-background">
 //             {/* Image Cropper Modal with Auto-upload Progress */}
 //             {showCropper && (
 //                 <motion.div
 //                     initial={{ opacity: 0 }}
 //                     animate={{ opacity: 1 }}
-//                     className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//                     className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //                 >
 //                     <motion.div
 //                         initial={{ scale: 0.9, opacity: 0 }}
 //                         animate={{ scale: 1, opacity: 1 }}
-//                         className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//                         className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //                     >
 //                         {/* Header */}
-//                         <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//                             <h3 className="text-lg font-semibold text-gray-800">
+//                         <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//                             <h3 className="text-lg font-semibold text-ink-charcoal">
 //                                 Crop Service Image (4:3 Standard)
 //                                 {isAutoUploading && (
-//                                     <span className="ml-2 text-blue-600 text-sm">Uploading... {uploadProgress}%</span>
+//                                     <span className="ml-2 text-status-info text-sm">Uploading... {uploadProgress}%</span>
 //                                 )}
 //                             </h3>
 //                             <button
 //                                 onClick={cancelCrop}
-//                                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //                                 disabled={isAutoUploading}
 //                             >
-//                                 <X className="w-5 h-5 text-gray-600" />
+//                                 <X className="w-5 h-5 text-ink-paragraph" />
 //                             </button>
 //                         </div>
 
 //                         {/* Cropper Area */}
-//                         <div className="flex-1 relative bg-gray-900 min-h-0">
+//                         <div className="flex-1 relative bg-ink min-h-0">
 //                             <Cropper
 //                                 image={imageToCrop}
 //                                 crop={crop}
@@ -754,9 +754,9 @@
 //                         {/* Upload Progress Bar */}
 //                         {isAutoUploading && (
 //                             <div className="px-4 pt-2">
-//                                 <div className="w-full bg-gray-200 rounded-full h-2">
+//                                 <div className="w-full bg-ink-light rounded-full h-2">
 //                                     <div
-//                                         className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+//                                         className="bg-status-info h-2 rounded-full transition-all duration-300"
 //                                         style={{ width: `${uploadProgress}%` }}
 //                                     ></div>
 //                                 </div>
@@ -764,28 +764,28 @@
 //                         )}
 
 //                         {/* Controls */}
-//                         <div className="p-4 bg-gray-50 border-t border-gray-200">
+//                         <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //                             {/* Aspect Ratio Info */}
 //                             <div className="mb-4">
-//                                 <p className="text-sm font-medium text-gray-700 mb-2">
-//                                     Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+//                                 <p className="text-sm font-medium text-ink-paragraph mb-2">
+//                                     Aspect Ratio: <span className="text-status-info">4:3 (Standard)</span>
 //                                 </p>
 //                             </div>
 
 //                             {/* Zoom Control */}
 //                             <div className="space-y-2 mb-4">
 //                                 <div className="flex items-center justify-between text-sm">
-//                                     <span className="flex items-center gap-2 text-gray-700">
+//                                     <span className="flex items-center gap-2 text-ink-paragraph">
 //                                         <ZoomIn className="w-4 h-4" />
 //                                         Zoom
 //                                     </span>
-//                                     <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                                     <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                                 </div>
 //                                 <div className="flex items-center gap-2">
 //                                     <button
 //                                         type="button"
 //                                         onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
-//                                         className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                                         className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                                         disabled={isAutoUploading}
 //                                     >
 //                                         <ZoomOut className="w-4 h-4" />
@@ -797,13 +797,13 @@
 //                                         max={5}
 //                                         step={0.1}
 //                                         onChange={(e) => setZoom(Number(e.target.value))}
-//                                         className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                                         className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                                         disabled={isAutoUploading}
 //                                     />
 //                                     <button
 //                                         type="button"
 //                                         onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
-//                                         className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                                         className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                                         disabled={isAutoUploading}
 //                                     >
 //                                         <ZoomIn className="w-4 h-4" />
@@ -815,21 +815,21 @@
 //                             <div className="grid grid-cols-3 gap-3">
 //                                 <button
 //                                     onClick={resetCropSettings}
-//                                     className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                                     className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                                     disabled={isAutoUploading}
 //                                 >
 //                                     Reset
 //                                 </button>
 //                                 <button
 //                                     onClick={cancelCrop}
-//                                     className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                                     className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                                     disabled={isAutoUploading}
 //                                 >
 //                                     Cancel
 //                                 </button>
 //                                 <button
 //                                     onClick={applyCrop}
-//                                     className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium flex items-center justify-center gap-2"
+//                                     className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium flex items-center justify-center gap-2"
 //                                     disabled={isAutoUploading}
 //                                 >
 //                                     {isAutoUploading ? (
@@ -850,19 +850,19 @@
 //                     {isEditing && (
 //                         <div className="flex items-center justify-end gap-4 mb-4 text-sm">
 //                             {hasUnsavedChanges && (
-//                                 <div className="flex items-center gap-2 text-orange-600">
-//                                     <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+//                                 <div className="flex items-center gap-2 text-status-warning">
+//                                     <div className="w-2 h-2 bg-status-warning rounded-full animate-pulse"></div>
 //                                     Unsaved changes
 //                                 </div>
 //                             )}
 //                             {isAutoSaving && (
-//                                 <div className="flex items-center gap-2 text-blue-600">
+//                                 <div className="flex items-center gap-2 text-status-info">
 //                                     <Loader2 className="w-3 h-3 animate-spin" />
 //                                     Auto-saving...
 //                                 </div>
 //                             )}
 //                             {lastSavedTime && !hasUnsavedChanges && !isAutoSaving && (
-//                                 <div className="text-green-600">
+//                                 <div className="text-status-success">
 //                                     Saved {lastSavedTime.toLocaleTimeString()}
 //                                 </div>
 //                             )}
@@ -873,7 +873,7 @@
 //                         <Button
 //                             onClick={handleEdit}
 //                             size='sm'
-//                             className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                             className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                         >
 //                             <Edit2 className='w-4 h-4 mr-2' />
 //                             Edit
@@ -883,7 +883,7 @@
 //                             <Button
 //                                 onClick={handleSave}
 //                                 size='sm'
-//                                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                                 className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                                 disabled={isSaving || isUploading}
 //                             >
 //                                 {isUploading ? (
@@ -898,7 +898,7 @@
 //                             <Button
 //                                 onClick={handleCancel}
 //                                 size='sm'
-//                                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                                 className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                                 disabled={isSaving || isUploading}
 //                             >
 //                                 <X className='w-4 h-4 mr-2' />
@@ -908,7 +908,7 @@
 //                                 onClick={addService}
 //                                 variant='outline'
 //                                 size='sm'
-//                                 className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+//                                 className='bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md'
 //                             >
 //                                 <Plus className='w-4 h-4 mr-2' />
 //                                 Add Service
@@ -926,18 +926,18 @@
 //                     transition={{ duration: 0.6 }}
 //                 >
 //                     <div className="flex items-center justify-center mb-4">
-//                         <Briefcase className="w-8 h-8 text-red-500 mr-3" />
+//                         <Briefcase className="w-8 h-8 text-status-error mr-3" />
 //                         {isEditing ? (
 //                             <div className="relative">
 //                                 <input
 //                                     type="text"
 //                                     value={displayData.heading || ""}
 //                                     onChange={(e) => updateHeader('heading', e.target.value)}
-//                                     className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+//                                     className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center"
 //                                     placeholder="Services"
 //                                     maxLength={TEXT_LIMITS.HEADING}
 //                                 />
-//                                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                                     {displayData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
 //                                 </div>
 //                             </div>
@@ -954,11 +954,11 @@
 //                                     type="text"
 //                                     value={displayData.subtitle || ""}
 //                                     onChange={(e) => updateHeader('subtitle', e.target.value)}
-//                                     className="text-xl text-red-600 mb-4 max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
+//                                     className="text-xl text-status-error mb-4 max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full text-center"
 //                                     placeholder="Subtitle (e.g., Professional Services)"
 //                                     maxLength={TEXT_LIMITS.SUBTITLE}
 //                                 />
-//                                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                                     {displayData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
 //                                 </div>
 //                             </div>
@@ -966,12 +966,12 @@
 //                                 <textarea
 //                                     value={displayData.description || ""}
 //                                     onChange={(e) => updateHeader('description', e.target.value)}
-//                                     className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+//                                     className="text-lg text-muted-foreground max-w-3xl mx-auto bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
 //                                     rows={2}
 //                                     placeholder="Description of your services"
 //                                     maxLength={TEXT_LIMITS.DESCRIPTION}
 //                                 />
-//                                 <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                                 <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                                     {displayData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
 //                                 </div>
 //                             </div>
@@ -979,7 +979,7 @@
 //                     ) : (
 //                         <>
 //                             {displayData.subtitle && (
-//                                 <p className="text-xl text-red-600 mb-4 max-w-3xl mx-auto">
+//                                 <p className="text-xl text-status-error mb-4 max-w-3xl mx-auto">
 //                                     {displayData.subtitle}
 //                                 </p>
 //                             )}
@@ -1020,7 +1020,7 @@
 //                                                             onClick={() => fileInputRefs.current[displayData.services[currentIndex]?.id]?.click()}
 //                                                             size="sm"
 //                                                             variant="outline"
-//                                                             className="bg-white text-black hover:bg-gray-100"
+//                                                             className="bg-surface-card text-ink hover:bg-ink-light"
 //                                                         >
 //                                                             <Upload className='w-4 h-4 mr-2' />
 //                                                             Change Image
@@ -1037,11 +1037,11 @@
 //                                                             className='hidden'
 //                                                         />
 //                                                         {pendingImageFiles[displayData.services[currentIndex]?.id || ''] && (
-//                                                             <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
+//                                                             <p className='text-xs text-status-warning mt-1 bg-surface-card p-1 rounded'>
 //                                                                 {pendingImageFiles[displayData.services[currentIndex]?.id || '']?.name}
 //                                                             </p>
 //                                                         )}
-//                                                         <div className='text-xs text-gray-500 mt-1 text-center'>
+//                                                         <div className='text-xs text-ink-caption mt-1 text-center'>
 //                                                             Recommended: 800×600px (4:3 ratio)
 //                                                         </div>
 //                                                     </div>
@@ -1058,21 +1058,21 @@
 //                                                     }}
 //                                                 />
 //                                             ) : (
-//                                                 <div className="w-full h-full flex items-center justify-center bg-gray-200">
-//                                                     <p className="text-gray-400 text-sm">No image uploaded</p>
+//                                                 <div className="w-full h-full flex items-center justify-center bg-ink-light">
+//                                                     <p className="text-ink-caption text-sm">No image uploaded</p>
 //                                                 </div>
 //                                             )}
-//                                             <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+//                                             <div className="absolute inset-0 bg-gradient-to-r from-ink/20 to-transparent"></div>
 //                                         </div>
 
 //                                         {/* Service Details - Fixed height container */}
-//                                         <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-red-50 dark:from-card dark:to-red-900/20">
+//                                         <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-status-error/10 dark:from-card dark:to-red-900/20">
 //                                             {isEditing && (
 //                                                 <Button
 //                                                     onClick={() => removeService(currentIndex)}
 //                                                     size='sm'
 //                                                     variant='outline'
-//                                                     className='absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
+//                                                     className='absolute top-2 right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error p-1'
 //                                                 >
 //                                                     <Trash2 className='w-4 h-4' />
 //                                                 </Button>
@@ -1086,11 +1086,11 @@
 //                                                                 type="text"
 //                                                                 value={displayData.services[currentIndex]?.title || ''}
 //                                                                 onChange={(e) => updateService(currentIndex, 'title', e.target.value)}
-//                                                                 className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+//                                                                 className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2"
 //                                                                 placeholder="Service Title"
 //                                                                 maxLength={TEXT_LIMITS.SERVICE_TITLE}
 //                                                             />
-//                                                             <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                                                             <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                                                                 {displayData.services[currentIndex]?.title?.length || 0}/{TEXT_LIMITS.SERVICE_TITLE}
 //                                                             </div>
 //                                                         </div>
@@ -1106,11 +1106,11 @@
 //                                                         <textarea
 //                                                             value={displayData.services[currentIndex]?.description || ''}
 //                                                             onChange={(e) => updateService(currentIndex, 'description', e.target.value)}
-//                                                             className="w-full h-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground leading-relaxed resize-none"
+//                                                             className="w-full h-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-muted-foreground leading-relaxed resize-none"
 //                                                             placeholder="Service description"
 //                                                             maxLength={TEXT_LIMITS.SERVICE_DESCRIPTION}
 //                                                         />
-//                                                         <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                                                         <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                                                             {displayData.services[currentIndex]?.description?.length || 0}/{TEXT_LIMITS.SERVICE_DESCRIPTION}
 //                                                         </div>
 //                                                     </div>
@@ -1126,7 +1126,7 @@
 //                                     // Empty state when editing but no services added yet
 //                                     <div className="absolute inset-0 flex items-center justify-center bg-card">
 //                                         <div className="text-center p-8">
-//                                             <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+//                                             <Briefcase className="w-16 h-16 text-ink-caption mx-auto mb-4" />
 //                                             <h3 className="text-xl font-semibold text-foreground mb-2">
 //                                                 No Services Added
 //                                             </h3>
@@ -1136,7 +1136,7 @@
 //                                             <Button
 //                                                 onClick={addService}
 //                                                 size='lg'
-//                                                 className='bg-red-500 hover:bg-red-600 text-white'
+//                                                 className='bg-status-error hover:bg-status-error text-white'
 //                                             >
 //                                                 <Plus className='w-5 h-5 mr-2' />
 //                                                 Add First Service
@@ -1152,13 +1152,13 @@
 //                             <>
 //                                 <button
 //                                     onClick={prevSlide}
-//                                     className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-red-600 transition-all duration-300 hover:scale-110 z-10"
+//                                     className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-status-error transition-all duration-300 hover:scale-110 z-10"
 //                                 >
 //                                     <ChevronLeft className="w-6 h-6" />
 //                                 </button>
 //                                 <button
 //                                     onClick={nextSlide}
-//                                     className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-red-600 transition-all duration-300 hover:scale-110 z-10"
+//                                     className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-status-error transition-all duration-300 hover:scale-110 z-10"
 //                                 >
 //                                     <ChevronRight className="w-6 h-6" />
 //                                 </button>
@@ -1171,8 +1171,8 @@
 //                                                 key={index}
 //                                                 onClick={() => goToSlide(index)}
 //                                                 className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
-//                                                         ? 'bg-red-500 scale-125'
-//                                                         : 'bg-gray-300 hover:bg-gray-400'
+//                                                         ? 'bg-status-error scale-125'
+//                                                         : 'bg-ink-light hover:bg-ink-caption'
 //                                                     }`}
 //                                             />
 //                                         ))}
@@ -1186,8 +1186,8 @@
 //                     !isEditing && data.services.length === 0 && (
 //                         <div className="text-center py-12">
 //                             <div className="max-w-md mx-auto">
-//                                 <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-//                                     <Briefcase className="w-8 h-8 text-gray-400" />
+//                                 <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+//                                     <Briefcase className="w-8 h-8 text-ink-caption" />
 //                                 </div>
 //                                 <h4 className="text-lg font-semibold text-foreground mb-2">
 //                                     No Services Added
@@ -1198,7 +1198,7 @@
 //                                 <Button
 //                                     onClick={handleEdit}
 //                                     size='md'
-//                                     className='bg-red-500 hover:bg-red-600 text-white'
+//                                     className='bg-status-error hover:bg-status-error text-white'
 //                                 >
 //                                     <Plus className='w-4 h-4 mr-2' />
 //                                     Add Services
@@ -1265,8 +1265,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -1908,7 +1908,7 @@ export function Services({
       <section
         ref={servicesRef}
         id="services"
-        className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background"
+        className="py-20 bg-gradient-to-br from-status-error/10 to-background dark:from-red-900/20 dark:to-background"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Edit Controls */}
@@ -1916,7 +1916,7 @@ export function Services({
             <Button
               onClick={handleEdit}
               size="sm"
-              className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+              className="bg-status-error hover:bg-status-error shadow-md text-white"
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Add Services
@@ -1931,7 +1931,7 @@ export function Services({
     <section
       ref={servicesRef}
       id="services"
-      className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background"
+      className="py-20 bg-gradient-to-br from-status-error/10 to-background dark:from-red-900/20 dark:to-background"
     >
       {/* Image Cropper Modal */}
       {showCropper &&
@@ -1939,19 +1939,19 @@ export function Services({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+              className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
             >
               {/* Header */}
-              <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                <h3 className="text-lg font-semibold text-gray-800">
+              <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+                <h3 className="text-lg font-semibold text-ink-charcoal">
                   Crop Service Image (4:3 Standard)
                   {isUploading && (
-                    <span className="ml-2 text-blue-600 text-sm flex items-center gap-1">
+                    <span className="ml-2 text-status-info text-sm flex items-center gap-1">
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Uploading...
                     </span>
@@ -1959,15 +1959,15 @@ export function Services({
                 </h3>
                 <button
                   onClick={cancelCrop}
-                  className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                  className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
                   disabled={isUploading}
                 >
-                  <X className="w-5 h-5 text-gray-600" />
+                  <X className="w-5 h-5 text-ink-paragraph" />
                 </button>
               </div>
 
               {/* Cropper Area */}
-              <div className="flex-1 relative bg-gray-900 min-h-0">
+              <div className="flex-1 relative bg-ink min-h-0">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
@@ -1998,23 +1998,23 @@ export function Services({
               </div>
 
               {/* Controls */}
-              <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <div className="p-4 bg-ink-offwhite border-t border-ink-light">
                 {/* Aspect Ratio Info */}
                 <div className="mb-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
+                  <p className="text-sm font-medium text-ink-paragraph mb-2">
                     Aspect Ratio:{" "}
-                    <span className="text-blue-600">4:3 (Standard)</span>
+                    <span className="text-status-info">4:3 (Standard)</span>
                   </p>
                 </div>
 
                 {/* Zoom Control */}
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
+                    <span className="flex items-center gap-2 text-ink-paragraph">
                       <ZoomIn className="w-4 h-4" />
                       Zoom
                     </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                    <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
@@ -2022,7 +2022,7 @@ export function Services({
                       onClick={() =>
                         setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))
                       }
-                      className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                      className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
                       disabled={isUploading}
                     >
                       <ZoomOut className="w-4 h-4" />
@@ -2034,7 +2034,7 @@ export function Services({
                       max={5}
                       step={0.1}
                       onChange={(e) => setZoom(Number(e.target.value))}
-                      className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                      className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                       disabled={isUploading}
                     />
                     <button
@@ -2042,7 +2042,7 @@ export function Services({
                       onClick={() =>
                         setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))
                       }
-                      className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                      className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
                       disabled={isUploading}
                     >
                       <ZoomIn className="w-4 h-4" />
@@ -2054,21 +2054,21 @@ export function Services({
                 <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={resetCropSettings}
-                    className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium disabled:opacity-50"
+                    className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium disabled:opacity-50"
                     disabled={isUploading}
                   >
                     Reset
                   </button>
                   <button
                     onClick={cancelCrop}
-                    className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium disabled:opacity-50"
+                    className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium disabled:opacity-50"
                     disabled={isUploading}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={applyCrop}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
                     disabled={isUploading}
                   >
                     {isUploading ? (
@@ -2094,16 +2094,16 @@ export function Services({
           {isEditing && (
             <div className="flex items-center gap-2 text-sm mb-2 justify-end">
               {isAutoSaving && (
-                <div className="flex items-center gap-1 text-blue-500">
+                <div className="flex items-center gap-1 text-status-info">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Auto-saving...</span>
                 </div>
               )}
               {hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-yellow-500">● Unsaved changes</div>
+                <div className="text-brand-gold">● Unsaved changes</div>
               )}
               {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-green-500">
+                <div className="text-status-success">
                   ✓ Auto-saved {lastSaved.toLocaleTimeString()}
                 </div>
               )}
@@ -2114,7 +2114,7 @@ export function Services({
             <Button
               onClick={handleEdit}
               size="sm"
-              className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+              className="bg-status-error hover:bg-status-error shadow-md text-white"
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Edit
@@ -2124,7 +2124,7 @@ export function Services({
               <Button
                 onClick={handleSave}
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                className="bg-status-success hover:bg-status-success text-white shadow-md"
                 disabled={isSaving || isUploading}
               >
                 {isUploading ? (
@@ -2139,7 +2139,7 @@ export function Services({
               <Button
                 onClick={handleCancel}
                 size="sm"
-                className="bg-red-400 hover:bg-red-600 shadow-md text-white"
+                className="bg-status-error hover:bg-status-error shadow-md text-white"
                 disabled={isSaving || isUploading}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -2149,7 +2149,7 @@ export function Services({
                 onClick={addService}
                 variant="outline"
                 size="sm"
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                className="bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Service
@@ -2167,18 +2167,18 @@ export function Services({
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center justify-center mb-4">
-            <Briefcase className="w-8 h-8 text-red-500 mr-3" />
+            <Briefcase className="w-8 h-8 text-status-error mr-3" />
             {isEditing ? (
               <div className="relative">
                 <input
                   type="text"
                   value={displayData.heading || ""}
                   onChange={(e) => updateHeader("heading", e.target.value)}
-                  className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center"
+                  className="text-3xl sm:text-4xl lg:text-5xl text-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center"
                   placeholder="Services"
                   maxLength={TEXT_LIMITS.HEADING}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {displayData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
                 </div>
               </div>
@@ -2195,11 +2195,11 @@ export function Services({
                   type="text"
                   value={displayData.subtitle || ""}
                   onChange={(e) => updateHeader("subtitle", e.target.value)}
-                  className="text-xl text-red-600 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full text-center"
+                  className="text-xl text-status-error bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full text-center"
                   placeholder="Subtitle (e.g., Professional Services)"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {displayData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
                 </div>
               </div>
@@ -2207,12 +2207,12 @@ export function Services({
                 <textarea
                   value={displayData.description || ""}
                   onChange={(e) => updateHeader("description", e.target.value)}
-                  className="text-lg text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
                   rows={2}
                   placeholder="Description of your services"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
                 />
-                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                   {displayData.description?.length || 0}/
                   {TEXT_LIMITS.DESCRIPTION}
                 </div>
@@ -2221,7 +2221,7 @@ export function Services({
           ) : (
             <>
               {displayData.subtitle && (
-                <p className="text-xl text-red-600 mb-4 text-center max-w-3xl mx-auto">
+                <p className="text-xl text-status-error mb-4 text-center max-w-3xl mx-auto">
                   {displayData.subtitle}
                 </p>
               )}
@@ -2266,7 +2266,7 @@ export function Services({
                               }
                               size="sm"
                               variant="outline"
-                              className="bg-white text-black hover:bg-gray-100"
+                              className="bg-surface-card text-ink hover:bg-ink-light"
                             >
                               <Upload className="w-4 h-4 mr-2" />
                               Change Image
@@ -2292,7 +2292,7 @@ export function Services({
                             {pendingImageFiles[
                               displayData.services[currentIndex]?.id || ""
                             ] && (
-                              <p className="text-xs text-orange-600 mt-1 bg-white p-1 rounded">
+                              <p className="text-xs text-status-warning mt-1 bg-surface-card p-1 rounded">
                                 {
                                   pendingImageFiles[
                                     displayData.services[currentIndex]?.id || ""
@@ -2300,7 +2300,7 @@ export function Services({
                                 }
                               </p>
                             )}
-                            <div className="text-xs text-gray-500 mt-1 text-center">
+                            <div className="text-xs text-ink-caption mt-1 text-center">
                               Recommended: 800×600px (4:3 ratio)
                             </div>
                           </div>
@@ -2321,23 +2321,23 @@ export function Services({
                           }}
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                          <p className="text-gray-400 text-sm">
+                        <div className="w-full h-full flex items-center justify-center bg-ink-light">
+                          <p className="text-ink-caption text-sm">
                             No image uploaded
                           </p>
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-ink/20 to-transparent"></div>
                     </div>
 
                     {/* Service Details */}
-                    <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-red-50 dark:from-card dark:to-red-900/20">
+                    <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-status-error/10 dark:from-card dark:to-red-900/20">
                       {isEditing && (
                         <Button
                           onClick={() => removeService(currentIndex)}
                           size="sm"
                           variant="outline"
-                          className="absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1"
+                          className="absolute top-2 right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -2360,11 +2360,11 @@ export function Services({
                                     e.target.value
                                   )
                                 }
-                                className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                                className="w-full text-2xl lg:text-3xl text-foreground mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2"
                                 placeholder="Service Title"
                                 maxLength={TEXT_LIMITS.SERVICE_TITLE}
                               />
-                              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                                 {displayData.services[currentIndex]?.title
                                   ?.length || 0}
                                 /{TEXT_LIMITS.SERVICE_TITLE}
@@ -2391,11 +2391,11 @@ export function Services({
                                   e.target.value
                                 )
                               }
-                              className="w-full h-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-muted-foreground leading-relaxed resize-none"
+                              className="w-full h-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-muted-foreground leading-relaxed resize-none"
                               placeholder="Service description"
                               maxLength={TEXT_LIMITS.SERVICE_DESCRIPTION}
                             />
-                            <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                            <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                               {displayData.services[currentIndex]?.description
                                 ?.length || 0}
                               /{TEXT_LIMITS.SERVICE_DESCRIPTION}
@@ -2414,7 +2414,7 @@ export function Services({
                   // Empty state when editing but no services added yet
                   <div className="absolute inset-0 flex items-center justify-center bg-card">
                     <div className="text-center p-8">
-                      <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <Briefcase className="w-16 h-16 text-ink-caption mx-auto mb-4" />
                       <h3 className="text-xl font-semibold text-foreground mb-2">
                         No Services Added
                       </h3>
@@ -2424,7 +2424,7 @@ export function Services({
                       <Button
                         onClick={addService}
                         size="lg"
-                        className="bg-red-500 hover:bg-red-600 text-white"
+                        className="bg-status-error hover:bg-status-error text-white"
                       >
                         <Plus className="w-5 h-5 mr-2" />
                         Add First Service
@@ -2440,13 +2440,13 @@ export function Services({
               <>
                 <button
                   onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-red-600 transition-all duration-300 hover:scale-110 z-10"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-status-error transition-all duration-300 hover:scale-110 z-10"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-red-600 transition-all duration-300 hover:scale-110 z-10"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-status-error transition-all duration-300 hover:scale-110 z-10"
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
@@ -2460,8 +2460,8 @@ export function Services({
                         onClick={() => goToSlide(index)}
                         className={`w-3 h-3 rounded-full transition-all duration-300 ${
                           index === currentIndex
-                            ? "bg-red-500 scale-125"
-                            : "bg-gray-300 hover:bg-gray-400"
+                            ? "bg-status-error scale-125"
+                            : "bg-ink-light hover:bg-ink-caption"
                         }`}
                       />
                     ))}
@@ -2476,8 +2476,8 @@ export function Services({
           data.services.length === 0 && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Briefcase className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                  <Briefcase className="w-8 h-8 text-ink-caption" />
                 </div>
                 <h4 className="text-lg font-semibold text-foreground mb-2">
                   No Services Added
@@ -2489,7 +2489,7 @@ export function Services({
                 <Button
                   onClick={handleEdit}
                   size="md"
-                  className="bg-red-500 hover:bg-red-600 text-white"
+                  className="bg-status-error hover:bg-status-error text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Services

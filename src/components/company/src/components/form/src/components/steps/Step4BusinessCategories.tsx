@@ -538,14 +538,14 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   const getCategoryColor = (category: string) => {
     if (category.toLowerCase().includes("drone")) {
       return {
-        bg: "bg-blue-50",
-        border: "border-blue-200",
-        text: "text-blue-900",
-        button: "bg-blue-100 hover:bg-blue-200 text-blue-800",
-        tag: "bg-blue-100 text-blue-800 border-blue-200",
-        selected: "bg-blue-100 border-blue-500 text-blue-900",
-        completed: "bg-green-100 border-green-500 text-green-900",
-        incomplete: "bg-red-100 border-red-500 text-red-900",
+        bg: "bg-status-info/10",
+        border: "border-status-info/25",
+        text: "text-status-info",
+        button: "bg-status-info/15 hover:bg-status-info/25 text-status-info",
+        tag: "bg-status-info/15 text-status-info border-status-info/25",
+        selected: "bg-status-info/15 border-status-info text-status-info",
+        completed: "bg-status-success/15 border-status-success text-status-success",
+        incomplete: "bg-status-error/15 border-status-error text-status-error",
       };
     } else if (
       category.toLowerCase().includes("ai") ||
@@ -556,25 +556,25 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
       category.toLowerCase().includes("machine learning")
     ) {
       return {
-        bg: "bg-purple-50",
-        border: "border-purple-200",
-        text: "text-purple-900",
-        button: "bg-purple-100 hover:bg-purple-200 text-purple-800",
-        tag: "bg-purple-100 text-purple-800 border-purple-200",
-        selected: "bg-purple-100 border-purple-500 text-purple-900",
-        completed: "bg-green-100 border-green-500 text-green-900",
-        incomplete: "bg-red-100 border-red-500 text-red-900",
+        bg: "bg-brand-gold/10",
+        border: "border-brand-gold/25",
+        text: "text-brand-gold",
+        button: "bg-brand-gold/15 hover:bg-brand-gold/25 text-brand-gold",
+        tag: "bg-brand-gold/15 text-brand-gold border-brand-gold/25",
+        selected: "bg-brand-gold/15 border-brand-gold text-brand-gold",
+        completed: "bg-status-success/15 border-status-success text-status-success",
+        incomplete: "bg-status-error/15 border-status-error text-status-error",
       };
     } else {
       return {
-        bg: "bg-green-50",
-        border: "border-green-200",
-        text: "text-green-900",
-        button: "bg-green-100 hover:bg-green-200 text-green-800",
-        tag: "bg-green-100 text-green-800 border-green-200",
-        selected: "bg-green-100 border-green-500 text-green-900",
-        completed: "bg-green-100 border-green-500 text-green-900",
-        incomplete: "bg-red-100 border-red-500 text-red-900",
+        bg: "bg-status-success/10",
+        border: "border-status-success/25",
+        text: "text-status-success",
+        button: "bg-status-success/15 hover:bg-status-success/25 text-status-success",
+        tag: "bg-status-success/15 text-status-success border-status-success/25",
+        selected: "bg-status-success/15 border-status-success text-status-success",
+        completed: "bg-status-success/15 border-status-success text-status-success",
+        incomplete: "bg-status-error/15 border-status-error text-status-error",
       };
     }
   };
@@ -627,10 +627,10 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
       <div className="space-y-6">
         {/* Main Business Categories */}
         <div>
-          <h3 className="text-lg font-bold text-slate-900 mb-4">
+          <h3 className="text-lg font-bold text-ink mb-4">
             Main Business Categories
           </h3>
-          <p className="text-sm text-slate-600 mb-4">
+          <p className="text-sm text-ink-paragraph mb-4">
             Select your primary business categories (multiple selection allowed)
           </p>
 
@@ -654,24 +654,24 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                   if (status === "completed") {
                     if (isExpanded) {
                       categoryStyle =
-                        "bg-blue-100 border-blue-500 shadow-sm ring-2 ring-blue-300";
-                      textStyle = "text-blue-800";
+                        "bg-status-info/15 border-status-info shadow-sm ring-2 ring-status-info/40";
+                      textStyle = "text-status-info";
                     } else {
-                      categoryStyle = "bg-green-100 border-green-500 shadow-sm";
-                      textStyle = "text-green-800";
+                      categoryStyle = "bg-status-success/15 border-status-success shadow-sm";
+                      textStyle = "text-status-success";
                     }
                     showCheckbox = true;
                   } else if (status === "expanded") {
                     categoryStyle =
-                      "bg-blue-100 border-blue-500 shadow-sm ring-2 ring-blue-300";
-                    textStyle = "text-blue-800";
+                      "bg-status-info/15 border-status-info shadow-sm ring-2 ring-status-info/40";
+                    textStyle = "text-status-info";
                   } else if (isSelected) {
-                    categoryStyle = "bg-yellow-100 border-yellow-500 shadow-sm";
-                    textStyle = "text-yellow-800";
+                    categoryStyle = "bg-brand-yellow-soft border-brand-gold shadow-sm";
+                    textStyle = "text-brand-gold";
                   } else {
                     categoryStyle =
-                      "bg-white border-slate-200 hover:border-slate-300";
-                    textStyle = "text-slate-700";
+                      "bg-surface-card border-ink-light hover:border-ink-light";
+                    textStyle = "text-ink-paragraph";
                   }
 
                   return (
@@ -682,7 +682,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                     >
                       <div className="flex items-start">
                         {showCheckbox && (
-                          <div className="w-2.5 h-2.5 rounded border border-green-500 bg-green-500 flex items-center justify-center mr-1 mt-0.5 flex-shrink-0">
+                          <div className="w-2.5 h-2.5 rounded border border-status-success bg-status-success flex items-center justify-center mr-1 mt-0.5 flex-shrink-0">
                             <svg
                               className="w-1.5 h-1.5 text-white"
                               fill="currentColor"
@@ -722,7 +722,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                     <button
                       type="button"
                       onClick={() => handleMainCategoryToggle(expandedCat)}
-                      className="text-xs text-gray-500 hover:text-gray-700 px-2 py-0.5 rounded hover:bg-white/50"
+                      className="text-xs text-ink-caption hover:text-ink-paragraph px-2 py-0.5 rounded hover:bg-white/50"
                     >
                       ▲ Collapse
                     </button>
@@ -749,26 +749,26 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                       if (subStatus === "completed") {
                         if (isSubExpanded) {
                           subCategoryStyle =
-                            "bg-blue-100 border-blue-500 shadow-sm ring-2 ring-blue-300";
-                          subTextStyle = "text-blue-800";
+                            "bg-status-info/15 border-status-info shadow-sm ring-2 ring-status-info/40";
+                          subTextStyle = "text-status-info";
                         } else {
                           subCategoryStyle =
-                            "bg-green-100 border-green-500 shadow-sm";
-                          subTextStyle = "text-green-800";
+                            "bg-status-success/15 border-status-success shadow-sm";
+                          subTextStyle = "text-status-success";
                         }
                         showSubCheckbox = true;
                       } else if (subStatus === "expanded") {
                         subCategoryStyle =
-                          "bg-blue-100 border-blue-500 shadow-sm ring-2 ring-blue-300";
-                        subTextStyle = "text-blue-800";
+                          "bg-status-info/15 border-status-info shadow-sm ring-2 ring-status-info/40";
+                        subTextStyle = "text-status-info";
                       } else if (isSubSelected) {
                         subCategoryStyle =
-                          "bg-orange-100 border-orange-500 shadow-sm";
-                        subTextStyle = "text-orange-800";
+                          "bg-status-warning/15 border-status-warning shadow-sm";
+                        subTextStyle = "text-status-warning";
                       } else {
                         subCategoryStyle =
-                          "bg-white hover:bg-slate-50 border border-slate-200";
-                        subTextStyle = "text-slate-700";
+                          "bg-surface-card hover:bg-ink-offwhite border border-ink-light";
+                        subTextStyle = "text-ink-paragraph";
                       }
 
                       return (
@@ -784,7 +784,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                         >
                           <div className="flex items-start">
                             {showSubCheckbox && (
-                              <div className="w-2 h-2 rounded border border-green-500 bg-green-500 flex items-center justify-center mr-1 mt-0.5 flex-shrink-0">
+                              <div className="w-2 h-2 rounded border border-status-success bg-status-success flex items-center justify-center mr-1 mt-0.5 flex-shrink-0">
                                 <svg
                                   className="w-1 h-1 text-white"
                                   fill="currentColor"
@@ -813,13 +813,13 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                   {(selectedSubcategories[expandedCat] || [])
                     .filter(sub => expandedSubcategories.has(sub) && subSubcategories[sub])
                     .map((expandedSub) => (
-                      <div key={expandedSub} className="bg-white rounded-md border border-slate-200 p-3 mb-2 animate-step-slide-up">
+                      <div key={expandedSub} className="bg-surface-card rounded-md border border-ink-light p-3 mb-2 animate-step-slide-up">
                         <div className="flex items-center justify-between mb-2">
-                          <h5 className="font-medium text-xs text-slate-800">{expandedSub} — Details</h5>
+                          <h5 className="font-medium text-xs text-ink-charcoal">{expandedSub} — Details</h5>
                           <button
                             type="button"
                             onClick={() => handleSubCategoryToggle(expandedCat, expandedSub)}
-                            className="text-xs text-gray-400 hover:text-gray-600 px-1"
+                            className="text-xs text-ink-caption hover:text-ink-paragraph px-1"
                           >▲</button>
                         </div>
                         <div className="flex flex-wrap items-start">
@@ -830,8 +830,8 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                                 key={subSubCategory}
                                 className={`inline-flex items-center px-1.5 py-0.5 mr-1 mb-1 rounded border cursor-pointer transition-all hover:shadow-sm whitespace-nowrap ${
                                   isSubSubSelected
-                                    ? "bg-green-50 border-green-300 text-green-800"
-                                    : "hover:bg-slate-50 border-slate-200 text-gray-800"
+                                    ? "bg-status-success/10 border-status-success/40 text-status-success"
+                                    : "hover:bg-ink-offwhite border-ink-light text-ink-charcoal"
                                 }`}
                               >
                                 <input
@@ -841,7 +841,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                                   className="sr-only"
                                 />
                                 <div className={`w-2.5 h-2.5 rounded border mr-1.5 flex items-center justify-center ${
-                                  isSubSubSelected ? "border-green-500 bg-green-500" : "border-slate-300"
+                                  isSubSubSelected ? "border-status-success bg-status-success" : "border-ink-light"
                                 }`}>
                                   {isSubSubSelected && (
                                     <svg className="w-1.5 h-1.5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -849,7 +849,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                                     </svg>
                                   )}
                                 </div>
-                                <span className="text-slate-700 text-xs leading-none">{subSubCategory}</span>
+                                <span className="text-ink-paragraph text-xs leading-none">{subSubCategory}</span>
                               </label>
                             );
                           })}
@@ -874,7 +874,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                           const trimmedItem = item.trim();
                           if (!trimmedItem) return null;
                           return (
-                            <span key={index} className="inline-block px-2 py-0.5 mr-1 mb-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium">
+                            <span key={index} className="inline-block px-2 py-0.5 mr-1 mb-1 bg-status-info/15 text-status-info rounded border border-status-info/25 text-xs font-medium">
                               {trimmedItem}
                             </span>
                           );
@@ -890,8 +890,8 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
         </div>
 
         {/* Geography of Operations */}
-        <div className="bg-slate-50 rounded-lg p-3">
-          <h3 className="text-base font-bold text-slate-900 mb-3">
+        <div className="bg-ink-offwhite rounded-lg p-3">
+          <h3 className="text-base font-bold text-ink mb-3">
             Geography of Operations
           </h3>
           <MultiSelect
@@ -921,11 +921,11 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
         </div>
 
         {/* Summary */}
-        <div className="bg-slate-100 rounded-lg p-3">
-          <h4 className="text-sm font-semibold text-slate-800 mb-2">
+        <div className="bg-ink-light rounded-lg p-3">
+          <h4 className="text-sm font-semibold text-ink-charcoal mb-2">
             Selection Summary
           </h4>
-          <div className="text-sm text-slate-600 space-y-1">
+          <div className="text-sm text-ink-paragraph space-y-1">
             <p>
               <strong>Selected Main Categories:</strong>{" "}
               {selectedMainCategories.length}
@@ -945,15 +945,15 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
           </div>
 
           {/* Status Legend */}
-          <div className="mt-3 pt-3 border-t border-slate-300">
-            <h5 className="text-sm font-semibold text-slate-700 mb-2">
+          <div className="mt-3 pt-3 border-t border-ink-light">
+            <h5 className="text-sm font-semibold text-ink-paragraph mb-2">
               Status Legend:
             </h5>
             <div className="flex flex-wrap gap-4 text-xs">
               <div className="flex items-center">
-                <div className="w-3 h-3 bg-green-100 border border-green-500 rounded mr-2 flex items-center justify-center">
+                <div className="w-3 h-3 bg-status-success/15 border border-status-success rounded mr-2 flex items-center justify-center">
                   <svg
-                    className="w-2 h-2 text-green-600"
+                    className="w-2 h-2 text-status-success"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -967,15 +967,15 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 <span className="text-xs">Complete</span>
               </div>
               <div className="flex items-center">
-                <div className="w-3 h-3 bg-yellow-100 border border-yellow-500 rounded mr-2"></div>
+                <div className="w-3 h-3 bg-brand-yellow-soft border border-brand-gold rounded mr-2"></div>
                 <span className="text-xs">Selected</span>
               </div>
               <div className="flex items-center">
-                <div className="w-3 h-3 bg-blue-100 border border-blue-500 rounded mr-2"></div>
+                <div className="w-3 h-3 bg-status-info/15 border border-status-info rounded mr-2"></div>
                 <span className="text-xs">Expanded</span>
               </div>
               <div className="flex items-center">
-                <div className="w-3 h-3 bg-white border border-slate-300 rounded mr-2"></div>
+                <div className="w-3 h-3 bg-surface-card border border-ink-light rounded mr-2"></div>
                 <span className="text-xs">Available</span>
               </div>
             </div>

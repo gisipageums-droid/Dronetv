@@ -191,17 +191,17 @@
 //   };
 
 //   return (
-//     <section id="gallery" className="py-20 bg-white">
+//     <section id="gallery" className="py-20 bg-surface-card">
 //       <div className="container max-w-7xl mx-auto px-4">
 //         <div className="text-center mb-16 relative">
 //           {/* Edit/Save/Cancel Buttons */}
 //           <div className="absolute top-0 right-0 flex gap-3 items-center">
 //             {/* Auto-save status */}
 //             {editMode && onStateChange && (
-//               <div className="text-sm text-gray-600 mr-2 bg-gray-100 px-3 py-1 rounded-lg hidden sm:block">
+//               <div className="text-sm text-ink-paragraph mr-2 bg-ink-light px-3 py-1 rounded-lg hidden sm:block">
 //                 {isSaving ? (
 //                   <span className="flex items-center gap-1">
-//                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+//                     <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
 //                     Saving...
 //                   </span>
 //                 ) : lastSaved ? (
@@ -214,13 +214,13 @@
 //               <>
 //                 <button
 //                   onClick={handleEditToggle}
-//                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg border border-green-700 hover:bg-green-700 transition"
+//                   className="flex items-center gap-2 bg-status-success text-white px-4 py-2 rounded-lg border border-status-success hover:bg-status-success transition"
 //                 >
 //                   <Save size={18} /> Done
 //                 </button>
 //                 <button
 //                   onClick={handleCancel}
-//                   className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg border border-red-700 hover:bg-red-700 transition"
+//                   className="flex items-center gap-2 bg-status-error text-white px-4 py-2 rounded-lg border border-status-error hover:bg-status-error transition"
 //                 >
 //                   <X size={18} /> Cancel
 //                 </button>
@@ -228,7 +228,7 @@
 //             ) : (
 //               <button
 //                 onClick={handleEditToggle}
-//                 className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg border border-blue-700 hover:bg-blue-700 transition"
+//                 className="flex items-center gap-2 bg-status-info text-white px-4 py-2 rounded-lg border border-status-info hover:bg-status-info transition"
 //               >
 //                 <Edit size={18} /> Edit
 //               </button>
@@ -244,9 +244,9 @@
 //                     value={galleryContent.title}
 //                     onChange={(e) => updateHeaderField('title', e.target.value)}
 //                     maxLength={50}
-//                     className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+//                     className="text-4xl md:text-5xl font-bold text-ink bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
 //                   />
-//                   <div className="text-sm text-gray-500 text-right mt-1">
+//                   <div className="text-sm text-ink-caption text-right mt-1">
 //                     {galleryContent.title.length}/50
 //                   </div>
 //                 </div>
@@ -256,9 +256,9 @@
 //                     value={galleryContent.titleHighlight}
 //                     onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
 //                     maxLength={50}
-//                     className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+//                     className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
 //                   />
-//                   <div className="text-sm text-gray-500 text-right mt-1">
+//                   <div className="text-sm text-ink-caption text-right mt-1">
 //                     {galleryContent.titleHighlight.length}/50
 //                   </div>
 //                 </div>
@@ -269,21 +269,21 @@
 //                   value={galleryContent.subtitle}
 //                   onChange={(e) => updateHeaderField('subtitle', e.target.value)}
 //                   maxLength={200}
-//                   className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
+//                   className="text-ink-paragraph text-lg bg-transparent border-2 border-ink-light focus:border-status-info outline-none p-2 rounded-md w-full resize-none"
 //                   rows={2}
 //                 />
-//                 <div className="text-sm text-gray-500 text-right mt-1">
+//                 <div className="text-sm text-ink-caption text-right mt-1">
 //                   {galleryContent.subtitle.length}/200
 //                 </div>
 //               </div>
 //             </>
 //           ) : (
 //             <>
-//               <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+//               <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
 //                 {galleryContent.title} <span className="text-[#FF0000]">{galleryContent.titleHighlight}</span>
 //               </h2>
 //               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-//               <p className="text-gray-600 text-lg max-w-2xl mx-auto text-justify">
+//               <p className="text-ink-paragraph text-lg max-w-2xl mx-auto text-justify">
 //                 {galleryContent.subtitle}
 //               </p>
 //             </>
@@ -294,10 +294,10 @@
 //           <div className="space-y-8">
 //             {galleryContent.items.length === 0 ? (
 //               <div className="text-center py-8">
-//                 <p className="text-gray-500 mb-4">No videos added yet.</p>
+//                 <p className="text-ink-caption mb-4">No videos added yet.</p>
 //                 <button
 //                   onClick={handleAddVideo}
-//                   className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition-colors shadow-lg mx-auto"
+//                   className="flex items-center gap-2 px-6 py-3 bg-status-info text-white rounded-full font-semibold hover:bg-status-info transition-colors shadow-lg mx-auto"
 //                 >
 //                   <Plus size={18} /> Add First Video
 //                 </button>
@@ -306,17 +306,17 @@
 //               <>
 //                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 //                   {galleryContent.items.map((item: GalleryItem, index: number) => (
-//                     <div key={index} className="flex flex-col gap-2 p-4 bg-gray-100 rounded-2xl shadow-md border border-gray-200">
+//                     <div key={index} className="flex flex-col gap-2 p-4 bg-ink-light rounded-2xl shadow-md border border-ink-light">
 //                       <div>
 //                         <input
 //                           type="text"
 //                           value={item.title}
 //                           onChange={(e) => handleInputChange(e, index, 'title')}
 //                           maxLength={100}
-//                           className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                           className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-status-info"
 //                           placeholder="Video Title"
 //                         />
-//                         <div className="text-xs text-gray-500 text-right mt-1">
+//                         <div className="text-xs text-ink-caption text-right mt-1">
 //                           {item.title.length}/100
 //                         </div>
 //                       </div>
@@ -326,19 +326,19 @@
 //                           value={item.src}
 //                           onChange={(e) => handleInputChange(e, index, 'src')}
 //                           maxLength={500}
-//                           className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                           className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-status-info"
 //                           placeholder="Paste any YouTube URL (will be auto-converted)"
 //                         />
-//                         <div className="text-xs text-gray-500 text-right mt-1">
+//                         <div className="text-xs text-ink-caption text-right mt-1">
 //                           {item.src.length}/500
 //                         </div>
 //                       </div>
-//                       <div className="text-gray-500 text-xs mt-1">
+//                       <div className="text-ink-caption text-xs mt-1">
 //                         <p>Supported: youtu.be, youtube.com/watch, youtube.com/embed</p>
 //                       </div>
 //                       <button
 //                         onClick={() => handleRemoveVideo(index)}
-//                         className="p-2 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+//                         className="p-2 mt-2 bg-status-error text-white rounded-lg hover:bg-status-error transition-colors"
 //                       >
 //                         <Trash2 size={18} className="mx-auto" />
 //                       </button>
@@ -348,7 +348,7 @@
 //                 <div className="flex justify-center gap-4 mt-8">
 //                   <button
 //                     onClick={handleAddVideo}
-//                     className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition-colors shadow-lg"
+//                     className="flex items-center gap-2 px-6 py-3 bg-status-info text-white rounded-full font-semibold hover:bg-status-info transition-colors shadow-lg"
 //                   >
 //                     <Plus size={18} /> Add Video
 //                   </button>
@@ -359,9 +359,9 @@
 //         ) : (
 //           <div className="relative">
 //             {galleryContent.items.length === 0 ? (
-//               <div className="text-center py-16 bg-gray-100 rounded-2xl">
-//                 <p className="text-gray-500 text-lg">No videos available</p>
-//                 <p className="text-gray-400 text-sm mt-2">Add videos in edit mode</p>
+//               <div className="text-center py-16 bg-ink-light rounded-2xl">
+//                 <p className="text-ink-caption text-lg">No videos available</p>
+//                 <p className="text-ink-caption text-sm mt-2">Add videos in edit mode</p>
 //               </div>
 //             ) : (
 //               <>
@@ -374,7 +374,7 @@
 //                     allowFullScreen
 //                     className="w-full h-[530px] rounded-xl"
 //                   ></iframe>
-//                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+//                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent">
 //                     <h3 className="text-white font-semibold text-lg">{galleryContent.items[currentSlide]?.title}</h3>
 //                   </div>
 //                 </div>
@@ -382,13 +382,13 @@
 //                   <>
 //                     <button
 //                       onClick={prevSlide}
-//                       className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+//                       className="absolute left-4 top-1/2 -translate-y-1/2 bg-ink-charcoal text-white p-3 rounded-full shadow-lg hover:bg-ink-paragraph transition-colors"
 //                     >
 //                       <ChevronLeft size={24} />
 //                     </button>
 //                     <button
 //                       onClick={nextSlide}
-//                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+//                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-ink-charcoal text-white p-3 rounded-full shadow-lg hover:bg-ink-paragraph transition-colors"
 //                     >
 //                       <ChevronRight size={24} />
 //                     </button>
@@ -398,7 +398,7 @@
 //                           key={index}
 //                           onClick={() => setCurrentSlide(index)}
 //                           className={`w-3 h-3 rounded-full transition-colors ${
-//                             currentSlide === index ? 'bg-white' : 'bg-white/50'
+//                             currentSlide === index ? 'bg-surface-card' : 'bg-white/50'
 //                           }`}
 //                         />
 //                       ))}
@@ -640,17 +640,17 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
   };
 
   return (
-    <section id="gallery" className="py-20 bg-white">
+    <section id="gallery" className="py-20 bg-surface-card">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16 relative">
           {/* Edit/Save/Cancel Buttons */}
           <div className="absolute top-0 right-0 flex gap-3 items-center">
             {/* Auto-save status */}
             {editMode && onStateChange && (
-              <div className="text-sm text-gray-600 mr-2 bg-gray-100 px-3 py-1 rounded-lg hidden sm:block">
+              <div className="text-sm text-ink-paragraph mr-2 bg-ink-light px-3 py-1 rounded-lg hidden sm:block">
                 {isSaving ? (
                   <span className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
                     Saving...
                   </span>
                 ) : lastSaved ? (
@@ -665,13 +665,13 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
               <>
                 <button
                   onClick={handleEditToggle}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg border border-green-700 hover:bg-green-700 transition"
+                  className="flex items-center gap-2 bg-status-success text-white px-4 py-2 rounded-lg border border-status-success hover:bg-status-success transition"
                 >
                   <Save size={18} /> Done
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg border border-red-700 hover:bg-red-700 transition"
+                  className="flex items-center gap-2 bg-status-error text-white px-4 py-2 rounded-lg border border-status-error hover:bg-status-error transition"
                 >
                   <X size={18} /> Cancel
                 </button>
@@ -679,7 +679,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
             ) : (
               <button
                 onClick={handleEditToggle}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg border border-blue-700 hover:bg-blue-700 transition"
+                className="flex items-center gap-2 bg-status-info text-white px-4 py-2 rounded-lg border border-status-info hover:bg-status-info transition"
               >
                 <Edit size={18} /> Edit
               </button>
@@ -695,9 +695,9 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                     value={galleryContent.title}
                     onChange={(e) => updateHeaderField('title', e.target.value)}
                     maxLength={50}
-                    className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                    className="text-4xl md:text-5xl font-bold text-ink bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
                   />
-                  <div className="text-sm text-gray-500 text-right mt-1">
+                  <div className="text-sm text-ink-caption text-right mt-1">
                     {galleryContent.title.length}/50
                   </div>
                 </div>
@@ -707,9 +707,9 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                     value={galleryContent.titleHighlight}
                     onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
                     maxLength={50}
-                    className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                    className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
                   />
-                  <div className="text-sm text-gray-500 text-right mt-1">
+                  <div className="text-sm text-ink-caption text-right mt-1">
                     {galleryContent.titleHighlight.length}/50
                   </div>
                 </div>
@@ -720,21 +720,21 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                   value={galleryContent.subtitle}
                   onChange={(e) => updateHeaderField('subtitle', e.target.value)}
                   maxLength={200}
-                  className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
+                  className="text-ink-paragraph text-lg bg-transparent border-2 border-ink-light focus:border-status-info outline-none p-2 rounded-md w-full resize-none"
                   rows={2}
                 />
-                <div className="text-sm text-gray-500 text-right mt-1">
+                <div className="text-sm text-ink-caption text-right mt-1">
                   {galleryContent.subtitle.length}/200
                 </div>
               </div>
             </>
           ) : (
             <>
-              <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+              <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
                 {galleryContent.title} <span className="text-[#FF0000]">{galleryContent.titleHighlight}</span>
               </h2>
               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto text-center">
+              <p className="text-ink-paragraph text-lg max-w-2xl mx-auto text-center">
                 {galleryContent.subtitle}
               </p>
             </>
@@ -745,10 +745,10 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
           <div className="space-y-8">
             {galleryContent.items.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500 mb-4">No videos added yet.</p>
+                <p className="text-ink-caption mb-4">No videos added yet.</p>
                 <button
                   onClick={handleAddVideo}
-                  className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition-colors shadow-lg mx-auto"
+                  className="flex items-center gap-2 px-6 py-3 bg-status-info text-white rounded-full font-semibold hover:bg-status-info transition-colors shadow-lg mx-auto"
                 >
                   <Plus size={18} /> Add First Video
                 </button>
@@ -757,17 +757,17 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {galleryContent.items.map((item: GalleryItem, index: number) => (
-                    <div key={index} className="flex flex-col gap-2 p-4 bg-gray-100 rounded-2xl shadow-md border border-gray-200">
+                    <div key={index} className="flex flex-col gap-2 p-4 bg-ink-light rounded-2xl shadow-md border border-ink-light">
                       <div>
                         <input
                           type="text"
                           value={item.title}
                           onChange={(e) => handleInputChange(e, index, 'title')}
                           maxLength={100}
-                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-status-info"
                           placeholder="Video Title"
                         />
-                        <div className="text-xs text-gray-500 text-right mt-1">
+                        <div className="text-xs text-ink-caption text-right mt-1">
                           {item.title.length}/100
                         </div>
                       </div>
@@ -777,19 +777,19 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                           value={item.src}
                           onChange={(e) => handleInputChange(e, index, 'src')}
                           maxLength={500}
-                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-status-info"
                           placeholder="Paste any YouTube URL (will be auto-converted)"
                         />
-                        <div className="text-xs text-gray-500 text-right mt-1">
+                        <div className="text-xs text-ink-caption text-right mt-1">
                           {item.src.length}/500
                         </div>
                       </div>
-                      <div className="text-gray-500 text-xs mt-1">
+                      <div className="text-ink-caption text-xs mt-1">
                         <p>Supported: youtu.be, youtube.com/watch, youtube.com/embed</p>
                       </div>
                       <button
                         onClick={() => handleRemoveVideo(index)}
-                        className="p-2 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                        className="p-2 mt-2 bg-status-error text-white rounded-lg hover:bg-status-error transition-colors"
                       >
                         <Trash2 size={18} className="mx-auto" />
                       </button>
@@ -799,7 +799,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                 <div className="flex justify-center gap-4 mt-8">
                   <button
                     onClick={handleAddVideo}
-                    className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition-colors shadow-lg"
+                    className="flex items-center gap-2 px-6 py-3 bg-status-info text-white rounded-full font-semibold hover:bg-status-info transition-colors shadow-lg"
                   >
                     <Plus size={18} /> Add Video
                   </button>
@@ -810,9 +810,9 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
         ) : (
           <div className="relative">
             {galleryContent.items.length === 0 ? (
-              <div className="text-center py-16 bg-gray-100 rounded-2xl">
-                <p className="text-gray-500 text-lg">No videos available</p>
-                <p className="text-gray-400 text-sm mt-2">Add videos in edit mode</p>
+              <div className="text-center py-16 bg-ink-light rounded-2xl">
+                <p className="text-ink-caption text-lg">No videos available</p>
+                <p className="text-ink-caption text-sm mt-2">Add videos in edit mode</p>
               </div>
             ) : (
               <>
@@ -825,7 +825,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                     allowFullScreen
                     className="w-full h-[530px] rounded-xl"
                   ></iframe>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent">
                     <h3 className="text-white font-semibold text-lg">{galleryContent.items[currentSlide]?.title}</h3>
                   </div>
                 </div>
@@ -833,13 +833,13 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                   <>
                     <button
                       onClick={prevSlide}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-ink-charcoal text-white p-3 rounded-full shadow-lg hover:bg-ink-paragraph transition-colors"
                     >
                       <ChevronLeft size={24} />
                     </button>
                     <button
                       onClick={nextSlide}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-ink-charcoal text-white p-3 rounded-full shadow-lg hover:bg-ink-paragraph transition-colors"
                     >
                       <ChevronRight size={24} />
                     </button>
@@ -849,7 +849,7 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                           key={index}
                           onClick={() => setCurrentSlide(index)}
                           className={`w-3 h-3 rounded-full transition-colors ${
-                            currentSlide === index ? 'bg-white' : 'bg-white/50'
+                            currentSlide === index ? 'bg-surface-card' : 'bg-white/50'
                           }`}
                         />
                       ))}

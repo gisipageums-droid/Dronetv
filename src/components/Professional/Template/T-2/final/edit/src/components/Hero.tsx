@@ -34,8 +34,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants: Record<string, string> = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes: Record<string, string> = {
 //     sm: "h-8 px-3 text-sm",
@@ -550,7 +550,7 @@
 //         }
 //       };
 
-//       const baseClasses = "w-full bg-white/10 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-white placeholder-gray-300";
+//       const baseClasses = "w-full bg-white/10 backdrop-blur-sm border-2 border-dashed border-brand-yellow-soft rounded focus:border-brand-yellow focus:outline-none text-white placeholder-ink-light";
 //       const currentLength = value?.length || 0;
 //       const isOverLimit = charLimit && currentLength > charLimit;
 
@@ -562,7 +562,7 @@
 //                 value={value || ''}
 //                 onChange={handleChange}
 //                 className={`${baseClasses} p-3 resize-y overflow-auto whitespace-pre-wrap break-words ${className} ${
-//                   isOverLimit ? 'border-red-400' : ''
+//                   isOverLimit ? 'border-status-error' : ''
 //                 }`}
 //                 placeholder={placeholder}
 //                 rows={rows}
@@ -570,7 +570,7 @@
 //               />
 //               {charLimit && (
 //                 <div className={`absolute bottom-2 right-2 text-xs ${
-//                   isOverLimit ? 'text-red-400' : 'text-gray-400'
+//                   isOverLimit ? 'text-status-error' : 'text-ink-caption'
 //                 }`}>
 //                   {currentLength}/{charLimit}
 //                 </div>
@@ -583,13 +583,13 @@
 //                 value={value || ''}
 //                 onChange={handleChange}
 //                 className={`${baseClasses} p-2 ${className} ${
-//                   isOverLimit ? 'border-red-400' : ''
+//                   isOverLimit ? 'border-status-error' : ''
 //                 }`}
 //                 placeholder={placeholder}
 //               />
 //               {charLimit && (
 //                 <div className={`absolute -bottom-6 right-0 text-xs ${
-//                   isOverLimit ? 'text-red-400' : 'text-gray-400'
+//                   isOverLimit ? 'text-status-error' : 'text-ink-caption'
 //                 }`}>
 //                   {currentLength}/{charLimit}
 //                 </div>
@@ -626,12 +626,12 @@
 //     return (
 //       <section
 //         ref={heroRef}
-//         className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
+//         className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-surface-main dark:from-background dark:to-yellow-900/20 pt-20"
 //       >
-//         <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
-//           <div className='bg-white rounded-lg p-6 shadow-lg flex items-center gap-3'>
-//             <Loader2 className='w-5 h-5 animate-spin text-blue-600' />
-//             <span className='text-gray-700'>Loading content...</span>
+//         <div className="absolute inset-0 bg-ink/60 flex items-center justify-center z-30">
+//           <div className='bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3'>
+//             <Loader2 className='w-5 h-5 animate-spin text-status-info' />
+//             <span className='text-ink-paragraph'>Loading content...</span>
 //           </div>
 //         </div>
 //       </section>
@@ -642,7 +642,7 @@
 //     <section
 //       id="home"
 //       ref={heroRef}
-//       className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20 relative"
+//       className="min-h-screen flex items-center bg-gradient-to-br from-background to-surface-main dark:from-background dark:to-yellow-900/20 pt-20 relative"
 //     >
 //       {/* Image Cropper Modal */}
 //       {showCropper &&
@@ -650,29 +650,29 @@
 //           <motion.div
 //             initial={{ opacity: 0 }}
 //             animate={{ opacity: 1 }}
-//             className="fixed inset-0 bg-black/90 z-[2147483647] flex items-center justify-center p-4"
+//             className="fixed inset-0 bg-ink/90 z-[2147483647] flex items-center justify-center p-4"
 //             style={{ zIndex: 2147483647 }}
 //           >
 //             <motion.div
 //               initial={{ scale: 0.9, opacity: 0 }}
 //               animate={{ scale: 1, opacity: 1 }}
-//               className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
+//               className="bg-surface-card rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
 //             >
 //               {/* Header */}
-//               <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//                 <h3 className="text-lg font-semibold text-gray-800">
+//               <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//                 <h3 className="text-lg font-semibold text-ink-charcoal">
 //                   Crop Hero Image (4:3 Aspect Ratio)
 //                 </h3>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                   className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //                 >
-//                   <X className="w-5 h-5 text-gray-600" />
+//                   <X className="w-5 h-5 text-ink-paragraph" />
 //                 </button>
 //               </div>
 
 //               {/* Cropper Area */}
-//               <div className="flex-1 relative bg-gray-900 min-h-0">
+//               <div className="flex-1 relative bg-ink min-h-0">
 //                 <Cropper
 //                   image={imageToCrop}
 //                   crop={crop}
@@ -703,28 +703,28 @@
 //               </div>
 
 //               {/* Controls */}
-//               <div className="p-4 bg-gray-50 border-t border-gray-200">
+//               <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //                 {/* Aspect Ratio Info */}
 //                 <div className="mb-4">
-//                   <p className="text-sm font-medium text-gray-700 mb-2">
-//                     Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+//                   <p className="text-sm font-medium text-ink-paragraph mb-2">
+//                     Aspect Ratio: <span className="text-status-info">4:3 (Standard)</span>
 //                   </p>
 //                 </div>
 
 //                 {/* Zoom Control */}
 //                 <div className="space-y-2 mb-4">
 //                   <div className="flex items-center justify-between text-sm">
-//                     <span className="flex items-center gap-2 text-gray-700">
+//                     <span className="flex items-center gap-2 text-ink-paragraph">
 //                       <ZoomIn className="w-4 h-4" />
 //                       Zoom
 //                     </span>
-//                     <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                     <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                   </div>
 //                   <div className="flex items-center gap-2">
 //                     <button
 //                       type="button"
 //                       onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
-//                       className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                       className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                     >
 //                       <ZoomOut className="w-4 h-4" />
 //                     </button>
@@ -735,12 +735,12 @@
 //                     max={5}
 //                     step={0.1}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                   />
 //                     <button
 //                       type="button"
 //                       onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
-//                       className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                       className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                     >
 //                       <ZoomIn className="w-4 h-4" />
 //                     </button>
@@ -751,19 +751,19 @@
 //                 <div className="grid grid-cols-3 gap-3">
 //                   <button
 //                     onClick={resetCropSettings}
-//                     className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                     className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                   >
 //                     Reset
 //                   </button>
 //                   <button
 //                     onClick={cancelCrop}
-//                     className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                     className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                   >
 //                     Cancel
 //                   </button>
 //                   <button
 //                     onClick={applyCrop}
-//                     className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+//                     className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium"
 //                   >
 //                     Apply Crop
 //                   </button>
@@ -791,12 +791,12 @@
 //                 <EditableText
 //                   value={displayData.name}
 //                   field='name'
-//                   className="text-yellow-500 p-1"
+//                   className="text-brand-gold p-1"
 //                   placeholder="Your name"
 //                   charLimit={TEXT_LIMITS.HEADING}
 //                 />
 //               ) : (
-//                 <span className="text-yellow-500">{displayData.name}</span>
+//                 <span className="text-brand-gold">{displayData.name}</span>
 //               )}
 //             </motion.h1>
 
@@ -809,7 +809,7 @@
 //                     value={displayData.description}
 //                     field='description'
 //                     multiline
-//                     className="text-lg text-yellow-500 p-1 min-h-[120px]"
+//                     className="text-lg text-brand-gold p-1 min-h-[120px]"
 //                     placeholder="Your description"
 //                     rows={4}
 //                     charLimit={TEXT_LIMITS.DESCRIPTION}
@@ -834,14 +834,14 @@
 //                   <EditableText
 //                     value={safeButtons.work}
 //                     buttonField='work'
-//                     className="px-6 py-3 rounded-lg text-yellow-500 text-center"
+//                     className="px-6 py-3 rounded-lg text-brand-gold text-center"
 //                     placeholder="Work button text"
 //                     charLimit={TEXT_LIMITS.SUBTITLE}
 //                   />
 //                   <EditableText
 //                     value={safeButtons.contact}
 //                     buttonField='contact'
-//                     className="px-6 py-3 text-yellow-500 rounded-lg text-center"
+//                     className="px-6 py-3 text-brand-gold rounded-lg text-center"
 //                     placeholder="Contact button text"
 //                     charLimit={TEXT_LIMITS.SUBTITLE}
 //                   />
@@ -850,13 +850,13 @@
 //                 <>
 //                   <a
 //                     href="#projects"
-//                     className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+//                     className="inline-flex items-center justify-center px-6 py-3 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors"
 //                   >
 //                     {safeButtons.work}
 //                   </a>
 //                   <a
 //                     href="#contact"
-//                     className="inline-flex items-center justify-center px-6 py-3 bg-transparent text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+//                     className="inline-flex items-center justify-center px-6 py-3 bg-transparent text-status-info border border-status-info rounded-lg hover:bg-status-info/10 transition-colors"
 //                   >
 //                     {safeButtons.contact}
 //                   </a>
@@ -878,7 +878,7 @@
 //                 <Button
 //                   onClick={handleEdit}
 //                   size='sm'
-//                   className='bg-red-500 hover:bg-red-600 shadow-md'
+//                   className='bg-status-error hover:bg-status-error shadow-md'
 //                   disabled={isLoading}
 //                 >
 //                   <Edit2 className='w-4 h-4 mr-2' />
@@ -889,7 +889,7 @@
 //                   <Button
 //                     onClick={handleSave}
 //                     size='sm'
-//                     className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                     className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                     disabled={isSaving || isUploading}
 //                   >
 //                     {isUploading ? (
@@ -904,7 +904,7 @@
 //                   <Button
 //                     onClick={handleCancel}
 //                     size='sm'
-//                     className='bg-red-400 hover:bg-red-600 shadow-md'
+//                     className='bg-status-error hover:bg-status-error shadow-md'
 //                     disabled={isSaving || isUploading}
 //                   >
 //                     <X className='w-4 h-4 mr-2' />
@@ -920,7 +920,7 @@
 //               transition={{ duration: 0.3, ease: "easeInOut" }}
 //             >
 //               <motion.div
-//                 className="absolute inset-0 bg-yellow-400 rounded-3xl transform rotate-6"
+//                 className="absolute inset-0 bg-brand-yellow rounded-3xl transform rotate-6"
 //               ></motion.div>
 //               <motion.div
 //                 className="relative bg-card rounded-3xl overflow-hidden shadow-2xl"
@@ -938,8 +938,8 @@
 //                   />
 //                   {isEditing && (
 //                     <div className='absolute bottom-2 right-2 flex flex-col gap-2'>
-//                       <div className="bg-black/70 text-white p-2 rounded">
-//                         <label className='cursor-pointer hover:bg-black/90 transition-colors flex items-center gap-2'>
+//                       <div className="bg-ink/70 text-white p-2 rounded">
+//                         <label className='cursor-pointer hover:bg-ink-charcoal/90 transition-colors flex items-center gap-2'>
 //                           <Upload className='w-4 h-4' />
 //                           Change Image
 //                           <input
@@ -950,11 +950,11 @@
 //                           />
 //                         </label>
 //                         {pendingImageFile && (
-//                           <div className='text-xs text-orange-300 mt-1'>
+//                           <div className='text-xs text-status-warning/40 mt-1'>
 //                             Pending upload: {pendingImageFile.name}
 //                           </div>
 //                         )}
-//                         <div className='text-xs text-gray-300 mt-1'>
+//                         <div className='text-xs text-ink-light mt-1'>
 //                           Recommended: 600×800px (3:4 ratio) - Portrait
 //                         </div>
 //                       </div>
@@ -1015,8 +1015,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants: Record<string, string> = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes: Record<string, string> = {
 //     sm: "h-8 px-3 text-sm",
@@ -1643,7 +1643,7 @@
 //         }
 //       };
 
-//       const baseClasses = "w-full bg-white/10 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-white placeholder-gray-300";
+//       const baseClasses = "w-full bg-white/10 backdrop-blur-sm border-2 border-dashed border-brand-yellow-soft rounded focus:border-brand-yellow focus:outline-none text-white placeholder-ink-light";
 //       const currentLength = value?.length || 0;
 //       const isOverLimit = charLimit && currentLength > charLimit;
 
@@ -1655,7 +1655,7 @@
 //                 value={value || ''}
 //                 onChange={handleChange}
 //                 className={`${baseClasses} p-3 resize-y overflow-auto whitespace-pre-wrap break-words ${className} ${
-//                   isOverLimit ? 'border-red-400' : ''
+//                   isOverLimit ? 'border-status-error' : ''
 //                 }`}
 //                 placeholder={placeholder}
 //                 rows={rows}
@@ -1663,7 +1663,7 @@
 //               />
 //               {charLimit && (
 //                 <div className={`absolute bottom-2 right-2 text-xs ${
-//                   isOverLimit ? 'text-red-400' : 'text-gray-400'
+//                   isOverLimit ? 'text-status-error' : 'text-ink-caption'
 //                 }`}>
 //                   {currentLength}/{charLimit}
 //                 </div>
@@ -1676,13 +1676,13 @@
 //                 value={value || ''}
 //                 onChange={handleChange}
 //                 className={`${baseClasses} p-2 ${className} ${
-//                   isOverLimit ? 'border-red-400' : ''
+//                   isOverLimit ? 'border-status-error' : ''
 //                 }`}
 //                 placeholder={placeholder}
 //               />
 //               {charLimit && (
 //                 <div className={`absolute -bottom-6 right-0 text-xs ${
-//                   isOverLimit ? 'text-red-400' : 'text-gray-400'
+//                   isOverLimit ? 'text-status-error' : 'text-ink-caption'
 //                 }`}>
 //                   {currentLength}/{charLimit}
 //                 </div>
@@ -1719,12 +1719,12 @@
 //     return (
 //       <section
 //         ref={heroRef}
-//         className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
+//         className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-surface-main dark:from-background dark:to-yellow-900/20 pt-20"
 //       >
-//         <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
-//           <div className='bg-white rounded-lg p-6 shadow-lg flex items-center gap-3'>
-//             <Loader2 className='w-5 h-5 animate-spin text-blue-600' />
-//             <span className='text-gray-700'>Loading content...</span>
+//         <div className="absolute inset-0 bg-ink/60 flex items-center justify-center z-30">
+//           <div className='bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3'>
+//             <Loader2 className='w-5 h-5 animate-spin text-status-info' />
+//             <span className='text-ink-paragraph'>Loading content...</span>
 //           </div>
 //         </div>
 //       </section>
@@ -1735,7 +1735,7 @@
 //     <section
 //       id="home"
 //       ref={heroRef}
-//       className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20 relative"
+//       className="min-h-screen flex items-center bg-gradient-to-br from-background to-surface-main dark:from-background dark:to-yellow-900/20 pt-20 relative"
 //     >
 //       {/* Image Cropper Modal */}
 //       {showCropper &&
@@ -1743,20 +1743,20 @@
 //           <motion.div
 //             initial={{ opacity: 0 }}
 //             animate={{ opacity: 1 }}
-//             className="fixed inset-0 bg-black/90 z-[2147483647] flex items-center justify-center p-4"
+//             className="fixed inset-0 bg-ink/90 z-[2147483647] flex items-center justify-center p-4"
 //             style={{ zIndex: 2147483647 }}
 //           >
 //             <motion.div
 //               initial={{ scale: 0.9, opacity: 0 }}
 //               animate={{ scale: 1, opacity: 1 }}
-//               className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
+//               className="bg-surface-card rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
 //             >
 //               {/* Header */}
-//               <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//                 <h3 className="text-lg font-semibold text-gray-800">
+//               <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//                 <h3 className="text-lg font-semibold text-ink-charcoal">
 //                   Crop Hero Image (4:3 Aspect Ratio)
 //                   {isUploading && (
-//                     <span className="ml-2 text-blue-600 text-sm flex items-center gap-1">
+//                     <span className="ml-2 text-status-info text-sm flex items-center gap-1">
 //                       <Loader2 className="w-4 h-4 animate-spin" />
 //                       Uploading...
 //                     </span>
@@ -1764,15 +1764,15 @@
 //                 </h3>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                   className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //                   disabled={isUploading}
 //                 >
-//                   <X className="w-5 h-5 text-gray-600" />
+//                   <X className="w-5 h-5 text-ink-paragraph" />
 //                 </button>
 //               </div>
 
 //               {/* Cropper Area */}
-//               <div className="flex-1 relative bg-gray-900 min-h-0">
+//               <div className="flex-1 relative bg-ink min-h-0">
 //                 <Cropper
 //                   image={imageToCrop}
 //                   crop={crop}
@@ -1803,28 +1803,28 @@
 //               </div>
 
 //               {/* Controls */}
-//               <div className="p-4 bg-gray-50 border-t border-gray-200">
+//               <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //                 {/* Aspect Ratio Info */}
 //                 <div className="mb-4">
-//                   <p className="text-sm font-medium text-gray-700 mb-2">
-//                     Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+//                   <p className="text-sm font-medium text-ink-paragraph mb-2">
+//                     Aspect Ratio: <span className="text-status-info">4:3 (Standard)</span>
 //                   </p>
 //                 </div>
 
 //                 {/* Zoom Control */}
 //                 <div className="space-y-2 mb-4">
 //                   <div className="flex items-center justify-between text-sm">
-//                     <span className="flex items-center gap-2 text-gray-700">
+//                     <span className="flex items-center gap-2 text-ink-paragraph">
 //                       <ZoomIn className="w-4 h-4" />
 //                       Zoom
 //                     </span>
-//                     <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                     <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                   </div>
 //                   <div className="flex items-center gap-2">
 //                     <button
 //                       type="button"
 //                       onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
-//                       className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                       className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                       disabled={isUploading}
 //                     >
 //                       <ZoomOut className="w-4 h-4" />
@@ -1836,13 +1836,13 @@
 //                     max={5}
 //                     step={0.1}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                     disabled={isUploading}
 //                   />
 //                     <button
 //                       type="button"
 //                       onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
-//                       className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                       className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                       disabled={isUploading}
 //                     >
 //                       <ZoomIn className="w-4 h-4" />
@@ -1854,21 +1854,21 @@
 //                 <div className="grid grid-cols-3 gap-3">
 //                   <button
 //                     onClick={resetCropSettings}
-//                     className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium disabled:opacity-50"
+//                     className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium disabled:opacity-50"
 //                     disabled={isUploading}
 //                   >
 //                     Reset
 //                   </button>
 //                   <button
 //                     onClick={cancelCrop}
-//                     className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium disabled:opacity-50"
+//                     className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium disabled:opacity-50"
 //                     disabled={isUploading}
 //                   >
 //                     Cancel
 //                   </button>
 //                   <button
 //                     onClick={applyCrop}
-//                     className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+//                     className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
 //                     disabled={isUploading}
 //                   >
 //                     {isUploading ? (
@@ -1899,18 +1899,18 @@
 //             {isEditing && (
 //               <div className="flex items-center gap-2 text-sm">
 //                 {isAutoSaving && (
-//                   <div className="flex items-center gap-1 text-blue-500">
+//                   <div className="flex items-center gap-1 text-status-info">
 //                     <Loader2 className="w-4 h-4 animate-spin" />
 //                     <span>Auto-saving...</span>
 //                   </div>
 //                 )}
 //                 {hasUnsavedChanges && !isAutoSaving && (
-//                   <div className="text-yellow-500">
+//                   <div className="text-brand-gold">
 //                     ● Unsaved changes
 //                   </div>
 //                 )}
 //                 {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-//                   <div className="text-green-500">
+//                   <div className="text-status-success">
 //                     ✓ Auto-saved {lastSaved.toLocaleTimeString()}
 //                   </div>
 //                 )}
@@ -1926,12 +1926,12 @@
 //                 <EditableText
 //                   value={displayData.name}
 //                   field='name'
-//                   className="text-yellow-500 p-1"
+//                   className="text-brand-gold p-1"
 //                   placeholder="Your name"
 //                   charLimit={TEXT_LIMITS.HEADING}
 //                 />
 //               ) : (
-//                 <span className="text-yellow-500">{displayData.name}</span>
+//                 <span className="text-brand-gold">{displayData.name}</span>
 //               )}
 //             </motion.h1>
 
@@ -1944,7 +1944,7 @@
 //                     value={displayData.description}
 //                     field='description'
 //                     multiline
-//                     className="text-lg text-yellow-500 p-1 min-h-[120px]"
+//                     className="text-lg text-brand-gold p-1 min-h-[120px]"
 //                     placeholder="Your description"
 //                     rows={4}
 //                     charLimit={TEXT_LIMITS.DESCRIPTION}
@@ -1969,14 +1969,14 @@
 //                   <EditableText
 //                     value={safeButtons.work}
 //                     buttonField='work'
-//                     className="px-6 py-3 rounded-lg text-yellow-500 text-center"
+//                     className="px-6 py-3 rounded-lg text-brand-gold text-center"
 //                     placeholder="Work button text"
 //                     charLimit={TEXT_LIMITS.SUBTITLE}
 //                   />
 //                   <EditableText
 //                     value={safeButtons.contact}
 //                     buttonField='contact'
-//                     className="px-6 py-3 text-yellow-500 rounded-lg text-center"
+//                     className="px-6 py-3 text-brand-gold rounded-lg text-center"
 //                     placeholder="Contact button text"
 //                     charLimit={TEXT_LIMITS.SUBTITLE}
 //                   />
@@ -1985,13 +1985,13 @@
 //                 <>
 //                   <a
 //                     href="#projects"
-//                     className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+//                     className="inline-flex items-center justify-center px-6 py-3 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors"
 //                   >
 //                     {safeButtons.work}
 //                   </a>
 //                   <a
 //                     href="#contact"
-//                     className="inline-flex items-center justify-center px-6 py-3 bg-transparent text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+//                     className="inline-flex items-center justify-center px-6 py-3 bg-transparent text-status-info border border-status-info rounded-lg hover:bg-status-info/10 transition-colors"
 //                   >
 //                     {safeButtons.contact}
 //                   </a>
@@ -2013,7 +2013,7 @@
 //                 <Button
 //                   onClick={handleEdit}
 //                   size='sm'
-//                   className='bg-red-500 hover:bg-red-600 shadow-md'
+//                   className='bg-status-error hover:bg-status-error shadow-md'
 //                   disabled={isLoading}
 //                 >
 //                   <Edit2 className='w-4 h-4 mr-2' />
@@ -2024,7 +2024,7 @@
 //                   <Button
 //                     onClick={handleSave}
 //                     size='sm'
-//                     className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                     className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                     disabled={isSaving || isUploading}
 //                   >
 //                     {isUploading ? (
@@ -2039,7 +2039,7 @@
 //                   <Button
 //                     onClick={handleCancel}
 //                     size='sm'
-//                     className='bg-red-400 hover:bg-red-600 shadow-md'
+//                     className='bg-status-error hover:bg-status-error shadow-md'
 //                     disabled={isSaving || isUploading}
 //                   >
 //                     <X className='w-4 h-4 mr-2' />
@@ -2055,7 +2055,7 @@
 //               transition={{ duration: 0.3, ease: "easeInOut" }}
 //             >
 //               <motion.div
-//                 className="absolute inset-0 bg-yellow-400 rounded-3xl transform rotate-6"
+//                 className="absolute inset-0 bg-brand-yellow rounded-3xl transform rotate-6"
 //               ></motion.div>
 //               <motion.div
 //                 className="relative bg-card rounded-3xl overflow-hidden shadow-2xl"
@@ -2073,8 +2073,8 @@
 //                   />
 //                   {isEditing && (
 //                     <div className='absolute bottom-2 right-2 flex flex-col gap-2'>
-//                       <div className="bg-black/70 text-white p-2 rounded">
-//                         <label className='cursor-pointer hover:bg-black/90 transition-colors flex items-center gap-2'>
+//                       <div className="bg-ink/70 text-white p-2 rounded">
+//                         <label className='cursor-pointer hover:bg-ink-charcoal/90 transition-colors flex items-center gap-2'>
 //                           <Upload className='w-4 h-4' />
 //                           Change Image
 //                           <input
@@ -2085,11 +2085,11 @@
 //                           />
 //                         </label>
 //                         {pendingImageFile && (
-//                           <div className='text-xs text-orange-300 mt-1'>
+//                           <div className='text-xs text-status-warning/40 mt-1'>
 //                             Pending upload: {pendingImageFile.name}
 //                           </div>
 //                         )}
-//                         <div className='text-xs text-gray-300 mt-1'>
+//                         <div className='text-xs text-ink-light mt-1'>
 //                           Recommended: 600×800px (3:4 ratio) - Portrait
 //                         </div>
 //                       </div>
@@ -2149,8 +2149,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants: Record<string, string> = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes: Record<string, string> = {
     sm: "h-8 px-3 text-sm",
@@ -2828,7 +2828,7 @@ export function Hero({
       };
 
       const baseClasses =
-        "w-full bg-white/80 dark:bg-black/80 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-gray-800 dark:text-white placeholder-gray-500";
+        "w-full bg-white/80 dark:bg-black/80 backdrop-blur-sm border-2 border-dashed border-brand-yellow-soft rounded focus:border-brand-yellow focus:outline-none text-ink-charcoal dark:text-white placeholder-ink-caption";
       const currentLength = value?.length || 0;
       const isOverLimit = charLimit && currentLength > charLimit;
 
@@ -2840,7 +2840,7 @@ export function Hero({
                 value={value || ""}
                 onChange={handleChange}
                 className={`${baseClasses} p-3 resize-y overflow-auto whitespace-pre-wrap break-words ${className} ${
-                  isOverLimit ? "border-red-400" : ""
+                  isOverLimit ? "border-status-error" : ""
                 }`}
                 placeholder={placeholder}
                 rows={rows}
@@ -2849,7 +2849,7 @@ export function Hero({
               {charLimit && (
                 <div
                   className={`absolute bottom-2 right-2 text-xs ${
-                    isOverLimit ? "text-red-400" : "text-gray-400"
+                    isOverLimit ? "text-status-error" : "text-ink-caption"
                   }`}
                 >
                   {currentLength}/{charLimit}
@@ -2863,14 +2863,14 @@ export function Hero({
                 value={value || ""}
                 onChange={handleChange}
                 className={`${baseClasses} p-2 ${className} ${
-                  isOverLimit ? "border-red-400" : ""
+                  isOverLimit ? "border-status-error" : ""
                 }`}
                 placeholder={placeholder}
               />
               {charLimit && (
                 <div
                   className={`absolute -bottom-6 right-0 text-xs ${
-                    isOverLimit ? "text-red-400" : "text-gray-400"
+                    isOverLimit ? "text-status-error" : "text-ink-caption"
                   }`}
                 >
                   {currentLength}/{charLimit}
@@ -2912,12 +2912,12 @@ export function Hero({
     return (
       <section
         ref={heroRef}
-        className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20"
+        className="min-h-screen mt-[4rem] flex items-center justify-center bg-gradient-to-br from-background to-surface-main dark:from-background dark:to-yellow-900/20 pt-20"
       >
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
-          <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-            <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-            <span className="text-gray-700">Loading content...</span>
+        <div className="absolute inset-0 bg-ink/60 flex items-center justify-center z-30">
+          <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3">
+            <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+            <span className="text-ink-paragraph">Loading content...</span>
           </div>
         </div>
       </section>
@@ -2928,7 +2928,7 @@ export function Hero({
     <section
       id="home"
       ref={heroRef}
-      className="min-h-screen mt-5 flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20 relative"
+      className="min-h-screen mt-5 flex items-center bg-gradient-to-br from-background to-surface-main dark:from-background dark:to-yellow-900/20 pt-20 relative"
     >
       {/* Image Cropper Modal */}
       {showCropper &&
@@ -2936,20 +2936,20 @@ export function Hero({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/90 z-[2147483647] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-ink/90 z-[2147483647] flex items-center justify-center p-4"
             style={{ zIndex: 2147483647 }}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
+              className="bg-surface-card rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
             >
               {/* Header */}
-              <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                <h3 className="text-lg font-semibold text-gray-800">
+              <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+                <h3 className="text-lg font-semibold text-ink-charcoal">
                   Crop Hero Image (4:3 Aspect Ratio)
                   {isUploading && (
-                    <span className="ml-2 text-blue-600 text-sm flex items-center gap-1">
+                    <span className="ml-2 text-status-info text-sm flex items-center gap-1">
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Uploading...
                     </span>
@@ -2957,15 +2957,15 @@ export function Hero({
                 </h3>
                 <button
                   onClick={cancelCrop}
-                  className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                  className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
                   disabled={isUploading}
                 >
-                  <X className="w-5 h-5 text-gray-600" />
+                  <X className="w-5 h-5 text-ink-paragraph" />
                 </button>
               </div>
 
               {/* Cropper Area */}
-              <div className="flex-1 relative bg-gray-900 min-h-0">
+              <div className="flex-1 relative bg-ink min-h-0">
                 <Cropper
                   image={imageToCrop}
                   crop={crop}
@@ -2996,23 +2996,23 @@ export function Hero({
               </div>
 
               {/* Controls */}
-              <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <div className="p-4 bg-ink-offwhite border-t border-ink-light">
                 {/* Aspect Ratio Info */}
                 <div className="mb-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
+                  <p className="text-sm font-medium text-ink-paragraph mb-2">
                     Aspect Ratio:{" "}
-                    <span className="text-blue-600">4:3 (Standard)</span>
+                    <span className="text-status-info">4:3 (Standard)</span>
                   </p>
                 </div>
 
                 {/* Zoom Control */}
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2 text-gray-700">
+                    <span className="flex items-center gap-2 text-ink-paragraph">
                       <ZoomIn className="w-4 h-4" />
                       Zoom
                     </span>
-                    <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                    <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
@@ -3020,7 +3020,7 @@ export function Hero({
                       onClick={() =>
                         setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))
                       }
-                      className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                      className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
                       disabled={isUploading}
                     >
                       <ZoomOut className="w-4 h-4" />
@@ -3032,7 +3032,7 @@ export function Hero({
                       max={5}
                       step={0.1}
                       onChange={(e) => setZoom(Number(e.target.value))}
-                      className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                      className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                       disabled={isUploading}
                     />
                     <button
@@ -3040,7 +3040,7 @@ export function Hero({
                       onClick={() =>
                         setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))
                       }
-                      className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                      className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
                       disabled={isUploading}
                     >
                       <ZoomIn className="w-4 h-4" />
@@ -3052,21 +3052,21 @@ export function Hero({
                 <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={resetCropSettings}
-                    className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium disabled:opacity-50"
+                    className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium disabled:opacity-50"
                     disabled={isUploading}
                   >
                     Reset
                   </button>
                   <button
                     onClick={cancelCrop}
-                    className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium disabled:opacity-50"
+                    className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium disabled:opacity-50"
                     disabled={isUploading}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={applyCrop}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2"
                     disabled={isUploading}
                   >
                     {isUploading ? (
@@ -3097,16 +3097,16 @@ export function Hero({
             {isEditing && (
               <div className="flex items-center gap-2 text-sm">
                 {isAutoSaving && (
-                  <div className="flex items-center gap-1 text-blue-500">
+                  <div className="flex items-center gap-1 text-status-info">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span>Auto-saving...</span>
                   </div>
                 )}
                 {hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-yellow-500">● Unsaved changes</div>
+                  <div className="text-brand-gold">● Unsaved changes</div>
                 )}
                 {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-green-500">
+                  <div className="text-status-success">
                     ✓ Auto-saved {lastSaved.toLocaleTimeString()}
                   </div>
                 )}
@@ -3122,12 +3122,12 @@ export function Hero({
                 <EditableText
                   value={displayData.name}
                   field="name"
-                  className="text-yellow-500"
+                  className="text-brand-gold"
                   placeholder="Your name"
                   charLimit={TEXT_LIMITS.HEADING}
                 />
               ) : (
-                <span className="text-yellow-500">{displayData.name}</span>
+                <span className="text-brand-gold">{displayData.name}</span>
               )}
             </motion.h1>
 
@@ -3138,7 +3138,7 @@ export function Hero({
                     value={displayData.description}
                     field="description"
                     multiline
-                    className="text-lg text-yellow-500 min-h-[120px]"
+                    className="text-lg text-brand-gold min-h-[120px]"
                     placeholder="Your description"
                     rows={4}
                     charLimit={TEXT_LIMITS.DESCRIPTION}
@@ -3163,14 +3163,14 @@ export function Hero({
                   <EditableText
                     value={safeButtons.work}
                     buttonField="work"
-                    className="px-6 py-3 rounded-lg text-center bg-blue-600 text-black"
+                    className="px-6 py-3 rounded-lg text-center bg-status-info text-ink"
                     placeholder="Work button text"
                     charLimit={TEXT_LIMITS.SUBTITLE}
                   />
                   <EditableText
                     value={safeButtons.contact}
                     buttonField="contact"
-                    className="px-6 py-3 rounded-lg text-center bg-transparent text-blue-600 border border-blue-600"
+                    className="px-6 py-3 rounded-lg text-center bg-transparent text-status-info border border-status-info"
                     placeholder="Contact button text"
                     charLimit={TEXT_LIMITS.SUBTITLE}
                   />
@@ -3179,13 +3179,13 @@ export function Hero({
                 <>
                   <a
                     href="#projects"
-                    className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors"
                   >
                     {safeButtons.work}
                   </a>
                   <a
                     href="#contact"
-                    className="inline-flex items-center justify-center px-6 py-3 bg-transparent text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-transparent text-status-info border border-status-info rounded-lg hover:bg-status-info/10 transition-colors"
                   >
                     {safeButtons.contact}
                   </a>
@@ -3207,7 +3207,7 @@ export function Hero({
                 <Button
                   onClick={handleEdit}
                   size="sm"
-                  className="bg-red-500 hover:bg-red-600 shadow-md"
+                  className="bg-status-error hover:bg-status-error shadow-md"
                   disabled={isLoading}
                 >
                   <Edit2 className="w-4 h-4 mr-2" />
@@ -3218,7 +3218,7 @@ export function Hero({
                   <Button
                     onClick={handleSave}
                     size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                    className="bg-status-success hover:bg-status-success text-white shadow-md"
                     disabled={isSaving || isUploading}
                   >
                     {isUploading ? (
@@ -3237,7 +3237,7 @@ export function Hero({
                   <Button
                     onClick={handleCancel}
                     size="sm"
-                    className="bg-red-400 hover:bg-red-600 shadow-md"
+                    className="bg-status-error hover:bg-status-error shadow-md"
                     disabled={isSaving || isUploading}
                   >
                     <X className="w-4 h-4 mr-2" />
@@ -3252,7 +3252,7 @@ export function Hero({
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <motion.div className="absolute inset-0 bg-yellow-400 rounded-3xl transform rotate-6"></motion.div>
+              <motion.div className="absolute inset-0 bg-brand-yellow rounded-3xl transform rotate-6"></motion.div>
               <motion.div
                 className="relative bg-card rounded-3xl overflow-hidden shadow-2xl"
                 whileHover={{
@@ -3269,8 +3269,8 @@ export function Hero({
                   />
                   {isEditing && (
                     <div className="absolute bottom-2 right-2 flex flex-col gap-2">
-                      <div className="bg-black/70 text-white p-2 rounded">
-                        <label className="cursor-pointer hover:bg-black/90 transition-colors flex items-center gap-2">
+                      <div className="bg-ink/70 text-white p-2 rounded">
+                        <label className="cursor-pointer hover:bg-ink-charcoal/90 transition-colors flex items-center gap-2">
                           <Upload className="w-4 h-4" />
                           Change Image
                           <input
@@ -3281,11 +3281,11 @@ export function Hero({
                           />
                         </label>
                         {pendingImageFile && (
-                          <div className="text-xs text-orange-300 mt-1">
+                          <div className="text-xs text-status-warning/40 mt-1">
                             Pending upload: {pendingImageFile.name}
                           </div>
                         )}
-                        <div className="text-xs text-gray-300 mt-1">
+                        <div className="text-xs text-ink-light mt-1">
                           Recommended: 600×800px (3:4 ratio) - Portrait
                         </div>
                       </div>

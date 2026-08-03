@@ -140,7 +140,7 @@ const SpeakerCard = memo(
       const defaultAvatar = prefix === 'Mr.' ? maleAvatar : femaleAvatar;
       
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full">
+        <div className="w-full h-full flex items-center justify-center bg-ink-light rounded-full">
           <img 
             src={defaultAvatar} 
             alt={altText}
@@ -156,7 +156,7 @@ const SpeakerCard = memo(
 
     if (isEditing) {
       return (
-        <div className="bg-white rounded-lg md:rounded-xl shadow-lg md:shadow-xl p-4 md:p-6 h-full">
+        <div className="bg-surface-card rounded-lg md:rounded-xl shadow-lg md:shadow-xl p-4 md:p-6 h-full">
           <div className="space-y-3 md:space-y-4 h-full flex flex-col">
             {/* Avatar Upload in Edit Mode */}
             <div className="flex flex-col items-center">
@@ -166,20 +166,20 @@ const SpeakerCard = memo(
               >
                 <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center">
                   {renderAvatar(currentAvatar, editForm.name || speaker.name, currentPrefix)}
-                  <div className="avatar-fallback hidden w-full h-full items-center justify-center bg-gray-200 rounded-full">
-                    <User className="w-8 h-8 text-gray-500" />
+                  <div className="avatar-fallback hidden w-full h-full items-center justify-center bg-ink-light rounded-full">
+                    <User className="w-8 h-8 text-ink-caption" />
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-ink/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Upload className="w-6 h-6 text-white" />
                 </div>
                 {isAvatarUploading && (
-                  <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center">
+                  <div className="absolute inset-0 bg-ink/60 rounded-full flex items-center justify-center">
                     <Loader2 className="w-6 h-6 text-white animate-spin" />
                   </div>
                 )}
               </div>
-              <span className="text-xs text-gray-500 mt-2">
+              <span className="text-xs text-ink-caption mt-2">
                 Click to change photo (200x200 circular)
               </span>
             </div>
@@ -190,7 +190,7 @@ const SpeakerCard = memo(
                 <select
                   value={editForm.prefix || speaker.prefix || 'Mr.'}
                   onChange={(e) => onFormChange({ ...editForm, prefix: e.target.value })}
-                  className="w-full px-3 py-2 text-sm md:text-base border rounded-lg bg-white"
+                  className="w-full px-3 py-2 text-sm md:text-base border rounded-lg bg-surface-card"
                 >
                   <option value="Mr.">Mr.</option>
                   <option value="Mrs.">Mrs.</option>
@@ -206,7 +206,7 @@ const SpeakerCard = memo(
                   className="w-full px-3 py-2 text-sm md:text-base border rounded-lg"
                   placeholder="Speaker Name"
                 />
-                <div className="text-xs text-gray-500 text-right mt-1">
+                <div className="text-xs text-ink-caption text-right mt-1">
                   {(editForm.name || '').length}/50
                 </div>
               </div>
@@ -218,7 +218,7 @@ const SpeakerCard = memo(
                   className="w-full px-3 py-2 text-sm md:text-base border rounded-lg"
                   placeholder="Title"
                 />
-                <div className="text-xs text-gray-500 text-right mt-1">
+                <div className="text-xs text-ink-caption text-right mt-1">
                   {(editForm.title || '').length}/100
                 </div>
               </div>
@@ -230,7 +230,7 @@ const SpeakerCard = memo(
                   className="w-full px-3 py-2 text-sm md:text-base border rounded-lg"
                   placeholder="Company"
                 />
-                <div className="text-xs text-gray-500 text-right mt-1">
+                <div className="text-xs text-ink-caption text-right mt-1">
                   {(editForm.company || '').length}/100
                 </div>
               </div>
@@ -238,7 +238,7 @@ const SpeakerCard = memo(
             <div className="flex gap-2 pt-2">
               <button 
                 onClick={onSave} 
-                className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-sm md:text-base flex items-center gap-1 flex-1 justify-center hover:bg-green-700 transition-colors"
+                className="px-3 py-1.5 bg-status-success text-white rounded-lg text-sm md:text-base flex items-center gap-1 flex-1 justify-center hover:bg-status-success transition-colors"
               >
                 <Save size={14} className="md:w-4 md:h-4" /> 
                 <span className="hidden xs:inline">Done</span>
@@ -246,7 +246,7 @@ const SpeakerCard = memo(
               </button>
               <button 
                 onClick={onCancel} 
-                className="px-3 py-1.5 bg-gray-500 text-white rounded-lg text-sm md:text-base flex items-center gap-1 flex-1 justify-center hover:bg-gray-600 transition-colors"
+                className="px-3 py-1.5 bg-ink-caption text-white rounded-lg text-sm md:text-base flex items-center gap-1 flex-1 justify-center hover:bg-ink-paragraph transition-colors"
               >
                 <X size={14} className="md:w-4 md:h-4" />
                 <span className="hidden xs:inline">Cancel</span>
@@ -259,18 +259,18 @@ const SpeakerCard = memo(
     }
 
     return (
-      <div className="group bg-white rounded-lg md:rounded-xl shadow-md md:shadow-lg p-4 md:p-6 relative h-full min-h-[200px] md:min-h-[250px] hover:shadow-lg transition-shadow duration-300">
+      <div className="group bg-surface-card rounded-lg md:rounded-xl shadow-md md:shadow-lg p-4 md:p-6 relative h-full min-h-[200px] md:min-h-[250px] hover:shadow-lg transition-shadow duration-300">
         {isEditMode && (
           <div className="absolute top-2 right-2 flex gap-1 z-10">
             <button 
               onClick={onEdit} 
-              className="p-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors"
+              className="p-1 bg-status-info text-white rounded text-xs hover:bg-status-info transition-colors"
             >
               <Edit2 size={12} className="md:w-3.5 md:h-3.5" />
             </button>
             <button 
               onClick={onDelete} 
-              className="p-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
+              className="p-1 bg-status-error text-white rounded text-xs hover:bg-status-error transition-colors"
             >
               <Trash2 size={12} className="md:w-3.5 md:h-3.5" />
             </button>
@@ -284,17 +284,17 @@ const SpeakerCard = memo(
         >
           <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full overflow-hidden flex items-center justify-center">
             {renderAvatar(speaker.avatar, speaker.name, speaker.prefix)}
-            <div className="avatar-fallback hidden w-full h-full items-center justify-center bg-gray-200 rounded-full">
-              <User className="w-8 h-8 text-gray-500" />
+            <div className="avatar-fallback hidden w-full h-full items-center justify-center bg-ink-light rounded-full">
+              <User className="w-8 h-8 text-ink-caption" />
             </div>
           </div>
           {isEditMode && (
             <>
-              <div className="absolute inset-0 bg-black/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="absolute inset-0 bg-ink/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <Upload className="w-6 h-6 text-white" />
               </div>
               {isAvatarUploading && (
-                <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center">
+                <div className="absolute inset-0 bg-ink/60 rounded-full flex items-center justify-center">
                   <Loader2 className="w-6 h-6 text-white animate-spin" />
                 </div>
               )}
@@ -311,7 +311,7 @@ const SpeakerCard = memo(
           </p>
         )}
         {speaker.company && (
-          <p className="text-justify text-xs md:text-sm text-gray-600 mt-1 line-clamp-2">
+          <p className="text-justify text-xs md:text-sm text-ink-paragraph mt-1 line-clamp-2">
             {speaker.company}
           </p>
         )}
@@ -877,7 +877,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
             Render UI
      -------------------------- */
   return (
-    <section id="speakers" className="py-12 md:py-20 bg-gray-50 min-h-screen">
+    <section id="speakers" className="py-12 md:py-20 bg-ink-offwhite min-h-screen">
       <div className="container mx-auto px-3 sm:px-4 max-w-7xl relative">
         
         {/* Header */}
@@ -890,9 +890,9 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                   value={headerContent.eventTitle}
                   onChange={(e) => updateHeaderField("eventTitle", e.target.value)}
                   maxLength={100}
-                  className="w-full text-2xl sm:text-3xl md:text-4xl font-bold px-4 py-2 md:py-3 border rounded-lg md:rounded-xl text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-2xl sm:text-3xl md:text-4xl font-bold px-4 py-2 md:py-3 border rounded-lg md:rounded-xl text-center focus:outline-none focus:ring-2 focus:ring-status-info"
                 />
-                <div className="text-xs text-gray-500 text-right mt-1">
+                <div className="text-xs text-ink-caption text-right mt-1">
                   {headerContent.eventTitle.length}/100
                 </div>
               </div>
@@ -903,9 +903,9 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                   value={headerContent.sectionTitle}
                   onChange={(e) => updateHeaderField("sectionTitle", e.target.value)}
                   maxLength={100}
-                  className="w-full text-xl sm:text-2xl font-bold px-4 py-2 md:py-3 border rounded-lg md:rounded-xl text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xl sm:text-2xl font-bold px-4 py-2 md:py-3 border rounded-lg md:rounded-xl text-center focus:outline-none focus:ring-2 focus:ring-status-info"
                 />
-                <div className="text-xs text-gray-500 text-right mt-1">
+                <div className="text-xs text-ink-caption text-right mt-1">
                   {headerContent.sectionTitle.length}/100
                 </div>
               </div>
@@ -916,9 +916,9 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                   value={headerContent.subtitle}
                   onChange={(e) => updateHeaderField("subtitle", e.target.value)}
                   maxLength={200}
-                  className="w-full text-base md:text-lg px-4 py-2 md:py-3 border rounded-lg md:rounded-xl text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-base md:text-lg px-4 py-2 md:py-3 border rounded-lg md:rounded-xl text-center focus:outline-none focus:ring-2 focus:ring-status-info"
                 />
-                <div className="text-xs text-gray-500 text-right mt-1">
+                <div className="text-xs text-ink-caption text-right mt-1">
                   {headerContent.subtitle.length}/200
                 </div>
               </div>
@@ -926,10 +926,10 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
           ) : (
             <>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-                <span className="text-yellow-500 block md:inline">{headerContent.eventTitle}</span>
-                <span className="block text-xl sm:text-2xl md:text-3xl text-gray-800 mt-2">{headerContent.sectionTitle}</span>
+                <span className="text-brand-gold block md:inline">{headerContent.eventTitle}</span>
+                <span className="block text-xl sm:text-2xl md:text-3xl text-ink-charcoal mt-2">{headerContent.sectionTitle}</span>
               </h2>
-              <p className="text-gray-600 mt-3 md:mt-4 text-justify md:text-center px-4 sm:px-6 md:px-0 max-w-3xl mx-auto">
+              <p className="text-ink-paragraph mt-3 md:mt-4 text-justify md:text-center px-4 sm:px-6 md:px-0 max-w-3xl mx-auto">
                 {headerContent.subtitle}
               </p>
             </>
@@ -939,10 +939,10 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
           <div className="absolute top-0 right-0 flex flex-col sm:flex-row gap-2 items-start sm:items-center p-2">
             {/* Auto-save status */}
             {isEditMode && onStateChange && (
-              <div className="text-xs sm:text-sm text-gray-600 bg-white/90 px-2 sm:px-3 py-1 rounded-lg mb-2 sm:mb-0 shadow-sm">
+              <div className="text-xs sm:text-sm text-ink-paragraph bg-white/90 px-2 sm:px-3 py-1 rounded-lg mb-2 sm:mb-0 shadow-sm">
                 {isSaving ? (
                   <span className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
                     <span className="hidden sm:inline">Saving...</span>
                     <span className="sm:hidden">Saving</span>
                   </span>
@@ -964,7 +964,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
               <div className="flex gap-2">
                 <button 
                   onClick={saveHeaderEdit} 
-                  className="px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 sm:px-6 sm:py-3 bg-status-info text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-status-info transition-colors"
                 >
                   <Save size={16} className="sm:w-4 sm:h-4" /> 
                   <span className="hidden sm:inline">Done</span>
@@ -972,7 +972,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                 </button>
                 <button 
                   onClick={cancelHeaderEdit} 
-                  className="px-4 py-2 sm:px-6 sm:py-3 bg-red-500 text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-red-600 transition-colors"
+                  className="px-4 py-2 sm:px-6 sm:py-3 bg-status-error text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-status-error transition-colors"
                 >
                   <X size={16} className="sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Cancel</span>
@@ -982,7 +982,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
             ) : (
               <button 
                 onClick={startHeaderEdit} 
-                className="px-4 py-2 sm:px-6 sm:py-3 bg-green-500 text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-green-600 transition-colors"
+                className="px-4 py-2 sm:px-6 sm:py-3 bg-status-success text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-status-success transition-colors"
               >
                 <Edit size={16} className="sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Edit</span>
@@ -994,7 +994,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
 
         {/* Day Tabs */}
         <div className="flex flex-col sm:flex-row justify-center items-center mb-8 md:mb-12 gap-4">
-          <div className="bg-white shadow-lg p-1 sm:p-2 rounded-xl md:rounded-2xl flex flex-wrap justify-center gap-1 sm:gap-2 max-w-full overflow-x-auto">
+          <div className="bg-surface-card shadow-lg p-1 sm:p-2 rounded-xl md:rounded-2xl flex flex-wrap justify-center gap-1 sm:gap-2 max-w-full overflow-x-auto">
             {speakers.map((day, index) => (
               <div key={index} className="relative">
                 {isEditMode ? (
@@ -1004,10 +1004,10 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                       onChange={(e) => handleDayEdit(index, e.target.value)}
                       onClick={() => setActiveDay(index)}
                       maxLength={50}
-                      className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg md:rounded-xl border text-sm sm:text-base min-w-[120px] sm:min-w-0 focus:outline-none focus:ring-2 focus:ring-blue-500 ${editingCard ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg md:rounded-xl border text-sm sm:text-base min-w-[120px] sm:min-w-0 focus:outline-none focus:ring-2 focus:ring-status-info ${editingCard ? 'opacity-50 cursor-not-allowed' : ''}`}
                       disabled={!!editingCard}
                     />
-                    <div className="text-xs text-gray-500 text-right mt-1">
+                    <div className="text-xs text-ink-caption text-right mt-1">
                       {day.day.length}/50
                     </div>
                   </div>
@@ -1016,8 +1016,8 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                     onClick={() => setActiveDay(index)}
                     className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg md:rounded-xl text-sm sm:text-base whitespace-nowrap transition-colors ${editingCard ? 'opacity-50 cursor-not-allowed' : ''} ${
                       activeDay === index 
-                        ? 'bg-yellow-400 text-black font-bold hover:bg-yellow-500' 
-                        : 'hover:bg-gray-100'
+                        ? 'bg-brand-yellow text-ink font-bold hover:bg-brand-gold' 
+                        : 'hover:bg-ink-light'
                     }`}
                     disabled={!!editingCard}
                   >
@@ -1028,7 +1028,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                 {isEditMode && speakers.length > 1 && (
                   <button
                     onClick={() => handleRemoveDay(index)}
-                    className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-red-500 text-white w-4 h-4 sm:w-5 sm:h-5 rounded-full text-xs flex items-center justify-center hover:bg-red-600 transition-colors"
+                    className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-status-error text-white w-4 h-4 sm:w-5 sm:h-5 rounded-full text-xs flex items-center justify-center hover:bg-status-error transition-colors"
                     disabled={!!editingCard}
                   >
                     ×
@@ -1041,7 +1041,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
           {isEditMode && (
             <button
               onClick={handleAddDay}
-              className="px-3 sm:px-4 py-1 sm:py-2 bg-blue-600 text-white rounded-full text-sm sm:text-base flex items-center gap-1 whitespace-nowrap hover:bg-blue-700 transition-colors"
+              className="px-3 sm:px-4 py-1 sm:py-2 bg-status-info text-white rounded-full text-sm sm:text-base flex items-center gap-1 whitespace-nowrap hover:bg-status-info transition-colors"
               title="Add New Day"
               disabled={!!editingCard}
             >
@@ -1055,14 +1055,14 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
         {/* Speakers Grid */}
         <div className="px-2 sm:px-0">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-3">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-ink-charcoal">
               {speakers[activeDay]?.day}
             </h3>
 
             {isEditMode && !editingCard && (
               <button
                 onClick={() => handleAddSpeaker(activeDay)}
-                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-green-600 text-white rounded-lg text-sm sm:text-base flex items-center gap-1 whitespace-nowrap hover:bg-green-700 transition-colors"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-status-success text-white rounded-lg text-sm sm:text-base flex items-center gap-1 whitespace-nowrap hover:bg-status-success transition-colors"
               >
                 <Plus size={14} className="sm:w-4 sm:h-4" /> 
                 <span className="hidden sm:inline">Add Speaker</span>
@@ -1072,12 +1072,12 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
           </div>
 
           {speakers[activeDay]?.speakers.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-              <p className="text-gray-500 text-lg">No speakers added for this day yet.</p>
+            <div className="text-center py-12 bg-surface-card rounded-xl shadow-sm">
+              <p className="text-ink-caption text-lg">No speakers added for this day yet.</p>
               {isEditMode && !editingCard && (
                 <button
                   onClick={() => handleAddSpeaker(activeDay)}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="mt-4 px-4 py-2 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors"
                 >
                   + Add First Speaker
                 </button>
@@ -1111,22 +1111,22 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
 
       {/* Avatar Cropper Modal */}
       {showAvatarCropper && (
-        <div className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
-            <div className="p-4 border-b flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+        <div className="fixed inset-0 bg-ink/90 z-[9999] flex items-center justify-center p-4">
+          <div className="bg-surface-card rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
+            <div className="p-4 border-b flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Avatar (Circular {AVATAR_DIMENSIONS.width}x{AVATAR_DIMENSIONS.height})
               </h3>
               <button
                 onClick={cancelAvatarCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area with dynamic sizing */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={avatarImageToCrop || undefined}
                 crop={avatarCrop}
@@ -1161,14 +1161,14 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     Zoom
                   </span>
-                  <span className="text-gray-600">{avatarZoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{avatarZoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -1177,7 +1177,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
                   max={5}
                   step={0.1}
                   onChange={(e) => setAvatarZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -1185,20 +1185,20 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetAvatarCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelAvatarCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyAvatarCrop}
                   disabled={isAvatarUploading}
-                  className={`w-full ${isAvatarUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm font-medium`}
+                  className={`w-full ${isAvatarUploading ? 'bg-ink-caption cursor-not-allowed' : 'bg-status-success hover:bg-status-success'} text-white rounded py-2 text-sm font-medium`}
                 >
                   {isAvatarUploading ? (
                     <span className="flex items-center justify-center gap-2">

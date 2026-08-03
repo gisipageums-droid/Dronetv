@@ -82,17 +82,17 @@ export function EventsSection({ eventsData }: EventsProps) {
 
   if (isLoading) {
     return (
-      <section ref={eventsRef} id="events" className="py-20 bg-white">
+      <section ref={eventsRef} id="events" className="py-20 bg-surface-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
-          <p className="text-gray-600 mt-4">Loading events data...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
+          <p className="text-ink-paragraph mt-4">Loading events data...</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section ref={eventsRef} id="events" className="py-20 bg-white">
+    <section ref={eventsRef} id="events" className="py-20 bg-surface-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <motion.div
@@ -102,11 +102,11 @@ export function EventsSection({ eventsData }: EventsProps) {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
-            <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+          <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
+            <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
           </div>
-          <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-          <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+          <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+          <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
             {displayData.description}
           </p>
         </motion.div>
@@ -121,25 +121,25 @@ export function EventsSection({ eventsData }: EventsProps) {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -10 }}
-              className="group bg-yellow-50 rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-amber-200 hover:border-amber-400"
+              className="group bg-surface-main rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-brand-yellow-soft hover:border-brand-yellow"
             >
               <div className="p-6 sm:p-8">
                 {/* View Mode */}
                 <div className="flex items-center gap-4 mb-4">
-                  <h3 className="text-gray-900 group-hover:text-amber-600 transition-colors text-xl sm:text-2xl">
+                  <h3 className="text-ink group-hover:text-brand-yellow transition-colors text-xl sm:text-2xl">
                     {event.title}
                   </h3>
                 </div>
 
-                <p className="text-gray-600 mb-6 text-sm sm:text-base">{event.description}</p>
+                <p className="text-ink-paragraph mb-6 text-sm sm:text-base">{event.description}</p>
 
                 <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-3 text-gray-600 text-sm sm:text-base">
-                    <Clock className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                  <div className="flex items-center gap-3 text-ink-paragraph text-sm sm:text-base">
+                    <Clock className="w-5 h-5 text-brand-gold flex-shrink-0" />
                     <span>{event.time}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-600 text-sm sm:text-base">
-                    <MapPin className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                  <div className="flex items-center gap-3 text-ink-paragraph text-sm sm:text-base">
+                    <MapPin className="w-5 h-5 text-brand-gold flex-shrink-0" />
                     <span>{event.location}</span>
                   </div>
                 </div>
@@ -158,11 +158,11 @@ export function EventsSection({ eventsData }: EventsProps) {
             className="text-center py-12"
           >
             <div className="max-w-md mx-auto">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                <Calendar className="w-8 h-8 text-gray-400" />
+              <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                <Calendar className="w-8 h-8 text-ink-caption" />
               </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">No Events Added</h4>
-              <p className="text-gray-600">Add events to showcase your conference schedule.</p>
+              <h4 className="text-lg font-semibold text-ink mb-2">No Events Added</h4>
+              <p className="text-ink-paragraph">Add events to showcase your conference schedule.</p>
             </div>
           </motion.div>
         )}

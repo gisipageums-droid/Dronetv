@@ -86,28 +86,28 @@
 //   if (!isOpen) return null;
 
 //   return (
-//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-//       <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink bg-opacity-50">
+//       <div className="bg-surface-card rounded-lg p-6 max-w-md w-full mx-4">
 //         <div className="flex items-center justify-between mb-4">
 //           <div className="flex items-center">
-//             <AlertTriangle className="w-6 h-6 text-yellow-500 mr-2" />
-//             <h3 className="text-lg font-semibold text-slate-900">
+//             <AlertTriangle className="w-6 h-6 text-brand-gold mr-2" />
+//             <h3 className="text-lg font-semibold text-ink">
 //               Insufficient Tokens
 //             </h3>
 //           </div>
 //           <button
 //             onClick={onClose}
-//             className="text-slate-400 hover:text-slate-600 transition-colors"
+//             className="text-ink-caption hover:text-ink-paragraph transition-colors"
 //           >
 //             <X className="w-5 h-5" />
 //           </button>
 //         </div>
 
 //         <div className="mb-6">
-//           <p className="text-slate-700 mb-4">{message}</p>
+//           <p className="text-ink-paragraph mb-4">{message}</p>
 
-//           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-//             <p className="text-sm text-yellow-700">
+//           <div className="bg-surface-main border border-brand-yellow-soft rounded-lg p-4">
+//             <p className="text-sm text-brand-gold">
 //               {`Each website generation requires 100 tokens but you have ${totalToken}. You can purchase more
 //               tokens to continue.`}
 //             </p>
@@ -117,7 +117,7 @@
 //         <div className="flex justify-end space-x-3">
 //           <button
 //             onClick={onClose}
-//             className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+//             className="px-4 py-2 text-ink-paragraph border border-ink-light rounded-lg hover:bg-ink-offwhite transition-colors"
 //           >
 //             Cancel
 //           </button>
@@ -125,7 +125,7 @@
 //           {onPurchaseTokens && (
 //             <button
 //               onClick={onPurchaseTokens}
-//               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+//               className="px-4 py-2 bg-status-success text-white rounded-lg hover:bg-status-success transition-colors"
 //             >
 //               Purchase Tokens
 //             </button>
@@ -485,13 +485,13 @@
 
 //   if (formLoader)
 //     return (
-//       <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+//       <div className="fixed inset-0 bg-status-info flex items-center justify-center z-50">
 //         <div className="text-center">
 //           {/* Loader */}
-//           <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+//           <div className="w-16 h-16 mx-auto mb-4 border-4 border-status-info border-t-transparent rounded-full animate-spin"></div>
 
 //           {/* Message */}
-//           <p className="text-blue-200 text-lg">
+//           <p className="text-status-info/25 text-lg">
 //             Please wait while we load your form
 //           </p>
 //         </div>
@@ -511,25 +511,25 @@
 //   return (
 //     <>
 //       {/* Header */}
-//       <div className="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-lg border-b border-amber-300">
+//       <div className="bg-gradient-to-r from-brand-yellow to-brand-yellow shadow-lg border-b border-brand-yellow-soft">
 //         <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
 //           <div>
-//             <h1 className="text-xl font-bold text-black">DroneTV</h1>
-//             <p className="text-sm text-gray-800">
+//             <h1 className="text-xl font-bold text-ink">DroneTV</h1>
+//             <p className="text-sm text-ink-charcoal">
 //               AI-Powered Website Generator
 //             </p>
 //           </div>
 //           <div className="text-right">
-//             <p className="text-xs text-gray-700">Drone • AI • GIS</p>
-//             <p className="text-xs text-gray-600">One form, instant website</p>
+//             <p className="text-xs text-ink-paragraph">Drone • AI • GIS</p>
+//             <p className="text-xs text-ink-paragraph">One form, instant website</p>
 //           </div>
 //         </div>
 //       </div>
 
 //       {loading && <Loader />}
 
-//       <div className="bg-yellow-100 w-full py-4 ">
-//         <div className="bg-yellow-100 max-w-4xl mx-auto">
+//       <div className="bg-brand-yellow-soft w-full py-4 ">
+//         <div className="bg-brand-yellow-soft max-w-4xl mx-auto">
 //           {/* --- Step Navigation Chips --- */}
 //           <div className="flex flex-wrap items-center gap-2 mb-4 justify-center">
 //             {steps.slice(0, 6).map((s: any, index: number) => (
@@ -538,19 +538,19 @@
 //                   onClick={() => goTo(index)}
 //                   className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
 //                     index === current
-//                       ? "bg-black text-yellow-200 shadow"
+//                       ? "bg-ink text-brand-yellow-soft shadow"
 //                       : index < current
-//                       ? "bg-yellow-200 text-black hover:bg-black-300"
-//                       : "bg-yellow-100 text-gray-600 hover:bg-yellow-300"
+//                       ? "bg-brand-yellow-soft text-ink hover:bg-ink-300"
+//                       : "bg-brand-yellow-soft text-ink-paragraph hover:bg-brand-yellow-soft"
 //                   }`}
 //                 >
 //                   <div
 //                     className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${
 //                       index === current
-//                         ? "bg-yellow-400 text-black"
+//                         ? "bg-brand-yellow text-ink"
 //                         : index < current
-//                         ? "bg-yellow-400 text-black"
-//                         : "bg-gray-300 text-black"
+//                         ? "bg-brand-yellow text-ink"
+//                         : "bg-ink-light text-ink"
 //                     }`}
 //                   >
 //                     {index + 1}
@@ -560,7 +560,7 @@
 //                   </span>
 //                 </button>
 //                 {index < 4 && (
-//                   <span className="mx-2 text-gray-500 font-bold select-none">
+//                   <span className="mx-2 text-ink-caption font-bold select-none">
 //                     -
 //                   </span>
 //                 )}
@@ -571,12 +571,12 @@
 //           {/* --- Progress Percentage and Bar --- */}
 //           {current < 6 && (
 //             <div className="w-full mb-6">
-//               <div className="flex justify-end mb-1 text-sm font-semibold text-gray-700">
+//               <div className="flex justify-end mb-1 text-sm font-semibold text-ink-paragraph">
 //                 {progress}% complete
 //               </div>
-//               <div className="w-full bg-gray-200 rounded-lg h-4">
+//               <div className="w-full bg-ink-light rounded-lg h-4">
 //                 <div
-//                   className="bg-yellow-400 h-4 rounded-lg transition-all duration-300"
+//                   className="bg-brand-yellow h-4 rounded-lg transition-all duration-300"
 //                   style={{ width: `${progress}%` }}
 //                 ></div>
 //               </div>
@@ -591,7 +591,7 @@
 //           <div className="flex justify-end -mt-2">
 //             <button
 //               onClick={() => setAdminOpen(true)}
-//               className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+//               className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
 //             >
 //               Open Admin Panel
 //             </button>
@@ -599,7 +599,7 @@
 //         )}
 
 //         {/* --- Step Content Container --- */}
-//         <div className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6">
+//         <div className="bg-surface-card border-2 border-brand-yellow-soft shadow-md rounded-xl p-6">
 //           {current === 0 ? (
 //             <Step1 step={stepData} setStepValid={setStep1Valid} />
 //           ) : current === 5 ? (
@@ -618,7 +618,7 @@
 //           <button
 //             onClick={prev}
 //             disabled={current === 0}
-//             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+//             className="px-4 py-2 bg-ink-light hover:bg-ink-light rounded disabled:opacity-50"
 //           >
 //             Back
 //           </button>
@@ -627,14 +627,14 @@
 //             <button
 //               onClick={next}
 //               disabled={current === 0 && !step1Valid} // ✅ disable Next only on Step1 if invalid
-//               className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded disabled:opacity-50"
+//               className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded disabled:opacity-50"
 //             >
 //               Next
 //             </button>
 //           ) : (
 //             <button
 //               onClick={handleSubmit}
-//               className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded"
+//               className="px-4 py-2 bg-status-success hover:bg-status-success text-white font-medium rounded"
 //             >
 //               Submit
 //             </button>
@@ -756,28 +756,28 @@
 //   if (!isOpen) return null;
 
 //   return (
-//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-//       <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink bg-opacity-50">
+//       <div className="bg-surface-card rounded-lg p-6 max-w-md w-full mx-4">
 //         <div className="flex items-center justify-between mb-4">
 //           <div className="flex items-center">
-//             <AlertTriangle className="w-6 h-6 text-yellow-500 mr-2" />
-//             <h3 className="text-lg font-semibold text-slate-900">
+//             <AlertTriangle className="w-6 h-6 text-brand-gold mr-2" />
+//             <h3 className="text-lg font-semibold text-ink">
 //               Insufficient Tokens
 //             </h3>
 //           </div>
 //           <button
 //             onClick={onClose}
-//             className="text-slate-400 hover:text-slate-600 transition-colors"
+//             className="text-ink-caption hover:text-ink-paragraph transition-colors"
 //           >
 //             <X className="w-5 h-5" />
 //           </button>
 //         </div>
 
 //         <div className="mb-6">
-//           <p className="text-slate-700 mb-4">{message}</p>
+//           <p className="text-ink-paragraph mb-4">{message}</p>
 
-//           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-//             <p className="text-sm text-yellow-700">
+//           <div className="bg-surface-main border border-brand-yellow-soft rounded-lg p-4">
+//             <p className="text-sm text-brand-gold">
 //               {`Each website generation requires 100 tokens but you have ${totalToken}. You can purchase more
 //               tokens to continue.`}
 //             </p>
@@ -787,7 +787,7 @@
 //         <div className="flex justify-end space-x-3">
 //           <button
 //             onClick={onClose}
-//             className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+//             className="px-4 py-2 text-ink-paragraph border border-ink-light rounded-lg hover:bg-ink-offwhite transition-colors"
 //           >
 //             Cancel
 //           </button>
@@ -795,7 +795,7 @@
 //           {onPurchaseTokens && (
 //             <button
 //               onClick={onPurchaseTokens}
-//               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+//               className="px-4 py-2 bg-status-success text-white rounded-lg hover:bg-status-success transition-colors"
 //             >
 //               Purchase Tokens
 //             </button>
@@ -991,10 +991,10 @@
 
 //   if (formLoader)
 //     return (
-//       <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+//       <div className="fixed inset-0 bg-status-info flex items-center justify-center z-50">
 //         <div className="text-center">
-//           <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-//           <p className="text-blue-200 text-lg">
+//           <div className="w-16 h-16 mx-auto mb-4 border-4 border-status-info border-t-transparent rounded-full animate-spin"></div>
+//           <p className="text-status-info/25 text-lg">
 //             Please wait while we load your event form
 //           </p>
 //         </div>
@@ -1013,25 +1013,25 @@
 //   return (
 //     <>
 //       {/* Header */}
-//       <div className="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-lg border-b border-amber-300">
+//       <div className="bg-gradient-to-r from-brand-yellow to-brand-yellow shadow-lg border-b border-brand-yellow-soft">
 //         <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
 //           <div>
-//             <h1 className="text-xl font-bold text-black">EventPro</h1>
-//             <p className="text-sm text-gray-800">
+//             <h1 className="text-xl font-bold text-ink">EventPro</h1>
+//             <p className="text-sm text-ink-charcoal">
 //               AI-Powered Event Website Generator
 //             </p>
 //           </div>
 //           <div className="text-right">
-//             <p className="text-xs text-gray-700">Conferences • Seminars • Exhibitions</p>
-//             <p className="text-xs text-gray-600">Create stunning event websites instantly</p>
+//             <p className="text-xs text-ink-paragraph">Conferences • Seminars • Exhibitions</p>
+//             <p className="text-xs text-ink-paragraph">Create stunning event websites instantly</p>
 //           </div>
 //         </div>
 //       </div>
 
 //       {loading && <Loader />}
 
-//       <div className="bg-yellow-100 w-full py-4 ">
-//         <div className="bg-yellow-100 max-w-4xl mx-auto">
+//       <div className="bg-brand-yellow-soft w-full py-4 ">
+//         <div className="bg-brand-yellow-soft max-w-4xl mx-auto">
 //           {/* Step Navigation Chips */}
 //           <div className="flex flex-wrap items-center gap-2 mb-4 justify-center">
 //             {steps.slice(0, 5).map((s: any, index: number) => (
@@ -1040,19 +1040,19 @@
 //                   onClick={() => goTo(index)}
 //                   className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
 //                     index === current
-//                       ? "bg-black text-yellow-200 shadow"
+//                       ? "bg-ink text-brand-yellow-soft shadow"
 //                       : index < current
-//                       ? "bg-yellow-200 text-black hover:bg-black-300"
-//                       : "bg-yellow-100 text-gray-600 hover:bg-yellow-300"
+//                       ? "bg-brand-yellow-soft text-ink hover:bg-ink-300"
+//                       : "bg-brand-yellow-soft text-ink-paragraph hover:bg-brand-yellow-soft"
 //                   }`}
 //                 >
 //                   <div
 //                     className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${
 //                       index === current
-//                         ? "bg-yellow-400 text-black"
+//                         ? "bg-brand-yellow text-ink"
 //                         : index < current
-//                         ? "bg-yellow-400 text-black"
-//                         : "bg-gray-300 text-black"
+//                         ? "bg-brand-yellow text-ink"
+//                         : "bg-ink-light text-ink"
 //                     }`}
 //                   >
 //                     {index + 1}
@@ -1062,7 +1062,7 @@
 //                   </span>
 //                 </button>
 //                 {index < 4 && (
-//                   <span className="mx-2 text-gray-500 font-bold select-none">
+//                   <span className="mx-2 text-ink-caption font-bold select-none">
 //                     -
 //                   </span>
 //                 )}
@@ -1073,12 +1073,12 @@
 //           {/* Progress Percentage and Bar */}
 //           {current < 5 && (
 //             <div className="w-full mb-6">
-//               <div className="flex justify-end mb-1 text-sm font-semibold text-gray-700">
+//               <div className="flex justify-end mb-1 text-sm font-semibold text-ink-paragraph">
 //                 {progress}% complete
 //               </div>
-//               <div className="w-full bg-gray-200 rounded-lg h-4">
+//               <div className="w-full bg-ink-light rounded-lg h-4">
 //                 <div
-//                   className="bg-yellow-400 h-4 rounded-lg transition-all duration-300"
+//                   className="bg-brand-yellow h-4 rounded-lg transition-all duration-300"
 //                   style={{ width: `${progress}%` }}
 //                 ></div>
 //               </div>
@@ -1093,7 +1093,7 @@
 //           <div className="flex justify-end -mt-2">
 //             <button
 //               onClick={() => setAdminOpen(true)}
-//               className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+//               className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
 //             >
 //               Open Admin Panel
 //             </button>
@@ -1101,7 +1101,7 @@
 //         )}
 
 //         {/* Step Content Container */}
-//         <div className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6">
+//         <div className="bg-surface-card border-2 border-brand-yellow-soft shadow-md rounded-xl p-6">
 //           {current === 0 ? (
 //             <Step1 step={stepData}  />
 //           ) : (
@@ -1114,7 +1114,7 @@
 //           <button
 //             onClick={prev}
 //             disabled={current === 0}
-//             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+//             className="px-4 py-2 bg-ink-light hover:bg-ink-light rounded disabled:opacity-50"
 //           >
 //             Back
 //           </button>
@@ -1123,14 +1123,14 @@
 //             <button
 //               onClick={next}
 //               disabled={current === 0}
-//               className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded disabled:opacity-50"
+//               className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded disabled:opacity-50"
 //             >
 //               Next
 //             </button>
 //           ) : (
 //             <button
 //               onClick={handleSubmit}
-//               className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded"
+//               className="px-4 py-2 bg-status-success hover:bg-status-success text-white font-medium rounded"
 //             >
 //               Create Event Website
 //             </button>
@@ -1138,14 +1138,14 @@
 //           {current < 5 ? (
 //   <button
 //     onClick={next}
-//     className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+//     className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
 //   >
 //     Next
 //   </button>
 // ) : (
 //   <button
 //     onClick={handleSubmit}
-//     className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded"
+//     className="px-4 py-2 bg-status-success hover:bg-status-success text-white font-medium rounded"
 //   >
 //     Create Event Website
 //   </button>
@@ -1265,28 +1265,28 @@
 //   if (!isOpen) return null;
 
 //   return (
-//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-//       <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+//     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink bg-opacity-50">
+//       <div className="bg-surface-card rounded-lg p-6 max-w-md w-full mx-4">
 //         <div className="flex items-center justify-between mb-4">
 //           <div className="flex items-center">
-//             <AlertTriangle className="w-6 h-6 text-yellow-500 mr-2" />
-//             <h3 className="text-lg font-semibold text-slate-900">
+//             <AlertTriangle className="w-6 h-6 text-brand-gold mr-2" />
+//             <h3 className="text-lg font-semibold text-ink">
 //               Insufficient Tokens
 //             </h3>
 //           </div>
 //           <button
 //             onClick={onClose}
-//             className="text-slate-400 hover:text-slate-600 transition-colors"
+//             className="text-ink-caption hover:text-ink-paragraph transition-colors"
 //           >
 //             <X className="w-5 h-5" />
 //           </button>
 //         </div>
 
 //         <div className="mb-6">
-//           <p className="text-slate-700 mb-4">{message}</p>
+//           <p className="text-ink-paragraph mb-4">{message}</p>
 
-//           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-//             <p className="text-sm text-yellow-700">
+//           <div className="bg-surface-main border border-brand-yellow-soft rounded-lg p-4">
+//             <p className="text-sm text-brand-gold">
 //               {`Each website generation requires 100 tokens but you have ${totalToken}. You can purchase more
 //               tokens to continue.`}
 //             </p>
@@ -1296,7 +1296,7 @@
 //         <div className="flex justify-end space-x-3">
 //           <button
 //             onClick={onClose}
-//             className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+//             className="px-4 py-2 text-ink-paragraph border border-ink-light rounded-lg hover:bg-ink-offwhite transition-colors"
 //           >
 //             Cancel
 //           </button>
@@ -1304,7 +1304,7 @@
 //           {onPurchaseTokens && (
 //             <button
 //               onClick={onPurchaseTokens}
-//               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+//               className="px-4 py-2 bg-status-success text-white rounded-lg hover:bg-status-success transition-colors"
 //             >
 //               Purchase Tokens
 //             </button>
@@ -1499,10 +1499,10 @@
 
 //   if (formLoader)
 //     return (
-//       <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+//       <div className="fixed inset-0 bg-status-info flex items-center justify-center z-50">
 //         <div className="text-center">
-//           <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-//           <p className="text-blue-200 text-lg">
+//           <div className="w-16 h-16 mx-auto mb-4 border-4 border-status-info border-t-transparent rounded-full animate-spin"></div>
+//           <p className="text-status-info/25 text-lg">
 //             Please wait while we load your event form
 //           </p>
 //         </div>
@@ -1521,25 +1521,25 @@
 //   return (
 //     <>
 //       {/* Header */}
-//       <div className="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-lg border-b border-amber-300">
+//       <div className="bg-gradient-to-r from-brand-yellow to-brand-yellow shadow-lg border-b border-brand-yellow-soft">
 //         <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
 //           <div>
-//             <h1 className="text-xl font-bold text-black">EventPro</h1>
-//             <p className="text-sm text-gray-800">
+//             <h1 className="text-xl font-bold text-ink">EventPro</h1>
+//             <p className="text-sm text-ink-charcoal">
 //               AI-Powered Event Website Generator
 //             </p>
 //           </div>
 //           <div className="text-right">
-//             <p className="text-xs text-gray-700">Conferences • Seminars • Exhibitions</p>
-//             <p className="text-xs text-gray-600">Create stunning event websites instantly</p>
+//             <p className="text-xs text-ink-paragraph">Conferences • Seminars • Exhibitions</p>
+//             <p className="text-xs text-ink-paragraph">Create stunning event websites instantly</p>
 //           </div>
 //         </div>
 //       </div>
 
 //       {loading && <Loader />}
 
-//       <div className="bg-yellow-100 w-full py-4 ">
-//         <div className="bg-yellow-100 max-w-4xl mx-auto">
+//       <div className="bg-brand-yellow-soft w-full py-4 ">
+//         <div className="bg-brand-yellow-soft max-w-4xl mx-auto">
 //           {/* Step Navigation Chips */}
 //           <div className="flex flex-wrap items-center gap-2 mb-4 justify-center">
 //             {steps.slice(0, 6).map((s: any, index: number) => (
@@ -1548,19 +1548,19 @@
 //                   onClick={() => goTo(index)}
 //                   className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${
 //                     index === current
-//                       ? "bg-black text-yellow-200 shadow"
+//                       ? "bg-ink text-brand-yellow-soft shadow"
 //                       : index < current
-//                       ? "bg-yellow-200 text-black hover:bg-black-300"
-//                       : "bg-yellow-100 text-gray-600 hover:bg-yellow-300"
+//                       ? "bg-brand-yellow-soft text-ink hover:bg-ink-300"
+//                       : "bg-brand-yellow-soft text-ink-paragraph hover:bg-brand-yellow-soft"
 //                   }`}
 //                 >
 //                   <div
 //                     className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${
 //                       index === current
-//                         ? "bg-yellow-400 text-black"
+//                         ? "bg-brand-yellow text-ink"
 //                         : index < current
-//                         ? "bg-yellow-400 text-black"
-//                         : "bg-gray-300 text-black"
+//                         ? "bg-brand-yellow text-ink"
+//                         : "bg-ink-light text-ink"
 //                     }`}
 //                   >
 //                     {index + 1}
@@ -1570,7 +1570,7 @@
 //                   </span>
 //                 </button>
 //                 {index < 5 && (
-//                   <span className="mx-2 text-gray-500 font-bold select-none">
+//                   <span className="mx-2 text-ink-caption font-bold select-none">
 //                     -
 //                   </span>
 //                 )}
@@ -1581,12 +1581,12 @@
 //           {/* Progress Percentage and Bar */}
 //           {current < 6 && (
 //             <div className="w-full mb-6">
-//               <div className="flex justify-end mb-1 text-sm font-semibold text-gray-700">
+//               <div className="flex justify-end mb-1 text-sm font-semibold text-ink-paragraph">
 //                 {progress}% complete
 //               </div>
-//               <div className="w-full bg-gray-200 rounded-lg h-4">
+//               <div className="w-full bg-ink-light rounded-lg h-4">
 //                 <div
-//                   className="bg-yellow-400 h-4 rounded-lg transition-all duration-300"
+//                   className="bg-brand-yellow h-4 rounded-lg transition-all duration-300"
 //                   style={{ width: `${progress}%` }}
 //                 ></div>
 //               </div>
@@ -1601,7 +1601,7 @@
 //           <div className="flex justify-end -mt-2">
 //             <button
 //               onClick={() => setAdminOpen(true)}
-//               className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+//               className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
 //             >
 //               Open Admin Panel
 //             </button>
@@ -1609,7 +1609,7 @@
 //         )}
 
 //         {/* Step Content Container */}
-//         <div className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6">
+//         <div className="bg-surface-card border-2 border-brand-yellow-soft shadow-md rounded-xl p-6">
 //           <StepComponent step={stepData} allSteps={steps} />
 //         </div>
 
@@ -1618,7 +1618,7 @@
 //           <button
 //             onClick={prev}
 //             disabled={current === 0}
-//             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+//             className="px-4 py-2 bg-ink-light hover:bg-ink-light rounded disabled:opacity-50"
 //           >
 //             Back
 //           </button>
@@ -1626,14 +1626,14 @@
 //           {current < 6 ? (
 //             <button
 //               onClick={next}
-//               className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+//               className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
 //             >
 //               Next
 //             </button>
 //           ) : (
 //             <button
 //               onClick={handleSubmit}
-//               className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded"
+//               className="px-4 py-2 bg-status-success hover:bg-status-success text-white font-medium rounded"
 //             >
 //               Create Event Website
 //             </button>
@@ -1757,28 +1757,28 @@ const TokenValidationModal: React.FC<{
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink bg-opacity-50">
+      <div className="bg-surface-card rounded-lg p-6 max-w-md w-full mx-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
-            <AlertTriangle className="w-6 h-6 text-yellow-500 mr-2" />
-            <h3 className="text-lg font-semibold text-slate-900">
+            <AlertTriangle className="w-6 h-6 text-brand-gold mr-2" />
+            <h3 className="text-lg font-semibold text-ink">
               Insufficient Tokens
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-ink-caption hover:text-ink-paragraph transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="mb-6">
-          <p className="text-slate-700 mb-4">{message}</p>
+          <p className="text-ink-paragraph mb-4">{message}</p>
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-sm text-yellow-700">
+          <div className="bg-surface-main border border-brand-yellow-soft rounded-lg p-4">
+            <p className="text-sm text-brand-gold">
               {`Each website generation requires 100 tokens but you have ${totalToken}. You can purchase more
               tokens to continue.`}
             </p>
@@ -1788,7 +1788,7 @@ const TokenValidationModal: React.FC<{
         <div className="flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+            className="px-4 py-2 text-ink-paragraph border border-ink-light rounded-lg hover:bg-ink-offwhite transition-colors"
           >
             Cancel
           </button>
@@ -1796,7 +1796,7 @@ const TokenValidationModal: React.FC<{
           {onPurchaseTokens && (
             <button
               onClick={onPurchaseTokens}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="px-4 py-2 bg-status-success text-white rounded-lg hover:bg-status-success transition-colors"
             >
               Purchase Tokens
             </button>
@@ -2089,10 +2089,10 @@ function EventsForm() {
 
   if (formLoader)
     return (
-      <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-[99999999]">
+      <div className="fixed inset-0 bg-status-info flex items-center justify-center z-[99999999]">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-blue-200 text-lg">
+          <div className="w-16 h-16 mx-auto mb-4 border-4 border-status-info border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-status-info/25 text-lg">
             Please wait while we load your event form
           </p>
         </div>
@@ -2112,25 +2112,25 @@ function EventsForm() {
     <>
       <Toaster position="top-right" richColors />
       {/* Header */}
-      <div className="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-lg border-b border-amber-300">
+      <div className="bg-gradient-to-r from-brand-yellow to-brand-yellow shadow-lg border-b border-brand-yellow-soft">
         <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-xl font-bold text-black">EventPro</h1>
-            <p className="text-sm text-gray-800">
+            <h1 className="text-xl font-bold text-ink">EventPro</h1>
+            <p className="text-sm text-ink-charcoal">
               AI-Powered {eventTypeLabel} Website Generator
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-gray-700">Conferences • Seminars • Exhibitions</p>
-            <p className="text-xs text-gray-600">Create stunning {eventTypeLabel.toLowerCase()} websites instantly</p>
+            <p className="text-xs text-ink-paragraph">Conferences • Seminars • Exhibitions</p>
+            <p className="text-xs text-ink-paragraph">Create stunning {eventTypeLabel.toLowerCase()} websites instantly</p>
           </div>
         </div>
       </div>
 
       {loading && <Loader duration={30000} onComplete={handleLoaderComplete} />}
 
-      <div className="bg-yellow-100 w-full py-4 ">
-        <div className="bg-yellow-100 max-w-4xl mx-auto px-4">
+      <div className="bg-brand-yellow-soft w-full py-4 ">
+        <div className="bg-brand-yellow-soft max-w-4xl mx-auto px-4">
           {/* Step Navigation Chips */}
           <div className="flex flex-wrap items-center gap-2 mb-4 justify-center">
             {steps.slice(0, 6).map((s: any, index: number) => (
@@ -2138,18 +2138,18 @@ function EventsForm() {
                 <button
                   onClick={() => goTo(index)}
                   className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium transition-colors ${index === current
-                    ? "bg-black text-yellow-200 shadow"
+                    ? "bg-ink text-brand-yellow-soft shadow"
                     : index < current
-                      ? "bg-yellow-200 text-black hover:bg-black-300"
-                      : "bg-yellow-100 text-gray-600 hover:bg-yellow-300"
+                      ? "bg-brand-yellow-soft text-ink hover:bg-ink-300"
+                      : "bg-brand-yellow-soft text-ink-paragraph hover:bg-brand-yellow-soft"
                     }`}
                 >
                   <div
                     className={`w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold ${index === current
-                      ? "bg-yellow-400 text-black"
+                      ? "bg-brand-yellow text-ink"
                       : index < current
-                        ? "bg-yellow-400 text-black"
-                        : "bg-gray-300 text-black"
+                        ? "bg-brand-yellow text-ink"
+                        : "bg-ink-light text-ink"
                       }`}
                   >
                     {index + 1}
@@ -2159,7 +2159,7 @@ function EventsForm() {
                   </span>
                 </button>
                 {index < 5 && (
-                  <span className="mx-2 text-gray-500 font-bold select-none">
+                  <span className="mx-2 text-ink-caption font-bold select-none">
                     -
                   </span>
                 )}
@@ -2170,12 +2170,12 @@ function EventsForm() {
           {/* Progress Percentage and Bar */}
           {current < 6 && (
             <div className="w-full mb-6">
-              <div className="flex justify-end mb-1 text-sm font-semibold text-gray-700">
+              <div className="flex justify-end mb-1 text-sm font-semibold text-ink-paragraph">
                 {progress}% complete
               </div>
-              <div className="w-full bg-gray-200 rounded-lg h-4">
+              <div className="w-full bg-ink-light rounded-lg h-4">
                 <div
-                  className="bg-yellow-400 h-4 rounded-lg transition-all duration-300"
+                  className="bg-brand-yellow h-4 rounded-lg transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
@@ -2190,7 +2190,7 @@ function EventsForm() {
           <div className="flex justify-end -mt-2">
             <button
               onClick={() => setAdminOpen(true)}
-              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+              className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
             >
               Open Admin Panel
             </button>
@@ -2198,7 +2198,7 @@ function EventsForm() {
         )}
 
         {/* Step Content Container */}
-        <div key={current} className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6 animate-step-slide-up">
+        <div key={current} className="bg-surface-card border-2 border-brand-yellow-soft shadow-md rounded-xl p-6 animate-step-slide-up">
           <StepComponent step={stepData} allSteps={steps} setStepValid={setStepValid} />
         </div>
 
@@ -2207,7 +2207,7 @@ function EventsForm() {
           <button
             onClick={prev}
             disabled={current === 0}
-            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded disabled:opacity-50"
+            className="px-4 py-2 bg-ink-light hover:bg-ink-light rounded disabled:opacity-50"
           >
             Back
           </button>
@@ -2217,7 +2217,7 @@ function EventsForm() {
               onClick={next}
               disabled={!stepValid}
               title={!stepValid ? "Please fill in all required fields" : undefined}
-              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
@@ -2225,7 +2225,7 @@ function EventsForm() {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-status-success hover:bg-status-success text-white font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? "Please wait..." : `Create ${eventTypeLabel} Website`}
             </button>

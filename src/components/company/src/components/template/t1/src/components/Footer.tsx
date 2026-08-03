@@ -94,7 +94,7 @@ export default function Footer() {
 
   return (
     <motion.footer
-      className="bg-gray-900 border-t border-gray-800"
+      className="bg-ink border-t border-ink-charcoal"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -115,7 +115,7 @@ export default function Footer() {
             variants={itemVariants}
           >
             <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-              <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400">
+              <span className="flex flex-row gap-2 text-xl font-bold text-brand-yellow">
                 <img
                   src={footerData.brand.logoUrl}
                   alt="Logo"
@@ -125,7 +125,7 @@ export default function Footer() {
               </span>
             </div>
 
-            <p className="text-gray-300 text-sm leading-relaxed mb-6">
+            <p className="text-ink-light text-sm leading-relaxed mb-6">
               {footerData.brand.description}
             </p>
           </motion.div>
@@ -146,7 +146,7 @@ export default function Footer() {
                   <li key={link.id}>
                     <a
                       href={link.href}
-                      className="text-gray-300 hover:text-blue-400 transition-colors duration-200"
+                      className="text-ink-light hover:text-status-info transition-colors duration-200"
                     >
                       {link.text}
                     </a>

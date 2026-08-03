@@ -24,8 +24,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants: Record<string, string> = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes: Record<string, string> = {
 //     sm: "h-8 px-3 text-sm",
@@ -146,7 +146,7 @@
 //       return (
 //         <>
 //           {words[0]}{' '}
-//           <span className="text-yellow-500">
+//           <span className="text-brand-gold">
 //             {words.slice(1).join(' ')}
 //           </span>
 //         </>
@@ -506,28 +506,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop Project Image (16:9 Aspect Ratio)
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className="flex-1 relative bg-gray-900 min-h-0">
+//             <div className="flex-1 relative bg-ink min-h-0">
 //               <Cropper
 //                 image={imageToCrop}
 //                 crop={crop}
@@ -558,28 +558,28 @@
 //             </div>
 
 //             {/* Controls - UPDATED WITH ZOOM OUT BUTTONS */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Info */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">
-//                   Aspect Ratio: <span className="text-blue-600">16:9 (Widescreen)</span>
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">
+//                   Aspect Ratio: <span className="text-status-info">16:9 (Widescreen)</span>
 //                 </p>
 //               </div>
 
 //               {/* Zoom Control - UPDATED WITH ZOOM OUT BUTTON */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="flex items-center gap-2 text-gray-700">
+//                   <span className="flex items-center gap-2 text-ink-paragraph">
 //                     <ZoomIn className="w-4 h-4" />
 //                     Zoom
 //                   </span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <div className="flex items-center gap-2">
 //                   <button
 //                     type="button"
 //                     onClick={handleZoomOut}
-//                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                     className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                   >
 //                     <ZoomOut className="w-4 h-4" />
 //                   </button>
@@ -590,12 +590,12 @@
 //                     max={5}
 //                     step={0.1}
 //                     onChange={(e) => handleZoomChange(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                   />
 //                   <button
 //                     type="button"
 //                     onClick={handleZoomIn}
-//                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                     className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                   >
 //                     <ZoomIn className="w-4 h-4" />
 //                   </button>
@@ -606,19 +606,19 @@
 //               <div className="flex justify-center gap-3 pt-4">
 //                 <button
 //                   onClick={resetCropSettings}
-//                   className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+//                   className="px-6 py-2 border border-ink-light text-ink-paragraph hover:bg-ink-light rounded text-sm font-medium transition-colors"
 //                 >
 //                   Reset Zoom
 //                 </button>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+//                   className="px-6 py-2 border border-ink-light text-ink-paragraph hover:bg-ink-light rounded text-sm font-medium transition-colors"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={applyCrop}
-//                   className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors"
+//                   className="px-6 py-2 bg-status-success hover:bg-status-success text-white rounded text-sm font-medium transition-colors"
 //                 >
 //                   Apply Crop
 //                 </button>
@@ -635,7 +635,7 @@
 //             <Button
 //               onClick={handleEdit}
 //               size='sm'
-//               className='bg-red-500 hover:bg-red-600 text-white shadow-md'
+//               className='bg-status-error hover:bg-status-error text-white shadow-md'
 //             >
 //               <Edit2 className='w-4 h-4 mr-2' />
 //               Edit
@@ -645,7 +645,7 @@
 //               <Button
 //                 onClick={handleSave}
 //                 size='sm'
-//                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                 className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                 disabled={isSaving || isUploading}
 //               >
 //                 {isUploading ? (
@@ -660,7 +660,7 @@
 //               <Button
 //                 onClick={handleCancel}
 //                 size='sm'
-//                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                 className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                 disabled={isSaving || isUploading}
 //               >
 //                 <X className='w-4 h-4 mr-2' />
@@ -670,7 +670,7 @@
 //                 onClick={addProject}
 //                 variant='outline'
 //                 size='sm'
-//                 className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+//                 className='bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md'
 //               >
 //                 <Plus className='w-4 h-4 mr-2' />
 //                 Add Project
@@ -694,11 +694,11 @@
 //                   type="text"
 //                   value={tempData.subtitle || ""}
 //                   onChange={(e) => updateSection('subtitle', e.target.value)}
-//                   className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+//                   className="text-lg text-brand-gold mb-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
 //                   placeholder="Subtitle"
 //                   maxLength={TEXT_LIMITS.SUBTITLE}
 //                 />
-//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                   {tempData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
 //                 </div>
 //               </div>
@@ -707,11 +707,11 @@
 //                   type="text"
 //                   value={tempData.heading || ""}
 //                   onChange={(e) => updateSection('heading', e.target.value)}
-//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
 //                   placeholder="Heading"
 //                   maxLength={TEXT_LIMITS.HEADING}
 //                 />
-//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                   {tempData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
 //                 </div>
 //               </div>
@@ -719,12 +719,12 @@
 //                 <textarea
 //                   value={tempData.description || ""}
 //                   onChange={(e) => updateSection('description', e.target.value)}
-//                   className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+//                   className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
 //                   rows={2}
 //                   placeholder="Description"
 //                   maxLength={TEXT_LIMITS.DESCRIPTION}
 //                 />
-//                 <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                 <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                   {tempData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
 //                 </div>
 //               </div>
@@ -737,7 +737,7 @@
 //                   whileInView={{ opacity: 1, y: 0 }}
 //                   transition={{ duration: 0.6, delay: 0.2 }}
 //                   viewport={{ once: true }}
-//                   className="text-lg text-yellow-500 mb-2"
+//                   className="text-lg text-brand-gold mb-2"
 //                 >
 //                   {data.subtitle}
 //                 </motion.p>
@@ -779,8 +779,8 @@
 //               onClick={() => setActiveCategory("All")}
 //               className={`px-6 py-2 rounded-full transition-all duration-300 ${
 //                 activeCategory === "All"
-//                   ? 'bg-yellow-400 text-gray-900 shadow-lg'
-//                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+//                   ? 'bg-brand-yellow text-ink shadow-lg'
+//                   : 'bg-ink-light text-ink-paragraph hover:bg-ink-light'
 //               }`}
 //             >
 //               All
@@ -790,8 +790,8 @@
 //                 key={category}
 //                 onClick={() => setActiveCategory(category)}
 //                 className={`px-6 py-2 rounded-full transition-all duration-300 ${activeCategory === category
-//                     ? 'bg-yellow-400 text-gray-900 shadow-lg'
-//                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+//                     ? 'bg-brand-yellow text-ink shadow-lg'
+//                     : 'bg-ink-light text-ink-paragraph hover:bg-ink-light'
 //                   }`}
 //               >
 //                 {category}
@@ -805,12 +805,12 @@
 //           <motion.div
 //             initial={{ opacity: 0, y: 20 }}
 //             whileInView={{ opacity: 1, y: 0 }}
-//             className="mb-12 p-6 bg-gray-50 rounded-2xl"
+//             className="mb-12 p-6 bg-ink-offwhite rounded-2xl"
 //           >
 //             <h3 className="text-lg font-semibold mb-4">Categories</h3>
 //             <div className="flex flex-wrap gap-2 mb-4">
 //               {tempData.categories.map((category, index) => (
-//                 <div key={index} className="flex items-center gap-2 bg-white px-3 py-1 rounded-full">
+//                 <div key={index} className="flex items-center gap-2 bg-surface-card px-3 py-1 rounded-full">
 //                   <input
 //                     type="text"
 //                     value={category}
@@ -818,12 +818,12 @@
 //                     className="bg-transparent border-none outline-none"
 //                     maxLength={TEXT_LIMITS.CATEGORY}
 //                   />
-//                   <div className="text-xs text-gray-500">
+//                   <div className="text-xs text-ink-caption">
 //                     {category.length}/{TEXT_LIMITS.CATEGORY}
 //                   </div>
 //                   <button
 //                     onClick={() => removeCategory(index)}
-//                     className="text-red-500 hover:text-red-700"
+//                     className="text-status-error hover:text-status-error"
 //                   >
 //                     <X className="w-3 h-3" />
 //                   </button>
@@ -831,7 +831,7 @@
 //               ))}
 //               <button
 //                 onClick={addCategory}
-//                 className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition-all duration-300"
+//                 className="px-3 py-1 bg-status-info/15 text-status-info rounded-full text-sm hover:bg-status-info/25 transition-all duration-300"
 //               >
 //                 <Plus className="w-4 h-4" />
 //               </button>
@@ -857,14 +857,14 @@
 //                     onClick={() => removeProject(index)}
 //                     size='sm'
 //                     variant='outline'
-//                     className='absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1 z-10'
+//                     className='absolute top-2 right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error p-1 z-10'
 //                   >
 //                     <Trash2 className='w-3 h-3' />
 //                   </Button>
 //                 )}
 
 //                 {/* Project Image - UPDATED with 16:9 aspect ratio */}
-//                 <div className="relative overflow-hidden bg-gray-100 aspect-[16/9]">
+//                 <div className="relative overflow-hidden bg-ink-light aspect-[16/9]">
 //                   <motion.div transition={{ duration: 0.3 }} className="h-full">
 //                     {isEditing && (
 //                       <div className="absolute top-2 left-2 z-10">
@@ -873,9 +873,9 @@
 //                             onClick={() => fileInputRefs.current[project.id.toString()]?.click()}
 //                             size="sm"
 //                             variant="outline"
-//                             className="bg-white text-black hover:bg-gray-100"
+//                             className="bg-surface-card text-ink hover:bg-ink-light"
 //                           >
-//                             <Upload className="w-4 h-4 mr-2 text-black" />
+//                             <Upload className="w-4 h-4 mr-2 text-ink" />
 //                             Upload
 //                           </Button>
 //                           <input
@@ -886,11 +886,11 @@
 //                             className='hidden'
 //                           />
 //                           {pendingImageFiles[project.id.toString()] && (
-//                             <p className='text-xs text-orange-600 mt-1 bg-white p-1 rounded'>
+//                             <p className='text-xs text-status-warning mt-1 bg-surface-card p-1 rounded'>
 //                               {pendingImageFiles[project.id.toString()].name}
 //                             </p>
 //                           )}
-//                           <div className='text-xs text-gray-500 mt-1 text-center'>
+//                           <div className='text-xs text-ink-caption mt-1 text-center'>
 //                             Recommended: 800×450px (16:9 ratio) - Widescreen
 //                           </div>
 //                         </div>
@@ -907,18 +907,18 @@
 //                         }}
 //                       />
 //                     ) : (
-//                       <div className="w-full h-full flex items-center justify-center bg-gray-200">
-//                         <p className="text-gray-400 text-sm">No image uploaded</p>
+//                       <div className="w-full h-full flex items-center justify-center bg-ink-light">
+//                         <p className="text-ink-caption text-sm">No image uploaded</p>
 //                       </div>
 //                     )}
 //                   </motion.div>
-//                   <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+//                   <div className="absolute inset-0 bg-ink bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
 //                     <div className="opacity-0 hover:opacity-100 transition-all duration-300 flex space-x-4">
 //                       <motion.a
 //                         href={project.live}
 //                         whileHover={{ scale: 1.1 }}
 //                         whileTap={{ scale: 0.95 }}
-//                         className="bg-yellow-400 text-gray-900 p-2 rounded-full"
+//                         className="bg-brand-yellow text-ink p-2 rounded-full"
 //                       >
 //                         <ExternalLink size={20} />
 //                       </motion.a>
@@ -926,7 +926,7 @@
 //                         href={project.github}
 //                         whileHover={{ scale: 1.1 }}
 //                         whileTap={{ scale: 0.95 }}
-//                         className="bg-white text-gray-900 p-2 rounded-full"
+//                         className="bg-surface-card text-ink p-2 rounded-full"
 //                       >
 //                         <Github size={20} />
 //                       </motion.a>
@@ -943,10 +943,10 @@
 //                         type="text"
 //                         value={project.title}
 //                         onChange={(e) => updateProject(index, 'title', e.target.value)}
-//                         className="text-xl text-foreground mb-2 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+//                         className="text-xl text-foreground mb-2 w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
 //                         maxLength={TEXT_LIMITS.PROJECT_TITLE}
 //                       />
-//                       <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                       <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                         {project.title.length}/{TEXT_LIMITS.PROJECT_TITLE}
 //                       </div>
 //                     </div>
@@ -960,11 +960,11 @@
 //                       <textarea
 //                         value={project.description}
 //                         onChange={(e) => updateProject(index, 'description', e.target.value)}
-//                         className="text-muted-foreground mb-4 leading-relaxed w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+//                         className="text-muted-foreground mb-4 leading-relaxed w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
 //                         rows={3}
 //                         maxLength={TEXT_LIMITS.PROJECT_DESCRIPTION}
 //                       />
-//                       <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                       <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                         {project.description.length}/{TEXT_LIMITS.PROJECT_DESCRIPTION}
 //                       </div>
 //                     </div>
@@ -977,7 +977,7 @@
 //                     {project.tags.map((tag, tagIndex) => (
 //                       <span
 //                         key={tagIndex}
-//                         className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm flex items-center gap-2"
+//                         className="px-3 py-1 bg-brand-yellow-soft text-brand-gold rounded-full text-sm flex items-center gap-2"
 //                       >
 //                         {isEditing ? (
 //                           <>
@@ -988,12 +988,12 @@
 //                               className="bg-transparent border-none outline-none w-20"
 //                               maxLength={TEXT_LIMITS.TAG}
 //                             />
-//                             <div className="text-xs text-gray-500">
+//                             <div className="text-xs text-ink-caption">
 //                               {tag.length}/{TEXT_LIMITS.TAG}
 //                             </div>
 //                             <button
 //                               onClick={() => removeTag(index, tagIndex)}
-//                               className="text-red-500 hover:text-red-700"
+//                               className="text-status-error hover:text-status-error"
 //                             >
 //                               <Trash2 className="w-3 h-3" />
 //                             </button>
@@ -1006,7 +1006,7 @@
 //                     {isEditing && (
 //                       <button
 //                         onClick={() => addTag(index)}
-//                         className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition-all duration-300"
+//                         className="px-3 py-1 bg-status-info/15 text-status-info rounded-full text-sm hover:bg-status-info/25 transition-all duration-300"
 //                       >
 //                         <Plus className="w-3 h-3" />
 //                       </button>
@@ -1022,10 +1022,10 @@
 //                           value={project.category}
 //                           onChange={(e) => updateProject(index, 'category', e.target.value)}
 //                           placeholder="Category"
-//                           className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+//                           className="w-full p-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none"
 //                           maxLength={TEXT_LIMITS.CATEGORY}
 //                         />
-//                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                           {project.category.length}/{TEXT_LIMITS.CATEGORY}
 //                         </div>
 //                       </div>
@@ -1035,17 +1035,17 @@
 //                           value={project.date}
 //                           onChange={(e) => updateProject(index, 'date', e.target.value)}
 //                           placeholder="Date"
-//                           className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+//                           className="w-full p-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none"
 //                           maxLength={TEXT_LIMITS.DATE}
 //                         />
-//                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                           {project.date.length}/{TEXT_LIMITS.DATE}
 //                         </div>
 //                       </div>
 //                     </div>
 //                   ) : (
 //                     <div className="flex justify-between items-center mb-4 text-sm text-muted-foreground">
-//                       <span className="bg-gray-100 px-3 py-1 rounded-full">{project.category}</span>
+//                       <span className="bg-ink-light px-3 py-1 rounded-full">{project.category}</span>
 //                       <span>{project.date}</span>
 //                     </div>
 //                   )}
@@ -1062,10 +1062,10 @@
 //                           value={project.live}
 //                           onChange={(e) => updateProject(index, 'live', e.target.value)}
 //                           placeholder="Live Demo URL"
-//                           className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+//                           className="w-full p-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none"
 //                           maxLength={TEXT_LIMITS.URL}
 //                         />
-//                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                           {project.live.length}/{TEXT_LIMITS.URL}
 //                         </div>
 //                       </div>
@@ -1075,10 +1075,10 @@
 //                           value={project.github}
 //                           onChange={(e) => updateProject(index, 'github', e.target.value)}
 //                           placeholder="GitHub URL"
-//                           className="w-full p-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+//                           className="w-full p-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none"
 //                           maxLength={TEXT_LIMITS.URL}
 //                         />
-//                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                           {project.github.length}/{TEXT_LIMITS.URL}
 //                         </div>
 //                       </div>
@@ -1087,13 +1087,13 @@
 //                     <div className="flex space-x-3 mt-4">
 //                       <a
 //                         href={project.live}
-//                         className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex-1"
+//                         className="inline-flex items-center justify-center px-4 py-2 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors flex-1"
 //                       >
 //                         Live Demo
 //                       </a>
 //                       <a
 //                         href={project.github}
-//                         className="inline-flex items-center justify-center px-4 py-2 bg-transparent text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors flex-1"
+//                         className="inline-flex items-center justify-center px-4 py-2 bg-transparent text-status-info border border-status-info rounded-lg hover:bg-status-info/10 transition-colors flex-1"
 //                       >
 //                         <Github className="w-4 h-4 mr-2" />
 //                         Code
@@ -1156,8 +1156,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants: Record<string, string> = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes: Record<string, string> = {
     sm: "h-8 px-3 text-sm",
@@ -1310,7 +1310,7 @@ export function Projects({
       return (
         <>
           {words[0]}{" "}
-          <span className="text-yellow-500">{words.slice(1).join(" ")}</span>
+          <span className="text-brand-gold">{words.slice(1).join(" ")}</span>
         </>
       );
     }
@@ -1919,34 +1919,34 @@ export function Projects({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Project Image (16:9 Aspect Ratio)
                 {isAutoUploading && (
-                  <span className="ml-2 text-blue-600 text-sm">
+                  <span className="ml-2 text-status-info text-sm">
                     Uploading... {uploadProgress}%
                   </span>
                 )}
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
                 disabled={isAutoUploading}
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -1979,9 +1979,9 @@ export function Projects({
             {/* Upload Progress Bar */}
             {isAutoUploading && (
               <div className="px-4 pt-2">
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-ink-light rounded-full h-2">
                   <div
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-status-info h-2 rounded-full transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}
                   ></div>
                 </div>
@@ -1989,29 +1989,29 @@ export function Projects({
             )}
 
             {/* Controls - UPDATED WITH ZOOM OUT BUTTONS */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Info */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:{" "}
-                  <span className="text-blue-600">16:9 (Widescreen)</span>
+                  <span className="text-status-info">16:9 (Widescreen)</span>
                 </p>
               </div>
 
               {/* Zoom Control - UPDATED WITH ZOOM OUT BUTTON */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     <ZoomIn className="w-4 h-4" />
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={handleZoomOut}
-                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
                     disabled={isAutoUploading}
                   >
                     <ZoomOut className="w-4 h-4" />
@@ -2023,13 +2023,13 @@ export function Projects({
                     max={5}
                     step={0.1}
                     onChange={(e) => handleZoomChange(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                     disabled={isAutoUploading}
                   />
                   <button
                     type="button"
                     onClick={handleZoomIn}
-                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
                     disabled={isAutoUploading}
                   >
                     <ZoomIn className="w-4 h-4" />
@@ -2041,21 +2041,21 @@ export function Projects({
               <div className="flex justify-center gap-3 pt-4">
                 <button
                   onClick={resetCropSettings}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                  className="px-6 py-2 border border-ink-light text-ink-paragraph hover:bg-ink-light rounded text-sm font-medium transition-colors"
                   disabled={isAutoUploading}
                 >
                   Reset Zoom
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+                  className="px-6 py-2 border border-ink-light text-ink-paragraph hover:bg-ink-light rounded text-sm font-medium transition-colors"
                   disabled={isAutoUploading}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-2"
+                  className="px-6 py-2 bg-status-success hover:bg-status-success text-white rounded text-sm font-medium transition-colors flex items-center gap-2"
                   disabled={isAutoUploading}
                 >
                   {isAutoUploading ? (
@@ -2076,19 +2076,19 @@ export function Projects({
           {isEditing && (
             <div className="flex items-center justify-end gap-4 mb-4 text-sm">
               {hasUnsavedChanges && (
-                <div className="flex items-center gap-2 text-orange-600">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+                <div className="flex items-center gap-2 text-status-warning">
+                  <div className="w-2 h-2 bg-status-warning rounded-full animate-pulse"></div>
                   Unsaved changes
                 </div>
               )}
               {isAutoSaving && (
-                <div className="flex items-center gap-2 text-blue-600">
+                <div className="flex items-center gap-2 text-status-info">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   Auto-saving...
                 </div>
               )}
               {lastSavedTime && !hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-green-600">
+                <div className="text-status-success">
                   Saved {lastSavedTime.toLocaleTimeString()}
                 </div>
               )}
@@ -2099,7 +2099,7 @@ export function Projects({
             <Button
               onClick={handleEdit}
               size="sm"
-              className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+              className="bg-status-error hover:bg-status-error text-white shadow-md"
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Edit
@@ -2109,7 +2109,7 @@ export function Projects({
               <Button
                 onClick={handleSave}
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                className="bg-status-success hover:bg-status-success text-white shadow-md"
                 disabled={isSaving || isUploading}
               >
                 {isUploading ? (
@@ -2124,7 +2124,7 @@ export function Projects({
               <Button
                 onClick={handleCancel}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                className="bg-status-error hover:bg-status-error shadow-md text-white"
                 disabled={isSaving || isUploading}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -2134,7 +2134,7 @@ export function Projects({
                 onClick={addProject}
                 variant="outline"
                 size="sm"
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                className="bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Project
@@ -2158,11 +2158,11 @@ export function Projects({
                   type="text"
                   value={tempData.subtitle || ""}
                   onChange={(e) => updateSection("subtitle", e.target.value)}
-                  className="text-lg text-yellow-500 mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-lg text-brand-gold mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   placeholder="Subtitle"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {tempData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
                 </div>
               </div>
@@ -2171,11 +2171,11 @@ export function Projects({
                   type="text"
                   value={tempData.heading || ""}
                   onChange={(e) => updateSection("heading", e.target.value)}
-                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   placeholder="Heading"
                   maxLength={TEXT_LIMITS.HEADING}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {tempData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
                 </div>
               </div>
@@ -2183,12 +2183,12 @@ export function Projects({
                 <textarea
                   value={tempData.description || ""}
                   onChange={(e) => updateSection("description", e.target.value)}
-                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
                   rows={2}
                   placeholder="Description"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
                 />
-                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                   {tempData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
                 </div>
               </div>
@@ -2201,7 +2201,7 @@ export function Projects({
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                   viewport={{ once: true }}
-                  className="text-lg text-yellow-500 mb-2"
+                  className="text-lg text-brand-gold mb-2"
                 >
                   {data.subtitle}
                 </motion.p>
@@ -2245,8 +2245,8 @@ export function Projects({
                 onClick={() => setActiveCategory(category)}
                 className={`px-6 py-2 rounded-full transition-all duration-300 ${
                   activeCategory === category
-                    ? "bg-yellow-400 text-gray-900 shadow-lg"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-brand-yellow text-ink shadow-lg"
+                    : "bg-ink-light text-ink-paragraph hover:bg-ink-light"
                 }`}
               >
                 {category}
@@ -2260,14 +2260,14 @@ export function Projects({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="mb-12 p-6 bg-gray-50 dark:bg-black rounded-2xl"
+            className="mb-12 p-6 bg-ink-offwhite dark:bg-black rounded-2xl"
           >
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <div className="flex flex-wrap gap-2 mb-4">
               {tempData.categories.map((category, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 bg-white dark:bg-black px-3 py-1 rounded-full"
+                  className="flex items-center gap-2 bg-surface-card dark:bg-black px-3 py-1 rounded-full"
                 >
                   <input
                     type="text"
@@ -2276,12 +2276,12 @@ export function Projects({
                     className="bg-transparent border"
                     maxLength={TEXT_LIMITS.CATEGORY}
                   />
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-ink-caption">
                     {category.length}/{TEXT_LIMITS.CATEGORY}
                   </div>
                   <button
                     onClick={() => removeCategory(index)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-status-error hover:text-status-error"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -2289,7 +2289,7 @@ export function Projects({
               ))}
               <button
                 onClick={addCategory}
-                className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition-all duration-300"
+                className="px-3 py-1 bg-status-info/15 text-status-info rounded-full text-sm hover:bg-status-info/25 transition-all duration-300"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -2315,14 +2315,14 @@ export function Projects({
                     onClick={() => removeProject(index)}
                     size="sm"
                     variant="outline"
-                    className="absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1 z-10"
+                    className="absolute top-2 right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error p-1 z-10"
                   >
                     <Trash2 className="w-3 h-3" />
                   </Button>
                 )}
 
                 {/* Project Image - UPDATED with 16:9 aspect ratio */}
-                <div className="relative overflow-hidden bg-gray-100 aspect-[16/9]">
+                <div className="relative overflow-hidden bg-ink-light aspect-[16/9]">
                   <motion.div transition={{ duration: 0.3 }} className="h-full">
                     {isEditing && (
                       <div className="absolute top-2 left-2 z-10">
@@ -2335,9 +2335,9 @@ export function Projects({
                             }
                             size="sm"
                             variant="outline"
-                            className="bg-white text-black hover:bg-gray-100"
+                            className="bg-surface-card text-ink hover:bg-ink-light"
                           >
-                            <Upload className="w-4 h-4 mr-2 text-black" />
+                            <Upload className="w-4 h-4 mr-2 text-ink" />
                             Upload
                           </Button>
 
@@ -2354,11 +2354,11 @@ export function Projects({
                             className="hidden"
                           />
                           {pendingImageFiles[project.id.toString()] && (
-                            <p className="text-xs text-orange-600 mt-1 bg-white p-1 rounded">
+                            <p className="text-xs text-status-warning mt-1 bg-surface-card p-1 rounded">
                               {pendingImageFiles[project.id.toString()].name}
                             </p>
                           )}
-                          <div className="text-xs text-gray-500 mt-1 text-center">
+                          <div className="text-xs text-ink-caption mt-1 text-center">
                             Recommended: 800×450px (16:9 ratio) - Widescreen
                           </div>
                         </div>
@@ -2376,20 +2376,20 @@ export function Projects({
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                        <p className="text-gray-400 text-sm">
+                      <div className="w-full h-full flex items-center justify-center bg-ink-light">
+                        <p className="text-ink-caption text-sm">
                           No image uploaded
                         </p>
                       </div>
                     )}
                   </motion.div>
-                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-ink bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                     <div className="opacity-0 hover:opacity-100 transition-all duration-300 flex space-x-4">
                       <motion.a
                         href={project.live}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        className="bg-yellow-400 text-gray-900 p-2 rounded-full"
+                        className="bg-brand-yellow text-ink p-2 rounded-full"
                       >
                         <ExternalLink size={20} />
                       </motion.a>
@@ -2397,7 +2397,7 @@ export function Projects({
                         href={project.github}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        className="bg-white text-gray-900 p-2 rounded-full"
+                        className="bg-surface-card text-ink p-2 rounded-full"
                       >
                         <Github size={20} />
                       </motion.a>
@@ -2416,10 +2416,10 @@ export function Projects({
                         onChange={(e) =>
                           updateProject(index, "title", e.target.value)
                         }
-                        className="text-xl text-foreground mb-2 w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-xl text-foreground mb-2 w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
                         maxLength={TEXT_LIMITS.PROJECT_TITLE}
                       />
-                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                         {project.title.length}/{TEXT_LIMITS.PROJECT_TITLE}
                       </div>
                     </div>
@@ -2437,11 +2437,11 @@ export function Projects({
                         onChange={(e) =>
                           updateProject(index, "description", e.target.value)
                         }
-                        className="text-muted-foreground mb-4 leading-relaxed w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-muted-foreground mb-4 leading-relaxed w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
                         rows={3}
                         maxLength={TEXT_LIMITS.PROJECT_DESCRIPTION}
                       />
-                      <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                      <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                         {project.description.length}/
                         {TEXT_LIMITS.PROJECT_DESCRIPTION}
                       </div>
@@ -2457,7 +2457,7 @@ export function Projects({
                     {project.tags.map((tag, tagIndex) => (
                       <span
                         key={tagIndex}
-                        className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm flex items-center gap-2"
+                        className="px-3 py-1 bg-brand-yellow-soft text-brand-gold rounded-full text-sm flex items-center gap-2"
                       >
                         {isEditing ? (
                           <>
@@ -2470,12 +2470,12 @@ export function Projects({
                               className="bg-transparent border-none outline-none w-20"
                               maxLength={TEXT_LIMITS.TAG}
                             />
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-ink-caption">
                               {tag.length}/{TEXT_LIMITS.TAG}
                             </div>
                             <button
                               onClick={() => removeTag(index, tagIndex)}
-                              className="text-red-500 hover:text-red-700"
+                              className="text-status-error hover:text-status-error"
                             >
                               <Trash2 className="w-3 h-3" />
                             </button>
@@ -2488,7 +2488,7 @@ export function Projects({
                     {isEditing && (
                       <button
                         onClick={() => addTag(index)}
-                        className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition-all duration-300"
+                        className="px-3 py-1 bg-status-info/15 text-status-info rounded-full text-sm hover:bg-status-info/25 transition-all duration-300"
                       >
                         <Plus className="w-3 h-3" />
                       </button>
@@ -2506,10 +2506,10 @@ export function Projects({
                             updateProject(index, "category", e.target.value)
                           }
                           placeholder="Category"
-                          className="w-full p-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                          className="w-full p-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none"
                           maxLength={TEXT_LIMITS.CATEGORY}
                         />
-                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500 ">
+                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption ">
                           {project.category.length}/{TEXT_LIMITS.CATEGORY}
                         </div>
                       </div>
@@ -2521,17 +2521,17 @@ export function Projects({
                             updateProject(index, "date", e.target.value)
                           }
                           placeholder="Date"
-                          className="w-full p-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none"
+                          className="w-full p-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none"
                           maxLength={TEXT_LIMITS.DATE}
                         />
-                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                           {project.date.length}/{TEXT_LIMITS.DATE}
                         </div>
                       </div>
                     </div>
                   ) : (
                     <div className="flex justify-between items-center mb-4 text-sm text-muted-foreground">
-                      <span className="bg-gray-100 px-3 py-1 rounded-full dark:bg-gray-800 dark:text-gray-300">
+                      <span className="bg-ink-light px-3 py-1 rounded-full dark:bg-gray-800 dark:text-gray-300">
                         {project.category}
                       </span>
                       <span>{project.date}</span>

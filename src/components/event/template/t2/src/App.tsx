@@ -35,7 +35,7 @@ export default function Event_T2() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface-card">
       <Navigation activeSection={activeSection} />
       <HeroSection />
       <EventsSection />

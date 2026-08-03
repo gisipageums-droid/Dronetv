@@ -4,14 +4,14 @@ import { motion } from 'motion/react';
 
 export function Hero() {
   return (
-    <section id="home" className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20">
+    <section id="home" className="min-h-screen flex items-center bg-gradient-to-br from-background to-surface-main dark:from-background dark:to-yellow-900/20 pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight">
               Hi, I'm{' '}
-              <span className="text-yellow-500">John Doe</span>
+              <span className="text-brand-gold">John Doe</span>
             </h1>
 
             <p className="text-xl text-muted-foreground leading-relaxed">
@@ -31,15 +31,15 @@ export function Hero() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-8 pt-8">
               <div className="text-center">
-                <div className="text-3xl text-yellow-500 mb-2">50+</div>
+                <div className="text-3xl text-brand-gold mb-2">50+</div>
                 <p className="text-muted-foreground">Projects</p>
               </div>
               <div className="text-center">
-                <div className="text-3xl text-yellow-500 mb-2">3+</div>
+                <div className="text-3xl text-brand-gold mb-2">3+</div>
                 <p className="text-muted-foreground">Years Experience</p>
               </div>
               <div className="text-center">
-                <div className="text-3xl text-yellow-500 mb-2">100%</div>
+                <div className="text-3xl text-brand-gold mb-2">100%</div>
                 <p className="text-muted-foreground">Client Satisfaction</p>
               </div>
             </div>
@@ -58,7 +58,7 @@ export function Hero() {
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               <motion.div 
-                className="absolute inset-0 bg-yellow-400 rounded-3xl transform rotate-6"
+                className="absolute inset-0 bg-brand-yellow rounded-3xl transform rotate-6"
                 whileHover={{ rotate: 8, scale: 1.02 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               ></motion.div>

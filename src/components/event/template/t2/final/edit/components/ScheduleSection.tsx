@@ -34,8 +34,8 @@ const CustomButton = ({
 }) => {
   const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -169,14 +169,14 @@ const defaultData: ScheduleData = createDefaultData();
 
 // Type options with colors
 const typeOptions = [
-  { value: 'keynote', label: 'Keynote', color: 'bg-amber-500' },
-  { value: 'workshop', label: 'Workshop', color: 'bg-yellow-500' },
-  { value: 'panel', label: 'Panel', color: 'bg-orange-500' },
-  { value: 'session', label: 'Session', color: 'bg-amber-400' },
-  { value: 'networking', label: 'Networking', color: 'bg-yellow-400' },
-  { value: 'break', label: 'Break', color: 'bg-gray-400' },
-  { value: 'registration', label: 'Registration', color: 'bg-gray-400' },
-  { value: 'closing', label: 'Closing', color: 'bg-amber-600' },
+  { value: 'keynote', label: 'Keynote', color: 'bg-brand-gold' },
+  { value: 'workshop', label: 'Workshop', color: 'bg-brand-gold' },
+  { value: 'panel', label: 'Panel', color: 'bg-status-warning' },
+  { value: 'session', label: 'Session', color: 'bg-brand-yellow' },
+  { value: 'networking', label: 'Networking', color: 'bg-brand-yellow' },
+  { value: 'break', label: 'Break', color: 'bg-ink-caption' },
+  { value: 'registration', label: 'Registration', color: 'bg-ink-caption' },
+  { value: 'closing', label: 'Closing', color: 'bg-brand-gold' },
 ];
 
 // Editable Text Component - FIXED VERSION
@@ -206,13 +206,13 @@ const EditableText = ({
           <textarea
             value={safeValue}
             onChange={(e) => onChange(e.target.value)}
-            className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+            className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
             placeholder={placeholder}
             rows={rows}
             maxLength={charLimit}
           />
           {charLimit && (
-            <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+            <div className="absolute bottom-2 right-2 text-xs text-ink-caption">
               {safeValue.length}/{charLimit}
             </div>
           )}
@@ -223,12 +223,12 @@ const EditableText = ({
             type="text"
             value={safeValue}
             onChange={(e) => onChange(e.target.value)}
-            className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+            className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
             placeholder={placeholder}
             maxLength={charLimit}
           />
           {charLimit && (
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
               {safeValue.length}/{charLimit}
             </div>
           )}
@@ -434,7 +434,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
   // Helper function to get type color
   const getTypeColor = (type: string) => {
     const typeOption = typeOptions.find(option => option.value === type);
-    return typeOption ? typeOption.color : 'bg-gray-400';
+    return typeOption ? typeOption.color : 'bg-ink-caption';
   };
 
   // Safe access to day data
@@ -443,7 +443,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
   };
 
   return (
-    <section id="schedule" className="py-16 sm:py-20 md:py-24 bg-yellow-100">
+    <section id="schedule" className="py-16 sm:py-20 md:py-24 bg-brand-yellow-soft">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Edit Controls */}
@@ -452,7 +452,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
               <CustomButton
                 onClick={handleEdit}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                className="bg-status-error hover:bg-status-error shadow-md text-white"
               >
                 <Edit2 className="w-4 h-4 mr-2" />
                 Edit Schedule
@@ -462,7 +462,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                 <CustomButton
                   onClick={handleSave}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                  className="bg-status-success hover:bg-status-success text-white shadow-md"
                   disabled={isSaving}
                 >
                   {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
@@ -471,7 +471,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                 <CustomButton
                   onClick={handleCancel}
                   size="sm"
-                  className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+                  className="bg-status-error hover:bg-status-error text-white shadow-md"
                   disabled={isSaving}
                 >
                   <X className="w-4 h-4 mr-2" />
@@ -481,7 +481,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                   onClick={addDay}
                   variant="outline"
                   size="sm"
-                  className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                  className="bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Day
@@ -494,11 +494,11 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
           <div className="text-center mb-12 sm:mb-16">
             {isEditing ? (
               <>
-                <div className="inline-block mb-4 px-4 py-2 bg-white rounded-full shadow-sm border border-amber-200">
+                <div className="inline-block mb-4 px-4 py-2 bg-surface-card rounded-full shadow-sm border border-brand-yellow-soft">
                   <EditableText
                     value={displayData.subtitle}
                     onChange={(value) => updateField('subtitle', value)}
-                    className="text-red-700 text-xl font-semibold text-center"
+                    className="text-status-error text-xl font-semibold text-center"
                     placeholder="Section subtitle"
                     charLimit={TEXT_LIMITS.SUBTITLE}
                   />
@@ -506,7 +506,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                 <EditableText
                   value={displayData.heading}
                   onChange={(value) => updateField('heading', value)}
-                  className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
+                  className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
                   placeholder="Section heading"
                   charLimit={TEXT_LIMITS.HEADING}
                 />
@@ -514,7 +514,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                   value={displayData.description}
                   onChange={(value) => updateField('description', value)}
                   multiline
-                  className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4 text-center"
+                  className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4 text-center"
                   placeholder="Section description"
                   charLimit={TEXT_LIMITS.DESCRIPTION}
                   rows={2}
@@ -522,11 +522,11 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
               </>
             ) : (
               <>
-                <div className="inline-block mb-4 px-4 py-2 bg-white rounded-full shadow-sm border border-amber-200">
-                  <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+                <div className="inline-block mb-4 px-4 py-2 bg-surface-card rounded-full shadow-sm border border-brand-yellow-soft">
+                  <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
                 </div>
-                <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-                <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+                <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+                <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
                   {displayData.description}
                 </p>
               </>
@@ -546,8 +546,8 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                       onClick={() => setActiveDay(day)}
                       className={`px-6 sm:px-8 py-3 sm:py-4 rounded-xl transition-all duration-300 text-sm sm:text-base min-w-[120px] ${
                         activeDay === day
-                          ? 'bg-yellow-400 text-gray-900 shadow-lg scale-105'
-                          : 'bg-white text-gray-600 hover:bg-yellow-50 border border-gray-200'
+                          ? 'bg-brand-yellow text-ink shadow-lg scale-105'
+                          : 'bg-surface-card text-ink-paragraph hover:bg-surface-main border border-ink-light'
                       }`}
                     >
                       {isEditing ? (
@@ -580,7 +580,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                       <CustomButton
                         onClick={() => removeDay(day)}
                         size="sm"
-                        className="bg-red-500 hover:bg-red-600 text-white p-2"
+                        className="bg-status-error hover:bg-status-error text-white p-2"
                       >
                         <Trash2 className="w-3 h-3" />
                       </CustomButton>
@@ -589,7 +589,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                   
                   {/* Schedule item count badge */}
                   {isEditing && (
-                    <div className="text-xs text-gray-500 bg-white px-2 py-1 rounded-full border">
+                    <div className="text-xs text-ink-caption bg-surface-card px-2 py-1 rounded-full border">
                       {dayData.items.length} items
                     </div>
                   )}
@@ -601,7 +601,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
             {isEditing && (
               <button
                 onClick={addDay}
-                className="px-4 py-3 bg-white text-gray-600 hover:bg-yellow-50 border border-dashed border-gray-300 rounded-xl transition-all duration-300 h-[84px] flex items-center justify-center"
+                className="px-4 py-3 bg-surface-card text-ink-paragraph hover:bg-surface-main border border-dashed border-ink-light rounded-xl transition-all duration-300 h-[84px] flex items-center justify-center"
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -613,7 +613,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
             {getDayData(activeDay).items.map((item, index) => (
               <div
                 key={item.id}
-                className="group bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-transparent hover:border-amber-500 relative"
+                className="group bg-surface-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-transparent hover:border-brand-gold relative"
               >
                 {/* Edit Controls Overlay */}
                 {isEditing && (
@@ -621,7 +621,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                     <CustomButton
                       onClick={() => moveScheduleItem(activeDay, item.id, 'up')}
                       size="sm"
-                      className="bg-gray-500 hover:bg-gray-600 text-white p-1"
+                      className="bg-ink-caption hover:bg-ink-paragraph text-white p-1"
                       disabled={index === 0}
                     >
                       <ChevronUp className="w-3 h-3" />
@@ -629,7 +629,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                     <CustomButton
                       onClick={() => moveScheduleItem(activeDay, item.id, 'down')}
                       size="sm"
-                      className="bg-gray-500 hover:bg-gray-600 text-white p-1"
+                      className="bg-ink-caption hover:bg-ink-paragraph text-white p-1"
                       disabled={index === getDayData(activeDay).items.length - 1}
                     >
                       <ChevronDown className="w-3 h-3" />
@@ -637,7 +637,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                     <CustomButton
                       onClick={() => removeScheduleItem(activeDay, item.id)}
                       size="sm"
-                      className="bg-red-500 hover:bg-red-600 text-white p-1"
+                      className="bg-status-error hover:bg-status-error text-white p-1"
                     >
                       <Trash2 className="w-3 h-3" />
                     </CustomButton>
@@ -650,13 +650,13 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                       <EditableText
                         value={item.time}
                         onChange={(value) => updateScheduleItem(activeDay, item.id, 'time', value)}
-                        className="text-gray-900 text-sm sm:text-base"
+                        className="text-ink text-sm sm:text-base"
                         placeholder="Time slot"
                         charLimit={TEXT_LIMITS.SCHEDULE_TIME}
                       />
                     ) : (
-                      <div className="flex items-center gap-2 text-gray-900 text-sm sm:text-base">
-                        <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 flex-shrink-0" />
+                      <div className="flex items-center gap-2 text-ink text-sm sm:text-base">
+                        <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold flex-shrink-0" />
                         <span>{item.time}</span>
                       </div>
                     )}
@@ -668,7 +668,7 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                         <select
                           value={item.type}
                           onChange={(e) => updateScheduleItem(activeDay, item.id, 'type', e.target.value)}
-                          className={`px-2 sm:px-3 py-1 text-white rounded-full text-xs capitalize ${getTypeColor(item.type)} border-2 border-dashed border-blue-300`}
+                          className={`px-2 sm:px-3 py-1 text-white rounded-full text-xs capitalize ${getTypeColor(item.type)} border-2 border-dashed border-status-info/40`}
                         >
                           {typeOptions.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -688,29 +688,29 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                         <EditableText
                           value={item.title}
                           onChange={(value) => updateScheduleItem(activeDay, item.id, 'title', value)}
-                          className="text-gray-900 text-base sm:text-lg md:text-xl font-semibold"
+                          className="text-ink text-base sm:text-lg md:text-xl font-semibold"
                           placeholder="Session title"
                           charLimit={TEXT_LIMITS.SCHEDULE_TITLE}
                         />
                         
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                           <div className="flex items-center gap-2 flex-1">
-                            <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                            <MapPin className="w-4 h-4 text-brand-gold flex-shrink-0" />
                             <EditableText
                               value={item.location}
                               onChange={(value) => updateScheduleItem(activeDay, item.id, 'location', value)}
-                              className="text-gray-600 text-sm sm:text-base"
+                              className="text-ink-paragraph text-sm sm:text-base"
                               placeholder="Location"
                               charLimit={TEXT_LIMITS.SCHEDULE_LOCATION}
                             />
                           </div>
                           
                           <div className="flex items-center gap-2 flex-1">
-                            <User className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                            <User className="w-4 h-4 text-brand-gold flex-shrink-0" />
                             <EditableText
                               value={item.speaker}
                               onChange={(value) => updateScheduleItem(activeDay, item.id, 'speaker', value)}
-                              className="text-gray-600 text-sm sm:text-base"
+                              className="text-ink-paragraph text-sm sm:text-base"
                               placeholder="Speaker"
                               charLimit={TEXT_LIMITS.SCHEDULE_SPEAKER}
                             />
@@ -719,19 +719,19 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
                       </div>
                     ) : (
                       <>
-                        <h3 className="text-gray-900 mb-3 group-hover:text-amber-600 transition-colors text-base sm:text-lg md:text-xl">
+                        <h3 className="text-ink mb-3 group-hover:text-brand-yellow transition-colors text-base sm:text-lg md:text-xl">
                           {item.title}
                         </h3>
                         {item.description && (
-                          <p className="text-gray-600 text-sm mb-3">{item.description}</p>
+                          <p className="text-ink-paragraph text-sm mb-3">{item.description}</p>
                         )}
-                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 text-gray-600 text-sm sm:text-base">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 text-ink-paragraph text-sm sm:text-base">
                           <div className="flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                            <MapPin className="w-4 h-4 text-brand-gold flex-shrink-0" />
                             <span>{item.location}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <User className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                            <User className="w-4 h-4 text-brand-gold flex-shrink-0" />
                             <span>{item.speaker}</span>
                           </div>
                         </div>
@@ -745,13 +745,13 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
             {/* Add Schedule Item (edit mode) */}
             {isEditing && (
               <div
-                className="group bg-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-blue-400 transition-all duration-300"
+                className="group bg-ink-offwhite rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-dashed border-ink-light flex items-center justify-center cursor-pointer hover:border-status-info transition-all duration-300"
                 onClick={() => addScheduleItem(activeDay)}
               >
                 <div className="text-center">
-                  <Plus className="w-6 h-6 text-gray-400 group-hover:text-blue-400 mx-auto mb-2" />
-                  <p className="text-gray-500 group-hover:text-blue-400 font-semibold">Add Schedule Item</p>
-                  <p className="text-gray-400 text-sm">Click to add a new session</p>
+                  <Plus className="w-6 h-6 text-ink-caption group-hover:text-status-info mx-auto mb-2" />
+                  <p className="text-ink-caption group-hover:text-status-info font-semibold">Add Schedule Item</p>
+                  <p className="text-ink-caption text-sm">Click to add a new session</p>
                 </div>
               </div>
             )}
@@ -761,14 +761,14 @@ export function ScheduleSection({ scheduleData, onStateChange}: ScheduleProps) {
           {(getDayData(activeDay).items.length === 0) && !isEditing && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Clock className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                  <Clock className="w-8 h-8 text-ink-caption" />
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Schedule Items</h4>
-                <p className="text-gray-600 mb-6">Add schedule items to showcase your event agenda.</p>
+                <h4 className="text-lg font-semibold text-ink mb-2">No Schedule Items</h4>
+                <p className="text-ink-paragraph mb-6">Add schedule items to showcase your event agenda.</p>
                 <CustomButton
                   onClick={handleEdit}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                  className="bg-brand-gold hover:bg-brand-gold text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Schedule

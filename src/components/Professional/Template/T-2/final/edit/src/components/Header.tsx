@@ -23,8 +23,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants: Record<string, string> = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes: Record<string, string> = {
 //     sm: "h-8 px-3 text-sm",
@@ -167,7 +167,7 @@
 //     return (
 //       <header ref={headerRef} className="fixed top-[4rem] left-0 right-0 z-40 bg-background border-b border-border shadow-lg">
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center">
-//           <Loader2 className="w-6 h-6 animate-spin mx-auto text-yellow-400" />
+//           <Loader2 className="w-6 h-6 animate-spin mx-auto text-brand-yellow" />
 //         </div>
 //       </header>
 //     );
@@ -186,7 +186,7 @@
 //                   <div className="flex items-center gap-4">
 //                     {/* Avatar Display */}
 //                     <div className="flex flex-col items-center gap-2">
-//                       <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+//                       <div className="w-14 h-14 rounded-full bg-brand-yellow-soft flex items-center justify-center text-ink font-bold text-lg border-2 border-brand-yellow-soft shadow-lg">
 //                         {getAvatarLetter(displayData.logoText)}
 //                       </div>
 //                     </div>
@@ -197,10 +197,10 @@
 //                         type="text"
 //                         value={displayData.logoText}
 //                         onChange={(e) => updateLogoText(e.target.value)}
-//                         className="px-3 py-2 text-base bg-white/80 border border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none w-48"
+//                         className="px-3 py-2 text-base bg-white/80 border border-dashed border-brand-yellow-soft rounded focus:border-brand-gold focus:outline-none w-48"
 //                         placeholder="Enter your name"
 //                       />
-//                       <p className="text-xs text-gray-500">First letter will be shown in avatar</p>
+//                       <p className="text-xs text-ink-caption">First letter will be shown in avatar</p>
 //                     </div>
 //                   </div>
 //                 </>
@@ -208,7 +208,7 @@
 //                 <>
 //                   {/* Display Mode - Avatar with Text on the right */}
 //                   <div className="flex items-center gap-4">
-//                     <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+//                     <div className="w-14 h-14 rounded-full bg-brand-yellow-soft flex items-center justify-center text-ink font-bold text-lg border-2 border-brand-yellow-soft shadow-lg">
 //                       {getAvatarLetter(displayData.logoText)}
 //                     </div>
 //                     {/* Logo Text displayed to the right of avatar */}
@@ -228,7 +228,7 @@
 //                 <a
 //                   key={index}
 //                   href={link.href}
-//                   className="transition-all duration-300 text-muted-foreground hover:text-yellow-500 hover:scale-110"
+//                   className="transition-all duration-300 text-muted-foreground hover:text-brand-yellow hover:scale-110"
 //                 >
 //                   {link.label}
 //                 </a>
@@ -241,7 +241,7 @@
 //                 <Button
 //                   onClick={handleEdit}
 //                   size='sm'
-//                   className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                   className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                 >
 //                   <Edit2 className='w-4 h-4 mr-2' />
 //                   Edit
@@ -251,7 +251,7 @@
 //                   <Button
 //                     onClick={handleSave}
 //                     size='sm'
-//                     className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                     className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                     disabled={isSaving}
 //                   >
 //                     {isSaving ? (
@@ -264,7 +264,7 @@
 //                   <Button
 //                     onClick={handleCancel}
 //                     size='sm'
-//                     className='bg-gray-500 hover:bg-gray-600 shadow-md text-white'
+//                     className='bg-ink-caption hover:bg-ink-paragraph shadow-md text-white'
 //                     disabled={isSaving}
 //                   >
 //                     <X className='w-4 h-4 mr-2' />
@@ -279,7 +279,7 @@
 //               {/* Mobile menu button */}
 //               <button
 //                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-//                 className="transition-all duration-300 md:hidden text-muted-foreground hover:text-yellow-500 hover:scale-110"
+//                 className="transition-all duration-300 md:hidden text-muted-foreground hover:text-brand-yellow hover:scale-110"
 //               >
 //                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
 //               </button>
@@ -295,7 +295,7 @@
 //                 key={index}
 //                 href={link.href}
 //                 onClick={() => setIsMenuOpen(false)}
-//                 className="block py-2 transition-colors duration-300 text-muted-foreground hover:text-yellow-500"
+//                 className="block py-2 transition-colors duration-300 text-muted-foreground hover:text-brand-yellow"
 //               >
 //                 {link.label}
 //               </a>
@@ -331,8 +331,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants: Record<string, string> = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes: Record<string, string> = {
     sm: "h-8 px-3 text-sm",
@@ -560,7 +560,7 @@ export function Header({
         className="fixed top-[4rem] left-0 right-0 z-40 bg-background border-b border-border shadow-lg"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center">
-          <Loader2 className="w-6 h-6 animate-spin mx-auto text-yellow-400" />
+          <Loader2 className="w-6 h-6 animate-spin mx-auto text-brand-yellow" />
         </div>
       </header>
     );
@@ -583,25 +583,25 @@ export function Header({
                     {/* Auto-save indicator */}
                     <div className="flex flex-col items-center gap-2">
                       {/* Avatar Display */}
-                      <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+                      <div className="w-14 h-14 rounded-full bg-brand-yellow-soft flex items-center justify-center text-ink font-bold text-lg border-2 border-brand-yellow-soft shadow-lg">
                         {getAvatarLetter(displayData.logoText)}
                       </div>
 
                       {/* Auto-save status indicator */}
                       <div className="flex items-center gap-2 text-xs">
                         {isAutoSaving && (
-                          <div className="flex items-center gap-1 text-blue-500">
+                          <div className="flex items-center gap-1 text-status-info">
                             <Loader2 className="w-3 h-3 animate-spin" />
                             <span>Auto-saving...</span>
                           </div>
                         )}
                         {hasUnsavedChanges && !isAutoSaving && (
-                          <div className="text-yellow-500">
+                          <div className="text-brand-gold">
                             ● Unsaved changes
                           </div>
                         )}
                         {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                          <div className="text-green-500">✓ Auto-saved</div>
+                          <div className="text-status-success">✓ Auto-saved</div>
                         )}
                       </div>
                     </div>
@@ -612,10 +612,10 @@ export function Header({
                         type="text"
                         value={displayData.logoText}
                         onChange={(e) => updateLogoText(e.target.value)}
-                        className="px-3 py-2 text-base bg-white/80 dark:bg-black/80 border border-dashed border-yellow-300 rounded focus:border-yellow-500 focus:outline-none w-48"
+                        className="px-3 py-2 text-base bg-white/80 dark:bg-black/80 border border-dashed border-brand-yellow-soft rounded focus:border-brand-gold focus:outline-none w-48"
                         placeholder="Enter your name"
                       />
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-ink-caption">
                         First letter will be shown in avatar
                       </p>
                     </div>
@@ -625,7 +625,7 @@ export function Header({
                 <>
                   {/* Display Mode - Avatar with Text on the right */}
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
+                    <div className="w-14 h-14 rounded-full bg-brand-yellow-soft flex items-center justify-center text-ink font-bold text-lg border-2 border-brand-yellow-soft shadow-lg">
                       {getAvatarLetter(displayData.logoText)}
                     </div>
                     {/* Logo Text displayed to the right of avatar */}
@@ -645,7 +645,7 @@ export function Header({
                 <a
                   key={index}
                   href={link.href}
-                  className="transition-all duration-300 text-muted-foreground hover:text-yellow-500 hover:scale-110"
+                  className="transition-all duration-300 text-muted-foreground hover:text-brand-yellow hover:scale-110"
                 >
                   {link.label}
                 </a>
@@ -658,7 +658,7 @@ export function Header({
                 <Button
                   onClick={handleEdit}
                   size="sm"
-                  className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                  className="bg-status-error hover:bg-status-error shadow-md text-white"
                 >
                   <Edit2 className="w-4 h-4 mr-2" />
                   Edit
@@ -668,7 +668,7 @@ export function Header({
                   <Button
                     onClick={handleSave}
                     size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                    className="bg-status-success hover:bg-status-success text-white shadow-md"
                     disabled={isSaving}
                   >
                     {isSaving ? (
@@ -681,7 +681,7 @@ export function Header({
                   <Button
                     onClick={handleCancel}
                     size="sm"
-                    className="bg-gray-500 hover:bg-gray-600 shadow-md text-white"
+                    className="bg-ink-caption hover:bg-ink-paragraph shadow-md text-white"
                     disabled={isSaving}
                   >
                     <X className="w-4 h-4 mr-2" />
@@ -696,7 +696,7 @@ export function Header({
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="transition-all duration-300 md:hidden text-muted-foreground hover:text-yellow-500 hover:scale-110"
+                className="transition-all duration-300 md:hidden text-muted-foreground hover:text-brand-yellow hover:scale-110"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
@@ -712,7 +712,7 @@ export function Header({
                 key={index}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 transition-colors duration-300 text-muted-foreground hover:text-yellow-500"
+                className="block py-2 transition-colors duration-300 text-muted-foreground hover:text-brand-yellow"
               >
                 {link.label}
               </a>

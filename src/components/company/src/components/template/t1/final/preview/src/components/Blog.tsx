@@ -59,14 +59,14 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
 
   return (
     <motion.div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
       <motion.div
-        className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl"
+        className="bg-surface-card dark:bg-gray-800 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl"
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -80,17 +80,17 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
             alt={blog.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"></div>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors shadow-lg dark:bg-gray-700 dark:hover:bg-gray-600"
+            className="absolute top-4 right-4 bg-white/90 hover:bg-surface-card rounded-full p-2 transition-colors shadow-lg dark:bg-gray-700 dark:hover:bg-gray-600"
             aria-label="Close modal"
           >
-            <X className="w-5 h-5 text-gray-900 dark:text-white" />
+            <X className="w-5 h-5 text-ink dark:text-white" />
           </button>
           <div className="absolute bottom-6 left-6 right-6">
             <div className="flex items-center gap-3 mb-3">
-              <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">
+              <span className="px-3 py-1 bg-status-info text-white text-xs font-medium rounded-full">
                 {blog.category}
               </span>
             </div>
@@ -118,7 +118,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
         <div className="overflow-y-auto max-h-[calc(70vh-16rem)] p-8">
           {/* Excerpt */}
           <div className="mb-8">
-            <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="text-lg text-ink-paragraph dark:text-gray-300 leading-relaxed">
               {blog.excerpt}
             </p>
           </div>
@@ -126,17 +126,17 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
           {/* Blog Outline if available */}
           {blog.outline && blog.outline.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <span className="text-indigo-600">📋</span> In this article:
+              <h3 className="text-xl font-bold text-ink dark:text-white mb-4 flex items-center gap-2">
+                <span className="text-status-info">📋</span> In this article:
               </h3>
-              <div className="bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-xl border border-indigo-100 dark:border-indigo-800">
+              <div className="bg-status-info/10 dark:bg-indigo-900/20 p-6 rounded-xl border border-status-info/15 dark:border-indigo-800">
                 <ul className="space-y-3">
                   {blog.outline.map((item: string, index: number) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-indigo-600 dark:text-indigo-400 mr-3 mt-1 text-lg">
+                      <span className="text-status-info dark:text-indigo-400 mr-3 mt-1 text-lg">
                         •
                       </span>
-                      <span className="text-gray-700 dark:text-gray-300">
+                      <span className="text-ink-paragraph dark:text-gray-300">
                         {item}
                       </span>
                     </li>
@@ -148,7 +148,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
 
           {/* Main Content */}
           <div className="mb-8">
-            <div className="text-gray-700 dark:text-gray-300 leading-7 space-y-6 text-base">
+            <div className="text-ink-paragraph dark:text-gray-300 leading-7 space-y-6 text-base">
               {blog.content ? (
                 <div dangerouslySetInnerHTML={{ __html: blog.content }} />
               ) : (
@@ -169,7 +169,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
                     increased yields and reduced resource consumption.
                   </p>
 
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">
+                  <h3 className="text-xl font-bold text-ink dark:text-white mt-8 mb-4">
                     The Future of Drone Technology
                   </h3>
 
@@ -189,14 +189,14 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
           {/* Keywords if available */}
           {blog.keywords && blog.keywords.length > 0 && (
             <div className="mb-6">
-              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+              <h4 className="text-sm font-semibold text-ink dark:text-white mb-3">
                 Keywords:
               </h4>
               <div className="flex flex-wrap gap-2">
                 {blog.keywords.map((keyword: string, index: number) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-sm rounded-full border border-indigo-200 dark:border-indigo-700"
+                    className="px-3 py-1.5 bg-status-info/15 dark:bg-indigo-900 text-status-info dark:text-indigo-200 text-sm rounded-full border border-status-info/25 dark:border-indigo-700"
                   >
                     #{keyword}
                   </span>
@@ -206,10 +206,10 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
           )}
 
           {/* CTA Button */}
-          <div className="flex justify-center pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-center pt-6 border-t border-ink-light dark:border-gray-700">
             <Button
               onClick={onClose}
-              className="px-8 bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="px-8 bg-status-info hover:bg-status-info text-white"
             >
               Close Article
             </Button>
@@ -259,7 +259,7 @@ export default function Blog({ blogData }) {
       <motion.section
         ref={sectionRef}
         id="blog"
-        className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative"
+        className="py-20 bg-ink-offwhite dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative"
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : { opacity: 0 }}
         transition={{ duration: 0.5 }}
@@ -271,10 +271,10 @@ export default function Blog({ blogData }) {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-3xl font-bold text-ink dark:text-white">
               {content.header.title}
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-ink-paragraph dark:text-gray-300">
               {content.header.desc}
             </p>
           </motion.div>
@@ -307,13 +307,13 @@ export default function Blog({ blogData }) {
                           alt={b.title}
                         />
                         <div className="absolute top-3 right-3">
-                          <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">
+                          <span className="px-3 py-1 bg-status-info text-white text-xs font-medium rounded-full">
                             {b.category}
                           </span>
                         </div>
                       </div>
                       <CardContent className="p-6 space-y-3">
-                        <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                        <div className="flex justify-between items-center text-sm text-ink-caption dark:text-gray-400">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
                             <span>{b.date}</span>
@@ -323,14 +323,14 @@ export default function Blog({ blogData }) {
                             <span>{b.readTime || "5 min read"}</span>
                           </div>
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        <h3 className="text-xl font-semibold text-ink dark:text-white group-hover:text-status-info dark:group-hover:text-indigo-400 transition-colors">
                           {b.title}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-300 line-clamp-3">
+                        <p className="text-ink-paragraph dark:text-gray-300 line-clamp-3">
                           {b.excerpt}
                         </p>
                         <div className="flex justify-between items-center mt-4">
-                          <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                          <div className="text-sm text-ink-caption dark:text-gray-400 flex items-center gap-1">
                             {b.author && (
                               <>
                                 <User className="w-4 h-4" />
@@ -344,7 +344,7 @@ export default function Blog({ blogData }) {
                           >
                             <Button
                               variant="ghost"
-                              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                              className="text-status-info dark:text-indigo-400 hover:text-status-info dark:hover:text-indigo-300 hover:bg-status-info/10 dark:hover:bg-indigo-900/20"
                               onClick={() => openModal(b)}
                             >
                               Read More →

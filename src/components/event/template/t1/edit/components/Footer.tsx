@@ -248,16 +248,16 @@
 //   };
 
 //   return (
-//     <footer className="bg-black text-white relative">
+//     <footer className="bg-ink text-white relative">
 //       <div className="container mx-auto px-4 py-16">
 //         {/* Edit/Save/Cancel Buttons */}
 //         <div className="absolute top-6 right-6 z-30 flex gap-3 items-center">
 //           {/* Auto-save status */}
 //           {editMode && onStateChange && (
-//             <div className="text-sm text-gray-400 mr-2 bg-gray-800 px-3 py-1 rounded-lg hidden sm:block">
+//             <div className="text-sm text-ink-caption mr-2 bg-ink-charcoal px-3 py-1 rounded-lg hidden sm:block">
 //               {isSaving ? (
 //                 <span className="flex items-center gap-1">
-//                   <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+//                   <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
 //                   Saving...
 //                 </span>
 //               ) : lastSaved ? (
@@ -270,13 +270,13 @@
 //             <>
 //               <button
 //                 onClick={handleEditToggle}
-//                 className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+//                 className="flex items-center gap-2 bg-status-success text-white px-4 py-2 rounded-lg hover:bg-status-success transition"
 //               >
 //                 <Save size={18} /> Done
 //               </button>
 //               <button
 //                 onClick={handleCancel}
-//                 className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+//                 className="flex items-center gap-2 bg-status-error text-white px-4 py-2 rounded-lg hover:bg-status-error transition"
 //               >
 //                 <X size={18} /> Cancel
 //               </button>
@@ -305,9 +305,9 @@
 //                     }
 //                     maxLength={50}
 //                     placeholder="Event Name"
-//                     className="bg-white text-black px-3 py-2 rounded-md text-2xl font-bold w-full"
+//                     className="bg-surface-card text-ink px-3 py-2 rounded-md text-2xl font-bold w-full"
 //                   />
-//                   <div className="text-xs text-gray-500 text-right mt-1">
+//                   <div className="text-xs text-ink-caption text-right mt-1">
 //                     {footerContent.eventName.length}/50
 //                   </div>
 //                 </div>
@@ -326,15 +326,15 @@
 //                     updateHeaderField("description", e.target.value)
 //                   }
 //                   maxLength={200}
-//                   className="mb-6 leading-relaxed bg-white text-black px-3 py-2 rounded-md w-full h-24 resize-y"
+//                   className="mb-6 leading-relaxed bg-surface-card text-ink px-3 py-2 rounded-md w-full h-24 resize-y"
 //                   placeholder="Event description"
 //                 />
-//                 <div className="text-xs text-gray-500 text-right mt-1">
+//                 <div className="text-xs text-ink-caption text-right mt-1">
 //                   {footerContent.description.length}/200
 //                 </div>
 //               </div>
 //             ) : (
-//               <p className="text-gray-400 mb-6 leading-relaxed">
+//               <p className="text-ink-caption mb-6 leading-relaxed">
 //                 {footerContent.description}
 //               </p>
 //             )}
@@ -352,9 +352,9 @@
 //                       updateHeaderField("quickLinksTitle", e.target.value)
 //                     }
 //                     maxLength={50}
-//                     className="text-xl font-bold bg-white text-black px-2 py-1 rounded-md w-full"
+//                     className="text-xl font-bold bg-surface-card text-ink px-2 py-1 rounded-md w-full"
 //                   />
-//                   <div className="text-xs text-gray-500 text-right mt-1">
+//                   <div className="text-xs text-ink-caption text-right mt-1">
 //                     {footerContent.quickLinksTitle.length}/50
 //                   </div>
 //                 </div>
@@ -366,7 +366,7 @@
 //               {editMode && (
 //                 <button
 //                   onClick={addQuickLink}
-//                   className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-md text-sm hover:bg-blue-700 transition"
+//                   className="flex items-center gap-1 bg-status-info text-white px-2 py-1 rounded-md text-sm hover:bg-status-info transition"
 //                 >
 //                   <Plus size={14} /> Add
 //                 </button>
@@ -387,10 +387,10 @@
 //                               updateQuickLink(index, "name", e.target.value)
 //                             }
 //                             maxLength={50}
-//                             className="bg-white text-black px-2 py-1 rounded-md text-sm w-full"
+//                             className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm w-full"
 //                             placeholder="Link Name"
 //                           />
-//                           <div className="text-xs text-gray-500 text-right mt-1">
+//                           <div className="text-xs text-ink-caption text-right mt-1">
 //                             {link.name.length}/50
 //                           </div>
 //                         </div>
@@ -402,17 +402,17 @@
 //                               updateQuickLink(index, "href", e.target.value)
 //                             }
 //                             maxLength={200}
-//                             className="bg-white text-black px-2 py-1 rounded-md text-sm w-full"
+//                             className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm w-full"
 //                             placeholder="Link URL"
 //                           />
-//                           <div className="text-xs text-gray-500 text-right mt-1">
+//                           <div className="text-xs text-ink-caption text-right mt-1">
 //                             {link.href.length}/200
 //                           </div>
 //                         </div>
 //                       </div>
 //                       <button
 //                         onClick={() => removeQuickLink(index)}
-//                         className="p-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+//                         className="p-1 bg-status-error text-white rounded-md hover:bg-status-error transition"
 //                         title="Remove Link"
 //                       >
 //                         <Trash2 size={14} />
@@ -421,7 +421,7 @@
 //                   ) : (
 //                     <button
 //                       onClick={() => scrollToSection(link.href)}
-//                       className="text-gray-400 hover:text-[#FFD400] transition-all duration-300 hover:translate-x-1 transform inline-block"
+//                       className="text-ink-caption hover:text-[#FFD400] transition-all duration-300 hover:translate-x-1 transform inline-block"
 //                     >
 //                       {link.name}
 //                     </button>
@@ -433,15 +433,15 @@
 //         </div>
 
 //         {/* Social Links Section */}
-//         <div className="border-t border-gray-800 pt-8">
+//         <div className="border-t border-ink-charcoal pt-8">
 //           <div className="flex flex-col md:flex-row justify-between items-center">
 //             <div className="flex flex-col md:flex-row items-center gap-4 w-full">
 //               <div className="flex items-center gap-2 mb-4 md:mb-0">
-//                 <span className="text-gray-400">Follow us:</span>
+//                 <span className="text-ink-caption">Follow us:</span>
 //                 {editMode && (
 //                   <button
 //                     onClick={addSocialLink}
-//                     className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-md text-sm hover:bg-blue-700 transition"
+//                     className="flex items-center gap-1 bg-status-info text-white px-2 py-1 rounded-md text-sm hover:bg-status-info transition"
 //                   >
 //                     <Plus size={14} /> Add Social
 //                   </button>
@@ -455,13 +455,13 @@
 //                     className="flex flex-col items-center relative"
 //                   >
 //                     {editMode ? (
-//                       <div className="flex gap-2 mb-2 p-2 bg-gray-800 rounded-lg">
+//                       <div className="flex gap-2 mb-2 p-2 bg-ink-charcoal rounded-lg">
 //                         <select
 //                           value={social.icon}
 //                           onChange={(e) =>
 //                             updateSocialLink(index, "icon", e.target.value)
 //                           }
-//                           className="bg-white text-black px-2 py-1 rounded-md text-sm"
+//                           className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm"
 //                         >
 //                           <option value="Facebook">Facebook</option>
 //                           <option value="Twitter">Twitter</option>
@@ -478,9 +478,9 @@
 //                             }
 //                             maxLength={200}
 //                             placeholder="URL"
-//                             className="bg-white text-black px-2 py-1 rounded-md text-sm"
+//                             className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm"
 //                           />
-//                           <div className="text-xs text-gray-500 text-right mt-1">
+//                           <div className="text-xs text-ink-caption text-right mt-1">
 //                             {social.href.length}/200
 //                           </div>
 //                         </div>
@@ -493,15 +493,15 @@
 //                             }
 //                             maxLength={50}
 //                             placeholder="Label"
-//                             className="bg-white text-black px-2 py-1 rounded-md text-sm"
+//                             className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm"
 //                           />
-//                           <div className="text-xs text-gray-500 text-right mt-1">
+//                           <div className="text-xs text-ink-caption text-right mt-1">
 //                             {social.label.length}/50
 //                           </div>
 //                         </div>
 //                         <button
 //                           onClick={() => removeSocialLink(index)}
-//                           className="p-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+//                           className="p-1 bg-status-error text-white rounded-md hover:bg-status-error transition"
 //                           title="Remove Social Link"
 //                         >
 //                           <Trash2 size={14} />
@@ -511,7 +511,7 @@
 //                       <a
 //                         href={social.href}
 //                         aria-label={social.label}
-//                         className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
+//                         className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
 //                         target="_blank"
 //                         rel="noopener noreferrer"
 //                       >
@@ -525,7 +525,7 @@
 //           </div>
 
 //           {/* Copyright */}
-//           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+//           <div className="mt-8 pt-8 border-t border-ink-charcoal text-center text-ink-caption">
 //             <p>
 //               © {new Date().getFullYear()} {footerContent.eventName}. All rights
 //               reserved.
@@ -821,16 +821,16 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
   };
 
   return (
-    <footer className="bg-black text-white relative">
+    <footer className="bg-ink text-white relative">
       <div className="container mx-auto px-4 py-16">
         {/* Edit/Save/Cancel Buttons */}
         <div className="absolute top-6 right-6 z-30 flex gap-3 items-center">
           {/* Auto-save status */}
           {editMode && onStateChange && (
-            <div className="text-sm text-gray-400 mr-2 bg-gray-800 px-3 py-1 rounded-lg hidden sm:block">
+            <div className="text-sm text-ink-caption mr-2 bg-ink-charcoal px-3 py-1 rounded-lg hidden sm:block">
               {isSaving ? (
                 <span className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
                   Saving...
                 </span>
               ) : lastSaved ? (
@@ -845,13 +845,13 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
             <>
               <button
                 onClick={handleEditToggle}
-                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                className="flex items-center gap-2 bg-status-success text-white px-4 py-2 rounded-lg hover:bg-status-success transition"
               >
                 <Save size={18} /> Done
               </button>
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+                className="flex items-center gap-2 bg-status-error text-white px-4 py-2 rounded-lg hover:bg-status-error transition"
               >
                 <X size={18} /> Cancel
               </button>
@@ -880,9 +880,9 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                     }
                     maxLength={50}
                     placeholder="Event Name"
-                    className="bg-white text-black px-3 py-2 rounded-md text-2xl font-bold w-full"
+                    className="bg-surface-card text-ink px-3 py-2 rounded-md text-2xl font-bold w-full"
                   />
-                  <div className="text-xs text-gray-500 text-right mt-1">
+                  <div className="text-xs text-ink-caption text-right mt-1">
                     {footerContent.eventName.length}/50
                   </div>
                 </div>
@@ -901,15 +901,15 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                     updateHeaderField("description", e.target.value)
                   }
                   maxLength={200}
-                  className="mb-6 leading-relaxed bg-white text-black px-3 py-2 rounded-md w-full h-24 resize-y"
+                  className="mb-6 leading-relaxed bg-surface-card text-ink px-3 py-2 rounded-md w-full h-24 resize-y"
                   placeholder="Event description"
                 />
-                <div className="text-xs text-gray-500 text-right mt-1">
+                <div className="text-xs text-ink-caption text-right mt-1">
                   {footerContent.description.length}/200
                 </div>
               </div>
             ) : (
-              <p className="text-gray-400 mb-6 leading-relaxed">
+              <p className="text-ink-caption mb-6 leading-relaxed">
                 {footerContent.description}
               </p>
             )}
@@ -927,9 +927,9 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                       updateHeaderField("quickLinksTitle", e.target.value)
                     }
                     maxLength={50}
-                    className="text-xl font-bold bg-white text-black px-2 py-1 rounded-md w-full"
+                    className="text-xl font-bold bg-surface-card text-ink px-2 py-1 rounded-md w-full"
                   />
-                  <div className="text-xs text-gray-500 text-right mt-1">
+                  <div className="text-xs text-ink-caption text-right mt-1">
                     {footerContent.quickLinksTitle.length}/50
                   </div>
                 </div>
@@ -941,7 +941,7 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
               {editMode && (
                 <button
                   onClick={addQuickLink}
-                  className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-md text-sm hover:bg-blue-700 transition"
+                  className="flex items-center gap-1 bg-status-info text-white px-2 py-1 rounded-md text-sm hover:bg-status-info transition"
                 >
                   <Plus size={14} /> Add
                 </button>
@@ -962,10 +962,10 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                               updateQuickLink(index, "name", e.target.value)
                             }
                             maxLength={50}
-                            className="bg-white text-black px-2 py-1 rounded-md text-sm w-full"
+                            className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm w-full"
                             placeholder="Link Name"
                           />
-                          <div className="text-xs text-gray-500 text-right mt-1">
+                          <div className="text-xs text-ink-caption text-right mt-1">
                             {link.name.length}/50
                           </div>
                         </div>
@@ -977,17 +977,17 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                               updateQuickLink(index, "href", e.target.value)
                             }
                             maxLength={200}
-                            className="bg-white text-black px-2 py-1 rounded-md text-sm w-full"
+                            className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm w-full"
                             placeholder="Link URL"
                           />
-                          <div className="text-xs text-gray-500 text-right mt-1">
+                          <div className="text-xs text-ink-caption text-right mt-1">
                             {link.href.length}/200
                           </div>
                         </div>
                       </div>
                       <button
                         onClick={() => removeQuickLink(index)}
-                        className="p-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                        className="p-1 bg-status-error text-white rounded-md hover:bg-status-error transition"
                         title="Remove Link"
                       >
                         <Trash2 size={14} />
@@ -996,7 +996,7 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                   ) : (
                     <button
                       onClick={() => scrollToSection(link.href)}
-                      className="text-gray-400 hover:text-[#FFD400] transition-all duration-300 hover:translate-x-1 transform inline-block"
+                      className="text-ink-caption hover:text-[#FFD400] transition-all duration-300 hover:translate-x-1 transform inline-block"
                     >
                       {link.name}
                     </button>
@@ -1008,15 +1008,15 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
         </div>
 
         {/* Social Links Section */}
-        <div className="border-t border-gray-800 pt-8">
+        <div className="border-t border-ink-charcoal pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex flex-col md:flex-row items-center gap-4 w-full">
               <div className="flex items-center gap-2 mb-4 md:mb-0">
-                <span className="text-gray-400">Follow us:</span>
+                <span className="text-ink-caption">Follow us:</span>
                 {editMode && (
                   <button
                     onClick={addSocialLink}
-                    className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-md text-sm hover:bg-blue-700 transition"
+                    className="flex items-center gap-1 bg-status-info text-white px-2 py-1 rounded-md text-sm hover:bg-status-info transition"
                   >
                     <Plus size={14} /> Add Social
                   </button>
@@ -1030,13 +1030,13 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                     className="flex flex-col items-center relative"
                   >
                     {editMode ? (
-                      <div className="flex gap-2 mb-2 p-2 bg-gray-800 rounded-lg">
+                      <div className="flex gap-2 mb-2 p-2 bg-ink-charcoal rounded-lg">
                         <select
                           value={social.icon}
                           onChange={(e) =>
                             updateSocialLink(index, "icon", e.target.value)
                           }
-                          className="bg-white text-black px-2 py-1 rounded-md text-sm"
+                          className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm"
                         >
                           <option value="Facebook">Facebook</option>
                           <option value="Twitter">Twitter</option>
@@ -1053,9 +1053,9 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                             }
                             maxLength={200}
                             placeholder="URL"
-                            className="bg-white text-black px-2 py-1 rounded-md text-sm"
+                            className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm"
                           />
-                          <div className="text-xs text-gray-500 text-right mt-1">
+                          <div className="text-xs text-ink-caption text-right mt-1">
                             {social.href.length}/200
                           </div>
                         </div>
@@ -1068,15 +1068,15 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                             }
                             maxLength={50}
                             placeholder="Label"
-                            className="bg-white text-black px-2 py-1 rounded-md text-sm"
+                            className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm"
                           />
-                          <div className="text-xs text-gray-500 text-right mt-1">
+                          <div className="text-xs text-ink-caption text-right mt-1">
                             {social.label.length}/50
                           </div>
                         </div>
                         <button
                           onClick={() => removeSocialLink(index)}
-                          className="p-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                          className="p-1 bg-status-error text-white rounded-md hover:bg-status-error transition"
                           title="Remove Social Link"
                         >
                           <Trash2 size={14} />
@@ -1086,7 +1086,7 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                       <a
                         href={social.href}
                         aria-label={social.label}
-                        className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
+                        className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -1100,7 +1100,7 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
           </div>
 
           {/* Copyright */}
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+          <div className="mt-8 pt-8 border-t border-ink-charcoal text-center text-ink-caption">
             <p>
               © {new Date().getFullYear()} {footerContent.eventName}. All rights
               reserved.

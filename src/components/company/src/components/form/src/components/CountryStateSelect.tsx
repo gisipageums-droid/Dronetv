@@ -89,22 +89,22 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
     setStateSearchTerm("");
   };
 
-  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${className}`;
+  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-status-info focus:border-transparent text-sm ${className}`;
 
   const getSelectClasses = (error?: string) =>
     `${selectClasses} ${
       error
-        ? "border-red-300 bg-red-50"
-        : "border-amber-300 bg-white hover:border-amber-400"
+        ? "border-status-error/40 bg-status-error/10"
+        : "border-brand-yellow-soft bg-surface-card hover:border-brand-yellow"
     }`;
 
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
       {/* Country Select */}
       <div className="mb-2">
-        <label className="block text-xs font-semibold text-gray-700 mt-1 mb-1">
+        <label className="block text-xs font-semibold text-ink-paragraph mt-1 mb-1">
           {countryLabel}
-          {countryRequired && <span className="text-red-500 ml-1">*</span>}
+          {countryRequired && <span className="text-status-error ml-1">*</span>}
         </label>
 
         <div className="relative">
@@ -115,7 +115,7 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
               countryError
             )} flex items-center justify-between text-left cursor-pointer`}
           >
-            <span className={countryValue ? "text-gray-900" : "text-gray-500"}>
+            <span className={countryValue ? "text-ink" : "text-ink-caption"}>
               {countryValue || countryPlaceholder}
             </span>
             <ChevronDown className="w-4 h-4" />
@@ -123,15 +123,15 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
 
           {/* Country Dropdown */}
           {countryDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-hidden">
+            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface-card border border-ink-light rounded-md shadow-lg max-h-60 overflow-hidden">
               {/* Search Input */}
-              <div className="p-2 border-b border-gray-200">
+              <div className="p-2 border-b border-ink-light">
                 <input
                   type="text"
                   placeholder="Search countries..."
                   value={countrySearchTerm}
                   onChange={(e) => setCountrySearchTerm(e.target.value)}
-                  className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-2 py-1 text-xs border border-ink-light rounded focus:outline-none focus:ring-1 focus:ring-status-info"
                   autoFocus
                 />
               </div>
@@ -144,20 +144,20 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
                       key={country.isoCode}
                       type="button"
                       onClick={() => handleCountrySelect(country)}
-                      className="w-full flex items-center px-3 py-2 text-left hover:bg-gray-100 transition-colors"
+                      className="w-full flex items-center px-3 py-2 text-left hover:bg-ink-light transition-colors"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-gray-900 truncate">
+                        <div className="text-xs font-medium text-ink truncate">
                           {country.name}
                         </div>
                       </div>
-                      <div className="text-xs text-gray-500 ml-2">
+                      <div className="text-xs text-ink-caption ml-2">
                         {country.isoCode}
                       </div>
                     </button>
                   ))
                 ) : (
-                  <div className="px-3 py-2 text-xs text-gray-500">
+                  <div className="px-3 py-2 text-xs text-ink-caption">
                     No countries found
                   </div>
                 )}
@@ -167,7 +167,7 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
         </div>
 
         {countryError && (
-          <div className="flex items-center mt-1 text-red-600">
+          <div className="flex items-center mt-1 text-status-error">
             <AlertCircle className="w-4 h-4 mr-2" />
             <span className="text-xs">{countryError}</span>
           </div>
@@ -176,9 +176,9 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
 
       {/* State Select */}
       <div className="mb-2">
-        <label className="block text-xs font-semibold text-gray-700 mt-1 mb-1">
+        <label className="block text-xs font-semibold text-ink-paragraph mt-1 mb-1">
           {stateLabel}
-          {stateRequired && <span className="text-red-500 ml-1">*</span>}
+          {stateRequired && <span className="text-status-error ml-1">*</span>}
         </label>
 
         <div className="relative">
@@ -193,9 +193,9 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
             }`}
           >
             {!countryValue ? (
-              <span className="text-gray-400">Select country first</span>
+              <span className="text-ink-caption">Select country first</span>
             ) : (
-              <span className={stateValue ? "text-gray-900" : "text-gray-500"}>
+              <span className={stateValue ? "text-ink" : "text-ink-caption"}>
                 {stateValue || statePlaceholder}
               </span>
             )}
@@ -204,15 +204,15 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
 
           {/* State Dropdown */}
           {stateDropdownOpen && countryValue && (
-            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-hidden">
+            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface-card border border-ink-light rounded-md shadow-lg max-h-60 overflow-hidden">
               {/* Search Input */}
-              <div className="p-2 border-b border-gray-200">
+              <div className="p-2 border-b border-ink-light">
                 <input
                   type="text"
                   placeholder="Search states..."
                   value={stateSearchTerm}
                   onChange={(e) => setStateSearchTerm(e.target.value)}
-                  className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-2 py-1 text-xs border border-ink-light rounded focus:outline-none focus:ring-1 focus:ring-status-info"
                   autoFocus
                 />
               </div>
@@ -225,20 +225,20 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
                       key={state.isoCode}
                       type="button"
                       onClick={() => handleStateSelect(state)}
-                      className="w-full flex items-center px-3 py-2 text-left hover:bg-gray-100 transition-colors"
+                      className="w-full flex items-center px-3 py-2 text-left hover:bg-ink-light transition-colors"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-gray-900 truncate">
+                        <div className="text-xs font-medium text-ink truncate">
                           {state.name}
                         </div>
                       </div>
-                      <div className="text-xs text-gray-500 ml-2">
+                      <div className="text-xs text-ink-caption ml-2">
                         {state.isoCode}
                       </div>
                     </button>
                   ))
                 ) : (
-                  <div className="px-3 py-2 text-xs text-gray-500">
+                  <div className="px-3 py-2 text-xs text-ink-caption">
                     {availableStates.length === 0
                       ? "No states available for this country"
                       : "No states found"}
@@ -250,7 +250,7 @@ export const CountryStateSelect: React.FC<CountryStateSelectProps> = ({
         </div>
 
         {stateError && (
-          <div className="flex items-center mt-1 text-red-600">
+          <div className="flex items-center mt-1 text-status-error">
             <AlertCircle className="w-4 h-4 mr-2" />
             <span className="text-xs">{stateError}</span>
           </div>

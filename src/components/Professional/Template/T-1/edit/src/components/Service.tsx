@@ -105,9 +105,9 @@
 //   }, [initial]);
 
 //   const getCharCountColor = (current: number, max: number) => {
-//     if (current >= max) return "text-red-500";
-//     if (current >= max * 0.9) return "text-yellow-500";
-//     return "text-gray-500";
+//     if (current >= max) return "text-status-error";
+//     if (current >= max * 0.9) return "text-brand-gold";
+//     return "text-ink-caption";
 //   };
 
 //   const setField = (k: keyof FormData, v: any) => {
@@ -141,7 +141,7 @@
 
 //   return (
 //     <div
-//       className="p-6 bg-white border-2 border-orange-300 border-dashed rounded-2xl dark:bg-gray-900 dark:border-orange-600"
+//       className="p-6 bg-surface-card border-2 border-status-warning/40 border-dashed rounded-2xl dark:bg-gray-900 dark:border-orange-600"
 //       onMouseDown={(e) => e.stopPropagation()}
 //       onPointerDown={(e) => e.stopPropagation()}
 //     >
@@ -154,7 +154,7 @@
 //             value={local.title}
 //             onChange={(e) => setField("title", e.target.value)}
 //             maxLength={CHAR_LIMITS.title}
-//             className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+//             className="w-full p-3 border border-ink-light rounded-lg bg-ink-offwhite dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-status-warning focus:border-transparent focus:outline-none"
 //           />
 //           <div
 //             className={`text-sm text-right ${getCharCountColor(
@@ -173,7 +173,7 @@
 //             onChange={(e) => setField("shortDescription", e.target.value)}
 //             maxLength={CHAR_LIMITS.shortDescription}
 //             rows={2}
-//             className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+//             className="w-full p-3 border border-ink-light rounded-lg resize-none bg-ink-offwhite dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-status-warning focus:border-transparent focus:outline-none"
 //           />
 //           <div
 //             className={`text-sm text-right ${getCharCountColor(
@@ -192,7 +192,7 @@
 //             onChange={(e) => setField("fullDescription", e.target.value)}
 //             maxLength={CHAR_LIMITS.fullDescription}
 //             rows={3}
-//             className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+//             className="w-full p-3 border border-ink-light rounded-lg resize-none bg-ink-offwhite dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-status-warning focus:border-transparent focus:outline-none"
 //           />
 //           <div
 //             className={`text-sm text-right ${getCharCountColor(
@@ -206,13 +206,13 @@
 
 //         <div>
 //           <div className="flex items-center justify-between mb-2">
-//             <label className="font-medium text-gray-700 dark:text-gray-300">
+//             <label className="font-medium text-ink-paragraph dark:text-gray-300">
 //               Features :
 //             </label>
 //             <button
 //               type="button"
 //               onClick={addFeature}
-//               className="flex items-center px-3 py-1 space-x-1 text-sm text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
+//               className="flex items-center px-3 py-1 space-x-1 text-sm text-white transition-colors bg-status-info rounded-lg hover:bg-status-info"
 //             >
 //               <Plus className="w-4 h-4" />
 //               <span>Add</span>
@@ -229,13 +229,13 @@
 //                     value={f}
 //                     onChange={(e) => updateFeature(idx, e.target.value)}
 //                     maxLength={CHAR_LIMITS.feature}
-//                     className="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+//                     className="flex-1 p-2 border border-ink-light rounded-lg bg-ink-offwhite dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-status-warning focus:border-transparent focus:outline-none"
 //                   />
 //                   {local.features.length > 1 && (
 //                     <button
 //                       type="button"
 //                       onClick={() => removeFeature(idx)}
-//                       className="p-2 text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+//                       className="p-2 text-status-error transition-colors rounded-lg hover:bg-status-error/10 dark:hover:bg-red-900/20"
 //                     >
 //                       <X className="w-4 h-4" />
 //                     </button>
@@ -257,14 +257,14 @@
 //         <div className="flex gap-2">
 //           <button
 //             onClick={handleSave}
-//             className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-green-500 rounded-lg hover:bg-green-600"
+//             className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-status-success rounded-lg hover:bg-status-success"
 //           >
 //             <Save className="w-4 h-4" />
 //             <span>Save</span>
 //           </button>
 //           <button
 //             onClick={onCancel}
-//             className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-gray-500 rounded-lg hover:bg-gray-600"
+//             className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-ink-caption rounded-lg hover:bg-ink-paragraph"
 //           >
 //             <X className="w-4 h-4" />
 //             <span>Cancel</span>
@@ -300,7 +300,7 @@
 //           typeof s.id === "number" ? Math.floor(s.id) : parseInt(String(s.id)),
 //         features: Array.isArray(s.features) ? s.features : [],
 //         icon: s.icon || "Code",
-//         color: s.color || "from-blue-500 to-cyan-500",
+//         color: s.color || "from-status-info to-status-info",
 //       }));
 
 //       setServiceContent({
@@ -313,9 +313,9 @@
 //   }, [content]);
 
 //   const getCharCountColor = (current: number, max: number) => {
-//     if (current >= max) return "text-red-500";
-//     if (current >= max * 0.9) return "text-yellow-500";
-//     return "text-gray-500";
+//     if (current >= max) return "text-status-error";
+//     if (current >= max * 0.9) return "text-brand-gold";
+//     return "text-ink-caption";
 //   };
 
 //   const handleContentChange = (field: keyof ServiceContent, value: string) => {
@@ -393,7 +393,7 @@
 //   };
 
 //   return (
-//     <section id="services" className="py-20 text-justify bg-gray-50 dark:bg-gray-800">
+//     <section id="services" className="py-20 text-justify bg-ink-offwhite dark:bg-gray-800">
 //       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
 //         {/* Edit Mode Toggle */}
 //         <div className="absolute top-0 right-0">
@@ -401,7 +401,7 @@
 //             <div className="flex items-center gap-2">
 //               <button
 //                 onClick={handleSaveSection}
-//                 className="p-3 rounded-full bg-green-500"
+//                 className="p-3 rounded-full bg-status-success"
 //               >
 //                 <SaveAll className="w-6 h-6" />
 //               </button>
@@ -410,7 +410,7 @@
 //                   toast.success("Cancel Update");
 //                   setIsEditMode(false);
 //                 }}
-//                 className="p-3 rounded-full bg-red-500"
+//                 className="p-3 rounded-full bg-status-error"
 //               >
 //                 <X className="w-6 h-6" />
 //               </button>
@@ -418,7 +418,7 @@
 //           ) : (
 //             <button
 //               onClick={() => setIsEditMode(true)}
-//               className="p-3 rounded-full bg-gray-200 dark:bg-gray-500"
+//               className="p-3 rounded-full bg-ink-light dark:bg-gray-500"
 //             >
 //               <Edit className="w-6 h-6" />
 //             </button>
@@ -447,7 +447,7 @@
 //                     handleContentChange("heading", e.target.value)
 //                   }
 //                   maxLength={CHAR_LIMITS.heading}
-//                   className="w-full max-w-lg p-2 mx-auto text-4xl font-bold text-gray-900 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                   className="w-full max-w-lg p-2 mx-auto text-4xl font-bold text-ink bg-ink-light border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                   placeholder="Section heading"
 //                 />
 //                 <div
@@ -466,7 +466,7 @@
 //                     handleContentChange("description", e.target.value)
 //                   }
 //                   maxLength={CHAR_LIMITS.description}
-//                   className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                   className="w-full max-w-3xl p-2 mx-auto text-xl text-ink-paragraph bg-ink-light border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                   rows={2}
 //                   placeholder="Section description"
 //                 />
@@ -482,13 +482,13 @@
 //             </div>
 //           ) : (
 //             <>
-//               <h2 className="mb-4 text-4xl font-bold text-gray-900 lg:text-5xl dark:text-white">
+//               <h2 className="mb-4 text-4xl font-bold text-ink lg:text-5xl dark:text-white">
 //                 {serviceContent.heading.split(" ")[0]}{" "}
-//                 <span className="text-orange-400">
+//                 <span className="text-status-warning">
 //                   {serviceContent.heading.split(" ").slice(1).join(" ")}
 //                 </span>
 //               </h2>
-//               <p className=" max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+//               <p className=" max-w-3xl mx-auto text-xl text-ink-paragraph dark:text-gray-400">
 //                 {serviceContent.description}
 //               </p>
 //             </>
@@ -503,7 +503,7 @@
 //                 setIsAddingNew(true);
 //                 setEditingId(null);
 //               }}
-//               className="inline-flex items-center gap-2 px-6 py-3 text-white transition-colors bg-orange-500 rounded-lg shadow-lg hover:bg-orange-600"
+//               className="inline-flex items-center gap-2 px-6 py-3 text-white transition-colors bg-status-warning rounded-lg shadow-lg hover:bg-status-warning"
 //             >
 //               <Plus className="w-5 h-5" />
 //               <span>Add New Service</span>
@@ -541,13 +541,13 @@
 //         {/* Services Grid or Empty State */}
 //         {serviceContent.services.length === 0 ? (
 //           <div className="py-20 text-center">
-//             <p className="mb-4 text-lg text-gray-500 dark:text-gray-400">
+//             <p className="mb-4 text-lg text-ink-caption dark:text-gray-400">
 //               No services available yet.
 //             </p>
 //             {isEditMode && (
 //               <button
 //                 onClick={() => setIsAddingNew(true)}
-//                 className="px-6 py-2 text-white transition-colors bg-orange-500 rounded-lg hover:bg-orange-600"
+//                 className="px-6 py-2 text-white transition-colors bg-status-warning rounded-lg hover:bg-status-warning"
 //               >
 //                 Add Your First Service
 //               </button>
@@ -581,20 +581,20 @@
 //                         ? undefined
 //                         : () => setHoveredService(null)
 //                     }
-//                     className="relative p-8 transition-all duration-300 bg-white border border-gray-100 shadow-xl rounded-2xl group dark:bg-gray-900 hover:shadow-2xl dark:border-gray-800"
+//                     className="relative p-8 transition-all duration-300 bg-surface-card border border-ink-light shadow-xl rounded-2xl group dark:bg-gray-900 hover:shadow-2xl dark:border-gray-800"
 //                   >
 //                     {/* Edit Controls */}
 //                     {isEditMode && !isCardEditing && (
 //                       <div className="absolute z-20 flex gap-2 top-3 right-3">
 //                         <button
 //                           onClick={() => setEditingId(service.id)}
-//                           className="p-2 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
+//                           className="p-2 text-white transition-colors bg-status-info rounded-lg hover:bg-status-info"
 //                         >
 //                           <Edit3 className="w-4 h-4" />
 //                         </button>
 //                         <button
 //                           onClick={() => handleDeleteService(service.id)}
-//                           className="p-2 text-white transition-colors bg-red-500 rounded-lg hover:bg-red-600"
+//                           className="p-2 text-white transition-colors bg-status-error rounded-lg hover:bg-status-error"
 //                         >
 //                           <Trash2 className="w-4 h-4" />
 //                         </button>
@@ -624,20 +624,20 @@
 //                             service.color
 //                           } mb-6 ${
 //                             isEditMode ? "" : "group-hover:scale-110"
-//                           } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
+//                           } transition-transform duration-300 bg-brand-gold text-xl font-extrabold`}
 //                         >
 //                           <span className="uppercase text-white">
 //                             {service.title[0]}
 //                           </span>
 //                         </div>
 
-//                         <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+//                         <h3 className="mb-3 text-2xl font-bold text-ink dark:text-white">
 //                           {service.title}
 //                         </h3>
 
 //                         <motion.p
 //                           layout
-//                           className="mb-6 leading-relaxed text-gray-600 transition-all duration-300 dark:text-gray-400"
+//                           className="mb-6 leading-relaxed text-ink-paragraph transition-all duration-300 dark:text-gray-400"
 //                         >
 //                           {hoveredService === service.id
 //                             ? service.fullDescription
@@ -660,9 +660,9 @@
 //                                     ? idx * 0.06
 //                                     : 0,
 //                               }}
-//                               className="flex items-center text-sm text-gray-600 dark:text-gray-400"
+//                               className="flex items-center text-sm text-ink-paragraph dark:text-gray-400"
 //                             >
-//                               <Check className="flex-shrink-0 w-4 h-4 mr-2 text-green-500" />
+//                               <Check className="flex-shrink-0 w-4 h-4 mr-2 text-status-success" />
 //                               {feature}
 //                             </motion.li>
 //                           ))}
@@ -672,7 +672,7 @@
 //                           href="#contact"
 //                           whileHover={isEditMode ? undefined : { scale: 1.05 }}
 //                           whileTap={isEditMode ? undefined : { scale: 0.95 }}
-//                           className={`w-full bg-orange-400 ${
+//                           className={`w-full bg-status-warning ${
 //                             service.color
 //                           } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
 //                             isEditMode ? "" : "group-hover:shadow-lg"
@@ -806,9 +806,9 @@ const ServiceForm: React.FC<{
   }, [initial]);
 
   const getCharCountColor = (current: number, max: number) => {
-    if (current >= max) return "text-red-500";
-    if (current >= max * 0.9) return "text-yellow-500";
-    return "text-gray-500";
+    if (current >= max) return "text-status-error";
+    if (current >= max * 0.9) return "text-brand-gold";
+    return "text-ink-caption";
   };
 
   const setField = (k: keyof FormData, v: any) => {
@@ -842,7 +842,7 @@ const ServiceForm: React.FC<{
 
   return (
     <div
-      className="p-6 bg-white border-2 border-orange-300 border-dashed rounded-2xl dark:bg-gray-900 dark:border-orange-600"
+      className="p-6 bg-surface-card border-2 border-status-warning/40 border-dashed rounded-2xl dark:bg-gray-900 dark:border-orange-600"
       onMouseDown={(e) => e.stopPropagation()}
       onPointerDown={(e) => e.stopPropagation()}
     >
@@ -855,7 +855,7 @@ const ServiceForm: React.FC<{
             value={local.title}
             onChange={(e) => setField("title", e.target.value)}
             maxLength={CHAR_LIMITS.title}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+            className="w-full p-3 border border-ink-light rounded-lg bg-ink-offwhite dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-status-warning focus:border-transparent focus:outline-none"
           />
           <div
             className={`text-sm text-right ${getCharCountColor(
@@ -874,7 +874,7 @@ const ServiceForm: React.FC<{
             onChange={(e) => setField("shortDescription", e.target.value)}
             maxLength={CHAR_LIMITS.shortDescription}
             rows={2}
-            className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+            className="w-full p-3 border border-ink-light rounded-lg resize-none bg-ink-offwhite dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-status-warning focus:border-transparent focus:outline-none"
           />
           <div
             className={`text-sm text-right ${getCharCountColor(
@@ -893,7 +893,7 @@ const ServiceForm: React.FC<{
             onChange={(e) => setField("fullDescription", e.target.value)}
             maxLength={CHAR_LIMITS.fullDescription}
             rows={3}
-            className="w-full p-3 border border-gray-300 rounded-lg resize-none bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+            className="w-full p-3 border border-ink-light rounded-lg resize-none bg-ink-offwhite dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-status-warning focus:border-transparent focus:outline-none"
           />
           <div
             className={`text-sm text-right ${getCharCountColor(
@@ -907,13 +907,13 @@ const ServiceForm: React.FC<{
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="font-medium text-gray-700 dark:text-gray-300">
+            <label className="font-medium text-ink-paragraph dark:text-gray-300">
               Features :
             </label>
             <button
               type="button"
               onClick={addFeature}
-              className="flex items-center px-3 py-1 space-x-1 text-sm text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
+              className="flex items-center px-3 py-1 space-x-1 text-sm text-white transition-colors bg-status-info rounded-lg hover:bg-status-info"
             >
               <Plus className="w-4 h-4" />
               <span>Add</span>
@@ -930,13 +930,13 @@ const ServiceForm: React.FC<{
                     value={f}
                     onChange={(e) => updateFeature(idx, e.target.value)}
                     maxLength={CHAR_LIMITS.feature}
-                    className="flex-1 p-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:outline-none"
+                    className="flex-1 p-2 border border-ink-light rounded-lg bg-ink-offwhite dark:bg-gray-800 dark:border-gray-600 focus:ring-2 focus:ring-status-warning focus:border-transparent focus:outline-none"
                   />
                   {local.features.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeFeature(idx)}
-                      className="p-2 text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                      className="p-2 text-status-error transition-colors rounded-lg hover:bg-status-error/10 dark:hover:bg-red-900/20"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -958,14 +958,14 @@ const ServiceForm: React.FC<{
         <div className="flex gap-2">
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-green-500 rounded-lg hover:bg-green-600"
+            className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-status-success rounded-lg hover:bg-status-success"
           >
             <Save className="w-4 h-4" />
             <span>Save</span>
           </button>
           <button
             onClick={onCancel}
-            className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-gray-500 rounded-lg hover:bg-gray-600"
+            className="flex items-center gap-2 px-4 py-2 text-white transition-colors bg-ink-caption rounded-lg hover:bg-ink-paragraph"
           >
             <X className="w-4 h-4" />
             <span>Cancel</span>
@@ -1024,7 +1024,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
           typeof s.id === "number" ? Math.floor(s.id) : parseInt(String(s.id)),
         features: Array.isArray(s.features) ? s.features : [],
         icon: s.icon || "Code",
-        color: s.color || "from-blue-500 to-cyan-500",
+        color: s.color || "from-status-info to-status-info",
       }));
 
       setServiceContent({
@@ -1090,9 +1090,9 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
   }, [serviceContent, hasUnsavedChanges, onSave]);
 
   const getCharCountColor = (current: number, max: number) => {
-    if (current >= max) return "text-red-500";
-    if (current >= max * 0.9) return "text-yellow-500";
-    return "text-gray-500";
+    if (current >= max) return "text-status-error";
+    if (current >= max * 0.9) return "text-brand-gold";
+    return "text-ink-caption";
   };
 
   const handleContentChange = (field: keyof ServiceContent, value: string) => {
@@ -1179,7 +1179,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
           typeof s.id === "number" ? Math.floor(s.id) : parseInt(String(s.id)),
         features: Array.isArray(s.features) ? s.features : [],
         icon: s.icon || "Code",
-        color: s.color || "from-blue-500 to-cyan-500",
+        color: s.color || "from-status-info to-status-info",
       }));
 
       setServiceContent({
@@ -1219,7 +1219,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
   return (
     <section
       id="services"
-      className="py-20 text-justify bg-gray-50 dark:bg-gray-800"
+      className="py-20 text-justify bg-ink-offwhite dark:bg-gray-800"
     >
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Edit Mode Toggle */}
@@ -1227,7 +1227,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
           {isEditMode ? (
             <>
               {/* Auto-save indicator */}
-              <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
+              <div className="flex items-center gap-2 mr-2 text-sm text-ink-caption dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
                 {isAutoSaving ? (
                   <div className="flex items-center gap-1">
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -1235,12 +1235,12 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                   </div>
                 ) : hasUnsavedChanges ? (
                   <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
                     <span>Unsaved changes</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-status-success rounded-full"></div>
                     <span>Saved {formatLastSavedTime()}</span>
                   </div>
                 )}
@@ -1248,14 +1248,14 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
 
               <button
                 onClick={handleSaveSection}
-                className="p-3 text-white transition-colors bg-green-500 rounded-full hover:bg-green-600"
+                className="p-3 text-white transition-colors bg-status-success rounded-full hover:bg-status-success"
                 title="Save All Changes"
               >
                 <SaveAll className="w-6 h-6" />
               </button>
               <button
                 onClick={handleCancelEditMode}
-                className="p-3 text-white transition-colors bg-red-500 rounded-full hover:bg-red-600"
+                className="p-3 text-white transition-colors bg-status-error rounded-full hover:bg-status-error"
                 title="Cancel Editing"
               >
                 <X className="w-6 h-6" />
@@ -1264,10 +1264,10 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
           ) : (
             <button
               onClick={handleEditStart}
-              className="p-3 transition-colors bg-gray-200 rounded-full dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+              className="p-3 transition-colors bg-ink-light rounded-full dark:bg-gray-700 hover:bg-ink-light dark:hover:bg-gray-600"
               title="Edit Services"
             >
-              <Edit className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+              <Edit className="w-6 h-6 text-ink-paragraph dark:text-gray-300" />
             </button>
           )}
         </div>
@@ -1294,7 +1294,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                     handleContentChange("heading", e.target.value)
                   }
                   maxLength={CHAR_LIMITS.heading}
-                  className="w-full max-w-lg p-2 mx-auto text-4xl font-bold text-gray-900 bg-gray-100 border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  className="w-full max-w-lg p-2 mx-auto text-4xl font-bold text-ink bg-ink-light border-2 rounded-lg lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                   placeholder="Section heading"
                 />
                 <div
@@ -1313,7 +1313,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                     handleContentChange("description", e.target.value)
                   }
                   maxLength={CHAR_LIMITS.description}
-                  className="w-full max-w-3xl p-2 mx-auto text-xl text-gray-600 bg-gray-100 border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  className="w-full max-w-3xl p-2 mx-auto text-xl text-ink-paragraph bg-ink-light border-2 rounded-lg resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                   rows={2}
                   placeholder="Section description"
                 />
@@ -1329,13 +1329,13 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
             </div>
           ) : (
             <>
-              <h2 className="mb-4 text-4xl font-bold text-gray-900 lg:text-5xl dark:text-white">
+              <h2 className="mb-4 text-4xl font-bold text-ink lg:text-5xl dark:text-white">
                 {serviceContent.heading.split(" ")[0]}{" "}
-                <span className="text-orange-400">
+                <span className="text-status-warning">
                   {serviceContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
-              <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+              <p className="max-w-3xl mx-auto text-xl text-ink-paragraph dark:text-gray-400">
                 {serviceContent.description}
               </p>
             </>
@@ -1350,7 +1350,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                 setIsAddingNew(true);
                 setEditingId(null);
               }}
-              className="inline-flex items-center gap-2 px-6 py-3 text-white transition-colors bg-orange-500 rounded-lg shadow-lg hover:bg-orange-600"
+              className="inline-flex items-center gap-2 px-6 py-3 text-white transition-colors bg-status-warning rounded-lg shadow-lg hover:bg-status-warning"
             >
               <Plus className="w-5 h-5" />
               <span>Add New Service</span>
@@ -1388,13 +1388,13 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
         {/* Services Grid or Empty State */}
         {serviceContent.services.length === 0 ? (
           <div className="py-20 text-center">
-            <p className="mb-4 text-lg text-gray-500 dark:text-gray-400">
+            <p className="mb-4 text-lg text-ink-caption dark:text-gray-400">
               No services available yet.
             </p>
             {isEditMode && (
               <button
                 onClick={() => setIsAddingNew(true)}
-                className="px-6 py-2 text-white transition-colors bg-orange-500 rounded-lg hover:bg-orange-600"
+                className="px-6 py-2 text-white transition-colors bg-status-warning rounded-lg hover:bg-status-warning"
               >
                 Add Your First Service
               </button>
@@ -1428,20 +1428,20 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                         ? undefined
                         : () => setHoveredService(null)
                     }
-                    className="relative p-8 transition-all duration-300 bg-white border border-gray-100 shadow-xl rounded-2xl group dark:bg-gray-900 hover:shadow-2xl dark:border-gray-800"
+                    className="relative p-8 transition-all duration-300 bg-surface-card border border-ink-light shadow-xl rounded-2xl group dark:bg-gray-900 hover:shadow-2xl dark:border-gray-800"
                   >
                     {/* Edit Controls */}
                     {isEditMode && !isCardEditing && (
                       <div className="absolute z-20 flex gap-2 top-3 right-3">
                         <button
                           onClick={() => setEditingId(service.id)}
-                          className="p-2 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
+                          className="p-2 text-white transition-colors bg-status-info rounded-lg hover:bg-status-info"
                         >
                           <Edit3 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteService(service.id)}
-                          className="p-2 text-white transition-colors bg-red-500 rounded-lg hover:bg-red-600"
+                          className="p-2 text-white transition-colors bg-status-error rounded-lg hover:bg-status-error"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -1471,20 +1471,20 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                             service.color
                           } mb-6 ${
                             isEditMode ? "" : "group-hover:scale-110"
-                          } transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
+                          } transition-transform duration-300 bg-brand-gold text-xl font-extrabold`}
                         >
                           <span className="uppercase text-white">
                             {service.title[0]}
                           </span>
                         </div>
 
-                        <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+                        <h3 className="mb-3 text-2xl font-bold text-ink dark:text-white">
                           {service.title}
                         </h3>
 
                         <motion.p
                           layout
-                          className="mb-6 leading-relaxed text-gray-600 transition-all duration-300 dark:text-gray-400"
+                          className="mb-6 leading-relaxed text-ink-paragraph transition-all duration-300 dark:text-gray-400"
                         >
                           {hoveredService === service.id
                             ? service.fullDescription
@@ -1507,9 +1507,9 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                                     ? idx * 0.06
                                     : 0,
                               }}
-                              className="flex items-center text-sm text-gray-600 dark:text-gray-400"
+                              className="flex items-center text-sm text-ink-paragraph dark:text-gray-400"
                             >
-                              <Check className="flex-shrink-0 w-4 h-4 mr-2 text-green-500" />
+                              <Check className="flex-shrink-0 w-4 h-4 mr-2 text-status-success" />
                               {feature}
                             </motion.li>
                           ))}
@@ -1519,7 +1519,7 @@ const Service: React.FC<ServiceProps> = ({ content, onSave }) => {
                           href="#contact"
                           whileHover={isEditMode ? undefined : { scale: 1.05 }}
                           whileTap={isEditMode ? undefined : { scale: 0.95 }}
-                          className={`w-full bg-orange-400 ${
+                          className={`w-full bg-status-warning ${
                             service.color
                           } text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${
                             isEditMode ? "" : "group-hover:shadow-lg"

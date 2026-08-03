@@ -92,25 +92,25 @@ const defaultContactData: ContactData = {
       icon: "Github",
       label: "GitHub",
       href: "#",
-      color: "hover:text-gray-900",
+      color: "hover:text-ink",
     },
     {
       icon: "Linkedin",
       label: "LinkedIn",
       href: "#",
-      color: "hover:text-blue-600",
+      color: "hover:text-status-info",
     },
     {
       icon: "Twitter",
       label: "Twitter",
       href: "#",
-      color: "hover:text-blue-400",
+      color: "hover:text-status-info",
     },
     {
       icon: "Instagram",
       label: "Instagram",
       href: "#",
-      color: "hover:text-pink-500",
+      color: "hover:text-status-error",
     },
   ],
   form: {
@@ -365,10 +365,10 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
     return (
       <section
         id="contact"
-        className="py-20 bg-yellow-50 dark:bg-yellow-900/20"
+        className="py-20 bg-surface-main dark:bg-yellow-900/20"
       >
         <div className="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
-          <Loader2 className="w-8 h-8 mx-auto text-yellow-500 animate-spin" />
+          <Loader2 className="w-8 h-8 mx-auto text-brand-gold animate-spin" />
           <p className="mt-4 text-muted-foreground">
             Loading contact section...
           </p>
@@ -380,7 +380,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
   return (
     <section
       id="contact"
-      className="relative py-20 bg-yellow-50 dark:bg-yellow-900/20"
+      className="relative py-20 bg-surface-main dark:bg-yellow-900/20"
     >
 
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -397,14 +397,14 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                 type="text"
                 value={displayData.subtitle}
                 onChange={(e) => updateTextContent("subtitle", e.target.value)}
-                className="w-full px-4 py-2 text-lg tracking-wider uppercase border-2 border-blue-300 border-dashed rounded text-muted-foreground bg-white/80 focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 text-lg tracking-wider uppercase border-2 border-status-info/40 border-dashed rounded text-muted-foreground bg-white/80 focus:border-status-info focus:outline-none"
                 placeholder="Subtitle"
               />
               <input
                 type="text"
                 value={displayData.heading}
                 onChange={(e) => updateTextContent("heading", e.target.value)}
-                className="w-full px-4 py-2 text-3xl text-center border-2 border-blue-300 border-dashed rounded sm:text-4xl text-foreground bg-white/80 focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 text-3xl text-center border-2 border-status-info/40 border-dashed rounded sm:text-4xl text-foreground bg-white/80 focus:border-status-info focus:outline-none"
                 placeholder="Main Heading"
               />
               <input
@@ -413,7 +413,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                 onChange={(e) =>
                   updateTextContent("description", e.target.value)
                 }
-                className="w-full px-4 py-2 text-lg border-2 border-blue-300 border-dashed rounded text-muted-foreground bg-white/80 focus:border-blue-500 focus:outline-none"
+                className="w-full px-4 py-2 text-lg border-2 border-status-info/40 border-dashed rounded text-muted-foreground bg-white/80 focus:border-status-info focus:outline-none"
                 placeholder="Description"
               />
             </div>
@@ -459,7 +459,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                   >
                     {field.label}
                     {field.required && (
-                      <span className="ml-1 text-red-500">*</span>
+                      <span className="ml-1 text-status-error">*</span>
                     )}
                   </label>
 
@@ -473,7 +473,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                         handleFormChange(field.name, e.target.value)
                       }
                       rows={field.rows || 4}
-                      className="w-full px-4 py-3 transition-all duration-300 border rounded-lg resize-none border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[120px]"
+                      className="w-full px-4 py-3 transition-all duration-300 border rounded-lg resize-none border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[120px]"
                       placeholder={fieldPlaceholders[field.name] || field.label}
                       required={field.required}
                       disabled={isEditing}
@@ -486,7 +486,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                       onChange={(e) =>
                         handleFormChange(field.name, e.target.value)
                       }
-                      className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
+                      className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
                       required={field.required}
                       disabled={isEditing}
                     >
@@ -506,7 +506,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                       onChange={(e) =>
                         handleFormChange(field.name, e.target.value)
                       }
-                      className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
+                      className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
                       placeholder={fieldPlaceholders[field.name] || field.label}
                       required={field.required}
                       disabled={isEditing}
@@ -544,7 +544,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                     onChange={(e) =>
                       updateFormSetting("successMessage", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-blue-300 border-dashed rounded bg-white/80 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-status-info/40 border-dashed rounded bg-white/80 focus:border-status-info focus:outline-none"
                     placeholder="Success Message"
                   />
                   <input
@@ -553,7 +553,7 @@ export function Contact({ contactData, onStateChange }: ContactProps) {
                     onChange={(e) =>
                       updateFormSetting("errorMessage", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-blue-300 border-dashed rounded bg-white/80 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-status-info/40 border-dashed rounded bg-white/80 focus:border-status-info focus:outline-none"
                     placeholder="Error Message"
                   />
                 </div>

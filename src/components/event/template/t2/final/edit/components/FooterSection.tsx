@@ -37,8 +37,8 @@ const Button = ({
     const baseClasses =
         "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
     const variants: Record<string, string> = {
-        outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-        default: "bg-blue-600 text-white hover:bg-blue-700",
+        outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+        default: "bg-status-info text-white hover:bg-status-info",
     };
     const sizes: Record<string, string> = {
         sm: "h-8 px-3 text-sm",
@@ -223,7 +223,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
         const currentLength = value?.length || 0;
         const isOverLimit = charLimit && currentLength > charLimit;
 
-        const baseClasses = "w-full bg-white border-2 border-dashed border-amber-300 rounded-lg focus:border-amber-500 focus:outline-none text-gray-900 placeholder-gray-400 px-3 py-2";
+        const baseClasses = "w-full bg-surface-card border-2 border-dashed border-brand-yellow-soft rounded-lg focus:border-brand-gold focus:outline-none text-ink placeholder-ink-caption px-3 py-2";
 
         return (
             <div className="relative">
@@ -231,7 +231,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                     <textarea
                         value={value || ''}
                         onChange={handleChange}
-                        className={`${baseClasses} resize-none ${className} ${isOverLimit ? 'border-red-400' : ''
+                        className={`${baseClasses} resize-none ${className} ${isOverLimit ? 'border-status-error' : ''
                             }`}
                         placeholder={placeholder}
                         rows={rows}
@@ -241,13 +241,13 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                         type="text"
                         value={value || ''}
                         onChange={handleChange}
-                        className={`${baseClasses} ${className} ${isOverLimit ? 'border-red-400' : ''
+                        className={`${baseClasses} ${className} ${isOverLimit ? 'border-status-error' : ''
                             }`}
                         placeholder={placeholder}
                     />
                 )}
                 {charLimit && (
-                    <div className={`absolute -bottom-6 right-0 text-xs ${isOverLimit ? 'text-red-400' : 'text-gray-400'
+                    <div className={`absolute -bottom-6 right-0 text-xs ${isOverLimit ? 'text-status-error' : 'text-ink-caption'
                         }`}>
                         {currentLength}/{charLimit}
                     </div>
@@ -436,17 +436,17 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
     // Loading state
     if (isLoading) {
         return (
-            <footer ref={footerRef} className="py-12 bg-amber-50 border-t border-amber-200">
+            <footer ref={footerRef} className="py-12 bg-surface-main border-t border-brand-yellow-soft">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-                    <p className="text-gray-600 mt-4">Loading footer data...</p>
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
+                    <p className="text-ink-paragraph mt-4">Loading footer data...</p>
                 </div>
             </footer>
         );
     }
 
     return (
-        <footer ref={footerRef} className="bg-amber-50 border-t border-amber-200">
+        <footer ref={footerRef} className="bg-surface-main border-t border-brand-yellow-soft">
             {/* Edit Controls */}
             <div className='container mx-auto px-4 sm:px-6 pt-6'>
                 <div className='max-w-6xl mx-auto text-right'>
@@ -454,7 +454,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                         <Button
                             onClick={handleEdit}
                             size='sm'
-                            className='bg-red-500 hover:bg-red-600 shadow-md text-gray-900'
+                            className='bg-status-error hover:bg-status-error shadow-md text-ink'
                         >
                             <Edit2 className='w-4 h-4 mr-2' />
                             Edit Footer
@@ -464,7 +464,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                             <Button
                                 onClick={handleSave}
                                 size='sm'
-                                className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+                                className='bg-status-success hover:bg-status-success text-white shadow-md'
                                 disabled={isSaving}
                             >
                                 {isSaving ? (
@@ -477,7 +477,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                             <Button
                                 onClick={handleCancel}
                                 size='sm'
-                                className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+                                className='bg-status-error hover:bg-status-error shadow-md text-white'
                                 disabled={isSaving}
                             >
                                 <X className='w-4 h-4 mr-2' />
@@ -501,7 +501,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                             className="lg:col-span-1"
                         >
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
+                                <div className="w-10 h-10 bg-brand-yellow rounded-lg flex items-center justify-center">
                                     <span className="text-white font-semibold text-lg uppercase">{displayData.logoText.charAt(0)}</span>
                                 </div>
                                 {isEditing ? (
@@ -513,7 +513,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                                         placeholder="Logo Text"
                                     />
                                 ) : (
-                                    <span className="text-gray-900 text-xl font-semibold">{displayData.logoText}</span>
+                                    <span className="text-ink text-xl font-semibold">{displayData.logoText}</span>
                                 )}
                             </div>
 
@@ -528,7 +528,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                                     rows={3}
                                 />
                             ) : (
-                                <p className="text-gray-600 text-sm mb-4">
+                                <p className="text-ink-paragraph text-sm mb-4">
                                     {displayData.description}
                                 </p>
                             )}
@@ -537,8 +537,8 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                                 {defaultFooterData.contactInfo.map((item, index) => {
                                     const Icon = getIconComponent(item.icon);
                                     return (
-                                        <div key={index} className="flex items-center gap-3 text-sm text-gray-600">
-                                            <Icon className="w-4 h-4 text-yellow-500" />
+                                        <div key={index} className="flex items-center gap-3 text-sm text-ink-paragraph">
+                                            <Icon className="w-4 h-4 text-brand-gold" />
                                             {isEditing ? (
                                                 <div className="flex gap-2 flex-1">
                                                     <FooterEditableText
@@ -552,14 +552,14 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                                                         onClick={() => removeContactInfo(index)}
                                                         size="sm"
                                                         variant="outline"
-                                                        className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+                                                        className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
                                                     >
                                                         <X className="w-3 h-3" />
                                                     </Button>
                                                 </div>
                                             ) : (
                                                 item.href ? (
-                                                    <a href={item.href} className="hover:text-yellow-600 transition-colors">
+                                                    <a href={item.href} className="hover:text-brand-yellow transition-colors">
                                                         {item.text}
                                                     </a>
                                                 ) : (
@@ -580,13 +580,13 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                             viewport={{ once: true }}
                             className="lg:col-span-1 ml-40"
                         >
-                            <h3 className="text-gray-900 font-semibold text-lg  mb-4">Quick Links</h3>
+                            <h3 className="text-ink font-semibold text-lg  mb-4">Quick Links</h3>
                                 <ul className="space-y-3">
                                     {defaultFooterData.quickLinks.map((link) => (
                                         <li key={link.id}>
                                             <a
                                                 href={link.href}
-                                                className="text-gray-600 hover:text-yellow-600 transition-colors text-sm"
+                                                className="text-ink-paragraph hover:text-brand-yellow transition-colors text-sm"
                                             >
                                                 {link.label}
                                             </a>
@@ -604,13 +604,13 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                             viewport={{ once: true }}
                             className="lg:col-span-1 ml-40"
                         >
-                            <h3 className="text-gray-900 font-semibold text-lg mb-4">More Links</h3>
+                            <h3 className="text-ink font-semibold text-lg mb-4">More Links</h3>
                                 <ul className="space-y-3">
                                     {defaultFooterData.moreLinks.map((link) => (
                                         <li key={link.id}>
                                             <a
                                                 href={link.href}
-                                                className="text-gray-600 hover:text-yellow-600 transition-colors text-sm"
+                                                className="text-ink-paragraph hover:text-brand-yellow transition-colors text-sm"
                                             >
                                                 {link.label}
                                             </a>

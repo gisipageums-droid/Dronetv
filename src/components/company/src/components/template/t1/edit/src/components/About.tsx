@@ -19,8 +19,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -781,7 +781,7 @@ const handleAutoSave = async () => {
       };
 
       const baseClasses =
-        "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none transition-colors duration-200";
+        "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none transition-colors duration-200";
 
       return (
         <div className="relative">
@@ -805,7 +805,7 @@ const handleAutoSave = async () => {
             />
           )}
           {maxLength && (
-            <div className="text-right text-xs text-gray-500 mt-1">
+            <div className="text-right text-xs text-ink-caption mt-1">
               {value.length}/{maxLength}
             </div>
           )}
@@ -822,27 +822,27 @@ const handleAutoSave = async () => {
       {cropModalOpen && (
         <motion.div
 
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Office Image
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop}
@@ -874,10 +874,10 @@ const handleAutoSave = async () => {
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
@@ -885,8 +885,8 @@ const handleAutoSave = async () => {
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                     }`}
                   >
                     1:1 (Square)
@@ -895,8 +895,8 @@ const handleAutoSave = async () => {
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                     }`}
                   >
                     4:3 (Standard)
@@ -905,8 +905,8 @@ const handleAutoSave = async () => {
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                     }`}
                   >
                     16:9 (Widescreen)
@@ -917,8 +917,8 @@ const handleAutoSave = async () => {
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
@@ -926,7 +926,7 @@ const handleAutoSave = async () => {
                     onClick={() =>
                       setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))
                     }
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -937,21 +937,21 @@ const handleAutoSave = async () => {
                     max={4}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     onClick={() =>
                       setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))
                     }
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     +
                   </button>
                   <button
                     type="button"
                     onClick={() => setZoom(1)}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     1x
                   </button>
@@ -962,19 +962,19 @@ const handleAutoSave = async () => {
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium"
                 >
                   Apply Crop
                 </button>
@@ -987,28 +987,28 @@ const handleAutoSave = async () => {
       <section
         id="about"
         ref={sectionRef}
-        className="py-20 bg-gradient-to-b from-blue-50 to-white scroll-mt-20 relative"
+        className="py-20 bg-gradient-to-b from-status-info/10 to-white scroll-mt-20 relative"
       >
         {/* Loading Overlay */}
         {isLoading && (
-          <div className="absolute inset-0 bg-blue-50/80 flex items-center justify-center z-20">
-            <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-              <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-              <span className="text-gray-700">Loading content...</span>
+          <div className="absolute inset-0 bg-status-info/80 flex items-center justify-center z-20">
+            <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3">
+              <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+              <span className="text-ink-paragraph">Loading content...</span>
             </div>
           </div>
         )}
 
         {/* Auto-save indicator */}
         {isEditing && (isSaving || isUploading) && (
-          <div className="absolute top-4 left-4 z-10 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+          <div className="absolute top-4 left-4 z-10 bg-status-info/15 text-status-info px-3 py-1 rounded-full text-sm flex items-center gap-2">
             <Loader2 className="w-3 h-3 animate-spin" />
             Auto-saving...
           </div>
         )}
 
         {isEditing && lastSaved && !isSaving && !isUploading && (
-          <div className="absolute top-4 left-4 z-10 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+          <div className="absolute top-4 left-4 z-10 bg-status-success/15 text-status-success px-3 py-1 rounded-full text-sm">
             Last saved: {lastSaved.toLocaleTimeString()}
           </div>
         )}
@@ -1021,7 +1021,7 @@ const handleAutoSave = async () => {
                 onClick={handleEdit}
                 variant="outline"
                 size="sm"
-                className="bg-white hover:bg-gray-50 shadow-md border-gray-300"
+                className="bg-surface-card hover:bg-ink-offwhite shadow-md border-ink-light"
               >
                 <Edit2 className="w-4 h-4 mr-2" />
                 Edit
@@ -1031,7 +1031,7 @@ const handleAutoSave = async () => {
                 <Button
                   onClick={handleSave}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                  className="bg-status-success hover:bg-status-success text-white shadow-md"
                   disabled={isSaving || isUploading}
                 >
                   {isUploading ? (
@@ -1051,7 +1051,7 @@ const handleAutoSave = async () => {
                   onClick={handleCancel}
                   variant="outline"
                   size="sm"
-                  className="bg-white hover:bg-gray-50 shadow-md border-gray-300"
+                  className="bg-surface-card hover:bg-ink-offwhite shadow-md border-ink-light"
                   disabled={isSaving || isUploading}
                 >
                   <X className="w-4 h-4 mr-2" />
@@ -1069,22 +1069,22 @@ const handleAutoSave = async () => {
               className="space-y-6"
             >
               <div>
-                <Badge className="bg-yellow-400 text-gray-900 mb-4">
+                <Badge className="bg-brand-yellow text-ink mb-4">
                   About Company
                 </Badge>
 
                 {/* Updated heading without companyName */}
-                <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                <h2 className="text-4xl font-bold text-ink mb-6">
                   About Us
                 </h2>
               </div>
 
               {/* Company Info Grid - Now with 3 columns (removed companyName) */}
-              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+              <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light">
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   {/* Industry */}
                   <div className="space-y-1">
-                    <p className="text-gray-500 text-xs uppercase tracking-wide">
+                    <p className="text-ink-caption text-xs uppercase tracking-wide">
                       Industry
                     </p>
                     {isEditing ? (
@@ -1096,7 +1096,7 @@ const handleAutoSave = async () => {
                         maxLength={50}
                       />
                     ) : (
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-ink">
                         {displayContent.industry}
                       </p>
                     )}
@@ -1104,7 +1104,7 @@ const handleAutoSave = async () => {
                   
                   {/* Established */}
                   <div className="space-y-1">
-                    <p className="text-gray-500 text-xs uppercase tracking-wide">
+                    <p className="text-ink-caption text-xs uppercase tracking-wide">
                       Established
                     </p>
                     {isEditing ? (
@@ -1116,7 +1116,7 @@ const handleAutoSave = async () => {
                         maxLength={50}
                       />
                     ) : (
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-ink">
                         {displayContent.established}
                       </p>
                     )}
@@ -1124,7 +1124,7 @@ const handleAutoSave = async () => {
                   
                   {/* Headquarters */}
                   <div className="space-y-1">
-                    <p className="text-gray-500 text-xs uppercase tracking-wide">
+                    <p className="text-ink-caption text-xs uppercase tracking-wide">
                       Headquarters
                     </p>
                     {isEditing ? (
@@ -1136,7 +1136,7 @@ const handleAutoSave = async () => {
                         maxLength={50}
                       />
                     ) : (
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-ink">
                         {displayContent.headquarters}
                       </p>
                     )}
@@ -1152,7 +1152,7 @@ const handleAutoSave = async () => {
                       value={displayContent.description1}
                       field="description1"
                       multiline={true}
-                      className="text-gray-600 leading-relaxed text-base"
+                      className="text-ink-paragraph leading-relaxed text-base"
                       placeholder="Company description part 1"
                       maxLength={600}
                     />
@@ -1160,17 +1160,17 @@ const handleAutoSave = async () => {
                       value={displayContent.description2}
                       field="description2"
                       multiline={true}
-                      className="text-gray-600 leading-relaxed text-base"
+                      className="text-ink-paragraph leading-relaxed text-base"
                       placeholder="Company description part 2"
                       maxLength={600}
                     />
                   </>
                 ) : (
                   <>
-                    <p className="text-gray-600 leading-relaxed text-base text-justify">
+                    <p className="text-ink-paragraph leading-relaxed text-base text-justify">
                       {displayContent.description1}
                     </p>
-                    <p className="text-gray-600 leading-relaxed text-base text-justify">
+                    <p className="text-ink-paragraph leading-relaxed text-base text-justify">
                       {displayContent.description2}
                     </p>
                   </>
@@ -1179,40 +1179,40 @@ const handleAutoSave = async () => {
 
               {/* Mission & Vision */}
               <div className="space-y-4">
-                <div className="bg-blue-100 rounded-lg p-5 border-l-4 border-blue-600">
-                  <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                    <span className="text-blue-600">🎯</span> Mission
+                <div className="bg-status-info/15 rounded-lg p-5 border-l-4 border-status-info">
+                  <h3 className="font-bold text-ink mb-2 flex items-center gap-2">
+                    <span className="text-status-info">🎯</span> Mission
                   </h3>
                   {isEditing ? (
                     <EditableText
                       value={displayContent.mission}
                       field="mission"
                       multiline={true}
-                      className="text-gray-700 text-sm leading-relaxed w-full text-justify"
+                      className="text-ink-paragraph text-sm leading-relaxed w-full text-justify"
                       placeholder="Mission statement"
                       maxLength={600}
                     />
                   ) : (
-                    <p className="text-gray-700 text-sm leading-relaxed ">
+                    <p className="text-ink-paragraph text-sm leading-relaxed ">
                       {displayContent.mission}
                     </p>
                   )}
                 </div>
-                <div className="bg-purple-100 rounded-lg p-5 border-l-4 border-purple-600">
-                  <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                    <span className="text-purple-600">👁️</span> Vision
+                <div className="bg-brand-gold/15 rounded-lg p-5 border-l-4 border-brand-gold">
+                  <h3 className="font-bold text-ink mb-2 flex items-center gap-2">
+                    <span className="text-brand-gold">👁️</span> Vision
                   </h3>
                   {isEditing ? (
                     <EditableText
                       value={displayContent.vision}
                       field="vision"
                       multiline={true}
-                      className="text-gray-700 text-sm leading-relaxed w-full text-justify"
+                      className="text-ink-paragraph text-sm leading-relaxed w-full text-justify"
                       placeholder="Vision statement"
                       maxLength={600}
                     />
                   ) : (
-                    <p className="text-gray-700 text-sm leading-relaxed ">
+                    <p className="text-ink-paragraph text-sm leading-relaxed ">
                       {displayContent.vision}
                     </p>
                   )}
@@ -1220,9 +1220,9 @@ const handleAutoSave = async () => {
               </div>
 
               {/* Certifications - Mobile */}
-              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
-                <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                  <span className="text-green-600">✓</span> Certifications
+              <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
+                <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                  <span className="text-status-success">✓</span> Certifications
                 </h3>
                 {isEditing ? (
                   <div className="space-y-3">
@@ -1236,18 +1236,18 @@ const handleAutoSave = async () => {
                               updateCertification(index, e.target.value);
                             }
                           }}
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
+                          className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-sm"
                           placeholder="Certification"
                           maxLength={100}
                         />
-                        <div className="text-xs text-gray-500 whitespace-nowrap">
+                        <div className="text-xs text-ink-caption whitespace-nowrap">
                           {cert.length}/100
                         </div>
                         <Button
                           onClick={() => removeCertification(index)}
                           size="sm"
                           variant="outline"
-                          className="bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
+                          className="bg-status-error/10 hover:bg-status-error/15 text-status-error border-status-error/25"
                         >
                           <Trash2 className="w-3 h-3" />
                         </Button>
@@ -1257,7 +1257,7 @@ const handleAutoSave = async () => {
                       onClick={addCertification}
                       size="sm"
                       variant="outline"
-                      className="bg-green-50 hover:bg-green-100 text-green-700 mt-2 border-green-200"
+                      className="bg-status-success/10 hover:bg-status-success/15 text-status-success mt-2 border-status-success/25"
                     >
                       <Plus className="w-3 h-3 mr-1" /> Add Certification
                     </Button>
@@ -1267,9 +1267,9 @@ const handleAutoSave = async () => {
                     {displayContent.certifications.map((cert, index) => (
                       <li
                         key={index}
-                        className="flex items-start gap-3 text-gray-700 text-sm"
+                        className="flex items-start gap-3 text-ink-paragraph text-sm"
                       >
-                        <span className="text-green-600 mt-0.5">•</span>
+                        <span className="text-status-success mt-0.5">•</span>
                         <span className="text-justify">{cert}</span>
                       </li>
                     ))}
@@ -1278,9 +1278,9 @@ const handleAutoSave = async () => {
               </div>
 
               {/* Achievements - Mobile */}
-              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
-                <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                  <span className="text-yellow-600">🏆</span> Achievements
+              <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
+                <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                  <span className="text-brand-gold">🏆</span> Achievements
                 </h3>
                 {isEditing ? (
                   <div className="space-y-3">
@@ -1294,18 +1294,18 @@ const handleAutoSave = async () => {
                               updateAchievement(index, e.target.value);
                             }
                           }}
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
+                          className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
                           maxLength={100}
                         />
-                        <div className="text-xs text-gray-500 whitespace-nowrap">
+                        <div className="text-xs text-ink-caption whitespace-nowrap">
                           {achievement.length}/100
                         </div>
                         <Button
                           onClick={() => removeAchievement(index)}
                           size="sm"
                           variant="outline"
-                          className="bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
+                          className="bg-status-error/10 hover:bg-status-error/15 text-status-error border-status-error/25"
                         >
                           <Trash2 className="w-3 h-3" />
                         </Button>
@@ -1315,7 +1315,7 @@ const handleAutoSave = async () => {
                       onClick={addAchievement}
                       size="sm"
                       variant="outline"
-                      className="bg-green-50 hover:bg-green-100 text-green-700 mt-2 border-green-200"
+                      className="bg-status-success/10 hover:bg-status-success/15 text-status-success mt-2 border-status-success/25"
                     >
                       <Plus className="w-3 h-3 mr-1" /> Add Achievement
                     </Button>
@@ -1325,9 +1325,9 @@ const handleAutoSave = async () => {
                     {displayContent.achievements.map((achievement, index) => (
                       <li
                         key={index}
-                        className="flex items-start gap-3 text-gray-700 text-sm"
+                        className="flex items-start gap-3 text-ink-paragraph text-sm"
                       >
-                        <span className="text-yellow-600 mt-0.5">•</span>
+                        <span className="text-brand-gold mt-0.5">•</span>
                         <span className="text-justify">{achievement}</span>
                       </li>
                     ))}
@@ -1352,7 +1352,7 @@ const handleAutoSave = async () => {
                       onClick={() => fileInputRef.current?.click()}
                       size="sm"
                       variant="outline"
-                      className="bg-white/90 backdrop-blur-sm shadow-md border-gray-300 hover:bg-white"
+                      className="bg-white/90 backdrop-blur-sm shadow-md border-ink-light hover:bg-surface-card"
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Change Image
@@ -1367,14 +1367,14 @@ const handleAutoSave = async () => {
                   </div>
                 )}
                 {isEditing && pendingImageFile && (
-                  <div className="absolute top-16 right-4 z-10 bg-orange-100 text-orange-800 text-xs p-2 rounded shadow-md border border-orange-200">
+                  <div className="absolute top-16 right-4 z-10 bg-status-warning/15 text-status-warning text-xs p-2 rounded shadow-md border border-status-warning/25">
                     <div className="font-medium">New image selected:</div>
                     <div className="truncate max-w-[200px]">
                       {pendingImageFile.name}
                     </div>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent mix-blend-multiply"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-status-info/20 to-transparent mix-blend-multiply"></div>
                 <img
                   src={getImageSource()}
                   alt="Office"
@@ -1389,8 +1389,8 @@ const handleAutoSave = async () => {
                   }}
                 />
                 {isEditing && (
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <span className="text-white font-medium bg-black/50 px-3 py-2 rounded-lg">
+                  <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink-charcoal/10 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <span className="text-white font-medium bg-ink/50 px-3 py-2 rounded-lg">
                       Click Change Image to upload
                     </span>
                   </div>
@@ -1398,9 +1398,9 @@ const handleAutoSave = async () => {
               </div>
 
               {/* Certifications - Desktop */}
-              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
-                <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                  <span className="text-green-600">✓</span> Certifications
+              <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
+                <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                  <span className="text-status-success">✓</span> Certifications
                 </h3>
                 {isEditing ? (
                   <div className="space-y-3">
@@ -1414,18 +1414,18 @@ const handleAutoSave = async () => {
                               updateCertification(index, e.target.value);
                             }
                           }}
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
+                          className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-sm"
                           placeholder="Certification"
                           maxLength={100}
                         />
-                        <div className="text-xs text-gray-500 whitespace-nowrap">
+                        <div className="text-xs text-ink-caption whitespace-nowrap">
                           {cert.length}/100
                         </div>
                         <Button
                           onClick={() => removeCertification(index)}
                           size="sm"
                           variant="outline"
-                          className="bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
+                          className="bg-status-error/10 hover:bg-status-error/15 text-status-error border-status-error/25"
                         >
                           <Trash2 className="w-3 h-3" />
                         </Button>
@@ -1435,7 +1435,7 @@ const handleAutoSave = async () => {
                       onClick={addCertification}
                       size="sm"
                       variant="outline"
-                      className="bg-green-50 hover:bg-green-100 text-green-700 mt-2 border-green-200"
+                      className="bg-status-success/10 hover:bg-status-success/15 text-status-success mt-2 border-status-success/25"
                     >
                       <Plus className="w-3 h-3 mr-1" /> Add Certification
                     </Button>
@@ -1445,9 +1445,9 @@ const handleAutoSave = async () => {
                     {displayContent.certifications.map((cert, index) => (
                       <li
                         key={index}
-                        className="flex items-start gap-3 text-gray-700 text-sm"
+                        className="flex items-start gap-3 text-ink-paragraph text-sm"
                       >
-                        <span className="text-green-600 mt-0.5">•</span>
+                        <span className="text-status-success mt-0.5">•</span>
                         <span className="text-justify">{cert}</span>
                       </li>
                     ))}
@@ -1456,9 +1456,9 @@ const handleAutoSave = async () => {
               </div>
 
               {/* Achievements - Desktop */}
-              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
-                <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                  <span className="text-yellow-600">🏆</span> Achievements
+              <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
+                <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                  <span className="text-brand-gold">🏆</span> Achievements
                 </h3>
                 {isEditing ? (
                   <div className="space-y-3">
@@ -1472,18 +1472,18 @@ const handleAutoSave = async () => {
                               updateAchievement(index, e.target.value);
                             }
                           }}
-                          className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-sm"
+                          className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-sm"
                           placeholder="Achievement"
                           maxLength={100}
                         />
-                        <div className="text-xs text-gray-500 whitespace-nowrap">
+                        <div className="text-xs text-ink-caption whitespace-nowrap">
                           {achievement.length}/100
                         </div>
                         <Button
                           onClick={() => removeAchievement(index)}
                           size="sm"
                           variant="outline"
-                          className="bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
+                          className="bg-status-error/10 hover:bg-status-error/15 text-status-error border-status-error/25"
                         >
                           <Trash2 className="w-3 h-3" />
                         </Button>
@@ -1493,7 +1493,7 @@ const handleAutoSave = async () => {
                       onClick={addAchievement}
                       size="sm"
                       variant="outline"
-                      className="bg-green-50 hover:bg-green-100 text-green-700 mt-2 border-green-200"
+                      className="bg-status-success/10 hover:bg-status-success/15 text-status-success mt-2 border-status-success/25"
                     >
                       <Plus className="w-3 h-3 mr-1" /> Add Achievement
                     </Button>
@@ -1503,9 +1503,9 @@ const handleAutoSave = async () => {
                     {displayContent.achievements.map((achievement, index) => (
                       <li
                         key={index}
-                        className="flex items-start gap-3 text-gray-700 text-sm"
+                        className="flex items-start gap-3 text-ink-paragraph text-sm"
                       >
-                        <span className="text-yellow-600 mt-0.5">•</span>
+                        <span className="text-brand-gold mt-0.5">•</span>
                         <span className="text-justify">{achievement}</span>
                       </li>
                     ))}

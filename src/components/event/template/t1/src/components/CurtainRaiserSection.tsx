@@ -3,9 +3,9 @@ import { Calendar, MapPin, Video } from 'lucide-react';
 
 const CurtainRaiserSection: React.FC = () => {
   return (
-    <section className="py-16 bg-black text-white">
+    <section className="py-16 bg-ink text-white">
       <div className="container mx-auto px-4 text-center">
-        <div data-aos="fade-up" className="inline-block bg-[#FFD400] text-black text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full mb-6">
+        <div data-aos="fade-up" className="inline-block bg-[#FFD400] text-ink text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full mb-6">
           Upcoming
         </div>
 
@@ -15,7 +15,7 @@ const CurtainRaiserSection: React.FC = () => {
 
         <div data-aos="fade-up" data-aos-delay="200" className="w-20 h-1 bg-[#FF0000] mx-auto mb-8"></div>
 
-        <div data-aos="fade-up" data-aos-delay="300" className="flex flex-wrap justify-center gap-8 mb-10 text-gray-300">
+        <div data-aos="fade-up" data-aos-delay="300" className="flex flex-wrap justify-center gap-8 mb-10 text-ink-light">
           <div className="flex items-center gap-2">
             <Calendar size={18} className="text-[#FFD400]" />
             <span>26th February 2026</span>
@@ -30,7 +30,7 @@ const CurtainRaiserSection: React.FC = () => {
           </div>
         </div>
 
-        <p data-aos="fade-up" data-aos-delay="400" className="text-gray-400 text-base max-w-2xl mx-auto">
+        <p data-aos="fade-up" data-aos-delay="400" className="text-ink-caption text-base max-w-2xl mx-auto">
           Join us for the official Curtain Raiser of Drone Expo 2026 in Bengaluru. Drone TV will be present on the ground capturing exclusive videos and photographs, which will be shared on the same day.
         </p>
       </div>

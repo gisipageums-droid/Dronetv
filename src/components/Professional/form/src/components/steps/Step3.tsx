@@ -18,8 +18,8 @@ interface SkillContainerProps {
 
 const containerClasses = (level: number) => {
   if (level === 0) return "bg-transparent border-0";
-  if (level === 1) return "bg-amber-50 border border-amber-200";
-  return "bg-white border border-gray-200";
+  if (level === 1) return "bg-surface-main border border-brand-yellow-soft";
+  return "bg-surface-card border border-ink-light";
 };
 
 const SkillContainer = ({
@@ -43,7 +43,7 @@ const SkillContainer = ({
             <div
               onClick={() => onClick(node, level, parents)}
               className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer ${
-                isSelected ? "bg-yellow-100" : "hover:bg-yellow-50"
+                isSelected ? "bg-brand-yellow-soft" : "hover:bg-surface-main"
               }`}
             >
               <input
@@ -190,7 +190,7 @@ export const Step3 = ({ step }: { step: any }) => {
 
       {/* Freeform Skills */}
       {step.skills?.freeformSkills?.enabled && (
-        <div className="p-4 rounded-lg bg-gradient-to-r from-yellow-50 to-white border border-yellow-200">
+        <div className="p-4 rounded-lg bg-gradient-to-r from-surface-main to-white border border-brand-yellow-soft">
           <label className="block mb-2 font-medium text-xs">
             {step.skills.freeformSkills.placeholder}
           </label>
@@ -198,12 +198,12 @@ export const Step3 = ({ step }: { step: any }) => {
             {data.freeformSkills.map((skill) => (
               <span
                 key={skill}
-                className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700 flex items-center gap-1"
+                className="px-2 py-1 rounded-full text-xs bg-status-info/15 text-status-info flex items-center gap-1"
               >
                 {skill}
                 <button
                   onClick={() => removeFreeformSkill(skill)}
-                  className="text-red-500 font-bold text-xs"
+                  className="text-status-error font-bold text-xs"
                 >
                   ×
                 </button>
@@ -212,7 +212,7 @@ export const Step3 = ({ step }: { step: any }) => {
           </div>
           <input
             type="text"
-            className="border p-2 w-full rounded text-xs focus:ring-2 focus:ring-yellow-400 text-gray-900 bg-white"
+            className="border p-2 w-full rounded text-xs focus:ring-2 focus:ring-brand-yellow text-ink bg-surface-card"
             placeholder="Type and press Enter or comma..."
             onKeyDown={handleFreeformKeyDown}
           />
@@ -222,12 +222,12 @@ export const Step3 = ({ step }: { step: any }) => {
       {/* ✅ Selected Skills Summary */}
       {(data.skills?.length > 0 || data.freeformSkills?.length > 0) && (
         <div className="mt-4">
-          <h3 className="text-sm font-semibold mb-2 text-gray-700">Selected Skills:</h3>
+          <h3 className="text-sm font-semibold mb-2 text-ink-paragraph">Selected Skills:</h3>
           <div className="flex flex-wrap gap-2">
             {[...(data.skills || []), ...(data.freeformSkills || [])].map((skill) => (
               <button
                 key={skill}
-                className="px-3 py-1 bg-yellow-200 text-black text-xs rounded-full border border-yellow-400 hover:bg-yellow-300"
+                className="px-3 py-1 bg-brand-yellow-soft text-ink text-xs rounded-full border border-brand-yellow hover:bg-brand-yellow-soft"
               >
                 {skill}
               </button>

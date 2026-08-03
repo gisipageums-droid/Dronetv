@@ -71,16 +71,16 @@ export function ExhibitorsSection({ exhibitorsData }: ExhibitorsProps) {
   const duplicatedExhibitors = [...displayData.exhibitors, ...displayData.exhibitors];
 
   return (
-    <section id="exhibitors" className="py-16 sm:py-20 md:py-24 bg-yellow-50 overflow-hidden">
+    <section id="exhibitors" className="py-16 sm:py-20 md:py-24 bg-surface-main overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto mb-12 sm:mb-16">
           {/* Header */}
           <div className="text-center">
-            <div className="inline-block mb-4 px-4 py-2 bg-white rounded-full border border-amber-200 shadow-sm">
-              <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+            <div className="inline-block mb-4 px-4 py-2 bg-surface-card rounded-full border border-brand-yellow-soft shadow-sm">
+              <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
             </div>
-            <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+            <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+            <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
               {displayData.description}
             </p>
           </div>
@@ -138,9 +138,9 @@ export function ExhibitorsSection({ exhibitorsData }: ExhibitorsProps) {
               transition={{ duration: 0.3 }}
               className="flex-shrink-0 w-80 sm:w-96"
             >
-              <div className="group bg-white p-6 sm:p-8 rounded-2xl border-2 border-amber-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 relative h-full">
+              <div className="group bg-surface-card p-6 sm:p-8 rounded-2xl border-2 border-brand-yellow-soft hover:border-brand-yellow hover:shadow-xl transition-all duration-300 relative h-full">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
+                  <div className="w-12 h-12 bg-brand-yellow rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 relative overflow-hidden">
                     {exhibitor.logo ? (
                       <img
                         src={exhibitor.logo}
@@ -152,17 +152,17 @@ export function ExhibitorsSection({ exhibitorsData }: ExhibitorsProps) {
                     )}
                   </div>
                   
-                  <span className="px-3 py-1 bg-yellow-100 text-amber-700 rounded-full text-xs sm:text-sm">
+                  <span className="px-3 py-1 bg-brand-yellow-soft text-brand-gold rounded-full text-xs sm:text-sm">
                     {exhibitor.booth}
                   </span>
                 </div>
                 
-                <h3 className="text-gray-900 mb-2 text-lg sm:text-xl group-hover:text-amber-600 transition-colors">
+                <h3 className="text-ink mb-2 text-lg sm:text-xl group-hover:text-brand-yellow transition-colors">
                   {exhibitor.name}
                 </h3>
-                <p className="text-amber-600 mb-4 text-sm sm:text-base">{exhibitor.category}</p>
+                <p className="text-brand-gold mb-4 text-sm sm:text-base">{exhibitor.category}</p>
                 {exhibitor.description && (
-                  <p className="text-gray-600 text-sm mb-4">{exhibitor.description}</p>
+                  <p className="text-ink-paragraph text-sm mb-4">{exhibitor.description}</p>
                 )}
               </div>
             </motion.div>
@@ -174,11 +174,11 @@ export function ExhibitorsSection({ exhibitorsData }: ExhibitorsProps) {
       {displayData.exhibitors.length === 0 && (
         <div className="text-center py-12">
           <div className="max-w-md mx-auto">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <Building2 className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+              <Building2 className="w-8 h-8 text-ink-caption" />
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">No Exhibitors Added</h4>
-            <p className="text-gray-600">Add exhibitors to showcase your event partners.</p>
+            <h4 className="text-lg font-semibold text-ink mb-2">No Exhibitors Added</h4>
+            <p className="text-ink-paragraph">Add exhibitors to showcase your event partners.</p>
           </div>
         </div>
       )}

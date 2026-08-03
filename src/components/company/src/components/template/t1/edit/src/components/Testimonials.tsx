@@ -548,7 +548,7 @@ export default function EditableTestimonials({
       stars.push(
         <span
           key={i}
-          className={i <= rate ? "text-yellow-400" : "text-gray-300"}
+          className={i <= rate ? "text-brand-yellow" : "text-ink-light"}
         >
           ★
         </span>
@@ -597,7 +597,7 @@ export default function EditableTestimonials({
               <textarea
                 value={tempValue}
                 onChange={(e) => setTempValue(e.target.value)}
-                className="flex-1 px-2 py-1 border border-blue-300 rounded resize-none"
+                className="flex-1 px-2 py-1 border border-status-info/40 rounded resize-none"
                 rows={3}
                 maxLength={charLimit}
                 autoFocus
@@ -607,25 +607,25 @@ export default function EditableTestimonials({
                 type="text"
                 value={tempValue}
                 onChange={(e) => setTempValue(e.target.value)}
-                className="flex-1 px-2 py-1 border border-blue-300 rounded"
+                className="flex-1 px-2 py-1 border border-status-info/40 rounded"
                 maxLength={charLimit}
                 autoFocus
               />
             )}
             <button
               onClick={saveFieldEdit}
-              className="p-1 text-green-600 hover:text-green-800"
+              className="p-1 text-status-success hover:text-status-success"
             >
               <Check size={16} />
             </button>
             <button
               onClick={cancelEdit}
-              className="p-1 text-red-600 hover:text-red-800"
+              className="p-1 text-status-error hover:text-status-error"
             >
               <X size={16} />
             </button>
           </div>
-          <div className="text-xs text-gray-500 text-right">
+          <div className="text-xs text-ink-caption text-right">
             {tempValue.length}/{charLimit} characters
           </div>
         </div>
@@ -635,7 +635,7 @@ export default function EditableTestimonials({
     return (
       <div className={`group relative ${className}`}>
         {multiline ? (
-          <blockquote className="text-lg text-gray-700 italic text-justify">
+          <blockquote className="text-lg text-ink-paragraph italic text-justify">
             "{value}"
           </blockquote>
         ) : (
@@ -643,7 +643,7 @@ export default function EditableTestimonials({
         )}
         <button
           onClick={() => startEditField(index, field, (value as string) ?? "")}
-          className="opacity-0 group-hover:opacity-100 absolute -right-6 top-0 p-1 text-gray-400 hover:text-blue-600 transition-all duration-200"
+          className="opacity-0 group-hover:opacity-100 absolute -right-6 top-0 p-1 text-ink-caption hover:text-status-info transition-all duration-200"
         >
           <Edit2 size={14} />
         </button>
@@ -654,7 +654,7 @@ export default function EditableTestimonials({
   return (
     <section
       id="testimonials"
-      className="bg-gray-50 py-16 scroll-mt-20 relative"
+      className="bg-ink-offwhite py-16 scroll-mt-20 relative"
     >
       {/* Auto-save indicator */}
       {isEditing && (
@@ -662,18 +662,18 @@ export default function EditableTestimonials({
           <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
             {isSaving ? (
               <>
-                <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
-                <span className="text-xs text-gray-700">Saving...</span>
+                <Loader2 className="w-3 h-3 animate-spin text-status-info" />
+                <span className="text-xs text-ink-paragraph">Saving...</span>
               </>
             ) : unsavedChanges ? (
               <>
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-gray-700">Unsaved changes</span>
+                <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                <span className="text-xs text-ink-paragraph">Unsaved changes</span>
               </>
             ) : (
               <>
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-xs text-gray-700">
+                <div className="w-2 h-2 bg-status-success rounded-full"></div>
+                <span className="text-xs text-ink-paragraph">
                   Saved {lastSaved && `at ${lastSaved}`}
                 </span>
               </>
@@ -689,7 +689,7 @@ export default function EditableTestimonials({
             onClick={handleEdit}
             variant="outline"
             size="sm"
-            className="bg-white hover:bg-gray-50 shadow-md"
+            className="bg-surface-card hover:bg-ink-offwhite shadow-md"
           >
             <Edit2 className="w-4 h-4 mr-2" />
             Edit
@@ -699,7 +699,7 @@ export default function EditableTestimonials({
             <Button
               onClick={handleSave}
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+              className="bg-status-success hover:bg-status-success text-white shadow-md"
               disabled={isSaving || isUploading}
             >
               {isSaving ? (
@@ -713,7 +713,7 @@ export default function EditableTestimonials({
               onClick={handleCancel}
               variant="outline"
               size="sm"
-              className="bg-white hover:bg-gray-50 shadow-md"
+              className="bg-surface-card hover:bg-ink-offwhite shadow-md"
               disabled={isSaving || isUploading}
             >
               <X className="w-4 h-4 mr-2" />
@@ -732,16 +732,16 @@ export default function EditableTestimonials({
                 type="text"
                 value={tempData.headline.title}
                 onChange={(e) => updateHeadlineField("title", e.target.value)}
-                className="text-3xl font-bold text-gray-900 px-2 py-1 border border-blue-300 rounded text-center"
+                className="text-3xl font-bold text-ink px-2 py-1 border border-status-info/40 rounded text-center"
                 maxLength={CHAR_LIMITS.title}
               />
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-ink-caption">
                 {tempData.headline.title.length}/{CHAR_LIMITS.title} characters
               </div>
             </div>
           ) : (
             <div className="mb-4">
-              <h2 className="text-3xl font-bold text-gray-900">
+              <h2 className="text-3xl font-bold text-ink">
                 {tempData.headline.title}
               </h2>
             </div>
@@ -755,17 +755,17 @@ export default function EditableTestimonials({
                 onChange={(e) =>
                   updateHeadlineField("description", e.target.value)
                 }
-                className="w-full text-gray-600 text-base px-3 py-2 border-2 border-dashed border-blue-200 rounded-lg resize-none text-center focus:outline-none focus:border-blue-500 focus:border-solid"
+                className="w-full text-ink-paragraph text-base px-3 py-2 border-2 border-dashed border-status-info/25 rounded-lg resize-none text-center focus:outline-none focus:border-status-info focus:border-solid"
                 rows={2}
                 maxLength={CHAR_LIMITS.description}
               />
-              <div className="text-xs text-gray-500 self-end">
+              <div className="text-xs text-ink-caption self-end">
                 {tempData.headline.description.length}/{CHAR_LIMITS.description}{" "}
                 characters
               </div>
             </div>
           ) : (
-            <p className="text-gray-600 max-w-2xl mx-auto text-base">
+            <p className="text-ink-paragraph max-w-2xl mx-auto text-base">
               {tempData.headline.description}
             </p>
           )}
@@ -778,12 +778,12 @@ export default function EditableTestimonials({
           >
             {tempData.testimonials.map((testimonial, index) => (
               <div key={index} className="w-full flex-shrink-0">
-                <div className="mx-4 bg-white shadow-lg border-0 rounded-lg relative">
+                <div className="mx-4 bg-surface-card shadow-lg border-0 rounded-lg relative">
                   {/* Delete Button */}
                   {isEditing && (
                     <button
                       onClick={() => deleteTestimonial(index)}
-                      className="absolute top-2 right-2 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full z-10"
+                      className="absolute top-2 right-2 p-2 text-status-error hover:text-status-error hover:bg-status-error/10 rounded-full z-10"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -791,7 +791,7 @@ export default function EditableTestimonials({
 
                   <div className="p-8 text-center">
                     <div className="mb-6">
-                      <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden relative">
+                      <div className="w-16 h-16 bg-status-info rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden relative">
                         <img
                           src={testimonial.image || (testimonial.gender === "male" ? maleAvatar : femaleAvatar)}
                           alt={testimonial.name}
@@ -817,7 +817,7 @@ export default function EditableTestimonials({
                           </>
                         )}
                       </div>
-                      <h3 className="font-semibold text-xl text-gray-900 mb-2">
+                      <h3 className="font-semibold text-xl text-ink mb-2">
                         <EditableField
                           testimonial={testimonial}
                           index={index}
@@ -830,11 +830,11 @@ export default function EditableTestimonials({
                         <div className="flex flex-wrap justify-center gap-4 mb-2">
                           {/* Gender Selection */}
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600">Gender:</span>
+                            <span className="text-sm text-ink-paragraph">Gender:</span>
                             <select
                               value={testimonial.gender || "male"}
                               onChange={(e) => updateTestimonialField(index, "gender", e.target.value)}
-                              className="text-sm border border-gray-300 rounded px-2 py-1"
+                              className="text-sm border border-ink-light rounded px-2 py-1"
                             >
                               <option value="male">Male</option>
                               <option value="female">Female</option>
@@ -843,11 +843,11 @@ export default function EditableTestimonials({
                           
                           {/* Rating Selection */}
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600">Rating:</span>
+                            <span className="text-sm text-ink-paragraph">Rating:</span>
                             <select
                               value={testimonial.rating || 5}
                               onChange={(e) => updateTestimonialField(index, "rating", Number(e.target.value))}
-                              className="text-sm border border-gray-300 rounded px-2 py-1"
+                              className="text-sm border border-ink-light rounded px-2 py-1"
                             >
                               <option value={1}>1</option>
                               <option value={2}>2</option>
@@ -877,7 +877,7 @@ export default function EditableTestimonials({
                     </div>
 
                     <div className="border-t pt-6">
-                      <p className="text-gray-600 text-justify">
+                      <p className="text-ink-paragraph text-justify">
                         <EditableField
                           testimonial={testimonial}
                           index={index}
@@ -898,7 +898,7 @@ export default function EditableTestimonials({
           {isEditing && (
             <button
               onClick={addTestimonial}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+              className="flex items-center gap-2 px-4 py-2 bg-status-success text-white rounded-lg hover:bg-status-success transition-colors duration-200"
             >
               <Plus size={16} />
               Add Testimonial
@@ -913,8 +913,8 @@ export default function EditableTestimonials({
                   key={index}
                   onClick={() => setCurrent(index)}
                   className={`w-3 h-3 rounded-full transition-colors duration-200 ${index === current
-                    ? "bg-blue-600"
-                    : "bg-gray-300 hover:bg-gray-400"
+                    ? "bg-status-info"
+                    : "bg-ink-light hover:bg-ink-caption"
                     }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
@@ -929,28 +929,28 @@ export default function EditableTestimonials({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Testimonial Image
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop ?? undefined}
@@ -982,18 +982,18 @@ export default function EditableTestimonials({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     1:1 (Square)
@@ -1001,8 +1001,8 @@ export default function EditableTestimonials({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     4:3 (Standard)
@@ -1010,8 +1010,8 @@ export default function EditableTestimonials({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     16:9 (Widescreen)
@@ -1022,14 +1022,14 @@ export default function EditableTestimonials({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -1040,19 +1040,19 @@ export default function EditableTestimonials({
                     max={4}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     +
                   </button>
                   <button
                     type="button"
                     onClick={() => setZoom(1)}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     1x
                   </button>
@@ -1063,20 +1063,20 @@ export default function EditableTestimonials({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isUploading ? (
                     <>

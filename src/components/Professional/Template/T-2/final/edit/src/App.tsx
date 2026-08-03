@@ -157,7 +157,7 @@ export default function FinalEditTemp_2() {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
           <p className="mt-4 text-muted-foreground">Loading template data...</p>
         </div>
       </div>
@@ -176,7 +176,7 @@ export default function FinalEditTemp_2() {
       {/* <div className="fixed top-[9.5rem] left-4 z-50">
         <button
           onClick={handlePublish}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-300"
+          className="bg-status-success hover:bg-status-success text-white px-4 py-2 rounded-lg shadow-lg transition-colors duration-300"
         >
           Publish Changes
         </button>

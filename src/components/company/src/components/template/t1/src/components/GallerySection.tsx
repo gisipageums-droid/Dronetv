@@ -132,7 +132,7 @@ export default function GallerySection() {
     <section
       id="gallery"
       ref={sectionRef}
-      className="py-24 bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20"
+      className="py-24 bg-gradient-to-b from-surface-main/30 via-white to-surface-main/20 scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
@@ -143,7 +143,7 @@ export default function GallerySection() {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="inline-block mb-4"
           >
-            <Badge className="bg-[#ffeb3b] text-gray-900 px-5 py-2 shadow-md">
+            <Badge className="bg-[#ffeb3b] text-ink px-5 py-2 shadow-md">
               Our Gallery
             </Badge>
           </motion.div>
@@ -152,7 +152,7 @@ export default function GallerySection() {
             initial={{ opacity: 0, y: 30 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
-            className="text-3xl md:text-4xl font-extrabold text-gray-900"
+            className="text-3xl md:text-4xl font-extrabold text-ink"
           >
             {galleryData.heading.title}
           </motion.h2>
@@ -161,7 +161,7 @@ export default function GallerySection() {
             initial={{ opacity: 0, y: 30 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-            className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg"
+            className="text-ink-paragraph mt-4 max-w-2xl mx-auto text-lg"
           >
             {galleryData.heading.description}
           </motion.p>
@@ -183,7 +183,7 @@ export default function GallerySection() {
                 y: -5,
                 scale: 1.02,
               }}
-              className="overflow-hidden rounded-lg shadow-md cursor-pointer group bg-white"
+              className="overflow-hidden rounded-lg shadow-md cursor-pointer group bg-surface-card"
               onClick={() => openLightbox(index)}
             >
               <div className="relative overflow-hidden">
@@ -198,12 +198,12 @@ export default function GallerySection() {
                     }}
                   />
                 ) : (
-                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">No image</span>
+                  <div className="w-full h-64 bg-ink-light flex items-center justify-center">
+                    <span className="text-ink-caption">No image</span>
                   </div>
                 )}
 
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
+                <div className="absolute inset-0 bg-ink bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
                   <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
                     <h3 className="font-semibold">{image.title}</h3>
                     <p className="text-sm">{image.category}</p>
@@ -223,25 +223,25 @@ export default function GallerySection() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed top-[8rem] inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+          className="fixed top-[8rem] inset-0 bg-ink bg-opacity-90 z-50 flex items-center justify-center p-4"
         >
           <button
             onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+            className="absolute top-4 right-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70 z-10"
           >
             <X size={24} />
           </button>
 
           <button
             onClick={goToPrev}
-            className="absolute left-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+            className="absolute left-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70 z-10"
           >
             <ChevronLeft size={32} />
           </button>
 
           <button
             onClick={goToNext}
-            className="absolute right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+            className="absolute right-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70 z-10"
           >
             <ChevronRight size={32} />
           </button>
@@ -256,10 +256,10 @@ export default function GallerySection() {
               <h3 className="text-xl font-semibold">
                 {galleryData.images[selectedImage].title}
               </h3>
-              <p className="text-gray-300">
+              <p className="text-ink-light">
                 {galleryData.images[selectedImage].category}
               </p>
-              <p className="text-gray-400 text-sm mt-2">
+              <p className="text-ink-caption text-sm mt-2">
                 {galleryData.images[selectedImage].description}
               </p>
             </div>

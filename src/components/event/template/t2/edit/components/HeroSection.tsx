@@ -36,8 +36,8 @@ const CustomButton = ({
 }) => {
   const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -168,13 +168,13 @@ const EditableText = ({
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
           placeholder={placeholder}
           rows={rows}
           maxLength={charLimit}
         />
         {charLimit && (
-          <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+          <div className="absolute bottom-2 right-2 text-xs text-ink-caption">
             {value.length}/{charLimit}
           </div>
         )}
@@ -185,12 +185,12 @@ const EditableText = ({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
           placeholder={placeholder}
           maxLength={charLimit}
         />
         {charLimit && (
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
             {value.length}/{charLimit}
           </div>
         )}
@@ -264,14 +264,14 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
   const displayData = isEditing ? tempData : data;
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-yellow-50 pt-[4rem]">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-surface-main pt-[4rem]">
       {/* Edit Controls */}
       <div className="absolute top-[9rem] right-8 z-50">
         {!isEditing ? (
           <CustomButton
             onClick={handleEdit}
             size="sm"
-            className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+            className="bg-status-error hover:bg-status-error shadow-md text-white"
           >
             <Edit2 className="w-4 h-4 mr-2" />
             Edit
@@ -281,7 +281,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
             <CustomButton
               onClick={handleSave}
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+              className="bg-status-success hover:bg-status-success text-white shadow-md"
               disabled={isSaving}
             >
               {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
@@ -290,7 +290,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
             <CustomButton
               onClick={handleCancel}
               size="sm"
-              className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+              className="bg-status-error hover:bg-status-error text-white shadow-md"
               disabled={isSaving}
             >
               <X className="w-4 h-4 mr-2" />
@@ -303,7 +303,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
       {/* Animated Background Shapes */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute top-20 left-10 w-64 h-64 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70"
+          className="absolute top-20 left-10 w-64 h-64 bg-brand-yellow-soft rounded-full mix-blend-multiply filter blur-3xl opacity-70"
           animate={{
             x: [0, 100, 0],
             y: [0, 50, 0],
@@ -315,7 +315,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
           }}
         />
         <motion.div
-          className="absolute top-40 right-10 w-72 h-72 bg-amber-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70"
+          className="absolute top-40 right-10 w-72 h-72 bg-brand-yellow-soft rounded-full mix-blend-multiply filter blur-3xl opacity-70"
           animate={{
             x: [0, -100, 0],
             y: [0, 100, 0],
@@ -327,7 +327,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
           }}
         />
         <motion.div
-          className="absolute -bottom-20 left-1/2 w-96 h-96 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-60"
+          className="absolute -bottom-20 left-1/2 w-96 h-96 bg-brand-yellow rounded-full mix-blend-multiply filter blur-3xl opacity-60"
           animate={{
             x: [0, 50, 0],
             y: [0, -50, 0],
@@ -345,7 +345,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
         {[...Array(15)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-amber-500 rounded-full"
+            className="absolute w-2 h-2 bg-brand-gold rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -370,18 +370,18 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="inline-block mb-6 px-6 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-amber-200 shadow-sm"
+            className="inline-block mb-6 px-6 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-brand-yellow-soft shadow-sm"
           >
             {isEditing ? (
               <EditableText
                 value={displayData.subtitle}
                 onChange={(value) => updateField('subtitle', value)}
-                className="text-amber-700 text-center"
+                className="text-brand-gold text-center"
                 placeholder="Section subtitle"
                 charLimit={TEXT_LIMITS.SUBTITLE}
               />
             ) : (
-              <span className="text-amber-700">{displayData.subtitle}</span>
+              <span className="text-brand-gold">{displayData.subtitle}</span>
             )}
           </motion.div>
           
@@ -389,7 +389,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-gray-900 mb-6 leading-tight"
+            className="text-ink mb-6 leading-tight"
           >
             {isEditing ? (
               <div className="space-y-4">
@@ -403,7 +403,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
                 <EditableText
                   value={displayData.titlePart2}
                   onChange={(value) => updateField('titlePart2', value)}
-                  className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-center text-amber-600 bg-clip-text"
+                  className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-center text-brand-gold bg-clip-text"
                   placeholder="Second part of title"
                   charLimit={TEXT_LIMITS.TITLE_PART2}
                 />
@@ -411,7 +411,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
             ) : (
               <>
                 <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl">{displayData.titlePart1}</span>
-                <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl mt-2 bg-amber-600 bg-clip-text text-transparent">
+                <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl mt-2 bg-brand-gold bg-clip-text text-transparent">
                   {displayData.titlePart2}
                 </span>
               </>
@@ -422,7 +422,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto px-4"
+            className="text-lg sm:text-xl md:text-2xl text-ink-paragraph mb-12 max-w-3xl mx-auto px-4"
           >
             {isEditing ? (
               <EditableText
@@ -467,7 +467,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
                 
                 <Button
                   size="lg"
-                  className="bg-yellow-400 hover:from-yellow-500 hover:to-amber-600 text-gray-900 px-8 py-6 text-base sm:text-lg shadow-lg"
+                  className="bg-brand-yellow hover:from-brand-gold hover:to-brand-gold text-ink px-8 py-6 text-base sm:text-lg shadow-lg"
                   onClick={() => { window.location.hash = '#contact'; }}
                 >
                   {displayData.primaryButton}
@@ -475,7 +475,7 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-gray-300 text-gray-900 px-8 py-6 text-base sm:text-lg shadow-lg"
+                  className="border-ink-light text-ink px-8 py-6 text-base sm:text-lg shadow-lg"
                   onClick={() => { window.location.hash = '#events'; }}
                 >
                   {displayData.secondaryButton}
@@ -491,49 +491,49 @@ export function HeroSection({ heroData, onStateChange }: HeroProps) {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto px-4 mb-4"
           >
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-amber-200 hover:scale-105 transition-transform duration-300">
-              <Calendar className="w-8 h-8 text-amber-600 mx-auto mb-3" />
-              <p className="text-gray-600 mb-1 text-sm">Date</p>
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-brand-yellow-soft hover:scale-105 transition-transform duration-300">
+              <Calendar className="w-8 h-8 text-brand-gold mx-auto mb-3" />
+              <p className="text-ink-paragraph mb-1 text-sm">Date</p>
               {isEditing ? (
                 <EditableText
                   value={displayData.eventInfo.date}
                   onChange={(value) => updateEventInfo('date', value)}
-                  className="text-gray-900 text-center"
+                  className="text-ink text-center"
                   placeholder="Event date"
                   charLimit={TEXT_LIMITS.EVENT_DATE}
                 />
               ) : (
-                <p className="text-gray-900">{displayData.eventInfo.date}</p>
+                <p className="text-ink">{displayData.eventInfo.date}</p>
               )}
             </div>
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-amber-200 hover:scale-105 transition-transform duration-300">
-              <MapPin className="w-8 h-8 text-amber-600 mx-auto mb-3" />
-              <p className="text-gray-600 mb-1 text-sm">Location</p>
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-brand-yellow-soft hover:scale-105 transition-transform duration-300">
+              <MapPin className="w-8 h-8 text-brand-gold mx-auto mb-3" />
+              <p className="text-ink-paragraph mb-1 text-sm">Location</p>
               {isEditing ? (
                 <EditableText
                   value={displayData.eventInfo.location}
                   onChange={(value) => updateEventInfo('location', value)}
-                  className="text-gray-900 text-center"
+                  className="text-ink text-center"
                   placeholder="Event location"
                   charLimit={TEXT_LIMITS.EVENT_LOCATION}
                 />
               ) : (
-                <p className="text-gray-900">{displayData.eventInfo.location}</p>
+                <p className="text-ink">{displayData.eventInfo.location}</p>
               )}
             </div>
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-amber-200 hover:scale-105 transition-transform duration-300 sm:col-span-2 md:col-span-1">
-              <Users className="w-8 h-8 text-amber-600 mx-auto mb-3" />
-              <p className="text-gray-600 mb-1 text-sm">Attendees</p>
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-brand-yellow-soft hover:scale-105 transition-transform duration-300 sm:col-span-2 md:col-span-1">
+              <Users className="w-8 h-8 text-brand-gold mx-auto mb-3" />
+              <p className="text-ink-paragraph mb-1 text-sm">Attendees</p>
               {isEditing ? (
                 <EditableText
                   value={displayData.eventInfo.attendees}
                   onChange={(value) => updateEventInfo('attendees', value)}
-                  className="text-gray-900 text-center"
+                  className="text-ink text-center"
                   placeholder="Attendee count"
                   charLimit={TEXT_LIMITS.EVENT_ATTENDEES}
                 />
               ) : (
-                <p className="text-gray-900">{displayData.eventInfo.attendees}</p>
+                <p className="text-ink">{displayData.eventInfo.attendees}</p>
               )}
             </div>
           </motion.div>

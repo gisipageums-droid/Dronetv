@@ -35,7 +35,7 @@ export function Header({ onDarkModeToggle }: HeaderProps) {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="text-muted-foreground hover:text-yellow-500 hover:scale-110 transition-all duration-300"
+                  className="text-muted-foreground hover:text-brand-yellow hover:scale-110 transition-all duration-300"
                 >
                   {item.name}
                 </a>
@@ -48,7 +48,7 @@ export function Header({ onDarkModeToggle }: HeaderProps) {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden text-muted-foreground hover:text-yellow-500 hover:scale-110 transition-all duration-300"
+              className="md:hidden text-muted-foreground hover:text-brand-yellow hover:scale-110 transition-all duration-300"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -63,7 +63,7 @@ export function Header({ onDarkModeToggle }: HeaderProps) {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-2 text-muted-foreground hover:text-yellow-500 transition-colors duration-300"
+                className="block py-2 text-muted-foreground hover:text-brand-yellow transition-colors duration-300"
               >
                 {item.name}
               </a>

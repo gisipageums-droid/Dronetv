@@ -32,8 +32,8 @@ const CustomButton = ({
 }) => {
   const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -154,13 +154,13 @@ const EditableText = ({
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
           placeholder={placeholder}
           rows={rows}
           maxLength={charLimit}
         />
         {charLimit && (
-          <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+          <div className="absolute bottom-2 right-2 text-xs text-ink-caption">
             {value.length}/{charLimit}
           </div>
         )}
@@ -171,12 +171,12 @@ const EditableText = ({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
           placeholder={placeholder}
           maxLength={charLimit}
         />
         {charLimit && (
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
             {value.length}/{charLimit}
           </div>
         )}
@@ -599,7 +599,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
   }, [showCropper, ZOOM_STEP, MIN_ZOOM, MAX_ZOOM]);
 
   return (
-    <section id="gallery" className="py-16 sm:py-20 md:py-24 bg-white">
+    <section id="gallery" className="py-16 sm:py-20 md:py-24 bg-surface-card">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Edit Controls */}
@@ -608,7 +608,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
               <CustomButton
                 onClick={handleEdit}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                className="bg-status-error hover:bg-status-error shadow-md text-white"
               >
                 <Edit2 className="w-4 h-4 mr-2" />
                 Edit Gallery
@@ -618,7 +618,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                 <CustomButton
                   onClick={handleSave}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                  className="bg-status-success hover:bg-status-success text-white shadow-md"
                   disabled={isSaving || isUploading}
                 >
                   {isUploading ? (
@@ -633,7 +633,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                 <CustomButton
                   onClick={handleCancel}
                   size="sm"
-                  className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+                  className="bg-status-error hover:bg-status-error text-white shadow-md"
                   disabled={isSaving || isUploading}
                 >
                   <X className="w-4 h-4 mr-2" />
@@ -643,7 +643,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                   onClick={addImage}
                   variant="outline"
                   size="sm"
-                  className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                  className="bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md"
                   disabled={maxImagesReached}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -657,11 +657,11 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
           <div className="text-center mb-12 sm:mb-16">
             {isEditing ? (
               <>
-                <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
+                <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
                   <EditableText
                     value={displayData.subtitle}
                     onChange={(value) => updateField('subtitle', value)}
-                    className="text-red-700 text-xl font-semibold text-center"
+                    className="text-status-error text-xl font-semibold text-center"
                     placeholder="Section subtitle"
                     charLimit={TEXT_LIMITS.SUBTITLE}
                   />
@@ -669,7 +669,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                 <EditableText
                   value={displayData.heading}
                   onChange={(value) => updateField('heading', value)}
-                  className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
+                  className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
                   placeholder="Section heading"
                   charLimit={TEXT_LIMITS.HEADING}
                 />
@@ -677,7 +677,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                   value={displayData.description}
                   onChange={(value) => updateField('description', value)}
                   multiline
-                  className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4 text-center"
+                  className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4 text-center"
                   placeholder="Section description"
                   charLimit={TEXT_LIMITS.DESCRIPTION}
                   rows={2}
@@ -685,11 +685,11 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
               </>
             ) : (
               <>
-                <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
-                  <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+                <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
+                  <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
                 </div>
-                <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-                <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+                <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+                <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
                   {displayData.description}
                 </p>
               </>
@@ -699,11 +699,11 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
           {/* Image Counter */}
           {isEditing && (
             <div className="text-center mb-6">
-              <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+              <span className="inline-block px-3 py-1 bg-status-info/15 text-status-info rounded-full text-sm">
                 {displayData.images.length} / 6 images
               </span>
               {maxImagesReached && (
-                <p className="text-red-600 text-sm mt-2">Maximum 6 images reached. Remove some images to add new ones.</p>
+                <p className="text-status-error text-sm mt-2">Maximum 6 images reached. Remove some images to add new ones.</p>
               )}
             </div>
           )}
@@ -724,21 +724,21 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
 
                 {/* Edit Overlay */}
                 {isEditing && (
-                  <div className="absolute inset-0 bg-black/60 flex flex-col justify-between p-4">
+                  <div className="absolute inset-0 bg-ink/60 flex flex-col justify-between p-4">
                     <div className="flex justify-between items-start">
-                      <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded capitalize">
+                      <span className="px-2 py-1 bg-status-info text-white text-xs rounded capitalize">
                         {image.category}
                       </span>
                       <CustomButton
                         onClick={() => removeImage(image.id)}
                         size="sm"
-                        className="bg-red-500 hover:bg-red-600 text-white p-1"
+                        className="bg-status-error hover:bg-status-error text-white p-1"
                       >
                         <Trash2 className="w-3 h-3" />
                       </CustomButton>
                     </div>
                     <div className="space-y-2">
-                      <label className="cursor-pointer inline-flex items-center justify-center w-full py-1 bg-blue-600 text-white rounded text-sm">
+                      <label className="cursor-pointer inline-flex items-center justify-center w-full py-1 bg-status-info text-white rounded text-sm">
                         <Upload className="w-3 h-3 mr-1" />
                         Replace
                         <input
@@ -752,7 +752,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                         <select
                           value={image.category}
                           onChange={(e) => updateImageCategory(image.id, e.target.value)}
-                          className="w-full p-1 text-sm bg-black/50 text-white rounded border border-gray-300"
+                          className="w-full p-1 text-sm bg-ink/50 text-white rounded border border-ink-light"
                         >
                           {categoryOptions.map(category => (
                             <option key={category} value={category} className="capitalize">
@@ -763,7 +763,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                         <EditableText
                           value={image.caption}
                           onChange={(value) => updateImageCaption(image.id, value)}
-                          className="text-white bg-black/50 text-sm"
+                          className="text-white bg-ink/50 text-sm"
                           placeholder="Image caption"
                           charLimit={TEXT_LIMITS.CAPTION}
                         />
@@ -774,9 +774,9 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
 
                 {/* Hover Overlay (non-edit mode) */}
                 {!isEditing && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-                      <span className="inline-block px-2 py-1 bg-blue-500 text-white text-xs rounded capitalize mb-2">
+                      <span className="inline-block px-2 py-1 bg-status-info text-white text-xs rounded capitalize mb-2">
                         {image.category}
                       </span>
                       <p className="text-white text-sm sm:text-base">{image.caption}</p>
@@ -789,13 +789,13 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
             {/* Add New Image Card (edit mode) */}
             {isEditing && !maxImagesReached && (
               <div
-                className="group relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-blue-400 transition-all duration-300"
+                className="group relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden border-2 border-dashed border-ink-light flex items-center justify-center cursor-pointer hover:border-status-info transition-all duration-300"
                 onClick={addImage}
               >
                 <div className="text-center">
-                  <Plus className="w-8 h-8 text-gray-400 group-hover:text-blue-400 mx-auto mb-2" />
-                  <p className="text-gray-500 group-hover:text-blue-400">Add Image</p>
-                  <p className="text-gray-400 text-xs mt-1">{displayData.images.length}/6</p>
+                  <Plus className="w-8 h-8 text-ink-caption group-hover:text-status-info mx-auto mb-2" />
+                  <p className="text-ink-caption group-hover:text-status-info">Add Image</p>
+                  <p className="text-ink-caption text-xs mt-1">{displayData.images.length}/6</p>
                 </div>
               </div>
             )}
@@ -805,14 +805,14 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
           {displayData.images.length === 0 && !isEditing && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Plus className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                  <Plus className="w-8 h-8 text-ink-caption" />
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Images Added</h4>
-                <p className="text-gray-600 mb-6">Add up to 6 images to showcase your event gallery.</p>
+                <h4 className="text-lg font-semibold text-ink mb-2">No Images Added</h4>
+                <p className="text-ink-paragraph mb-6">Add up to 6 images to showcase your event gallery.</p>
                 <CustomButton
                   onClick={handleEdit}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                  className="bg-brand-gold hover:bg-brand-gold text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Images
@@ -823,11 +823,11 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
 
           {/* Cropper Modal */}
           {showCropper && (
-            <div className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4">
-              <div className="bg-white rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
+            <div className="fixed inset-0 bg-ink/90 z-[9999] flex items-center justify-center p-4">
+              <div className="bg-surface-card rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
                 <div className="p-4 border-b flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Crop Image</h3>
-                  <button onClick={cancelCrop} className="p-1 hover:bg-gray-200 rounded">
+                  <button onClick={cancelCrop} className="p-1 hover:bg-ink-light rounded">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -870,7 +870,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
                       onClick={() => setZoom(prev => Math.max(MIN_ZOOM, prev - ZOOM_STEP))}
-                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-8 h-8 flex items-center justify-center bg-ink-light hover:bg-ink-light rounded disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={zoom <= MIN_ZOOM}
                     >
                       -
@@ -886,23 +886,23 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                     />
                     <button
                       onClick={() => setZoom(prev => Math.min(MAX_ZOOM, prev + ZOOM_STEP))}
-                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-8 h-8 flex items-center justify-center bg-ink-light hover:bg-ink-light rounded disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={zoom >= MAX_ZOOM}
                     >
                       +
                     </button>
                     <button
                       onClick={() => setZoom(1)}
-                      className="px-2 h-8 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                      className="px-2 h-8 text-sm bg-ink-light hover:bg-ink-light rounded"
                     >
                       1x
                     </button>
-                    <span className="text-sm text-gray-600">({zoom.toFixed(1)}x)</span>
+                    <span className="text-sm text-ink-paragraph">({zoom.toFixed(1)}x)</span>
                   </div>
                   <div className="flex-1 text-right">
                     <button
                       onClick={applyCrop}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                      className="px-4 py-2 bg-status-success text-white rounded hover:bg-status-success"
                     >
                       Apply Crop
                     </button>
@@ -915,7 +915,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
           {/* Lightbox */}
           {selectedImage !== null && !isEditing && (
             <div
-              className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+              className="fixed inset-0 bg-ink/95 z-50 flex items-center justify-center p-4"
               onClick={() => setSelectedImage(null)}
             >
               <button
@@ -952,7 +952,7 @@ export function GallerySection({ galleryData, onStateChange, userId, eventId }: 
                   className="max-w-full max-h-[80vh] object-contain rounded-lg"
                 />
                 <div className="text-center mt-4 sm:mt-6">
-                  <span className="inline-block px-3 py-1 bg-blue-500 text-white text-sm rounded-full capitalize mb-2">
+                  <span className="inline-block px-3 py-1 bg-status-info text-white text-sm rounded-full capitalize mb-2">
                     {displayData.images[selectedImage].category}
                   </span>
                   <p className="text-white text-base sm:text-lg">

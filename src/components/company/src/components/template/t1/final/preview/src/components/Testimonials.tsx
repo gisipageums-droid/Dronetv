@@ -28,7 +28,7 @@ export default function Testimonials({ content }) {
       stars.push(
         <span
           key={i}
-          className={i <= rating ? "text-yellow-400" : "text-gray-300"}
+          className={i <= rating ? "text-brand-yellow" : "text-ink-light"}
         >
           ★
         </span>
@@ -40,15 +40,15 @@ export default function Testimonials({ content }) {
   return (
     <section
       id='testimonials'
-      className='bg-gray-50 py-16 scroll-mt-20 relative'
+      className='bg-ink-offwhite py-16 scroll-mt-20 relative'
       ref={sectionRef}
     >
       <div className='max-w-6xl mx-auto px-6'>
         <div className='text-center mb-12'>
-          <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+          <h2 className='text-3xl font-bold text-ink mb-4'>
             {testimonialsData.headline.title}
           </h2>
-          <p className='text-gray-600 max-w-2xl mx-auto'>
+          <p className='text-ink-paragraph max-w-2xl mx-auto'>
             {testimonialsData.headline.description}
           </p>
         </div>
@@ -59,12 +59,12 @@ export default function Testimonials({ content }) {
             {testimonialsData.stats.map((stat, index) => (
               <div
                 key={index}
-                className='bg-white p-6 rounded-lg shadow-sm text-center'
+                className='bg-surface-card p-6 rounded-lg shadow-sm text-center'
               >
-                <div className='text-3xl font-bold text-blue-600 mb-2'>
+                <div className='text-3xl font-bold text-status-info mb-2'>
                   {stat.value}
                 </div>
-                <div className='text-gray-600'>
+                <div className='text-ink-paragraph'>
                   {stat.label}
                 </div>
               </div>
@@ -79,17 +79,17 @@ export default function Testimonials({ content }) {
           >
             {testimonialsData.testimonials.map((testimonial, index) => (
               <div key={index} className='w-full flex-shrink-0'>
-                <div className='mx-4 bg-white shadow-lg border-0 rounded-lg'>
+                <div className='mx-4 bg-surface-card shadow-lg border-0 rounded-lg'>
                   <div className='p-8 text-center'>
                     <div className='mb-6'>
-                      <div className='w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden'>
+                      <div className='w-16 h-16 bg-status-info rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden'>
                         <img
                           src={testimonial.image}
                           alt={testimonial.name}
                           className='w-full h-full object-cover'
                         />
                       </div>
-                      <h3 className='font-semibold text-xl text-gray-900 mb-2'>
+                      <h3 className='font-semibold text-xl text-ink mb-2'>
                         {testimonial.name}
                       </h3>
                       <div className='flex justify-center mb-2'>
@@ -98,13 +98,13 @@ export default function Testimonials({ content }) {
                     </div>
 
                     <div className='mb-6'>
-                      <blockquote className='text-lg text-gray-700 italic'>
+                      <blockquote className='text-lg text-ink-paragraph italic'>
                         "{testimonial.quote}"
                       </blockquote>
                     </div>
 
                     <div className='border-t pt-6'>
-                      <p className='text-gray-600'>
+                      <p className='text-ink-paragraph'>
                         {testimonial.role}
                       </p>
                     </div>
@@ -124,8 +124,8 @@ export default function Testimonials({ content }) {
                 onClick={() => setCurrent(index)}
                 className={`w-3 h-3 rounded-full transition-colors duration-200 ${
                   index === current
-                    ? "bg-blue-600"
-                    : "bg-gray-300 hover:bg-gray-400"
+                    ? "bg-status-info"
+                    : "bg-ink-light hover:bg-ink-caption"
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />

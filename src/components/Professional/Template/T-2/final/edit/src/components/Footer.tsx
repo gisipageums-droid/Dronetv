@@ -35,8 +35,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants: Record<string, string> = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes: Record<string, string> = {
 //     sm: "h-8 px-3 text-sm",
@@ -139,7 +139,7 @@
 //     const currentLength = value?.length || 0;
 //     const isOverLimit = charLimit && currentLength > charLimit;
 
-//     const baseClasses = "w-full bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none text-white placeholder-gray-400";
+//     const baseClasses = "w-full bg-ink-charcoal border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none text-white placeholder-ink-caption";
 
 //     return (
 //       <div className="relative">
@@ -148,7 +148,7 @@
 //             value={value || ''}
 //             onChange={handleChange}
 //             className={`${baseClasses} p-2 resize-none ${className} ${
-//               isOverLimit ? 'border-red-400' : ''
+//               isOverLimit ? 'border-status-error' : ''
 //             }`}
 //             placeholder={placeholder}
 //             rows={rows}
@@ -159,14 +159,14 @@
 //             value={value || ''}
 //             onChange={handleChange}
 //             className={`${baseClasses} p-2 ${className} ${
-//               isOverLimit ? 'border-red-400' : ''
+//               isOverLimit ? 'border-status-error' : ''
 //             }`}
 //             placeholder={placeholder}
 //           />
 //         )}
 //         {charLimit && (
 //           <div className={`absolute -bottom-6 right-0 text-xs ${
-//             isOverLimit ? 'text-red-400' : 'text-gray-400'
+//             isOverLimit ? 'text-status-error' : 'text-ink-caption'
 //           }`}>
 //             {currentLength}/{charLimit}
 //           </div>
@@ -345,10 +345,10 @@
 //   // Loading state
 //   if (isLoading) {
 //     return (
-//       <footer ref={footerRef} className="py-12 text-white bg-gray-900">
+//       <footer ref={footerRef} className="py-12 text-white bg-ink">
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-//           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-//           <p className="text-gray-400 mt-4">Loading footer data...</p>
+//           <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
+//           <p className="text-ink-caption mt-4">Loading footer data...</p>
 //         </div>
 //       </footer>
 //     );
@@ -367,7 +367,7 @@
 //   };
 
 //   return (
-//     <footer ref={footerRef} className="py-12  text-white bg-gray-900">
+//     <footer ref={footerRef} className="py-12  text-white bg-ink">
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 //         {/* Edit Controls */}
 //         <div className='text-right mb-8'>
@@ -375,7 +375,7 @@
 //             <Button
 //               onClick={handleEdit}
 //               size='sm'
-//               className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//               className='bg-status-error hover:bg-status-error shadow-md text-white'
 //             >
 //               <Edit2 className='w-4 h-4 mr-2' />
 //               Edit
@@ -385,7 +385,7 @@
 //               <Button
 //                 onClick={handleSave}
 //                 size='sm'
-//                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                 className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                 disabled={isSaving}
 //               >
 //                 {isSaving ? (
@@ -398,7 +398,7 @@
 //               <Button
 //                 onClick={handleCancel}
 //                 size='sm'
-//                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                 className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                 disabled={isSaving}
 //               >
 //                 <X className='w-4 h-4 mr-2' />
@@ -430,14 +430,14 @@
 //                   value={displayData.tagline}
 //                   onChange={(value) => updateBasicField('tagline', value)}
 //                   charLimit={FOOTER_TEXT_LIMITS.TAGLINE}
-//                   className="text-lg text-yellow-400"
+//                   className="text-lg text-brand-yellow"
 //                   placeholder="Tagline"
 //                 />
 //                 <FooterEditableText
 //                   value={displayData.description}
 //                   onChange={(value) => updateBasicField('description', value)}
 //                   charLimit={FOOTER_TEXT_LIMITS.DESCRIPTION}
-//                   className="text-sm text-gray-400"
+//                   className="text-sm text-ink-caption"
 //                   placeholder="Description"
 //                   multiline
 //                   rows={4}
@@ -446,8 +446,8 @@
 //             ) : (
 //               <>
 //                 <h3 className="text-2xl font-bold text-white">{displayData.logoText}</h3>
-//                 <p className="text-lg text-yellow-400">{displayData.tagline}</p>
-//                 <p className="leading-relaxed text-gray-400">
+//                 <p className="text-lg text-brand-yellow">{displayData.tagline}</p>
+//                 <p className="leading-relaxed text-ink-caption">
 //                   {displayData.description}
 //                 </p>
 //               </>
@@ -462,7 +462,7 @@
 //             viewport={{ once: true }}
 //             className="space-y-4"
 //           >
-//             <h4 className="text-lg font-semibold text-yellow-400">Quick Links</h4>
+//             <h4 className="text-lg font-semibold text-brand-yellow">Quick Links</h4>
 //             {isEditing ? (
 //               <div className="space-y-2">
 //                 {displayData.quickLinks.map((link, index) => (
@@ -471,21 +471,21 @@
 //                       value={link.label}
 //                       onChange={(value) => updateQuickLink(index, 'label', value)}
 //                       charLimit={FOOTER_TEXT_LIMITS.LINK_LABEL}
-//                       className="flex-1 text-sm text-gray-400"
+//                       className="flex-1 text-sm text-ink-caption"
 //                       placeholder="Link Label"
 //                     />
 //                     <input
 //                       type="text"
 //                       value={link.href}
 //                       onChange={(e) => updateQuickLink(index, 'href', e.target.value)}
-//                       className="flex-1 text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+//                       className="flex-1 text-sm text-ink-caption bg-ink-charcoal border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2"
 //                       placeholder="Link URL"
 //                     />
 //                     <Button
 //                       onClick={() => removeQuickLink(index)}
 //                       size="sm"
 //                       variant="outline"
-//                       className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+//                       className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
 //                     >
 //                       <X className="w-3 h-3" />
 //                     </Button>
@@ -495,7 +495,7 @@
 //                   onClick={addQuickLink}
 //                   variant="outline"
 //                   size="sm"
-//                   className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700"
+//                   className="w-full bg-status-info/10 hover:bg-status-info/15 text-status-info"
 //                 >
 //                   Add Quick Link
 //                 </Button>
@@ -508,7 +508,7 @@
 //                     href={link.href}
 //                     whileHover={{ x: 5, color: '#fbbf24' }}
 //                     transition={{ duration: 0.2 }}
-//                     className="block text-gray-400 transition-colors duration-300 hover:text-yellow-400"
+//                     className="block text-ink-caption transition-colors duration-300 hover:text-brand-yellow"
 //                   >
 //                     {link.label}
 //                   </motion.a>
@@ -525,7 +525,7 @@
 //             viewport={{ once: true }}
 //             className="space-y-4"
 //           >
-//             <h4 className="text-lg font-semibold text-yellow-400">More Links</h4>
+//             <h4 className="text-lg font-semibold text-brand-yellow">More Links</h4>
 //             {isEditing ? (
 //               <div className="space-y-2">
 //                 {displayData.moreLinks.map((link, index) => (
@@ -534,21 +534,21 @@
 //                       value={link.label}
 //                       onChange={(value) => updateMoreLink(index, 'label', value)}
 //                       charLimit={FOOTER_TEXT_LIMITS.LINK_LABEL}
-//                       className="flex-1 text-sm text-gray-400"
+//                       className="flex-1 text-sm text-ink-caption"
 //                       placeholder="Link Label"
 //                     />
 //                     <input
 //                       type="text"
 //                       value={link.href}
 //                       onChange={(e) => updateMoreLink(index, 'href', e.target.value)}
-//                       className="flex-1 text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+//                       className="flex-1 text-sm text-ink-caption bg-ink-charcoal border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2"
 //                       placeholder="Link URL"
 //                     />
 //                     <Button
 //                       onClick={() => removeMoreLink(index)}
 //                       size="sm"
 //                       variant="outline"
-//                       className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+//                       className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
 //                     >
 //                       <X className="w-3 h-3" />
 //                     </Button>
@@ -558,7 +558,7 @@
 //                   onClick={addMoreLink}
 //                   variant="outline"
 //                   size="sm"
-//                   className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700"
+//                   className="w-full bg-status-info/10 hover:bg-status-info/15 text-status-info"
 //                 >
 //                   Add More Link
 //                 </Button>
@@ -571,7 +571,7 @@
 //                     href={link.href}
 //                     whileHover={{ x: 5, color: '#fbbf24' }}
 //                     transition={{ duration: 0.2 }}
-//                     className="block text-gray-400 transition-colors duration-300 hover:text-yellow-400"
+//                     className="block text-ink-caption transition-colors duration-300 hover:text-brand-yellow"
 //                   >
 //                     {link.label}
 //                   </motion.a>
@@ -587,7 +587,7 @@
 //           whileInView={{ opacity: 1, y: 0 }}
 //           transition={{ duration: 0.6, delay: 0.3 }}
 //           viewport={{ once: true }}
-//           className="grid gap-8 md:grid-cols-2 mt-8 pt-8 border-t border-gray-800"
+//           className="grid gap-8 md:grid-cols-2 mt-8 pt-8 border-t border-ink-charcoal"
 //         >
 
 //         </motion.div>
@@ -598,7 +598,7 @@
 //           whileInView={{ opacity: 1 }}
 //           transition={{ duration: 0.6, delay: 0.4 }}
 //           viewport={{ once: true }}
-//           className="pt-8 mt-8 text-center border-t border-gray-800"
+//           className="pt-8 mt-8 text-center border-t border-ink-charcoal"
 //         >
 //           {isEditing ? (
 //             <div className="space-y-2">
@@ -606,27 +606,27 @@
 //                 value={displayData.copyright.replace(`© ${currentYear}`, '').trim()}
 //                 onChange={(value) => updateBasicField('copyright', `© ${currentYear} ${value}`)}
 //                 charLimit={FOOTER_TEXT_LIMITS.COPYRIGHT}
-//                 className="w-full text-sm text-gray-400 text-center"
+//                 className="w-full text-sm text-ink-caption text-center"
 //                 placeholder="Copyright text"
 //               />
 //               <FooterEditableText
 //                 value={displayData.builtWith}
 //                 onChange={(value) => updateBasicField('builtWith', value)}
 //                 charLimit={FOOTER_TEXT_LIMITS.BUILT_WITH}
-//                 className="w-full text-sm text-gray-400 text-center"
+//                 className="w-full text-sm text-ink-caption text-center"
 //                 placeholder="Built with text"
 //               />
 //             </div>
 //           ) : (
 //             <>
-//               <p className="text-gray-400">{displayData.copyright}</p>
-//               <p className="flex justify-center items-center space-x-2 text-gray-400 mt-2">
+//               <p className="text-ink-caption">{displayData.copyright}</p>
+//               <p className="flex justify-center items-center space-x-2 text-ink-caption mt-2">
 //                 <span>{displayData.builtWith}</span>
 //                 <motion.span
 //                   animate={{ scale: [1, 1.2, 1] }}
 //                   transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
 //                 >
-//                   <Heart className="w-4 h-4 text-red-500 fill-current" />
+//                   <Heart className="w-4 h-4 text-status-error fill-current" />
 //                 </motion.span>
 //               </p>
 //             </>
@@ -674,8 +674,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants: Record<string, string> = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes: Record<string, string> = {
     sm: "h-8 px-3 text-sm",
@@ -856,7 +856,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
       const isOverLimit = charLimit && currentLength > charLimit;
 
       const baseClasses =
-        "w-full bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none text-white placeholder-gray-400";
+        "w-full bg-ink-charcoal border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none text-white placeholder-ink-caption";
 
       return (
         <div className="relative">
@@ -865,7 +865,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
               value={value || ""}
               onChange={handleChange}
               className={`${baseClasses} p-2 resize-none ${className} ${
-                isOverLimit ? "border-red-400" : ""
+                isOverLimit ? "border-status-error" : ""
               }`}
               placeholder={placeholder}
               rows={rows}
@@ -876,7 +876,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
               value={value || ""}
               onChange={handleChange}
               className={`${baseClasses} p-2 ${className} ${
-                isOverLimit ? "border-red-400" : ""
+                isOverLimit ? "border-status-error" : ""
               }`}
               placeholder={placeholder}
             />
@@ -884,7 +884,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
           {charLimit && (
             <div
               className={`absolute -bottom-6 right-0 text-xs ${
-                isOverLimit ? "text-red-400" : "text-gray-400"
+                isOverLimit ? "text-status-error" : "text-ink-caption"
               }`}
             >
               {currentLength}/{charLimit}
@@ -1145,10 +1145,10 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
   // Loading state
   if (isLoading) {
     return (
-      <footer ref={footerRef} className="py-12 text-white bg-gray-900">
+      <footer ref={footerRef} className="py-12 text-white bg-ink">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="text-gray-400 mt-4">Loading footer data...</p>
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
+          <p className="text-ink-caption mt-4">Loading footer data...</p>
         </div>
       </footer>
     );
@@ -1167,7 +1167,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
   };
 
   return (
-    <footer ref={footerRef} className="py-12 text-white bg-gray-900">
+    <footer ref={footerRef} className="py-12 text-white bg-ink">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className="text-right mb-8">
@@ -1175,16 +1175,16 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
           {isEditing && (
             <div className="flex items-center gap-2 justify-end mb-2 text-sm">
               {isAutoSaving && (
-                <div className="flex items-center gap-1 text-blue-500">
+                <div className="flex items-center gap-1 text-status-info">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Auto-saving...</span>
                 </div>
               )}
               {hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-yellow-500">● Unsaved changes</div>
+                <div className="text-brand-gold">● Unsaved changes</div>
               )}
               {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-green-500">
+                <div className="text-status-success">
                   ✓ Auto-saved {lastSaved.toLocaleTimeString()}
                 </div>
               )}
@@ -1195,7 +1195,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
             <Button
               onClick={handleEdit}
               size="sm"
-              className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+              className="bg-status-error hover:bg-status-error shadow-md text-white"
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Edit
@@ -1205,7 +1205,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
               <Button
                 onClick={handleSave}
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                className="bg-status-success hover:bg-status-success text-white shadow-md"
                 disabled={isSaving}
               >
                 {isSaving ? (
@@ -1218,7 +1218,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
               <Button
                 onClick={handleCancel}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                className="bg-status-error hover:bg-status-error shadow-md text-white"
                 disabled={isSaving}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -1250,14 +1250,14 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                   value={displayData.tagline}
                   onChange={(value) => updateBasicField("tagline", value)}
                   charLimit={FOOTER_TEXT_LIMITS.TAGLINE}
-                  className="text-lg text-yellow-400"
+                  className="text-lg text-brand-yellow"
                   placeholder="Tagline"
                 />
                 <FooterEditableText
                   value={displayData.description}
                   onChange={(value) => updateBasicField("description", value)}
                   charLimit={FOOTER_TEXT_LIMITS.DESCRIPTION}
-                  className="text-sm text-gray-400"
+                  className="text-sm text-ink-caption"
                   placeholder="Description"
                   multiline
                   rows={4}
@@ -1268,8 +1268,8 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                 <h3 className="text-2xl font-bold text-white">
                   {displayData.logoText}
                 </h3>
-                <p className="text-lg text-yellow-400">{displayData.tagline}</p>
-                <p className="leading-relaxed text-gray-400">
+                <p className="text-lg text-brand-yellow">{displayData.tagline}</p>
+                <p className="leading-relaxed text-ink-caption">
                   {displayData.description}
                 </p>
               </>
@@ -1284,7 +1284,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
             viewport={{ once: true }}
             className="space-y-4"
           >
-            <h4 className="text-lg font-semibold text-yellow-400">
+            <h4 className="text-lg font-semibold text-brand-yellow">
               Quick Links
             </h4>
             {isEditing ? (
@@ -1297,7 +1297,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                         updateQuickLink(index, "label", value)
                       }
                       charLimit={FOOTER_TEXT_LIMITS.LINK_LABEL}
-                      className="flex-1 text-sm text-gray-400"
+                      className="flex-1 text-sm text-ink-caption"
                       placeholder="Link Label"
                     />
                     <input
@@ -1306,14 +1306,14 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                       onChange={(e) =>
                         updateQuickLink(index, "href", e.target.value)
                       }
-                      className="flex-1 text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                      className="flex-1 text-sm text-ink-caption bg-ink-charcoal border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2"
                       placeholder="Link URL"
                     />
                     <Button
                       onClick={() => removeQuickLink(index)}
                       size="sm"
                       variant="outline"
-                      className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+                      className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
                     >
                       <X className="w-3 h-3" />
                     </Button>
@@ -1323,7 +1323,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                   onClick={addQuickLink}
                   variant="outline"
                   size="sm"
-                  className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700"
+                  className="w-full bg-status-info/10 hover:bg-status-info/15 text-status-info"
                 >
                   Add Quick Link
                 </Button>
@@ -1336,7 +1336,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                     href={link.href}
                     whileHover={{ x: 5, color: "#fbbf24" }}
                     transition={{ duration: 0.2 }}
-                    className="block text-gray-400 transition-colors duration-300 hover:text-yellow-400"
+                    className="block text-ink-caption transition-colors duration-300 hover:text-brand-yellow"
                   >
                     {link.label}
                   </motion.a>
@@ -1353,7 +1353,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
             viewport={{ once: true }}
             className="space-y-4"
           >
-            <h4 className="text-lg font-semibold text-yellow-400">
+            <h4 className="text-lg font-semibold text-brand-yellow">
               More Links
             </h4>
             {isEditing ? (
@@ -1366,7 +1366,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                         updateMoreLink(index, "label", value)
                       }
                       charLimit={FOOTER_TEXT_LIMITS.LINK_LABEL}
-                      className="flex-1 text-sm text-gray-400"
+                      className="flex-1 text-sm text-ink-caption"
                       placeholder="Link Label"
                     />
                     <input
@@ -1375,14 +1375,14 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                       onChange={(e) =>
                         updateMoreLink(index, "href", e.target.value)
                       }
-                      className="flex-1 text-sm text-gray-400 bg-gray-800 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2"
+                      className="flex-1 text-sm text-ink-caption bg-ink-charcoal border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2"
                       placeholder="Link URL"
                     />
                     <Button
                       onClick={() => removeMoreLink(index)}
                       size="sm"
                       variant="outline"
-                      className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+                      className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
                     >
                       <X className="w-3 h-3" />
                     </Button>
@@ -1392,7 +1392,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                   onClick={addMoreLink}
                   variant="outline"
                   size="sm"
-                  className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700"
+                  className="w-full bg-status-info/10 hover:bg-status-info/15 text-status-info"
                 >
                   Add More Link
                 </Button>
@@ -1405,7 +1405,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
                     href={link.href}
                     whileHover={{ x: 5, color: "#fbbf24" }}
                     transition={{ duration: 0.2 }}
-                    className="block text-gray-400 transition-colors duration-300 hover:text-yellow-400"
+                    className="block text-ink-caption transition-colors duration-300 hover:text-brand-yellow"
                   >
                     {link.label}
                   </motion.a>
@@ -1421,7 +1421,7 @@ export function Footer({ footerData, onStateChange }: FooterProps) {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
-          className="grid gap-8 md:grid-cols-2 mt-8 pt-8 border-t border-gray-800"
+          className="grid gap-8 md:grid-cols-2 mt-8 pt-8 border-t border-ink-charcoal"
         >
           {/* Content removed as per your original code */}
         </motion.div>

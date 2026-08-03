@@ -48,16 +48,16 @@ export function Navigation({ activeSection }: NavigationProps) {
     <>
       <nav
         className={`fixed top-[4rem] left-0 right-0 z-[50] transition-all duration-300 ${
-          isScrolled ? 'bg-white shadow-md py-3' : 'bg-white/95 backdrop-blur-md py-4'
+          isScrolled ? 'bg-surface-card shadow-md py-3' : 'bg-white/95 backdrop-blur-md py-4'
         }`}
       >
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-amber-500 rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 bg-brand-gold rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm">E</span>
               </div>
-              <span className="text-gray-900 text-lg">EventPro</span>
+              <span className="text-ink text-lg">EventPro</span>
             </div>
 
             {/* Desktop Navigation */}
@@ -67,12 +67,12 @@ export function Navigation({ activeSection }: NavigationProps) {
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
                   className={`transition-colors duration-200 relative group text-sm ${
-                    activeSection === item.id ? 'text-amber-600' : 'text-gray-600 hover:text-amber-600'
+                    activeSection === item.id ? 'text-brand-gold' : 'text-ink-paragraph hover:text-brand-yellow'
                   }`}
                 >
                   {item.label}
                   <span
-                    className={`absolute -bottom-1 left-0 w-full h-0.5 bg-amber-500 transition-transform duration-200 ${
+                    className={`absolute -bottom-1 left-0 w-full h-0.5 bg-brand-gold transition-transform duration-200 ${
                       activeSection === item.id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                     }`}
                   />
@@ -83,7 +83,7 @@ export function Navigation({ activeSection }: NavigationProps) {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-900"
+              className="lg:hidden p-2 text-ink"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -93,13 +93,13 @@ export function Navigation({ activeSection }: NavigationProps) {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-ink/50 z-40 lg:hidden transition-opacity duration-300 ${
           isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsMobileMenuOpen(false)}
       >
         <div
-          className={`fixed right-0 top-0 bottom-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ${
+          className={`fixed right-0 top-0 bottom-0 w-64 bg-surface-card shadow-xl transform transition-transform duration-300 ${
             isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -107,7 +107,7 @@ export function Navigation({ activeSection }: NavigationProps) {
           <div className="p-6">
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="absolute top-6 right-6 text-gray-900"
+              className="absolute top-6 right-6 text-ink"
             >
               <X size={24} />
             </button>
@@ -117,7 +117,7 @@ export function Navigation({ activeSection }: NavigationProps) {
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
                   className={`text-left py-2 transition-colors duration-200 text-sm ${
-                    activeSection === item.id ? 'text-amber-600' : 'text-gray-600 hover:text-amber-600'
+                    activeSection === item.id ? 'text-brand-gold' : 'text-ink-paragraph hover:text-brand-yellow'
                   }`}
                 >
                   {item.label}

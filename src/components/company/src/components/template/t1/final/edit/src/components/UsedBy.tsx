@@ -451,28 +451,28 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Company Logo
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop || ""}
@@ -501,10 +501,10 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
@@ -512,8 +512,8 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                     }`}
                   >
                     1:1 (Square)
@@ -522,8 +522,8 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                     }`}
                   >
                     4:3 (Standard)
@@ -532,8 +532,8 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                     }`}
                   >
                     16:9 (Widescreen)
@@ -544,8 +544,8 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -554,7 +554,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -562,20 +562,20 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:bg-ink-caption disabled:cursor-not-allowed"
                 >
                   {isUploading ? (
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />
@@ -589,13 +589,13 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
         </motion.div>
       )}
 
-      <section className="py-16 bg-white relative">
+      <section className="py-16 bg-surface-card relative">
         {/* Auto-save status */}
         {editMode && onStateChange && (
-          <div className="absolute top-4 left-4 z-30 flex gap-2 items-center text-sm text-gray-500 bg-white/80 px-3 py-1 rounded-lg">
+          <div className="absolute top-4 left-4 z-30 flex gap-2 items-center text-sm text-ink-caption bg-white/80 px-3 py-1 rounded-lg">
             {isSaving ? (
               <span className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
                 Auto-saving...
               </span>
             ) : lastSaved ? (
@@ -613,7 +613,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
               <button
                 onClick={handleSave}
                 disabled={isSaving || isUploading}
-                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:bg-gray-400"
+                className="flex items-center gap-2 bg-status-success text-white px-4 py-2 rounded-lg hover:bg-status-success transition disabled:bg-ink-caption"
               >
                 {isSaving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -624,7 +624,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
               </button>
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+                className="flex items-center gap-2 bg-status-error text-white px-4 py-2 rounded-lg hover:bg-status-error transition"
               >
                 <X size={18} /> Cancel
               </button>
@@ -633,7 +633,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
             !isPublished && (
               <button
                 onClick={handleEditToggle}
-                className="flex items-center gap-2 bg-black/60 text-white px-4 py-2 rounded-lg border border-white/30 hover:bg-black/80 transition"
+                className="flex items-center gap-2 bg-ink/60 text-white px-4 py-2 rounded-lg border border-white/30 hover:bg-ink-charcoal/80 transition"
               >
                 <Edit2 size={18} /> Edit
               </button>
@@ -650,7 +650,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
           >
             {editMode ? (
               <div className="mb-8">
-                <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2 text-center">
                   Section Title
                 </label>
                 <div className="max-w-xs mx-auto">
@@ -658,18 +658,18 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
                     type="text"
                     value={content.title}
                     onChange={(e) => updateTitle(e.target.value)}
-                    className="w-full bg-white border-2 border-blue-300 rounded p-2 focus:border-blue-500 focus:outline-none text-center text-lg font-medium"
+                    className="w-full bg-surface-card border-2 border-status-info/40 rounded p-2 focus:border-status-info focus:outline-none text-center text-lg font-medium"
                     placeholder="Section title"
                     maxLength={35}
                   />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <div className="flex justify-between text-xs text-ink-caption mt-1">
                     <span>Press Enter to save</span>
                     <span>{content.title.length}/35</span>
                   </div>
                 </div>
               </div>
             ) : (
-              <p className="text-center text-gray-400 text-lg mb-8">
+              <p className="text-center text-ink-caption text-lg mb-8">
                 {content.title}
               </p>
             )}
@@ -686,7 +686,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
               <div className="text-center">
                 <button
                   onClick={addCompany}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+                  className="flex items-center gap-2 bg-status-info hover:bg-status-info text-white px-4 py-2 rounded-md transition-colors"
                 >
                   <Plus size={18} />
                   Add Company
@@ -697,7 +697,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
                 {content.companies.map((company) => (
                   <motion.div
                     key={company.id}
-                    className="bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300"
+                    className="bg-ink-offwhite p-4 rounded-lg border-2 border-dashed border-ink-light"
                     variants={itemVariants}
                   >
                     <div className="space-y-3">
@@ -713,7 +713,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
                             }}
                           />
                           {editMode && (
-                            <label className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded cursor-pointer">
+                            <label className="absolute inset-0 bg-ink/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded cursor-pointer">
                               <Upload className="w-4 h-4 text-white" />
                               <input
                                 type="file"
@@ -733,7 +733,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
                               input.onchange = (e) => handleImageUpload(company.id, e as any);
                               input.click();
                             }}
-                            className="mt-2 text-xs bg-gray-200 hover:bg-gray-300 text-gray-800 px-2 py-1 rounded"
+                            className="mt-2 text-xs bg-ink-light hover:bg-ink-light text-ink-charcoal px-2 py-1 rounded"
                           >
                             <Upload className="w-3 h-3 mr-1 inline" />
                             Change Logo
@@ -743,17 +743,17 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
 
                       {/* Company Name */}
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                        <label className="block text-xs font-medium text-ink-paragraph mb-1">
                           Company Name
                         </label>
                         <input
                           type="text"
                           value={company.name}
                           onChange={(e) => updateCompanyName(company.id, e.target.value)}
-                          className="w-full bg-white border border-gray-300 rounded p-2 text-sm"
+                          className="w-full bg-surface-card border border-ink-light rounded p-2 text-sm"
                           maxLength={100}
                         />
-                        <div className="text-xs text-gray-500 text-right mt-1">
+                        <div className="text-xs text-ink-caption text-right mt-1">
                           {company.name.length}/100
                         </div>
                       </div>
@@ -762,7 +762,7 @@ const EditableUsedBy: React.FC<EditableUsedByProps> = ({
                       {editMode && content.companies.length > 1 && (
                         <button
                           onClick={() => removeCompany(company.id)}
-                          className="w-full bg-red-50 hover:bg-red-100 border border-red-300 text-red-700 px-3 py-1 rounded text-sm"
+                          className="w-full bg-status-error/10 hover:bg-status-error/15 border border-status-error/40 text-status-error px-3 py-1 rounded text-sm"
                         >
                           <Trash2 className="w-3 h-3 mr-1 inline" />
                           Remove

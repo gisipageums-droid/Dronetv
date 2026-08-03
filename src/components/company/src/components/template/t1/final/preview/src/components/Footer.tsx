@@ -53,7 +53,7 @@ export default function Footer({ content }) {
 
   return (
     <motion.footer
-      className="bg-gray-900 border-t border-gray-800"
+      className="bg-ink border-t border-ink-charcoal"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -74,7 +74,7 @@ export default function Footer({ content }) {
             variants={itemVariants}
           >
             <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-              <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400">
+              <span className="flex flex-row gap-2 text-xl font-bold text-brand-yellow">
                 <img
                   src={footerData.brand.logoUrl}
                   alt="Logo"
@@ -84,7 +84,7 @@ export default function Footer({ content }) {
               </span>
             </div>
 
-            <p className="text-gray-300 text-sm leading-relaxed mb-6">
+            <p className="text-ink-light text-sm leading-relaxed mb-6">
               {footerData.brand.description}
             </p>
           </motion.div>
@@ -105,7 +105,7 @@ export default function Footer({ content }) {
                   <li key={link.id}>
                     <a
                       href={link.href}
-                      className="text-gray-300 hover:text-blue-400 transition-colors duration-200"
+                      className="text-ink-light hover:text-status-info transition-colors duration-200"
                     >
                       {link.text}
                     </a>
@@ -121,26 +121,26 @@ export default function Footer({ content }) {
             
             <div className="space-y-3 mb-6 text-sm">
               <div
-                className={`flex items-start justify-center md:justify-start space-x-3 text-gray-300 ${
+                className={`flex items-start justify-center md:justify-start space-x-3 text-ink-light ${
                   isSubscribed ? "" : "blur-[3px] select-none"
                 }`}
               >
-                <Mail className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                <Mail className="w-4 h-4 text-status-info mt-0.5 flex-shrink-0" />
                 <span className="">{footerData.contact.email}</span>
               </div>
 
               <div
-                className={`flex items-start justify-center md:justify-start space-x-3 text-gray-300 ${
+                className={`flex items-start justify-center md:justify-start space-x-3 text-ink-light ${
                   isSubscribed ? "" : "blur-[3px] select-none"
                 }`}
               >
-                <Phone className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                <Phone className="w-4 h-4 text-status-info mt-0.5 flex-shrink-0" />
                 <span className="">{footerData.contact.phone}</span>
               </div>
 
-              <div className="flex items-start justify-center md:justify-start space-x-3 text-gray-300">
+              <div className="flex items-start justify-center md:justify-start space-x-3 text-ink-light">
                 <MapPin
-                  className={`w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0 ${
+                  className={`w-4 h-4 text-status-info mt-0.5 flex-shrink-0 ${
                     isSubscribed ? "" : "blur-[3px] select-none"
                   }`}
                 />

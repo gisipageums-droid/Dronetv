@@ -72,7 +72,7 @@ const Navbar: React.FC = () => {
       className={`fixed top-16 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-sm ${
         isScrolled
           ? "bg-white/80 dark:bg-gray-900/80 shadow-lg backdrop-blur-xl"
-          : "bg-white dark:bg-gray-900"
+          : "bg-surface-card dark:bg-gray-900"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,13 +80,13 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-blue-500 dark:text-orange-500"
+            className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-status-info dark:text-orange-500"
             onClick={() => scrollToSection("#home")}
           >
-            <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+            <div className="rounded-full bg-brand-gold text-ink h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
               <span className="uppercase">J</span>
             </div>
-            <span className="text-2xl font-bold truncate capitalize text-yellow-500">
+            <span className="text-2xl font-bold truncate capitalize text-brand-gold">
               John Doe
             </span>
           </motion.div>
@@ -100,15 +100,15 @@ const Navbar: React.FC = () => {
                 onClick={() => scrollToSection(link.href)}
                 className={`relative px-3 py-2 rounded-md font-medium transition-colors duration-200 ${
                   activeLink === link.href
-                    ? "text-orange-500"
-                    : "text-gray-700 dark:text-gray-300 hover:text-orange-500"
+                    ? "text-status-warning"
+                    : "text-ink-paragraph dark:text-gray-300 hover:text-status-warning"
                 }`}
               >
                 {link.label}
                 {activeLink === link.href && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 rounded-md bg-orange-500/10"
+                    className="absolute inset-0 rounded-md bg-status-warning/10"
                   />
                 )}
               </motion.button>
@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={toggleDarkMode}
-            className="hidden md:inline-block p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-accent-yellow/20 transition-colors duration-200"
+            className="hidden md:inline-block p-3 rounded-full bg-ink-light dark:bg-gray-800 text-ink-paragraph dark:text-gray-300 hover:bg-accent-yellow/20 transition-colors duration-200"
           >
             {isDarkMode ? (
               <Sun className="w-5 h-5" />
@@ -135,7 +135,7 @@ const Navbar: React.FC = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={toggleDarkMode}
-              className="p-2 rounded-full bg-gray-100 dark:bg-gray-800"
+              className="p-2 rounded-full bg-ink-light dark:bg-gray-800"
             >
               {isDarkMode ? (
                 <Sun className="w-5 h-5" />
@@ -146,7 +146,7 @@ const Navbar: React.FC = () => {
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-md text-gray-700 dark:text-gray-300"
+              className="p-2 rounded-md text-ink-paragraph dark:text-gray-300"
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6" />
@@ -163,7 +163,7 @@ const Navbar: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-200 dark:border-gray-800"
+            className="md:hidden border-t border-ink-light dark:border-gray-800"
           >
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navLinks.map((link) => (
@@ -172,8 +172,8 @@ const Navbar: React.FC = () => {
                   onClick={() => scrollToSection(link.href)}
                   className={`block w-full text-left px-3 py-2 rounded-md transition-colors duration-200 ${
                     activeLink === link.href
-                      ? "text-accent-orange font-semibold bg-gray-100 dark:bg-gray-800"
-                      : "text-gray-700 dark:text-gray-300 hover:text-accent-orange hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-accent-orange font-semibold bg-ink-light dark:bg-gray-800"
+                      : "text-ink-paragraph dark:text-gray-300 hover:text-accent-orange hover:bg-ink-light dark:hover:bg-gray-800"
                   }`}
                 >
                   {link.label}

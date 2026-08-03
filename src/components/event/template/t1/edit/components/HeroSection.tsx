@@ -707,12 +707,12 @@ const toggleMute = () => {
   allowFullScreen
 />
 
-        <div className="absolute inset-0 bg-black/60 z-10"></div>
+        <div className="absolute inset-0 bg-ink/60 z-10"></div>
       </div>
       {/* Mute / Unmute Button */}
 <button
   onClick={toggleMute}
-  className="z-30 absolute bottom-6 right-6 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full backdrop-blur-md border border-white/20 transition"
+  className="z-30 absolute bottom-6 right-6 bg-ink/50 hover:bg-ink-charcoal/70 text-white p-3 rounded-full backdrop-blur-md border border-white/20 transition"
 >
   {isMuted ? (
     // Mute Icon
@@ -739,10 +739,10 @@ const toggleMute = () => {
           <div className="absolute top-20 right-6 z-30 flex gap-3 items-center">
             {/* Auto-save status */}
             {editMode && onStateChange && (
-              <div className="text-sm text-white mr-2 bg-black/40 px-3 py-1 rounded-lg hidden sm:block">
+              <div className="text-sm text-white mr-2 bg-ink/40 px-3 py-1 rounded-lg hidden sm:block">
                 {isSaving ? (
                   <span className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
                     Saving...
                   </span>
                 ) : lastSaved ? (
@@ -758,7 +758,7 @@ const toggleMute = () => {
                 <button
                   onClick={handleEditToggle}
                   disabled={isSaving || isUploading}
-                  className="flex items-center my-20 gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                  className="flex items-center my-20 gap-2 bg-status-success text-white px-4 py-2 rounded-lg hover:bg-status-success transition disabled:opacity-50"
                 >
                   {isSaving ? (
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -770,7 +770,7 @@ const toggleMute = () => {
                 <button
                   onClick={handleCancel}
                   disabled={isSaving || isUploading}
-                  className="flex items-center my-20 gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                  className="flex items-center my-20 gap-2 bg-status-error text-white px-4 py-2 rounded-lg hover:bg-status-error transition disabled:opacity-50"
                 >
                   <X size={18} /> Cancel
                 </button>
@@ -778,7 +778,7 @@ const toggleMute = () => {
             ) : (
               <button
                 onClick={handleEditToggle}
-                className="flex items-center gap-2 bg-black/60 text-white px-4 py-2 rounded-lg border border-white/30 hover:bg-black/80 transition"
+                className="flex items-center gap-2 bg-ink/60 text-white px-4 py-2 rounded-lg border border-white/30 hover:bg-ink-charcoal/80 transition"
               >
                 <Edit size={18} /> Edit
               </button>
@@ -798,8 +798,8 @@ const toggleMute = () => {
                 
                 {/* Hover Overlay - Show upload button only in edit mode on hover */}
                 {editMode && (
-                  <div className="absolute inset-0 bg-black/70 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2">
-                    <label className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer">
+                  <div className="absolute inset-0 bg-ink/70 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2">
+                    <label className="flex items-center gap-2 bg-status-info text-white px-4 py-2 rounded-lg hover:bg-status-info transition cursor-pointer">
                       {isUploading ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
@@ -822,8 +822,8 @@ const toggleMute = () => {
                 
                 {/* Non-edit mode hover overlay */}
                 {!editMode && (
-                  <div className="absolute inset-0 bg-black/30 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <span className="text-white text-xs font-medium bg-black/70 px-2 py-1 rounded">
+                  <div className="absolute inset-0 bg-ink/30 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span className="text-white text-xs font-medium bg-ink/70 px-2 py-1 rounded">
                       Banner Preview
                     </span>
                   </div>
@@ -832,7 +832,7 @@ const toggleMute = () => {
             ) : (
               // Show upload button when no image exists (edit mode only)
               editMode && (
-                <label className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer">
+                <label className="flex items-center gap-2 bg-status-info text-white px-4 py-2 rounded-lg hover:bg-status-info transition cursor-pointer">
                   {isUploading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
@@ -864,7 +864,7 @@ const toggleMute = () => {
                 maxLength={100}
                 className="text-5xl md:text-7xl font-bold text-white mb-1 leading-tight px-4 py-2 rounded-md w-full max-w-2xl mx-auto bg-white/20 backdrop-blur-sm"
               />
-              <div className="text-sm text-gray-300 text-right max-w-2xl mx-auto">
+              <div className="text-sm text-ink-light text-right max-w-2xl mx-auto">
                 {heroContent.title.length}/100
               </div>
             </div>
@@ -888,9 +888,9 @@ const toggleMute = () => {
                     }
                     placeholder="Date"
                     maxLength={50}
-                    className="bg-white text-black px-2 py-1 rounded-md"
+                    className="bg-surface-card text-ink px-2 py-1 rounded-md"
                   />
-                  <div className="text-xs text-gray-300 text-right">
+                  <div className="text-xs text-ink-light text-right">
                     {heroContent.date.length}/50
                   </div>
                 </div>
@@ -910,9 +910,9 @@ const toggleMute = () => {
                     }
                     placeholder="Time"
                     maxLength={50}
-                    className="bg-white text-black px-2 py-1 rounded-md"
+                    className="bg-surface-card text-ink px-2 py-1 rounded-md"
                   />
-                  <div className="text-xs text-gray-300 text-right">
+                  <div className="text-xs text-ink-light text-right">
                     {heroContent.time.length}/50
                   </div>
                 </div>
@@ -935,9 +935,9 @@ const toggleMute = () => {
                     }
                     placeholder="Location"
                     maxLength={200}
-                    className="bg-white text-black px-2 py-1 rounded-md"
+                    className="bg-surface-card text-ink px-2 py-1 rounded-md"
                   />
-                  <div className="text-xs text-gray-300 text-right">
+                  <div className="text-xs text-ink-light text-right">
                     {heroContent.location.length}/200
                   </div>
                 </div>
@@ -951,8 +951,8 @@ const toggleMute = () => {
           <div className="mb-8">
             {countdown.isEventExpired ? (
               <div className="text-center">
-                <div className="inline-block bg-orange-300/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-red-400/30">
-                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">
+                <div className="inline-block bg-status-warning/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-status-error/30">
+                  <h3 className="text-2xl md:text-3xl font-bold text-status-success mb-2">
                     ✅ Event has been completed
                   </h3>
                   <p className="text-white text-lg">This event has ended</p>
@@ -960,8 +960,8 @@ const toggleMute = () => {
               </div>
             ) : countdown.isEventStarted ? (
               <div className="text-center">
-                <div className="inline-block bg-green-500/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-green-400/30">
-                  <h3 className="text-2xl md:text-3xl font-bold text-green-400 mb-2">
+                <div className="inline-block bg-status-success/20 backdrop-blur-sm rounded-2xl px-8 py-4 border border-status-success/30">
+                  <h3 className="text-2xl md:text-3xl font-bold text-status-success mb-2">
                     🎉 Event is Live!
                   </h3>
                   <p className="text-white text-lg">Join us now at the event</p>
@@ -973,7 +973,7 @@ const toggleMute = () => {
                   Event Starts In
                 </h3>
                 <div className="flex justify-center gap-4 md:gap-6">
-                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                  <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
                     <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
                       {countdown.days}
                     </div>
@@ -981,7 +981,7 @@ const toggleMute = () => {
                       Days
                     </div>
                   </div>
-                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                  <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
                     <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
                       {countdown.hours}
                     </div>
@@ -989,7 +989,7 @@ const toggleMute = () => {
                       Hours
                     </div>
                   </div>
-                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                  <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
                     <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
                       {countdown.minutes}
                     </div>
@@ -997,7 +997,7 @@ const toggleMute = () => {
                       Minutes
                     </div>
                   </div>
-                  <div className="bg-black/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
+                  <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
                     <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
                       {countdown.seconds}
                     </div>
@@ -1028,7 +1028,7 @@ const toggleMute = () => {
                         eventDate: eventDateTime,
                       });
                     }}
-                    className="bg-white text-black px-3 py-2 rounded-md w-full"
+                    className="bg-surface-card text-ink px-3 py-2 rounded-md w-full"
                   />
                 </div>
                 <div>
@@ -1042,7 +1042,7 @@ const toggleMute = () => {
                         endDate: e.target.value,
                       })
                     }
-                    className="bg-white text-black px-3 py-2 rounded-md w-full"
+                    className="bg-surface-card text-ink px-3 py-2 rounded-md w-full"
                   />
                 </div>
               </div>
@@ -1061,7 +1061,7 @@ const toggleMute = () => {
                         eventDate: eventDateTime,
                       });
                     }}
-                    className="bg-white text-black px-3 py-2 rounded-md w-full"
+                    className="bg-surface-card text-ink px-3 py-2 rounded-md w-full"
                   />
                 </div>
                 <div>
@@ -1075,7 +1075,7 @@ const toggleMute = () => {
                         endTime: e.target.value,
                       })
                     }
-                    className="bg-white text-black px-3 py-2 rounded-md w-full"
+                    className="bg-surface-card text-ink px-3 py-2 rounded-md w-full"
                   />
                 </div>
               </div>
@@ -1134,7 +1134,7 @@ const toggleMute = () => {
                       time: displayTime,
                     });
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+                  className="bg-status-info hover:bg-status-info text-white px-4 py-2 rounded-md transition-colors"
                 >
                   Update Display Date & Time
                 </button>
@@ -1157,19 +1157,19 @@ const toggleMute = () => {
                   }
                   placeholder="Paste any YouTube URL (will be auto-converted)"
                   maxLength={500}
-                  className="bg-white text-black px-3 py-2 rounded-md w-full max-w-lg"
+                  className="bg-surface-card text-ink px-3 py-2 rounded-md w-full max-w-lg"
                 />
-                <div className="text-gray-300 text-sm mt-1 text-right max-w-lg mx-auto">
+                <div className="text-ink-light text-sm mt-1 text-right max-w-lg mx-auto">
                   {heroContent.videoUrl.length}/500
                 </div>
-                <div className="text-gray-300 text-sm mt-2 space-y-1">
+                <div className="text-ink-light text-sm mt-2 space-y-1">
                   <p>
                     <strong>Supported formats:</strong>
                   </p>
                   <p>• https://youtu.be/VIDEO_ID</p>
                   <p>• https://www.youtube.com/watch?v=VIDEO_ID</p>
                   <p>• https://www.youtube.com/embed/VIDEO_ID</p>
-                  <p className="text-yellow-300 mt-2">
+                  <p className="text-brand-yellow-soft mt-2">
                     <strong>
                       ✨ Auto-converts to embed format with autoplay!
                     </strong>
@@ -1192,9 +1192,9 @@ const toggleMute = () => {
                         onChange={(e) => updateHighlight(i, e.target.value)}
                         placeholder={`Highlight ${i + 1}`}
                         maxLength={200}
-                        className="bg-white text-black px-3 py-2 rounded-md w-full"
+                        className="bg-surface-card text-ink px-3 py-2 rounded-md w-full"
                       />
-                      <div className="text-xs text-gray-300 text-right mt-1">
+                      <div className="text-xs text-ink-light text-right mt-1">
                         {highlight.length}/200
                       </div>
                     </div>
@@ -1203,8 +1203,8 @@ const toggleMute = () => {
                       disabled={heroContent.highlights.length <= 1}
                       className={`mt-2 p-2 rounded-md transition-colors ${
                         heroContent.highlights.length <= 1
-                          ? "bg-gray-500 cursor-not-allowed"
-                          : "bg-red-500 hover:bg-red-600"
+                          ? "bg-ink-caption cursor-not-allowed"
+                          : "bg-status-error hover:bg-status-error"
                       }`}
                       title={
                         heroContent.highlights.length <= 1
@@ -1226,7 +1226,7 @@ const toggleMute = () => {
               <div className="mt-4 flex justify-center">
                 <button
                   onClick={addHighlight}
-                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors"
+                  className="flex items-center gap-2 bg-status-success hover:bg-status-success text-white px-4 py-2 rounded-md transition-colors"
                 >
                   <Plus size={18} /> Add Highlight
                 </button>
@@ -1239,30 +1239,30 @@ const toggleMute = () => {
 
       {/* Cropper Modal - UPDATED WITH ASPECT RATIO OPTIONS */}
       {showCropper && (
-        <div className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
-            <div className="p-4 border-b flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+        <div className="fixed inset-0 bg-ink/90 z-[9999] flex items-center justify-center p-4">
+          <div className="bg-surface-card rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
+            <div className="p-4 border-b flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Banner ({getAspectRatioText()} Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Aspect Ratio Selection */}
-            <div className="p-4 border-b border-gray-200 bg-white">
+            <div className="p-4 border-b border-ink-light bg-surface-card">
               <div className="flex flex-wrap gap-2">
-                <span className="text-sm font-medium text-gray-700 mr-2">Aspect Ratio:</span>
+                <span className="text-sm font-medium text-ink-paragraph mr-2">Aspect Ratio:</span>
                 <button
                   onClick={() => setSelectedAspectRatio("original")}
                   className={`px-3 py-1 text-sm rounded border ${
                     selectedAspectRatio === "original"
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-ink-light text-ink-paragraph border-ink-light hover:bg-ink-light"
                   }`}
                 >
                   {HERO_BANNER_DIMENSIONS.width}:{HERO_BANNER_DIMENSIONS.height} (Fixed)
@@ -1271,8 +1271,8 @@ const toggleMute = () => {
                   onClick={() => setSelectedAspectRatio("1:1")}
                   className={`px-3 py-1 text-sm rounded border ${
                     selectedAspectRatio === "1:1"
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-ink-light text-ink-paragraph border-ink-light hover:bg-ink-light"
                   }`}
                 >
                   1:1 (Square)
@@ -1281,8 +1281,8 @@ const toggleMute = () => {
                   onClick={() => setSelectedAspectRatio("3:2")}
                   className={`px-3 py-1 text-sm rounded border ${
                     selectedAspectRatio === "3:2"
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-ink-light text-ink-paragraph border-ink-light hover:bg-ink-light"
                   }`}
                 >
                   3:2 (Standard)
@@ -1291,8 +1291,8 @@ const toggleMute = () => {
                   onClick={() => setSelectedAspectRatio("16:9")}
                   className={`px-3 py-1 text-sm rounded border ${
                     selectedAspectRatio === "16:9"
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-ink-light text-ink-paragraph border-ink-light hover:bg-ink-light"
                   }`}
                 >
                   16:9 (Landscape)
@@ -1301,7 +1301,7 @@ const toggleMute = () => {
             </div>
 
             {/* Cropper Area with dynamic sizing */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop || ""}
                 crop={crop}
@@ -1336,14 +1336,14 @@ const toggleMute = () => {
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -1352,7 +1352,7 @@ const toggleMute = () => {
                   max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -1360,13 +1360,13 @@ const toggleMute = () => {
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
@@ -1374,7 +1374,7 @@ const toggleMute = () => {
                   onClick={applyCrop}
                   disabled={isUploading}
                   className={`w-full ${
-                    isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+                    isUploading ? "bg-ink-caption cursor-not-allowed" : "bg-status-success hover:bg-status-success"
                   } text-white rounded py-2 text-sm font-medium`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}

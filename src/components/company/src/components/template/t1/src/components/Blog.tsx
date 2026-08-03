@@ -4,7 +4,7 @@ import { X, Calendar, Clock, User } from "lucide-react";
 
 // Custom Card Component
 const Card = ({ children, className = "" }) => (
-  <div className={`bg-white rounded-xl shadow-lg overflow-hidden ${className}`}>
+  <div className={`bg-surface-card rounded-xl shadow-lg overflow-hidden ${className}`}>
     {children}
   </div>
 );
@@ -16,8 +16,8 @@ const CardContent = ({ children, className = "" }) => (
 // Custom Button Component
 const Button = ({ children, onClick, className = "", variant = "primary" }) => {
   const variantClasses = {
-    primary: "bg-indigo-600 hover:bg-indigo-700 text-white",
-    ghost: "text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+    primary: "bg-status-info hover:bg-status-info text-white",
+    ghost: "text-status-info hover:text-status-info hover:bg-status-info/10"
   };
 
   return (
@@ -85,14 +85,14 @@ function BlogModal({ blog, onClose }) {
 
   return (
     <motion.div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
       <motion.div
-        className="bg-white rounded-2xl w-full max-w-4xl max-h-[70vh] overflow-hidden shadow-2xl"
+        className="bg-surface-card rounded-2xl w-full max-w-4xl max-h-[70vh] overflow-hidden shadow-2xl"
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -106,17 +106,17 @@ function BlogModal({ blog, onClose }) {
             alt={blog.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"></div>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors shadow-lg"
+            className="absolute top-4 right-4 bg-white/90 hover:bg-surface-card rounded-full p-2 transition-colors shadow-lg"
             aria-label="Close modal"
           >
-            <X className="w-5 h-5 text-gray-900" />
+            <X className="w-5 h-5 text-ink" />
           </button>
           <div className="absolute bottom-6 left-6 right-6">
             <div className="flex items-center gap-3 mb-3">
-              <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">
+              <span className="px-3 py-1 bg-status-info text-white text-xs font-medium rounded-full">
                 {blog.category}
               </span>
             </div>
@@ -144,7 +144,7 @@ function BlogModal({ blog, onClose }) {
         <div className="overflow-y-auto max-h-[calc(90vh-16rem)] p-8">
           {/* Excerpt */}
           <div className="mb-8">
-            <p className="text-lg text-gray-700 leading-relaxed">
+            <p className="text-lg text-ink-paragraph leading-relaxed">
               {blog.excerpt}
             </p>
           </div>
@@ -152,17 +152,17 @@ function BlogModal({ blog, onClose }) {
           {/* Blog Outline if available */}
           {blog.outline && blog.outline.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <span className="text-indigo-600">📋</span> In this article:
+              <h3 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+                <span className="text-status-info">📋</span> In this article:
               </h3>
-              <div className="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
+              <div className="bg-status-info/10 p-6 rounded-xl border border-status-info/15">
                 <ul className="space-y-3">
                   {blog.outline.map((item, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-indigo-600 mr-3 mt-1 text-lg">
+                      <span className="text-status-info mr-3 mt-1 text-lg">
                         •
                       </span>
-                      <span className="text-gray-700">
+                      <span className="text-ink-paragraph">
                         {item}
                       </span>
                     </li>
@@ -174,7 +174,7 @@ function BlogModal({ blog, onClose }) {
 
           {/* Main Content */}
           <div className="mb-8">
-            <div className="text-gray-700 leading-7 space-y-6 text-base">
+            <div className="text-ink-paragraph leading-7 space-y-6 text-base">
               {blog.content ? (
                 <div dangerouslySetInnerHTML={{ __html: blog.content }} />
               ) : (
@@ -195,7 +195,7 @@ function BlogModal({ blog, onClose }) {
                     increased yields and reduced resource consumption.
                   </p>
 
-                  <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">
+                  <h3 className="text-xl font-bold text-ink mt-8 mb-4">
                     The Future of Drone Technology
                   </h3>
 
@@ -215,14 +215,14 @@ function BlogModal({ blog, onClose }) {
           {/* Keywords if available */}
           {blog.keywords && blog.keywords.length > 0 && (
             <div className="mb-6">
-              <h4 className="text-sm font-semibold text-gray-900 mb-3">
+              <h4 className="text-sm font-semibold text-ink mb-3">
                 Keywords:
               </h4>
               <div className="flex flex-wrap gap-2">
                 {blog.keywords.map((keyword, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-indigo-100 text-indigo-800 text-sm rounded-full border border-indigo-200"
+                    className="px-3 py-1.5 bg-status-info/15 text-status-info text-sm rounded-full border border-status-info/25"
                   >
                     #{keyword}
                   </span>
@@ -232,7 +232,7 @@ function BlogModal({ blog, onClose }) {
           )}
 
           {/* CTA Button */}
-          <div className="flex justify-center pt-6 border-t border-gray-200">
+          <div className="flex justify-center pt-6 border-t border-ink-light">
             <Button
               onClick={onClose}
               className="px-8"
@@ -428,7 +428,7 @@ export default function Blog() {
       <motion.section
         ref={sectionRef}
         id="blog"
-        className="py-20 bg-gray-50 scroll-mt-20 relative"
+        className="py-20 bg-ink-offwhite scroll-mt-20 relative"
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : { opacity: 0 }}
         transition={{ duration: 0.5 }}
@@ -440,13 +440,13 @@ export default function Blog() {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-block px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
+            <span className="inline-block px-4 py-1.5 bg-status-info/15 text-status-info rounded-full text-sm font-medium mb-4">
               Our Blog
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
               {content.header.title}
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-ink-paragraph max-w-2xl mx-auto">
               {content.header.desc}
             </p>
           </motion.div>
@@ -479,13 +479,13 @@ export default function Blog() {
                           alt={b.title}
                         />
                         <div className="absolute top-3 right-3">
-                          <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">
+                          <span className="px-3 py-1 bg-status-info text-white text-xs font-medium rounded-full">
                             {b.category}
                           </span>
                         </div>
                       </div>
                       <CardContent className="p-6 space-y-3">
-                        <div className="flex justify-between items-center text-sm text-gray-500">
+                        <div className="flex justify-between items-center text-sm text-ink-caption">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
                             <span>{b.date}</span>
@@ -495,14 +495,14 @@ export default function Blog() {
                             <span>{b.readTime || "5 min read"}</span>
                           </div>
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                        <h3 className="text-xl font-semibold text-ink group-hover:text-status-info transition-colors">
                           {b.title}
                         </h3>
-                        <p className="text-gray-600 line-clamp-3">
+                        <p className="text-ink-paragraph line-clamp-3">
                           {b.excerpt}
                         </p>
                         <div className="flex justify-between items-center mt-4">
-                          <div className="text-sm text-gray-500 flex items-center gap-1">
+                          <div className="text-sm text-ink-caption flex items-center gap-1">
                             {b.author && (
                               <>
                                 <User className="w-4 h-4" />
@@ -516,7 +516,7 @@ export default function Blog() {
                           >
                             <Button
                               variant="ghost"
-                              className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                              className="text-status-info hover:text-status-info hover:bg-status-info/10"
                               onClick={() => openModal(b)}
                             >
                               Read More →

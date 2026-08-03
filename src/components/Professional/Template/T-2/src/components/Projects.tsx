@@ -66,7 +66,7 @@ export function Projects() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
-            Featured <span className="text-yellow-500">Projects</span>
+            Featured <span className="text-brand-gold">Projects</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             A showcase of my recent work and projects that demonstrate my skills 
@@ -96,13 +96,13 @@ export function Projects() {
                     className="w-full h-48 object-cover"
                   />
                 </motion.div>
-                <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 bg-ink bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                   <div className="opacity-0 hover:opacity-100 transition-all duration-300 flex space-x-4">
                     <motion.a
                       href={project.liveUrl}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-yellow-400 text-gray-900 p-2 rounded-full"
+                      className="bg-brand-yellow text-ink p-2 rounded-full"
                     >
                       <ExternalLink size={20} />
                     </motion.a>
@@ -110,7 +110,7 @@ export function Projects() {
                       href={project.githubUrl}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-white text-gray-900 p-2 rounded-full"
+                      className="bg-surface-card text-ink p-2 rounded-full"
                     >
                       <Github size={20} />
                     </motion.a>
@@ -126,7 +126,7 @@ export function Projects() {
                   {project.technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm"
+                      className="px-3 py-1 bg-brand-yellow-soft text-brand-gold rounded-full text-sm"
                     >
                       {tech}
                     </span>

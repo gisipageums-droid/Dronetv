@@ -37,8 +37,8 @@ const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
             className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
               ${
                 selectedValue === item.value
-                  ? "text-amber-600 font-bold text-lg scale-105 rounded-lg mx-1"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-brand-gold font-bold text-lg scale-105 rounded-lg mx-1"
+                  : "text-ink-caption hover:text-ink-paragraph"
               }`}
             onClick={() => handleClick(item.value)}
           >
@@ -234,20 +234,20 @@ const ScrollDatePicker: React.FC<{
   }, []);
 
   return (
-    <div className="bg-white border border-amber-200 rounded-xl p-4 date-picker-card animate-fade-in-up">
+    <div className="bg-surface-card border border-brand-yellow-soft rounded-xl p-4 date-picker-card animate-fade-in-up">
       <div className="text-center mb-4">
-        <h3 className="font-semibold text-gray-800">{title}</h3>
-        <p className="text-xs text-gray-600 mt-1">{description}</p>
+        <h3 className="font-semibold text-ink-charcoal">{title}</h3>
+        <p className="text-xs text-ink-paragraph mt-1">{description}</p>
       </div>
 
       <div className="flex items-center justify-between mb-2 px-4">
-        <div className="flex-1 text-center"><span className="text-xs font-medium text-gray-500">DAY</span></div>
-        <div className="flex-1 text-center"><span className="text-xs font-medium text-gray-500">MONTH</span></div>
-        <div className="flex-1 text-center"><span className="text-xs font-medium text-gray-500">YEAR</span></div>
+        <div className="flex-1 text-center"><span className="text-xs font-medium text-ink-caption">DAY</span></div>
+        <div className="flex-1 text-center"><span className="text-xs font-medium text-ink-caption">MONTH</span></div>
+        <div className="flex-1 text-center"><span className="text-xs font-medium text-ink-caption">YEAR</span></div>
       </div>
 
       <div className="relative">
-        <div className="absolute left-0 right-0 top-20 transform -translate-y-1/2 h-8 bg-amber-100 border-2 border-amber-300 rounded-lg pointer-events-none date-picker-highlight"></div>
+        <div className="absolute left-0 right-0 top-20 transform -translate-y-1/2 h-8 bg-brand-yellow-soft border-2 border-brand-yellow-soft rounded-lg pointer-events-none date-picker-highlight"></div>
 
         <div className="flex items-stretch h-32 relative z-10">
           <ScrollColumn
@@ -274,9 +274,9 @@ const ScrollDatePicker: React.FC<{
         </div>
       </div>
 
-      <div className="text-center mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
-        <p className="text-sm text-gray-600">Selected Date</p>
-        <p className="font-semibold text-amber-700">
+      <div className="text-center mt-4 p-3 bg-surface-main rounded-lg border border-brand-yellow-soft">
+        <p className="text-sm text-ink-paragraph">Selected Date</p>
+        <p className="font-semibold text-brand-gold">
           {parseInt(selectedDate.day)}{" "}
           {months.find((m) => m.value === selectedDate.month)?.name}{" "}
           {selectedDate.year}
@@ -418,7 +418,7 @@ export const Step1 = ({
   // Render input field based on type
   const renderInputField = (field: any) => {
     const baseClasses =
-      "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
+      "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full";
     const currentValue = data[field.id] || "";
     const charLimit = characterLimits[field.id as keyof typeof characterLimits];
     const charsRemaining = charLimit ? charLimit - currentValue.length : null;
@@ -436,9 +436,9 @@ export const Step1 = ({
         <div className="space-y-3">
           {/* Custom Date Picker - Full width on first line */}
           <div>
-            <label className="mb-1 font-medium text-slate-800 text-sm block">
+            <label className="mb-1 font-medium text-ink-charcoal text-sm block">
               Date
-              {field.required && <span className="text-red-500 ml-1">*</span>}
+              {field.required && <span className="text-status-error ml-1">*</span>}
             </label>
             <ScrollDatePicker
               value={currentDate}
@@ -452,9 +452,9 @@ export const Step1 = ({
 
           {/* Time Input - Full width on second line */}
           <div>
-            <label className="mb-1 font-medium text-slate-800 text-sm block">
+            <label className="mb-1 font-medium text-ink-charcoal text-sm block">
               Time
-              {field.required && <span className="text-red-500 ml-1">*</span>}
+              {field.required && <span className="text-status-error ml-1">*</span>}
             </label>
             <input
               type="time"
@@ -481,9 +481,9 @@ export const Step1 = ({
             type={field.type}
             className={`${baseClasses} ${charLimit ? "pr-10" : ""} ${
               eventTitleStatus && !eventTitleStatus.available
-                ? "border-red-300 focus:ring-red-400"
+                ? "border-status-error/40 focus:ring-status-error"
                 : eventTitleStatus?.available
-                ? "border-green-300 focus:ring-green-400"
+                ? "border-status-success/40 focus:ring-status-success"
                 : ""
             }`}
             value={currentValue}
@@ -501,8 +501,8 @@ export const Step1 = ({
             <div
               className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${
                 charsRemaining && charsRemaining < 10
-                  ? "text-red-500"
-                  : "text-slate-500"
+                  ? "text-status-error"
+                  : "text-ink-caption"
               }`}
             >
               {charsRemaining}
@@ -511,17 +511,17 @@ export const Step1 = ({
 
           {/* Event Title Availability Status */}
           {isCheckingEventTitle && (
-            <div className="absolute left-0 top-full mt-1 text-xs text-blue-600">
+            <div className="absolute left-0 top-full mt-1 text-xs text-status-info">
               Checking availability...
             </div>
           )}
           {eventTitleStatus && !eventTitleStatus.available && (
             <div className="absolute left-0 top-full mt-1">
-              <div className="text-xs text-red-600 mb-1">
+              <div className="text-xs text-status-error mb-1">
                 {eventTitleStatus.message}
               </div>
               {eventTitleStatus.suggestions && eventTitleStatus.suggestions.length > 0 && (
-                <div className="text-xs text-amber-700">
+                <div className="text-xs text-brand-gold">
                   <span className="font-medium">Suggestions:</span>{" "}
                   {eventTitleStatus.suggestions.join(", ")}
                 </div>
@@ -529,7 +529,7 @@ export const Step1 = ({
             </div>
           )}
           {eventTitleStatus && eventTitleStatus.available && (
-            <div className="absolute left-0 top-full mt-1 text-xs text-green-600">
+            <div className="absolute left-0 top-full mt-1 text-xs text-status-success">
               {eventTitleStatus.message || "Event title is available!"}
             </div>
           )}
@@ -607,8 +607,8 @@ export const Step1 = ({
             <div
               className={`absolute bottom-2 right-2 text-xs ${
                 charsRemaining && charsRemaining < 10
-                  ? "text-red-500"
-                  : "text-slate-500"
+                  ? "text-status-error"
+                  : "text-ink-caption"
               }`}
             >
               {charsRemaining}
@@ -624,11 +624,11 @@ export const Step1 = ({
         <div className="flex items-center">
           <input
             type="checkbox"
-            className="w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500"
+            className="w-4 h-4 text-brand-gold border-brand-yellow-soft rounded focus:ring-brand-gold"
             checked={data[field.id] || false}
             onChange={(e) => updateField(field.id, e.target.checked)}
           />
-          <label className="ml-2 text-sm text-slate-700">
+          <label className="ml-2 text-sm text-ink-paragraph">
             Enable countdown
           </label>
         </div>
@@ -656,8 +656,8 @@ export const Step1 = ({
           <div
             className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${
               charsRemaining && charsRemaining < 10
-                ? "text-red-500"
-                : "text-slate-500"
+                ? "text-status-error"
+                : "text-ink-caption"
             }`}
           >
             {charsRemaining}
@@ -734,7 +734,7 @@ export const Step1 = ({
 
   return (
     <>
-      <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+      <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
         {step.title}
       </h2>
 
@@ -742,9 +742,9 @@ export const Step1 = ({
         {fieldGroups.map((group, index) => (
           <div
             key={index}
-            className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md"
+            className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md"
           >
-            <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
+            <h3 className="text-lg font-semibold text-ink border-b border-brand-yellow-soft pb-2">
               {group.title}
             </h3>
 
@@ -781,13 +781,13 @@ export const Step1 = ({
                     {/* Don't show label for date fields since ScrollDatePicker has its own title */}
                     {field.type !== "date" &&
                       field.id !== "countdownTargetDate" && (
-                        <label className="mb-1 font-medium text-slate-800 text-sm">
+                        <label className="mb-1 font-medium text-ink-charcoal text-sm">
                           {generateLabel(field.id)}
                           {field.required && (
-                            <span className="text-red-500 ml-1">*</span>
+                            <span className="text-status-error ml-1">*</span>
                           )}
                           {charLimit && (
-                            <span className="text-slate-500 text-xs font-normal ml-2">
+                            <span className="text-ink-caption text-xs font-normal ml-2">
                               (max {charLimit} characters)
                             </span>
                           )}
@@ -797,13 +797,13 @@ export const Step1 = ({
 
                     {/* Helper text for specific fields */}
                     {field.id === "countdownTargetDate" && (
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-xs text-ink-caption mt-1">
                         Set the date and time for the countdown timer
                       </p>
                     )}
 
                     {field.id === "eventTagline" && (
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-xs text-ink-caption mt-1">
                         A catchy phrase that summarizes your event
                       </p>
                     )}

@@ -43,14 +43,14 @@ const speakersData = [
 // Utility functions
 const getColorForAvatar = (name = '') => {
   const colors = [
-    'bg-purple-500',
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-yellow-500',
-    'bg-red-500',
-    'bg-indigo-500',
-    'bg-pink-500',
-    'bg-cyan-500'
+    'bg-brand-gold',
+    'bg-status-info',
+    'bg-status-success',
+    'bg-brand-gold',
+    'bg-status-error',
+    'bg-status-info',
+    'bg-status-error',
+    'bg-status-info'
   ];
   const code = name && name.length ? name.charCodeAt(0) : 65;
   const idx = code % colors.length;
@@ -66,9 +66,9 @@ const getInitials = (name = '') => {
 
 const SpeakerCard = ({ speaker }) => {
   return (
-    <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-6 h-full border border-gray-100 hover:border-gray-200 relative overflow-hidden">
+    <div className="group bg-surface-card rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-6 h-full border border-ink-light hover:border-ink-light relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-100 rounded-full -translate-y-10 translate-x-10 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+      <div className="absolute top-0 right-0 w-20 h-20 bg-brand-yellow-soft rounded-full -translate-y-10 translate-x-10 opacity-50 group-hover:opacity-70 transition-opacity"></div>
       
       <div className="relative z-10">
         {/* Avatar */}
@@ -80,20 +80,20 @@ const SpeakerCard = ({ speaker }) => {
 
         {/* Content */}
         <div className="text-center space-y-2">
-          <h4 className="text-lg font-bold text-gray-800 leading-tight">{speaker.name}</h4>
+          <h4 className="text-lg font-bold text-ink-charcoal leading-tight">{speaker.name}</h4>
           {speaker.title && (
-            <p className="text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full inline-block">
+            <p className="text-sm font-medium text-brand-gold bg-surface-main px-3 py-1 rounded-full inline-block">
               {speaker.title}
             </p>
           )}
           {speaker.company && (
-            <p className="text-sm text-gray-600 leading-relaxed">{speaker.company}</p>
+            <p className="text-sm text-ink-paragraph leading-relaxed">{speaker.company}</p>
           )}
         </div>
       </div>
 
       {/* Hover effect border */}
-      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-yellow-400 transition-all pointer-events-none"></div>
+      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-brand-yellow transition-all pointer-events-none"></div>
     </div>
   );
 };
@@ -107,32 +107,32 @@ const SpeakersSection = () => {
   const speakersToday = speakersData[activeDay]?.speakers?.length || 0;
 
   return (
-    <section className="py-20 bg-gray-50 min-h-screen">
+    <section className="py-20 bg-ink-offwhite min-h-screen">
       <div className="container mx-auto px-4 max-w-7xl relative">
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-bold mb-4">
-            <span className="text-yellow-500">
+            <span className="text-brand-gold">
               Drone Expo 2025
             </span>
-            <span className="block text-gray-800 text-3xl md:text-4xl mt-2">Speakers</span>
+            <span className="block text-ink-charcoal text-3xl md:text-4xl mt-2">Speakers</span>
           </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto mt-4">
+          <p className="text-ink-paragraph text-lg max-w-2xl mx-auto mt-4">
             Meet our distinguished speakers who will share their expertise and insights
           </p>
         </div>
 
         {/* Day Navigation */}
         <div className="flex justify-center mb-12">
-          <div className="bg-white rounded-2xl shadow-lg p-2 flex gap-2">
+          <div className="bg-surface-card rounded-2xl shadow-lg p-2 flex gap-2">
             {speakersData.map((dayGroup, index) => (
               <button
                 key={index}
                 onClick={() => setActiveDay(index)}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   activeDay === index
-                    ? 'bg-yellow-500 text-black shadow-lg'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                    ? 'bg-brand-gold text-ink shadow-lg'
+                    : 'text-ink-paragraph hover:text-ink-charcoal hover:bg-ink-offwhite'
                 }`}
               >
                 {dayGroup.day}
@@ -144,7 +144,7 @@ const SpeakersSection = () => {
         {/* Speakers Grid */}
         <div className="mb-16">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-3xl font-bold text-gray-800">
+            <h3 className="text-3xl font-bold text-ink-charcoal">
               {speakersData[activeDay]?.day}
             </h3>
           </div>
@@ -160,19 +160,19 @@ const SpeakersSection = () => {
         </div>
 
         {/* Stats */}
-        <div className="mt-16 bg-yellow-500 rounded-2xl p-8 text-black">
+        <div className="mt-16 bg-brand-gold rounded-2xl p-8 text-ink">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold mb-2">{totalSpeakers}</div>
-              <div className="text-yellow-100">Total Speakers</div>
+              <div className="text-brand-yellow-soft">Total Speakers</div>
             </div>
             <div>
               <div className="text-3xl font-bold mb-2">{eventDays}</div>
-              <div className="text-yellow-100">Event Days</div>
+              <div className="text-brand-yellow-soft">Event Days</div>
             </div>
             <div>
               <div className="text-3xl font-bold mb-2">{speakersToday}</div>
-              <div className="text-yellow-100">Speakers Today</div>
+              <div className="text-brand-yellow-soft">Speakers Today</div>
             </div>
           </div>
         </div>

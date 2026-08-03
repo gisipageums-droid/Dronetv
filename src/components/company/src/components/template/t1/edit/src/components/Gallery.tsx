@@ -28,8 +28,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes = {
 //     sm: "h-8 px-3 text-sm",
@@ -473,11 +473,11 @@
 //       };
 
 //       const baseClasses =
-//         "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+//         "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none";
 
 //       // Show character count if maxLength is provided
 //       const charCount = maxLength ? (
-//         <div className="text-xs text-gray-500 text-right mt-1">
+//         <div className="text-xs text-ink-caption text-right mt-1">
 //           {value?.length || 0}/{maxLength}
 //         </div>
 //       ) : null;
@@ -529,14 +529,14 @@
 //       id="gallery"
 //       ref={sectionRef}
 //       className={`${displaygalleryData?.images?.length > 0 ? "py-24" : "py-2"
-//         } bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20 relative`}
+//         } bg-gradient-to-b from-surface-main/30 via-white to-surface-main/20 scroll-mt-20 relative`}
 //     >
 //       {/* Loading Overlay */}
 //       {isLoading && (
 //         <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
-//           <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-//             <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-//             <span className="text-gray-700">Loading galleryData...</span>
+//           <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3">
+//             <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+//             <span className="text-ink-paragraph">Loading galleryData...</span>
 //           </div>
 //         </div>
 //       )}
@@ -548,7 +548,7 @@
 //             onClick={handleEdit}
 //             variant="outline"
 //             size="sm"
-//             className="bg-white hover:bg-gray-50 shadow-md"
+//             className="bg-surface-card hover:bg-ink-offwhite shadow-md"
 //           >
 //             <Edit2 className="w-4 h-4 mr-2" />
 //             Edit
@@ -558,7 +558,7 @@
 //             <Button
 //               onClick={handleSave}
 //               size="sm"
-//               className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+//               className="bg-status-success hover:bg-status-success text-white shadow-md"
 //               disabled={isSaving || isUploading}
 //             >
 //               {isUploading ? (
@@ -574,7 +574,7 @@
 //               onClick={handleCancel}
 //               variant="outline"
 //               size="sm"
-//               className="bg-white hover:bg-gray-50 shadow-md"
+//               className="bg-surface-card hover:bg-ink-offwhite shadow-md"
 //               disabled={isSaving || isUploading}
 //             >
 //               <X className="w-4 h-4 mr-2" />
@@ -594,7 +594,7 @@
 //               transition={{ duration: 0.6, ease: "easeOut" }}
 //               className="inline-block mb-4"
 //             >
-//               <Badge className="bg-[#ffeb3b] text-gray-900 px-5 py-2 shadow-md">
+//               <Badge className="bg-[#ffeb3b] text-ink px-5 py-2 shadow-md">
 //                 Our Gallery
 //               </Badge>
 //             </motion.div>
@@ -605,7 +605,7 @@
 //               <EditableText
 //                 value={displaygalleryData.heading.title}
 //                 field="title"
-//                 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center"
+//                 className="text-3xl md:text-4xl font-extrabold text-ink text-center"
 //                 placeholder="Gallery Title"
 //                 maxLength={35}
 //               />
@@ -613,7 +613,7 @@
 //                 value={displaygalleryData.heading.description}
 //                 field="description"
 //                 multiline={true}
-//                 className="text-gray-600 max-w-2xl mx-auto text-lg text-center"
+//                 className="text-ink-paragraph max-w-2xl mx-auto text-lg text-center"
 //                 placeholder="Gallery description"
 //                 maxLength={35}
 //               />
@@ -624,7 +624,7 @@
 //                 initial={{ opacity: 0, y: 30 }}
 //                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
 //                 transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
-//                 className="text-3xl md:text-4xl font-extrabold text-gray-900"
+//                 className="text-3xl md:text-4xl font-extrabold text-ink"
 //               >
 //                 {displaygalleryData?.heading?.title}
 //               </motion.h2>
@@ -633,7 +633,7 @@
 //                 initial={{ opacity: 0, y: 30 }}
 //                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
 //                 transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-//                 className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg"
+//                 className="text-ink-paragraph mt-4 max-w-2xl mx-auto text-lg"
 //               >
 //                 {displaygalleryData?.heading?.description}
 //               </motion.p>
@@ -657,7 +657,7 @@
 //                 y: isEditing ? 0 : -5,
 //                 scale: isEditing ? 1 : 1.02,
 //               }}
-//               className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${"bg-white"}`}
+//               className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${"bg-surface-card"}`}
 //               onClick={() => openLightbox(index)}
 //             >
 //               <div className="relative overflow-hidden">
@@ -672,8 +672,8 @@
 //                     }}
 //                   />
 //                 ) : (
-//                   <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-//                     <span className="text-gray-500">No image</span>
+//                   <div className="w-full h-64 bg-ink-light flex items-center justify-center">
+//                     <span className="text-ink-caption">No image</span>
 //                   </div>
 //                 )}
 
@@ -699,14 +699,14 @@
 //                       className="hidden"
 //                     />
 //                     {pendingImages[index] && (
-//                       <p className="text-xs text-orange-600 bg-white p-1 rounded">
+//                       <p className="text-xs text-status-warning bg-surface-card p-1 rounded">
 //                         {pendingImages[index].name}
 //                       </p>
 //                     )}
 //                   </div>
 //                 )}
 
-//                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
+//                 <div className="absolute inset-0 bg-ink bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
 //                   <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
 //                     {isEditing ? (
 //                       <>
@@ -716,11 +716,11 @@
 //                             onChange={(e) =>
 //                               updateImageField(index, "title", e.target.value)
 //                             }
-//                             className="font-semibold bg-transparent border-b w-full mb-1 text-white placeholder-gray-300"
+//                             className="font-semibold bg-transparent border-b w-full mb-1 text-white placeholder-ink-light"
 //                             placeholder="Image title"
 //                             maxLength={35}
 //                           />
-//                           <div className="text-xs text-gray-300 text-right">
+//                           <div className="text-xs text-ink-light text-right">
 //                             {image.title?.length || 0}/100
 //                           </div>
 //                         </div>
@@ -734,11 +734,11 @@
 //                                 e.target.value
 //                               )
 //                             }
-//                             className="text-sm bg-transparent border-b w-full text-white placeholder-gray-300"
+//                             className="text-sm bg-transparent border-b w-full text-white placeholder-ink-light"
 //                             placeholder="Image category"
 //                             maxLength={50}
 //                           />
-//                           <div className="text-xs text-gray-300 text-right">
+//                           <div className="text-xs text-ink-light text-right">
 //                             {image.category?.length || 0}/50
 //                           </div>
 //                         </div>
@@ -752,12 +752,12 @@
 //                                 e.target.value
 //                               )
 //                             }
-//                             className="text-xs bg-transparent border-b w-full mt-1 text-white placeholder-gray-300 resize-none"
+//                             className="text-xs bg-transparent border-b w-full mt-1 text-white placeholder-ink-light resize-none"
 //                             placeholder="Image description"
 //                             rows={2}
 //                             maxLength={500}
 //                           />
-//                           <div className="text-xs text-gray-300 text-right">
+//                           <div className="text-xs text-ink-light text-right">
 //                             {image.description?.length || 0}/500
 //                           </div>
 //                         </div>
@@ -782,7 +782,7 @@
 //                     }}
 //                     size="sm"
 //                     variant="outline"
-//                     className="absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700"
+//                     className="absolute top-2 right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error"
 //                   >
 //                     <Trash2 className="w-4 h-4" />
 //                   </Button>
@@ -801,10 +801,10 @@
 //                 duration: 0.8,
 //                 ease: [0.16, 1, 0.3, 1],
 //               }}
-//               className="rounded-lg flex items-center justify-center border-dashed bg-white border-2 border-gray-300 cursor-pointer h-full min-h-[256px]"
+//               className="rounded-lg flex items-center justify-center border-dashed bg-surface-card border-2 border-ink-light cursor-pointer h-full min-h-[256px]"
 //               onClick={addImage}
 //             >
-//               <div className="flex flex-col items-center p-6 text-green-600">
+//               <div className="flex flex-col items-center p-6 text-status-success">
 //                 <Plus size={32} />
 //                 <span className="mt-2">Add Image</span>
 //               </div>
@@ -813,7 +813,7 @@
 //         </div>
 
 //         {displaygalleryData?.images?.length >= 6 && isEditing && (
-//           <p className="mt-6 w-full border border-gray-200 px-2 py-4 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">
+//           <p className="mt-6 w-full border border-ink-light px-2 py-4 rounded-lg bg-ink-light text-ink-paragraph text-sm font-medium">
 //             You alredy have 6 image's for adding new image you can edit existing
 //             images or remove one then add new!
 //           </p>
@@ -825,25 +825,25 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed top-[8rem] inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+//           className="fixed top-[8rem] inset-0 bg-ink bg-opacity-90 z-50 flex items-center justify-center p-4"
 //         >
 //           <button
 //             onClick={closeLightbox}
-//             className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+//             className="absolute top-4 right-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70 z-10"
 //           >
 //             <X size={24} />
 //           </button>
 
 //           <button
 //             onClick={goToPrev}
-//             className="absolute left-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+//             className="absolute left-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70 z-10"
 //           >
 //             <ChevronLeft size={32} />
 //           </button>
 
 //           <button
 //             onClick={goToNext}
-//             className="absolute right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+//             className="absolute right-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70 z-10"
 //           >
 //             <ChevronRight size={32} />
 //           </button>
@@ -858,10 +858,10 @@
 //               <h3 className="text-xl font-semibold">
 //                 {displaygalleryData.images[selectedImage].title}
 //               </h3>
-//               <p className="text-gray-300">
+//               <p className="text-ink-light">
 //                 {displaygalleryData.images[selectedImage].category}
 //               </p>
-//               <p className="text-gray-400 text-sm mt-2">
+//               <p className="text-ink-caption text-sm mt-2">
 //                 {displaygalleryData.images[selectedImage].description}
 //               </p>
 //             </div>
@@ -874,28 +874,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop Image
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className="flex-1 relative bg-gray-900 min-h-0">
+//             <div className="flex-1 relative bg-ink min-h-0">
 //               <div className="relative w-full h-full">
 //                 <Cropper
 //                   image={imageToCrop}
@@ -927,18 +927,18 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Buttons */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">
 //                   Aspect Ratio:
 //                 </p>
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(1)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     1:1 (Square)
@@ -946,8 +946,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     4:3 (Standard)
@@ -955,8 +955,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(16 / 9)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     16:9 (Widescreen)
@@ -967,14 +967,14 @@
 //               {/* Zoom Control */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="text-gray-700">Zoom</span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">Zoom</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <div className="flex items-center gap-3">
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     −
 //                   </button>
@@ -985,19 +985,19 @@
 //                     max={4}
 //                     step={0.1}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                   />
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     +
 //                   </button>
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom(1)}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     1x
 //                   </button>
@@ -1008,19 +1008,19 @@
 //               <div className="grid grid-cols-3 gap-3">
 //                 <button
 //                   onClick={resetCropSettings}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Reset
 //                 </button>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={applyCrop}
-//                   className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+//                   className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium"
 //                 >
 //                   Apply Crop
 //                 </button>
@@ -1065,8 +1065,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -1611,7 +1611,7 @@ export default function EditableGallerySection({
         maxLength = null,
       }) => {
         const baseClasses =
-          "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none transition-colors duration-200";
+          "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none transition-colors duration-200";
 
         const handleChange = (e) => {
           let newValue = e.target.value;
@@ -1630,7 +1630,7 @@ export default function EditableGallerySection({
 
         // Show character count if maxLength is provided
         const charCount = maxLength ? (
-          <div className="text-xs text-gray-500 text-right mt-1">
+          <div className="text-xs text-ink-caption text-right mt-1">
             {value?.length || 0}/{maxLength}
           </div>
         ) : null;
@@ -1688,12 +1688,12 @@ export default function EditableGallerySection({
       id="gallery"
       ref={sectionRef}
       className={`${displaygalleryData?.images?.length > 0 ? "py-24" : "py-2"
-        } bg-gradient-to-b from-yellow-50/30 via-white to-yellow-50/20 scroll-mt-20 relative`}
+        } bg-gradient-to-b from-surface-main/30 via-white to-surface-main/20 scroll-mt-20 relative`}
     >
       {/* Auto-save indicator */}
       {isEditing && (
         <motion.div
-          className="absolute top-4 left-4 flex items-center gap-2 text-xs text-gray-500 z-10"
+          className="absolute top-4 left-4 flex items-center gap-2 text-xs text-ink-caption z-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -1706,7 +1706,7 @@ export default function EditableGallerySection({
             <span>Last saved: {lastSaved.toLocaleTimeString()}</span>
           ) : null}
           {hasUnsavedChanges && !isSaving && (
-            <span className="text-amber-500">• Unsaved changes</span>
+            <span className="text-brand-gold">• Unsaved changes</span>
           )}
         </motion.div>
       )}
@@ -1714,9 +1714,9 @@ export default function EditableGallerySection({
       {/* Loading Overlay */}
       {isLoading && (
         <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
-          <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-            <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-            <span className="text-gray-700">Loading galleryData...</span>
+          <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3">
+            <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+            <span className="text-ink-paragraph">Loading galleryData...</span>
           </div>
         </div>
       )}
@@ -1728,7 +1728,7 @@ export default function EditableGallerySection({
             onClick={handleEdit}
             variant="outline"
             size="sm"
-            className="bg-white hover:bg-gray-50 shadow-md"
+            className="bg-surface-card hover:bg-ink-offwhite shadow-md"
           >
             <Edit2 className="w-4 h-4 mr-2" />
             Edit
@@ -1738,7 +1738,7 @@ export default function EditableGallerySection({
             <Button
               onClick={handleSave}
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+              className="bg-status-success hover:bg-status-success text-white shadow-md"
               disabled={isSaving || isUploading}
             >
               {isUploading ? (
@@ -1754,7 +1754,7 @@ export default function EditableGallerySection({
               onClick={handleCancel}
               variant="outline"
               size="sm"
-              className="bg-white hover:bg-gray-50 shadow-md"
+              className="bg-surface-card hover:bg-ink-offwhite shadow-md"
               disabled={isSaving || isUploading}
             >
               <X className="w-4 h-4 mr-2" />
@@ -1774,7 +1774,7 @@ export default function EditableGallerySection({
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="inline-block mb-4"
             >
-              <Badge className="bg-[#ffeb3b] text-gray-900 px-5 py-2 shadow-md">
+              <Badge className="bg-[#ffeb3b] text-ink px-5 py-2 shadow-md">
                 Our Gallery
               </Badge>
             </motion.div>
@@ -1785,7 +1785,7 @@ export default function EditableGallerySection({
               <EditableText
                 value={displaygalleryData?.heading?.title}
                 field="title"
-                className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center"
+                className="text-3xl md:text-4xl font-extrabold text-ink text-center"
                 placeholder="Gallery Title"
                 maxLength={35}
               />
@@ -1793,7 +1793,7 @@ export default function EditableGallerySection({
                 value={displaygalleryData?.heading?.description}
                 field="description"
                 multiline={true}
-                className="text-gray-600 max-w-2xl mx-auto text-lg text-center"
+                className="text-ink-paragraph max-w-2xl mx-auto text-lg text-center"
                 placeholder="Gallery description"
                 maxLength={100}
               />
@@ -1804,7 +1804,7 @@ export default function EditableGallerySection({
                 initial={{ opacity: 0, y: 30 }}
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
-                className="text-3xl md:text-4xl font-extrabold text-gray-900"
+                className="text-3xl md:text-4xl font-extrabold text-ink"
               >
                 {displaygalleryData?.heading?.title}
               </motion.h2>
@@ -1813,7 +1813,7 @@ export default function EditableGallerySection({
                 initial={{ opacity: 0, y: 30 }}
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
-                className="text-gray-600 text-justify mt-4 max-w-2xl mx-auto text-lg"
+                className="text-ink-paragraph text-justify mt-4 max-w-2xl mx-auto text-lg"
               >
                 {displaygalleryData?.heading?.description}
               </motion.p>
@@ -1837,7 +1837,7 @@ export default function EditableGallerySection({
                 y: isEditing ? 0 : -5,
                 scale: isEditing ? 1 : 1.02,
               }}
-              className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${"bg-white"}`}
+              className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${"bg-surface-card"}`}
               onClick={() => openLightbox(index)}
             >
               <div className="relative overflow-hidden">
@@ -1852,8 +1852,8 @@ export default function EditableGallerySection({
                     }}
                   />
                 ) : (
-                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">No image</span>
+                  <div className="w-full h-64 bg-ink-light flex items-center justify-center">
+                    <span className="text-ink-caption">No image</span>
                   </div>
                 )}
 
@@ -1881,7 +1881,7 @@ export default function EditableGallerySection({
                   </div>
                 )}
 
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
+                <div className="absolute inset-0 bg-ink bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
                   <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
                     {isEditing ? (
                       <>
@@ -1891,11 +1891,11 @@ export default function EditableGallerySection({
                             onChange={(e) =>
                               handleInlineInputChange(index, "title", e.target.value)
                             }
-                            className="font-semibold bg-transparent border-b w-full mb-1 text-white placeholder-gray-300"
+                            className="font-semibold bg-transparent border-b w-full mb-1 text-white placeholder-ink-light"
                             placeholder="Image title"
                             maxLength={100}
                           />
-                          <div className="text-xs text-gray-300 text-right">
+                          <div className="text-xs text-ink-light text-right">
                             {image.title?.length || 0}/100
                           </div>
                         </div>
@@ -1905,11 +1905,11 @@ export default function EditableGallerySection({
                             onChange={(e) =>
                               handleInlineInputChange(index, "category", e.target.value)
                             }
-                            className="text-sm bg-transparent border-b w-full text-white placeholder-gray-300"
+                            className="text-sm bg-transparent border-b w-full text-white placeholder-ink-light"
                             placeholder="Image category"
                             maxLength={50}
                           />
-                          <div className="text-xs text-gray-300 text-right">
+                          <div className="text-xs text-ink-light text-right">
                             {image.category?.length || 0}/50
                           </div>
                         </div>
@@ -1919,12 +1919,12 @@ export default function EditableGallerySection({
                             onChange={(e) =>
                               handleInlineInputChange(index, "description", e.target.value)
                             }
-                            className="text-xs bg-transparent border-b w-full mt-1 text-white placeholder-gray-300 resize-none"
+                            className="text-xs bg-transparent border-b w-full mt-1 text-white placeholder-ink-light resize-none"
                             placeholder="Image description"
                             rows={2}
                             maxLength={500}
                           />
-                          <div className="text-xs text-gray-300 text-right">
+                          <div className="text-xs text-ink-light text-right">
                             {image.description?.length || 0}/500
                           </div>
                         </div>
@@ -1949,7 +1949,7 @@ export default function EditableGallerySection({
                     }}
                     size="sm"
                     variant="outline"
-                    className="absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700"
+                    className="absolute top-2 right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -1968,10 +1968,10 @@ export default function EditableGallerySection({
                 duration: 0.8,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="rounded-lg flex items-center justify-center border-dashed bg-white border-2 border-gray-300 cursor-pointer h-full min-h-[256px]"
+              className="rounded-lg flex items-center justify-center border-dashed bg-surface-card border-2 border-ink-light cursor-pointer h-full min-h-[256px]"
               onClick={addImage}
             >
-              <div className="flex flex-col items-center p-6 text-green-600">
+              <div className="flex flex-col items-center p-6 text-status-success">
                 <Plus size={32} />
                 <span className="mt-2">Add Image</span>
               </div>
@@ -1980,7 +1980,7 @@ export default function EditableGallerySection({
         </div>
 
         {displaygalleryData?.images?.length >= 6 && isEditing && (
-          <p className="mt-6 w-full border border-gray-200 px-2 py-4 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">
+          <p className="mt-6 w-full border border-ink-light px-2 py-4 rounded-lg bg-ink-light text-ink-paragraph text-sm font-medium">
             You alredy have 6 image's for adding new image you can edit existing
             images or remove one then add new!
           </p>
@@ -1992,25 +1992,25 @@ export default function EditableGallerySection({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed top-[8rem] inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+          className="fixed top-[8rem] inset-0 bg-ink bg-opacity-90 z-50 flex items-center justify-center p-4"
         >
           <button
             onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+            className="absolute top-4 right-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70 z-10"
           >
             <X size={24} />
           </button>
 
           <button
             onClick={goToPrev}
-            className="absolute left-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+            className="absolute left-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70 z-10"
           >
             <ChevronLeft size={32} />
           </button>
 
           <button
             onClick={goToNext}
-            className="absolute right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 z-10"
+            className="absolute right-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70 z-10"
           >
             <ChevronRight size={32} />
           </button>
@@ -2025,10 +2025,10 @@ export default function EditableGallerySection({
               <h3 className="text-xl font-semibold">
                 {displaygalleryData?.images[selectedImage]?.title}
               </h3>
-              <p className="text-gray-300">
+              <p className="text-ink-light">
                 {displaygalleryData?.images[selectedImage]?.category}
               </p>
-              <p className="text-gray-400 text-sm mt-2">
+              <p className="text-ink-caption text-sm mt-2">
                 {displaygalleryData?.images[selectedImage]?.description}
               </p>
             </div>
@@ -2041,28 +2041,28 @@ export default function EditableGallerySection({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Image
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop}
@@ -2094,18 +2094,18 @@ export default function EditableGallerySection({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     1:1 (Square)
@@ -2113,8 +2113,8 @@ export default function EditableGallerySection({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     4:3 (Standard)
@@ -2122,8 +2122,8 @@ export default function EditableGallerySection({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     16:9 (Widescreen)
@@ -2134,14 +2134,14 @@ export default function EditableGallerySection({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom?.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom?.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -2152,19 +2152,19 @@ export default function EditableGallerySection({
                     max={4}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     +
                   </button>
                   <button
                     type="button"
                     onClick={() => setZoom(1)}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     1x
                   </button>
@@ -2175,20 +2175,20 @@ export default function EditableGallerySection({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:bg-ink-caption disabled:cursor-not-allowed"
                 >
                   {isUploading ? (
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />

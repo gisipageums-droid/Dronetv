@@ -107,7 +107,7 @@ const Projects: React.FC = () => {
   };
 
   return (
-    <section id="projects" className="py-20 bg-white dark:bg-gray-900">
+    <section id="projects" className="py-20 bg-surface-card dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
@@ -120,10 +120,10 @@ const Projects: React.FC = () => {
             variants={itemVariants}
             className="text-center mb-16 relative"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Featured <span className="text-orange-500">Projects</span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-ink dark:text-white mb-4">
+              Featured <span className="text-status-warning">Projects</span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <p className="text-xl text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto">
               A showcase of my recent work, demonstrating expertise across
               various technologies and industries.
             </p>
@@ -136,7 +136,7 @@ const Projects: React.FC = () => {
                 key={project.id}
                 variants={itemVariants}
                 whileHover={{ y: -10 }}
-                className="group bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 relative"
+                className="group bg-ink-offwhite dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 relative"
               >
                 {/* Project Image */}
                 <div className="relative overflow-hidden">
@@ -150,7 +150,7 @@ const Projects: React.FC = () => {
                 {/* Project Content */}
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center text-sm text-ink-caption dark:text-gray-400">
                       <Calendar className="w-4 h-4 mr-1" />
                       {project.date}
                     </div>
@@ -160,11 +160,11 @@ const Projects: React.FC = () => {
                     </div>
                   </div>
 
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-accent-orange transition-colors duration-200">
+                  <h3 className="text-xl font-bold text-ink dark:text-white mb-3 group-hover:text-accent-orange transition-colors duration-200">
                     {project.title}
                   </h3>
 
-                  <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                  <p className="text-ink-paragraph dark:text-gray-300 mb-4 leading-relaxed">
                     {project.description}
                   </p>
 

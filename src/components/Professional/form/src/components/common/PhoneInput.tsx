@@ -31,11 +31,11 @@ export const PhoneInput = ({
   };
 
   const baseClasses =
-    "border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
+    "border border-brand-yellow-soft rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm";
 
   return (
     <div className={`flex ${baseClasses} ${className}`}>
-      <span className="flex items-center px-3 py-2 border-r border-amber-300 bg-amber-50 text-sm font-medium text-gray-700 select-none">
+      <span className="flex items-center px-3 py-2 border-r border-brand-yellow-soft bg-surface-main text-sm font-medium text-ink-paragraph select-none">
         +91
       </span>
       <input
@@ -45,7 +45,7 @@ export const PhoneInput = ({
         placeholder={placeholder}
         required={required}
         maxLength={10}
-        className="flex-1 px-3 py-2 focus:outline-none rounded-r-lg text-gray-900 bg-white"
+        className="flex-1 px-3 py-2 focus:outline-none rounded-r-lg text-ink bg-surface-card"
       />
     </div>
   );

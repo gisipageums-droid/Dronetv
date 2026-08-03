@@ -153,7 +153,7 @@
 //         className={`fixed top-16 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-sm ${
 //           isScrolled
 //             ? "bg-white/80 dark:bg-gray-900/80 shadow-lg backdrop-blur-xl"
-//             : "bg-white dark:bg-gray-900"
+//             : "bg-surface-card dark:bg-gray-900"
 //         }`}
 //       >
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -161,10 +161,10 @@
 //             {/* Logo */}
 //             <motion.div
 //               whileHover={{ scale: 1.05 }}
-//               className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-blue-500 dark:text-orange-500"
+//               className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-status-info dark:text-orange-500"
 //               onClick={() => scrollToSection("#home")}
 //             >
-//               <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+//               <div className="rounded-full bg-brand-gold text-ink h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
 //                 <span className="uppercase">
 //                   {editedContent.logoText[0] || "P"}
 //                 </span>
@@ -182,16 +182,16 @@
 //                         });
 //                       }
 //                     }}
-//                     className="text-xl font-bold bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 py-1 rounded max-w-[150px] border-2 border-dashed border-orange-300 focus:border-orange-500 focus:outline-none"
+//                     className="text-xl font-bold bg-surface-card dark:bg-gray-800 text-ink-charcoal dark:text-gray-100 px-3 py-1 rounded max-w-[150px] border-2 border-dashed border-status-warning/40 focus:border-status-warning focus:outline-none"
 //                     placeholder="Logo text"
 //                     maxLength={50}
 //                   />
-//                   <div className="absolute -bottom-6 right-0 text-xs text-gray-500">
+//                   <div className="absolute -bottom-6 right-0 text-xs text-ink-caption">
 //                     {editedContent.logoText.length}/50
 //                   </div>
 //                 </div>
 //               ) : (
-//                 <span className="text-2xl font-bold truncate capitalize text-yellow-500">
+//                 <span className="text-2xl font-bold truncate capitalize text-brand-gold">
 //                   {editedContent.logoText || "MyLogo"}
 //                 </span>
 //               )}
@@ -211,15 +211,15 @@
 //                     onClick={() => scrollToSection(link.href)}
 //                     className={`relative px-3 py-2 rounded-md font-medium transition-colors whitespace-nowrap ${
 //                       activeLink === link.href
-//                         ? "text-orange-500"
-//                         : "text-gray-700 dark:text-gray-300 hover:text-orange-500"
+//                         ? "text-status-warning"
+//                         : "text-ink-paragraph dark:text-gray-300 hover:text-status-warning"
 //                     }`}
 //                   >
 //                     {link.label}
 //                     {activeLink === link.href && (
 //                       <motion.div
 //                         layoutId="activeTab"
-//                         className="absolute inset-0 rounded-md bg-orange-500/10"
+//                         className="absolute inset-0 rounded-md bg-status-warning/10"
 //                       />
 //                     )}
 //                   </button>
@@ -236,7 +236,7 @@
 //                     whileTap={{ scale: 0.95 }}
 //                     onClick={handleSave}
 //                     title="Save updates"
-//                     className="p-3 bg-green-500 text-white rounded-full"
+//                     className="p-3 bg-status-success text-white rounded-full"
 //                   >
 //                     <Save className="w-5 h-5" />
 //                   </motion.button>
@@ -245,7 +245,7 @@
 //                     whileTap={{ scale: 0.95 }}
 //                     onClick={handleCancel}
 //                     title="Cancel updates"
-//                     className="p-3 bg-red-500 text-white rounded-full"
+//                     className="p-3 bg-status-error text-white rounded-full"
 //                   >
 //                     <CloseIcon className="w-5 h-5" />
 //                   </motion.button>
@@ -256,7 +256,7 @@
 //                   whileTap={{ scale: 0.95 }}
 //                   onClick={() => setIsEditing(true)}
 //                   title="Edit header"
-//                   className="p-3 bg-gray-500/50 text-white rounded-full"
+//                   className="p-3 bg-ink-caption/50 text-white rounded-full"
 //                 >
 //                   <Edit className="w-5 h-5" />
 //                 </motion.button>
@@ -267,7 +267,7 @@
 //                   whileHover={{ scale: 1.05 }}
 //                   whileTap={{ scale: 0.95 }}
 //                   onClick={toggleDarkMode}
-//                   className="hidden md:inline-block p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex-shrink-0"
+//                   className="hidden md:inline-block p-3 rounded-full bg-ink-light dark:bg-gray-800 text-ink-paragraph dark:text-gray-300 flex-shrink-0"
 //                 >
 //                   {isDarkMode ? (
 //                     <Sun className="w-5 h-5" />
@@ -280,7 +280,7 @@
 //               {/* Mobile menu toggle */}
 //               <button
 //                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-//                 className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 flex-shrink-0"
+//                 className="md:hidden p-2 rounded-md text-ink-paragraph dark:text-gray-300 flex-shrink-0"
 //               >
 //                 {isMenuOpen ? (
 //                   <X className="w-6 h-6" />
@@ -297,7 +297,7 @@
 //               initial={{ opacity: 0, height: 0 }}
 //               animate={{ opacity: 1, height: "auto" }}
 //               exit={{ opacity: 0, height: 0 }}
-//               className="md:hidden border-t border-gray-200 dark:border-gray-800 overflow-hidden"
+//               className="md:hidden border-t border-ink-light dark:border-gray-800 overflow-hidden"
 //             >
 //               <div className="px-2 pt-2 pb-3 space-y-2">
 //                 {navLinks.map((link, index) => (
@@ -305,8 +305,8 @@
 //                     key={index}
 //                     className={`flex flex-col space-y-2 p-3 rounded-lg ${
 //                       isEditing
-//                         ? "bg-gray-100 dark:bg-gray-800 border-2 border-orange-200 dark:border-orange-900"
-//                         : "bg-gray-50 dark:bg-gray-800"
+//                         ? "bg-ink-light dark:bg-gray-800 border-2 border-status-warning/25 dark:border-orange-900"
+//                         : "bg-ink-offwhite dark:bg-gray-800"
 //                     }`}
 //                   >
 //                     {isEditing ? (
@@ -321,17 +321,17 @@
 //                                   updateNavLink(index, "label", e.target.value);
 //                                 }
 //                               }}
-//                               className="w-full bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-gray-800 dark:text-gray-100"
+//                               className="w-full bg-surface-card dark:bg-gray-700 border border-status-warning/40 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-status-warning px-2 py-2 rounded text-ink-charcoal dark:text-gray-100"
 //                               placeholder="Link label"
 //                               maxLength={50}
 //                             />
-//                             <div className="absolute -bottom-5 right-0 text-xs text-gray-500">
+//                             <div className="absolute -bottom-5 right-0 text-xs text-ink-caption">
 //                               {link.label.length}/50
 //                             </div>
 //                           </div>
 //                           <button
 //                             onClick={() => removeNavLink(index)}
-//                             className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 flex-shrink-0 rounded transition-colors"
+//                             className="text-status-error hover:text-status-error hover:bg-status-error/10 dark:hover:bg-red-900/20 p-2 flex-shrink-0 rounded transition-colors"
 //                           >
 //                             <CloseIcon className="w-5 h-5" />
 //                           </button>
@@ -345,11 +345,11 @@
 //                                 updateNavLink(index, "href", e.target.value);
 //                               }
 //                             }}
-//                             className="w-full bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-sm text-gray-600 dark:text-gray-400"
+//                             className="w-full bg-surface-card dark:bg-gray-700 border border-status-warning/40 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-status-warning px-2 py-2 rounded text-sm text-ink-paragraph dark:text-gray-400"
 //                             placeholder="#section-id"
 //                             maxLength={50}
 //                           />
-//                           <div className="absolute -bottom-5 right-0 text-xs text-gray-500">
+//                           <div className="absolute -bottom-5 right-0 text-xs text-ink-caption">
 //                             {link.href.length}/50
 //                           </div>
 //                         </div>
@@ -359,8 +359,8 @@
 //                         onClick={() => scrollToSection(link.href)}
 //                         className={`w-full text-left px-3 py-2 rounded-md text-base ${
 //                           activeLink === link.href
-//                             ? "text-orange-500 font-semibold bg-orange-50 dark:bg-orange-900/20"
-//                             : "text-gray-700 dark:text-gray-300 hover:text-orange-500"
+//                             ? "text-status-warning font-semibold bg-status-warning/10 dark:bg-orange-900/20"
+//                             : "text-ink-paragraph dark:text-gray-300 hover:text-status-warning"
 //                         }`}
 //                       >
 //                         {link.label}
@@ -371,7 +371,7 @@
 //                 {isEditing && (
 //                   <button
 //                     onClick={addNavLink}
-//                     className="w-full flex items-center justify-center gap-2 px-3 py-3 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 font-medium border-2 border-dashed border-green-300 dark:border-green-700 rounded-lg transition-colors"
+//                     className="w-full flex items-center justify-center gap-2 px-3 py-3 text-status-success hover:text-status-success hover:bg-status-success/10 dark:hover:bg-green-900/20 font-medium border-2 border-dashed border-status-success/40 dark:border-green-700 rounded-lg transition-colors"
 //                   >
 //                     <Plus className="w-5 h-5" /> Add New Link
 //                   </button>
@@ -674,7 +674,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
         className={`fixed top-16 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-sm ${
           isScrolled
             ? "bg-white/80 dark:bg-gray-900/80 shadow-lg backdrop-blur-xl"
-            : "bg-white dark:bg-gray-900"
+            : "bg-surface-card dark:bg-gray-900"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -682,10 +682,10 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
             {/* Logo */}
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-blue-500 dark:text-orange-500"
+              className="flex items-center space-x-2 cursor-pointer min-w-0 flex-shrink-0 text-status-info dark:text-orange-500"
               onClick={() => scrollToSection("#home")}
             >
-              <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+              <div className="rounded-full bg-brand-gold text-ink h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
                 <span className="uppercase">
                   {editedContent.logoText[0] || "P"}
                 </span>
@@ -696,16 +696,16 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                     type="text"
                     value={editedContent.logoText}
                     onChange={(e) => handleLogoTextChange(e.target.value)}
-                    className="text-xl font-bold bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 px-3 py-1 rounded max-w-[150px] border-2 border-dashed border-orange-300 focus:border-orange-500 focus:outline-none"
+                    className="text-xl font-bold bg-surface-card dark:bg-gray-800 text-ink-charcoal dark:text-gray-100 px-3 py-1 rounded max-w-[150px] border-2 border-dashed border-status-warning/40 focus:border-status-warning focus:outline-none"
                     placeholder="Logo text"
                     maxLength={50}
                   />
-                  <div className="absolute -bottom-6 right-0 text-xs text-gray-500">
+                  <div className="absolute -bottom-6 right-0 text-xs text-ink-caption">
                     {editedContent.logoText.length}/50
                   </div>
                 </div>
               ) : (
-                <span className="text-2xl font-bold truncate capitalize text-yellow-500">
+                <span className="text-2xl font-bold truncate capitalize text-brand-gold">
                   {editedContent.logoText || "MyLogo"}
                 </span>
               )}
@@ -725,15 +725,15 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                     onClick={() => scrollToSection(link.href)}
                     className={`relative px-3 py-2 rounded-md font-medium transition-colors whitespace-nowrap ${
                       activeLink === link.href
-                        ? "text-orange-500"
-                        : "text-gray-700 dark:text-gray-300 hover:text-orange-500"
+                        ? "text-status-warning"
+                        : "text-ink-paragraph dark:text-gray-300 hover:text-status-warning"
                     }`}
                   >
                     {link.label}
                     {activeLink === link.href && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute inset-0 rounded-md bg-orange-500/10"
+                        className="absolute inset-0 rounded-md bg-status-warning/10"
                       />
                     )}
                   </button>
@@ -746,7 +746,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
               {isEditing ? (
                 <>
                   {/* Auto-save indicator */}
-                  <div className="hidden md:flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="hidden md:flex items-center gap-2 mr-2 text-sm text-ink-caption dark:text-gray-400">
                     {isAutoSaving ? (
                       <div className="flex items-center gap-1">
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -754,12 +754,12 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                       </div>
                     ) : hasUnsavedChanges ? (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
                         <span>Unsaved changes</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-status-success rounded-full"></div>
                         <span>Saved {formatLastSavedTime()}</span>
                       </div>
                     )}
@@ -770,7 +770,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                     whileTap={{ scale: 0.95 }}
                     onClick={handleSave}
                     title="Save updates"
-                    className="p-3 bg-green-500 text-white rounded-full"
+                    className="p-3 bg-status-success text-white rounded-full"
                   >
                     <Save className="w-5 h-5" />
                   </motion.button>
@@ -779,7 +779,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                     whileTap={{ scale: 0.95 }}
                     onClick={handleCancel}
                     title="Cancel updates"
-                    className="p-3 bg-red-500 text-white rounded-full"
+                    className="p-3 bg-status-error text-white rounded-full"
                   >
                     <CloseIcon className="w-5 h-5" />
                   </motion.button>
@@ -790,7 +790,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleEditStart}
                   title="Edit header"
-                  className="p-3 bg-gray-500/50 text-white rounded-full"
+                  className="p-3 bg-ink-caption/50 text-white rounded-full"
                 >
                   <Edit className="w-5 h-5" />
                 </motion.button>
@@ -801,7 +801,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleDarkMode}
-                  className="hidden md:inline-block p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 flex-shrink-0"
+                  className="hidden md:inline-block p-3 rounded-full bg-ink-light dark:bg-gray-800 text-ink-paragraph dark:text-gray-300 flex-shrink-0"
                 >
                   {isDarkMode ? (
                     <Sun className="w-5 h-5" />
@@ -814,7 +814,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
               {/* Mobile menu toggle */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 flex-shrink-0"
+                className="md:hidden p-2 rounded-md text-ink-paragraph dark:text-gray-300 flex-shrink-0"
               >
                 {isMenuOpen ? (
                   <X className="w-6 h-6" />
@@ -831,12 +831,12 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-gray-200 dark:border-gray-800 overflow-hidden"
+              className="md:hidden border-t border-ink-light dark:border-gray-800 overflow-hidden"
             >
               {/* Mobile Auto-save indicator */}
               {isEditing && (
-                <div className="px-4 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className="px-4 py-2 bg-ink-light dark:bg-gray-800 border-b border-ink-light dark:border-gray-700">
+                  <div className="flex items-center gap-2 text-sm text-ink-caption dark:text-gray-400">
                     {isAutoSaving ? (
                       <div className="flex items-center gap-1">
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -844,12 +844,12 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                       </div>
                     ) : hasUnsavedChanges ? (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
                         <span>Unsaved changes</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-status-success rounded-full"></div>
                         <span>Saved {formatLastSavedTime()}</span>
                       </div>
                     )}
@@ -863,8 +863,8 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                     key={index}
                     className={`flex flex-col space-y-2 p-3 rounded-lg ${
                       isEditing
-                        ? "bg-gray-100 dark:bg-gray-800 border-2 border-orange-200 dark:border-orange-900"
-                        : "bg-gray-50 dark:bg-gray-800"
+                        ? "bg-ink-light dark:bg-gray-800 border-2 border-status-warning/25 dark:border-orange-900"
+                        : "bg-ink-offwhite dark:bg-gray-800"
                     }`}
                   >
                     {isEditing ? (
@@ -879,17 +879,17 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                                   updateNavLink(index, "label", e.target.value);
                                 }
                               }}
-                              className="w-full bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-gray-800 dark:text-gray-100"
+                              className="w-full bg-surface-card dark:bg-gray-700 border border-status-warning/40 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-status-warning px-2 py-2 rounded text-ink-charcoal dark:text-gray-100"
                               placeholder="Link label"
                               maxLength={50}
                             />
-                            <div className="absolute -bottom-5 right-0 text-xs text-gray-500">
+                            <div className="absolute -bottom-5 right-0 text-xs text-ink-caption">
                               {link.label.length}/50
                             </div>
                           </div>
                           <button
                             onClick={() => removeNavLink(index)}
-                            className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 flex-shrink-0 rounded transition-colors"
+                            className="text-status-error hover:text-status-error hover:bg-status-error/10 dark:hover:bg-red-900/20 p-2 flex-shrink-0 rounded transition-colors"
                           >
                             <CloseIcon className="w-5 h-5" />
                           </button>
@@ -903,11 +903,11 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                                 updateNavLink(index, "href", e.target.value);
                               }
                             }}
-                            className="w-full bg-white dark:bg-gray-700 border border-orange-300 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 px-2 py-2 rounded text-sm text-gray-600 dark:text-gray-400"
+                            className="w-full bg-surface-card dark:bg-gray-700 border border-status-warning/40 dark:border-orange-700 focus:outline-none focus:ring-2 focus:ring-status-warning px-2 py-2 rounded text-sm text-ink-paragraph dark:text-gray-400"
                             placeholder="#section-id"
                             maxLength={50}
                           />
-                          <div className="absolute -bottom-5 right-0 text-xs text-gray-500">
+                          <div className="absolute -bottom-5 right-0 text-xs text-ink-caption">
                             {link.href.length}/50
                           </div>
                         </div>
@@ -917,8 +917,8 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                         onClick={() => scrollToSection(link.href)}
                         className={`w-full text-left px-3 py-2 rounded-md text-base ${
                           activeLink === link.href
-                            ? "text-orange-500 font-semibold bg-orange-50 dark:bg-orange-900/20"
-                            : "text-gray-700 dark:text-gray-300 hover:text-orange-500"
+                            ? "text-status-warning font-semibold bg-status-warning/10 dark:bg-orange-900/20"
+                            : "text-ink-paragraph dark:text-gray-300 hover:text-status-warning"
                         }`}
                       >
                         {link.label}
@@ -929,7 +929,7 @@ const Navbar: React.FC<NavbarProps> = ({ content, onSave }) => {
                 {isEditing && (
                   <button
                     onClick={addNavLink}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-3 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 font-medium border-2 border-dashed border-green-300 dark:border-green-700 rounded-lg transition-colors"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-3 text-status-success hover:text-status-success hover:bg-status-success/10 dark:hover:bg-green-900/20 font-medium border-2 border-dashed border-status-success/40 dark:border-green-700 rounded-lg transition-colors"
                   >
                     <Plus className="w-5 h-5" /> Add New Link
                   </button>

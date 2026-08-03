@@ -37,8 +37,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants: Record<string, string> = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes: Record<string, string> = {
 //     sm: "h-8 px-3 text-sm",
@@ -433,7 +433,7 @@
 //       const maxLength = getMaxLength();
 //       const currentLength = value?.length || 0;
 
-//       const baseClasses = "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+//       const baseClasses = "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none";
 
 //       if (multiline) {
 //         return (
@@ -447,7 +447,7 @@
 //               maxLength={maxLength}
 //             />
 //             {maxLength && (
-//               <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//               <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                 {currentLength}/{maxLength}
 //               </div>
 //             )}
@@ -466,7 +466,7 @@
 //             maxLength={maxLength}
 //           />
 //           {maxLength && (
-//             <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//             <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //               {currentLength}/{maxLength}
 //             </div>
 //           )}
@@ -493,7 +493,7 @@
 //             <Button
 //               onClick={handleEdit}
 //               size='sm'
-//               className='bg-red-500 hover:bg-red-600 text-white shadow-md'
+//               className='bg-status-error hover:bg-status-error text-white shadow-md'
 //             >
 //               <Edit2 className='w-4 h-4 mr-2' />
 //               Add About Content
@@ -503,7 +503,7 @@
 //           {/* Empty State */}
 //           <div className="text-center py-16">
 //             <div className="max-w-md mx-auto">
-//               <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+//               <div className="w-24 h-24 mx-auto mb-6 bg-ink-light rounded-full flex items-center justify-center">
 //                 <span className="text-2xl">👤</span>
 //               </div>
 //               <h3 className="text-2xl font-semibold text-foreground mb-4">
@@ -515,7 +515,7 @@
 //               <Button
 //                 onClick={handleEdit}
 //                 size='lg'
-//                 className='bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg'
+//                 className='bg-brand-gold hover:bg-brand-gold text-white shadow-lg'
 //               >
 //                 <Edit2 className='w-5 h-5 mr-2' />
 //                 Add About Content
@@ -534,28 +534,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col" // Increased max-width to max-w-6xl
+//             className="bg-surface-card rounded-xl max-w-6xl w-full h-[90vh] flex flex-col" // Increased max-width to max-w-6xl
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop About Image (4:3 Aspect Ratio)
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className="flex-1 relative bg-gray-900 min-h-0">
+//             <div className="flex-1 relative bg-ink min-h-0">
 //               <Cropper
 //                 image={imageToCrop}
 //                 crop={crop}
@@ -586,28 +586,28 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Info */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">
-//                   Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">
+//                   Aspect Ratio: <span className="text-status-info">4:3 (Standard)</span>
 //                 </p>
 //               </div>
 
 //               {/* Zoom Control */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="flex items-center gap-2 text-gray-700">
+//                   <span className="flex items-center gap-2 text-ink-paragraph">
 //                     <ZoomIn className="w-4 h-4" />
 //                     Zoom
 //                   </span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <div className="flex items-center gap-2">
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
-//                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                     className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                   >
 //                     <ZoomOut className="w-4 h-4" />
 //                   </button>
@@ -618,12 +618,12 @@
 //                     max={5}
 //                     step={0.1}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                   />
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
-//                     className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+//                     className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                   >
 //                     <ZoomIn className="w-4 h-4" />
 //                   </button>
@@ -634,19 +634,19 @@
 //               <div className="flex justify-center gap-3 pt-4">
 //                 <button
 //                   onClick={resetCropSettings}
-//                   className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+//                   className="px-6 py-2 border border-ink-light text-ink-paragraph hover:bg-ink-light rounded text-sm font-medium transition-colors"
 //                 >
 //                   Reset Zoom
 //                 </button>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors"
+//                   className="px-6 py-2 border border-ink-light text-ink-paragraph hover:bg-ink-light rounded text-sm font-medium transition-colors"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={applyCrop}
-//                   className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors"
+//                   className="px-6 py-2 bg-status-success hover:bg-status-success text-white rounded text-sm font-medium transition-colors"
 //                 >
 //                   Apply Crop
 //                 </button>
@@ -663,7 +663,7 @@
 //             <Button
 //               onClick={handleEdit}
 //               size='sm'
-//               className='bg-red-500 hover:bg-red-600 text-white shadow-md'
+//               className='bg-status-error hover:bg-status-error text-white shadow-md'
 //             >
 //               <Edit2 className='w-4 h-4 mr-2' />
 //               Edit
@@ -673,7 +673,7 @@
 //               <Button
 //                 onClick={handleSave}
 //                 size='sm'
-//                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                 className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                 disabled={isSaving || isUploading}
 //               >
 //                 {isUploading ? (
@@ -688,7 +688,7 @@
 //               <Button
 //                 onClick={handleCancel}
 //                 size='sm'
-//                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                 className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                 disabled={isSaving || isUploading}
 //               >
 //                 <X className='w-4 h-4 mr-2' />
@@ -699,7 +699,7 @@
 //                   onClick={addSkill}
 //                   variant='outline'
 //                   size='sm'
-//                   className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+//                   className='bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md'
 //                 >
 //                   Add Skill
 //                 </Button>
@@ -724,7 +724,7 @@
 //                     onClick={() => fileInputRef.current?.click()}
 //                     size="sm"
 //                     variant="outline"
-//                     className="bg-white text-black hover:bg-gray-100"
+//                     className="bg-surface-card text-ink hover:bg-ink-light"
 //                   >
 //                     <Upload className="w-4 h-4 mr-2" />
 //                     Change Image
@@ -737,11 +737,11 @@
 //                     className="hidden"
 //                   />
 //                   {pendingImageFile && (
-//                     <p className="text-xs text-orange-600 mt-1 bg-white p-1 rounded">
+//                     <p className="text-xs text-status-warning mt-1 bg-surface-card p-1 rounded">
 //                       Image selected: {pendingImageFile.name}
 //                     </p>
 //                   )}
-//                   <div className='text-xs text-gray-500 mt-1 text-center'>
+//                   <div className='text-xs text-ink-caption mt-1 text-center'>
 //                     Recommended: {Math.round(aboutImageContainerRef.current?.offsetWidth || 400)}×{Math.round((aboutImageContainerRef.current?.offsetWidth || 400) * (4/3))}px (3:4 ratio) - Portrait
 //                   </div>
 //                 </div>
@@ -754,8 +754,8 @@
 //               transition={{ duration: 0.3 }}
 //               className="relative"
 //             >
-//               <div className="absolute inset-0 bg-yellow-400 rounded-3xl transform -rotate-6"></div>
-//               <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl">
+//               <div className="absolute inset-0 bg-brand-yellow rounded-3xl transform -rotate-6"></div>
+//               <div className="relative bg-surface-card rounded-3xl overflow-hidden shadow-2xl">
 //                 {displayData.imageSrc ? (
 //                   <img
 //                     src={displayData.imageSrc}
@@ -767,8 +767,8 @@
 //                     }}
 //                   />
 //                 ) : (
-//                   <div className="w-full h-96 flex items-center justify-center bg-gray-200">
-//                     <p className="text-gray-400 text-sm">No image uploaded</p>
+//                   <div className="w-full h-96 flex items-center justify-center bg-ink-light">
+//                     <p className="text-ink-caption text-sm">No image uploaded</p>
 //                   </div>
 //                 )}
 //               </div>
@@ -801,7 +801,7 @@
 //                   <EditableText
 //                     value={displayData.subtitle}
 //                     field="subtitle"
-//                     className="text-xl text-yellow-500 font-semibold"
+//                     className="text-xl text-brand-gold font-semibold"
 //                     placeholder="Subtitle"
 //                   />
 //                 </div>
@@ -813,7 +813,7 @@
 //                     </h2>
 //                   )}
 //                   {displayData.subtitle && (
-//                     <p className="text-xl text-yellow-500 font-semibold mt-2">
+//                     <p className="text-xl text-brand-gold font-semibold mt-2">
 //                       {displayData.subtitle}
 //                     </p>
 //                   )}
@@ -881,27 +881,27 @@
 //             >
 //               {displayData.skills.map((skill, index) => (
 //                 <div key={index} className="flex items-center space-x-3 group">
-//                   <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+//                   <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
 //                   {isEditing ? (
 //                     <div className="flex items-center gap-2 w-full">
 //                       <EditableText
 //                         value={skill}
 //                         isSkill
 //                         skillIndex={index}
-//                         className="text-gray-700 flex-1"
+//                         className="text-ink-paragraph flex-1"
 //                         placeholder="Skill description"
 //                       />
 //                       <Button
 //                         onClick={() => removeSkill(index)}
 //                         size="sm"
 //                         variant="outline"
-//                         className="bg-red-50 hover:bg-red-100 text-red-700 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+//                         className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1 opacity-0 group-hover:opacity-100 transition-opacity"
 //                       >
 //                         <X className="w-3 h-3" />
 //                       </Button>
 //                     </div>
 //                   ) : (
-//                     skill && <span className="text-gray-700">{skill}</span>
+//                     skill && <span className="text-ink-paragraph">{skill}</span>
 //                   )}
 //                 </div>
 //               ))}
@@ -977,8 +977,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants: Record<string, string> = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes: Record<string, string> = {
     sm: "h-8 px-3 text-sm",
@@ -1488,7 +1488,7 @@ export function About({
       const maxLength = getMaxLength();
       const currentLength = value?.length || 0;
 
-      const baseClasses = "w-full bg-white/80 dark:bg-black/80 dark:text-white border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+      const baseClasses = "w-full bg-white/80 dark:bg-black/80 dark:text-white border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none";
 
       if (multiline) {
         return (
@@ -1502,7 +1502,7 @@ export function About({
               maxLength={maxLength}
             />
             {maxLength && (
-              <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+              <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                 {currentLength}/{maxLength}
               </div>
             )}
@@ -1521,7 +1521,7 @@ export function About({
             maxLength={maxLength}
           />
           {maxLength && (
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
               {currentLength}/{maxLength}
             </div>
           )}
@@ -1548,7 +1548,7 @@ export function About({
             <Button
               onClick={handleEdit}
               size='sm'
-              className='bg-red-500 hover:bg-red-600 text-white shadow-md'
+              className='bg-status-error hover:bg-status-error text-white shadow-md'
             >
               <Edit2 className='w-4 h-4 mr-2' />
               Add About Content
@@ -1558,7 +1558,7 @@ export function About({
           {/* Empty State */}
           <div className="text-center py-16">
             <div className="max-w-md mx-auto">
-              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+              <div className="w-24 h-24 mx-auto mb-6 bg-ink-light rounded-full flex items-center justify-center">
                 <span className="text-2xl">👤</span>
               </div>
               <h3 className="text-2xl font-semibold text-foreground mb-4">
@@ -1570,7 +1570,7 @@ export function About({
               <Button
                 onClick={handleEdit}
                 size='lg'
-                className='bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg'
+                className='bg-brand-gold hover:bg-brand-gold text-white shadow-lg'
               >
                 <Edit2 className='w-5 h-5 mr-2' />
                 Add About Content
@@ -1589,19 +1589,19 @@ export function About({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-6xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop About Image (4:3 Aspect Ratio)
                 {isUploading && (
-                  <span className="ml-2 text-blue-600 text-sm flex items-center gap-1">
+                  <span className="ml-2 text-status-info text-sm flex items-center gap-1">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Uploading...
                   </span>
@@ -1609,15 +1609,15 @@ export function About({
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
                 disabled={isUploading}
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -1648,28 +1648,28 @@ export function About({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Info */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  Aspect Ratio: <span className="text-blue-600">4:3 (Standard)</span>
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
+                  Aspect Ratio: <span className="text-status-info">4:3 (Standard)</span>
                 </p>
               </div>
 
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     <ZoomIn className="w-4 h-4" />
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(0.1, +(z - 0.1).toFixed(2)))}
-                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
                     disabled={isUploading}
                   >
                     <ZoomOut className="w-4 h-4" />
@@ -1681,13 +1681,13 @@ export function About({
                     max={5}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                     disabled={isUploading}
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(5, +(z + 0.1).toFixed(2)))}
-                    className="p-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="p-2 rounded border border-ink-light text-ink-paragraph hover:bg-ink-light"
                     disabled={isUploading}
                   >
                     <ZoomIn className="w-4 h-4" />
@@ -1699,21 +1699,21 @@ export function About({
               <div className="flex justify-center gap-3 pt-4">
                 <button
                   onClick={resetCropSettings}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                  className="px-6 py-2 border border-ink-light text-ink-paragraph hover:bg-ink-light rounded text-sm font-medium transition-colors disabled:opacity-50"
                   disabled={isUploading}
                 >
                   Reset Zoom
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                  className="px-6 py-2 border border-ink-light text-ink-paragraph hover:bg-ink-light rounded text-sm font-medium transition-colors disabled:opacity-50"
                   disabled={isUploading}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2 bg-status-success hover:bg-status-success text-white rounded text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
                   disabled={isUploading}
                 >
                   {isUploading ? (
@@ -1738,7 +1738,7 @@ export function About({
             <Button
               onClick={handleEdit}
               size='sm'
-              className='bg-red-500 hover:bg-red-600 text-white shadow-md'
+              className='bg-status-error hover:bg-status-error text-white shadow-md'
             >
               <Edit2 className='w-4 h-4 mr-2' />
               Edit
@@ -1748,18 +1748,18 @@ export function About({
               {/* Auto-save indicator */}
               <div className="flex items-center gap-2 mr-4 text-sm">
                 {isAutoSaving && (
-                  <div className="flex items-center gap-1 text-blue-500">
+                  <div className="flex items-center gap-1 text-status-info">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span>Auto-saving...</span>
                   </div>
                 )}
                 {hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-yellow-500">
+                  <div className="text-brand-gold">
                     ● Unsaved changes
                   </div>
                 )}
                 {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                  <div className="text-green-500">
+                  <div className="text-status-success">
                     ✓ Auto-saved {lastSaved.toLocaleTimeString()}
                   </div>
                 )}
@@ -1768,7 +1768,7 @@ export function About({
               <Button
                 onClick={handleSave}
                 size='sm'
-                className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+                className='bg-status-success hover:bg-status-success text-white shadow-md'
                 disabled={isSaving || isUploading}
               >
                 {isUploading ? (
@@ -1783,7 +1783,7 @@ export function About({
               <Button
                 onClick={handleCancel}
                 size='sm'
-                className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+                className='bg-status-error hover:bg-status-error shadow-md text-white'
                 disabled={isSaving || isUploading}
               >
                 <X className='w-4 h-4 mr-2' />
@@ -1794,7 +1794,7 @@ export function About({
                   onClick={addSkill}
                   variant='outline'
                   size='sm'
-                  className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+                  className='bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md'
                 >
                   Add Skill
                 </Button>
@@ -1819,7 +1819,7 @@ export function About({
                     onClick={() => fileInputRef.current?.click()}
                     size="sm"
                     variant="outline"
-                    className="bg-white text-black hover:bg-gray-100"
+                    className="bg-surface-card text-ink hover:bg-ink-light"
                   >
                     <Upload className="w-4 h-4 mr-2" />
                     Change Image
@@ -1832,11 +1832,11 @@ export function About({
                     className="hidden"
                   />
                   {pendingImageFile && (
-                    <p className="text-xs text-orange-600 mt-1 bg-white p-1 rounded">
+                    <p className="text-xs text-status-warning mt-1 bg-surface-card p-1 rounded">
                       Image selected: {pendingImageFile.name}
                     </p>
                   )}
-                  <div className='text-xs text-gray-500 mt-1 text-center'>
+                  <div className='text-xs text-ink-caption mt-1 text-center'>
                     Recommended: {Math.round(aboutImageContainerRef.current?.offsetWidth || 400)}×{Math.round((aboutImageContainerRef.current?.offsetWidth || 400) * (4/3))}px (3:4 ratio) - Portrait
                   </div>
                 </div>
@@ -1849,8 +1849,8 @@ export function About({
               transition={{ duration: 0.3 }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-yellow-400 rounded-3xl transform -rotate-6"></div>
-              <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl">
+              <div className="absolute inset-0 bg-brand-yellow rounded-3xl transform -rotate-6"></div>
+              <div className="relative bg-surface-card rounded-3xl overflow-hidden shadow-2xl">
                 {displayData.imageSrc ? (
                   <img
                     src={displayData.imageSrc}
@@ -1862,8 +1862,8 @@ export function About({
                     }}
                   />
                 ) : (
-                  <div className="w-full h-96 flex items-center justify-center bg-gray-200">
-                    <p className="text-gray-400 text-sm">No image uploaded</p>
+                  <div className="w-full h-96 flex items-center justify-center bg-ink-light">
+                    <p className="text-ink-caption text-sm">No image uploaded</p>
                   </div>
                 )}
               </div>
@@ -1896,7 +1896,7 @@ export function About({
                   <EditableText
                     value={displayData.subtitle}
                     field="subtitle"
-                    className="text-xl text-yellow-500 font-semibold"
+                    className="text-xl text-brand-gold font-semibold"
                     placeholder="Subtitle"
                   />
                 </div>
@@ -1908,7 +1908,7 @@ export function About({
                     </h2>
                   )}
                   {displayData.subtitle && (
-                    <p className="text-xl text-yellow-500 font-semibold mt-2">
+                    <p className="text-xl text-brand-gold font-semibold mt-2">
                       {displayData.subtitle}
                     </p>
                   )}
@@ -1976,27 +1976,27 @@ export function About({
             >
               {displayData.skills.map((skill, index) => (
                 <div key={index} className="flex items-center space-x-3 group">
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                  <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
                   {isEditing ? (
                     <div className="flex items-center gap-2 w-full">
                       <EditableText
                         value={skill}
                         isSkill
                         skillIndex={index}
-                        className="text-gray-700 flex-1"
+                        className="text-ink-paragraph flex-1"
                         placeholder="Skill description"
                       />
                       <Button
                         onClick={() => removeSkill(index)}
                         size="sm"
                         variant="outline"
-                        className="bg-red-50 hover:bg-red-100 text-red-700 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <X className="w-3 h-3" />
                       </Button>
                     </div>
                   ) : (
-                    skill && <span className="text-gray-700 dark:text-gray-300">{skill}</span>
+                    skill && <span className="text-ink-paragraph dark:text-gray-300">{skill}</span>
                   )}
                 </div>
               ))}

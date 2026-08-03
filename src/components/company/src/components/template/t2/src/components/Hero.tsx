@@ -182,14 +182,14 @@ export default function Hero({ heroData }) {
                     <img
                       src={safeData.hero3Image}
                       alt="Additional business context"
-                      className="block object-cover rounded-2xl shadow-xl border-4 border-white bg-white w-44 h-32 md:w-52 md:h-36"
+                      className="block object-cover rounded-2xl shadow-xl border-4 border-white bg-surface-card w-44 h-32 md:w-52 md:h-36"
                     />
                   </div>
                 </motion.div>
 
                 {/* Decorative circle */}
                 <motion.div
-                  className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80"
+                  className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-brand-yellow rounded-full opacity-80"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.6, type: "spring", stiffness: 300 }}

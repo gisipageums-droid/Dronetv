@@ -213,15 +213,15 @@ const App: React.FC = () => {
           {/* Icon + heading */}
           <div className="text-center mb-8">
             <div className="relative inline-block mb-6">
-              <div className="w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center"
+              <div className="w-24 h-24 bg-brand-yellow rounded-full flex items-center justify-center"
                 style={{ boxShadow: '0 0 48px rgba(251,191,36,0.45), 0 0 16px rgba(251,191,36,0.3)' }}>
-                <svg className="w-12 h-12 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-12 h-12 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                 </svg>
               </div>
-              <div className="absolute -top-1 -right-1 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce"
+              <div className="absolute -top-1 -right-1 w-8 h-8 bg-brand-yellow rounded-full flex items-center justify-center animate-bounce"
                 style={{ boxShadow: '0 0 12px rgba(251,191,36,0.6)' }}>
-                <svg className="w-4 h-4 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
@@ -229,7 +229,7 @@ const App: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
               {isPolling ? "AI is Building Your Website" : "Loading Your Profile..."}
             </h1>
-            <p className="text-gray-400 text-sm sm:text-base">
+            <p className="text-ink-caption text-sm sm:text-base">
               {isPolling ? "Please stay on this page while we craft your digital presence" : "Fetching your data, please wait."}
             </p>
           </div>
@@ -238,9 +238,9 @@ const App: React.FC = () => {
             <>
               {/* Progress bar */}
               <div className="mb-6">
-                <div className="flex justify-between text-xs text-gray-500 mb-2">
-                  <span className="text-gray-400 font-medium">Progress</span>
-                  <span className="text-yellow-400 font-semibold">{minutes > 0 ? `${minutes}m ` : ""}{seconds}s elapsed</span>
+                <div className="flex justify-between text-xs text-ink-caption mb-2">
+                  <span className="text-ink-caption font-medium">Progress</span>
+                  <span className="text-brand-yellow font-semibold">{minutes > 0 ? `${minutes}m ` : ""}{seconds}s elapsed</span>
                 </div>
                 <div className="w-full rounded-full h-2" style={{ background: 'rgba(255,255,255,0.08)' }}>
                   <div
@@ -291,15 +291,15 @@ const App: React.FC = () => {
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                         ) : (
-                          <span className={`text-xs font-bold ${isActive ? "text-gray-900" : "text-gray-500"}`}>{index + 1}</span>
+                          <span className={`text-xs font-bold ${isActive ? "text-ink" : "text-ink-caption"}`}>{index + 1}</span>
                         )}
                       </div>
-                      <span className={`text-sm font-medium transition-all duration-300 ${isActive ? "text-yellow-300" : isCompleted ? "text-green-400" : "text-gray-500"}`}>{step}</span>
+                      <span className={`text-sm font-medium transition-all duration-300 ${isActive ? "text-brand-yellow-soft" : isCompleted ? "text-status-success" : "text-ink-caption"}`}>{step}</span>
                       {isActive && (
                         <div className="ml-auto flex space-x-1">
-                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" />
-                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                          <div className="w-1.5 h-1.5 bg-brand-yellow rounded-full animate-bounce" />
+                          <div className="w-1.5 h-1.5 bg-brand-yellow rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <div className="w-1.5 h-1.5 bg-brand-yellow rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                         </div>
                       )}
                     </div>
@@ -311,12 +311,12 @@ const App: React.FC = () => {
 
           {!isPolling && (
             <div className="flex justify-center">
-              <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"
+              <div className="w-12 h-12 border-4 border-brand-yellow border-t-transparent rounded-full animate-spin"
                 style={{ filter: 'drop-shadow(0 0 8px rgba(251,191,36,0.5))' }} />
             </div>
           )}
 
-          <p className="text-center text-gray-600 text-xs mt-6">This usually takes 1–3 minutes</p>
+          <p className="text-center text-ink-paragraph text-xs mt-6">This usually takes 1–3 minutes</p>
         </div>
       </div>
     );
@@ -324,16 +324,16 @@ const App: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center w-full h-screen bg-gray-50 px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
-          <div className="w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
-            <span className="text-red-500 text-2xl">!</span>
+      <div className="flex flex-col items-center justify-center w-full h-screen bg-ink-offwhite px-4">
+        <div className="bg-surface-card rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <div className="w-12 h-12 mx-auto mb-4 bg-status-error/15 rounded-full flex items-center justify-center">
+            <span className="text-status-error text-2xl">!</span>
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
-          <p className="text-gray-500 text-sm mb-6">{error}</p>
+          <h2 className="text-xl font-bold text-ink mb-2">Something went wrong</h2>
+          <p className="text-ink-caption text-sm mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2.5 bg-amber-400 hover:bg-amber-500 text-gray-900 font-semibold rounded-lg transition-colors"
+            className="px-6 py-2.5 bg-brand-yellow hover:bg-brand-gold text-ink font-semibold rounded-lg transition-colors"
           >
             Try Again
           </button>
@@ -345,7 +345,7 @@ const App: React.FC = () => {
   if (!AIGenData) {
     return (
       <div className="flex items-center justify-center w-full h-screen">
-        <div className="text-gray-500">No data available</div>
+        <div className="text-ink-caption">No data available</div>
       </div>
     );
   }
@@ -353,7 +353,7 @@ const App: React.FC = () => {
   if (!AIGenData.content) {
     return (
       <div className="flex items-center justify-center w-full h-screen">
-        <div className="text-gray-500">No content found for this draft</div>
+        <div className="text-ink-caption">No content found for this draft</div>
       </div>
     );
   }
@@ -361,7 +361,7 @@ const App: React.FC = () => {
 
   return (
     <DarkModeProvider>
-      <div className="relative min-h-screen transition-colors duration-300 bg-white dark:bg-gray-900">
+      <div className="relative min-h-screen transition-colors duration-300 bg-surface-card dark:bg-gray-900">
         <Navbar
           content={AIGenData.content.headerContent}
           onSave={(updatedHeader) =>

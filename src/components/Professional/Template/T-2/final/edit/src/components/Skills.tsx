@@ -39,9 +39,9 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
-//     danger: "bg-red-600 text-white hover:bg-red-700"
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
+//     danger: "bg-status-error text-white hover:bg-status-error"
 //   };
 //   const sizes = {
 //     sm: "h-8 px-3 text-sm",
@@ -177,7 +177,7 @@
 //     const imageSrc = skillImages[imageIndex];
 
 //     return (
-//       <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden border-2 border-yellow-400">
+//       <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden border-2 border-brand-yellow">
 //         <img
 //           src={imageSrc}
 //           alt={skill.title}
@@ -320,9 +320,9 @@
 //   // Loading state - only show if we're actually loading and have no data
 //   if ((isLoading && !dataLoaded) || (!dataLoaded && displayData.skills.length === 0)) {
 //     return (
-//       <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+//       <section ref={skillsRef} id="skills" className="py-20 bg-surface-main dark:bg-yellow-900/20">
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-//           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
+//           <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
 //           <p className="text-muted-foreground mt-4">Loading skills data...</p>
 //         </div>
 //       </section>
@@ -330,7 +330,7 @@
 //   }
 
 //   return (
-//     <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+//     <section ref={skillsRef} id="skills" className="py-20 bg-surface-main dark:bg-yellow-900/20">
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 //         {/* Edit Controls with Auto-save Status */}
 //         <div className='text-right mb-8'>
@@ -338,19 +338,19 @@
 //           {isEditing && (
 //             <div className="flex items-center justify-end gap-4 mb-4 text-sm">
 //               {hasUnsavedChanges && (
-//                 <div className="flex items-center gap-2 text-orange-600">
-//                   <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+//                 <div className="flex items-center gap-2 text-status-warning">
+//                   <div className="w-2 h-2 bg-status-warning rounded-full animate-pulse"></div>
 //                   Unsaved changes
 //                 </div>
 //               )}
 //               {isAutoSaving && (
-//                 <div className="flex items-center gap-2 text-blue-600">
+//                 <div className="flex items-center gap-2 text-status-info">
 //                   <Loader2 className="w-3 h-3 animate-spin" />
 //                   Auto-saving...
 //                 </div>
 //               )}
 //               {lastSavedTime && !hasUnsavedChanges && !isAutoSaving && (
-//                 <div className="text-green-600">
+//                 <div className="text-status-success">
 //                   Saved {lastSavedTime.toLocaleTimeString()}
 //                 </div>
 //               )}
@@ -361,7 +361,7 @@
 //             <Button
 //               onClick={handleEdit}
 //               size='sm'
-//               className='bg-red-500 hover:bg-red-600 shadow-md'
+//               className='bg-status-error hover:bg-status-error shadow-md'
 //             >
 //               <Edit2 className='w-4 h-4 mr-2' />
 //               Edit
@@ -371,7 +371,7 @@
 //               <Button
 //                 onClick={handleSave}
 //                 size='sm'
-//                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                 className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                 disabled={isSaving}
 //               >
 //                 {isSaving ? (
@@ -385,7 +385,7 @@
 //                 onClick={handleCancel}
 //                 variant='danger'
 //                 size='sm'
-//                 className='bg-red-600 hover:bg-red-700 text-white shadow-md'
+//                 className='bg-status-error hover:bg-status-error text-white shadow-md'
 //                 disabled={isSaving}
 //               >
 //                 <X className='w-4 h-4 mr-2' />
@@ -395,7 +395,7 @@
 //                 onClick={addSkill}
 //                 variant='outline'
 //                 size='sm'
-//                 className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+//                 className='bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md'
 //               >
 //                 <Plus className='w-4 h-4 mr-2' />
 //                 Add Skill
@@ -418,10 +418,10 @@
 //                   type="text"
 //                   value={displayData.header.title}
 //                   onChange={(e) => updateHeader('title', e.target.value)}
-//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
 //                   maxLength={TEXT_LIMITS.HEADER_TITLE}
 //                 />
-//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                   {displayData.header.title.length}/{TEXT_LIMITS.HEADER_TITLE}
 //                 </div>
 //               </div>
@@ -429,11 +429,11 @@
 //                 <textarea
 //                   value={displayData.header.subtitle}
 //                   onChange={(e) => updateHeader('subtitle', e.target.value)}
-//                   className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+//                   className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
 //                   rows={2}
 //                   maxLength={TEXT_LIMITS.HEADER_SUBTITLE}
 //                 />
-//                 <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                 <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                   {displayData.header.subtitle.length}/{TEXT_LIMITS.HEADER_SUBTITLE}
 //                 </div>
 //               </div>
@@ -466,7 +466,7 @@
 //                   onClick={() => removeSkill(index)}
 //                   size='sm'
 //                   variant='danger'
-//                   className='absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white p-1'
+//                   className='absolute -top-2 -right-2 bg-status-error hover:bg-status-error text-white p-1'
 //                 >
 //                   <Trash2 className='w-3 h-3' />
 //                 </Button>
@@ -488,10 +488,10 @@
 //                       type="text"
 //                       value={skill.title}
 //                       onChange={(e) => updateSkill(index, 'title', e.target.value)}
-//                       className="text-xl text-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+//                       className="text-xl text-foreground bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 w-full"
 //                       maxLength={TEXT_LIMITS.SKILL_TITLE}
 //                     />
-//                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                       {skill.title.length}/{TEXT_LIMITS.SKILL_TITLE}
 //                     </div>
 //                   </div>
@@ -499,11 +499,11 @@
 //                     <textarea
 //                       value={skill.description}
 //                       onChange={(e) => updateSkill(index, 'description', e.target.value)}
-//                       className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+//                       className="text-muted-foreground bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 w-full"
 //                       rows={2}
 //                       maxLength={TEXT_LIMITS.SKILL_DESCRIPTION}
 //                     />
-//                     <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                     <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                       {skill.description.length}/{TEXT_LIMITS.SKILL_DESCRIPTION}
 //                     </div>
 //                   </div>
@@ -524,7 +524,7 @@
 //                       type="number"
 //                       value={skill.level}
 //                       onChange={(e) => updateSkill(index, 'level', parseInt(e.target.value))}
-//                       className="w-16 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-right"
+//                       className="w-16 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-right"
 //                       min="0"
 //                       max="100"
 //                     />
@@ -532,13 +532,13 @@
 //                     <span>{skill.level}%</span>
 //                   )}
 //                 </div>
-//                 <div className="w-full bg-gray-200 rounded-full h-2">
+//                 <div className="w-full bg-ink-light rounded-full h-2">
 //                   <motion.div
 //                     initial={{ width: 0 }}
 //                     whileInView={{ width: `${skill.level}%` }}
 //                     transition={{ duration: 1, delay: index * 0.1 }}
 //                     viewport={{ once: true }}
-//                     className="bg-yellow-400 h-2 rounded-full"
+//                     className="bg-brand-yellow h-2 rounded-full"
 //                   />
 //                 </div>
 //               </div>
@@ -604,9 +604,9 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
-    danger: "bg-red-600 text-white hover:bg-red-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
+    danger: "bg-status-error text-white hover:bg-status-error",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -757,7 +757,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
     const imageSrc = skillImages[imageIndex];
 
     return (
-      <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden border-2 border-yellow-400">
+      <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden border-2 border-brand-yellow">
         <img
           src={imageSrc}
           alt={skill.title}
@@ -940,10 +940,10 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
       <section
         ref={skillsRef}
         id="skills"
-        className="py-20 bg-yellow-50 dark:bg-yellow-900/20"
+        className="py-20 bg-surface-main dark:bg-yellow-900/20"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
           <p className="text-muted-foreground mt-4">Loading skills data...</p>
         </div>
       </section>
@@ -954,7 +954,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
     <section
       ref={skillsRef}
       id="skills"
-      className="py-20 bg-yellow-50 dark:bg-yellow-900/20"
+      className="py-20 bg-surface-main dark:bg-yellow-900/20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls with Auto-save Status */}
@@ -963,16 +963,16 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
           {isEditing && (
             <div className="flex items-center justify-end gap-4 mb-4 text-sm">
               {isAutoSaving && (
-                <div className="flex items-center gap-1 text-blue-500">
+                <div className="flex items-center gap-1 text-status-info">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Auto-saving...</span>
                 </div>
               )}
               {hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-yellow-500">● Unsaved changes</div>
+                <div className="text-brand-gold">● Unsaved changes</div>
               )}
               {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-green-500">
+                <div className="text-status-success">
                   ✓ Auto-saved {lastSaved.toLocaleTimeString()}
                 </div>
               )}
@@ -983,7 +983,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
             <Button
               onClick={handleEdit}
               size="sm"
-              className="bg-red-500 hover:bg-red-600 shadow-md"
+              className="bg-status-error hover:bg-status-error shadow-md"
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Edit
@@ -993,7 +993,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
               <Button
                 onClick={handleSave}
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                className="bg-status-success hover:bg-status-success text-white shadow-md"
                 disabled={isSaving}
               >
                 {isSaving ? (
@@ -1007,7 +1007,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                 onClick={handleCancel}
                 variant="danger"
                 size="sm"
-                className="bg-red-600 hover:bg-red-700 text-white shadow-md"
+                className="bg-status-error hover:bg-status-error text-white shadow-md"
                 disabled={isSaving}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -1017,7 +1017,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                 onClick={addSkill}
                 variant="outline"
                 size="sm"
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                className="bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Skill
@@ -1040,10 +1040,10 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                   type="text"
                   value={displayData.header.title}
                   onChange={(e) => updateHeader("title", e.target.value)}
-                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   maxLength={TEXT_LIMITS.HEADER_TITLE}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {displayData.header.title.length}/{TEXT_LIMITS.HEADER_TITLE}
                 </div>
               </div>
@@ -1051,11 +1051,11 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                 <textarea
                   value={displayData.header.subtitle}
                   onChange={(e) => updateHeader("subtitle", e.target.value)}
-                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
                   rows={2}
                   maxLength={TEXT_LIMITS.HEADER_SUBTITLE}
                 />
-                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                   {displayData.header.subtitle.length}/
                   {TEXT_LIMITS.HEADER_SUBTITLE}
                 </div>
@@ -1089,7 +1089,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                   onClick={() => removeSkill(index)}
                   size="sm"
                   variant="danger"
-                  className="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white p-1"
+                  className="absolute -top-2 -right-2 bg-status-error hover:bg-status-error text-white p-1"
                 >
                   <Trash2 className="w-3 h-3" />
                 </Button>
@@ -1113,10 +1113,10 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                       onChange={(e) =>
                         updateSkill(index, "title", e.target.value)
                       }
-                      className="text-xl text-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+                      className="text-xl text-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 w-full"
                       maxLength={TEXT_LIMITS.SKILL_TITLE}
                     />
-                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                       {skill.title.length}/{TEXT_LIMITS.SKILL_TITLE}
                     </div>
                   </div>
@@ -1126,11 +1126,11 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                       onChange={(e) =>
                         updateSkill(index, "description", e.target.value)
                       }
-                      className="text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+                      className="text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 w-full"
                       rows={2}
                       maxLength={TEXT_LIMITS.SKILL_DESCRIPTION}
                     />
-                    <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                    <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                       {skill.description.length}/{TEXT_LIMITS.SKILL_DESCRIPTION}
                     </div>
                   </div>
@@ -1157,7 +1157,7 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                       onChange={(e) =>
                         updateSkill(index, "level", parseInt(e.target.value))
                       }
-                      className="w-16 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-right"
+                      className="w-16 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-right"
                       min="0"
                       max="100"
                     />
@@ -1165,13 +1165,13 @@ export function Skills({ skillsData, onStateChange }: SkillsProps) {
                     <span>{skill.level}%</span>
                   )}
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-ink-light rounded-full h-2">
                   <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: `${skill.level}%` }}
                     transition={{ duration: 1, delay: index * 0.1 }}
                     viewport={{ once: true }}
-                    className="bg-yellow-400 h-2 rounded-full"
+                    className="bg-brand-yellow h-2 rounded-full"
                   />
                 </div>
               </div>

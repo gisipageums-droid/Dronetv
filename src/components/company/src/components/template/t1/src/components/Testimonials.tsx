@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 
 // Mock icons (replace with actual icons if available)
-const Cust1 = () => <div className="w-8 h-8 bg-blue-500 rounded-full"></div>;
-const Cust2 = () => <div className="w-8 h-8 bg-green-500 rounded-full"></div>;
-const Cust3 = () => <div className="w-8 h-8 bg-purple-500 rounded-full"></div>;
-const Cust4 = () => <div className="w-8 h-8 bg-orange-500 rounded-full"></div>;
+const Cust1 = () => <div className="w-8 h-8 bg-status-info rounded-full"></div>;
+const Cust2 = () => <div className="w-8 h-8 bg-status-success rounded-full"></div>;
+const Cust3 = () => <div className="w-8 h-8 bg-brand-gold rounded-full"></div>;
+const Cust4 = () => <div className="w-8 h-8 bg-status-warning rounded-full"></div>;
 
 const staticTestimonialsData = {
   headline: {
@@ -88,7 +88,7 @@ export default function Testimonials() {
       stars.push(
         <span
           key={i}
-          className={i <= rating ? "text-yellow-400" : "text-gray-300"}
+          className={i <= rating ? "text-brand-yellow" : "text-ink-light"}
         >
           ★
         </span>
@@ -100,15 +100,15 @@ export default function Testimonials() {
   return (
     <section
       id="testimonials"
-      className="bg-gray-50 py-16 scroll-mt-20 relative"
+      className="bg-ink-offwhite py-16 scroll-mt-20 relative"
       ref={sectionRef}
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-ink mb-4">
             {testimonialsData.headline.title}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-ink-paragraph max-w-2xl mx-auto">
             {testimonialsData.headline.description}
           </p>
         </div>
@@ -119,12 +119,12 @@ export default function Testimonials() {
             {testimonialsData.stats.map((stat, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-lg shadow-sm text-center"
+                className="bg-surface-card p-6 rounded-lg shadow-sm text-center"
               >
-                <div className="text-3xl font-bold text-blue-600 mb-2">
+                <div className="text-3xl font-bold text-status-info mb-2">
                   {stat.value}
                 </div>
-                <div className="text-gray-600">{stat.label}</div>
+                <div className="text-ink-paragraph">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -138,10 +138,10 @@ export default function Testimonials() {
           >
             {testimonialsData.testimonials.map((testimonial, index) => (
               <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
-                <div className="bg-white shadow-lg border-0 rounded-lg h-full">
+                <div className="bg-surface-card shadow-lg border-0 rounded-lg h-full">
                   <div className="p-8 text-center h-full flex flex-col">
                     <div className="mb-6 flex-grow">
-                      <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
+                      <div className="w-16 h-16 bg-status-info rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
                         <img
                           src={testimonial.image}
                           alt={testimonial.name}
@@ -151,7 +151,7 @@ export default function Testimonials() {
                           }}
                         />
                       </div>
-                      <h3 className="font-semibold text-xl text-gray-900 mb-2">
+                      <h3 className="font-semibold text-xl text-ink mb-2">
                         {testimonial.name}
                       </h3>
                       <div className="flex justify-center mb-2">
@@ -160,13 +160,13 @@ export default function Testimonials() {
                     </div>
 
                     <div className="mb-6 flex-grow">
-                      <blockquote className="text-lg text-gray-700 italic leading-relaxed">
+                      <blockquote className="text-lg text-ink-paragraph italic leading-relaxed">
                         "{testimonial.quote}"
                       </blockquote>
                     </div>
 
                     <div className="border-t pt-6">
-                      <p className="text-gray-600 font-medium">{testimonial.role}</p>
+                      <p className="text-ink-paragraph font-medium">{testimonial.role}</p>
                     </div>
                   </div>
                 </div>
@@ -184,8 +184,8 @@ export default function Testimonials() {
                 onClick={() => setCurrent(index)}
                 className={`w-3 h-3 rounded-full transition-colors duration-200 ${
                   index === current
-                    ? "bg-blue-600"
-                    : "bg-gray-300 hover:bg-gray-400"
+                    ? "bg-status-info"
+                    : "bg-ink-light hover:bg-ink-caption"
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />

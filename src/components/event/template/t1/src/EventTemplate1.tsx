@@ -26,7 +26,7 @@ const EventTemplate1: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-white">
+    <div className="bg-surface-card">
       <Navigation />
       <HeroSection />
       <CurtainRaiserSection />

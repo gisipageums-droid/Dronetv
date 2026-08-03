@@ -26,18 +26,18 @@ export const Step2 = ({ step, allSteps }: { step: any; allSteps: any[] }) => {
   };
 
   // Predefined colors for containers
-  const containerColors = ["bg-amber-50 border border-amber-300", "bg-amber-50 border border-amber-300"];
+  const containerColors = ["bg-surface-main border border-brand-yellow-soft", "bg-surface-main border border-brand-yellow-soft"];
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-800">{step.title}</h2>
+      <h2 className="text-2xl font-semibold text-ink-charcoal">{step.title}</h2>
 
       {noCategoriesSelected && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
-          <span className="text-amber-500 text-xl mt-0.5">ℹ</span>
+        <div className="bg-surface-main border border-brand-yellow-soft rounded-lg p-4 flex items-start gap-3">
+          <span className="text-brand-gold text-xl mt-0.5">ℹ</span>
           <div>
-            <p className="text-amber-800 font-medium text-sm">No categories selected yet</p>
-            <p className="text-amber-700 text-sm mt-1">Go back to Step 1 and select at least one Professional Category to see subcategory options here. This step is optional.</p>
+            <p className="text-brand-gold font-medium text-sm">No categories selected yet</p>
+            <p className="text-brand-gold text-sm mt-1">Go back to Step 1 and select at least one Professional Category to see subcategory options here. This step is optional.</p>
           </div>
         </div>
       )}
@@ -57,7 +57,7 @@ export const Step2 = ({ step, allSteps }: { step: any; allSteps: any[] }) => {
               key={catName}
               className={`border ${colorClass} p-4 rounded-lg shadow-sm space-y-2`}
             >
-              <h3 className="font-semibold text-gray-700">{catName}</h3>
+              <h3 className="font-semibold text-ink-paragraph">{catName}</h3>
               <MultiSelect
                 options={subcategoryOptions}
                 selected={selectedForCategory}

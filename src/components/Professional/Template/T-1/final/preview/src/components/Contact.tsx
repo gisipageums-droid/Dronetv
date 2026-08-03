@@ -75,19 +75,19 @@ const defaultContent: ContactContent = {
       icon: "Github",
       label: "GitHub",
       href: "https://github.com/johndoe",
-      color: "hover:bg-gray-900 hover:text-white",
+      color: "hover:bg-ink-charcoal hover:text-white",
     },
     {
       icon: "Linkedin",
       label: "LinkedIn",
       href: "https://linkedin.com/in/johndoe",
-      color: "hover:bg-blue-600 hover:text-white",
+      color: "hover:bg-status-info hover:text-white",
     },
     {
       icon: "Twitter",
       label: "Twitter",
       href: "https://twitter.com/johndoe",
-      color: "hover:bg-blue-400 hover:text-white",
+      color: "hover:bg-status-info hover:text-white",
     },
   ],
   availability: {
@@ -158,7 +158,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
   return (
     <section
       id="contact"
-      className="py-20 transition-colors duration-300 bg-gray-50 dark:bg-gray-900"
+      className="py-20 transition-colors duration-300 bg-ink-offwhite dark:bg-gray-900"
     >
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Content */}
@@ -170,13 +170,13 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
         >
           {/* Header */}
           <motion.div variants={itemVariants} className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-gray-800 lg:text-5xl dark:text-gray-100">
+            <h2 className="mb-4 text-4xl font-bold text-ink-charcoal lg:text-5xl dark:text-gray-100">
               {contactContent.heading.split(" ").slice(0, -1).join(" ")}{" "}
-              <span className="text-orange-500">
+              <span className="text-status-warning">
                 {contactContent.heading.split(" ").slice(-1)}
               </span>
             </h2>
-            <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-300">
+            <p className="max-w-3xl mx-auto text-xl text-ink-paragraph dark:text-gray-300">
               {contactContent.description}
             </p>
           </motion.div>
@@ -184,8 +184,8 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             {/* Contact Form */}
             <motion.div variants={itemVariants}>
-              <div className="p-8 transition-colors duration-300 bg-white border border-gray-200 dark:bg-gray-800 backdrop-blur-sm rounded-2xl dark:border-gray-700">
-                <h3 className="mb-6 text-2xl font-bold text-orange-500">
+              <div className="p-8 transition-colors duration-300 bg-surface-card border border-ink-light dark:bg-gray-800 backdrop-blur-sm rounded-2xl dark:border-gray-700">
+                <h3 className="mb-6 text-2xl font-bold text-status-warning">
                   Send Me a Message
                 </h3>
 
@@ -194,7 +194,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                     <div>
                       <label
                         htmlFor="name"
-                        className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                        className="block mb-2 font-medium text-ink-paragraph dark:text-gray-300"
                       >
                         Full Name *
                       </label>
@@ -205,7 +205,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                         value={formData.name}
                         onChange={handleFormChange}
                         required
-                        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                        className="w-full px-4 py-3 text-ink placeholder-ink-caption transition-all duration-200 bg-ink-light border border-ink-light rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-status-warning focus:ring-2 focus:ring-status-warning/20 focus:outline-none"
                         placeholder="John Doe"
                       />
                     </div>
@@ -213,7 +213,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                     <div>
                       <label
                         htmlFor="email"
-                        className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                        className="block mb-2 font-medium text-ink-paragraph dark:text-gray-300"
                       >
                         Email Address *
                       </label>
@@ -224,7 +224,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                         value={formData.email}
                         onChange={handleFormChange}
                         required
-                        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                        className="w-full px-4 py-3 text-ink placeholder-ink-caption transition-all duration-200 bg-ink-light border border-ink-light rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-status-warning focus:ring-2 focus:ring-status-warning/20 focus:outline-none"
                         placeholder="john@example.com"
                       />
                     </div>
@@ -233,7 +233,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                   <div>
                     <label
                       htmlFor="subject"
-                      className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                      className="block mb-2 font-medium text-ink-paragraph dark:text-gray-300"
                     >
                       Subject *
                     </label>
@@ -244,7 +244,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                       value={formData.subject}
                       onChange={handleFormChange}
                       required
-                      className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                      className="w-full px-4 py-3 text-ink placeholder-ink-caption transition-all duration-200 bg-ink-light border border-ink-light rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-status-warning focus:ring-2 focus:ring-status-warning/20 focus:outline-none"
                       placeholder="Project Inquiry"
                     />
                   </div>
@@ -252,7 +252,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                   <div>
                     <label
                       htmlFor="message"
-                      className="block mb-2 font-medium text-gray-700 dark:text-gray-300"
+                      className="block mb-2 font-medium text-ink-paragraph dark:text-gray-300"
                     >
                       Message *
                     </label>
@@ -263,7 +263,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                       onChange={handleFormChange}
                       required
                       rows={5}
-                      className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-200 bg-gray-100 border border-gray-300 rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                      className="w-full px-4 py-3 text-ink placeholder-ink-caption transition-all duration-200 bg-ink-light border border-ink-light rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:border-status-warning focus:ring-2 focus:ring-status-warning/20 focus:outline-none"
                       placeholder="Tell me about your project..."
                     />
                   </div>
@@ -275,8 +275,8 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                       animate={{ opacity: 1, y: 0 }}
                       className={`flex items-center p-4 rounded-lg ${
                         submitStatus === "success"
-                          ? "bg-green-100 dark:bg-green-500/20 border border-green-400 dark:border-green-500/30 text-green-700 dark:text-green-400"
-                          : "bg-red-100 dark:bg-red-500/20 border border-red-400 dark:border-red-500/30 text-red-700 dark:text-red-400"
+                          ? "bg-status-success/15 dark:bg-green-500/20 border border-status-success dark:border-green-500/30 text-status-success dark:text-green-400"
+                          : "bg-status-error/15 dark:bg-red-500/20 border border-status-error dark:border-red-500/30 text-status-error dark:text-red-400"
                       }`}
                     >
                       {submitStatus === "success" ? (
@@ -297,7 +297,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                     whileTap={{ scale: 0.98 }}
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex items-center justify-center w-full px-6 py-4 font-semibold text-white transition-all duration-200 bg-orange-500 rounded-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center justify-center w-full px-6 py-4 font-semibold text-white transition-all duration-200 bg-status-warning rounded-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <motion.div
@@ -307,7 +307,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                           repeat: Infinity,
                           ease: "linear",
                         }}
-                        className="w-5 h-5 mr-2 border-2 border-black rounded-full border-t-transparent"
+                        className="w-5 h-5 mr-2 border-2 border-ink rounded-full border-t-transparent"
                       />
                     ) : (
                       <Send className="w-5 h-5 mr-2" />
@@ -321,8 +321,8 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
             {/* Contact Information */}
             <motion.div variants={itemVariants} className="space-y-8">
               {/* Contact Details */}
-              <div className="p-8 transition-colors duration-300 bg-gray-100 border border-gray-200 dark:bg-white/5 backdrop-blur-sm rounded-2xl dark:border-gray-700">
-                <h3 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">
+              <div className="p-8 transition-colors duration-300 bg-ink-light border border-ink-light dark:bg-white/5 backdrop-blur-sm rounded-2xl dark:border-gray-700">
+                <h3 className="mb-6 text-2xl font-bold text-ink-charcoal dark:text-white">
                   Get in Touch
                 </h3>
 
@@ -336,14 +336,14 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                         href={info.href}
                         className="flex items-center group"
                       >
-                        <div className="flex items-center justify-center w-12 h-12 mr-4 transition-all duration-200 rounded-lg bg-gradient-to-br from-yellow-200/20 to-orange-400/40 group-hover:from-yellow-400/30 group-hover:to-orange-600/30">
-                          <IconComponent className="w-6 h-6 text-orange-500" />
+                        <div className="flex items-center justify-center w-12 h-12 mr-4 transition-all duration-200 rounded-lg bg-gradient-to-br from-brand-yellow-soft/20 to-status-warning/40 group-hover:from-brand-yellow/30 group-hover:to-status-warning/30">
+                          <IconComponent className="w-6 h-6 text-status-warning" />
                         </div>
                         <div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <p className="text-sm text-ink-caption dark:text-gray-400">
                             {info.label}
                           </p>
-                          <p className="font-medium text-gray-800 transition-colors duration-200 dark:text-white group-hover:text-orange-500">
+                          <p className="font-medium text-ink-charcoal transition-colors duration-200 dark:text-white group-hover:text-status-warning">
                             {info.value}
                           </p>
                         </div>
@@ -354,8 +354,8 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
               </div>
 
               {/* Social Links */}
-              <div className="p-8 transition-colors duration-300 bg-gray-100 border border-gray-200 dark:bg-white/5 backdrop-blur-sm rounded-2xl dark:border-gray-700">
-                <h3 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">
+              <div className="p-8 transition-colors duration-300 bg-ink-light border border-ink-light dark:bg-white/5 backdrop-blur-sm rounded-2xl dark:border-gray-700">
+                <h3 className="mb-6 text-2xl font-bold text-ink-charcoal dark:text-white">
                   Follow Me
                 </h3>
 
@@ -368,7 +368,7 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                         whileHover={{ scale: 1.1, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                         href={social.href}
-                        className={`w-12 h-12 bg-gray-200 dark:bg-white/10 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 ${social.color} transition-all duration-200`}
+                        className={`w-12 h-12 bg-ink-light dark:bg-white/10 rounded-lg flex items-center justify-center text-ink-caption dark:text-gray-400 ${social.color} transition-all duration-200`}
                       >
                         <IconComponent className="w-6 h-6" />
                       </motion.a>
@@ -376,37 +376,37 @@ const Contact: React.FC<ContactProps> = ({ content }) => {
                   })}
                 </div>
 
-                <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                <p className="mt-4 text-sm text-ink-paragraph dark:text-gray-400">
                   Let's connect on social media and stay updated on my latest
                   projects and insights.
                 </p>
               </div>
 
               {/* Availability */}
-              <div className="p-6 border bg-gradient-to-r from-yellow-500/10 to-orange-500/10 dark:from-yellow-500/10 dark:to-orange-500/10 border-orange-500/30 rounded-2xl">
+              <div className="p-6 border bg-gradient-to-r from-brand-gold/10 to-status-warning/10 dark:from-yellow-500/10 dark:to-orange-500/10 border-status-warning/30 rounded-2xl">
                 <div className="flex items-center mb-3">
                   <div
                     className={`w-3 h-3 rounded-full mr-2 ${
                       contactContent.availability.status === "available"
-                        ? "bg-green-500"
+                        ? "bg-status-success"
                         : contactContent.availability.status === "busy"
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
+                        ? "bg-brand-gold"
+                        : "bg-status-error"
                     }`}
                   ></div>
                   <span
                     className={`font-semibold ${
                       contactContent.availability.status === "available"
-                        ? "text-green-600 dark:text-green-400"
+                        ? "text-status-success dark:text-green-400"
                         : contactContent.availability.status === "busy"
-                        ? "text-yellow-600 dark:text-yellow-400"
-                        : "text-red-600 dark:text-red-400"
+                        ? "text-brand-gold dark:text-yellow-400"
+                        : "text-status-error dark:text-red-400"
                     }`}
                   >
                     {contactContent.availability.message}
                   </span>
                 </div>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
+                <p className="text-sm text-ink-paragraph dark:text-gray-300">
                   {contactContent.availability.responseTime}
                 </p>
               </div>

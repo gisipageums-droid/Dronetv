@@ -98,7 +98,7 @@ export default function Contact({ onStateChange, contactData }) {
               whileTap={{ scale: 0.9 }}
               whileHover={{ y: -1, scaleX: 1.1 }}
               onClick={() => setIsEditing(false)}
-              className="px-4 py-2 text-white bg-green-600 rounded shadow-xl cursor-pointer hover:font-semibold hover:shadow-2xl"
+              className="px-4 py-2 text-white bg-status-success rounded shadow-xl cursor-pointer hover:font-semibold hover:shadow-2xl"
             >
               Save
             </motion.button>
@@ -107,7 +107,7 @@ export default function Contact({ onStateChange, contactData }) {
               whileTap={{ scale: 0.9 }}
               whileHover={{ y: -1, scaleX: 1.1 }}
               onClick={() => setIsEditing(true)}
-              className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
+              className="px-4 py-2 text-ink bg-brand-gold rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
             >
               Edit
             </motion.button>

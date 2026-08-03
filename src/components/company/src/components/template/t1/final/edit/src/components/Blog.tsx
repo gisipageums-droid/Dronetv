@@ -114,18 +114,18 @@ function BlogModal({ blog, onClose }: BlogModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center mt-12 bg-black/70 p-4"
+      className="fixed inset-0 z-[1000] flex items-center justify-center mt-12 bg-ink/70 p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md max-h-[70vh] overflow-y-auto my-auto"
+        className="relative bg-surface-card dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md max-h-[70vh] overflow-y-auto my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
-          className="absolute -top-2 -right-2 z-[1010] bg-gray-600 hover:bg-gray-700 rounded-full p-1 text-white transition-colors shadow-lg flex items-center justify-center"
+          className="absolute -top-2 -right-2 z-[1010] bg-ink-paragraph hover:bg-ink-paragraph rounded-full p-1 text-white transition-colors shadow-lg flex items-center justify-center"
           onClick={onClose}
           aria-label="Close modal"
           style={{ width: "28px", height: "28px" }}
@@ -153,10 +153,10 @@ function BlogModal({ blog, onClose }: BlogModalProps) {
             className="w-full h-32 object-cover rounded-t-xl scale-110"
             alt={blog.title}
           />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-ink/70 to-transparent p-3">
             <div className="flex justify-between items-center">
               <div className="text-white">
-                <span className="text-xs bg-indigo-600 px-2 py-1 rounded-full">
+                <span className="text-xs bg-status-info px-2 py-1 rounded-full">
                   {blog.category}
                 </span>
                 <p className="text-xs mt-1 opacity-90 text-justify">
@@ -169,27 +169,27 @@ function BlogModal({ blog, onClose }: BlogModalProps) {
 
         {/* Content */}
         <div className="p-4">
-          <h1 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+          <h1 className="text-lg font-bold text-ink dark:text-white mb-3">
             {blog.title}
           </h1>
 
-          <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed  mt-4">
+          <p className="text-sm text-ink-paragraph dark:text-gray-300 mb-4 leading-relaxed  mt-4">
             {blog.excerpt}
           </p>
 
           {/* Blog Outline if available */}
           {blog.outline && blog.outline.length > 0 && (
-            <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg mb-4 overflow-auto">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="bg-ink-offwhite dark:bg-gray-700 p-3 rounded-lg mb-4 overflow-auto">
+              <h3 className="text-sm font-semibold text-ink dark:text-white mb-2">
                 In this article:
               </h3>
               <ul className="space-y-1 text-xs">
                 {blog.outline.map((item: string, index: number) => (
                   <li key={index} className="flex items-start">
-                    <span className="text-indigo-600 dark:text-indigo-400 mr-2 mt-0.5">
+                    <span className="text-status-info dark:text-indigo-400 mr-2 mt-0.5">
                       •
                     </span>
-                    <span className="text-gray-700 dark:text-gray-300">
+                    <span className="text-ink-paragraph dark:text-gray-300">
                       {item}
                     </span>
                   </li>
@@ -199,7 +199,7 @@ function BlogModal({ blog, onClose }: BlogModalProps) {
           )}
 
           {/* Main Content */}
-          <div className="text-gray-700 dark:text-gray-300 leading-6 space-y-3 text-xs max-h-40 overflow-y-auto ">
+          <div className="text-ink-paragraph dark:text-gray-300 leading-6 space-y-3 text-xs max-h-40 overflow-y-auto ">
             {blog.content ? (
               <div dangerouslySetInnerHTML={{ __html: blog.content }} />
             ) : (
@@ -219,7 +219,7 @@ function BlogModal({ blog, onClose }: BlogModalProps) {
                   reduced resource consumption.
                 </p>
 
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mt-4 mb-2 text-justify">
+                <h3 className="text-sm font-semibold text-ink dark:text-white mt-4 mb-2 text-justify">
                   The Future of Drone Technology
                 </h3>
 
@@ -237,15 +237,15 @@ function BlogModal({ blog, onClose }: BlogModalProps) {
 
           {/* Keywords if available */}
           {blog.keywords && blog.keywords.length > 0 && (
-            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
-              <h4 className="text-xs font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="mt-4 pt-3 border-t border-ink-light dark:border-gray-700">
+              <h4 className="text-xs font-semibold text-ink dark:text-white mb-2">
                 Keywords:
               </h4>
               <div className="flex flex-wrap gap-1">
                 {blog.keywords.map((keyword: string, index: number) => (
                   <span
                     key={index}
-                    className="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-xs rounded-full"
+                    className="px-2 py-0.5 bg-status-info/15 dark:bg-indigo-900 text-status-info dark:text-indigo-200 text-xs rounded-full"
                   >
                     #{keyword}
                   </span>
@@ -669,7 +669,7 @@ export default function Blog({
         maxLength?: number | null;
       }) => {
         const baseClasses =
-          "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none transition-colors duration-200 p-2";
+          "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none transition-colors duration-200 p-2";
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
           let newValue = e.target.value;
@@ -685,7 +685,7 @@ export default function Blog({
 
         // Show character count if maxLength is provided
         const charCount = maxLength ? (
-          <div className="text-xs text-gray-500 text-right mt-1">
+          <div className="text-xs text-ink-caption text-right mt-1">
             {value?.length || 0}/{maxLength}
           </div>
         ) : null;
@@ -845,7 +845,7 @@ export default function Blog({
       <motion.section
         ref={sectionRef}
         id="blog"
-        className={`${displayContent.posts.length > 0 ? "py-20" : "py-2"} bg-gray-50 dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative`}
+        className={`${displayContent.posts.length > 0 ? "py-20" : "py-2"} bg-ink-offwhite dark:bg-gray-800 transition-colors duration-500 scroll-mt-20 relative`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -854,7 +854,7 @@ export default function Blog({
         {/* Auto-save indicator */}
         {isEditing && (
           <motion.div
-            className="absolute top-4 left-4 flex items-center gap-2 text-xs text-gray-500"
+            className="absolute top-4 left-4 flex items-center gap-2 text-xs text-ink-caption"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -867,7 +867,7 @@ export default function Blog({
               <span>Last saved: {lastSaved.toLocaleTimeString()}</span>
             ) : null}
             {hasUnsavedChanges && !isSaving && (
-              <span className="text-amber-500">• Unsaved changes</span>
+              <span className="text-brand-gold">• Unsaved changes</span>
             )}
           </motion.div>
         )}
@@ -882,7 +882,7 @@ export default function Blog({
           {!isEditing ? (
             <Button
               onClick={handleEdit}
-              className="bg-white shadow-md"
+              className="bg-surface-card shadow-md"
               variant="outline"
               size="sm"
             >
@@ -894,7 +894,7 @@ export default function Blog({
               <Button
                 onClick={handleSave}
                 size="sm"
-                className="bg-green-600 text-white"
+                className="bg-status-success text-white"
                 disabled={isSaving || isUploading}
               >
                 {isUploading ? (
@@ -910,7 +910,7 @@ export default function Blog({
                 onClick={handleCancel}
                 variant="outline"
                 size="sm"
-                className="bg-white"
+                className="bg-surface-card"
                 disabled={isSaving || isUploading}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -919,7 +919,7 @@ export default function Blog({
               <Button
                 onClick={handleAddBlog}
                 size="sm"
-                className="bg-blue-600 text-white"
+                className="bg-status-info text-white"
               >
                 <Plus className="w-4 h-4 mr-2" /> Add Blog
               </Button>
@@ -940,14 +940,14 @@ export default function Blog({
                 <EditableText
                   value={tempContent.header.title}
                   onChange={(val) => updateHeaderField("title", val)}
-                  className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
+                  className="text-3xl font-bold text-ink dark:text-white mb-2"
                   placeholder="Blog section title"
                   maxLength={50}
                 />
                 <EditableText
                   value={tempContent.header.desc}
                   onChange={(val) => updateHeaderField("desc", val)}
-                  className="text-gray-600 dark:text-gray-600"
+                  className="text-ink-paragraph dark:text-gray-600"
                   multiline
                   placeholder="Blog section description"
                   maxLength={150}
@@ -955,10 +955,10 @@ export default function Blog({
               </>
             ) : (
               <>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-3xl font-bold text-ink dark:text-white">
                   {displayContent.header.title}
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-ink-paragraph dark:text-gray-300">
                   {displayContent.header.desc}
                 </p>
               </>
@@ -1003,8 +1003,8 @@ export default function Blog({
                             transition={{ delay: 0.2 }}
                           >
                             <label className="flex items-center gap-2 bg-white/90 dark:bg-gray-800/90 p-2 rounded shadow cursor-pointer">
-                              <Upload className="w-4 h-4 text-gray-600 dark:text-gray-200" />
-                              <span className="text-sm text-gray-700 dark:text-gray-200">
+                              <Upload className="w-4 h-4 text-ink-paragraph dark:text-gray-200" />
+                              <span className="text-sm text-ink-paragraph dark:text-gray-200">
                                 Change
                               </span>
                               <input
@@ -1093,7 +1093,7 @@ export default function Blog({
                                 onClick={() => handleDeleteBlog(b.id)}
                                 variant="outline"
                                 size="sm"
-                                className="bg-red-600 text-white mt-2"
+                                className="bg-status-error text-white mt-2"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 Delete
@@ -1102,23 +1102,23 @@ export default function Blog({
                           </>
                         ) : (
                           <div className="">
-                            <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+                            <div className="flex justify-between items-center text-sm text-ink-caption dark:text-gray-400">
                               <span>{b.date}</span>
                               <motion.span
-                                className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                                className="bg-status-info/15 text-status-info text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
                                 whileHover={{ scale: 1.05 }}
                               >
                                 {b.category}
                               </motion.span>
                             </div>
-                            <h3 className="text-xl mb-2 font-semibold text-gray-900 dark:text-white">
+                            <h3 className="text-xl mb-2 font-semibold text-ink dark:text-white">
                               {b.title}
                             </h3>
-                            <p className="text-gray-600 dark:text-gray-300 h-full overflow-auto">
+                            <p className="text-ink-paragraph dark:text-gray-300 h-full overflow-auto">
                               {b.excerpt}
                             </p>
                             <div className="flex justify-between items-center mt-4 absolute bottom-4">
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-sm text-ink-caption dark:text-gray-400">
                                 <span>{b.author}</span>
                                 <span className="mx-2">•</span>
                                 <span>{b.readTime}</span>
@@ -1129,7 +1129,7 @@ export default function Blog({
                               >
                                 <Button
                                   variant="ghost"
-                                  className="text-red-500 dark:text-red-400 hover:text-red-600"
+                                  className="text-status-error dark:text-red-400 hover:text-status-error"
                                   onClick={() => setSelectedBlog(b)}
                                 >
                                   Read More →
@@ -1158,28 +1158,28 @@ export default function Blog({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Blog Image
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop}
@@ -1211,18 +1211,18 @@ export default function Blog({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     1:1 (Square)
@@ -1230,8 +1230,8 @@ export default function Blog({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     4:3 (Standard)
@@ -1239,8 +1239,8 @@ export default function Blog({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     16:9 (Widescreen)
@@ -1251,14 +1251,14 @@ export default function Blog({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -1269,19 +1269,19 @@ export default function Blog({
                     max={4}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     +
                   </button>
                   <button
                     type="button"
                     onClick={() => setZoom(1)}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     1x
                   </button>
@@ -1292,20 +1292,20 @@ export default function Blog({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:bg-ink-caption disabled:cursor-not-allowed"
                 >
                   {isUploading ? (
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />

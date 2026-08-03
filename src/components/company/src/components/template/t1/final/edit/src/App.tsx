@@ -317,7 +317,7 @@ export default function App() {
   if (isLoading || !finaleDataReview?.content) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
-        <div className="text-lg text-gray-600">Loading...</div>
+        <div className="text-lg text-ink-paragraph">Loading...</div>
       </div>
     );
   }
@@ -325,7 +325,7 @@ export default function App() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
-        <div className="text-lg text-red-600">Error: {error}</div>
+        <div className="text-lg text-status-error">Error: {error}</div>
       </div>
     );
   }

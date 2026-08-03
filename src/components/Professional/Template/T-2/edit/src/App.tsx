@@ -162,15 +162,15 @@ export default function EditTemp_2() {
         <div className="max-w-md w-full relative z-10">
           <div className="text-center mb-8">
             <div className="relative inline-block mb-6">
-              <div className="w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center"
+              <div className="w-24 h-24 bg-brand-yellow rounded-full flex items-center justify-center"
                 style={{ boxShadow: '0 0 48px rgba(251,191,36,0.45), 0 0 16px rgba(251,191,36,0.3)' }}>
-                <svg className="w-12 h-12 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-12 h-12 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                 </svg>
               </div>
-              <div className="absolute -top-1 -right-1 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce"
+              <div className="absolute -top-1 -right-1 w-8 h-8 bg-brand-yellow rounded-full flex items-center justify-center animate-bounce"
                 style={{ boxShadow: '0 0 12px rgba(251,191,36,0.6)' }}>
-                <svg className="w-4 h-4 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
@@ -178,7 +178,7 @@ export default function EditTemp_2() {
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
               {isPolling ? "AI is Building Your Website" : "Loading Your Profile..."}
             </h1>
-            <p className="text-gray-400 text-sm sm:text-base">
+            <p className="text-ink-caption text-sm sm:text-base">
               {isPolling ? "Please stay on this page while we craft your digital presence" : "Fetching your data, please wait."}
             </p>
           </div>
@@ -187,8 +187,8 @@ export default function EditTemp_2() {
             <>
               <div className="mb-6">
                 <div className="flex justify-between text-xs mb-2">
-                  <span className="text-gray-400 font-medium">Progress</span>
-                  <span className="text-yellow-400 font-semibold">{minutes > 0 ? `${minutes}m ` : ""}{seconds}s elapsed</span>
+                  <span className="text-ink-caption font-medium">Progress</span>
+                  <span className="text-brand-yellow font-semibold">{minutes > 0 ? `${minutes}m ` : ""}{seconds}s elapsed</span>
                 </div>
                 <div className="w-full rounded-full h-2" style={{ background: 'rgba(255,255,255,0.08)' }}>
                   <div className="h-2 rounded-full transition-all duration-1000 ease-out"
@@ -221,15 +221,15 @@ export default function EditTemp_2() {
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                         ) : (
-                          <span className={`text-xs font-bold ${isActive ? "text-gray-900" : "text-gray-500"}`}>{index + 1}</span>
+                          <span className={`text-xs font-bold ${isActive ? "text-ink" : "text-ink-caption"}`}>{index + 1}</span>
                         )}
                       </div>
-                      <span className={`text-sm font-medium transition-all duration-300 ${isActive ? "text-yellow-300" : isCompleted ? "text-green-400" : "text-gray-500"}`}>{step}</span>
+                      <span className={`text-sm font-medium transition-all duration-300 ${isActive ? "text-brand-yellow-soft" : isCompleted ? "text-status-success" : "text-ink-caption"}`}>{step}</span>
                       {isActive && (
                         <div className="ml-auto flex space-x-1">
-                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" />
-                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                          <div className="w-1.5 h-1.5 bg-brand-yellow rounded-full animate-bounce" />
+                          <div className="w-1.5 h-1.5 bg-brand-yellow rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <div className="w-1.5 h-1.5 bg-brand-yellow rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                         </div>
                       )}
                     </div>
@@ -241,12 +241,12 @@ export default function EditTemp_2() {
 
           {!isPolling && (
             <div className="flex justify-center">
-              <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"
+              <div className="w-12 h-12 border-4 border-brand-yellow border-t-transparent rounded-full animate-spin"
                 style={{ filter: 'drop-shadow(0 0 8px rgba(251,191,36,0.5))' }} />
             </div>
           )}
 
-          <p className="text-center text-gray-600 text-xs mt-6">This usually takes 1–3 minutes</p>
+          <p className="text-center text-ink-paragraph text-xs mt-6">This usually takes 1–3 minutes</p>
         </div>
       </div>
     );

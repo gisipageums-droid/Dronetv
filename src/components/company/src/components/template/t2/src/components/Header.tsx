@@ -74,8 +74,8 @@ export default function Header() {
   return (
     <motion.header
       className={`fixed top-16 left-0 right-0 border-b z-50 ${theme === "dark"
-          ? "bg-gray-800 border-gray-700 text-white"
-          : "bg-white border-gray-200 text-black"
+          ? "bg-ink-charcoal border-ink-paragraph text-white"
+          : "bg-surface-card border-ink-light text-ink"
         }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -97,10 +97,10 @@ export default function Header() {
                   onChange={(e) =>
                     updateContent("logoLetter", e.target.value.slice(0, 1))
                   }
-                  className='w-6 max-w-[32px] text-center bg-transparent border-b border-black font-bold text-lg outline-none'
+                  className='w-6 max-w-[32px] text-center bg-transparent border-b border-ink font-bold text-lg outline-none'
                 />
               ) : (
-                <span className='text-black font-bold text-lg'>
+                <span className='text-ink font-bold text-lg'>
                   {content.logoLetter}
                 </span>
               )}
@@ -113,7 +113,7 @@ export default function Header() {
                 className='bg-transparent border-b border-primary text-xl font-bold outline-none max-w-[140px] '
               />
             ) : (
-              <motion.span className={`lg:text-xl md: text-xl text-[10px] whitespace-nowrap font-bold ${theme === "dark" ? "text-white" : "text-black"}`}>
+              <motion.span className={`lg:text-xl md: text-xl text-[10px] whitespace-nowrap font-bold ${theme === "dark" ? "text-white" : "text-ink"}`}>
                 {content.companyName}
               </motion.span>
             )}
@@ -131,7 +131,7 @@ export default function Header() {
                       onChange={(e) =>
                         updateNavItem(item.id, "label", e.target.value)
                       }
-                      className='bg-white border px-2 py-1 rounded text-sm outline-none max-w-[100px] '
+                      className='bg-surface-card border px-2 py-1 rounded text-sm outline-none max-w-[100px] '
                     />
                     <input
                       type='text'
@@ -139,12 +139,12 @@ export default function Header() {
                       onChange={(e) =>
                         updateNavItem(item.id, "href", e.target.value)
                       }
-                      className='bg-white border px-2 py-1 rounded text-xs text-gray-500 outline-none max-w-[120px] '
+                      className='bg-surface-card border px-2 py-1 rounded text-xs text-ink-caption outline-none max-w-[120px] '
                       placeholder='URL'
                     />
                     <button
                       onClick={() => removeNavItem(item.id)}
-                      className='text-red-500 text-xs'
+                      className='text-status-error text-xs'
                     >
                       ✕
                     </button>
@@ -153,8 +153,8 @@ export default function Header() {
                   <motion.a
                     href={item.href}
                     className={`font-medium relative group whitespace-nowrap ${theme == "dark"
-                        ? "text-white hover:text-gray-200"
-                        : "text-black hover:text-primary "
+                        ? "text-white hover:text-ink-light"
+                        : "text-ink hover:text-primary "
                       }`}
                     whileHover={{ y: -2 }}
                   >
@@ -171,7 +171,7 @@ export default function Header() {
             {isEditing && (
               <button
                 onClick={addNavItem}
-                className='text-green-600 text-sm font-medium'
+                className='text-status-success text-sm font-medium'
               >
                 + Add
               </button>
@@ -185,11 +185,11 @@ export default function Header() {
                 type='text'
                 value={content.ctaText}
                 onChange={(e) => updateContent("ctaText", e.target.value)}
-                className='bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] '
+                className='bg-surface-card border px-3 py-1 rounded font-medium outline-none max-w-[120px] '
               />
             ) : (
 
-              <Button className='bg-primary text-black hover:bg-primary/90 shadow-lg transition-all duration-300  hidden md:block'>
+              <Button className='bg-primary text-ink hover:bg-primary/90 shadow-lg transition-all duration-300  hidden md:block'>
                 {content.ctaText}
               </Button>
             )}
@@ -201,7 +201,7 @@ export default function Header() {
           <motion.div className='lg:hidden'>
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className='text-gray-700 hover:text-primary transition-colors p-2'
+              className='text-ink-paragraph hover:text-primary transition-colors p-2'
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               animate={{ rotate: isMenuOpen ? 180 : 0 }}
@@ -218,7 +218,7 @@ export default function Header() {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className='md:hidden border-t border-gray-200 overflow-hidden'
+              className='md:hidden border-t border-ink-light overflow-hidden'
               variants={menuVariants}
               initial='closed'
               animate='open'
@@ -230,8 +230,8 @@ export default function Header() {
                     key={item.id}
                     href={item.href}
                     className={`${theme === "dark"
-                        ? "text-white hover:text-gray-200"
-                        : "text-black hover:text-primary "
+                        ? "text-white hover:text-ink-light"
+                        : "text-ink hover:text-primary "
                       }`}
                     variants={itemVariants}
                     whileHover={{ x: 10, scale: 1.02 }}
@@ -240,7 +240,7 @@ export default function Header() {
                     {item.label}
                   </motion.a>
                 ))}
-                <Button className='bg-primary text-black hover:bg-primary/90 w-full mt-4 shadow-lg'>
+                <Button className='bg-primary text-ink hover:bg-primary/90 w-full mt-4 shadow-lg'>
                   {content.ctaText}
                 </Button>
               </motion.nav>

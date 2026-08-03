@@ -6,15 +6,15 @@
   --card-foreground: #000000;
   --popover: #ffffff;
   --popover-foreground: #000000;
-  --primary: #facc15;
+  --primary: #F8C400;
   --primary-foreground: #000000;
   --secondary: #f5f5f5;
   --secondary-foreground: #000000;
   --muted: #f5f5f5;
   --muted-foreground: #6b7280;
-  --accent: #facc15;
+  --accent: #F8C400;
   --accent-foreground: #000000;
-  --red-accent: #ff0000;
+  --red-accent: #E8B400;
   --red-accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
@@ -24,21 +24,21 @@
   --switch-background: #e5e7eb;
   --font-weight-medium: 600;
   --font-weight-normal: 400;
-  --ring: #facc15;
-  --chart-1: #facc15;
+  --ring: #F8C400;
+  --chart-1: #F8C400;
   --chart-2: #000000;
-  --chart-3: #ff0000;
+  --chart-3: #E8B400;
   --chart-4: #f3f4f6;
   --chart-5: #d1d5db;
   --radius: 0.5rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #000000;
-  --sidebar-primary: #facc15;
+  --sidebar-primary: #F8C400;
   --sidebar-primary-foreground: #000000;
   --sidebar-accent: #f9fafb;
   --sidebar-accent-foreground: #000000;
   --sidebar-border: rgba(0, 0, 0, 0.1);
-  --sidebar-ring: #facc15;
+  --sidebar-ring: #F8C400;
 }
 
 /* Dark mode variables */
@@ -49,15 +49,15 @@
   --card-foreground: #fafafa;
   --popover: #1a1a1a;
   --popover-foreground: #fafafa;
-  --primary: #facc15;
+  --primary: #F8C400;
   --primary-foreground: #000000;
   --secondary: #262626;
   --secondary-foreground: #fafafa;
   --muted: #262626;
   --muted-foreground: #a1a1aa;
-  --accent: #facc15;
+  --accent: #F8C400;
   --accent-foreground: #000000;
-  --red-accent: #ff0000;
+  --red-accent: #E8B400;
   --red-accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #fafafa;
@@ -65,20 +65,20 @@
   --input: transparent;
   --input-background: #1f1f1f;
   --switch-background: #374151;
-  --ring: #facc15;
-  --chart-1: #facc15;
+  --ring: #F8C400;
+  --chart-1: #F8C400;
   --chart-2: #fafafa;
-  --chart-3: #ff0000;
+  --chart-3: #E8B400;
   --chart-4: #262626;
   --chart-5: #404040;
   --sidebar: #0a0a0a;
   --sidebar-foreground: #fafafa;
-  --sidebar-primary: #facc15;
+  --sidebar-primary: #F8C400;
   --sidebar-primary-foreground: #000000;
   --sidebar-accent: #1f1f1f;
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #facc15;
+  --sidebar-ring: #F8C400;
 }
 
 @theme inline {
@@ -207,11 +207,11 @@ html {
 @keyframes pulse-glow {
   0%, 100% { 
     opacity: 1; 
-    box-shadow: 0 0 5px rgba(250, 204, 21, 0.3);
+    box-shadow: 0 0 5px rgba(248, 196, 0, 0.3);
   }
   50% { 
     opacity: 0.8; 
-    box-shadow: 0 0 20px rgba(250, 204, 21, 0.6), 0 0 30px rgba(250, 204, 21, 0.4);
+    box-shadow: 0 0 20px rgba(248, 196, 0, 0.6), 0 0 30px rgba(248, 196, 0, 0.4);
   }
 }
 
@@ -272,16 +272,16 @@ html {
 /* Editable text animations */
 @keyframes edit-pulse {
   0%, 100% { 
-    box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.4);
+    box-shadow: 0 0 0 0 rgba(248, 196, 0, 0.4);
   }
   50% { 
-    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.2);
+    box-shadow: 0 0 0 4px rgba(248, 196, 0, 0.2);
   }
 }
 
 @keyframes edit-highlight {
   0% { background-color: transparent; }
-  50% { background-color: rgba(250, 204, 21, 0.1); }
+  50% { background-color: rgba(248, 196, 0, 0.1); }
   100% { background-color: transparent; }
 }
 
@@ -341,7 +341,7 @@ html {
   }
 
   .animate-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(250, 204, 21, 0.4), transparent);
+    background: linear-gradient(90deg, transparent, rgba(248, 196, 0, 0.4), transparent);
     background-size: 200px 100%;
     animation: shimmer 2s infinite;
   }
@@ -369,7 +369,7 @@ html {
   }
 
   .hover-glow:hover {
-    box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
+    box-shadow: 0 0 20px rgba(248, 196, 0, 0.3);
   }
 
   /* Backdrop blur utilities */
@@ -395,8 +395,8 @@ html {
   }
 
   .editable-hover:hover {
-    background-color: rgba(250, 204, 21, 0.05);
-    outline: 1px dashed rgba(250, 204, 21, 0.3);
+    background-color: rgba(248, 196, 0, 0.05);
+    outline: 1px dashed rgba(248, 196, 0, 0.3);
     outline-offset: 2px;
   }
 

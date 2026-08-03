@@ -44,14 +44,14 @@ const GallerySection: React.FC = () => {
   };
 
   return (
-    <section id="gallery" className="py-20 bg-white">
+    <section id="gallery" className="py-20 bg-surface-card">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16 relative">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
             Exhibitors <span className="text-[#FF0000]">Interview</span>
           </h2>
           <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-ink-paragraph text-lg max-w-2xl mx-auto">
             Catch our exclusive interviews with top exhibitors sharing their
             insights and innovations.
           </p>
@@ -66,7 +66,7 @@ const GallerySection: React.FC = () => {
               allowFullScreen
               className="w-full h-[500px] rounded-xl"
             ></iframe>
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent">
               <h3 className="text-white font-semibold text-lg">
                 {galleryItems[currentSlide].title}
               </h3>
@@ -74,13 +74,13 @@ const GallerySection: React.FC = () => {
           </div>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-ink-charcoal text-white p-3 rounded-full shadow-lg hover:bg-ink-paragraph transition-colors"
           >
             <ChevronLeft size={24} />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-ink-charcoal text-white p-3 rounded-full shadow-lg hover:bg-ink-paragraph transition-colors"
           >
             <ChevronRight size={24} />
           </button>

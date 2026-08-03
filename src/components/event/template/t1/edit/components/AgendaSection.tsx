@@ -286,9 +286,9 @@
 //               value={theme.title}
 //               onChange={handleInputChange}
 //               maxLength={100}
-//               className="w-full text-xl md:text-2xl font-bold text-black border-b border-gray-300 focus:outline-none focus:border-[#FF0000] transition-colors bg-transparent text-center"
+//               className="w-full text-xl md:text-2xl font-bold text-ink border-b border-ink-light focus:outline-none focus:border-[#FF0000] transition-colors bg-transparent text-center"
 //             />
-//             <div className="text-sm text-gray-500 text-right mt-1">
+//             <div className="text-sm text-ink-caption text-right mt-1">
 //               {theme.title.length}/100
 //             </div>
 //           </div>
@@ -299,14 +299,14 @@
 //               value={theme.note}
 //               onChange={handleInputChange}
 //               maxLength={200}
-//               className="w-full text-sm text-gray-500 font-medium border-b border-gray-300 focus:outline-none focus:border-blue-400 transition-colors bg-transparent text-center"
+//               className="w-full text-sm text-ink-caption font-medium border-b border-ink-light focus:outline-none focus:border-status-info transition-colors bg-transparent text-center"
 //               placeholder="Optional Note"
 //             />
-//             <div className="text-sm text-gray-500 text-right mt-1">
+//             <div className="text-sm text-ink-caption text-right mt-1">
 //               {theme.note.length}/200
 //             </div>
 //           </div>
-//           <ul className="text-left list-none space-y-4 text-gray-700 text-base">
+//           <ul className="text-left list-none space-y-4 text-ink-paragraph text-base">
 //             {theme.bullets.map((point, idx) => (
 //               <li key={idx} className="flex items-center gap-2">
 //                 <div className="flex-1">
@@ -315,15 +315,15 @@
 //                     value={point}
 //                     onChange={(e) => handleBulletChange(e, idx)}
 //                     maxLength={500}
-//                     className="w-full p-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+//                     className="w-full p-2 border rounded-md border-ink-light focus:outline-none focus:ring-2 focus:ring-status-info"
 //                   />
-//                   <div className="text-xs text-gray-500 text-right mt-1">
+//                   <div className="text-xs text-ink-caption text-right mt-1">
 //                     {point.length}/500
 //                   </div>
 //                 </div>
 //                 <button
 //                   onClick={() => handleRemoveBullet(idx)}
-//                   className="p-1 text-red-500 hover:bg-red-100 rounded-full"
+//                   className="p-1 text-status-error hover:bg-status-error/15 rounded-full"
 //                   title="Remove bullet"
 //                 >
 //                   <Trash2 size={16} />
@@ -333,7 +333,7 @@
 //             <li className="flex justify-center mt-4">
 //               <button
 //                 onClick={handleAddBullet}
-//                 className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors shadow-md"
+//                 className="flex items-center gap-1 px-3 py-1 bg-status-success text-white rounded-full hover:bg-status-success transition-colors shadow-md"
 //               >
 //                 <Plus size={16} /> Add Bullet
 //               </button>
@@ -342,13 +342,13 @@
 //           <div className="flex justify-center gap-4 mt-8">
 //             <button
 //               onClick={handleSave}
-//               className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-full font-semibold hover:bg-green-600 transition-colors shadow-lg"
+//               className="flex items-center gap-2 px-6 py-3 bg-status-success text-white rounded-full font-semibold hover:bg-status-success transition-colors shadow-lg"
 //             >
 //               <Save size={18} /> Done
 //             </button>
 //             <button
 //               onClick={handleCancel}
-//               className="flex items-center gap-2 px-6 py-3 bg-gray-500 text-white rounded-full font-semibold hover:bg-gray-600 transition-colors shadow-lg"
+//               className="flex items-center gap-2 px-6 py-3 bg-ink-caption text-white rounded-full font-semibold hover:bg-ink-paragraph transition-colors shadow-lg"
 //             >
 //               <X size={18} /> Cancel
 //             </button>
@@ -359,13 +359,13 @@
 
 //     return (
 //       <div className="text-center">
-//         <h3 className="text-xl md:text-2xl font-bold text-black mb-2">
+//         <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
 //           {theme.title}
 //         </h3>
 //         {theme.note && (
-//           <p className="text-sm text-gray-500 font-medium mb-4 text-justify">{theme.note}</p>
+//           <p className="text-sm text-ink-caption font-medium mb-4 text-justify">{theme.note}</p>
 //         )}
-//         <ul className="text-left list-disc list-inside space-y-3 text-gray-700 text-base">
+//         <ul className="text-left list-disc list-inside space-y-3 text-ink-paragraph text-base">
 //           {theme.bullets.map((point, idx) => (
 //             <li key={idx}>{point}</li>
 //           ))}
@@ -375,17 +375,17 @@
 //   };
 
 //   return (
-//     <section id="agenda" className="py-20 bg-white">
+//     <section id="agenda" className="py-20 bg-surface-card">
 //       <div className="container mx-auto px-4 max-w-7xl relative">
 //         <div className="text-center mb-12 relative">
 //           {/* Edit/Save/Cancel Buttons */}
 //           <div className="absolute top-0 right-0 flex gap-3 items-center">
 //             {/* Auto-save status */}
 //             {editMode && onStateChange && (
-//               <div className="text-sm text-gray-600 mr-2 bg-gray-100 px-3 py-1 rounded-lg hidden sm:block">
+//               <div className="text-sm text-ink-paragraph mr-2 bg-ink-light px-3 py-1 rounded-lg hidden sm:block">
 //                 {isSaving ? (
 //                   <span className="flex items-center gap-1">
-//                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+//                     <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
 //                     Saving...
 //                   </span>
 //                 ) : lastSaved ? (
@@ -398,13 +398,13 @@
 //               <>
 //                 <button
 //                   onClick={handleEditToggle}
-//                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg border border-green-700 hover:bg-green-700 transition"
+//                   className="flex items-center gap-2 bg-status-success text-white px-4 py-2 rounded-lg border border-status-success hover:bg-status-success transition"
 //                 >
 //                   <Save size={18} /> Done
 //                 </button>
 //                 <button
 //                   onClick={handleCancel}
-//                   className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg border border-red-700 hover:bg-red-700 transition"
+//                   className="flex items-center gap-2 bg-status-error text-white px-4 py-2 rounded-lg border border-status-error hover:bg-status-error transition"
 //                 >
 //                   <X size={18} /> Cancel
 //                 </button>
@@ -412,7 +412,7 @@
 //             ) : (
 //               <button
 //                 onClick={handleEditToggle}
-//                 className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg border border-blue-700 hover:bg-blue-700 transition"
+//                 className="flex items-center gap-2 bg-status-info text-white px-4 py-2 rounded-lg border border-status-info hover:bg-status-info transition"
 //               >
 //                 <Edit size={18} /> Edit
 //               </button>
@@ -428,9 +428,9 @@
 //                     value={agendaContent.title}
 //                     onChange={(e) => updateHeaderField('title', e.target.value)}
 //                     maxLength={100}
-//                     className="text-4xl md:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+//                     className="text-4xl md:text-5xl font-bold text-ink bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
 //                   />
-//                   <div className="text-sm text-gray-500 text-right mt-1">
+//                   <div className="text-sm text-ink-caption text-right mt-1">
 //                     {agendaContent.title.length}/100
 //                   </div>
 //                 </div>
@@ -440,9 +440,9 @@
 //                     value={agendaContent.titleHighlight}
 //                     onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
 //                     maxLength={50}
-//                     className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+//                     className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
 //                   />
-//                   <div className="text-sm text-gray-500 text-right mt-1">
+//                   <div className="text-sm text-ink-caption text-right mt-1">
 //                     {agendaContent.titleHighlight.length}/50
 //                   </div>
 //                 </div>
@@ -453,24 +453,24 @@
 //                   value={agendaContent.subtitle}
 //                   onChange={(e) => updateHeaderField('subtitle', e.target.value)}
 //                   maxLength={200}
-//                   className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
+//                   className="text-ink-paragraph text-lg bg-transparent border-2 border-ink-light focus:border-status-info outline-none p-2 rounded-md w-full resize-none"
 //                   rows={2}
 //                 />
-//                 <div className="text-sm text-gray-500 text-right mt-1">
+//                 <div className="text-sm text-ink-caption text-right mt-1">
 //                   {agendaContent.subtitle.length}/200
 //                 </div>
 //               </div>
 //             </>
 //           ) : (
 //             <>
-//               <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+//               <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
 //                 {agendaContent.title}{" "}
 //                 <span className="text-[#FF0000]">
 //                   {agendaContent.titleHighlight}
 //                 </span>
 //               </h2>
 //               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
-//               <p className="text-gray-600 text-lg max-w-2xl mx-auto text-justify">
+//               <p className="text-ink-paragraph text-lg max-w-2xl mx-auto text-justify">
 //                 {agendaContent.subtitle}
 //               </p>
 //             </>
@@ -480,7 +480,7 @@
 //         {/* Day Tabs */}
 //         <div className="flex justify-center mb-10">
 //           <div className="flex items-center gap-4">
-//             <div className="flex bg-gray-100 rounded-full p-2 shadow-md">
+//             <div className="flex bg-ink-light rounded-full p-2 shadow-md">
 //               {Object.keys(agendaContent.themes).map((day) => {
 //                 const dayNum = parseInt(day);
 //                 return (
@@ -495,7 +495,7 @@
 //                       className={`px-6 py-2 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
 //                         activeDay === dayNum
 //                           ? "bg-[#FF0000] text-white shadow-lg"
-//                           : "text-gray-700 hover:text-[#FF0000]"
+//                           : "text-ink-paragraph hover:text-[#FF0000]"
 //                       }`}
 //                       disabled={editMode}
 //                     >
@@ -505,7 +505,7 @@
 //                       Object.keys(agendaContent.themes).length > 1 && (
 //                         <button
 //                           onClick={() => handleRemoveDay(dayNum)}
-//                           className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors flex items-center justify-center"
+//                           className="absolute -top-2 -right-2 w-5 h-5 bg-status-error text-white rounded-full text-xs hover:bg-status-error transition-colors flex items-center justify-center"
 //                           title="Remove Day"
 //                         >
 //                           ×
@@ -518,7 +518,7 @@
 //             {editMode && (
 //               <button
 //                 onClick={handleAddDay}
-//                 className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-md"
+//                 className="flex items-center gap-2 px-4 py-2 bg-status-info text-white rounded-full hover:bg-status-info transition-colors shadow-md"
 //                 title="Add New Day"
 //               >
 //                 <Plus size={16} />
@@ -529,7 +529,7 @@
 //         </div>
 
 //         {/* Theme Box */}
-//         <div className="max-w-3xl mx-auto bg-gray-100 rounded-3xl shadow-lg p-8">
+//         <div className="max-w-3xl mx-auto bg-ink-light rounded-3xl shadow-lg p-8">
 //           {renderThemeContent()}
 //         </div>
 //       </div>
@@ -619,7 +619,7 @@ const ThemeCard = memo(
   }: any) => {
     if (isEditing) {
       return (
-        <div className="bg-gray-100 rounded-3xl shadow-lg p-4 md:p-8">
+        <div className="bg-ink-light rounded-3xl shadow-lg p-4 md:p-8">
           <div className="space-y-6">
             <div>
               <input
@@ -628,9 +628,9 @@ const ThemeCard = memo(
                 value={editForm?.title || ""}
                 onChange={(e) => onFormChange({ ...editForm, title: e.target.value })}
                 maxLength={100}
-                className="w-full text-xl md:text-2xl font-bold text-black border-b border-gray-300 focus:outline-none focus:border-[#FF0000] transition-colors bg-transparent text-center"
+                className="w-full text-xl md:text-2xl font-bold text-ink border-b border-ink-light focus:outline-none focus:border-[#FF0000] transition-colors bg-transparent text-center"
               />
-              <div className="text-sm text-gray-500 text-right mt-1">
+              <div className="text-sm text-ink-caption text-right mt-1">
                 {editForm?.title?.length || 0}/100
               </div>
             </div>
@@ -641,14 +641,14 @@ const ThemeCard = memo(
                 value={editForm?.note || ""}
                 onChange={(e) => onFormChange({ ...editForm, note: e.target.value })}
                 maxLength={200}
-                className="w-full text-sm text-gray-500 font-medium border-b border-gray-300 focus:outline-none focus:border-blue-400 transition-colors bg-transparent text-center"
+                className="w-full text-sm text-ink-caption font-medium border-b border-ink-light focus:outline-none focus:border-status-info transition-colors bg-transparent text-center"
                 placeholder="Optional Note"
               />
-              <div className="text-sm text-gray-500 text-right mt-1">
+              <div className="text-sm text-ink-caption text-right mt-1">
                 {editForm?.note?.length || 0}/200
               </div>
             </div>
-            <ul className="text-left list-none space-y-4 text-gray-700 text-base">
+            <ul className="text-left list-none space-y-4 text-ink-paragraph text-base">
               {editForm?.bullets?.map((point: string, idx: number) => (
                 <li key={idx} className="flex items-center gap-2">
                   <div className="flex-1">
@@ -657,15 +657,15 @@ const ThemeCard = memo(
                       value={point}
                       onChange={(e) => onBulletChange(idx, e.target.value)}
                       maxLength={500}
-                      className="w-full p-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full p-2 border rounded-md border-ink-light focus:outline-none focus:ring-2 focus:ring-status-info"
                     />
-                    <div className="text-xs text-gray-500 text-right mt-1">
+                    <div className="text-xs text-ink-caption text-right mt-1">
                       {point.length}/500
                     </div>
                   </div>
                   <button
                     onClick={() => onRemoveBullet(idx)}
-                    className="p-1 text-red-500 hover:bg-red-100 rounded-full"
+                    className="p-1 text-status-error hover:bg-status-error/15 rounded-full"
                     title="Remove bullet"
                   >
                     <Trash2 size={16} />
@@ -675,7 +675,7 @@ const ThemeCard = memo(
               <li className="flex justify-center mt-4">
                 <button
                   onClick={onAddBullet}
-                  className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors shadow-md"
+                  className="flex items-center gap-1 px-3 py-1 bg-status-success text-white rounded-full hover:bg-status-success transition-colors shadow-md"
                 >
                   <Plus size={16} /> Add Bullet
                 </button>
@@ -684,13 +684,13 @@ const ThemeCard = memo(
             <div className="flex justify-center gap-4 mt-8">
               <button
                 onClick={onSave}
-                className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-full font-semibold hover:bg-green-600 transition-colors shadow-lg"
+                className="flex items-center gap-2 px-6 py-3 bg-status-success text-white rounded-full font-semibold hover:bg-status-success transition-colors shadow-lg"
               >
                 <Save size={18} /> Done
               </button>
               <button
                 onClick={onCancel}
-                className="flex items-center gap-2 px-6 py-3 bg-gray-500 text-white rounded-full font-semibold hover:bg-gray-600 transition-colors shadow-lg"
+                className="flex items-center gap-2 px-6 py-3 bg-ink-caption text-white rounded-full font-semibold hover:bg-ink-paragraph transition-colors shadow-lg"
               >
                 <X size={18} /> Cancel
               </button>
@@ -701,15 +701,15 @@ const ThemeCard = memo(
     }
 
     return (
-      <div className="bg-gray-100 rounded-3xl shadow-lg p-4 md:p-8">
+      <div className="bg-ink-light rounded-3xl shadow-lg p-4 md:p-8">
         <div className="text-center">
-          <h3 className="text-xl md:text-2xl font-bold text-black mb-2">
+          <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
             {theme.title}
           </h3>
           {theme.note && (
-            <p className="text-sm text-gray-500 font-medium mb-4 text-justify">{theme.note}</p>
+            <p className="text-sm text-ink-caption font-medium mb-4 text-justify">{theme.note}</p>
           )}
-          <ul className="text-left list-disc list-inside space-y-3 text-gray-700 text-base">
+          <ul className="text-left list-disc list-inside space-y-3 text-ink-paragraph text-base">
             {theme.bullets.map((point: string, idx: number) => (
               <li key={idx}>{point}</li>
             ))}
@@ -719,7 +719,7 @@ const ThemeCard = memo(
             <div className="mt-8">
               <button
                 onClick={onEdit}
-                className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-600 transition-colors shadow-lg mx-auto"
+                className="flex items-center gap-2 px-6 py-3 bg-status-info text-white rounded-full font-semibold hover:bg-status-info transition-colors shadow-lg mx-auto"
               >
                 <Edit size={18} /> Edit Day {dayNumber}
               </button>
@@ -1010,17 +1010,17 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
   const currentTheme = agendaContent.themes[activeDay];
 
   return (
-    <section id="agenda" className="py-12 md:py-20 bg-white">
+    <section id="agenda" className="py-12 md:py-20 bg-surface-card">
       <div className="container mx-auto px-3 sm:px-4 max-w-7xl relative">
         <div className="text-center mb-10 md:mb-16 relative">
           {/* Edit Buttons */}
           <div className="absolute top-0 right-0 flex flex-col sm:flex-row gap-2 items-start sm:items-center p-2">
             {/* Auto-save status */}
             {isEditMode && onStateChange && (
-              <div className="text-xs sm:text-sm text-gray-600 bg-white/90 px-2 sm:px-3 py-1 rounded-lg mb-2 sm:mb-0 shadow-sm">
+              <div className="text-xs sm:text-sm text-ink-paragraph bg-white/90 px-2 sm:px-3 py-1 rounded-lg mb-2 sm:mb-0 shadow-sm">
                 {isSaving ? (
                   <span className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
                     <span className="hidden sm:inline">Saving...</span>
                     <span className="sm:hidden">Saving</span>
                   </span>
@@ -1042,7 +1042,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
               <div className="flex gap-2">
                 <button 
                   onClick={saveHeaderEdit} 
-                  className="px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 sm:px-6 sm:py-3 bg-status-info text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-status-info transition-colors"
                 >
                   <Save size={16} className="sm:w-4 sm:h-4" /> 
                   <span className="hidden sm:inline">Done</span>
@@ -1050,7 +1050,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                 </button>
                 <button 
                   onClick={cancelHeaderEdit} 
-                  className="px-4 py-2 sm:px-6 sm:py-3 bg-red-500 text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-red-600 transition-colors"
+                  className="px-4 py-2 sm:px-6 sm:py-3 bg-status-error text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-status-error transition-colors"
                 >
                   <X size={16} className="sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Cancel</span>
@@ -1060,7 +1060,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
             ) : (
               <button 
                 onClick={startHeaderEdit} 
-                className="px-4 py-2 sm:px-6 sm:py-3 bg-green-500 text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-green-600 transition-colors"
+                className="px-4 py-2 sm:px-6 sm:py-3 bg-status-success text-white rounded-lg md:rounded-xl text-sm sm:text-base flex items-center gap-1 hover:bg-status-success transition-colors"
               >
                 <Edit size={16} className="sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Edit</span>
@@ -1078,9 +1078,9 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                     value={agendaContent.title}
                     onChange={(e) => updateHeaderField('title', e.target.value)}
                     maxLength={100}
-                    className="w-full sm:w-auto text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center px-2"
+                    className="w-full sm:w-auto text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-ink bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center px-2"
                   />
-                  <div className="text-xs sm:text-sm text-gray-500 text-right mt-1">
+                  <div className="text-xs sm:text-sm text-ink-caption text-right mt-1">
                     {agendaContent.title.length}/100
                   </div>
                 </div>
@@ -1090,9 +1090,9 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                     value={agendaContent.titleHighlight}
                     onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
                     maxLength={50}
-                    className="w-full sm:w-auto text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center px-2"
+                    className="w-full sm:w-auto text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center px-2"
                   />
-                  <div className="text-xs sm:text-sm text-gray-500 text-right mt-1">
+                  <div className="text-xs sm:text-sm text-ink-caption text-right mt-1">
                     {agendaContent.titleHighlight.length}/50
                   </div>
                 </div>
@@ -1103,24 +1103,24 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                   value={agendaContent.subtitle}
                   onChange={(e) => updateHeaderField('subtitle', e.target.value)}
                   maxLength={200}
-                  className="text-gray-600 text-base md:text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none text-center"
+                  className="text-ink-paragraph text-base md:text-lg bg-transparent border-2 border-ink-light focus:border-status-info outline-none p-2 rounded-md w-full resize-none text-center"
                   rows={2}
                 />
-                <div className="text-xs sm:text-sm text-gray-500 text-right mt-1">
+                <div className="text-xs sm:text-sm text-ink-caption text-right mt-1">
                   {agendaContent.subtitle.length}/200
                 </div>
               </div>
             </>
           ) : (
             <>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ink mb-4">
                 {agendaContent.title}{" "}
                 <span className="text-[#FF0000]">
                   {agendaContent.titleHighlight}
                 </span>
               </h2>
               <div className="w-16 sm:w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
-              <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto px-4">
+              <p className="text-ink-paragraph text-base md:text-lg max-w-2xl mx-auto px-4">
                 {agendaContent.subtitle}
               </p>
             </>
@@ -1129,7 +1129,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
 
         {/* Day Tabs */}
         <div className="flex flex-col sm:flex-row justify-center items-center mb-8 md:mb-12 gap-4 px-2">
-          <div className="bg-gray-100 rounded-full p-1 sm:p-2 shadow-md flex flex-wrap justify-center gap-1 sm:gap-2 max-w-full overflow-x-auto">
+          <div className="bg-ink-light rounded-full p-1 sm:p-2 shadow-md flex flex-wrap justify-center gap-1 sm:gap-2 max-w-full overflow-x-auto">
             {dayNumbers.map((day) => (
               <div key={day} className="relative">
                 <button
@@ -1143,7 +1143,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                   className={`px-4 sm:px-5 md:px-6 py-2 rounded-full text-sm sm:text-base font-semibold transition-all duration-300 whitespace-nowrap ${
                     activeDay === day
                       ? "bg-[#FF0000] text-white shadow-lg"
-                      : "text-gray-700 hover:text-[#FF0000] hover:bg-gray-200"
+                      : "text-ink-paragraph hover:text-[#FF0000] hover:bg-ink-light"
                   }`}
                 >
                   Day {day}
@@ -1151,7 +1151,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                 {isEditMode && dayNumbers.length > 1 && (
                   <button
                     onClick={() => handleRemoveDay(day)}
-                    className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-5 sm:h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 transition-colors"
+                    className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-5 sm:h-5 bg-status-error text-white rounded-full text-xs flex items-center justify-center hover:bg-status-error transition-colors"
                     title="Remove Day"
                   >
                     ×
@@ -1163,7 +1163,7 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
           {isEditMode && (
             <button
               onClick={handleAddDay}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-500 text-white rounded-full text-sm sm:text-base flex items-center gap-1 whitespace-nowrap hover:bg-blue-600 transition-colors shadow-md"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-status-info text-white rounded-full text-sm sm:text-base flex items-center gap-1 whitespace-nowrap hover:bg-status-info transition-colors shadow-md"
               title="Add New Day"
             >
               <Plus size={14} className="sm:w-4 sm:h-4" />
@@ -1191,12 +1191,12 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
               onBulletChange={handleBulletChange}
             />
           ) : (
-            <div className="max-w-3xl mx-auto bg-gray-100 rounded-3xl shadow-lg p-8 text-center">
-              <p className="text-gray-500 text-lg">No theme for this day.</p>
+            <div className="max-w-3xl mx-auto bg-ink-light rounded-3xl shadow-lg p-8 text-center">
+              <p className="text-ink-caption text-lg">No theme for this day.</p>
               {isEditMode && (
                 <button
                   onClick={handleAddDay}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="mt-4 px-4 py-2 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors"
                 >
                   + Add Theme for Day {activeDay}
                 </button>

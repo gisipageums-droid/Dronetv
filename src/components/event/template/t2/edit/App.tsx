@@ -205,21 +205,21 @@ export default function Edit_event_t2() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-ink-offwhite flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-status-info"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ink-offwhite flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Error Loading Page</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-ink-paragraph mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            className="bg-status-info text-white px-4 py-2 rounded-lg"
           >
             Try Again
           </button>
@@ -230,10 +230,10 @@ export default function Edit_event_t2() {
 
   if (!AIGenData || !AIGenData.content) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ink-offwhite flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">No Data Found</h2>
-          <p className="text-gray-600">
+          <p className="text-ink-paragraph">
             The requested event page could not be loaded.
           </p>
         </div>
@@ -242,7 +242,7 @@ export default function Edit_event_t2() {
   }
 
   return (
-    <div className="min-h-screen bg-white transition-colors duration-300">
+    <div className="min-h-screen bg-surface-card transition-colors duration-300">
       {/* Navigation */}
       <Navigation
         activeSection={activeSection}
@@ -325,7 +325,7 @@ export default function Edit_event_t2() {
       {contentLoaded ? (
         <Publish />
       ) : (
-        <div className="fixed bottom-20 right-10 z-50 bg-gray-400 text-white font-semibold py-3 px-6 rounded-full shadow-lg cursor-not-allowed" title="Waiting for the event's existing content to load before publishing is enabled">
+        <div className="fixed bottom-20 right-10 z-50 bg-ink-caption text-white font-semibold py-3 px-6 rounded-full shadow-lg cursor-not-allowed" title="Waiting for the event's existing content to load before publishing is enabled">
           Loading content…
         </div>
       )}

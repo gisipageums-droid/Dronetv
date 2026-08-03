@@ -72,9 +72,9 @@
 //   }, [isEditing, aboutContent.skills]);
 
 //   const getCharCountColor = (current: number, max: number) => {
-//     if (current >= max) return "text-red-500";
-//     if (current >= max * 0.9) return "text-yellow-500";
-//     return "text-gray-500";
+//     if (current >= max) return "text-status-error";
+//     if (current >= max * 0.9) return "text-brand-gold";
+//     return "text-ink-caption";
 //   };
 
 //   const containerVariants = {
@@ -241,7 +241,7 @@
 //   };
 
 //   return (
-//     <section id="about" className="py-20 text-justify bg-white dark:bg-gray-900">
+//     <section id="about" className="py-20 text-justify bg-surface-card dark:bg-gray-900">
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 //         <motion.div
 //           variants={containerVariants}
@@ -259,7 +259,7 @@
 //                 <div className="flex items-center gap-2">
 //                   <button
 //                     onClick={handleSave}
-//                     className="p-3 text-gray-900 dark:text-white bg-green-500 hover:bg-green-600 rounded-full transition-colors"
+//                     className="p-3 text-ink dark:text-white bg-status-success hover:bg-status-success rounded-full transition-colors"
 //                     title="Save Changes"
 //                   >
 //                     <Save className="w-6 h-6" />
@@ -271,7 +271,7 @@
 //                       setIsEditing(false);
 //                       toast.info("Changes discarded");
 //                     }}
-//                     className="p-3 text-gray-900 dark:text-white bg-red-500 hover:bg-red-600 rounded-full transition-colors"
+//                     className="p-3 text-ink dark:text-white bg-status-error hover:bg-status-error rounded-full transition-colors"
 //                     title="Cancel"
 //                   >
 //                     <X className="w-6 h-6" />
@@ -280,7 +280,7 @@
 //               ) : (
 //                 <button
 //                   onClick={() => setIsEditing(true)}
-//                   className="p-3 text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-full transition-colors"
+//                   className="p-3 text-ink dark:text-white bg-ink-light dark:bg-gray-700 hover:bg-ink-light dark:hover:bg-gray-600 rounded-full transition-colors"
 //                   title="Edit Section"
 //                 >
 //                   <Edit className="w-6 h-6" />
@@ -295,7 +295,7 @@
 //                   value={aboutContent.heading}
 //                   onChange={handleContentChange}
 //                   maxLength={CHAR_LIMITS.heading}
-//                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-gray-600 dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none mb-4"
+//                   className="w-full bg-ink-light dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none mb-4"
 //                 />
 //                 <div
 //                   className={`text-sm text-right ${getCharCountColor(
@@ -308,10 +308,10 @@
 //               </div>
 //             ) : (
 //               <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-//                 <span className="text-gray-900 dark:text-white">
+//                 <span className="text-ink dark:text-white">
 //                   {aboutContent.heading.split(" ")[0]}
 //                 </span>{" "}
-//                 <span className="text-orange-500">
+//                 <span className="text-status-warning">
 //                   {aboutContent.heading.split(" ").slice(1).join(" ")}
 //                 </span>
 //               </h2>
@@ -324,7 +324,7 @@
 //                   value={aboutContent.subtitle}
 //                   onChange={handleContentChange}
 //                   maxLength={CHAR_LIMITS.subtitle}
-//                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                   className="w-full bg-ink-light dark:bg-gray-800 text-center text-xl text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                   rows={2}
 //                 />
 //                 <div
@@ -337,7 +337,7 @@
 //                 </div>
 //               </div>
 //             ) : (
-//               <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+//               <p className="text-xl text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto">
 //                 {aboutContent.subtitle}
 //               </p>
 //             )}
@@ -353,13 +353,13 @@
 //                   alt="About me"
 //                   className="w-full h-[600px] object-cover"
 //                 />
-//                 <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-yellow-500/20"></div>
+//                 <div className="absolute inset-0 bg-gradient-to-tr from-status-warning/20 to-brand-gold/20"></div>
 //                 {isEditing &&
 //                   (!isUploading ? (
 //                     <motion.label
 //                       whileHover={{ scale: 1.02 }}
 //                       whileTap={{ scale: 0.98 }}
-//                       className="absolute inset-0 cursor-pointer flex items-center justify-center bg-black/40 text-white font-semibold text-lg"
+//                       className="absolute inset-0 cursor-pointer flex items-center justify-center bg-ink/40 text-white font-semibold text-lg"
 //                     >
 //                       <Upload className="w-10 h-10 mr-2" />
 //                       Click to change image
@@ -371,7 +371,7 @@
 //                       />
 //                     </motion.label>
 //                   ) : (
-//                     <div className="absolute inset-0 cursor-pointer flex items-center justify-center bg-black/40 text-white font-semibold text-lg">
+//                     <div className="absolute inset-0 cursor-pointer flex items-center justify-center bg-ink/40 text-white font-semibold text-lg">
 //                       Uploading...
 //                     </div>
 //                   ))}
@@ -380,7 +380,7 @@
 
 //             {/* Right - Descriptions + Skills */}
 //             <motion.div variants={itemVariants} className="space-y-6">
-//               <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+//               <div className="space-y-4 text-ink-paragraph dark:text-gray-300 leading-relaxed">
 //                 {isEditing ? (
 //                   <>
 //                     <div className="space-y-1">
@@ -389,7 +389,7 @@
 //                         value={aboutContent.description1}
 //                         onChange={handleContentChange}
 //                         maxLength={CHAR_LIMITS.description1}
-//                         className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                         className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                         rows={3}
 //                       />
 //                       <div
@@ -408,7 +408,7 @@
 //                         value={aboutContent.description2}
 //                         onChange={handleContentChange}
 //                         maxLength={CHAR_LIMITS.description2}
-//                         className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                         className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                         rows={4}
 //                       />
 //                       <div
@@ -427,7 +427,7 @@
 //                         value={aboutContent.description3}
 //                         onChange={handleContentChange}
 //                         maxLength={CHAR_LIMITS.description3}
-//                         className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                         className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                         rows={3}
 //                       />
 //                       <div
@@ -452,7 +452,7 @@
 
 //               {/* Skills */}
 //               <div className="space-y-4">
-//                 <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
+//                 <h4 className="text-xl font-semibold text-ink dark:text-white">
 //                   Core Expertise
 //                 </h4>
 //                 {isEditing ? (
@@ -462,7 +462,7 @@
 //                       value={skillsInput}
 //                       onChange={(e) => setSkillsInput(e.target.value)}
 //                       maxLength={CHAR_LIMITS.skills}
-//                       className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                       className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                     />
 //                     <div
 //                       className={`text-sm text-right ${getCharCountColor(
@@ -480,13 +480,13 @@
 //                         <motion.span
 //                           key={index}
 //                           whileHover={{ scale: 1.05 }}
-//                           className="px-4 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
+//                           className="px-4 py-2 bg-gradient-to-r from-brand-gold/10 to-status-warning/10 border border-status-warning/30 rounded-full text-status-warning font-medium"
 //                         >
 //                           {skill}
 //                         </motion.span>
 //                       ))
 //                     ) : (
-//                       <p className="text-gray-500 dark:text-gray-400 italic">
+//                       <p className="text-ink-caption dark:text-gray-400 italic">
 //                         No skills specified
 //                       </p>
 //                     )}
@@ -494,7 +494,7 @@
 //                 )}
 
 //                 {isEditing && (
-//                   <p className="text-center text-xs rounded-lg text-gray-400">
+//                   <p className="text-center text-xs rounded-lg text-ink-caption">
 //                     Data should be separated by commas (e.g., data1, data2,
 //                     data3)
 //                   </p>
@@ -507,24 +507,24 @@
 
 //       {/* Image Cropping Modal */}
 //       {isCropping && (
-//         <div className="fixed inset-0 bg-black/90 z-[9999999] flex items-center justify-center p-4">
-//           <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl">
-//             <div className="flex justify-between items-center px-6 border-b border-gray-200 dark:border-gray-700">
-//               <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+//         <div className="fixed inset-0 bg-ink/90 z-[9999999] flex items-center justify-center p-4">
+//           <div className="bg-surface-card dark:bg-gray-800 rounded-lg w-full max-w-2xl">
+//             <div className="flex justify-between items-center px-6 border-b border-ink-light dark:border-gray-700">
+//               <h3 className="text-xl font-bold text-ink dark:text-white flex items-center gap-2">
 //                 <Crop className="w-6 h-6" />
 //                 Crop Image
 //               </h3>
 //               <button
 //                 onClick={() => setIsCropping(false)}
-//                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+//                 className="p-2 hover:bg-ink-light dark:hover:bg-gray-700 rounded-full transition-colors"
 //               >
-//                 <X className="w-6 h-6 text-gray-900 dark:text-white" />
+//                 <X className="w-6 h-6 text-ink dark:text-white" />
 //               </button>
 //             </div>
 
 //             <div className="p-6">
 //               <div
-//                 className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+//                 className={`relative h-96 bg-ink rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
 //               >
 //                 <Cropper
 //                   image={imageToCrop}
@@ -550,19 +550,19 @@
 //               <div className="space-y-2">
 //                 <div>
 //                   <div className="flex items-center justify-between mb-2">
-//                     <label className="text-sm font-medium text-gray-900 dark:text-white">
+//                     <label className="text-sm font-medium text-ink dark:text-white">
 //                       Zoom
 //                     </label>
 //                     <div className="flex gap-2">
 //                       <button
 //                         onClick={handleZoomOut}
-//                         className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+//                         className="p-2 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
 //                       >
 //                         <ZoomOut className="w-4 h-4" />
 //                       </button>
 //                       <button
 //                         onClick={handleZoomIn}
-//                         className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+//                         className="p-2 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
 //                       >
 //                         <ZoomIn className="w-4 h-4" />
 //                       </button>
@@ -575,24 +575,24 @@
 //                     step={0.01}
 //                     value={zoom}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+//                     className="w-full h-2 bg-ink-light dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
 //                   />
 //                 </div>
 
 //               </div>
 //             </div>
 
-//             <div className="flex gap-3 justify-end px-1 border-t border-gray-200 dark:border-gray-700">
+//             <div className="flex gap-3 justify-end px-1 border-t border-ink-light dark:border-gray-700">
 //               <button
 //                 onClick={() => setIsCropping(false)}
-//                 className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+//                 className="px-6 py-2 rounded-lg border border-ink-light dark:border-gray-600 text-ink dark:text-white hover:bg-ink-light dark:hover:bg-gray-700 transition-colors"
 //               >
 //                 Cancel
 //               </button>
 //               <button
 //                 onClick={handleCropConfirm}
 //                 disabled={!imageLoaded}
-//                 className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+//                 className="px-6 py-2 rounded-lg bg-status-info hover:bg-status-info text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 //               >
 //                 <Check className="w-5 h-5" />
 //                 Crop & Upload
@@ -788,9 +788,9 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   };
 
   const getCharCountColor = (current: number, max: number) => {
-    if (current >= max) return "text-red-500";
-    if (current >= max * 0.9) return "text-yellow-500";
-    return "text-gray-500";
+    if (current >= max) return "text-status-error";
+    if (current >= max * 0.9) return "text-brand-gold";
+    return "text-ink-caption";
   };
 
   const containerVariants = {
@@ -1025,7 +1025,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
   return (
     <section
       id="about"
-      className="py-20 text-justify bg-white dark:bg-gray-900"
+      className="py-20 text-justify bg-surface-card dark:bg-gray-900"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -1043,7 +1043,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
               {isEditing ? (
                 <div className="flex items-center gap-2">
                   {/* Auto-save indicator */}
-                  <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-2 mr-2 text-sm text-ink-caption dark:text-gray-400">
                     {isAutoSaving ? (
                       <div className="flex items-center gap-1">
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -1051,12 +1051,12 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                       </div>
                     ) : hasUnsavedChanges ? (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
                         <span>Unsaved changes</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-status-success rounded-full"></div>
                         <span>Saved {formatLastSavedTime()}</span>
                       </div>
                     )}
@@ -1064,14 +1064,14 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
                   <button
                     onClick={handleSave}
-                    className="p-3 text-gray-900 dark:text-white bg-green-500 hover:bg-green-600 rounded-full transition-colors"
+                    className="p-3 text-ink dark:text-white bg-status-success hover:bg-status-success rounded-full transition-colors"
                     title="Save Changes"
                   >
                     <Save className="w-6 h-6" />
                   </button>
                   <button
                     onClick={handleCancel}
-                    className="p-3 text-gray-900 dark:text-white bg-red-500 hover:bg-red-600 rounded-full transition-colors"
+                    className="p-3 text-ink dark:text-white bg-status-error hover:bg-status-error rounded-full transition-colors"
                     title="Cancel"
                   >
                     <X className="w-6 h-6" />
@@ -1080,7 +1080,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
               ) : (
                 <button
                   onClick={handleEditStart}
-                  className="p-3 text-gray-900 dark:text-white bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-full transition-colors"
+                  className="p-3 text-ink dark:text-white bg-ink-light dark:bg-gray-700 hover:bg-ink-light dark:hover:bg-gray-600 rounded-full transition-colors"
                   title="Edit Section"
                 >
                   <Edit className="w-6 h-6" />
@@ -1095,7 +1095,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                   value={aboutContent.heading}
                   onChange={handleContentChange}
                   maxLength={CHAR_LIMITS.heading}
-                  className="w-full bg-gray-100 dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-gray-600 dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none mb-4"
+                  className="w-full bg-ink-light dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none mb-4"
                 />
                 <div
                   className={`text-sm text-right ${getCharCountColor(
@@ -1108,10 +1108,10 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
               </div>
             ) : (
               <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-                <span className="text-gray-900 dark:text-white">
+                <span className="text-ink dark:text-white">
                   {aboutContent.heading.split(" ")[0]}
                 </span>{" "}
-                <span className="text-orange-500">
+                <span className="text-status-warning">
                   {aboutContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
@@ -1124,7 +1124,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                   value={aboutContent.subtitle}
                   onChange={handleContentChange}
                   maxLength={CHAR_LIMITS.subtitle}
-                  className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                  className="w-full bg-ink-light dark:bg-gray-800 text-center text-xl text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                   rows={2}
                 />
                 <div
@@ -1137,7 +1137,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                 </div>
               </div>
             ) : (
-              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+              <p className="text-xl text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto">
                 {aboutContent.subtitle}
               </p>
             )}
@@ -1153,13 +1153,13 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                   alt="About me"
                   className="w-full h-[600px] object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-yellow-500/20"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-status-warning/20 to-brand-gold/20"></div>
                 {isEditing &&
                   (!isUploading ? (
                     <motion.label
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="absolute inset-0 cursor-pointer flex items-center justify-center bg-black/40 text-white font-semibold text-lg"
+                      className="absolute inset-0 cursor-pointer flex items-center justify-center bg-ink/40 text-white font-semibold text-lg"
                     >
                       <Upload className="w-10 h-10 mr-2" />
                       Click to change image
@@ -1171,13 +1171,13 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                       />
                     </motion.label>
                   ) : (
-                    <div className="absolute inset-0 cursor-pointer flex items-center justify-center bg-black/40 text-white font-semibold text-lg">
+                    <div className="absolute inset-0 cursor-pointer flex items-center justify-center bg-ink/40 text-white font-semibold text-lg">
                       <div className="text-center">
                         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
                         <div>Uploading... {Math.round(uploadProgress)}%</div>
-                        <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
+                        <div className="w-32 h-2 bg-ink-paragraph rounded-full mt-2 mx-auto overflow-hidden">
                           <div
-                            className="h-full bg-green-500 transition-all duration-300"
+                            className="h-full bg-status-success transition-all duration-300"
                             style={{ width: `${uploadProgress}%` }}
                           ></div>
                         </div>
@@ -1189,7 +1189,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
             {/* Right - Descriptions + Skills */}
             <motion.div variants={itemVariants} className="space-y-6">
-              <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+              <div className="space-y-4 text-ink-paragraph dark:text-gray-300 leading-relaxed">
                 {isEditing ? (
                   <>
                     <div className="space-y-1">
@@ -1198,7 +1198,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                         value={aboutContent.description1}
                         onChange={handleContentChange}
                         maxLength={CHAR_LIMITS.description1}
-                        className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                        className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                         rows={3}
                       />
                       <div
@@ -1217,7 +1217,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                         value={aboutContent.description2}
                         onChange={handleContentChange}
                         maxLength={CHAR_LIMITS.description2}
-                        className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                        className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                         rows={4}
                       />
                       <div
@@ -1236,7 +1236,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                         value={aboutContent.description3}
                         onChange={handleContentChange}
                         maxLength={CHAR_LIMITS.description3}
-                        className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 resize-none border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                        className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 resize-none border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                         rows={3}
                       />
                       <div
@@ -1261,7 +1261,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
               {/* Skills */}
               <div className="space-y-4">
-                <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h4 className="text-xl font-semibold text-ink dark:text-white">
                   Core Expertise
                 </h4>
                 {isEditing ? (
@@ -1271,7 +1271,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                       value={skillsInput}
                       onChange={handleSkillsInputChange}
                       maxLength={CHAR_LIMITS.skills}
-                      className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                      className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                     />
                     <div
                       className={`text-sm text-right ${getCharCountColor(
@@ -1289,13 +1289,13 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                         <motion.span
                           key={index}
                           whileHover={{ scale: 1.05 }}
-                          className="px-4 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
+                          className="px-4 py-2 bg-gradient-to-r from-brand-gold/10 to-status-warning/10 border border-status-warning/30 rounded-full text-status-warning font-medium"
                         >
                           {skill}
                         </motion.span>
                       ))
                     ) : (
-                      <p className="text-gray-500 dark:text-gray-400 italic">
+                      <p className="text-ink-caption dark:text-gray-400 italic">
                         No skills specified
                       </p>
                     )}
@@ -1303,7 +1303,7 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                 )}
 
                 {isEditing && (
-                  <p className="text-center text-xs rounded-lg text-gray-400">
+                  <p className="text-center text-xs rounded-lg text-ink-caption">
                     Data should be separated by commas (e.g., data1, data2,
                     data3)
                   </p>
@@ -1316,24 +1316,24 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
 
       {/* Image Cropping Modal */}
       {isCropping && (
-        <div className="fixed inset-0 bg-black/90 z-[9999999] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl">
-            <div className="flex justify-between items-center px-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+        <div className="fixed inset-0 bg-ink/90 z-[9999999] flex items-center justify-center p-4">
+          <div className="bg-surface-card dark:bg-gray-800 rounded-lg w-full max-w-2xl">
+            <div className="flex justify-between items-center px-6 border-b border-ink-light dark:border-gray-700">
+              <h3 className="text-xl font-bold text-ink dark:text-white flex items-center gap-2">
                 <Crop className="w-6 h-6" />
                 Crop Image
               </h3>
               <button
                 onClick={() => setIsCropping(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                className="p-2 hover:bg-ink-light dark:hover:bg-gray-700 rounded-full transition-colors"
               >
-                <X className="w-6 h-6 text-gray-900 dark:text-white" />
+                <X className="w-6 h-6 text-ink dark:text-white" />
               </button>
             </div>
 
             <div className="p-6">
               <div
-                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${
+                className={`relative h-96 bg-ink rounded-lg overflow-hidden mb-6 ${
                   isDragging ? "cursor-grabbing" : "cursor-grab"
                 }`}
               >
@@ -1361,19 +1361,19 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
               <div className="space-y-2">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-900 dark:text-white">
+                    <label className="text-sm font-medium text-ink dark:text-white">
                       Zoom
                     </label>
                     <div className="flex gap-2">
                       <button
                         onClick={handleZoomOut}
-                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
                       >
                         <ZoomOut className="w-4 h-4" />
                       </button>
                       <button
                         onClick={handleZoomIn}
-                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
                       >
                         <ZoomIn className="w-4 h-4" />
                       </button>
@@ -1386,23 +1386,23 @@ const About: React.FC<AboutProps> = ({ content, onSave, userId }) => {
                     step={0.01}
                     value={zoom}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    className="w-full h-2 bg-ink-light dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-3 justify-end px-1 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex gap-3 justify-end px-1 border-t border-ink-light dark:border-gray-700">
               <button
                 onClick={() => setIsCropping(false)}
-                className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="px-6 py-2 rounded-lg border border-ink-light dark:border-gray-600 text-ink dark:text-white hover:bg-ink-light dark:hover:bg-gray-700 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCropConfirm}
                 disabled={!imageLoaded}
-                className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 rounded-lg bg-status-info hover:bg-status-info text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Check className="w-5 h-5" />
                 Crop & Upload

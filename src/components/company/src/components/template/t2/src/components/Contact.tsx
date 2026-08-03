@@ -479,7 +479,7 @@ export default function Contact() {
 
             {isEditing && (
               <div className='flex items-center justify-center'>
-                <Button onClick={addContactInfo} className='text-green-600'>
+                <Button onClick={addContactInfo} className='text-status-success'>
                   + Add Contact Info
                 </Button>
               </div>

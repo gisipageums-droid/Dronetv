@@ -427,28 +427,28 @@ export default function Blog({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Blog Image (4:3 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -483,14 +483,14 @@ export default function Blog({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -499,7 +499,7 @@ export default function Blog({
                   max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -507,20 +507,20 @@ export default function Blog({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className={`w-full ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm font-medium`}
+                  className={`w-full ${isUploading ? 'bg-ink-caption cursor-not-allowed' : 'bg-status-success hover:bg-status-success'} text-white rounded py-2 text-sm font-medium`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
@@ -541,7 +541,7 @@ export default function Blog({
                   whileTap={{ scale: 0.9 }}
                   whileHover={{ y: -1, scaleX: 1.05 }}
                   onClick={handleCancel}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
+                  className="bg-ink-caption hover:bg-ink-paragraph text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
                 >
                   Cancel
                 </motion.button>
@@ -551,10 +551,10 @@ export default function Blog({
                   onClick={handleSave}
                   disabled={isUploading}
                   className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
+                    ? "bg-ink-caption cursor-not-allowed"
                     : hasUnsavedChanges || Object.keys(pendingImages).length > 0
-                      ? "bg-green-600 hover:shadow-2xl"
-                      : "bg-gray-400 cursor-not-allowed"
+                      ? "bg-status-success hover:shadow-2xl"
+                      : "bg-ink-caption cursor-not-allowed"
                     } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
                 >
                   {isUploading ? "Uploading..." : "Save"}
@@ -565,7 +565,7 @@ export default function Blog({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
+                className="bg-brand-gold text-ink px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit
               </motion.button>
@@ -598,14 +598,14 @@ export default function Blog({
                     }
                     maxLength={25}
                     className={`font-medium bg-transparent border-b text-center ${blogSection.header.badge.length >= 25
-                      ? "border-red-500"
+                      ? "border-status-error"
                       : ""
                       }`}
                   />
-                  <div className="text-right text-xs text-gray-500 mt-1">
+                  <div className="text-right text-xs text-ink-caption mt-1">
                     {blogSection.header.badge.length}/25
                     {blogSection.header.badge.length >= 25 && (
-                      <span className="ml-2 text-red-500 font-bold">
+                      <span className="ml-2 text-status-error font-bold">
                         Limit reached!
                       </span>
                     )}
@@ -639,14 +639,14 @@ export default function Blog({
                   }
                   maxLength={80}
                   className={`text-3xl md:text-4xl text-foreground mb-6 w-full text-center bg-transparent border-b font-bold ${blogSection.header.title.length >= 80
-                    ? "border-red-500"
+                    ? "border-status-error"
                     : ""
                     }`}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1">
+                <div className="text-right text-xs text-ink-caption mt-1">
                   {blogSection.header.title.length}/80
                   {blogSection.header.title.length >= 80 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Limit reached!
                     </span>
                   )}
@@ -670,15 +670,15 @@ export default function Blog({
                   }
                   maxLength={200}
                   className={`text-lg text-muted-foreground max-w-2xl mx-auto w-full text-center bg-transparent border-b ${blogSection.header.desc.length >= 200
-                    ? "border-red-500"
+                    ? "border-status-error"
                     : ""
                     }`}
                   rows={2}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1">
+                <div className="text-right text-xs text-ink-caption mt-1">
                   {blogSection.header.desc.length}/200
                   {blogSection.header.desc.length >= 200 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Limit reached!
                     </span>
                   )}
@@ -696,7 +696,7 @@ export default function Blog({
             {displayedPosts.map((post, index) => (
               <motion.article
                 key={post.id}
-                className="bg-card rounded-xl border-2 shadow-lg hover:shadow-xl  shadow-gray-500 transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col h-full"
+                className="bg-card rounded-xl border-2 shadow-lg hover:shadow-xl  shadow-ink-caption transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col h-full"
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -729,13 +729,13 @@ export default function Blog({
                               }))
                             }
                             maxLength={40}
-                            className={`text-xs font-medium text-primary-foreground bg-transparent border-b ${post.category.length >= 40 ? "border-red-500" : ""
+                            className={`text-xs font-medium text-primary-foreground bg-transparent border-b ${post.category.length >= 40 ? "border-status-error" : ""
                               }`}
                           />
-                          <div className="text-right text-xs text-gray-500 mt-1">
+                          <div className="text-right text-xs text-ink-caption mt-1">
                             {post.category.length}/40
                             {post.category.length >= 40 && (
-                              <span className="ml-2 text-red-500 font-bold">
+                              <span className="ml-2 text-status-error font-bold">
                                 Limit reached!
                               </span>
                             )}
@@ -756,7 +756,7 @@ export default function Blog({
                       className="absolute bottom-2 left-2 right-2 bg-white/80 p-2 rounded z-50"
                     >
                       {/* Recommendation text connected with select image */}
-                      <div className="text-xs text-gray-600 mb-1 text-center">
+                      <div className="text-xs text-ink-paragraph mb-1 text-center">
                         Recommended: 600×450px (4:3 ratio)
                       </div>
                       <input
@@ -766,7 +766,7 @@ export default function Blog({
                         onChange={(e) => handleBlogImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
-                        <p className="text-xs text-green-600 mt-1 text-center">
+                        <p className="text-xs text-status-success mt-1 text-center">
                           ✓ Image cropped and ready to upload
                         </p>
                       )}
@@ -791,13 +791,13 @@ export default function Blog({
                             }))
                           }
                           maxLength={20}
-                          className={`text-xs text-muted-foreground bg-transparent border-b ${post.date.length >= 20 ? "border-red-500" : ""
+                          className={`text-xs text-muted-foreground bg-transparent border-b ${post.date.length >= 20 ? "border-status-error" : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {post.date.length}/20
                           {post.date.length >= 20 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -824,13 +824,13 @@ export default function Blog({
                             }))
                           }
                           maxLength={30}
-                          className={`text-xs text-muted-foreground bg-transparent border-b ${post.author.length >= 30 ? "border-red-500" : ""
+                          className={`text-xs text-muted-foreground bg-transparent border-b ${post.author.length >= 30 ? "border-status-error" : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {post.author.length}/30
                           {post.author.length >= 30 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -860,13 +860,13 @@ export default function Blog({
                               }))
                             }
                             maxLength={100}
-                            className={`font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 w-full border-b bg-transparent min-h-[3rem] ${post.title.length >= 100 ? "border-red-500" : ""
+                            className={`font-semibold text-card-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2 w-full border-b bg-transparent min-h-[3rem] ${post.title.length >= 100 ? "border-status-error" : ""
                               }`}
                           />
-                          <div className="text-right text-xs text-gray-500 mt-1">
+                          <div className="text-right text-xs text-ink-caption mt-1">
                             {post.title.length}/100
                             {post.title.length >= 100 && (
-                              <span className="ml-2 text-red-500 font-bold">
+                              <span className="ml-2 text-status-error font-bold">
                                 Limit reached!
                               </span>
                             )}
@@ -886,13 +886,13 @@ export default function Blog({
                               }))
                             }
                             maxLength={200}
-                            className={`text-muted-foreground text-sm line-clamp-3 w-full border-b bg-transparent min-h-[4.5rem] ${post.excerpt.length >= 200 ? "border-red-500" : ""
+                            className={`text-muted-foreground text-sm line-clamp-3 w-full border-b bg-transparent min-h-[4.5rem] ${post.excerpt.length >= 200 ? "border-status-error" : ""
                               }`}
                           />
-                          <div className="text-right text-xs text-gray-500 mt-1">
+                          <div className="text-right text-xs text-ink-caption mt-1">
                             {post.excerpt.length}/200
                             {post.excerpt.length >= 200 && (
-                              <span className="ml-2 text-red-500 font-bold">
+                              <span className="ml-2 text-status-error font-bold">
                                 Limit reached!
                               </span>
                             )}
@@ -966,7 +966,7 @@ export default function Blog({
                       ],
                     }))
                   }
-                  className="text-green-600 min-h-[400px] w-full"
+                  className="text-status-success min-h-[400px] w-full"
                 >
                   + Add Blog Post
                 </Button>
@@ -995,7 +995,7 @@ export default function Blog({
         <AnimatePresence>
           {isModalOpen && selectedPost && (
             <motion.div
-              className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-[99999999999999]"
+              className="fixed inset-0 bg-ink/20 flex items-center justify-center p-4 z-[99999999999999]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1017,7 +1017,7 @@ export default function Blog({
                   />
                   <button
                     onClick={closeModal}
-                    className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors"
+                    className="absolute top-4 right-4 w-8 h-8 bg-surface-card rounded-full flex items-center justify-center shadow-md hover:bg-ink-light transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -1036,14 +1036,14 @@ export default function Blog({
                             }
                             maxLength={20}
                             className={`text-sm font-medium text-primary-foreground bg-transparent border-b ${selectedPost.category.length >= 20
-                              ? "border-red-500"
+                              ? "border-status-error"
                               : ""
                               }`}
                           />
-                          <div className="text-right text-xs text-gray-500 mt-1">
+                          <div className="text-right text-xs text-ink-caption mt-1">
                             {selectedPost.category.length}/20
                             {selectedPost.category.length >= 20 && (
-                              <span className="ml-2 text-red-500 font-bold">
+                              <span className="ml-2 text-status-error font-bold">
                                 Limit reached!
                               </span>
                             )}
@@ -1074,14 +1074,14 @@ export default function Blog({
                           }
                           maxLength={20}
                           className={`text-sm text-muted-foreground bg-transparent border-b ${selectedPost.date.length >= 20
-                            ? "border-red-500"
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {selectedPost.date.length}/20
                           {selectedPost.date.length >= 20 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -1106,14 +1106,14 @@ export default function Blog({
                           }
                           maxLength={30}
                           className={`text-sm text-muted-foreground bg-transparent border-b ${selectedPost.author.length >= 30
-                            ? "border-red-500"
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {selectedPost.author.length}/30
                           {selectedPost.author.length >= 30 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -1139,14 +1139,14 @@ export default function Blog({
                           }
                           maxLength={100}
                           className={`text-2xl font-bold text-card-foreground mb-4 w-full bg-transparent border-b ${selectedPost.title.length >= 100
-                            ? "border-red-500"
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {selectedPost.title.length}/100
                           {selectedPost.title.length >= 100 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -1164,14 +1164,14 @@ export default function Blog({
                           }
                           maxLength={5000}
                           className={`prose prose-gray max-w-none text-card-foreground w-full h-48 mb-4 border bg-transparent p-2 ${selectedPost.content.length >= 5000
-                            ? "border-red-500"
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {selectedPost.content.length}/5000
                           {selectedPost.content.length >= 5000 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -1179,7 +1179,7 @@ export default function Blog({
                       </div>
 
                       <div className="mb-4">
-                        <div className="text-xs text-gray-600 mb-1">
+                        <div className="text-xs text-ink-paragraph mb-1">
                           Recommended: 600×450px (4:3 ratio)
                         </div>
                         <input
@@ -1189,7 +1189,7 @@ export default function Blog({
                           className="text-sm"
                         />
                         {pendingImages["modal"] && (
-                          <p className="text-xs text-green-600 mt-1">
+                          <p className="text-xs text-status-success mt-1">
                             ✓ Image cropped and ready to upload
                           </p>
                         )}
@@ -1216,7 +1216,7 @@ export default function Blog({
                   {isEditing && (
                     <Button
                       onClick={() => saveModalChanges()}
-                      className="bg-green-600 text-white"
+                      className="bg-status-success text-white"
                     >
                       Save Changes
                     </Button>

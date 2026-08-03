@@ -311,7 +311,7 @@ export default function Header({
             {!isEditMode ? (
               <button
                 onClick={handleEditLogo}
-                className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
+                className="flex items-center gap-1 px-3 py-2 md:px-4 md:py-2 bg-ink-light text-ink-paragraph rounded-lg shadow hover:bg-ink-light text-sm md:text-base transition-all duration-200 min-w-[40px] md:min-w-[50px]"
               >
                 <Edit2 size={16} />
                 <span className="hidden xs:inline">Edit Logo</span>
@@ -321,14 +321,14 @@ export default function Header({
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className={`flex items-center gap-1 px-3 py-2 ${isSaving ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'} text-white rounded-lg shadow text-sm transition-all duration-200`}
+                  className={`flex items-center gap-1 px-3 py-2 ${isSaving ? 'bg-ink-caption cursor-not-allowed' : 'bg-status-success hover:bg-status-success'} text-white rounded-lg shadow text-sm transition-all duration-200`}
                 >
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   <span className="hidden xs:inline">{isSaving ? "Saving..." : "Save"}</span>
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="flex items-center gap-1 px-3 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 text-sm transition-all duration-200"
+                  className="flex items-center gap-1 px-3 py-2 bg-status-error text-white rounded-lg shadow hover:bg-status-error text-sm transition-all duration-200"
                 >
                   <X size={16} />
                   <span className="hidden xs:inline">Cancel</span>
@@ -340,7 +340,7 @@ export default function Header({
           {/* Auto-save indicator */}
           {isSaving && (
             <div className="absolute right-2 top-2 z-[999999999]">
-              <div className="flex items-center gap-1 px-2 py-1 bg-blue-500 text-white rounded text-xs">
+              <div className="flex items-center gap-1 px-2 py-1 bg-status-info text-white rounded text-xs">
                 <Loader2 size={12} className="animate-spin" />
                 Auto-saving...
               </div>
@@ -350,7 +350,7 @@ export default function Header({
           <div className="flex items-center justify-between py-[1px] mx-auto max-w-7xl">
             {/* Logo + Company Name */}
             <motion.div
-              className="flex flex-row items-center gap-2 text-xl font-bold text-red-500 transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
+              className="flex flex-row items-center gap-2 text-xl font-bold text-status-error transition-colors duration-300 sm:text-2xl dark:text-yellow-400"
               whileHover={{ scale: 1.05 }}
             >
               {/* Enhanced Logo with Animations */}
@@ -376,9 +376,9 @@ export default function Header({
                         ? "cursor-pointer ring-2 rounded-lg"
                         : ""
                         } ${isDragOver
-                          ? "ring-4 ring-green-500 bg-green-50 scale-105"
+                          ? "ring-4 ring-status-success bg-status-success/10 scale-105"
                           : isEditMode
-                            ? "ring-blue-500"
+                            ? "ring-status-info"
                             : ""
                         }`}
                       onClick={handleLogoClick}
@@ -423,11 +423,11 @@ export default function Header({
 
                       {/* Upload Icon Overlay - Show only in edit mode */}
                       {isEditMode && !isDragOver && (
-                        <div className="absolute inset-0 bg-black bg-opacity-30 rounded-xl flex items-center justify-center transition-opacity duration-300">
-                          <div className="bg-white p-1.5 rounded-full shadow-lg">
-                            <Upload size={14} className="text-gray-700" />
+                        <div className="absolute inset-0 bg-ink bg-opacity-30 rounded-xl flex items-center justify-center transition-opacity duration-300">
+                          <div className="bg-surface-card p-1.5 rounded-full shadow-lg">
+                            <Upload size={14} className="text-ink-paragraph" />
                           </div>
-                          <span className="absolute bottom-1 text-xs text-white bg-black bg-opacity-50 px-1 rounded">
+                          <span className="absolute bottom-1 text-xs text-white bg-ink bg-opacity-50 px-1 rounded">
                             Click or drag to upload
                           </span>
                         </div>
@@ -435,11 +435,11 @@ export default function Header({
 
                       {/* Drag Over Overlay */}
                       {isDragOver && (
-                        <div className="absolute inset-0 bg-green-500 bg-opacity-20 rounded-xl flex items-center justify-center border-2 border-dashed border-green-500">
-                          <div className="bg-white p-2 rounded-full shadow-lg">
-                            <Upload size={18} className="text-green-600" />
+                        <div className="absolute inset-0 bg-status-success bg-opacity-20 rounded-xl flex items-center justify-center border-2 border-dashed border-status-success">
+                          <div className="bg-surface-card p-2 rounded-full shadow-lg">
+                            <Upload size={18} className="text-status-success" />
                           </div>
-                          <span className="absolute bottom-1 text-xs text-green-700 bg-white bg-opacity-90 px-2 py-0.5 rounded font-semibold">
+                          <span className="absolute bottom-1 text-xs text-status-success bg-surface-card bg-opacity-90 px-2 py-0.5 rounded font-semibold">
                             Drop image here
                           </span>
                         </div>
@@ -465,12 +465,12 @@ export default function Header({
                   onChange={(e) =>
                     setHeaderState((prev) => ({ ...prev, companyName: e.target.value }))
                   }
-                  className="ml-2 border-b-2 border-blue-400 bg-transparent text-base font-bold text-gray-800 focus:outline-none focus:border-blue-600 min-w-[120px] max-w-[200px]"
+                  className="ml-2 border-b-2 border-status-info bg-transparent text-base font-bold text-ink-charcoal focus:outline-none focus:border-status-info min-w-[120px] max-w-[200px]"
                   placeholder="Company name"
                 />
               ) : (
                 <span
-                  className="ml-2 text-base font-bold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors"
+                  className="ml-2 text-base font-bold text-ink-charcoal cursor-pointer hover:text-status-info transition-colors"
                   onClick={handleEditLogo}
                   title="Click to edit logo & name"
                 >
@@ -485,7 +485,7 @@ export default function Header({
                 <a
                   key={index}
                   href={`#${item.toLowerCase()}`}
-                  className="text-sm font-medium text-black transition-colors duration-300 hover:text-yellow-600 lg:text-base"
+                  className="text-sm font-medium text-ink transition-colors duration-300 hover:text-brand-yellow lg:text-base"
                 >
                   {item}
                 </a>
@@ -496,7 +496,7 @@ export default function Header({
             <div className="flex items-center space-x-2 md:hidden">
               <button
                 onClick={toggleMobileMenu}
-                className="p-2 transition-colors duration-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="p-2 transition-colors duration-200 rounded-md hover:bg-ink-light dark:hover:bg-gray-700"
               >
                 <svg
                   className="w-6 h-6 transition-transform duration-200"
@@ -542,7 +542,7 @@ export default function Header({
             <a
               key={index}
               href={`#${item.toLowerCase()}`}
-              className="px-3 py-2 font-medium text-black transition-colors duration-300 rounded-lg hover:text-yellow-600 hover:bg-gray-50"
+              className="px-3 py-2 font-medium text-ink transition-colors duration-300 rounded-lg hover:text-brand-yellow hover:bg-ink-offwhite"
               onClick={closeMobileMenu}
             >
               {item}

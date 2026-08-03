@@ -117,9 +117,9 @@
 //   }, [isAdding, currentProject]);
 
 //   const getCharCountColor = (current: number, max: number) => {
-//     if (current >= max) return "text-red-500";
-//     if (current >= max * 0.9) return "text-yellow-500";
-//     return "text-gray-500";
+//     if (current >= max) return "text-status-error";
+//     if (current >= max * 0.9) return "text-brand-gold";
+//     return "text-ink-caption";
 //   };
 
 //   // Image cropping functions
@@ -449,7 +449,7 @@
 //   };
 
 //   return (
-//     <section id="projects" className="py-20 text-justify bg-white dark:bg-gray-900">
+//     <section id="projects" className="py-20 text-justify bg-surface-card dark:bg-gray-900">
 //       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
 //         <motion.div
 //           variants={containerVariants}
@@ -467,14 +467,14 @@
 //                 <>
 //                   <button
 //                     onClick={handleSaveSection}
-//                     className="p-3 text-white bg-green-500 rounded-full transition-colors hover:bg-green-600"
+//                     className="p-3 text-white bg-status-success rounded-full transition-colors hover:bg-status-success"
 //                     title="Save Changes"
 //                   >
 //                     <Save className="w-6 h-6" />
 //                   </button>
 //                   <button
 //                     onClick={handleCancelEdit}
-//                     className="p-3 text-white bg-red-500 rounded-full transition-colors hover:bg-red-600"
+//                     className="p-3 text-white bg-status-error rounded-full transition-colors hover:bg-status-error"
 //                     title="Cancel"
 //                   >
 //                     <X className="w-6 h-6" />
@@ -483,7 +483,7 @@
 //               ) : (
 //                 <button
 //                   onClick={() => setIsEditing(true)}
-//                   className="p-3 text-gray-900 bg-gray-200 rounded-full transition-colors dark:text-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+//                   className="p-3 text-ink bg-ink-light rounded-full transition-colors dark:text-white dark:bg-gray-700 hover:bg-ink-light dark:hover:bg-gray-600"
 //                   title="Edit Section"
 //                 >
 //                   <Edit className="w-6 h-6" />
@@ -494,7 +494,7 @@
 //             {isEditing && (
 //               <button
 //                 onClick={startAddingProject}
-//                 className="absolute top-0 right-28 p-3 text-white bg-blue-500 rounded-full transition-colors hover:bg-blue-600"
+//                 className="absolute top-0 right-28 p-3 text-white bg-status-info rounded-full transition-colors hover:bg-status-info"
 //                 title="Add New Project"
 //               >
 //                 <Plus className="w-6 h-6" />
@@ -511,7 +511,7 @@
 //                       handleContentTextChange("heading", e.target.value)
 //                     }
 //                     maxLength={CHAR_LIMITS.heading}
-//                     className="p-2 mx-auto w-full max-w-2xl text-4xl font-bold text-gray-900 bg-gray-100 rounded-lg border-2 lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                     className="p-2 mx-auto w-full max-w-2xl text-4xl font-bold text-ink bg-ink-light rounded-lg border-2 lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                     placeholder="Section heading"
 //                   />
 //                   <div
@@ -530,7 +530,7 @@
 //                       handleContentTextChange("description", e.target.value)
 //                     }
 //                     maxLength={CHAR_LIMITS.description}
-//                     className="p-2 mx-auto w-full max-w-3xl text-xl text-gray-600 bg-gray-100 rounded-lg border-2 resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                     className="p-2 mx-auto w-full max-w-3xl text-xl text-ink-paragraph bg-ink-light rounded-lg border-2 resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                     rows={2}
 //                     placeholder="Section description"
 //                   />
@@ -547,13 +547,13 @@
 //               </div>
 //             ) : (
 //               <>
-//                 <h2 className="mb-4 text-4xl font-bold text-gray-900 lg:text-5xl dark:text-white">
+//                 <h2 className="mb-4 text-4xl font-bold text-ink lg:text-5xl dark:text-white">
 //                   {projectContent.heading.split(" ")[0]}{" "}
-//                   <span className="text-orange-500">
+//                   <span className="text-status-warning">
 //                     {projectContent.heading.split(" ").slice(1).join(" ")}
 //                   </span>
 //                 </h2>
-//                 <p className="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-400">
+//                 <p className="mx-auto max-w-3xl text-xl text-ink-paragraph dark:text-gray-400">
 //                   {projectContent.description}
 //                 </p>
 //               </>
@@ -566,15 +566,15 @@
 //               variants={itemVariants}
 //               initial="hidden"
 //               animate="visible"
-//               className="relative p-6 mb-8 bg-gray-50 rounded-2xl shadow-lg transition-all duration-300 dark:bg-gray-800"
+//               className="relative p-6 mb-8 bg-ink-offwhite rounded-2xl shadow-lg transition-all duration-300 dark:bg-gray-800"
 //             >
-//               <h3 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+//               <h3 className="mb-4 text-2xl font-bold text-ink dark:text-white">
 //                 Add New Project
 //               </h3>
 
 //               <div className="flex flex-col space-y-4">
 //                 <div className="relative">
-//                   <label className="flex flex-col justify-center items-center p-6 text-center text-gray-500 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer dark:border-gray-600 dark:text-gray-400">
+//                   <label className="flex flex-col justify-center items-center p-6 text-center text-ink-caption rounded-lg border-2 border-ink-light border-dashed cursor-pointer dark:border-gray-600 dark:text-gray-400">
 //                     <Upload className="mb-2 w-12 h-12" />
 //                     <span>Click to upload project image</span>
 //                     <input
@@ -586,7 +586,7 @@
 //                   </label>
 //                   {currentProject?.image && (
 //                     <div className="mt-4">
-//                       <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+//                       <p className="mb-2 text-sm text-ink-paragraph dark:text-gray-400">
 //                         Image Preview:
 //                       </p>
 //                       <img
@@ -607,7 +607,7 @@
 //                     }
 //                     maxLength={CHAR_LIMITS.projectTitle}
 //                     placeholder="Project Title"
-//                     className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                     className="px-4 py-2 w-full text-ink bg-surface-card rounded-lg border border-ink-light dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                   />
 //                   <div
 //                     className={`text-sm text-right ${getCharCountColor(
@@ -629,7 +629,7 @@
 //                     maxLength={CHAR_LIMITS.projectDescription}
 //                     placeholder="Project Description"
 //                     rows={3}
-//                     className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 resize-none dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                     className="px-4 py-2 w-full text-ink bg-surface-card rounded-lg border border-ink-light resize-none dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                   />
 //                   <div
 //                     className={`text-sm text-right ${getCharCountColor(
@@ -649,7 +649,7 @@
 //                     onChange={(e) => setTagInput(e.target.value)}
 //                     maxLength={CHAR_LIMITS.tags}
 //                     placeholder="Tags (comma separated, e.g., React, Node.js)"
-//                     className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                     className="px-4 py-2 w-full text-ink bg-surface-card rounded-lg border border-ink-light dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                   />
 //                   <div
 //                     className={`text-sm text-right ${getCharCountColor(
@@ -666,7 +666,7 @@
 //                     onClick={handleCancelAdd}
 //                     whileHover={{ scale: 1.05 }}
 //                     whileTap={{ scale: 0.95 }}
-//                     className="px-6 py-2 font-semibold text-gray-900 bg-gray-200 rounded-lg dark:bg-gray-700 dark:text-white"
+//                     className="px-6 py-2 font-semibold text-ink bg-ink-light rounded-lg dark:bg-gray-700 dark:text-white"
 //                   >
 //                     Cancel
 //                   </motion.button>
@@ -674,7 +674,7 @@
 //                     onClick={handleAddProject}
 //                     whileHover={{ scale: 1.05 }}
 //                     whileTap={{ scale: 0.95 }}
-//                     className="px-6 py-2 font-semibold text-white bg-orange-500 rounded-lg cursor-pointer"
+//                     className="px-6 py-2 font-semibold text-white bg-status-warning rounded-lg cursor-pointer"
 //                     disabled={!currentProject?.title?.trim() || isUploading}
 //                   >
 //                     {isUploading ? "Uploading..." : "Save Project"}
@@ -687,13 +687,13 @@
 //           {/* Projects Grid */}
 //           {projectContent.projects.length === 0 ? (
 //             <div className="py-20 text-center">
-//               <p className="text-lg text-gray-500 dark:text-gray-400">
+//               <p className="text-lg text-ink-caption dark:text-gray-400">
 //                 No projects to display yet.
 //               </p>
 //               {isEditing && (
 //                 <button
 //                   onClick={startAddingProject}
-//                   className="px-6 py-2 mt-4 text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600"
+//                   className="px-6 py-2 mt-4 text-white bg-status-info rounded-lg transition-colors hover:bg-status-info"
 //                 >
 //                   Add Your First Project
 //                 </button>
@@ -706,7 +706,7 @@
 //                   key={project.id}
 //                   // variants={itemVariants}
 //                   whileHover={{ y: isEditing ? 0 : -10 }}
-//                   className="overflow-hidden relative bg-gray-50 rounded-2xl shadow-lg transition-all duration-300 group dark:bg-gray-800 hover:shadow-2xl"
+//                   className="overflow-hidden relative bg-ink-offwhite rounded-2xl shadow-lg transition-all duration-300 group dark:bg-gray-800 hover:shadow-2xl"
 //                 >
 //                   {/* Card edit actions */}
 //                   {isEditing && (
@@ -714,7 +714,7 @@
 //                       {editingProjectId !== project.id ? (
 //                         <button
 //                           onClick={() => handleEditClick(project.id)}
-//                           className="p-1 text-white bg-gray-700 rounded-full transition-colors hover:bg-gray-600"
+//                           className="p-1 text-white bg-ink-paragraph rounded-full transition-colors hover:bg-ink-paragraph"
 //                           title="Edit This Project"
 //                         >
 //                           <Edit className="w-6 h-6" />
@@ -722,7 +722,7 @@
 //                       ) : (
 //                         <button
 //                           onClick={handleSaveProject}
-//                           className="p-1 text-white bg-green-500 rounded-full transition-colors hover:bg-green-600"
+//                           className="p-1 text-white bg-status-success rounded-full transition-colors hover:bg-status-success"
 //                           title="Save This Project"
 //                           disabled={isUploading}
 //                         >
@@ -731,7 +731,7 @@
 //                       )}
 //                       <button
 //                         onClick={() => handleDeleteProject(project.id)}
-//                         className="p-1 text-white bg-red-500 rounded-full transition-colors hover:bg-red-600"
+//                         className="p-1 text-white bg-status-error rounded-full transition-colors hover:bg-status-error"
 //                         title="Delete This Project"
 //                       >
 //                         <Trash2 className="w-6 h-6" />
@@ -743,7 +743,7 @@
 //                   <div className="overflow-hidden relative">
 //                     {editingProjectId === project.id ? (
 //                       <div className="relative">
-//                         <label className="flex absolute inset-0 z-10 flex-col justify-center items-center text-white cursor-pointer bg-black/50">
+//                         <label className="flex absolute inset-0 z-10 flex-col justify-center items-center text-white cursor-pointer bg-ink/50">
 //                           <Upload className="mb-2 w-12 h-12" />
 //                           <span>Change image</span>
 //                           <input
@@ -772,7 +772,7 @@
 //                   {/* Content */}
 //                   <div className="p-6">
 //                     <div className="flex justify-between items-center mb-3">
-//                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+//                       <div className="flex items-center text-sm text-ink-caption dark:text-gray-400">
 //                         <Calendar className="mr-1 w-4 h-4" />
 //                         {editingProjectId === project.id ? (
 //                           <div className="space-y-1">
@@ -783,7 +783,7 @@
 //                                 handleProjectChange("date", e.target.value)
 //                               }
 //                               maxLength={CHAR_LIMITS.date}
-//                               className="w-16 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+//                               className="w-16 text-ink bg-transparent border-b border-ink-light dark:text-white dark:border-gray-600 focus:outline-none"
 //                             />
 //                             <div
 //                               className={`text-xs text-right ${getCharCountColor(
@@ -799,7 +799,7 @@
 //                           project.date
 //                         )}
 //                       </div>
-//                       <div className="flex items-center text-sm text-orange-500">
+//                       <div className="flex items-center text-sm text-status-warning">
 //                         <Tag className="mr-1 w-4 h-4" />
 //                         {editingProjectId === project.id ? (
 //                           <div className="space-y-1">
@@ -810,7 +810,7 @@
 //                                 handleProjectChange("category", e.target.value)
 //                               }
 //                               maxLength={CHAR_LIMITS.category}
-//                               className="w-24 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+//                               className="w-24 text-ink bg-transparent border-b border-ink-light dark:text-white dark:border-gray-600 focus:outline-none"
 //                             />
 //                             <div
 //                               className={`text-xs text-right ${getCharCountColor(
@@ -837,7 +837,7 @@
 //                             handleProjectChange("title", e.target.value)
 //                           }
 //                           maxLength={CHAR_LIMITS.projectTitle}
-//                           className="mb-3 w-full text-xl font-bold text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+//                           className="mb-3 w-full text-xl font-bold text-ink bg-transparent border-b border-ink-light dark:text-white dark:border-gray-600 focus:outline-none"
 //                         />
 //                         <div
 //                           className={`text-xs text-right ${getCharCountColor(
@@ -850,7 +850,7 @@
 //                         </div>
 //                       </div>
 //                     ) : (
-//                       <h3 className="mb-3 text-xl font-bold text-gray-900 transition-colors duration-200 dark:text-white group-hover:text-orange-500">
+//                       <h3 className="mb-3 text-xl font-bold text-ink transition-colors duration-200 dark:text-white group-hover:text-status-warning">
 //                         {project.title}
 //                       </h3>
 //                     )}
@@ -863,7 +863,7 @@
 //                             handleProjectChange("description", e.target.value)
 //                           }
 //                           maxLength={CHAR_LIMITS.projectDescription}
-//                           className="p-2 mb-4 w-full text-gray-900 bg-transparent rounded border border-gray-300 resize-none dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                           className="p-2 mb-4 w-full text-ink bg-transparent rounded border border-ink-light resize-none dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                           rows={3}
 //                         />
 //                         <div
@@ -877,7 +877,7 @@
 //                         </div>
 //                       </div>
 //                     ) : (
-//                       <p className="mb-4 leading-relaxed text-gray-600 dark:text-gray-300">
+//                       <p className="mb-4 leading-relaxed text-ink-paragraph dark:text-gray-300">
 //                         {project.description}
 //                       </p>
 //                     )}
@@ -891,7 +891,7 @@
 //                             value={tagInput}
 //                             onChange={(e) => setTagInput(e.target.value)}
 //                             maxLength={CHAR_LIMITS.tags}
-//                             className="p-2 w-full text-gray-900 bg-transparent rounded border border-gray-300 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                             className="p-2 w-full text-ink bg-transparent rounded border border-ink-light dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                             placeholder="Separate tags with commas"
 //                           />
 //                           <div
@@ -907,7 +907,7 @@
 //                         project.tags.map((tag, index) => (
 //                           <span
 //                             key={index}
-//                             className="px-3 py-1 text-sm font-medium text-orange-500 bg-gradient-to-r rounded-full border from-yellow-500/10 to-orange-500/10 border-orange-500/30"
+//                             className="px-3 py-1 text-sm font-medium text-status-warning bg-gradient-to-r rounded-full border from-brand-gold/10 to-status-warning/10 border-status-warning/30"
 //                           >
 //                             {tag}
 //                           </span>
@@ -915,7 +915,7 @@
 //                       )}
 
 //                       {isEditing && (
-//                         <p className="text-center text-xs text-gray-400">
+//                         <p className="text-center text-xs text-ink-caption">
 //                           Tags should be separated by commas (e.g., data1,
 //                           data2, data3)
 //                         </p>
@@ -931,24 +931,24 @@
 
 //       {/* Image Cropping Modal */}
 //       {isCropping && (
-//         <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-//           <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl">
-//             <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-//               <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+//         <div className="fixed inset-0 bg-ink/90 z-50 flex items-center justify-center p-4">
+//           <div className="bg-surface-card dark:bg-gray-800 rounded-lg w-full max-w-2xl">
+//             <div className="flex justify-between items-center p-6 border-b border-ink-light dark:border-gray-700">
+//               <h3 className="text-xl font-bold text-ink dark:text-white flex items-center gap-2">
 //                 <Crop className="w-6 h-6" />
 //                 Crop Project Image
 //               </h3>
 //               <button
 //                 onClick={() => setIsCropping(false)}
-//                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+//                 className="p-2 hover:bg-ink-light dark:hover:bg-gray-700 rounded-full transition-colors"
 //               >
-//                 <X className="w-6 h-6 text-gray-900 dark:text-white" />
+//                 <X className="w-6 h-6 text-ink dark:text-white" />
 //               </button>
 //             </div>
 
 //             <div className="p-6">
 //               <div
-//                 className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+//                 className={`relative h-96 bg-ink rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
 //               >
 //                 <Cropper
 //                   image={imageToCrop}
@@ -974,19 +974,19 @@
 //               <div className="space-y-4">
 //                 <div>
 //                   <div className="flex items-center justify-between mb-2">
-//                     <label className="text-sm font-medium text-gray-900 dark:text-white">
+//                     <label className="text-sm font-medium text-ink dark:text-white">
 //                       Zoom
 //                     </label>
 //                     <div className="flex gap-2">
 //                       <button
 //                         onClick={handleZoomOut}
-//                         className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+//                         className="p-2 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
 //                       >
 //                         <ZoomOut className="w-4 h-4" />
 //                       </button>
 //                       <button
 //                         onClick={handleZoomIn}
-//                         className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+//                         className="p-2 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
 //                       >
 //                         <ZoomIn className="w-4 h-4" />
 //                       </button>
@@ -999,27 +999,27 @@
 //                     step={0.01}
 //                     value={zoom}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+//                     className="w-full h-2 bg-ink-light dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
 //                   />
 //                 </div>
 
-//                 <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+//                 <p className="text-sm text-ink-paragraph dark:text-gray-400 text-center">
 //                   Drag to reposition • Use slider or buttons to zoom
 //                 </p>
 //               </div>
 //             </div>
 
-//             <div className="flex gap-3 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
+//             <div className="flex gap-3 justify-end p-6 border-t border-ink-light dark:border-gray-700">
 //               <button
 //                 onClick={() => setIsCropping(false)}
-//                 className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+//                 className="px-6 py-2 rounded-lg border border-ink-light dark:border-gray-600 text-ink dark:text-white hover:bg-ink-light dark:hover:bg-gray-700 transition-colors"
 //               >
 //                 Cancel
 //               </button>
 //               <button
 //                 onClick={handleCropConfirm}
 //                 disabled={!imageLoaded}
-//                 className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+//                 className="px-6 py-2 rounded-lg bg-status-info hover:bg-status-info text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 //               >
 //                 <Check className="w-5 h-5" />
 //                 Crop & Upload
@@ -1318,9 +1318,9 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   ]);
 
   const getCharCountColor = (current: number, max: number) => {
-    if (current >= max) return "text-red-500";
-    if (current >= max * 0.9) return "text-yellow-500";
-    return "text-gray-500";
+    if (current >= max) return "text-status-error";
+    if (current >= max * 0.9) return "text-brand-gold";
+    return "text-ink-caption";
   };
 
   // Enhanced image upload function with progress tracking
@@ -1817,7 +1817,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
   return (
     <section
       id="projects"
-      className="py-20 text-justify bg-white dark:bg-gray-900"
+      className="py-20 text-justify bg-surface-card dark:bg-gray-900"
     >
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <motion.div
@@ -1835,7 +1835,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
               {isEditing ? (
                 <>
                   {/* Auto-save indicator */}
-                  <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
+                  <div className="flex items-center gap-2 mr-2 text-sm text-ink-caption dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
                     {isAutoSaving ? (
                       <div className="flex items-center gap-1">
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -1843,12 +1843,12 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       </div>
                     ) : hasUnsavedChanges ? (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
                         <span>Unsaved changes</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-status-success rounded-full"></div>
                         <span>Saved {formatLastSavedTime()}</span>
                       </div>
                     )}
@@ -1856,14 +1856,14 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
                   <button
                     onClick={handleSaveSection}
-                    className="p-3 text-white bg-green-500 rounded-full transition-colors hover:bg-green-600"
+                    className="p-3 text-white bg-status-success rounded-full transition-colors hover:bg-status-success"
                     title="Save Changes"
                   >
                     <Save className="w-6 h-6" />
                   </button>
                   <button
                     onClick={handleCancelEdit}
-                    className="p-3 text-white bg-red-500 rounded-full transition-colors hover:bg-red-600"
+                    className="p-3 text-white bg-status-error rounded-full transition-colors hover:bg-status-error"
                     title="Cancel"
                   >
                     <X className="w-6 h-6" />
@@ -1872,7 +1872,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
               ) : (
                 <button
                   onClick={handleEditStart}
-                  className="p-3 text-gray-900 bg-gray-200 rounded-full transition-colors dark:text-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+                  className="p-3 text-ink bg-ink-light rounded-full transition-colors dark:text-white dark:bg-gray-700 hover:bg-ink-light dark:hover:bg-gray-600"
                   title="Edit Section"
                 >
                   <Edit className="w-6 h-6" />
@@ -1883,7 +1883,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
             {isEditing && (
               <button
                 onClick={startAddingProject}
-                className="absolute -top-16 lg:top-0 right-28 p-3 text-white bg-blue-500 rounded-full transition-colors hover:bg-blue-600"
+                className="absolute -top-16 lg:top-0 right-28 p-3 text-white bg-status-info rounded-full transition-colors hover:bg-status-info"
                 title="Add New Project"
               >
                 <Plus className="w-6 h-6" />
@@ -1900,7 +1900,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       handleContentTextChange("heading", e.target.value)
                     }
                     maxLength={CHAR_LIMITS.heading}
-                    className="p-2 mx-auto w-full max-w-2xl text-4xl font-bold text-gray-900 bg-gray-100 rounded-lg border-2 lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    className="p-2 mx-auto w-full max-w-2xl text-4xl font-bold text-ink bg-ink-light rounded-lg border-2 lg:text-5xl dark:bg-gray-800 dark:text-white focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                     placeholder="Section heading"
                   />
                   <div
@@ -1919,7 +1919,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       handleContentTextChange("description", e.target.value)
                     }
                     maxLength={CHAR_LIMITS.description}
-                    className="p-2 mx-auto w-full max-w-3xl text-xl text-gray-600 bg-gray-100 rounded-lg border-2 resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    className="p-2 mx-auto w-full max-w-3xl text-xl text-ink-paragraph bg-ink-light rounded-lg border-2 resize-none dark:bg-gray-800 dark:text-gray-400 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                     rows={2}
                     placeholder="Section description"
                   />
@@ -1936,13 +1936,13 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
               </div>
             ) : (
               <>
-                <h2 className="mb-4 text-4xl font-bold text-gray-900 lg:text-5xl dark:text-white">
+                <h2 className="mb-4 text-4xl font-bold text-ink lg:text-5xl dark:text-white">
                   {projectContent.heading.split(" ")[0]}{" "}
-                  <span className="text-orange-500">
+                  <span className="text-status-warning">
                     {projectContent.heading.split(" ").slice(1).join(" ")}
                   </span>
                 </h2>
-                <p className="mx-auto max-w-3xl text-xl text-gray-600 dark:text-gray-400">
+                <p className="mx-auto max-w-3xl text-xl text-ink-paragraph dark:text-gray-400">
                   {projectContent.description}
                 </p>
               </>
@@ -1955,15 +1955,15 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
               variants={itemVariants}
               initial="hidden"
               animate="visible"
-              className="relative p-6 mb-8 bg-gray-50 rounded-2xl shadow-lg transition-all duration-300 dark:bg-gray-800"
+              className="relative p-6 mb-8 bg-ink-offwhite rounded-2xl shadow-lg transition-all duration-300 dark:bg-gray-800"
             >
-              <h3 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+              <h3 className="mb-4 text-2xl font-bold text-ink dark:text-white">
                 Add New Project
               </h3>
 
               <div className="flex flex-col space-y-4">
                 <div className="relative">
-                  <label className="flex flex-col justify-center items-center p-6 text-center text-gray-500 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer dark:border-gray-600 dark:text-gray-400">
+                  <label className="flex flex-col justify-center items-center p-6 text-center text-ink-caption rounded-lg border-2 border-ink-light border-dashed cursor-pointer dark:border-gray-600 dark:text-gray-400">
                     <Upload className="mb-2 w-12 h-12" />
                     <span>Click to upload project image</span>
                     <input
@@ -1975,7 +1975,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                   </label>
                   {currentProject?.image && (
                     <div className="mt-4">
-                      <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                      <p className="mb-2 text-sm text-ink-paragraph dark:text-gray-400">
                         Image Preview:
                       </p>
                       <img
@@ -1989,9 +1989,9 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     <div className="mt-4 text-center">
                       <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
                       <div>Uploading... {Math.round(uploadProgress)}%</div>
-                      <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
+                      <div className="w-32 h-2 bg-ink-paragraph rounded-full mt-2 mx-auto overflow-hidden">
                         <div
-                          className="h-full bg-green-500 transition-all duration-300"
+                          className="h-full bg-status-success transition-all duration-300"
                           style={{ width: `${uploadProgress}%` }}
                         ></div>
                       </div>
@@ -2008,7 +2008,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     }
                     maxLength={CHAR_LIMITS.projectTitle}
                     placeholder="Project Title"
-                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    className="px-4 py-2 w-full text-ink bg-surface-card rounded-lg border border-ink-light dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                   />
                   <div
                     className={`text-sm text-right ${getCharCountColor(
@@ -2030,7 +2030,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     maxLength={CHAR_LIMITS.projectDescription}
                     placeholder="Project Description"
                     rows={3}
-                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 resize-none dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    className="px-4 py-2 w-full text-ink bg-surface-card rounded-lg border border-ink-light resize-none dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                   />
                   <div
                     className={`text-sm text-right ${getCharCountColor(
@@ -2050,7 +2050,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     onChange={handleTagInputChange}
                     maxLength={CHAR_LIMITS.tags}
                     placeholder="Tags (comma separated, e.g., React, Node.js)"
-                    className="px-4 py-2 w-full text-gray-900 bg-white rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                    className="px-4 py-2 w-full text-ink bg-surface-card rounded-lg border border-ink-light dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                   />
                   <div
                     className={`text-sm text-right ${getCharCountColor(
@@ -2063,13 +2063,13 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                  <div className="text-sm text-ink-caption dark:text-gray-400">
                     {hasUnsavedChanges ? (
-                      <span className="text-yellow-500">
+                      <span className="text-brand-gold">
                         ● Unsaved changes - Auto-save in 2 seconds
                       </span>
                     ) : (
-                      <span className="text-green-500">
+                      <span className="text-status-success">
                         ● All changes saved
                       </span>
                     )}
@@ -2079,7 +2079,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       onClick={handleCancelAdd}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-2 font-semibold text-gray-900 bg-gray-200 rounded-lg dark:bg-gray-700 dark:text-white"
+                      className="px-6 py-2 font-semibold text-ink bg-ink-light rounded-lg dark:bg-gray-700 dark:text-white"
                     >
                       Cancel
                     </motion.button>
@@ -2087,7 +2087,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       onClick={handleAddProject}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-2 font-semibold text-white bg-orange-500 rounded-lg cursor-pointer"
+                      className="px-6 py-2 font-semibold text-white bg-status-warning rounded-lg cursor-pointer"
                       disabled={!currentProject?.title?.trim() || isUploading}
                     >
                       {isUploading ? "Uploading..." : "Save Project"}
@@ -2101,13 +2101,13 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
           {/* Projects Grid */}
           {projectContent.projects.length === 0 ? (
             <div className="py-20 text-center">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
+              <p className="text-lg text-ink-caption dark:text-gray-400">
                 No projects to display yet.
               </p>
               {isEditing && (
                 <button
                   onClick={startAddingProject}
-                  className="px-6 py-2 mt-4 text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600"
+                  className="px-6 py-2 mt-4 text-white bg-status-info rounded-lg transition-colors hover:bg-status-info"
                 >
                   Add Your First Project
                 </button>
@@ -2119,7 +2119,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                 <motion.div
                   key={project.id}
                   whileHover={{ y: isEditing ? 0 : -10 }}
-                  className="overflow-hidden relative bg-gray-50 rounded-2xl shadow-lg transition-all duration-300 group dark:bg-gray-800 hover:shadow-2xl"
+                  className="overflow-hidden relative bg-ink-offwhite rounded-2xl shadow-lg transition-all duration-300 group dark:bg-gray-800 hover:shadow-2xl"
                 >
                   {/* Card edit actions */}
                   {isEditing && (
@@ -2127,7 +2127,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       {editingProjectId !== project.id ? (
                         <button
                           onClick={() => handleEditClick(project.id)}
-                          className="p-1 text-white bg-gray-700 rounded-full transition-colors hover:bg-gray-600"
+                          className="p-1 text-white bg-ink-paragraph rounded-full transition-colors hover:bg-ink-paragraph"
                           title="Edit This Project"
                         >
                           <Edit className="w-6 h-6" />
@@ -2135,7 +2135,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       ) : (
                         <button
                           onClick={handleSaveProject}
-                          className="p-1 text-white bg-green-500 rounded-full transition-colors hover:bg-green-600"
+                          className="p-1 text-white bg-status-success rounded-full transition-colors hover:bg-status-success"
                           title="Save This Project"
                           disabled={isUploading}
                         >
@@ -2144,7 +2144,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       )}
                       <button
                         onClick={() => handleDeleteProject(project.id)}
-                        className="p-1 text-white bg-red-500 rounded-full transition-colors hover:bg-red-600"
+                        className="p-1 text-white bg-status-error rounded-full transition-colors hover:bg-status-error"
                         title="Delete This Project"
                       >
                         <Trash2 className="w-6 h-6" />
@@ -2156,7 +2156,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                   <div className="overflow-hidden relative">
                     {editingProjectId === project.id ? (
                       <div className="relative">
-                        <label className="flex absolute inset-0 z-10 flex-col justify-center items-center text-white cursor-pointer bg-black/50">
+                        <label className="flex absolute inset-0 z-10 flex-col justify-center items-center text-white cursor-pointer bg-ink/50">
                           <Upload className="mb-2 w-12 h-12" />
                           <span>Change image</span>
                           <input
@@ -2185,7 +2185,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                   {/* Content */}
                   <div className="p-6">
                     <div className="flex justify-between items-center mb-3">
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center text-sm text-ink-caption dark:text-gray-400">
                         <Calendar className="mr-1 w-4 h-4" />
                         {editingProjectId === project.id ? (
                           <div className="space-y-1">
@@ -2196,7 +2196,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                                 handleProjectChange("date", e.target.value)
                               }
                               maxLength={CHAR_LIMITS.date}
-                              className="w-16 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+                              className="w-16 text-ink bg-transparent border-b border-ink-light dark:text-white dark:border-gray-600 focus:outline-none"
                             />
                             <div
                               className={`text-xs text-right ${getCharCountColor(
@@ -2212,7 +2212,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                           project.date
                         )}
                       </div>
-                      <div className="flex items-center text-sm text-orange-500">
+                      <div className="flex items-center text-sm text-status-warning">
                         <Tag className="mr-1 w-4 h-4" />
                         {editingProjectId === project.id ? (
                           <div className="space-y-1">
@@ -2223,7 +2223,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                                 handleProjectChange("category", e.target.value)
                               }
                               maxLength={CHAR_LIMITS.category}
-                              className="w-24 text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+                              className="w-24 text-ink bg-transparent border-b border-ink-light dark:text-white dark:border-gray-600 focus:outline-none"
                             />
                             <div
                               className={`text-xs text-right ${getCharCountColor(
@@ -2250,7 +2250,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                             handleProjectChange("title", e.target.value)
                           }
                           maxLength={CHAR_LIMITS.projectTitle}
-                          className="mb-3 w-full text-xl font-bold text-gray-900 bg-transparent border-b border-gray-300 dark:text-white dark:border-gray-600 focus:outline-none"
+                          className="mb-3 w-full text-xl font-bold text-ink bg-transparent border-b border-ink-light dark:text-white dark:border-gray-600 focus:outline-none"
                         />
                         <div
                           className={`text-xs text-right ${getCharCountColor(
@@ -2263,7 +2263,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                         </div>
                       </div>
                     ) : (
-                      <h3 className="mb-3 text-xl font-bold text-gray-900 transition-colors duration-200 dark:text-white group-hover:text-orange-500">
+                      <h3 className="mb-3 text-xl font-bold text-ink transition-colors duration-200 dark:text-white group-hover:text-status-warning">
                         {project.title}
                       </h3>
                     )}
@@ -2276,7 +2276,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                             handleProjectChange("description", e.target.value)
                           }
                           maxLength={CHAR_LIMITS.projectDescription}
-                          className="p-2 mb-4 w-full text-gray-900 bg-transparent rounded border border-gray-300 resize-none dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                          className="p-2 mb-4 w-full text-ink bg-transparent rounded border border-ink-light resize-none dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                           rows={3}
                         />
                         <div
@@ -2290,7 +2290,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                         </div>
                       </div>
                     ) : (
-                      <p className="mb-4 leading-relaxed text-gray-600 dark:text-gray-300">
+                      <p className="mb-4 leading-relaxed text-ink-paragraph dark:text-gray-300">
                         {project.description}
                       </p>
                     )}
@@ -2304,7 +2304,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                             value={tagInput}
                             onChange={handleTagInputChange}
                             maxLength={CHAR_LIMITS.tags}
-                            className="p-2 w-full text-gray-900 bg-transparent rounded border border-gray-300 dark:text-white dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                            className="p-2 w-full text-ink bg-transparent rounded border border-ink-light dark:text-white dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                             placeholder="Separate tags with commas"
                           />
                           <div
@@ -2320,7 +2320,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                         project.tags.map((tag, index) => (
                           <span
                             key={index}
-                            className="px-3 py-1 text-sm font-medium text-orange-500 bg-gradient-to-r rounded-full border from-yellow-500/10 to-orange-500/10 border-orange-500/30"
+                            className="px-3 py-1 text-sm font-medium text-status-warning bg-gradient-to-r rounded-full border from-brand-gold/10 to-status-warning/10 border-status-warning/30"
                           >
                             {tag}
                           </span>
@@ -2328,7 +2328,7 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                       )}
 
                       {isEditing && (
-                        <p className="text-center text-xs text-gray-400">
+                        <p className="text-center text-xs text-ink-caption">
                           Tags should be separated by commas (e.g., data1,
                           data2, data3)
                         </p>
@@ -2344,24 +2344,24 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
 
       {/* Image Cropping Modal */}
       {isCropping && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl">
-            <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+        <div className="fixed inset-0 bg-ink/90 z-50 flex items-center justify-center p-4">
+          <div className="bg-surface-card dark:bg-gray-800 rounded-lg w-full max-w-2xl">
+            <div className="flex justify-between items-center p-6 border-b border-ink-light dark:border-gray-700">
+              <h3 className="text-xl font-bold text-ink dark:text-white flex items-center gap-2">
                 <Crop className="w-6 h-6" />
                 Crop Project Image
               </h3>
               <button
                 onClick={handleCancelCrop}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                className="p-2 hover:bg-ink-light dark:hover:bg-gray-700 rounded-full transition-colors"
               >
-                <X className="w-6 h-6 text-gray-900 dark:text-white" />
+                <X className="w-6 h-6 text-ink dark:text-white" />
               </button>
             </div>
 
             <div className="p-6">
               <div
-                className={`relative h-96 bg-gray-900 rounded-lg overflow-hidden mb-6 ${
+                className={`relative h-96 bg-ink rounded-lg overflow-hidden mb-6 ${
                   isDragging ? "cursor-grabbing" : "cursor-grab"
                 }`}
               >
@@ -2389,19 +2389,19 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-900 dark:text-white">
+                    <label className="text-sm font-medium text-ink dark:text-white">
                       Zoom
                     </label>
                     <div className="flex gap-2">
                       <button
                         onClick={handleZoomOut}
-                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
                       >
                         <ZoomOut className="w-4 h-4" />
                       </button>
                       <button
                         onClick={handleZoomIn}
-                        className="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="p-2 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
                       >
                         <ZoomIn className="w-4 h-4" />
                       </button>
@@ -2414,27 +2414,27 @@ const Projects: React.FC<ProjectsProps> = ({ content, onSave, userId }) => {
                     step={0.01}
                     value={zoom}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    className="w-full h-2 bg-ink-light dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
                   />
                 </div>
 
-                <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                <p className="text-sm text-ink-paragraph dark:text-gray-400 text-center">
                   Drag to reposition • Use slider or buttons to zoom
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-3 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex gap-3 justify-end p-6 border-t border-ink-light dark:border-gray-700">
               <button
                 onClick={handleCancelCrop}
-                className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="px-6 py-2 rounded-lg border border-ink-light dark:border-gray-600 text-ink dark:text-white hover:bg-ink-light dark:hover:bg-gray-700 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCropConfirm}
                 disabled={!imageLoaded}
-                className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 rounded-lg bg-status-info hover:bg-status-info text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Check className="w-5 h-5" />
                 Crop & Upload

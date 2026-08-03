@@ -11,7 +11,7 @@ const decodeHTML = (str: string): string => {
 
 // Custom Card Components
 const Card = ({ children, className = "" }) => (
-  <div className={`bg-white rounded-xl shadow-md overflow-hidden ${className}`}>
+  <div className={`bg-surface-card rounded-xl shadow-md overflow-hidden ${className}`}>
     {children}
   </div>
 );
@@ -39,7 +39,7 @@ const Button = ({ children, onClick, className = "", size = "md" }) => {
   return (
     <button
       onClick={onClick}
-      className={`font-medium rounded-lg transition-all duration-200 bg-yellow-400 text-gray-900 hover:bg-yellow-500 shadow-sm hover:shadow-md ${sizeClasses[size]} ${className}`}
+      className={`font-medium rounded-lg transition-all duration-200 bg-brand-yellow text-ink hover:bg-brand-gold shadow-sm hover:shadow-md ${sizeClasses[size]} ${className}`}
     >
       {children}
     </button>
@@ -89,7 +89,7 @@ export default function Products() {
         title: "Innovation Platform Pro",
         description: "Comprehensive platform for managing digital transformation and innovation workflows",
         category: "Platform",
-        categoryColor: "bg-blue-100 text-blue-700",
+        categoryColor: "bg-status-info/15 text-status-info",
         isPopular: true,
         detailedDescription: "Our flagship Innovation Platform Pro is designed to help enterprises manage their entire innovation lifecycle. From idea generation to execution, our platform provides the tools and insights needed to drive meaningful change and stay ahead of the competition.",
         features: [
@@ -118,7 +118,7 @@ export default function Products() {
         title: "Analytics Intelligence Suite",
         description: "Advanced analytics and business intelligence tools for data-driven decision making",
         category: "Analytics",
-        categoryColor: "bg-green-100 text-green-700",
+        categoryColor: "bg-status-success/15 text-status-success",
         isPopular: false,
         detailedDescription: "Transform your raw data into actionable insights with our Analytics Intelligence Suite. Leverage machine learning and advanced visualization to uncover trends, predict outcomes, and make informed business decisions.",
         features: [
@@ -147,7 +147,7 @@ export default function Products() {
         title: "Team Collaboration Hub",
         description: "Seamless collaboration tools for modern remote and hybrid teams",
         category: "Collaboration",
-        categoryColor: "bg-purple-100 text-purple-700",
+        categoryColor: "bg-brand-gold/15 text-brand-gold",
         isPopular: true,
         detailedDescription: "Break down communication barriers with our Team Collaboration Hub. Designed for the modern workplace, this platform brings together messaging, video calls, file sharing, and project management in one intuitive interface.",
         features: [
@@ -176,7 +176,7 @@ export default function Products() {
         title: "Workflow Automation Engine",
         description: "Automate repetitive tasks and streamline business processes with AI",
         category: "Automation",
-        categoryColor: "bg-orange-100 text-orange-700",
+        categoryColor: "bg-status-warning/15 text-status-warning",
         isPopular: false,
         detailedDescription: "Our Workflow Automation Engine uses artificial intelligence to identify and automate repetitive tasks across your organization. Save time, reduce errors, and focus on what matters most.",
         features: [
@@ -205,7 +205,7 @@ export default function Products() {
         title: "Enterprise Security Shield",
         description: "Comprehensive security solution for protecting sensitive business data",
         category: "Security",
-        categoryColor: "bg-red-100 text-red-700",
+        categoryColor: "bg-status-error/15 text-status-error",
         isPopular: true,
         detailedDescription: "Protect your business from cyber threats with our Enterprise Security Shield. This comprehensive solution includes threat detection, data encryption, access control, and compliance management.",
         features: [
@@ -234,7 +234,7 @@ export default function Products() {
         title: "Customer Success Platform",
         description: "Tools to understand, engage, and retain your customers effectively",
         category: "Platform",
-        categoryColor: "bg-blue-100 text-blue-700",
+        categoryColor: "bg-status-info/15 text-status-info",
         isPopular: false,
         detailedDescription: "Boost customer satisfaction and retention with our Customer Success Platform. Track customer health, automate engagement, and identify growth opportunities with comprehensive analytics.",
         features: [
@@ -263,7 +263,7 @@ export default function Products() {
         title: "Marketing Automation Pro",
         description: "End-to-end marketing automation for lead generation and conversion",
         category: "Automation",
-        categoryColor: "bg-orange-100 text-orange-700",
+        categoryColor: "bg-status-warning/15 text-status-warning",
         isPopular: true,
         detailedDescription: "Streamline your marketing efforts with our comprehensive automation platform. From lead capture to conversion tracking, manage your entire marketing funnel in one place.",
         features: [
@@ -292,7 +292,7 @@ export default function Products() {
         title: "Data Visualization Studio",
         description: "Create stunning interactive data visualizations and reports",
         category: "Analytics",
-        categoryColor: "bg-green-100 text-green-700",
+        categoryColor: "bg-status-success/15 text-status-success",
         isPopular: false,
         detailedDescription: "Turn complex data into compelling visual stories with our Data Visualization Studio. Create interactive dashboards, reports, and infographics that drive understanding and action.",
         features: [
@@ -350,7 +350,7 @@ export default function Products() {
     <section
       id="product"
       ref={sectionRef}
-      className="py-20 bg-gradient-to-b from-gray-50 to-white scroll-mt-20"
+      className="py-20 bg-gradient-to-b from-ink-offwhite to-white scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
@@ -360,19 +360,19 @@ export default function Products() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <span className="inline-block px-4 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1.5 bg-brand-yellow-soft text-brand-gold rounded-full text-sm font-medium mb-4">
             Our Products
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-3">
             {content.sectionTitle}
           </h2>
-          <h3 className="text-2xl font-semibold text-gray-700 mb-4">
+          <h3 className="text-2xl font-semibold text-ink-paragraph mb-4">
             {content.sectionSubtitle}
           </h3>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg text-ink-paragraph max-w-3xl mx-auto">
             {content.sectionDescription}
             {content.trustText && (
-              <span className="font-bold text-yellow-600">
+              <span className="font-bold text-brand-gold">
                 {" "}
                 {content.trustText}
               </span>
@@ -393,8 +393,8 @@ export default function Products() {
               onClick={() => setSelected(cat)}
               className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
                 selected === cat
-                  ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
-                  : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                  ? "bg-brand-yellow text-ink shadow-lg scale-105"
+                  : "bg-surface-card text-ink-paragraph hover:bg-ink-offwhite shadow-md hover:shadow-lg"
               }`}
             >
               {cat}
@@ -414,7 +414,7 @@ export default function Products() {
               <Card className="h-full flex flex-col hover:shadow-xl transition-all duration-300 group relative">
                 {product.isPopular && (
                   <div className="absolute top-4 right-4 z-10">
-                    <Badge className="bg-yellow-400 text-gray-900 shadow-md">
+                    <Badge className="bg-brand-yellow text-ink shadow-md">
                       <Star className="w-3 h-3 mr-1" fill="currentColor" />
                       Popular
                     </Badge>
@@ -422,7 +422,7 @@ export default function Products() {
                 )}
 
                 <CardContent className="p-0 flex flex-col h-full">
-                  <div className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100">
+                  <div className="relative overflow-hidden bg-gradient-to-br from-status-warning/10 to-status-warning/15">
                     <img
                       src={product.image}
                       alt={product.title}
@@ -434,34 +434,34 @@ export default function Products() {
                   <div className="p-5 flex-1 flex flex-col">
                     <div className="mb-3">
                       <Badge
-                        className={`${product.categoryColor || "bg-gray-100 text-gray-700"}`}
+                        className={`${product.categoryColor || "bg-ink-light text-ink-paragraph"}`}
                       >
                         {decodeHTML(product.category)}
                       </Badge>
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    <h3 className="text-xl font-bold text-ink mb-3">
                       {decodeHTML(product.title)}
                     </h3>
 
-                    <p className="text-gray-600 text-sm mb-4 flex-1">
+                    <p className="text-ink-paragraph text-sm mb-4 flex-1">
                       {decodeHTML(product.description || "").slice(0, 30) + "..."}
                     </p>
 
                     {/* {product.features && product.features.length > 0 && (
                       <div className="mb-4">
-                        <h4 className="font-semibold text-sm mb-2 text-gray-900">
+                        <h4 className="font-semibold text-sm mb-2 text-ink">
                           Key Features:
                         </h4>
-                        <ul className="text-xs text-gray-600 space-y-1.5">
+                        <ul className="text-xs text-ink-paragraph space-y-1.5">
                           {product.features.slice(0, 3).map((feature, idx) => (
                             <li key={idx} className="flex items-start">
-                              <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
+                              <div className="w-1.5 h-1.5 bg-brand-yellow rounded-full mr-2 mt-1.5 flex-shrink-0"></div>
                               <span>{feature}</span>
                             </li>
                           ))}
                           {product.features.length > 3 && (
-                            <li className="text-yellow-600 font-medium text-xs">
+                            <li className="text-brand-gold font-medium text-xs">
                               +{product.features.length - 3} more features
                             </li>
                           )}
@@ -491,7 +491,7 @@ export default function Products() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-16"
           >
-            <h3 className="text-3xl font-bold text-center mb-12 text-gray-900">
+            <h3 className="text-3xl font-bold text-center mb-12 text-ink">
               Why Choose Our Products?
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -503,24 +503,24 @@ export default function Products() {
                     isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
                   }
                   transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-                  className="text-center p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                  className="text-center p-6 bg-surface-card rounded-xl shadow-md hover:shadow-lg transition-shadow"
                 >
                   <div
                     className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 text-3xl
                       ${
                         benefit.color === "red-accent"
-                          ? "bg-red-100 text-red-600"
+                          ? "bg-status-error/15 text-status-error"
                           : benefit.color === "primary"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-yellow-100 text-yellow-600"
+                          ? "bg-brand-yellow-soft text-brand-gold"
+                          : "bg-brand-yellow-soft text-brand-gold"
                       }`}
                   >
                     {benefit.icon}
                   </div>
-                  <h4 className="font-bold text-lg mb-3 text-gray-900">
+                  <h4 className="font-bold text-lg mb-3 text-ink">
                     {benefit.title}
                   </h4>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p className="text-ink-paragraph text-sm leading-relaxed">
                     {benefit.desc}
                   </p>
                 </motion.div>
@@ -534,14 +534,14 @@ export default function Products() {
       <AnimatePresence>
         {isModalOpen && selectedProduct && (
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeModal}
           >
             <motion.div
-              className="bg-white rounded-2xl w-full max-w-4xl max-h-[70vh] overflow-hidden shadow-2xl"
+              className="bg-surface-card rounded-2xl w-full max-w-4xl max-h-[70vh] overflow-hidden shadow-2xl"
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -555,23 +555,23 @@ export default function Products() {
                   alt={selectedProduct.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"></div>
                 <button
                   onClick={closeModal}
-                  className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors shadow-lg"
+                  className="absolute top-4 right-4 bg-white/90 hover:bg-surface-card rounded-full p-2 transition-colors shadow-lg"
                   aria-label="Close modal"
                 >
-                  <X className="w-5 h-5 text-gray-900" />
+                  <X className="w-5 h-5 text-ink" />
                 </button>
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="flex items-center gap-3 mb-3">
                     <Badge
-                      className={`${selectedProduct.categoryColor || "bg-yellow-400 text-gray-900"}`}
+                      className={`${selectedProduct.categoryColor || "bg-brand-yellow text-ink"}`}
                     >
                       {selectedProduct.category}
                     </Badge>
                     {selectedProduct.isPopular && (
-                      <Badge className="bg-yellow-400 text-gray-900">
+                      <Badge className="bg-brand-yellow text-ink">
                         <Star className="w-3 h-3 mr-1" fill="currentColor" />
                         Popular
                       </Badge>
@@ -587,10 +587,10 @@ export default function Products() {
               <div className="overflow-y-auto max-h-[calc(90vh-16rem)] p-8">
                 {/* Description */}
                 <div className="mb-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  <h3 className="text-xl font-bold text-ink mb-3">
                     About This Product
                   </h3>
-                  <p className="text-gray-700 text-base leading-relaxed mb-4">
+                  <p className="text-ink-paragraph text-base leading-relaxed mb-4">
                     {selectedProduct.detailedDescription ||
                       selectedProduct.description}
                   </p>
@@ -600,17 +600,17 @@ export default function Products() {
                 {selectedProduct.features &&
                   selectedProduct.features.length > 0 && (
                     <div className="mb-8">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <span className="text-yellow-600">✨</span> All Features
+                      <h3 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+                        <span className="text-brand-gold">✨</span> All Features
                       </h3>
                       <div className="grid md:grid-cols-2 gap-3">
                         {selectedProduct.features.map((feature, idx) => (
                           <div
                             key={idx}
-                            className="flex gap-3 items-start bg-yellow-50 p-4 rounded-lg"
+                            className="flex gap-3 items-start bg-surface-main p-4 rounded-lg"
                           >
-                            <CheckCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                            <span className="text-gray-700">{feature}</span>
+                            <CheckCircle className="w-5 h-5 text-brand-gold mt-0.5 flex-shrink-0" />
+                            <span className="text-ink-paragraph">{feature}</span>
                           </div>
                         ))}
                       </div>
@@ -620,21 +620,21 @@ export default function Products() {
                 {/* Specifications */}
                 {selectedProduct.specifications && (
                   <div className="mb-8">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <span className="text-blue-600">📋</span> Specifications
+                    <h3 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+                      <span className="text-status-info">📋</span> Specifications
                     </h3>
-                    <div className="bg-blue-50 rounded-xl p-6">
+                    <div className="bg-status-info/10 rounded-xl p-6">
                       <div className="space-y-3">
                         {Object.entries(selectedProduct.specifications).map(
                           ([key, value], idx) => (
                             <div
                               key={idx}
-                              className="flex justify-between items-center border-b border-blue-100 pb-2 last:border-0"
+                              className="flex justify-between items-center border-b border-status-info/15 pb-2 last:border-0"
                             >
-                              <span className="font-medium text-gray-700">
+                              <span className="font-medium text-ink-paragraph">
                                 {key}:
                               </span>
-                              <span className="text-gray-900">{value}</span>
+                              <span className="text-ink">{value}</span>
                             </div>
                           )
                         )}
@@ -646,22 +646,22 @@ export default function Products() {
                 {/* Pricing & Timeline */}
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   {selectedProduct.pricing && (
-                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
-                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <span className="text-green-600">💰</span> Pricing
+                    <div className="bg-gradient-to-br from-status-success/10 to-status-success/10 p-6 rounded-xl border border-status-success/25">
+                      <h3 className="font-bold text-ink mb-3 flex items-center gap-2">
+                        <span className="text-status-success">💰</span> Pricing
                       </h3>
-                      <p className="text-gray-900 text-xl font-bold">
+                      <p className="text-ink text-xl font-bold">
                         {selectedProduct.pricing}
                       </p>
                     </div>
                   )}
                   {selectedProduct.timeline && (
-                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
-                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <span className="text-purple-600">⏱️</span> Delivery
+                    <div className="bg-gradient-to-br from-brand-gold/10 to-status-error/10 p-6 rounded-xl border border-brand-gold/25">
+                      <h3 className="font-bold text-ink mb-3 flex items-center gap-2">
+                        <span className="text-brand-gold">⏱️</span> Delivery
                         Timeline
                       </h3>
-                      <p className="text-gray-900 text-xl font-bold">
+                      <p className="text-ink text-xl font-bold">
                         {selectedProduct.timeline}
                       </p>
                     </div>

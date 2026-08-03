@@ -144,28 +144,28 @@
 //         name: "Facebook",
 //         icon: "Facebook",
 //         href: "#",
-//         hoverColor: "hover:bg-blue-600",
+//         hoverColor: "hover:bg-status-info",
 //       },
 //       {
 //         id: 2,
 //         name: "Twitter",
 //         icon: "Twitter",
 //         href: "#",
-//         hoverColor: "hover:bg-blue-400",
+//         hoverColor: "hover:bg-status-info",
 //       },
 //       {
 //         id: 3,
 //         name: "Instagram",
 //         icon: "Instagram",
 //         href: "#",
-//         hoverColor: "hover:bg-pink-600",
+//         hoverColor: "hover:bg-status-error",
 //       },
 //       {
 //         id: 4,
 //         name: "LinkedIn",
 //         icon: "Linkedin",
 //         href: "#",
-//         hoverColor: "hover:bg-blue-700",
+//         hoverColor: "hover:bg-status-info",
 //       },
 //     ],
 //     legalLinks: [
@@ -516,7 +516,7 @@
 //           name: "New Social",
 //           icon: "Facebook",
 //           href: "#",
-//           hoverColor: "hover:bg-blue-600",
+//           hoverColor: "hover:bg-status-info",
 //         },
 //       ],
 //     }));
@@ -598,7 +598,7 @@
 //     <>
 //       {/* Footer Preview/Edit */}
 //       <motion.footer
-//         className="bg-gray-900 border-t border-gray-800 relative"
+//         className="bg-ink border-t border-ink-charcoal relative"
 //         initial={{ opacity: 0 }}
 //         whileInView={{ opacity: 1 }}
 //         viewport={{ once: true }}
@@ -609,7 +609,7 @@
 //           {!isEditing ? (
 //             <Button
 //               onClick={handleEdit}
-//               className="bg-yellow-400 hover:bg-yellow-500 text-black"
+//               className="bg-brand-yellow hover:bg-brand-gold text-ink"
 //               size="sm"
 //             >
 //               <Edit2 className="w-3 h-3 mr-1" />
@@ -619,7 +619,7 @@
 //             <div className="flex gap-2">
 //               <Button
 //                 onClick={handleSave}
-//                 className="bg-green-600 hover:bg-green-700 text-white"
+//                 className="bg-status-success hover:bg-status-success text-white"
 //                 size="sm"
 //                 disabled={isSaving || isUploading}
 //               >
@@ -634,7 +634,7 @@
 //               </Button>
 //               <Button
 //                 onClick={handleCancel}
-//                 className="bg-gray-600 hover:bg-gray-700 text-white"
+//                 className="bg-ink-paragraph hover:bg-ink-paragraph text-white"
 //                 size="sm"
 //                 disabled={isSaving || isUploading}
 //               >
@@ -660,7 +660,7 @@
 //               variants={itemVariants}
 //             >
 //               <div className="flex items-center justify-start md:justify-start space-x-3 mb-4">
-//                 <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400 ">
+//                 <span className="flex flex-row gap-2 text-xl font-bold text-brand-yellow ">
 //                   <div className="relative">
 //                     <img
 //                       src={isEditing ? tempData.brand.logoUrl : footerData.brand.logoUrl}
@@ -675,13 +675,13 @@
 //                         <Button
 //                           size="sm"
 //                           variant="outline"
-//                           className="bg-gray-800 text-gray-100 border-gray-600 hover:bg-gray-700"
+//                           className="bg-ink-charcoal text-ink-light border-ink-paragraph hover:bg-ink-paragraph"
 //                           onClick={() => fileInputRef.current?.click()}
 //                         >
 //                           <Upload className="w-3 h-3 mr-1" /> Change Logo
 //                         </Button>
 //                         {pendingLogoFile && (
-//                           <span className="text-xs text-gray-400 max-w-[160px] truncate">
+//                           <span className="text-xs text-ink-caption max-w-[160px] truncate">
 //                             Selected: {pendingLogoFile.name}
 //                           </span>
 //                         )}
@@ -702,10 +702,10 @@
 //                         value={tempData.brand.name}
 //                         onChange={(e) => updateBrand("name", e.target.value)}
 //                         placeholder="Brand name"
-//                         className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm"
+//                         className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-sm"
 //                         maxLength={CHAR_LIMITS.brandName}
 //                       />
-//                       <div className="text-xs text-gray-500 text-right mt-1">
+//                       <div className="text-xs text-ink-caption text-right mt-1">
 //                         {tempData.brand.name.length}/{CHAR_LIMITS.brandName} characters
 //                       </div>
 //                     </div>
@@ -717,23 +717,23 @@
 
 //               {isEditing ? (
 //                 <div className="mb-4">
-//                   <label className="block text-xs text-gray-400 mb-1">
+//                   <label className="block text-xs text-ink-caption mb-1">
 //                     Description:
 //                   </label>
 //                   <textarea
 //                     value={tempData.brand.description}
 //                     onChange={(e) => updateBrand("description", e.target.value)}
 //                     placeholder="Brand description"
-//                     className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white text-sm resize-none"
+//                     className="w-full p-2 border border-ink-paragraph rounded bg-ink-charcoal text-white text-sm resize-none"
 //                     rows={3}
 //                     maxLength={CHAR_LIMITS.brandDescription}
 //                   />
-//                   <div className="text-xs text-gray-500 text-right mt-1">
+//                   <div className="text-xs text-ink-caption text-right mt-1">
 //                     {tempData.brand.description.length}/{CHAR_LIMITS.brandDescription} characters
 //                   </div>
 //                 </div>
 //               ) : (
-//                 <p className="text-gray-300 text-sm leading-relaxed mb-6">
+//                 <p className="text-ink-light text-sm leading-relaxed mb-6">
 //                   {footerData.brand.description}
 //                 </p>
 //               )}
@@ -757,10 +757,10 @@
 //                             updateSectionTitle(sectionIndex, e.target.value)
 //                           }
 //                           placeholder="Section title"
-//                           className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm font-semibold"
+//                           className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-sm font-semibold"
 //                           maxLength={CHAR_LIMITS.sectionTitle}
 //                         />
-//                         <div className="text-xs text-gray-500 text-right mt-1">
+//                         <div className="text-xs text-ink-caption text-right mt-1">
 //                           {section.title.length}/{CHAR_LIMITS.sectionTitle} characters
 //                         </div>
 //                       </div>
@@ -800,10 +800,10 @@
 //                                 )
 //                               }
 //                               placeholder="Link text"
-//                               className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
+//                               className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-xs"
 //                               maxLength={CHAR_LIMITS.linkText}
 //                             />
-//                             <div className="text-xs text-gray-500 text-right mt-1">
+//                             <div className="text-xs text-ink-caption text-right mt-1">
 //                               {link.text.length}/{CHAR_LIMITS.linkText} characters
 //                             </div>
 //                           </div>
@@ -820,10 +820,10 @@
 //                                 )
 //                               }
 //                               placeholder="Link URL"
-//                               className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
+//                               className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-xs"
 //                               maxLength={CHAR_LIMITS.linkUrl}
 //                             />
-//                             <div className="text-xs text-gray-500 text-right mt-1">
+//                             <div className="text-xs text-ink-caption text-right mt-1">
 //                               {link.href.length}/{CHAR_LIMITS.linkUrl} characters
 //                             </div>
 //                           </div>
@@ -831,7 +831,7 @@
 //                       ) : (
 //                         <a
 //                           href={link.href}
-//                           className="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex-1"
+//                           className="text-ink-light hover:text-status-info transition-colors duration-200 flex-1"
 //                         >
 //                           {link.text}
 //                         </a>
@@ -840,7 +840,7 @@
 //                       {isEditing && (
 //                         <button
 //                           onClick={() => removeSectionLink(section.id, link.id)}
-//                           className="text-red-400 hover:text-red-300 p-1"
+//                           className="text-status-error hover:text-status-error/40 p-1"
 //                         >
 //                           <Trash2 className="w-3 h-3" />
 //                         </button>
@@ -852,7 +852,7 @@
 //                     <li>
 //                       <button
 //                         onClick={() => addSectionLink(section.id)}
-//                         className="text-blue-400 hover:text-blue-300 flex items-center gap-1 text-sm"
+//                         className="text-status-info hover:text-status-info/40 flex items-center gap-1 text-sm"
 //                       >
 //                         <Plus className="w-3 h-3" />
 //                         Add Link
@@ -873,7 +873,7 @@
 //                   onClick={addSection}
 //                   size="sm"
 //                   variant="outline"
-//                   className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
+//                   className="text-status-success border-status-success hover:bg-status-success hover:text-white"
 //                 >
 //                   <Plus className="w-4 h-4 mr-1" />
 //                   Add Section
@@ -885,14 +885,14 @@
 //           {/* Edit Mode Instructions */}
 //           {isEditing && (
 //             <motion.div
-//               className="mt-8 p-4 bg-blue-900/50 rounded-lg border border-blue-700"
+//               className="mt-8 p-4 bg-status-info/50 rounded-lg border border-status-info"
 //               initial={{ opacity: 0 }}
 //               animate={{ opacity: 1 }}
 //             >
-//               <p className="text-sm text-blue-300 mb-2">
+//               <p className="text-sm text-status-info/40 mb-2">
 //                 <strong>Edit Mode Active:</strong> Character limits:
 //               </p>
-//               <ul className="text-xs text-blue-300 space-y-1">
+//               <ul className="text-xs text-status-info/40 space-y-1">
 //                 <li>• <strong>Brand Name:</strong> {CHAR_LIMITS.brandName} characters</li>
 //                 <li>• <strong>Brand Description:</strong> {CHAR_LIMITS.brandDescription} characters</li>
 //                 <li>• <strong>Section Titles:</strong> {CHAR_LIMITS.sectionTitle} characters</li>
@@ -909,28 +909,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop Logo
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className="flex-1 relative bg-gray-900 min-h-0">
+//             <div className="flex-1 relative bg-ink min-h-0">
 //               <div className="relative w-full h-full">
 //                 <Cropper
 //                   image={imageToCrop}
@@ -962,16 +962,16 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Buttons */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">Aspect Ratio:</p>
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(1)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-//                       ? 'bg-blue-500 text-white border-blue-500'
-//                       : 'bg-white text-gray-700 border-gray-300'
+//                       ? 'bg-status-info text-white border-status-info'
+//                       : 'bg-surface-card text-ink-paragraph border-ink-light'
 //                       }`}
 //                   >
 //                     1:1 (Square)
@@ -979,8 +979,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-//                       ? 'bg-blue-500 text-white border-blue-500'
-//                       : 'bg-white text-gray-700 border-gray-300'
+//                       ? 'bg-status-info text-white border-status-info'
+//                       : 'bg-surface-card text-ink-paragraph border-ink-light'
 //                       }`}
 //                   >
 //                     4:3 (Standard)
@@ -988,8 +988,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(16 / 9)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-//                       ? 'bg-blue-500 text-white border-blue-500'
-//                       : 'bg-white text-gray-700 border-gray-300'
+//                       ? 'bg-status-info text-white border-status-info'
+//                       : 'bg-surface-card text-ink-paragraph border-ink-light'
 //                       }`}
 //                   >
 //                     16:9 (Widescreen)
@@ -1000,14 +1000,14 @@
 //               {/* Zoom Control */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="text-gray-700">Zoom</span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">Zoom</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <div className="flex items-center gap-3">
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     −
 //                   </button>
@@ -1018,19 +1018,19 @@
 //                     max={4}
 //                     step={0.1}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                   />
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     +
 //                   </button>
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom(1)}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     1x
 //                   </button>
@@ -1041,19 +1041,19 @@
 //               <div className="grid grid-cols-3 gap-3">
 //                 <button
 //                   onClick={resetCropSettings}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Reset
 //                 </button>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={applyCrop}
-//                   className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+//                   className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium"
 //                 >
 //                   Apply Crop
 //                 </button>
@@ -1213,28 +1213,28 @@
 //         name: "Facebook",
 //         icon: "Facebook",
 //         href: "#",
-//         hoverColor: "hover:bg-blue-600",
+//         hoverColor: "hover:bg-status-info",
 //       },
 //       {
 //         id: 2,
 //         name: "Twitter",
 //         icon: "Twitter",
 //         href: "#",
-//         hoverColor: "hover:bg-blue-400",
+//         hoverColor: "hover:bg-status-info",
 //       },
 //       {
 //         id: 3,
 //         name: "Instagram",
 //         icon: "Instagram",
 //         href: "#",
-//         hoverColor: "hover:bg-pink-600",
+//         hoverColor: "hover:bg-status-error",
 //       },
 //       {
 //         id: 4,
 //         name: "LinkedIn",
 //         icon: "Linkedin",
 //         href: "#",
-//         hoverColor: "hover:bg-blue-700",
+//         hoverColor: "hover:bg-status-info",
 //       },
 //     ],
 //     legalLinks: [
@@ -1624,7 +1624,7 @@
 //           name: "New Social",
 //           icon: "Facebook",
 //           href: "#",
-//           hoverColor: "hover:bg-blue-600",
+//           hoverColor: "hover:bg-status-info",
 //         },
 //       ],
 //     }));
@@ -1711,7 +1711,7 @@
 //     <>
 //       {/* Footer Preview/Edit */}
 //       <motion.footer
-//         className="bg-gray-900 border-t border-gray-800 relative"
+//         className="bg-ink border-t border-ink-charcoal relative"
 //         initial={{ opacity: 0 }}
 //         whileInView={{ opacity: 1 }}
 //         viewport={{ once: true }}
@@ -1722,7 +1722,7 @@
 //           {!isEditing ? (
 //             <Button
 //               onClick={handleEdit}
-//               className="bg-yellow-400 hover:bg-yellow-500 text-black"
+//               className="bg-brand-yellow hover:bg-brand-gold text-ink"
 //               size="sm"
 //             >
 //               <Edit2 className="w-3 h-3 mr-1" />
@@ -1731,7 +1731,7 @@
 //             <div className="flex gap-2">
 //               <Button
 //                 onClick={handleSave}
-//                 className="bg-green-600 hover:bg-green-700 text-white"
+//                 className="bg-status-success hover:bg-status-success text-white"
 //                 size="sm"
 //                 disabled={isSaving || isUploading || !hasUnsavedChanges}
 //               >
@@ -1744,7 +1744,7 @@
 //               </Button>
 //               <Button
 //                 onClick={handleCancel}
-//                 className="bg-gray-600 hover:bg-gray-700 text-white"
+//                 className="bg-ink-paragraph hover:bg-ink-paragraph text-white"
 //                 size="sm"
 //                 disabled={isSaving || isUploading}
 //               >
@@ -1760,10 +1760,10 @@
 //           <div className="absolute top-4 left-4 z-10">
 //             <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs ${
 //               isSaving 
-//                 ? 'bg-blue-500 text-white' 
+//                 ? 'bg-status-info text-white' 
 //                 : hasUnsavedChanges 
-//                   ? 'bg-yellow-500 text-black' 
-//                   : 'bg-green-500 text-white'
+//                   ? 'bg-brand-gold text-ink' 
+//                   : 'bg-status-success text-white'
 //             }`}>
 //               {isSaving ? (
 //                 <>
@@ -1800,7 +1800,7 @@
 //               variants={itemVariants}
 //             >
 //               <div className="flex items-center justify-start md:justify-start space-x-3 mb-4">
-//                 <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400 ">
+//                 <span className="flex flex-row gap-2 text-xl font-bold text-brand-yellow ">
 //                   <div className="relative">
 //                     <img
 //                       src={isEditing ? tempData.brand.logoUrl : footerData.brand.logoUrl}
@@ -1815,7 +1815,7 @@
 //                         <Button
 //                           size="sm"
 //                           variant="outline"
-//                           className="bg-gray-800 text-gray-100 border-gray-600 hover:bg-gray-700"
+//                           className="bg-ink-charcoal text-ink-light border-ink-paragraph hover:bg-ink-paragraph"
 //                           onClick={() => fileInputRef.current?.click()}
 //                         >
 //                           <Upload className="w-3 h-3 mr-1" /> Change Logo
@@ -1837,10 +1837,10 @@
 //                         value={tempData.brand.name}
 //                         onChange={(e) => updateBrand("name", e.target.value)}
 //                         placeholder="Brand name"
-//                         className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm"
+//                         className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-sm"
 //                         maxLength={CHAR_LIMITS.brandName}
 //                       />
-//                       <div className="text-xs text-gray-500 text-right mt-1">
+//                       <div className="text-xs text-ink-caption text-right mt-1">
 //                         {tempData.brand.name.length}/{CHAR_LIMITS.brandName} characters
 //                       </div>
 //                     </div>
@@ -1852,23 +1852,23 @@
 
 //               {isEditing ? (
 //                 <div className="mb-4">
-//                   <label className="block text-xs text-gray-400 mb-1">
+//                   <label className="block text-xs text-ink-caption mb-1">
 //                     Description:
 //                   </label>
 //                   <textarea
 //                     value={tempData.brand.description}
 //                     onChange={(e) => updateBrand("description", e.target.value)}
 //                     placeholder="Brand description"
-//                     className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white text-sm resize-none"
+//                     className="w-full p-2 border border-ink-paragraph rounded bg-ink-charcoal text-white text-sm resize-none"
 //                     rows={3}
 //                     maxLength={CHAR_LIMITS.brandDescription}
 //                   />
-//                   <div className="text-xs text-gray-500 text-right mt-1">
+//                   <div className="text-xs text-ink-caption text-right mt-1">
 //                     {tempData.brand.description.length}/{CHAR_LIMITS.brandDescription} characters
 //                   </div>
 //                 </div>
 //               ) : (
-//                 <p className="text-gray-300 text-sm leading-relaxed mb-6">
+//                 <p className="text-ink-light text-sm leading-relaxed mb-6">
 //                   {footerData.brand.description}
 //                 </p>
 //               )}
@@ -1892,10 +1892,10 @@
 //                             updateSectionTitle(sectionIndex, e.target.value)
 //                           }
 //                           placeholder="Section title"
-//                           className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm font-semibold"
+//                           className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-sm font-semibold"
 //                           maxLength={CHAR_LIMITS.sectionTitle}
 //                         />
-//                         <div className="text-xs text-gray-500 text-right mt-1">
+//                         <div className="text-xs text-ink-caption text-right mt-1">
 //                           {section.title.length}/{CHAR_LIMITS.sectionTitle} characters
 //                         </div>
 //                       </div>
@@ -1935,10 +1935,10 @@
 //                                 )
 //                               }
 //                               placeholder="Link text"
-//                               className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
+//                               className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-xs"
 //                               maxLength={CHAR_LIMITS.linkText}
 //                             />
-//                             <div className="text-xs text-gray-500 text-right mt-1">
+//                             <div className="text-xs text-ink-caption text-right mt-1">
 //                               {link.text.length}/{CHAR_LIMITS.linkText} characters
 //                             </div>
 //                           </div>
@@ -1955,10 +1955,10 @@
 //                                 )
 //                               }
 //                               placeholder="Link URL"
-//                               className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
+//                               className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-xs"
 //                               maxLength={CHAR_LIMITS.linkUrl}
 //                             />
-//                             <div className="text-xs text-gray-500 text-right mt-1">
+//                             <div className="text-xs text-ink-caption text-right mt-1">
 //                               {link.href.length}/{CHAR_LIMITS.linkUrl} characters
 //                             </div>
 //                           </div>
@@ -1966,7 +1966,7 @@
 //                       ) : (
 //                         <a
 //                           href={link.href}
-//                           className="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex-1"
+//                           className="text-ink-light hover:text-status-info transition-colors duration-200 flex-1"
 //                         >
 //                           {link.text}
 //                         </a>
@@ -1975,7 +1975,7 @@
 //                       {isEditing && (
 //                         <button
 //                           onClick={() => removeSectionLink(section.id, link.id)}
-//                           className="text-red-400 hover:text-red-300 p-1"
+//                           className="text-status-error hover:text-status-error/40 p-1"
 //                         >
 //                           <Trash2 className="w-3 h-3" />
 //                         </button>
@@ -1987,7 +1987,7 @@
 //                     <li>
 //                       <button
 //                         onClick={() => addSectionLink(section.id)}
-//                         className="text-blue-400 hover:text-blue-300 flex items-center gap-1 text-sm"
+//                         className="text-status-info hover:text-status-info/40 flex items-center gap-1 text-sm"
 //                       >
 //                         <Plus className="w-3 h-3" />
 //                         Add Link
@@ -2008,7 +2008,7 @@
 //                   onClick={addSection}
 //                   size="sm"
 //                   variant="outline"
-//                   className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
+//                   className="text-status-success border-status-success hover:bg-status-success hover:text-white"
 //                 >
 //                   <Plus className="w-4 h-4 mr-1" />
 //                   Add Section
@@ -2020,14 +2020,14 @@
 //           {/* Edit Mode Instructions */}
 //           {isEditing && (
 //             <motion.div
-//               className="mt-8 p-4 bg-blue-900/50 rounded-lg border border-blue-700"
+//               className="mt-8 p-4 bg-status-info/50 rounded-lg border border-status-info"
 //               initial={{ opacity: 0 }}
 //               animate={{ opacity: 1 }}
 //             >
-//               <p className="text-sm text-blue-300 mb-2">
+//               <p className="text-sm text-status-info/40 mb-2">
 //                 <strong>Edit Mode Active:</strong> Changes are saved automatically every 2 seconds
 //               </p>
-//               <ul className="text-xs text-blue-300 space-y-1">
+//               <ul className="text-xs text-status-info/40 space-y-1">
 //                 <li>• <strong>Brand Name:</strong> {CHAR_LIMITS.brandName} characters</li>
 //                 <li>• <strong>Brand Description:</strong> {CHAR_LIMITS.brandDescription} characters</li>
 //                 <li>• <strong>Section Titles:</strong> {CHAR_LIMITS.sectionTitle} characters</li>
@@ -2044,28 +2044,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop Logo
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className="flex-1 relative bg-gray-900 min-h-0">
+//             <div className="flex-1 relative bg-ink min-h-0">
 //               <div className="relative w-full h-full">
 //                 <Cropper
 //                   image={imageToCrop}
@@ -2097,16 +2097,16 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Buttons */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">Aspect Ratio:</p>
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(1)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-//                       ? 'bg-blue-500 text-white border-blue-500'
-//                       : 'bg-white text-gray-700 border-gray-300'
+//                       ? 'bg-status-info text-white border-status-info'
+//                       : 'bg-surface-card text-ink-paragraph border-ink-light'
 //                       }`}
 //                   >
 //                     1:1 (Square)
@@ -2114,8 +2114,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-//                       ? 'bg-blue-500 text-white border-blue-500'
-//                       : 'bg-white text-gray-700 border-gray-300'
+//                       ? 'bg-status-info text-white border-status-info'
+//                       : 'bg-surface-card text-ink-paragraph border-ink-light'
 //                       }`}
 //                   >
 //                     4:3 (Standard)
@@ -2123,8 +2123,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(16 / 9)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-//                       ? 'bg-blue-500 text-white border-blue-500'
-//                       : 'bg-white text-gray-700 border-gray-300'
+//                       ? 'bg-status-info text-white border-status-info'
+//                       : 'bg-surface-card text-ink-paragraph border-ink-light'
 //                       }`}
 //                   >
 //                     16:9 (Widescreen)
@@ -2135,14 +2135,14 @@
 //               {/* Zoom Control */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="text-gray-700">Zoom</span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">Zoom</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <div className="flex items-center gap-3">
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     −
 //                   </button>
@@ -2153,19 +2153,19 @@
 //                     max={4}
 //                     step={0.1}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                   />
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     +
 //                   </button>
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom(1)}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     1x
 //                   </button>
@@ -2176,20 +2176,20 @@
 //               <div className="grid grid-cols-3 gap-3">
 //                 <button
 //                   onClick={resetCropSettings}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Reset
 //                 </button>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={applyCrop}
 //                   disabled={isUploading}
-//                   className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+//                   className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:bg-ink-caption disabled:cursor-not-allowed"
 //                 >
 //                   {isUploading ? (
 //                     <>
@@ -2376,28 +2376,28 @@ export default function EditableFooter({
         name: "Facebook",
         icon: "Facebook",
         href: "#",
-        hoverColor: "hover:bg-blue-600",
+        hoverColor: "hover:bg-status-info",
       },
       {
         id: 2,
         name: "Twitter",
         icon: "Twitter",
         href: "#",
-        hoverColor: "hover:bg-blue-400",
+        hoverColor: "hover:bg-status-info",
       },
       {
         id: 3,
         name: "Instagram",
         icon: "Instagram",
         href: "#",
-        hoverColor: "hover:bg-pink-600",
+        hoverColor: "hover:bg-status-error",
       },
       {
         id: 4,
         name: "LinkedIn",
         icon: "Linkedin",
         href: "#",
-        hoverColor: "hover:bg-blue-700",
+        hoverColor: "hover:bg-status-info",
       },
     ],
     legalLinks: [
@@ -2816,7 +2816,7 @@ export default function EditableFooter({
           name: "New Social",
           icon: "Facebook",
           href: "#",
-          hoverColor: "hover:bg-blue-600",
+          hoverColor: "hover:bg-status-info",
         },
       ],
     }));
@@ -2898,7 +2898,7 @@ export default function EditableFooter({
     <>
       {/* Footer Preview/Edit */}
       <motion.footer
-        className="bg-gray-900 border-t border-gray-800 relative"
+        className="bg-ink border-t border-ink-charcoal relative"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -2909,7 +2909,7 @@ export default function EditableFooter({
           {!isEditing ? (
             <Button
               onClick={handleEdit}
-              className="bg-yellow-400 hover:bg-yellow-500 text-black"
+              className="bg-brand-yellow hover:bg-brand-gold text-ink"
               size="sm"
             >
               <Edit2 className="w-3 h-3 mr-1" />
@@ -2920,25 +2920,25 @@ export default function EditableFooter({
               <div className="flex items-center gap-2 bg-white/90 px-3 py-1 rounded-md shadow-sm">
                 {isAutoSaving ? (
                   <>
-                    <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
-                    <span className="text-xs text-gray-600">Saving...</span>
+                    <Loader2 className="w-3 h-3 animate-spin text-status-info" />
+                    <span className="text-xs text-ink-paragraph">Saving...</span>
                   </>
                 ) : lastSaved ? (
                   <>
-                    <Check className="w-3 h-3 text-green-600" />
-                    <span className="text-xs text-gray-600">
+                    <Check className="w-3 h-3 text-status-success" />
+                    <span className="text-xs text-ink-paragraph">
                       Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </>
                 ) : (
-                  <span className="text-xs text-gray-600">Unsaved changes</span>
+                  <span className="text-xs text-ink-paragraph">Unsaved changes</span>
                 )}
               </div>
 
               {/* Manual Save button */}
               <Button
                 onClick={handleSave}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-status-success hover:bg-status-success text-white"
                 size="sm"
                 disabled={isAutoSaving || isUploading}
               >
@@ -2951,7 +2951,7 @@ export default function EditableFooter({
               </Button>
               <Button
                 onClick={handleCancel}
-                className="bg-gray-600 hover:bg-gray-700 text-white"
+                className="bg-ink-paragraph hover:bg-ink-paragraph text-white"
                 size="sm"
                 disabled={isAutoSaving || isUploading}
               >
@@ -2977,7 +2977,7 @@ export default function EditableFooter({
               variants={itemVariants}
             >
               <div className="flex items-center justify-start md:justify-start space-x-3 mb-4">
-                <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400 ">
+                <span className="flex flex-row gap-2 text-xl font-bold text-brand-yellow ">
                   <div className="relative">
                     {/* <img
                       src={isEditing ? tempData.brand.logoUrl : footerData.brand.logoUrl}
@@ -2992,13 +2992,13 @@ export default function EditableFooter({
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-gray-800 text-gray-100 border-gray-600 hover:bg-gray-700"
+                          className="bg-ink-charcoal text-ink-light border-ink-paragraph hover:bg-ink-paragraph"
                           onClick={() => fileInputRef.current?.click()}
                         >
                           <Upload className="w-3 h-3 mr-1" /> Change Logo
                         </Button>
                         {pendingLogoRef.current && (
-                          <span className="text-xs text-gray-400 max-w-[160px] truncate">
+                          <span className="text-xs text-ink-caption max-w-[160px] truncate">
                             New logo selected
                           </span>
                         )}
@@ -3019,10 +3019,10 @@ export default function EditableFooter({
                         value={tempData.brand.name}
                         onChange={(e) => updateBrand("name", e.target.value)}
                         placeholder="Brand name"
-                        className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm"
+                        className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-sm"
                         maxLength={CHAR_LIMITS.brandName}
                       />
-                      <div className="text-xs text-gray-500 text-right mt-1">
+                      <div className="text-xs text-ink-caption text-right mt-1">
                         {tempData.brand.name.length}/{CHAR_LIMITS.brandName} characters
                       </div>
                     </div>
@@ -3034,23 +3034,23 @@ export default function EditableFooter({
 
               {isEditing ? (
                 <div className="mb-4">
-                  <label className="block text-xs text-gray-400 mb-1">
+                  <label className="block text-xs text-ink-caption mb-1">
                     Description:
                   </label>
                   <textarea
                     value={tempData.brand.description}
                     onChange={(e) => updateBrand("description", e.target.value)}
                     placeholder="Brand description"
-                    className="w-full p-2 border border-gray-600 rounded bg-gray-800 text-white text-sm resize-none"
+                    className="w-full p-2 border border-ink-paragraph rounded bg-ink-charcoal text-white text-sm resize-none"
                     rows={3}
                     maxLength={CHAR_LIMITS.brandDescription}
                   />
-                  <div className="text-xs text-gray-500 text-right mt-1">
+                  <div className="text-xs text-ink-caption text-right mt-1">
                     {tempData.brand.description.length}/{CHAR_LIMITS.brandDescription} characters
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                <p className="text-ink-light text-sm leading-relaxed mb-6">
                   {footerData.brand.description}
                 </p>
               )}
@@ -3074,10 +3074,10 @@ export default function EditableFooter({
                             updateSectionTitle(sectionIndex, e.target.value)
                           }
                           placeholder="Section title"
-                          className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-sm font-semibold"
+                          className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-sm font-semibold"
                           maxLength={CHAR_LIMITS.sectionTitle}
                         />
-                        <div className="text-xs text-gray-500 text-right mt-1">
+                        <div className="text-xs text-ink-caption text-right mt-1">
                           {section.title.length}/{CHAR_LIMITS.sectionTitle} characters
                         </div>
                       </div>
@@ -3117,10 +3117,10 @@ export default function EditableFooter({
                                 )
                               }
                               placeholder="Link text"
-                              className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
+                              className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-xs"
                               maxLength={CHAR_LIMITS.linkText}
                             />
-                            <div className="text-xs text-gray-500 text-right mt-1">
+                            <div className="text-xs text-ink-caption text-right mt-1">
                               {link.text.length}/{CHAR_LIMITS.linkText} characters
                             </div>
                           </div>
@@ -3137,10 +3137,10 @@ export default function EditableFooter({
                                 )
                               }
                               placeholder="Link URL"
-                              className="w-full p-1 border border-gray-600 rounded bg-gray-800 text-white text-xs"
+                              className="w-full p-1 border border-ink-paragraph rounded bg-ink-charcoal text-white text-xs"
                               maxLength={CHAR_LIMITS.linkUrl}
                             />
-                            <div className="text-xs text-gray-500 text-right mt-1">
+                            <div className="text-xs text-ink-caption text-right mt-1">
                               {link.href.length}/{CHAR_LIMITS.linkUrl} characters
                             </div>
                           </div>
@@ -3148,7 +3148,7 @@ export default function EditableFooter({
                       ) : (
                         <a
                           href={link.href}
-                          className="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex-1"
+                          className="text-ink-light hover:text-status-info transition-colors duration-200 flex-1"
                         >
                           {link.text}
                         </a>
@@ -3157,7 +3157,7 @@ export default function EditableFooter({
                       {isEditing && (
                         <button
                           onClick={() => removeSectionLink(section.id, link.id)}
-                          className="text-red-400 hover:text-red-300 p-1"
+                          className="text-status-error hover:text-status-error/40 p-1"
                         >
                           <Trash2 className="w-3 h-3" />
                         </button>
@@ -3169,7 +3169,7 @@ export default function EditableFooter({
                     <li>
                       <button
                         onClick={() => addSectionLink(section.id)}
-                        className="text-blue-400 hover:text-blue-300 flex items-center gap-1 text-sm"
+                        className="text-status-info hover:text-status-info/40 flex items-center gap-1 text-sm"
                       >
                         <Plus className="w-3 h-3" />
                         Add Link
@@ -3190,7 +3190,7 @@ export default function EditableFooter({
                   onClick={addSection}
                   size="sm"
                   variant="outline"
-                  className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white"
+                  className="text-status-success border-status-success hover:bg-status-success hover:text-white"
                 >
                   <Plus className="w-4 h-4 mr-1" />
                   Add Section
@@ -3202,14 +3202,14 @@ export default function EditableFooter({
           {/* Edit Mode Instructions */}
           {isEditing && (
             <motion.div
-              className="mt-8 p-4 bg-blue-900/50 rounded-lg border border-blue-700"
+              className="mt-8 p-4 bg-status-info/50 rounded-lg border border-status-info"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              <p className="text-sm text-blue-300 mb-2">
+              <p className="text-sm text-status-info/40 mb-2">
                 <strong>Edit Mode Active:</strong> Character limits:
               </p>
-              <ul className="text-xs text-blue-300 space-y-1">
+              <ul className="text-xs text-status-info/40 space-y-1">
                 <li>• <strong>Brand Name:</strong> {CHAR_LIMITS.brandName} characters</li>
                 <li>• <strong>Brand Description:</strong> {CHAR_LIMITS.brandDescription} characters</li>
                 <li>• <strong>Section Titles:</strong> {CHAR_LIMITS.sectionTitle} characters</li>
@@ -3226,28 +3226,28 @@ export default function EditableFooter({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Logo
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop}
@@ -3279,16 +3279,16 @@ export default function EditableFooter({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">Aspect Ratio:</p>
+                <p className="text-sm font-medium text-ink-paragraph mb-2">Aspect Ratio:</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-status-info text-white border-status-info'
+                      : 'bg-surface-card text-ink-paragraph border-ink-light'
                       }`}
                   >
                     1:1 (Square)
@@ -3296,8 +3296,8 @@ export default function EditableFooter({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-status-info text-white border-status-info'
+                      : 'bg-surface-card text-ink-paragraph border-ink-light'
                       }`}
                   >
                     4:3 (Standard)
@@ -3305,8 +3305,8 @@ export default function EditableFooter({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? 'bg-blue-500 text-white border-blue-500'
-                      : 'bg-white text-gray-700 border-gray-300'
+                      ? 'bg-status-info text-white border-status-info'
+                      : 'bg-surface-card text-ink-paragraph border-ink-light'
                       }`}
                   >
                     16:9 (Widescreen)
@@ -3317,14 +3317,14 @@ export default function EditableFooter({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -3335,19 +3335,19 @@ export default function EditableFooter({
                     max={4}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     +
                   </button>
                   <button
                     type="button"
                     onClick={() => setZoom(1)}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     1x
                   </button>
@@ -3358,19 +3358,19 @@ export default function EditableFooter({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium"
                   disabled={isUploading}
                 >
                   {isUploading ? (

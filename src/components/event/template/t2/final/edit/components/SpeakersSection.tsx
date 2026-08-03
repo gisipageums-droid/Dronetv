@@ -34,8 +34,8 @@ const CustomButton = ({
 }) => {
   const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -88,16 +88,16 @@ interface SpeakersProps {
 
 // Color options for speakers
 const colorOptions = [
-  'from-yellow-400 to-amber-500',
-  'from-amber-400 to-orange-500',
-  'from-yellow-300 to-amber-400',
-  'from-amber-500 to-yellow-600',
-  'from-yellow-400 to-amber-600',
-  'from-amber-400 to-yellow-500',
-  'from-blue-400 to-blue-600',
-  'from-green-400 to-green-600',
-  'from-purple-400 to-purple-600',
-  'from-pink-400 to-pink-600',
+  'from-brand-yellow to-brand-gold',
+  'from-brand-yellow to-status-warning',
+  'from-brand-yellow-soft to-brand-yellow',
+  'from-brand-gold to-brand-gold',
+  'from-brand-yellow to-brand-gold',
+  'from-brand-yellow to-brand-gold',
+  'from-status-info to-status-info',
+  'from-status-success to-status-success',
+  'from-brand-gold to-brand-gold',
+  'from-status-error to-status-error',
 ];
 
 // Default speakers data
@@ -118,7 +118,7 @@ const defaultSpeakersData: SpeakersData = {
       "topic": "Session topic",
       "company": "EXACT company",
       "id": "1",
-      "color": "from-yellow-400 to-amber-500"
+      "color": "from-brand-yellow to-brand-gold"
     }
   ]
 };
@@ -147,13 +147,13 @@ const EditableText = ({
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
           placeholder={placeholder}
           rows={rows}
           maxLength={charLimit}
         />
         {charLimit && (
-          <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+          <div className="absolute bottom-2 right-2 text-xs text-ink-caption">
             {value.length}/{charLimit}
           </div>
         )}
@@ -164,12 +164,12 @@ const EditableText = ({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 ${className}`}
+          className={`w-full bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 ${className}`}
           placeholder={placeholder}
           maxLength={charLimit}
         />
         {charLimit && (
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
             {value.length}/{charLimit}
           </div>
         )}
@@ -544,7 +544,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
   const displayData = isEditing ? tempData : data;
 
   return (
-    <section id="speakers" className="py-16 sm:py-20 md:py-24 bg-white">
+    <section id="speakers" className="py-16 sm:py-20 md:py-24 bg-surface-card">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Edit Controls */}
@@ -553,7 +553,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
               <CustomButton
                 onClick={handleEdit}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                className="bg-status-error hover:bg-status-error shadow-md text-white"
               >
                 <Edit2 className="w-4 h-4 mr-2" />
                 Edit Speakers
@@ -563,7 +563,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                 <CustomButton
                   onClick={handleSave}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                  className="bg-status-success hover:bg-status-success text-white shadow-md"
                   disabled={isSaving || isUploading}
                 >
                   {isUploading ? (
@@ -578,7 +578,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                 <CustomButton
                   onClick={handleCancel}
                   size="sm"
-                  className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+                  className="bg-status-error hover:bg-status-error text-white shadow-md"
                   disabled={isSaving || isUploading}
                 >
                   <X className="w-4 h-4 mr-2" />
@@ -588,7 +588,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                   onClick={addSpeaker}
                   variant="outline"
                   size="sm"
-                  className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                  className="bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Speaker
@@ -601,11 +601,11 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
           <div className="text-center mb-12 sm:mb-16">
             {isEditing ? (
               <>
-                <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
+                <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
                   <EditableText
                     value={displayData.subtitle}
                     onChange={(value) => updateField('subtitle', value)}
-                    className="text-red-700 text-xl font-semibold text-center"
+                    className="text-status-error text-xl font-semibold text-center"
                     placeholder="Section subtitle"
                     charLimit={TEXT_LIMITS.SUBTITLE}
                   />
@@ -613,7 +613,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                 <EditableText
                   value={displayData.heading}
                   onChange={(value) => updateField('heading', value)}
-                  className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
+                  className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl text-center"
                   placeholder="Section heading"
                   charLimit={TEXT_LIMITS.HEADING}
                 />
@@ -621,7 +621,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                   value={displayData.description}
                   onChange={(value) => updateField('description', value)}
                   multiline
-                  className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4 text-center"
+                  className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4 text-center"
                   placeholder="Section description"
                   charLimit={TEXT_LIMITS.DESCRIPTION}
                   rows={2}
@@ -629,11 +629,11 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
               </>
             ) : (
               <>
-                <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
-                  <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+                <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
+                  <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
                 </div>
-                <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-                <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+                <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+                <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
                   {displayData.description}
                 </p>
               </>
@@ -645,7 +645,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
             {displayData.speakers.map((speaker) => (
               <div
                 key={speaker.id}
-                className="group relative bg-white rounded-2xl overflow-hidden border-2 border-gray-100 hover:border-amber-300 hover:shadow-2xl transition-all duration-300"
+                className="group relative bg-surface-card rounded-2xl overflow-hidden border-2 border-ink-light hover:border-brand-yellow-soft hover:shadow-2xl transition-all duration-300"
               >
                 {/* Edit Controls Overlay */}
                 {isEditing && (
@@ -653,7 +653,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                     <CustomButton
                       onClick={() => removeSpeaker(speaker.id)}
                       size="sm"
-                      className="bg-red-500 hover:bg-red-600 text-white p-1"
+                      className="bg-status-error hover:bg-status-error text-white p-1"
                     >
                       <Trash2 className="w-3 h-3" />
                     </CustomButton>
@@ -661,7 +661,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                 )}
 
                 {/* Speaker Header */}
-                <div className={`relative h-40 bg-yellow-200 flex items-center justify-center ${speaker.color}`}>
+                <div className={`relative h-40 bg-brand-yellow-soft flex items-center justify-center ${speaker.color}`}>
                   {speaker.image ? (
                     <img
                       src={speaker.image}
@@ -669,14 +669,14 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                       className="w-20 h-20 rounded-full object-cover shadow-lg group-hover:scale-110 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <User className="w-10 h-10 text-gray-700" />
+                    <div className="w-20 h-20 bg-surface-card rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <User className="w-10 h-10 text-ink-paragraph" />
                     </div>
                   )}
 
                   {/* Image Upload (Edit Mode) */}
                   {isEditing && (
-                    <label className="absolute bottom-2 right-2 cursor-pointer bg-black/70 text-white p-1 rounded text-xs hover:bg-black/90 transition-colors">
+                    <label className="absolute bottom-2 right-2 cursor-pointer bg-ink/70 text-white p-1 rounded text-xs hover:bg-ink-charcoal/90 transition-colors">
                       <Upload className="w-3 h-3" />
                       <input
                         type="file"
@@ -695,21 +695,21 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                       <EditableText
                         value={speaker.name}
                         onChange={(value) => updateSpeaker(speaker.id, 'name', value)}
-                        className="text-gray-900 text-lg sm:text-xl font-semibold"
+                        className="text-ink text-lg sm:text-xl font-semibold"
                         placeholder="Speaker name"
                         charLimit={TEXT_LIMITS.SPEAKER_NAME}
                       />
                       <EditableText
                         value={speaker.role}
                         onChange={(value) => updateSpeaker(speaker.id, 'role', value)}
-                        className="text-amber-600 text-sm sm:text-base"
+                        className="text-brand-gold text-sm sm:text-base"
                         placeholder="Speaker role"
                         charLimit={TEXT_LIMITS.SPEAKER_ROLE}
                       />
                       <EditableText
                         value={speaker.company}
                         onChange={(value) => updateSpeaker(speaker.id, 'company', value)}
-                        className="text-gray-600 text-sm"
+                        className="text-ink-paragraph text-sm"
                         placeholder="Company"
                         charLimit={TEXT_LIMITS.SPEAKER_COMPANY}
                       />
@@ -721,7 +721,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                         value={speaker.topic}
                         onChange={(value) => updateSpeaker(speaker.id, 'topic', value)}
                         multiline
-                        className="text-gray-700 text-sm sm:text-base"
+                        className="text-ink-paragraph text-sm sm:text-base"
                         placeholder="Speaking topic"
                         charLimit={TEXT_LIMITS.SPEAKER_TOPIC}
                         rows={2}
@@ -732,25 +732,25 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                         value={speaker.bio || ''}
                         onChange={(value) => updateSpeaker(speaker.id, 'bio', value)}
                         multiline
-                        className="text-gray-600 text-sm"
+                        className="text-ink-paragraph text-sm"
                         placeholder="Speaker bio"
                         rows={3}
                       />
                     </div>
                   ) : (
                     <>
-                      <h3 className="text-gray-900 mb-2 text-lg sm:text-xl group-hover:text-amber-600 transition-colors">
+                      <h3 className="text-ink mb-2 text-lg sm:text-xl group-hover:text-brand-yellow transition-colors">
                         {speaker.name}
                       </h3>
-                      <p className="text-amber-600 mb-1 text-sm sm:text-base">{speaker.role}</p>
-                      <p className="text-gray-600 mb-4 text-sm">{speaker.company}</p>
-                      <div className="pt-4 border-t border-gray-100">
-                        <p className="text-gray-700 text-sm sm:text-base mb-2">
-                          <span className="text-gray-500">Topic: </span>
+                      <p className="text-brand-gold mb-1 text-sm sm:text-base">{speaker.role}</p>
+                      <p className="text-ink-paragraph mb-4 text-sm">{speaker.company}</p>
+                      <div className="pt-4 border-t border-ink-light">
+                        <p className="text-ink-paragraph text-sm sm:text-base mb-2">
+                          <span className="text-ink-caption">Topic: </span>
                           {speaker.topic}
                         </p>
                         {speaker.bio && (
-                          <p className="text-gray-600 text-sm mt-2">{speaker.bio}</p>
+                          <p className="text-ink-paragraph text-sm mt-2">{speaker.bio}</p>
                         )}
                       </div>
                     </>
@@ -762,13 +762,13 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
             {/* Add New Speaker Card (edit mode) */}
             {isEditing && (
               <div
-                className="group relative bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition-all duration-300 min-h-[400px]"
+                className="group relative bg-ink-offwhite rounded-2xl overflow-hidden border-2 border-dashed border-ink-light flex flex-col items-center justify-center cursor-pointer hover:border-status-info transition-all duration-300 min-h-[400px]"
                 onClick={addSpeaker}
               >
                 <div className="text-center p-6">
-                  <Plus className="w-12 h-12 text-gray-400 group-hover:text-blue-400 mx-auto mb-4" />
-                  <p className="text-gray-500 group-hover:text-blue-400 font-semibold">Add New Speaker</p>
-                  <p className="text-gray-400 text-sm mt-2">Click to add a new speaker</p>
+                  <Plus className="w-12 h-12 text-ink-caption group-hover:text-status-info mx-auto mb-4" />
+                  <p className="text-ink-caption group-hover:text-status-info font-semibold">Add New Speaker</p>
+                  <p className="text-ink-caption text-sm mt-2">Click to add a new speaker</p>
                 </div>
               </div>
             )}
@@ -778,14 +778,14 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
           {displayData.speakers.length === 0 && !isEditing && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                  <User className="w-8 h-8 text-ink-caption" />
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Speakers Added</h4>
-                <p className="text-gray-600 mb-6">Add speakers to showcase your event presenters.</p>
+                <h4 className="text-lg font-semibold text-ink mb-2">No Speakers Added</h4>
+                <p className="text-ink-paragraph mb-6">Add speakers to showcase your event presenters.</p>
                 <CustomButton
                   onClick={handleEdit}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                  className="bg-brand-gold hover:bg-brand-gold text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Speakers
@@ -796,11 +796,11 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
 
           {/* Cropper Modal */}
           {showCropper && (
-            <div className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4">
-              <div className="bg-white rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
+            <div className="fixed inset-0 bg-ink/90 z-[9999] flex items-center justify-center p-4">
+              <div className="bg-surface-card rounded-xl max-w-4xl w-full h-[80vh] flex flex-col">
                 <div className="p-4 border-b flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Crop Speaker Image</h3>
-                  <button onClick={cancelCrop} className="p-1 hover:bg-gray-200 rounded">
+                  <button onClick={cancelCrop} className="p-1 hover:bg-ink-light rounded">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -833,7 +833,7 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
                       onClick={() => setZoom(prev => Math.max(MIN_ZOOM, prev - ZOOM_STEP))}
-                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-8 h-8 flex items-center justify-center bg-ink-light hover:bg-ink-light rounded disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={zoom <= MIN_ZOOM}
                     >
                       -
@@ -849,23 +849,23 @@ export function SpeakersSection({ speakersData, onStateChange, userId, eventId, 
                     />
                     <button
                       onClick={() => setZoom(prev => Math.min(MAX_ZOOM, prev + ZOOM_STEP))}
-                      className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-8 h-8 flex items-center justify-center bg-ink-light hover:bg-ink-light rounded disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={zoom >= MAX_ZOOM}
                     >
                       +
                     </button>
                     <button
                       onClick={() => setZoom(1)}
-                      className="px-2 h-8 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                      className="px-2 h-8 text-sm bg-ink-light hover:bg-ink-light rounded"
                     >
                       1x
                     </button>
-                    <span className="text-sm text-gray-600">({zoom.toFixed(1)}x)</span>
+                    <span className="text-sm text-ink-paragraph">({zoom.toFixed(1)}x)</span>
                   </div>
                   <div className="flex-1 text-right">
                     <button
                       onClick={applyCrop}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                      className="px-4 py-2 bg-status-success text-white rounded hover:bg-status-success"
                     >
                       Apply Crop
                     </button>

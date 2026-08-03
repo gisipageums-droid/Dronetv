@@ -27,8 +27,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes = {
 //     sm: "h-8 px-3 text-sm",
@@ -502,7 +502,7 @@
 //       };
 
 //       const baseClasses =
-//         "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+//         "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none";
 
 //       return (
 //         <div className="relative">
@@ -526,7 +526,7 @@
 //             />
 //           )}
 //           {maxLength && (
-//             <div className="text-right text-xs text-gray-500 mt-1">
+//             <div className="text-right text-xs text-ink-caption mt-1">
 //               {value.length}/{maxLength}
 //             </div>
 //           )}
@@ -549,14 +549,14 @@
 //       <section
 //         id="profile"
 //         ref={sectionRef}
-//         className="py-24 bg-gradient-to-b from-white to-yellow-50/30 scroll-mt-20 relative"
+//         className="py-24 bg-gradient-to-b from-white to-surface-main/30 scroll-mt-20 relative"
 //       >
 //         {/* Loading Overlay */}
 //         {isLoading && (
 //           <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
-//             <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-//               <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-//               <span className="text-gray-700">Loading content...</span>
+//             <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3">
+//               <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+//               <span className="text-ink-paragraph">Loading content...</span>
 //             </div>
 //           </div>
 //         )}
@@ -569,7 +569,7 @@
 //                 onClick={handleEdit}
 //                 variant="outline"
 //                 size="sm"
-//                 className="bg-white hover:bg-gray-50 shadow-md"
+//                 className="bg-surface-card hover:bg-ink-offwhite shadow-md"
 //               >
 //                 <Edit2 className="w-4 h-4 mr-2" />
 //                 Edit
@@ -579,7 +579,7 @@
 //                 <Button
 //                   onClick={handleSave}
 //                   size="sm"
-//                   className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+//                   className="bg-status-success hover:bg-status-success text-white shadow-md"
 //                   disabled={isSaving || isUploading}
 //                 >
 //                   {isUploading ? (
@@ -599,7 +599,7 @@
 //                   onClick={handleCancel}
 //                   variant="outline"
 //                   size="sm"
-//                   className="bg-white hover:bg-gray-50 shadow-md"
+//                   className="bg-surface-card hover:bg-ink-offwhite shadow-md"
 //                   disabled={isSaving || isUploading}
 //                 >
 //                   <X className="w-4 h-4 mr-2" />
@@ -610,7 +610,7 @@
 //           </div>
 //         )}
 
-//         <div className="w-28 rounded-full mx-auto mb-16 bg-orange-100 text-orange-500 text-sm font-semibold text-center py-2">
+//         <div className="w-28 rounded-full mx-auto mb-16 bg-status-warning/15 text-status-warning text-sm font-semibold text-center py-2">
 //           Profile
 //         </div>
 
@@ -644,12 +644,12 @@
 //                 </div>
 //               )}
 //               {isEditing && pendingImageFile && (
-//                 <div className="absolute top-16 right-4 z-10 bg-orange-100 text-orange-800 text-xs p-2 rounded shadow-md max-w-[200px]">
+//                 <div className="absolute top-16 right-4 z-10 bg-status-warning/15 text-status-warning text-xs p-2 rounded shadow-md max-w-[200px]">
 //                   <div className="font-medium">New image selected:</div>
 //                   <div className="truncate">{pendingImageFile.name}</div>
 //                 </div>
 //               )}
-//               <div className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100 w-full max-w-[900px] cursor-pointer" onClick={() => { if (isEditing) fileInputRef.current?.click(); }}>
+//               <div className="rounded-3xl overflow-hidden shadow-xl border border-brand-yellow-soft w-full max-w-[900px] cursor-pointer" onClick={() => { if (isEditing) fileInputRef.current?.click(); }}>
 //                 <img
 //                   src={
 //                     displayContent.imageUrl ||
@@ -675,7 +675,7 @@
 //                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
 //                 transition={{ delay: 0.2, duration: 0.7 }}
 //               >
-//                 <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+//                 <h2 className="text-4xl md:text-5xl font-extrabold text-ink leading-tight">
 //                   {isEditing ? (
 //                     <div className="relative">
 //                       <input
@@ -686,11 +686,11 @@
 //                             updateTempContent("companyName", e.target.value);
 //                           }
 //                         }}
-//                         className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-4xl md:text-5xl font-extrabold"
+//                         className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-4xl md:text-5xl font-extrabold"
 //                         placeholder="Company name"
 //                         maxLength={100}
 //                       />
-//                       <div className="text-right text-xs text-gray-500 mt-1">
+//                       <div className="text-right text-xs text-ink-caption mt-1">
 //                         {displayContent.companyName.length}/100
 //                       </div>
 //                     </div>
@@ -708,17 +708,17 @@
 //                           updateTempContent("description", e.target.value);
 //                         }
 //                       }}
-//                       className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-3 resize-none text-lg text-gray-700 mt-4 max-w-xl"
+//                       className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-3 resize-none text-lg text-ink-paragraph mt-4 max-w-xl"
 //                       placeholder="Company description"
 //                       rows={4}
 //                       maxLength={500}
 //                     />
-//                     <div className="text-right text-xs text-gray-500 mt-1">
+//                     <div className="text-right text-xs text-ink-caption mt-1">
 //                       {displayContent.description.length}/500
 //                     </div>
 //                   </div>
 //                 ) : (
-//                   <p className="text-lg text-gray-700 mt-4 max-w-xl">
+//                   <p className="text-lg text-ink-paragraph mt-4 max-w-xl">
 //                     {displayContent.description}
 //                   </p>
 //                 )}
@@ -745,7 +745,7 @@
 //                     initial={{ opacity: 0, y: 20 }}
 //                     animate={isVisible ? { opacity: 1, y: 0 } : {}}
 //                     transition={{ delay: stat.delay, duration: 0.6 }}
-//                     className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-yellow-100 hover:shadow-md transition-shadow"
+//                     className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-brand-yellow-soft hover:shadow-md transition-shadow"
 //                   >
 //                     {isEditing ? (
 //                       <div className="flex flex-col items-center">
@@ -755,21 +755,21 @@
 //                           onChange={(e) =>
 //                             updateTempContent(stat.field, e.target.value)
 //                           }
-//                           className="w-20 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-3xl md:text-4xl font-extrabold text-gray-900 text-center mb-1"
+//                           className="w-20 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-3xl md:text-4xl font-extrabold text-ink text-center mb-1"
 //                           placeholder="Value"
 //                           min="0"
 //                           max="9999"
 //                         />
-//                         <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
+//                         <div className="text-xs md:text-sm text-ink-paragraph mt-2 uppercase tracking-wide">
 //                           {stat.label}
 //                         </div>
 //                       </div>
 //                     ) : (
 //                       <>
-//                         <div className="text-3xl md:text-4xl font-extrabold text-gray-900">
+//                         <div className="text-3xl md:text-4xl font-extrabold text-ink">
 //                           {stat.value}
 //                         </div>
-//                         <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
+//                         <div className="text-xs md:text-sm text-ink-paragraph mt-2 uppercase tracking-wide">
 //                           {stat.label}
 //                         </div>
 //                       </>
@@ -785,7 +785,7 @@
 //                 transition={{ delay: 1.2, duration: 0.7 }}
 //                 className="mt-8 space-y-4"
 //               >
-//                 <h3 className="text-xl font-bold text-gray-900">
+//                 <h3 className="text-xl font-bold text-ink">
 //                   Our Core Values
 //                 </h3>
 //                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -795,7 +795,7 @@
 //                       initial={{ x: -20, opacity: 0 }}
 //                       animate={isVisible ? { x: 0, opacity: 1 } : {}}
 //                       transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
-//                       className="flex items-center gap-2 p-3 bg-yellow-50 rounded-xl"
+//                       className="flex items-center gap-2 p-3 bg-surface-main rounded-xl"
 //                     >
 //                       <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
 //                       {isEditing ? (
@@ -809,11 +809,11 @@
 //                                   updateCoreValue(i, e.target.value);
 //                                 }
 //                               }}
-//                               className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+//                               className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
 //                               placeholder="Core value"
 //                               maxLength={100}
 //                             />
-//                             <div className="text-right text-xs text-gray-500 mt-1">
+//                             <div className="text-right text-xs text-ink-caption mt-1">
 //                               {value.length}/100
 //                             </div>
 //                           </div>
@@ -821,13 +821,13 @@
 //                             onClick={() => removeCoreValue(i)}
 //                             size="sm"
 //                             variant="outline"
-//                             className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+//                             className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
 //                           >
 //                             <Trash2 className="w-3 h-3" />
 //                           </Button>
 //                         </div>
 //                       ) : (
-//                         <span className="text-gray-800 font-medium">
+//                         <span className="text-ink-charcoal font-medium">
 //                           {value}
 //                         </span>
 //                       )}
@@ -838,7 +838,7 @@
 //                       onClick={addCoreValue}
 //                       size="sm"
 //                       variant="outline"
-//                       className="bg-green-50 hover:bg-green-100 text-green-700 w-full"
+//                       className="bg-status-success/10 hover:bg-status-success/15 text-status-success w-full"
 //                     >
 //                       <Plus className="w-3 h-3 mr-1" /> Add Value
 //                     </Button>
@@ -855,28 +855,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop Company Image
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className="flex-1 relative bg-gray-900 min-h-0">
+//             <div className="flex-1 relative bg-ink min-h-0">
 //               <div className="relative w-full h-full">
 //                 <Cropper
 //                   image={imageToCrop}
@@ -911,18 +911,18 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Buttons */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">
 //                   Aspect Ratio:
 //                 </p>
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(1)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     1:1 (Square)
@@ -930,8 +930,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     4:3 (Standard)
@@ -939,8 +939,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(16 / 9)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     16:9 (Widescreen)
@@ -951,14 +951,14 @@
 //               {/* Zoom Control */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="text-gray-700">Zoom</span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">Zoom</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <div className="flex items-center gap-3">
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     −
 //                   </button>
@@ -969,19 +969,19 @@
 //                     max={4}
 //                     step={0.1}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                   />
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     +
 //                   </button>
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom(1)}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     1x
 //                   </button>
@@ -992,19 +992,19 @@
 //               <div className="grid grid-cols-3 gap-3">
 //                 <button
 //                   onClick={resetCropSettings}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Reset
 //                 </button>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={applyCrop}
-//                   className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+//                   className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium"
 //                 >
 //                   Apply Crop
 //                 </button>
@@ -1048,8 +1048,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes = {
 //     sm: "h-8 px-3 text-sm",
@@ -1601,7 +1601,7 @@
 //       };
 
 //       const baseClasses =
-//         "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+//         "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none";
 
 //       return (
 //         <div className="relative">
@@ -1625,7 +1625,7 @@
 //             />
 //           )}
 //           {maxLength && (
-//             <div className="text-right text-xs text-gray-500 mt-1">
+//             <div className="text-right text-xs text-ink-caption mt-1">
 //               {value.length}/{maxLength}
 //             </div>
 //           )}
@@ -1648,14 +1648,14 @@
 //       <section
 //         id="profile"
 //         ref={sectionRef}
-//         className="py-24 bg-gradient-to-b from-white to-yellow-50/30 scroll-mt-20 relative"
+//         className="py-24 bg-gradient-to-b from-white to-surface-main/30 scroll-mt-20 relative"
 //       >
 //         {/* Loading Overlay */}
 //         {isLoading && (
 //           <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
-//             <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-//               <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-//               <span className="text-gray-700">Loading content...</span>
+//             <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3">
+//               <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+//               <span className="text-ink-paragraph">Loading content...</span>
 //             </div>
 //           </div>
 //         )}
@@ -1666,18 +1666,18 @@
 //             <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
 //               {isSaving ? (
 //                 <>
-//                   <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
-//                   <span className="text-xs text-gray-700">Saving...</span>
+//                   <Loader2 className="w-3 h-3 animate-spin text-status-info" />
+//                   <span className="text-xs text-ink-paragraph">Saving...</span>
 //                 </>
 //               ) : unsavedChanges ? (
 //                 <>
-//                   <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-//                   <span className="text-xs text-gray-700">Unsaved changes</span>
+//                   <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+//                   <span className="text-xs text-ink-paragraph">Unsaved changes</span>
 //                 </>
 //               ) : (
 //                 <>
-//                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-//                   <span className="text-xs text-gray-700">
+//                   <div className="w-2 h-2 bg-status-success rounded-full"></div>
+//                   <span className="text-xs text-ink-paragraph">
 //                     Saved {lastSaved && `at ${lastSaved}`}
 //                   </span>
 //                 </>
@@ -1694,7 +1694,7 @@
 //                 onClick={handleEdit}
 //                 variant="outline"
 //                 size="sm"
-//                 className="bg-white hover:bg-gray-50 shadow-md"
+//                 className="bg-surface-card hover:bg-ink-offwhite shadow-md"
 //               >
 //                 <Edit2 className="w-4 h-4 mr-2" />
 //                 Edit
@@ -1704,7 +1704,7 @@
 //                 <Button
 //                   onClick={handleSave}
 //                   size="sm"
-//                   className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+//                   className="bg-status-success hover:bg-status-success text-white shadow-md"
 //                   disabled={isSaving || isUploading}
 //                 >
 //                   {isSaving ? (
@@ -1718,7 +1718,7 @@
 //                   onClick={handleCancel}
 //                   variant="outline"
 //                   size="sm"
-//                   className="bg-white hover:bg-gray-50 shadow-md"
+//                   className="bg-surface-card hover:bg-ink-offwhite shadow-md"
 //                   disabled={isSaving || isUploading}
 //                 >
 //                   <X className="w-4 h-4 mr-2" />
@@ -1729,7 +1729,7 @@
 //           </div>
 //         )}
 
-//         <div className="w-28 rounded-full mx-auto mb-16 bg-orange-100 text-orange-500 text-sm font-semibold text-center py-2">
+//         <div className="w-28 rounded-full mx-auto mb-16 bg-status-warning/15 text-status-warning text-sm font-semibold text-center py-2">
 //           Profile
 //         </div>
 
@@ -1763,14 +1763,14 @@
 //                 </div>
 //               )}
 //               {isEditing && isUploading && (
-//                 <div className="absolute top-16 right-4 z-10 bg-blue-100 text-blue-800 text-xs p-2 rounded shadow-md max-w-[200px]">
+//                 <div className="absolute top-16 right-4 z-10 bg-status-info/15 text-status-info text-xs p-2 rounded shadow-md max-w-[200px]">
 //                   <div className="flex items-center gap-2">
 //                     <Loader2 className="w-3 h-3 animate-spin" />
 //                     <span>Uploading to AWS...</span>
 //                   </div>
 //                 </div>
 //               )}
-//               <div className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100 w-full max-w-[900px] cursor-pointer" onClick={() => { if (isEditing) fileInputRef.current?.click(); }}>
+//               <div className="rounded-3xl overflow-hidden shadow-xl border border-brand-yellow-soft w-full max-w-[900px] cursor-pointer" onClick={() => { if (isEditing) fileInputRef.current?.click(); }}>
 //                 <img
 //                   src={
 //                     displayContent.imageUrl ||
@@ -1796,7 +1796,7 @@
 //                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
 //                 transition={{ delay: 0.2, duration: 0.7 }}
 //               >
-//                 <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+//                 <h2 className="text-4xl md:text-5xl font-extrabold text-ink leading-tight">
 //                   {isEditing ? (
 //                     <div className="relative">
 //                       <input
@@ -1807,11 +1807,11 @@
 //                             updateTempContent("companyName", e.target.value);
 //                           }
 //                         }}
-//                         className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-4xl md:text-5xl font-extrabold"
+//                         className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-4xl md:text-5xl font-extrabold"
 //                         placeholder="Company name"
 //                         maxLength={100}
 //                       />
-//                       <div className="text-right text-xs text-gray-500 mt-1">
+//                       <div className="text-right text-xs text-ink-caption mt-1">
 //                         {displayContent.companyName.length}/100
 //                       </div>
 //                     </div>
@@ -1829,17 +1829,17 @@
 //                           updateTempContent("description", e.target.value);
 //                         }
 //                       }}
-//                       className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-3 resize-none text-lg text-gray-700 mt-4 max-w-xl"
+//                       className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-3 resize-none text-lg text-ink-paragraph mt-4 max-w-xl"
 //                       placeholder="Company description"
 //                       rows={4}
 //                       maxLength={500}
 //                     />
-//                     <div className="text-right text-xs text-gray-500 mt-1">
+//                     <div className="text-right text-xs text-ink-caption mt-1">
 //                       {displayContent.description.length}/500
 //                     </div>
 //                   </div>
 //                 ) : (
-//                   <p className="text-lg text-gray-700 mt-4 max-w-xl">
+//                   <p className="text-lg text-ink-paragraph mt-4 max-w-xl">
 //                     {displayContent.description}
 //                   </p>
 //                 )}
@@ -1866,7 +1866,7 @@
 //                     initial={{ opacity: 0, y: 20 }}
 //                     animate={isVisible ? { opacity: 1, y: 0 } : {}}
 //                     transition={{ delay: stat.delay, duration: 0.6 }}
-//                     className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-yellow-100 hover:shadow-md transition-shadow"
+//                     className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-brand-yellow-soft hover:shadow-md transition-shadow"
 //                   >
 //                     {isEditing ? (
 //                       <div className="flex flex-col items-center">
@@ -1876,21 +1876,21 @@
 //                           onChange={(e) =>
 //                             updateTempContent(stat.field, e.target.value)
 //                           }
-//                           className="w-20 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-3xl md:text-4xl font-extrabold text-gray-900 text-center mb-1"
+//                           className="w-20 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-3xl md:text-4xl font-extrabold text-ink text-center mb-1"
 //                           placeholder="Value"
 //                           min="0"
 //                           max="9999"
 //                         />
-//                         <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
+//                         <div className="text-xs md:text-sm text-ink-paragraph mt-2 uppercase tracking-wide">
 //                           {stat.label}
 //                         </div>
 //                       </div>
 //                     ) : (
 //                       <>
-//                         <div className="text-3xl md:text-4xl font-extrabold text-gray-900">
+//                         <div className="text-3xl md:text-4xl font-extrabold text-ink">
 //                           {stat.value}
 //                         </div>
-//                         <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
+//                         <div className="text-xs md:text-sm text-ink-paragraph mt-2 uppercase tracking-wide">
 //                           {stat.label}
 //                         </div>
 //                       </>
@@ -1906,7 +1906,7 @@
 //                 transition={{ delay: 1.2, duration: 0.7 }}
 //                 className="mt-8 space-y-4"
 //               >
-//                 <h3 className="text-xl font-bold text-gray-900">
+//                 <h3 className="text-xl font-bold text-ink">
 //                   Our Core Values
 //                 </h3>
 //                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -1916,7 +1916,7 @@
 //                       initial={{ x: -20, opacity: 0 }}
 //                       animate={isVisible ? { x: 0, opacity: 1 } : {}}
 //                       transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
-//                       className="flex items-center gap-2 p-3 bg-yellow-50 rounded-xl"
+//                       className="flex items-center gap-2 p-3 bg-surface-main rounded-xl"
 //                     >
 //                       <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
 //                       {isEditing ? (
@@ -1930,11 +1930,11 @@
 //                                   updateCoreValue(i, e.target.value);
 //                                 }
 //                               }}
-//                               className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+//                               className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
 //                               placeholder="Core value"
 //                               maxLength={100}
 //                             />
-//                             <div className="text-right text-xs text-gray-500 mt-1">
+//                             <div className="text-right text-xs text-ink-caption mt-1">
 //                               {value.length}/100
 //                             </div>
 //                           </div>
@@ -1942,13 +1942,13 @@
 //                             onClick={() => removeCoreValue(i)}
 //                             size="sm"
 //                             variant="outline"
-//                             className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+//                             className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
 //                           >
 //                             <Trash2 className="w-3 h-3" />
 //                           </Button>
 //                         </div>
 //                       ) : (
-//                         <span className="text-gray-800 font-medium">
+//                         <span className="text-ink-charcoal font-medium">
 //                           {value}
 //                         </span>
 //                       )}
@@ -1959,7 +1959,7 @@
 //                       onClick={addCoreValue}
 //                       size="sm"
 //                       variant="outline"
-//                       className="bg-green-50 hover:bg-green-100 text-green-700 w-full"
+//                       className="bg-status-success/10 hover:bg-status-success/15 text-status-success w-full"
 //                     >
 //                       <Plus className="w-3 h-3 mr-1" /> Add Value
 //                     </Button>
@@ -1976,28 +1976,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop Company Image
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className="flex-1 relative bg-gray-900 min-h-0">
+//             <div className="flex-1 relative bg-ink min-h-0">
 //               <div className="relative w-full h-full">
 //                 <Cropper
 //                   image={imageToCrop}
@@ -2032,18 +2032,18 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Buttons */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">
 //                   Aspect Ratio:
 //                 </p>
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(1)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     1:1 (Square)
@@ -2051,8 +2051,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     4:3 (Standard)
@@ -2060,8 +2060,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(16 / 9)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-//                         ? "bg-blue-500 text-white border-blue-500"
-//                         : "bg-white text-gray-700 border-gray-300"
+//                         ? "bg-status-info text-white border-status-info"
+//                         : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     16:9 (Widescreen)
@@ -2072,14 +2072,14 @@
 //               {/* Zoom Control */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="text-gray-700">Zoom</span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">Zoom</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <div className="flex items-center gap-3">
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     −
 //                   </button>
@@ -2090,19 +2090,19 @@
 //                     max={4}
 //                     step={0.1}
 //                     onChange={(e) => setZoom(Number(e.target.value))}
-//                     className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                     className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                   />
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     +
 //                   </button>
 //                   <button
 //                     type="button"
 //                     onClick={() => setZoom(1)}
-//                     className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+//                     className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
 //                   >
 //                     1x
 //                   </button>
@@ -2113,20 +2113,20 @@
 //               <div className="grid grid-cols-3 gap-3">
 //                 <button
 //                   onClick={resetCropSettings}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Reset
 //                 </button>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={applyCrop}
 //                   disabled={isUploading}
-//                   className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+//                   className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
 //                 >
 //                   {isUploading ? (
 //                     <>
@@ -2176,8 +2176,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -2762,7 +2762,7 @@ export default function EditableCompanyProfile({
       };
 
       const baseClasses =
-        "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none";
+        "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none";
 
       return (
         <div className="relative">
@@ -2786,7 +2786,7 @@ export default function EditableCompanyProfile({
             />
           )}
           {maxLength && (
-            <div className="text-right text-xs text-gray-500 mt-1">
+            <div className="text-right text-xs text-ink-caption mt-1">
               {value.length}/{maxLength}
             </div>
           )}
@@ -2809,14 +2809,14 @@ export default function EditableCompanyProfile({
       <section
         id="profile"
         ref={sectionRef}
-        className="py-24 bg-gradient-to-b from-white to-yellow-50/30 scroll-mt-20 relative"
+        className="py-24 bg-gradient-to-b from-white to-surface-main/30 scroll-mt-20 relative"
       >
         {/* Loading Overlay */}
         {isLoading && (
           <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
-            <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-              <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-              <span className="text-gray-700">Loading content...</span>
+            <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3">
+              <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+              <span className="text-ink-paragraph">Loading content...</span>
             </div>
           </div>
         )}
@@ -2827,18 +2827,18 @@ export default function EditableCompanyProfile({
             <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
               {isSaving ? (
                 <>
-                  <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
-                  <span className="text-xs text-gray-700">Saving...</span>
+                  <Loader2 className="w-3 h-3 animate-spin text-status-info" />
+                  <span className="text-xs text-ink-paragraph">Saving...</span>
                 </>
               ) : unsavedChanges ? (
                 <>
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-gray-700">Unsaved changes</span>
+                  <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                  <span className="text-xs text-ink-paragraph">Unsaved changes</span>
                 </>
               ) : (
                 <>
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-xs text-gray-700">
+                  <div className="w-2 h-2 bg-status-success rounded-full"></div>
+                  <span className="text-xs text-ink-paragraph">
                     Saved {lastSaved && `at ${lastSaved}`}
                   </span>
                 </>
@@ -2855,7 +2855,7 @@ export default function EditableCompanyProfile({
                 onClick={handleEdit}
                 variant="outline"
                 size="sm"
-                className="bg-white hover:bg-gray-50 shadow-md"
+                className="bg-surface-card hover:bg-ink-offwhite shadow-md"
               >
                 <Edit2 className="w-4 h-4 mr-2" />
                 Edit
@@ -2865,7 +2865,7 @@ export default function EditableCompanyProfile({
                 <Button
                   onClick={handleSave}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                  className="bg-status-success hover:bg-status-success text-white shadow-md"
                   disabled={isSaving || isUploading}
                 >
                   {isSaving ? (
@@ -2879,7 +2879,7 @@ export default function EditableCompanyProfile({
                   onClick={handleCancel}
                   variant="outline"
                   size="sm"
-                  className="bg-white hover:bg-gray-50 shadow-md"
+                  className="bg-surface-card hover:bg-ink-offwhite shadow-md"
                   disabled={isSaving || isUploading}
                 >
                   <X className="w-4 h-4 mr-2" />
@@ -2890,7 +2890,7 @@ export default function EditableCompanyProfile({
           </div>
         )}
 
-        <div className="w-28 rounded-full mx-auto mb-16 bg-orange-100 text-orange-500 text-sm font-semibold text-center py-2">
+        <div className="w-28 rounded-full mx-auto mb-16 bg-status-warning/15 text-status-warning text-sm font-semibold text-center py-2">
           Profile
         </div>
 
@@ -2924,14 +2924,14 @@ export default function EditableCompanyProfile({
                 </div>
               )}
               {isEditing && isUploading && (
-                <div className="absolute top-16 right-4 z-10 bg-blue-100 text-blue-800 text-xs p-2 rounded shadow-md max-w-[200px]">
+                <div className="absolute top-16 right-4 z-10 bg-status-info/15 text-status-info text-xs p-2 rounded shadow-md max-w-[200px]">
                   <div className="flex items-center gap-2">
                     <Loader2 className="w-3 h-3 animate-spin" />
                     <span>Uploading to AWS...</span>
                   </div>
                 </div>
               )}
-              <div className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100 w-full max-w-[900px] cursor-pointer" onClick={() => { if (isEditing) fileInputRef.current?.click(); }}>
+              <div className="rounded-3xl overflow-hidden shadow-xl border border-brand-yellow-soft w-full max-w-[900px] cursor-pointer" onClick={() => { if (isEditing) fileInputRef.current?.click(); }}>
                 <img
                   src={
                     displayContent.imageUrl ||
@@ -2957,7 +2957,7 @@ export default function EditableCompanyProfile({
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.2, duration: 0.7 }}
               >
-                <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                <h2 className="text-4xl md:text-5xl font-extrabold text-ink leading-tight">
                   {isEditing ? (
                     <div className="relative">
                       <input
@@ -2968,11 +2968,11 @@ export default function EditableCompanyProfile({
                             updateTempContent("companyName", e.target.value);
                           }
                         }}
-                        className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-4xl md:text-5xl font-extrabold"
+                        className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-4xl md:text-5xl font-extrabold"
                         placeholder="Company name"
                         maxLength={100}
                       />
-                      <div className="text-right text-xs text-gray-500 mt-1">
+                      <div className="text-right text-xs text-ink-caption mt-1">
                         {displayContent.companyName.length}/100
                       </div>
                     </div>
@@ -2990,17 +2990,17 @@ export default function EditableCompanyProfile({
                           updateTempContent("description", e.target.value);
                         }
                       }}
-                      className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-3 resize-none text-lg text-gray-700 mt-4 max-w-xl"
+                      className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-3 resize-none text-lg text-ink-paragraph mt-4 max-w-xl"
                       placeholder="Company description"
                       rows={4}
                       maxLength={500}
                     />
-                    <div className="text-right text-xs text-gray-500 mt-1">
+                    <div className="text-right text-xs text-ink-caption mt-1">
                       {displayContent.description.length}/500
                     </div>
                   </div>
                 ) : (
-                  <p className="text-lg text-gray-700 mt-4 max-w-xl">
+                  <p className="text-lg text-ink-paragraph mt-4 max-w-xl">
                     {displayContent.description}
                   </p>
                 )}
@@ -3027,7 +3027,7 @@ export default function EditableCompanyProfile({
                     initial={{ opacity: 0, y: 20 }}
                     animate={isVisible ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: stat.delay, duration: 0.6 }}
-                    className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-yellow-100 hover:shadow-md transition-shadow"
+                    className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-brand-yellow-soft hover:shadow-md transition-shadow"
                   >
                     {isEditing ? (
                       <div className="flex flex-col items-center">
@@ -3037,21 +3037,21 @@ export default function EditableCompanyProfile({
                           onChange={(e) =>
                             updateTempContent(stat.field, e.target.value)
                           }
-                          className="w-20 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-3xl md:text-4xl font-extrabold text-gray-900 text-center mb-1"
+                          className="w-20 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-3xl md:text-4xl font-extrabold text-ink text-center mb-1"
                           placeholder="Value"
                           min="0"
                           max="9999"
                         />
-                        <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
+                        <div className="text-xs md:text-sm text-ink-paragraph mt-2 uppercase tracking-wide">
                           {stat.label}
                         </div>
                       </div>
                     ) : (
                       <>
-                        <div className="text-3xl md:text-4xl font-extrabold text-gray-900">
+                        <div className="text-3xl md:text-4xl font-extrabold text-ink">
                           {stat.value}
                         </div>
-                        <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
+                        <div className="text-xs md:text-sm text-ink-paragraph mt-2 uppercase tracking-wide">
                           {stat.label}
                         </div>
                       </>
@@ -3067,7 +3067,7 @@ export default function EditableCompanyProfile({
                 transition={{ delay: 1.2, duration: 0.7 }}
                 className="mt-8 space-y-4"
               >
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold text-ink">
                   Our Core Values
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -3077,7 +3077,7 @@ export default function EditableCompanyProfile({
                       initial={{ x: -20, opacity: 0 }}
                       animate={isVisible ? { x: 0, opacity: 1 } : {}}
                       transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
-                      className="flex items-center gap-2 p-3 bg-yellow-50 rounded-xl"
+                      className="flex items-center gap-2 p-3 bg-surface-main rounded-xl"
                     >
                       <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
                       {isEditing ? (
@@ -3091,11 +3091,11 @@ export default function EditableCompanyProfile({
                                   updateCoreValue(i, e.target.value);
                                 }
                               }}
-                              className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                              className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
                               placeholder="Core value"
                               maxLength={100}
                             />
-                            <div className="text-right text-xs text-gray-500 mt-1">
+                            <div className="text-right text-xs text-ink-caption mt-1">
                               {value.length}/100
                             </div>
                           </div>
@@ -3103,13 +3103,13 @@ export default function EditableCompanyProfile({
                             onClick={() => removeCoreValue(i)}
                             size="sm"
                             variant="outline"
-                            className="bg-red-50 hover:bg-red-100 text-red-700 p-1"
+                            className="bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
                           >
                             <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
                       ) : (
-                        <span className="text-gray-800 font-medium">
+                        <span className="text-ink-charcoal font-medium">
                           {value}
                         </span>
                       )}
@@ -3120,7 +3120,7 @@ export default function EditableCompanyProfile({
                       onClick={addCoreValue}
                       size="sm"
                       variant="outline"
-                      className="bg-green-50 hover:bg-green-100 text-green-700 w-full"
+                      className="bg-status-success/10 hover:bg-status-success/15 text-status-success w-full"
                     >
                       <Plus className="w-3 h-3 mr-1" /> Add Value
                     </Button>
@@ -3137,28 +3137,28 @@ export default function EditableCompanyProfile({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Company Image
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop}
@@ -3193,10 +3193,10 @@ export default function EditableCompanyProfile({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
@@ -3204,8 +3204,8 @@ export default function EditableCompanyProfile({
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 1
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                     }`}
                   >
                     1:1 (Square)
@@ -3214,8 +3214,8 @@ export default function EditableCompanyProfile({
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 4 / 3
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                     }`}
                   >
                     4:3 (Standard)
@@ -3224,8 +3224,8 @@ export default function EditableCompanyProfile({
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${
                       aspectRatio === 16 / 9
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "bg-white text-gray-700 border-gray-300"
+                        ? "bg-status-info text-white border-status-info"
+                        : "bg-surface-card text-ink-paragraph border-ink-light"
                     }`}
                   >
                     16:9 (Widescreen)
@@ -3236,8 +3236,8 @@ export default function EditableCompanyProfile({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
@@ -3245,7 +3245,7 @@ export default function EditableCompanyProfile({
                     onClick={() =>
                       setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))
                     }
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -3256,21 +3256,21 @@ export default function EditableCompanyProfile({
                     max={4}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     onClick={() =>
                       setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))
                     }
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     +
                   </button>
                   <button
                     type="button"
                     onClick={() => setZoom(1)}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     1x
                   </button>
@@ -3281,20 +3281,20 @@ export default function EditableCompanyProfile({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isUploading ? (
                     <>

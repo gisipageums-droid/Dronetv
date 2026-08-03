@@ -98,7 +98,7 @@ const Skills: React.FC = () => {
   return (
     <section
       id="skills"
-      className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300"
+      className="py-20 bg-surface-card dark:bg-gray-900 transition-colors duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -112,11 +112,11 @@ const Skills: React.FC = () => {
             variants={itemVariants}
             className="text-center mb-16 relative"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              My <span className="text-orange-500">Skills</span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-ink dark:text-white mb-4">
+              My <span className="text-status-warning">Skills</span>
             </h2>
 
-            <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-ink-paragraph dark:text-gray-300 max-w-3xl mx-auto">
               {skillContent.subtitle}
             </p>
           </motion.div>
@@ -128,15 +128,15 @@ const Skills: React.FC = () => {
                 key={categoryIndex}
                 variants={itemVariants}
                 whileHover={{ y: -5 }}
-                className="bg-gray-50 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 hover:border-accent-orange/50 transition-all duration-300"
+                className="bg-ink-offwhite dark:bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-ink-light dark:border-gray-700 hover:border-accent-orange/50 transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center flex-1">
-                    <div className="w-10 h-10 flex items-center justify-center uppercase text-xl font-extrabold text-white bg-yellow-500 p-2 rounded-full mr-2">
+                    <div className="w-10 h-10 flex items-center justify-center uppercase text-xl font-extrabold text-white bg-brand-gold p-2 rounded-full mr-2">
                       <span className="">{category.title[0]}</span>
                     </div>
                     
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h3 className="text-2xl font-bold text-ink dark:text-white">
                       {category.title}
                     </h3>
                   </div>
@@ -147,20 +147,20 @@ const Skills: React.FC = () => {
                     <div key={skillIndex} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <skill.icon className="w-6 h-6 text-orange-500 mr-3" />
-                          <span className="text-gray-700 dark:text-gray-200 font-medium">
+                          <skill.icon className="w-6 h-6 text-status-warning mr-3" />
+                          <span className="text-ink-paragraph dark:text-gray-200 font-medium">
                             {skill.name}
                           </span>
                         </div>
 
-                        <span className="text-orange-500 text-lg font-semibold">
+                        <span className="text-status-warning text-lg font-semibold">
                           {skill.level}%
                         </span>
                       </div>
 
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
+                      <div className="w-full bg-ink-light dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
                         <div
-                          className={`h-full rounded-full bg-orange-500 transition-all duration-1000 ease-out`}
+                          className={`h-full rounded-full bg-status-warning transition-all duration-1000 ease-out`}
                           style={{
                             width: `${skill.level || 0}%`,
                             transitionDelay: `${0.8 + categoryIndex * 0.1}s`,
@@ -176,7 +176,7 @@ const Skills: React.FC = () => {
 
           {/* Technologies Showcase */}
           <motion.div variants={itemVariants} className="mt-16">
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8 border-b-2 border-orange-500/50 pb-2 max-w-lg mx-auto">
+            <h3 className="text-3xl font-bold text-ink dark:text-white text-center mb-8 border-b-2 border-status-warning/50 pb-2 max-w-lg mx-auto">
               Technologies
             </h3>
 
@@ -186,7 +186,7 @@ const Skills: React.FC = () => {
                   key={index}
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-5 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
+                  className="px-5 py-2 bg-gradient-to-r from-brand-gold/10 to-status-warning/10 border border-status-warning/30 rounded-full text-status-warning font-medium"
                 >
                   {tech}
                 </motion.div>

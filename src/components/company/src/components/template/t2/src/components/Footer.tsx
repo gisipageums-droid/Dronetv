@@ -176,7 +176,7 @@ export default function Footer() {
 
   return (
     <motion.footer
-      className='bg-black text-white theme-transition'
+      className='bg-ink text-white theme-transition'
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -216,10 +216,10 @@ export default function Footer() {
                       onChange={(e) =>
                         updateCompanyInfo("logoText", e.target.value)
                       }
-                      className='text-black font-bold text-lg w-4 bg-transparent border-b'
+                      className='text-ink font-bold text-lg w-4 bg-transparent border-b'
                     />
                   ) : (
-                    <span className='text-black font-bold text-lg'>
+                    <span className='text-ink font-bold text-lg'>
                       {companyInfo.logoText}
                     </span>
                   )}
@@ -245,11 +245,11 @@ export default function Footer() {
                   onChange={(e) =>
                     updateCompanyInfo("description", e.target.value)
                   }
-                  className='text-gray-400 max-w-md w-full bg-transparent border-b'
+                  className='text-ink-caption max-w-md w-full bg-transparent border-b'
                   rows={3}
                 />
               ) : (
-                <p className='text-gray-400 max-w-md'>
+                <p className='text-ink-caption max-w-md'>
                   {companyInfo.description}
                 </p>
               )}
@@ -301,7 +301,7 @@ export default function Footer() {
                                   e.target.value
                                 )
                               }
-                              className='text-gray-400 bg-transparent border-b w-full mr-2'
+                              className='text-ink-caption bg-transparent border-b w-full mr-2'
                             />
                             <input
                               value={link.href}
@@ -313,7 +313,7 @@ export default function Footer() {
                                   e.target.value
                                 )
                               }
-                              className='text-gray-400 bg-transparent border-b w-full mr-2'
+                              className='text-ink-caption bg-transparent border-b w-full mr-2'
                             />
                             <Button
                               size='sm'
@@ -328,7 +328,7 @@ export default function Footer() {
                         ) : (
                           <a
                             href={link.href}
-                            className='text-gray-400 hover:text-primary transition-colors'
+                            className='text-ink-caption hover:text-primary transition-colors'
                           >
                             {link.name}
                           </a>
@@ -339,7 +339,7 @@ export default function Footer() {
                       <li>
                         <Button
                           onClick={() => addFooterLink(category)}
-                          className='text-green-600'
+                          className='text-status-success'
                         >
                           + Add Link
                         </Button>

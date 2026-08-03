@@ -47,7 +47,7 @@ export function Contact() {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section id="contact" className="py-20 bg-surface-main dark:bg-yellow-900/20">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -57,7 +57,7 @@ export function Contact() {
           className="mb-16 text-center"
         >
           <h2 className="mb-4 text-3xl sm:text-4xl text-foreground">
-            Get In <span className="text-yellow-500">Touch</span>
+            Get In <span className="text-brand-gold">Touch</span>
           </h2>
           <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
             Have a project in mind or want to collaborate? I'd love to hear from
@@ -93,7 +93,7 @@ export function Contact() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground"
+                    className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground"
                     required
                   />
                 </motion.div>
@@ -113,7 +113,7 @@ export function Contact() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground"
+                    className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground"
                     required
                   />
                 </motion.div>
@@ -134,7 +134,7 @@ export function Contact() {
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground"
+                  className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground"
                   required
                 />
               </motion.div>
@@ -154,7 +154,7 @@ export function Contact() {
                   value={formData.message}
                   onChange={handleChange}
                   rows={5}
-                  className="w-full px-4 py-3 transition-all duration-300 border rounded-lg resize-none border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground"
+                  className="w-full px-4 py-3 transition-all duration-300 border rounded-lg resize-none border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground"
                   required
                 ></textarea>
               </motion.div>

@@ -91,9 +91,9 @@
 //   };
 
 //   const getCharCountColor = (current: number, max: number) => {
-//     if (current >= max) return "text-red-500";
-//     if (current >= max * 0.9) return "text-yellow-500";
-//     return "text-gray-500";
+//     if (current >= max) return "text-status-error";
+//     if (current >= max * 0.9) return "text-brand-gold";
+//     return "text-ink-caption";
 //   };
 
 //   const getCroppedImage = async (): Promise<Blob> => {
@@ -244,7 +244,7 @@
 //   return (
 //     <section
 //       id="home"
-//       className="bg-white dark:bg-gray-900 transition-colors duration-300 pt-40"
+//       className="bg-surface-card dark:bg-gray-900 transition-colors duration-300 pt-40"
 //     >
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-40 relative">
 //         {/* Edit Button */}
@@ -254,14 +254,14 @@
 //               <button
 //                 onClick={handleSave}
 //                 title="save updates"
-//                 className="p-3 bg-green-500 hover:bg-green-600 text-white rounded-full"
+//                 className="p-3 bg-status-success hover:bg-status-success text-white rounded-full"
 //               >
 //                 <Save className="w-6 h-6" />
 //               </button>
 //               <button
 //                 onClick={handleCancel}
 //                 title="cancel updates"
-//                 className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-full"
+//                 className="p-3 bg-status-error hover:bg-status-error text-white rounded-full"
 //               >
 //                 <X className="w-6 h-6" />
 //               </button>
@@ -270,7 +270,7 @@
 //             <button
 //               onClick={() => setIsEditing(true)}
 //               title="update hero section"
-//               className="absolute top-0 right-0 p-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full"
+//               className="absolute top-0 right-0 p-3 bg-ink-light dark:bg-gray-700 text-ink dark:text-white rounded-full"
 //             >
 //               <Edit className="w-6 h-6" />
 //             </button>
@@ -306,8 +306,8 @@
 //                   </div>
 //                 </div>
 //               ) : (
-//                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white">
-//                   <span className="text-yellow-500 capitalize">
+//                 <h1 className="text-4xl lg:text-6xl font-bold text-ink dark:text-white">
+//                   <span className="text-brand-gold capitalize">
 //                     {heroContent.name}
 //                   </span>
 //                 </h1>
@@ -332,7 +332,7 @@
 //                   </div>
 //                 </div>
 //               ) : (
-//                 <p className="text-xl lg:text-2xl font-semibold text-gray-900 dark:text-white">
+//                 <p className="text-xl lg:text-2xl font-semibold text-ink dark:text-white">
 //                   {heroContent.title}
 //                 </p>
 //               )}
@@ -358,7 +358,7 @@
 //                   </div>
 //                 </div>
 //               ) : (
-//                 <p className="text-lg text-justify lg:text-xl text-gray-700 dark:text-gray-300">
+//                 <p className="text-lg text-justify lg:text-xl text-ink-paragraph dark:text-gray-300">
 //                   {heroContent.description}
 //                 </p>
 //               )}
@@ -368,14 +368,14 @@
 //               <motion.div className="grid grid-cols-2 gap-4 pt-4">
 //                 <a
 //                   href="#projects"
-//                   className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-yellow-400 hover:bg-yellow-400 text-gray-900 dark:text-white hover:text-white text-center"
+//                   className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-brand-yellow hover:bg-brand-yellow text-ink dark:text-white hover:text-white text-center"
 //                 >
 //                   View My Work
 //                 </a>
 
 //                 <a
 //                   href="#contact"
-//                   className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-yellow-400 hover:bg-yellow-400 text-gray-900 dark:text-white hover:text-white text-center"
+//                   className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-brand-yellow hover:bg-brand-yellow text-ink dark:text-white hover:text-white text-center"
 //                 >
 //                   Get In Touch
 //                 </a>
@@ -385,11 +385,11 @@
 
 //           {/* Right Side - Profile Image */}
 //           <div className="flex justify-center lg:justify-end">
-//             <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full p-1 bg-gradient-to-r from-yellow-500 via-orange-500 to-indigo-yellow-700">
+//             <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full p-1 bg-gradient-to-r from-brand-gold via-status-warning to-indigo-yellow-700">
 //               <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative">
 //                 {isEditing ? (
 //                   !isUploading ? (
-//                     <label className="absolute inset-0 flex items-center justify-center bg-black/40 text-white cursor-pointer z-10">
+//                     <label className="absolute inset-0 flex items-center justify-center bg-ink/40 text-white cursor-pointer z-10">
 //                       <Upload className="w-10 h-10" />
 //                       <input
 //                         type="file"
@@ -399,7 +399,7 @@
 //                       />
 //                     </label>
 //                   ) : (
-//                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white z-10">
+//                     <div className="absolute inset-0 flex items-center justify-center bg-ink/40 text-white z-10">
 //                       <p className="text-center text-lg font-bold">
 //                         Loading...
 //                       </p>
@@ -417,11 +417,11 @@
 //         </motion.div>
 
 //         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-//           <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-10 bg-yellow-400 animate-pulse" />
-//           <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full opacity-10 bg-orange-500 animate-bounce" />
-//           <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full opacity-5 bg-red-500 animate-pulse" />
-//           <div className="absolute bottom-0 left-1/1 w-10 h-10 rounded-full opacity-5 bg-red-500 animate-bounce-slow" />
-//           <div className="absolute top-1 left-1/4 w-8 h-8 rounded-full opacity-5 bg-red-500 animate-bounce-slow" />
+//           <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-10 bg-brand-yellow animate-pulse" />
+//           <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full opacity-10 bg-status-warning animate-bounce" />
+//           <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full opacity-5 bg-status-error animate-pulse" />
+//           <div className="absolute bottom-0 left-1/1 w-10 h-10 rounded-full opacity-5 bg-status-error animate-bounce-slow" />
+//           <div className="absolute top-1 left-1/4 w-8 h-8 rounded-full opacity-5 bg-status-error animate-bounce-slow" />
 //         </div>
 //       </div>
 
@@ -429,26 +429,26 @@
 //       {isCropping &&
 //         createPortal(
 //           <div
-//             className="fixed inset-0 bg-black/90 z-[2147483647] flex items-center justify-center p-4"
+//             className="fixed inset-0 bg-ink/90 z-[2147483647] flex items-center justify-center p-4"
 //             style={{ zIndex: 2147483647 }}
 //           >
-//             <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-3xl relative mx-4">
-//               <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-//                 <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+//             <div className="bg-surface-card dark:bg-gray-800 rounded-lg w-full max-w-3xl relative mx-4">
+//               <div className="flex justify-between items-center p-6 border-b border-ink-light dark:border-gray-700">
+//                 <h3 className="text-xl font-bold text-ink dark:text-white flex items-center gap-2">
 //                   <Crop className="w-6 h-6" />
 //                   Crop Image
 //                 </h3>
 //                 <button
 //                   onClick={() => setIsCropping(false)}
-//                   className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+//                   className="p-2 hover:bg-ink-light dark:hover:bg-gray-700 rounded-full transition-colors"
 //                 >
-//                   <X className="w-6 h-6 text-gray-900 dark:text-white" />
+//                   <X className="w-6 h-6 text-ink dark:text-white" />
 //                 </button>
 //               </div>
 
 //               <div className="p-6">
 //                 <div
-//                   className={`relative h-72 bg-gray-900 rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+//                   className={`relative h-72 bg-ink rounded-lg overflow-hidden mb-6 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
 //                 >
 //                   <Cropper
 //                     image={imageToCrop}
@@ -474,22 +474,22 @@
 //                 <div className="space-y-4">
 //                   <div>
 //                     <div className="flex items-center justify-between mb-3">
-//                       <label className="text-base font-medium text-gray-900 dark:text-white">
+//                       <label className="text-base font-medium text-ink dark:text-white">
 //                         Zoom Control
 //                       </label>
 //                       <div className="flex gap-3">
 //                         <button
 //                           onClick={handleZoomOut}
-//                           className="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+//                           className="p-3 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
 //                         >
 //                           <ZoomOut className="w-5 h-5" />
 //                         </button>
-//                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[60px] text-center">
+//                         <span className="text-sm font-medium text-ink-paragraph dark:text-gray-300 min-w-[60px] text-center">
 //                           {Math.round(zoom * 100)}%
 //                         </span>
 //                         <button
 //                           onClick={handleZoomIn}
-//                           className="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+//                           className="p-3 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
 //                         >
 //                           <ZoomIn className="w-5 h-5" />
 //                         </button>
@@ -502,23 +502,23 @@
 //                       step={0.01}
 //                       value={zoom}
 //                       onChange={(e) => setZoom(Number(e.target.value))}
-//                       className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+//                       className="w-full h-3 bg-ink-light dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
 //                     />
 //                   </div>
 //                 </div>
 //               </div>
 
-//               <div className="flex gap-4 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
+//               <div className="flex gap-4 justify-end p-6 border-t border-ink-light dark:border-gray-700">
 //                 <button
 //                   onClick={() => setIsCropping(false)}
-//                   className="px-6 py-3 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
+//                   className="px-6 py-3 rounded-lg border border-ink-light dark:border-gray-600 text-ink dark:text-white hover:bg-ink-light dark:hover:bg-gray-700 transition-colors font-medium"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={handleCropConfirm}
 //                   disabled={!imageLoaded}
-//                   className="px-6 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+//                   className="px-6 py-3 rounded-lg bg-status-info hover:bg-status-info text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
 //                 >
 //                   <Check className="w-5 h-5" />
 //                   Crop & Upload Image
@@ -714,9 +714,9 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
   };
 
   const getCharCountColor = (current: number, max: number) => {
-    if (current >= max) return "text-red-500";
-    if (current >= max * 0.9) return "text-yellow-500";
-    return "text-gray-500";
+    if (current >= max) return "text-status-error";
+    if (current >= max * 0.9) return "text-brand-gold";
+    return "text-ink-caption";
   };
 
   // Enhanced image upload function with progress tracking
@@ -924,7 +924,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
   return (
     <section
       id="home"
-      className="bg-white dark:bg-gray-900 transition-colors duration-300 pt-40"
+      className="bg-surface-card dark:bg-gray-900 transition-colors duration-300 pt-40"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-40 relative">
         {/* Edit Button */}
@@ -932,7 +932,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
           {isEditing ? (
             <div className="absolute top-0 right-0 flex items-center justify-center gap-2">
               {/* Auto-save indicator */}
-              <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
+              <div className="flex items-center gap-2 mr-2 text-sm text-ink-caption dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
                 {isAutoSaving ? (
                   <div className="flex items-center gap-1">
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -940,12 +940,12 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                   </div>
                 ) : hasUnsavedChanges ? (
                   <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
                     <span>Unsaved changes</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-status-success rounded-full"></div>
                     <span>Saved {formatLastSavedTime()}</span>
                   </div>
                 )}
@@ -954,14 +954,14 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
               <button
                 onClick={handleSave}
                 title="save updates"
-                className="p-3 bg-green-500 hover:bg-green-600 text-white rounded-full"
+                className="p-3 bg-status-success hover:bg-status-success text-white rounded-full"
               >
                 <Save className="w-6 h-6" />
               </button>
               <button
                 onClick={handleCancel}
                 title="cancel updates"
-                className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-full"
+                className="p-3 bg-status-error hover:bg-status-error text-white rounded-full"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -970,7 +970,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
             <button
               onClick={handleEditStart}
               title="update hero section"
-              className="absolute top-0 right-0 p-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full"
+              className="absolute top-0 right-0 p-3 bg-ink-light dark:bg-gray-700 text-ink dark:text-white rounded-full"
             >
               <Edit className="w-6 h-6" />
             </button>
@@ -1006,8 +1006,8 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                   </div>
                 </div>
               ) : (
-                <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white">
-                  <span className="text-yellow-500 capitalize">
+                <h1 className="text-4xl lg:text-6xl font-bold text-ink dark:text-white">
+                  <span className="text-brand-gold capitalize">
                     {heroContent.name}
                   </span>
                 </h1>
@@ -1032,7 +1032,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                   </div>
                 </div>
               ) : (
-                <p className="text-xl lg:text-2xl font-semibold text-gray-900 dark:text-white">
+                <p className="text-xl lg:text-2xl font-semibold text-ink dark:text-white">
                   {heroContent.title}
                 </p>
               )}
@@ -1058,7 +1058,7 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                   </div>
                 </div>
               ) : (
-                <p className="text-lg text-justify lg:text-xl text-gray-700 dark:text-gray-300">
+                <p className="text-lg text-justify lg:text-xl text-ink-paragraph dark:text-gray-300">
                   {heroContent.description}
                 </p>
               )}
@@ -1068,14 +1068,14 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
               <motion.div className="grid grid-cols-2 gap-4 pt-4">
                 <a
                   href="#projects"
-                  className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-yellow-400 hover:bg-yellow-400 text-gray-900 dark:text-white hover:text-white text-center"
+                  className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-brand-yellow hover:bg-brand-yellow text-ink dark:text-white hover:text-white text-center"
                 >
                   View My Work
                 </a>
 
                 <a
                   href="#contact"
-                  className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-yellow-400 hover:bg-yellow-400 text-gray-900 dark:text-white hover:text-white text-center"
+                  className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-brand-yellow hover:bg-brand-yellow text-ink dark:text-white hover:text-white text-center"
                 >
                   Get In Touch
                 </a>
@@ -1085,11 +1085,11 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
 
           {/* Right Side - Profile Image */}
           <div className="flex justify-center lg:justify-end">
-            <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full p-1 bg-gradient-to-r from-yellow-500 via-orange-500 to-indigo-yellow-700">
+            <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full p-1 bg-gradient-to-r from-brand-gold via-status-warning to-indigo-yellow-700">
               <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative">
                 {isEditing ? (
                   !isUploading ? (
-                    <label className="absolute inset-0 flex items-center justify-center bg-black/40 text-white cursor-pointer z-10">
+                    <label className="absolute inset-0 flex items-center justify-center bg-ink/40 text-white cursor-pointer z-10">
                       <Upload className="w-10 h-10" />
                       <input
                         type="file"
@@ -1099,13 +1099,13 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                       />
                     </label>
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white z-10">
+                    <div className="absolute inset-0 flex items-center justify-center bg-ink/40 text-white z-10">
                       <div className="text-center">
                         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
                         <div>Uploading... {Math.round(uploadProgress)}%</div>
-                        <div className="w-32 h-2 bg-gray-600 rounded-full mt-2 mx-auto overflow-hidden">
+                        <div className="w-32 h-2 bg-ink-paragraph rounded-full mt-2 mx-auto overflow-hidden">
                           <div
-                            className="h-full bg-green-500 transition-all duration-300"
+                            className="h-full bg-status-success transition-all duration-300"
                             style={{ width: `${uploadProgress}%` }}
                           ></div>
                         </div>
@@ -1124,11 +1124,11 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
         </motion.div>
 
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-10 bg-yellow-400 animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full opacity-10 bg-orange-500 animate-bounce" />
-          <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full opacity-5 bg-red-500 animate-pulse" />
-          <div className="absolute bottom-0 left-1/1 w-10 h-10 rounded-full opacity-5 bg-red-500 animate-bounce-slow" />
-          <div className="absolute top-1 left-1/4 w-8 h-8 rounded-full opacity-5 bg-red-500 animate-bounce-slow" />
+          <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-10 bg-brand-yellow animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full opacity-10 bg-status-warning animate-bounce" />
+          <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full opacity-5 bg-status-error animate-pulse" />
+          <div className="absolute bottom-0 left-1/1 w-10 h-10 rounded-full opacity-5 bg-status-error animate-bounce-slow" />
+          <div className="absolute top-1 left-1/4 w-8 h-8 rounded-full opacity-5 bg-status-error animate-bounce-slow" />
         </div>
       </div>
 
@@ -1136,26 +1136,26 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
       {isCropping &&
         createPortal(
           <div
-            className="fixed inset-0 bg-black/90 z-[2147483647] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-ink/90 z-[2147483647] flex items-center justify-center p-4"
             style={{ zIndex: 2147483647 }}
           >
-            <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-3xl relative mx-4">
-              <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <div className="bg-surface-card dark:bg-gray-800 rounded-lg w-full max-w-3xl relative mx-4">
+              <div className="flex justify-between items-center p-6 border-b border-ink-light dark:border-gray-700">
+                <h3 className="text-xl font-bold text-ink dark:text-white flex items-center gap-2">
                   <Crop className="w-6 h-6" />
                   Crop Image
                 </h3>
                 <button
                   onClick={() => setIsCropping(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                  className="p-2 hover:bg-ink-light dark:hover:bg-gray-700 rounded-full transition-colors"
                 >
-                  <X className="w-6 h-6 text-gray-900 dark:text-white" />
+                  <X className="w-6 h-6 text-ink dark:text-white" />
                 </button>
               </div>
 
               <div className="p-6">
                 <div
-                  className={`relative h-72 bg-gray-900 rounded-lg overflow-hidden mb-6 ${
+                  className={`relative h-72 bg-ink rounded-lg overflow-hidden mb-6 ${
                     isDragging ? "cursor-grabbing" : "cursor-grab"
                   }`}
                 >
@@ -1183,22 +1183,22 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                 <div className="space-y-4">
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <label className="text-base font-medium text-gray-900 dark:text-white">
+                      <label className="text-base font-medium text-ink dark:text-white">
                         Zoom Control
                       </label>
                       <div className="flex gap-3">
                         <button
                           onClick={handleZoomOut}
-                          className="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                          className="p-3 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
                         >
                           <ZoomOut className="w-5 h-5" />
                         </button>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[60px] text-center">
+                        <span className="text-sm font-medium text-ink-paragraph dark:text-gray-300 min-w-[60px] text-center">
                           {Math.round(zoom * 100)}%
                         </span>
                         <button
                           onClick={handleZoomIn}
-                          className="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                          className="p-3 bg-ink-light dark:bg-gray-700 rounded-lg hover:bg-ink-light dark:hover:bg-gray-600 transition-colors"
                         >
                           <ZoomIn className="w-5 h-5" />
                         </button>
@@ -1211,23 +1211,23 @@ const Hero: React.FC<HeroProps> = ({ content, onSave, userId }) => {
                       step={0.01}
                       value={zoom}
                       onChange={(e) => setZoom(Number(e.target.value))}
-                      className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                      className="w-full h-3 bg-ink-light dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-4 justify-end p-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex gap-4 justify-end p-6 border-t border-ink-light dark:border-gray-700">
                 <button
                   onClick={() => setIsCropping(false)}
-                  className="px-6 py-3 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
+                  className="px-6 py-3 rounded-lg border border-ink-light dark:border-gray-600 text-ink dark:text-white hover:bg-ink-light dark:hover:bg-gray-700 transition-colors font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCropConfirm}
                   disabled={!imageLoaded}
-                  className="px-6 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  className="px-6 py-3 rounded-lg bg-status-info hover:bg-status-info text-white flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                 >
                   <Check className="w-5 h-5" />
                   Crop & Upload Image

@@ -147,10 +147,10 @@
 // //         <div className="absolute top-2 right-4 z-30 flex gap-2 items-center">
 // //           {/* Auto-save status */}
 // //           {editMode && onStateChange && (
-// //             <div className="text-xs text-gray-500 mr-2 hidden sm:block">
+// //             <div className="text-xs text-ink-caption mr-2 hidden sm:block">
 // //               {isSaving ? (
 // //                 <span className="flex items-center gap-1">
-// //                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+// //                   <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
 // //                   Saving...
 // //                 </span>
 // //               ) : lastSaved ? (
@@ -163,14 +163,14 @@
 // //             <>
 // //               <button
 // //                 onClick={handleEditToggle}
-// //                 className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition text-xs md:text-sm"
+// //                 className="flex items-center gap-1 bg-status-success text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-status-success transition text-xs md:text-sm"
 // //               >
 // //                 <Save size={16} className="md:w-[18px] md:h-[18px]" />
 // //                 <span className="hidden sm:inline">Done</span>
 // //               </button>
 // //               <button
 // //                 onClick={handleCancel}
-// //                 className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition text-xs md:text-sm"
+// //                 className="flex items-center gap-1 bg-status-error text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-status-error transition text-xs md:text-sm"
 // //               >
 // //                 <X size={16} className="md:w-[18px] md:h-[18px]" />
 // //                 <span className="hidden sm:inline">Cancel</span>
@@ -179,7 +179,7 @@
 // //           ) : (
 // //             <button
 // //               onClick={handleEditToggle}
-// //               className="flex items-center gap-1 bg-black/60 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg border border-white/30 hover:bg-black/80 transition text-xs md:text-sm"
+// //               className="flex items-center gap-1 bg-ink/60 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg border border-white/30 hover:bg-ink-charcoal/80 transition text-xs md:text-sm"
 // //             >
 // //               <Edit size={16} className="md:w-[18px] md:h-[18px]" />
 // //               <span className="hidden sm:inline">Edit</span>
@@ -200,16 +200,16 @@
 // //                   }
 // //                   placeholder="Event Name"
 // //                   maxLength={50}
-// //                   className="bg-white text-black px-2 py-1 md:px-3 md:py-2 rounded-md text-sm md:text-lg font-bold w-full"
+// //                   className="bg-surface-card text-ink px-2 py-1 md:px-3 md:py-2 rounded-md text-sm md:text-lg font-bold w-full"
 // //                 />
-// //                 <div className="text-xs text-gray-500 mt-1 text-right">
+// //                 <div className="text-xs text-ink-caption mt-1 text-right">
 // //                   {navContent.eventName.length}/50
 // //                 </div>
 // //               </div>
 // //             ) : (
 // //               <h1
 // //                 className={`text-lg md:text-xl lg:text-2xl font-bold transition-colors duration-300 truncate ${
-// //                   isScrolled ? "text-black" : "text-white"
+// //                   isScrolled ? "text-ink" : "text-white"
 // //                 }`}
 // //               >
 // //                 {navContent.eventName}
@@ -226,7 +226,7 @@
 // //                     onClick={() => scrollToSection(item.href)}
 // //                     className={`relative font-medium transition-colors duration-300 group text-sm xl:text-base ${
 // //                       isScrolled
-// //                         ? "text-black hover:text-[#FF0000]"
+// //                         ? "text-ink hover:text-[#FF0000]"
 // //                         : "text-white hover:text-[#FFD400]"
 // //                     }`}
 // //                   >
@@ -251,9 +251,9 @@
 // //                     }
 // //                     placeholder="CTA Text"
 // //                     maxLength={50}
-// //                     className="bg-white text-black px-2 py-1 rounded-md text-xs w-24"
+// //                     className="bg-surface-card text-ink px-2 py-1 rounded-md text-xs w-24"
 // //                   />
-// //                   <div className="text-xs text-gray-500 text-right">
+// //                   <div className="text-xs text-ink-caption text-right">
 // //                     {navContent.ctaText.length}/50
 // //                   </div>
 // //                 </div>
@@ -272,7 +272,7 @@
 // //           <button
 // //             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
 // //             className={`lg:hidden p-2 ${
-// //               isScrolled ? "text-black" : "text-white"
+// //               isScrolled ? "text-ink" : "text-white"
 // //             }`}
 // //           >
 // //             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -284,12 +284,12 @@
 // //           <div className="lg:hidden mt-4 py-4 bg-white/95 backdrop-blur-md rounded-lg shadow-lg">
 // //             {editMode ? (
 // //               <div className="px-4 space-y-4">
-// //                 <h3 className="text-sm font-semibold text-gray-700 mb-3">
+// //                 <h3 className="text-sm font-semibold text-ink-paragraph mb-3">
 // //                   Edit Navigation
 // //                 </h3>
 // //                 {navContent.navItems.map((item, index) => (
 // //                   <div key={index} className="space-y-2">
-// //                     <label className="text-xs text-gray-600">
+// //                     <label className="text-xs text-ink-paragraph">
 // //                       Item {index + 1}
 // //                     </label>
 // //                     <div className="flex gap-2">
@@ -299,10 +299,10 @@
 // //                           value={item.name}
 // //                           onChange={(e) => updateNavItem(index, 'name', e.target.value)}
 // //                           maxLength={100}
-// //                           className="bg-white text-black px-2 py-1 rounded-md text-sm border"
+// //                           className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm border"
 // //                           placeholder="Name"
 // //                         />
-// //                         <div className="text-xs text-gray-500 text-right mt-1">
+// //                         <div className="text-xs text-ink-caption text-right mt-1">
 // //                           {item.name.length}/100
 // //                         </div>
 // //                       </div>
@@ -312,10 +312,10 @@
 // //                           value={item.href}
 // //                           onChange={(e) => updateNavItem(index, 'href', e.target.value)}
 // //                           maxLength={200}
-// //                           className="bg-white text-black px-2 py-1 rounded-md text-sm border"
+// //                           className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm border"
 // //                           placeholder="#href"
 // //                         />
-// //                         <div className="text-xs text-gray-500 text-right mt-1">
+// //                         <div className="text-xs text-ink-caption text-right mt-1">
 // //                           {item.href.length}/200
 // //                         </div>
 // //                       </div>
@@ -323,7 +323,7 @@
 // //                   </div>
 // //                 ))}
 // //                 <div className="space-y-2">
-// //                   <label className="text-xs text-gray-600">CTA Button</label>
+// //                   <label className="text-xs text-ink-paragraph">CTA Button</label>
 // //                   <div className="flex flex-col">
 // //                     <input
 // //                       type="text"
@@ -336,9 +336,9 @@
 // //                       }
 // //                       placeholder="CTA Text"
 // //                       maxLength={50}
-// //                       className="w-full bg-white text-black px-2 py-1 rounded-md text-sm border"
+// //                       className="w-full bg-surface-card text-ink px-2 py-1 rounded-md text-sm border"
 // //                     />
-// //                     <div className="text-xs text-gray-500 text-right mt-1">
+// //                     <div className="text-xs text-ink-caption text-right mt-1">
 // //                       {navContent.ctaText.length}/50
 // //                     </div>
 // //                   </div>
@@ -350,7 +350,7 @@
 // //                   <button
 // //                     key={index}
 // //                     onClick={() => scrollToSection(item.href)}
-// //                     className="block w-full text-left px-4 py-3 text-black hover:text-[#FF0000] hover:bg-gray-100 transition-colors"
+// //                     className="block w-full text-left px-4 py-3 text-ink hover:text-[#FF0000] hover:bg-ink-light transition-colors"
 // //                   >
 // //                     {item.name}
 // //                   </button>
@@ -554,10 +554,10 @@
 //         <div className="absolute top-2 right-4 z-30 flex gap-2 items-center">
 //           {/* Auto-save status */}
 //           {editMode && onStateChange && (
-//             <div className="text-xs text-gray-500 mr-2 hidden sm:block">
+//             <div className="text-xs text-ink-caption mr-2 hidden sm:block">
 //               {isSaving ? (
 //                 <span className="flex items-center gap-1">
-//                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+//                   <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
 //                   Saving...
 //                 </span>
 //               ) : lastSaved ? (
@@ -572,14 +572,14 @@
 //             <>
 //               <button
 //                 onClick={handleEditToggle}
-//                 className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition text-xs md:text-sm"
+//                 className="flex items-center gap-1 bg-status-success text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-status-success transition text-xs md:text-sm"
 //               >
 //                 <Save size={16} className="md:w-[18px] md:h-[18px]" />
 //                 <span className="hidden sm:inline">Done</span>
 //               </button>
 //               <button
 //                 onClick={handleCancel}
-//                 className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition text-xs md:text-sm"
+//                 className="flex items-center gap-1 bg-status-error text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-status-error transition text-xs md:text-sm"
 //               >
 //                 <X size={16} className="md:w-[18px] md:h-[18px]" />
 //                 <span className="hidden sm:inline">Cancel</span>
@@ -588,7 +588,7 @@
 //           ) : (
 //             <button
 //               onClick={handleEditToggle}
-//               className="flex items-center gap-1 bg-black/60 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg border border-white/30 hover:bg-black/80 transition text-xs md:text-sm"
+//               className="flex items-center gap-1 bg-ink/60 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg border border-white/30 hover:bg-ink-charcoal/80 transition text-xs md:text-sm"
 //             >
 //               <Edit size={16} className="md:w-[18px] md:h-[18px]" />
 //               <span className="hidden sm:inline">Edit</span>
@@ -609,16 +609,16 @@
 //                   }
 //                   placeholder="Event Name"
 //                   maxLength={50}
-//                   className="bg-white text-black px-2 py-1 md:px-3 md:py-2 rounded-md text-sm md:text-lg font-bold w-full"
+//                   className="bg-surface-card text-ink px-2 py-1 md:px-3 md:py-2 rounded-md text-sm md:text-lg font-bold w-full"
 //                 />
-//                 <div className="text-xs text-gray-500 mt-1 text-right">
+//                 <div className="text-xs text-ink-caption mt-1 text-right">
 //                   {navContent.eventName.length}/50
 //                 </div>
 //               </div>
 //             ) : (
 //               <h1
 //                 className={`text-lg md:text-xl lg:text-2xl font-bold transition-colors duration-300 truncate ${
-//                   isScrolled ? "text-black" : "text-white"
+//                   isScrolled ? "text-ink" : "text-white"
 //                 }`}
 //               >
 //                 {navContent.eventName}
@@ -637,7 +637,7 @@
 //                       value={item.name}
 //                       onChange={(e) => updateNavItem(index, 'name', e.target.value)}
 //                       maxLength={100}
-//                       className="bg-white text-black px-2 py-1 rounded-md text-sm w-24 border"
+//                       className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm w-24 border"
 //                       placeholder="Name"
 //                     />
 //                     <input
@@ -645,7 +645,7 @@
 //                       value={item.href}
 //                       onChange={(e) => updateNavItem(index, 'href', e.target.value)}
 //                       maxLength={200}
-//                       className="bg-white text-black px-2 py-1 rounded-md text-sm w-20 border"
+//                       className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm w-20 border"
 //                       placeholder="#href"
 //                     />
 //                   </div>
@@ -654,7 +654,7 @@
 //                     onClick={() => scrollToSection(item.href)}
 //                     className={`relative font-medium transition-colors duration-300 group text-sm xl:text-base ${
 //                       isScrolled
-//                         ? "text-black hover:text-[#FF0000]"
+//                         ? "text-ink hover:text-[#FF0000]"
 //                         : "text-white hover:text-[#FFD400]"
 //                     }`}
 //                   >
@@ -679,9 +679,9 @@
 //                     }
 //                     placeholder="CTA Text"
 //                     maxLength={50}
-//                     className="bg-white text-black px-2 py-1 rounded-md text-xs w-24"
+//                     className="bg-surface-card text-ink px-2 py-1 rounded-md text-xs w-24"
 //                   />
-//                   <div className="text-xs text-gray-500 text-right">
+//                   <div className="text-xs text-ink-caption text-right">
 //                     {navContent.ctaText.length}/50
 //                   </div>
 //                 </div>
@@ -700,7 +700,7 @@
 //           <button
 //             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
 //             className={`lg:hidden p-2 ${
-//               isScrolled ? "text-black" : "text-white"
+//               isScrolled ? "text-ink" : "text-white"
 //             }`}
 //           >
 //             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -712,12 +712,12 @@
 //           <div className="lg:hidden mt-4 py-4 bg-white/95 backdrop-blur-md rounded-lg shadow-lg">
 //             {editMode ? (
 //               <div className="px-4 space-y-4">
-//                 <h3 className="text-sm font-semibold text-gray-700 mb-3">
+//                 <h3 className="text-sm font-semibold text-ink-paragraph mb-3">
 //                   Edit Navigation
 //                 </h3>
 //                 {navContent.navItems.map((item, index) => (
 //                   <div key={index} className="space-y-2">
-//                     <label className="text-xs text-gray-600">
+//                     <label className="text-xs text-ink-paragraph">
 //                       Item {index + 1}
 //                     </label>
 //                     <div className="flex gap-2">
@@ -727,10 +727,10 @@
 //                           value={item.name}
 //                           onChange={(e) => updateNavItem(index, 'name', e.target.value)}
 //                           maxLength={100}
-//                           className="bg-white text-black px-2 py-1 rounded-md text-sm border"
+//                           className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm border"
 //                           placeholder="Name"
 //                         />
-//                         <div className="text-xs text-gray-500 text-right mt-1">
+//                         <div className="text-xs text-ink-caption text-right mt-1">
 //                           {item.name.length}/100
 //                         </div>
 //                       </div>
@@ -740,10 +740,10 @@
 //                           value={item.href}
 //                           onChange={(e) => updateNavItem(index, 'href', e.target.value)}
 //                           maxLength={200}
-//                           className="bg-white text-black px-2 py-1 rounded-md text-sm border"
+//                           className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm border"
 //                           placeholder="#href"
 //                         />
-//                         <div className="text-xs text-gray-500 text-right mt-1">
+//                         <div className="text-xs text-ink-caption text-right mt-1">
 //                           {item.href.length}/200
 //                         </div>
 //                       </div>
@@ -751,7 +751,7 @@
 //                   </div>
 //                 ))}
 //                 <div className="space-y-2">
-//                   <label className="text-xs text-gray-600">CTA Button</label>
+//                   <label className="text-xs text-ink-paragraph">CTA Button</label>
 //                   <div className="flex flex-col">
 //                     <input
 //                       type="text"
@@ -764,9 +764,9 @@
 //                       }
 //                       placeholder="CTA Text"
 //                       maxLength={50}
-//                       className="w-full bg-white text-black px-2 py-1 rounded-md text-sm border"
+//                       className="w-full bg-surface-card text-ink px-2 py-1 rounded-md text-sm border"
 //                     />
-//                     <div className="text-xs text-gray-500 text-right mt-1">
+//                     <div className="text-xs text-ink-caption text-right mt-1">
 //                       {navContent.ctaText.length}/50
 //                     </div>
 //                   </div>
@@ -778,7 +778,7 @@
 //                   <button
 //                     key={index}
 //                     onClick={() => scrollToSection(item.href)}
-//                     className="block w-full text-left px-4 py-3 text-black hover:text-[#FF0000] hover:bg-gray-100 transition-colors"
+//                     className="block w-full text-left px-4 py-3 text-ink hover:text-[#FF0000] hover:bg-ink-light transition-colors"
 //                   >
 //                     {item.name}
 //                   </button>
@@ -986,10 +986,10 @@ const Navigation: React.FC<NavigationProps> = ({
         <div className="absolute top-2 right-4 z-30 flex gap-2 items-center">
           {/* Auto-save status */}
           {editMode && onStateChange && (
-            <div className="text-xs text-gray-500 mr-2 hidden sm:block">
+            <div className="text-xs text-ink-caption mr-2 hidden sm:block">
               {isSaving ? (
                 <span className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
                   Saving...
                 </span>
               ) : lastSaved ? (
@@ -1004,14 +1004,14 @@ const Navigation: React.FC<NavigationProps> = ({
             <>
               <button
                 onClick={handleEditToggle}
-                className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-green-700 transition text-xs md:text-sm"
+                className="flex items-center gap-1 bg-status-success text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-status-success transition text-xs md:text-sm"
               >
                 <Save size={16} className="md:w-[18px] md:h-[18px]" />
                 <span className="hidden sm:inline">Done</span>
               </button>
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-red-700 transition text-xs md:text-sm"
+                className="flex items-center gap-1 bg-status-error text-white px-2 py-1 md:px-4 md:py-2 rounded-lg hover:bg-status-error transition text-xs md:text-sm"
               >
                 <X size={16} className="md:w-[18px] md:h-[18px]" />
                 <span className="hidden sm:inline">Cancel</span>
@@ -1020,7 +1020,7 @@ const Navigation: React.FC<NavigationProps> = ({
           ) : (
             <button
               onClick={handleEditToggle}
-              className="flex items-center gap-1 bg-black/60 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg border border-white/30 hover:bg-black/80 transition text-xs md:text-sm"
+              className="flex items-center gap-1 bg-ink/60 text-white px-2 py-1 md:px-4 md:py-2 rounded-lg border border-white/30 hover:bg-ink-charcoal/80 transition text-xs md:text-sm"
             >
               <Edit size={16} className="md:w-[18px] md:h-[18px]" />
               <span className="hidden sm:inline">Edit</span>
@@ -1041,16 +1041,16 @@ const Navigation: React.FC<NavigationProps> = ({
                   }
                   placeholder="Event Name"
                   maxLength={50}
-                  className="bg-white text-black px-2 py-1 md:px-3 md:py-2 rounded-md text-sm md:text-lg font-bold w-full"
+                  className="bg-surface-card text-ink px-2 py-1 md:px-3 md:py-2 rounded-md text-sm md:text-lg font-bold w-full"
                 />
-                <div className="text-xs text-gray-500 mt-1 text-right">
+                <div className="text-xs text-ink-caption mt-1 text-right">
                   {navContent.eventName.length}/50
                 </div>
               </div>
             ) : (
               <h1
                 className={`text-lg md:text-xl lg:text-2xl font-bold transition-colors duration-300 truncate ${
-                  isScrolled ? "text-black" : "text-white"
+                  isScrolled ? "text-ink" : "text-white"
                 }`}
               >
                 {navContent.eventName}
@@ -1066,7 +1066,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   onClick={() => scrollToSection(item.href)}
                   className={`relative font-medium transition-colors duration-300 group text-sm xl:text-base ${
                     isScrolled
-                      ? "text-black hover:text-[#FF0000]"
+                      ? "text-ink hover:text-[#FF0000]"
                       : "text-white hover:text-[#FFD400]"
                   }`}
                 >
@@ -1090,9 +1090,9 @@ const Navigation: React.FC<NavigationProps> = ({
                     }
                     placeholder="CTA Text"
                     maxLength={50}
-                    className="bg-white text-black px-2 py-1 rounded-md text-xs w-24"
+                    className="bg-surface-card text-ink px-2 py-1 rounded-md text-xs w-24"
                   />
-                  <div className="text-xs text-gray-500 text-right">
+                  <div className="text-xs text-ink-caption text-right">
                     {navContent.ctaText.length}/50
                   </div>
                 </div>
@@ -1111,7 +1111,7 @@ const Navigation: React.FC<NavigationProps> = ({
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={`lg:hidden p-2 ${
-              isScrolled ? "text-black" : "text-white"
+              isScrolled ? "text-ink" : "text-white"
             }`}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -1123,12 +1123,12 @@ const Navigation: React.FC<NavigationProps> = ({
           <div className="lg:hidden mt-4 py-4 bg-white/95 backdrop-blur-md rounded-lg shadow-lg">
             {editMode ? (
               <div className="px-4 space-y-4">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                <h3 className="text-sm font-semibold text-ink-paragraph mb-3">
                   Edit Navigation
                 </h3>
                 {navContent.navItems.map((item, index) => (
                   <div key={index} className="space-y-2">
-                    <label className="text-xs text-gray-600">
+                    <label className="text-xs text-ink-paragraph">
                       Item {index + 1}
                     </label>
                     <div className="flex gap-2">
@@ -1138,10 +1138,10 @@ const Navigation: React.FC<NavigationProps> = ({
                           value={item.name}
                           onChange={(e) => updateNavItem(index, 'name', e.target.value)}
                           maxLength={100}
-                          className="bg-white text-black px-2 py-1 rounded-md text-sm border"
+                          className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm border"
                           placeholder="Name"
                         />
-                        <div className="text-xs text-gray-500 text-right mt-1">
+                        <div className="text-xs text-ink-caption text-right mt-1">
                           {item.name.length}/100
                         </div>
                       </div>
@@ -1151,10 +1151,10 @@ const Navigation: React.FC<NavigationProps> = ({
                           value={item.href}
                           onChange={(e) => updateNavItem(index, 'href', e.target.value)}
                           maxLength={200}
-                          className="bg-white text-black px-2 py-1 rounded-md text-sm border"
+                          className="bg-surface-card text-ink px-2 py-1 rounded-md text-sm border"
                           placeholder="#href"
                         />
-                        <div className="text-xs text-gray-500 text-right mt-1">
+                        <div className="text-xs text-ink-caption text-right mt-1">
                           {item.href.length}/200
                         </div>
                       </div>
@@ -1162,7 +1162,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   </div>
                 ))}
                 <div className="space-y-2">
-                  <label className="text-xs text-gray-600">CTA Button</label>
+                  <label className="text-xs text-ink-paragraph">CTA Button</label>
                   <div className="flex flex-col">
                     <input
                       type="text"
@@ -1175,9 +1175,9 @@ const Navigation: React.FC<NavigationProps> = ({
                       }
                       placeholder="CTA Text"
                       maxLength={50}
-                      className="w-full bg-white text-black px-2 py-1 rounded-md text-sm border"
+                      className="w-full bg-surface-card text-ink px-2 py-1 rounded-md text-sm border"
                     />
-                    <div className="text-xs text-gray-500 text-right mt-1">
+                    <div className="text-xs text-ink-caption text-right mt-1">
                       {navContent.ctaText.length}/50
                     </div>
                   </div>
@@ -1189,7 +1189,7 @@ const Navigation: React.FC<NavigationProps> = ({
                   <button
                     key={index}
                     onClick={() => scrollToSection(item.href)}
-                    className="block w-full text-left px-4 py-3 text-black hover:text-[#FF0000] hover:bg-gray-100 transition-colors"
+                    className="block w-full text-left px-4 py-3 text-ink hover:text-[#FF0000] hover:bg-ink-light transition-colors"
                   >
                     {item.name}
                   </button>

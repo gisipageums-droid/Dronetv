@@ -10,7 +10,7 @@ const Profile = ({ profileData }) => {
     <section
       id="our-team"
       className={`py-20 theme-transition ${
-        theme === "dark" ? "bg-black text-gray-100" : "bg-gray-50 text-gray-900"
+        theme === "dark" ? "bg-ink text-ink-light" : "bg-ink-offwhite text-ink"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,7 +24,7 @@ const Profile = ({ profileData }) => {
             <motion.div
               key={member.id}
               className={`rounded-lg overflow-hidden shadow-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-white"
+                theme === "dark" ? "bg-ink" : "bg-surface-card"
               }`}
               whileHover={{ y: -5 }}
               transition={{ duration: 0.2 }}
@@ -47,7 +47,7 @@ const Profile = ({ profileData }) => {
                 </p>
                 <p
                   className={`text-sm ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-600"
+                    theme === "dark" ? "text-ink-light" : "text-ink-paragraph"
                   }`}
                 >
                   {member.bio}
@@ -58,8 +58,8 @@ const Profile = ({ profileData }) => {
   target="_blank"
   className={`p-2 rounded-full ${
     theme === "dark"
-      ? "bg-gray-800 hover:bg-gray-500"
-      : "bg-gray-100 hover:bg-gray-200"
+      ? "bg-ink-charcoal hover:bg-ink-caption"
+      : "bg-ink-light hover:bg-ink-light"
   }`}
   aria-label="X (formerly Twitter)"
 >
@@ -76,8 +76,8 @@ const Profile = ({ profileData }) => {
                     target="_blank"
                     className={`p-2 rounded-full ${
                       theme === "dark"
-                        ? "bg-gray-800 hover:bg-gray-500"
-                        : "bg-gray-100 hover:bg-gray-200"
+                        ? "bg-ink-charcoal hover:bg-ink-caption"
+                        : "bg-ink-light hover:bg-ink-light"
                     }`}
                     aria-label="LinkedIn"
                   >

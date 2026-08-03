@@ -220,16 +220,16 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
   };
 
   return (
-    <section id="about" className="py-20 bg-white text-justify">
+    <section id="about" className="py-20 bg-surface-card text-justify">
       <div className="relative container max-w-7xl mx-auto px-4">
         {/* Edit / Save / Cancel */}
         <div className="absolute top-0 right-2 z-30 flex gap-3 items-center">
           {/* Auto-save status */}
           {editMode && onStateChange && (
-            <div className="text-sm text-gray-600 mr-2 bg-gray-100 px-3 py-1 rounded-lg hidden sm:block">
+            <div className="text-sm text-ink-paragraph mr-2 bg-ink-light px-3 py-1 rounded-lg hidden sm:block">
               {isSaving ? (
                 <span className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-status-info rounded-full animate-pulse"></div>
                   Saving...
                 </span>
               ) : lastSaved ? (
@@ -244,13 +244,13 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
             <>
               <button
                 onClick={handleEditToggle}
-                className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+                className="flex items-center gap-2 bg-status-success text-white px-4 py-2 rounded-lg hover:bg-status-success transition"
               >
                 <Save size={18} /> Done
               </button>
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+                className="flex items-center gap-2 bg-status-error text-white px-4 py-2 rounded-lg hover:bg-status-error transition"
               >
                 <X size={18} /> Cancel
               </button>
@@ -258,7 +258,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
           ) : (
             <button
               onClick={handleEditToggle}
-              className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg border border-white/30 hover:bg-green-600 transition"
+              className="flex items-center gap-2 bg-status-success text-white px-4 py-2 rounded-lg border border-white/30 hover:bg-status-success transition"
             >
               <Edit size={18} /> Edit
             </button>
@@ -276,14 +276,14 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                   setAboutContent({ ...aboutContent, heading: e.target.value })
                 }
                 maxLength={100}
-                className="text-4xl md:text-5xl font-bold text-black px-3 py-2 rounded-md w-full max-w-4xl mx-auto border border-gray-300"
+                className="text-4xl md:text-5xl font-bold text-ink px-3 py-2 rounded-md w-full max-w-4xl mx-auto border border-ink-light"
               />
-              <div className="text-sm text-gray-500 text-right max-w-4xl mx-auto mt-1">
+              <div className="text-sm text-ink-caption text-right max-w-4xl mx-auto mt-1">
                 {aboutContent.heading.length}/100
               </div>
             </div>
           ) : (
-            <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
               {aboutContent.heading}
             </h2>
           )}
@@ -297,15 +297,15 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                   setAboutContent({ ...aboutContent, subText: e.target.value })
                 }
                 maxLength={500}
-                className="text-gray-600 text-lg leading-relaxed w-full border border-gray-300 px-3 py-2 rounded-md resize-y"
+                className="text-ink-paragraph text-lg leading-relaxed w-full border border-ink-light px-3 py-2 rounded-md resize-y"
                 rows={3}
               />
-              <div className="text-sm text-gray-500 text-right mt-1">
+              <div className="text-sm text-ink-caption text-right mt-1">
                 {aboutContent.subText.length}/500
               </div>
             </div>
           ) : (
-            <p className="text-gray-600 text-lg max-w-4xl mx-auto leading-relaxed text-center">
+            <p className="text-ink-paragraph text-lg max-w-4xl mx-auto leading-relaxed text-center">
               {aboutContent.subText}
             </p>
           )}
@@ -317,7 +317,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
             <div className="text-center mb-6">
               <button
                 onClick={addFeature}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                className="bg-status-info text-white px-4 py-2 rounded-lg hover:bg-status-info transition"
               >
                 + Add Feature
               </button>
@@ -328,12 +328,12 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
             {aboutContent.features.map((item, index) => (
               <div
                 key={index}
-                className="bg-gray-50 p-6 rounded-xl border-[solid] border-[black] border-[1px] shadow-md hover:bg-[#FFD400] hover:text-black transition-all duration-300 relative"
+                className="bg-ink-offwhite p-6 rounded-xl border-[solid] border-[black] border-[1px] shadow-md hover:bg-[#FFD400] hover:text-ink transition-all duration-300 relative"
               >
                 {editMode && (
                   <button
                     onClick={() => removeFeature(index)}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                    className="absolute -top-2 -right-2 bg-status-error text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-status-error"
                   >
                     ×
                   </button>
@@ -359,9 +359,9 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                       value={item.title}
                       onChange={(e) => updateFeature(index, 'title', e.target.value)}
                       maxLength={100}
-                      className="text-xl font-semibold px-2 py-1 rounded-md w-full border border-gray-300"
+                      className="text-xl font-semibold px-2 py-1 rounded-md w-full border border-ink-light"
                     />
-                    <div className="text-xs text-gray-500 text-right mt-1">
+                    <div className="text-xs text-ink-caption text-right mt-1">
                       {item.title.length}/100
                     </div>
                   </div>
@@ -375,15 +375,15 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                       value={item.description}
                       onChange={(e) => updateFeature(index, 'description', e.target.value)}
                       maxLength={200}
-                      className="text-gray-600 w-full px-2 py-1 rounded-md border border-gray-300 resize-y"
+                      className="text-ink-paragraph w-full px-2 py-1 rounded-md border border-ink-light resize-y"
                       rows={3}
                     />
-                    <div className="text-xs text-gray-500 text-right mt-1">
+                    <div className="text-xs text-ink-caption text-right mt-1">
                       {item.description.length}/200
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-600">{item.description}</p>
+                  <p className="text-ink-paragraph">{item.description}</p>
                 )}
               </div>
             ))}
@@ -401,9 +401,9 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                     value={aboutContent.zonesTitle}
                     onChange={(e) => setAboutContent({ ...aboutContent, zonesTitle: e.target.value })}
                     maxLength={50}
-                    className="text-3xl font-bold text-[#FFD400] bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                    className="text-3xl font-bold text-[#FFD400] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
                   />
-                  <div className="text-xs text-gray-500 text-right mt-1">
+                  <div className="text-xs text-ink-caption text-right mt-1">
                     {aboutContent.zonesTitle.length}/50
                   </div>
                 </div>
@@ -414,9 +414,9 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                     value={aboutContent.zonesTitleHighlight}
                     onChange={(e) => setAboutContent({ ...aboutContent, zonesTitleHighlight: e.target.value })}
                     maxLength={50}
-                    className="text-3xl font-bold text-black bg-transparent border-b-2 border-gray-300 focus:border-blue-500 outline-none text-center"
+                    className="text-3xl font-bold text-ink bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
                   />
-                  <div className="text-xs text-gray-500 text-right mt-1">
+                  <div className="text-xs text-ink-caption text-right mt-1">
                     {aboutContent.zonesTitleHighlight.length}/50
                   </div>
                 </div>
@@ -427,20 +427,20 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                   value={aboutContent.zonesSubtitle}
                   onChange={(e) => setAboutContent({ ...aboutContent, zonesSubtitle: e.target.value })}
                   maxLength={200}
-                  className="text-gray-600 text-lg bg-transparent border-2 border-gray-300 focus:border-blue-500 outline-none p-2 rounded-md w-full resize-none"
+                  className="text-ink-paragraph text-lg bg-transparent border-2 border-ink-light focus:border-status-info outline-none p-2 rounded-md w-full resize-none"
                   rows={2}
                 />
-                <div className="text-sm text-gray-600 mt-1">
+                <div className="text-sm text-ink-paragraph mt-1">
                   {aboutContent.zonesSubtitle.length}/200
                 </div>
               </div>
             </>
           ) : (
             <>
-              <h3 className="text-3xl font-bold text-black mb-4">
+              <h3 className="text-3xl font-bold text-ink mb-4">
                 <span className="text-[#FFD400]">{aboutContent.zonesTitle}</span> {aboutContent.zonesTitleHighlight}
               </h3>
-              <p className="text-gray-600 text-lg max-w-3xl mx-auto text-center">
+              <p className="text-ink-paragraph text-lg max-w-3xl mx-auto text-center">
                 {aboutContent.zonesSubtitle}
               </p>
             </>
@@ -452,7 +452,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
             <div className="text-center mb-6">
               <button
                 onClick={addZone}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                className="bg-status-info text-white px-4 py-2 rounded-lg hover:bg-status-info transition"
               >
                 + Add Zone
               </button>
@@ -463,12 +463,12 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
             {aboutContent.zones.map((zone, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-2xl shadow-md border-[solid] border-[1px] border-yellow-400 hover:shadow-xl transition-all relative"
+                className="bg-surface-card p-6 rounded-2xl shadow-md border-[solid] border-[1px] border-brand-yellow hover:shadow-xl transition-all relative"
               >
                 {editMode && (
                   <button
                     onClick={() => removeZone(index)}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                    className="absolute -top-2 -right-2 bg-status-error text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-status-error"
                   >
                     ×
                   </button>
@@ -484,9 +484,9 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                       value={zone.title}
                       onChange={(e) => updateZone(index, 'title', e.target.value)}
                       maxLength={100}
-                      className="text-xl font-semibold text-[#FF0000] px-2 py-1 rounded-md w-full border border-gray-300"
+                      className="text-xl font-semibold text-[#FF0000] px-2 py-1 rounded-md w-full border border-ink-light"
                     />
-                    <div className="text-xs text-gray-500 text-right mt-1">
+                    <div className="text-xs text-ink-caption text-right mt-1">
                       {zone.title.length}/100
                     </div>
                   </div>
@@ -502,15 +502,15 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                       value={zone.description}
                       onChange={(e) => updateZone(index, 'description', e.target.value)}
                       maxLength={200}
-                      className="text-gray-700 w-full px-2 py-1 rounded-md border border-gray-300 resize-y"
+                      className="text-ink-paragraph w-full px-2 py-1 rounded-md border border-ink-light resize-y"
                       rows={3}
                     />
-                    <div className="text-xs text-gray-500 text-right mt-1">
+                    <div className="text-xs text-ink-caption text-right mt-1">
                       {zone.description.length}/200
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-700 leading-relaxed text-center">{zone.description}</p>
+                  <p className="text-ink-paragraph leading-relaxed text-center">{zone.description}</p>
                 )}
               </div>
             ))}

@@ -89,7 +89,7 @@ export function Certifications() {
   };
 
   return (
-    <section id="certifications" className="py-20 bg-gradient-to-br from-yellow-50 to-background dark:from-yellow-900/20 dark:to-background">
+    <section id="certifications" className="py-20 bg-gradient-to-br from-surface-main to-background dark:from-yellow-900/20 dark:to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div 
@@ -100,9 +100,9 @@ export function Certifications() {
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center justify-center mb-4">
-            <Award className="w-8 h-8 text-yellow-500 mr-3" />
+            <Award className="w-8 h-8 text-brand-gold mr-3" />
             <h2 className="text-3xl sm:text-4xl lg:text-5xl text-foreground">
-              Certifications & <span className="text-yellow-500">Achievements</span>
+              Certifications & <span className="text-brand-gold">Achievements</span>
             </h2>
           </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -134,16 +134,16 @@ export function Certifications() {
                     alt={certificates[currentIndex].title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-ink/20 to-transparent"></div>
                 </div>
 
                 {/* Certificate Details */}
-                <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-yellow-50 dark:from-card dark:to-yellow-900/20">
+                <div className="p-8 flex flex-col justify-center bg-gradient-to-br from-card to-surface-main dark:from-card dark:to-yellow-900/20">
                   <div className="mb-6">
                     <h3 className="text-2xl lg:text-3xl text-foreground mb-2">
                       {certificates[currentIndex].title}
                     </h3>
-                    <div className="flex items-center text-yellow-600 mb-4">
+                    <div className="flex items-center text-brand-gold mb-4">
                       <Calendar className="w-5 h-5 mr-2" />
                       <span className="text-lg">{certificates[currentIndex].issuer} • {certificates[currentIndex].date}</span>
                     </div>
@@ -153,7 +153,7 @@ export function Certifications() {
                     {certificates[currentIndex].description}
                   </p>
 
-                  <button className="inline-flex items-center text-yellow-600 hover:text-yellow-700 transition-colors group">
+                  <button className="inline-flex items-center text-brand-gold hover:text-brand-yellow transition-colors group">
                     <span className="mr-2">View Credential</span>
                     <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
@@ -165,13 +165,13 @@ export function Certifications() {
           {/* Navigation Arrows */}
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-yellow-600 transition-all duration-300 hover:scale-110 z-10"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-brand-yellow transition-all duration-300 hover:scale-110 z-10"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-yellow-600 transition-all duration-300 hover:scale-110 z-10"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-brand-yellow transition-all duration-300 hover:scale-110 z-10"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
@@ -184,8 +184,8 @@ export function Certifications() {
                 onClick={() => goToSlide(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === currentIndex 
-                    ? 'bg-yellow-500 scale-125' 
-                    : 'bg-gray-300 hover:bg-gray-400'
+                    ? 'bg-brand-gold scale-125' 
+                    : 'bg-ink-light hover:bg-ink-caption'
                 }`}
               />
             ))}
@@ -201,19 +201,19 @@ export function Certifications() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <div className="text-center">
-            <div className="text-3xl text-yellow-500 mb-2">{certificates.length}+</div>
+            <div className="text-3xl text-brand-gold mb-2">{certificates.length}+</div>
             <p className="text-muted-foreground">Certifications</p>
           </div>
           <div className="text-center">
-            <div className="text-3xl text-yellow-500 mb-2">500+</div>
+            <div className="text-3xl text-brand-gold mb-2">500+</div>
             <p className="text-muted-foreground">Hours of Learning</p>
           </div>
           <div className="text-center">
-            <div className="text-3xl text-yellow-500 mb-2">15+</div>
+            <div className="text-3xl text-brand-gold mb-2">15+</div>
             <p className="text-muted-foreground">Skills Mastered</p>
           </div>
           <div className="text-center">
-            <div className="text-3xl text-yellow-500 mb-2">100%</div>
+            <div className="text-3xl text-brand-gold mb-2">100%</div>
             <p className="text-muted-foreground">Pass Rate</p>
           </div>
         </motion.div>

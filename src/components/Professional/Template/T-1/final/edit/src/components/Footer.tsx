@@ -83,13 +83,13 @@
 //   };
 
 //   const getCharCountClass = (current: number, limit: number) => {
-//     if (current >= limit) return "text-red-500";
-//     if (current >= limit * 0.8) return "text-yellow-500";
-//     return "text-gray-500";
+//     if (current >= limit) return "text-status-error";
+//     if (current >= limit * 0.8) return "text-brand-gold";
+//     return "text-ink-caption";
 //   };
 
 //   return (
-//     <footer className="bg-dark-300 text-justify border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
+//     <footer className="bg-dark-300 text-justify border-t border-ink-light dark:border-gray-800 relative overflow-hidden">
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
 //         {onSave && (
 //           <div className="absolute top-6 right-6 z-20 flex gap-3">
@@ -97,14 +97,14 @@
 //               <>
 //                 <button
 //                   onClick={handleSave}
-//                   className="p-3 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md hover:shadow-lg transition-all"
+//                   className="p-3 bg-status-success hover:bg-status-success text-white rounded-full shadow-md hover:shadow-lg transition-all"
 //                   title="Save updates"
 //                 >
 //                   <Save className="w-5 h-5" />
 //                 </button>
 //                 <button
 //                   onClick={handleCancel}
-//                   className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-md hover:shadow-lg transition-all"
+//                   className="p-3 bg-status-error hover:bg-status-error text-white rounded-full shadow-md hover:shadow-lg transition-all"
 //                   title="Cancel updates"
 //                 >
 //                   <X className="w-5 h-5" />
@@ -113,7 +113,7 @@
 //             ) : (
 //               <button
 //                 onClick={() => setIsEditing(true)}
-//                 className="p-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full shadow-md hover:shadow-lg transition-all"
+//                 className="p-3 bg-ink-light dark:bg-gray-700 text-ink dark:text-white rounded-full shadow-md hover:shadow-lg transition-all"
 //                 title="Edit footer section"
 //               >
 //                 <Edit className="w-5 h-5" />
@@ -129,7 +129,7 @@
 //               whileHover={{ scale: 1.02 }}
 //               className="flex items-center space-x-2 mb-4"
 //             >
-//               <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+//               <div className="rounded-full bg-brand-gold text-ink h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
 //                 <span className="uppercase">
 //                   {content.personalInfo.name[0] || "P"}
 //                 </span>
@@ -150,7 +150,7 @@
 //                       })
 //                     }
 //                     maxLength={CHAR_LIMITS.personalName}
-//                     className="text-2xl font-bold text-blue-500 dark:text-orange-500 bg-transparent border-b border-orange-400 focus:outline-none"
+//                     className="text-2xl font-bold text-status-info dark:text-orange-500 bg-transparent border-b border-status-warning focus:outline-none"
 //                   />
 //                   <div
 //                     className={`text-xs mt-1 ${getCharCountClass(
@@ -163,7 +163,7 @@
 //                   </div>
 //                 </div>
 //               ) : (
-//                 <span className="text-2xl font-bold truncate capitalize text-yellow-500">
+//                 <span className="text-2xl font-bold truncate capitalize text-brand-gold">
 //                   {content.personalInfo.name}
 //                 </span>
 //               )}
@@ -183,7 +183,7 @@
 //                     })
 //                   }
 //                   maxLength={CHAR_LIMITS.personalDescription}
-//                   className="w-full bg-gray-800 border border-gray-700 text-gray-300 rounded-lg p-3 focus:border-orange-500 focus:outline-none resize-none"
+//                   className="w-full bg-ink-charcoal border border-ink-paragraph text-ink-light rounded-lg p-3 focus:border-status-warning focus:outline-none resize-none"
 //                   rows={3}
 //                 />
 //                 <div
@@ -197,7 +197,7 @@
 //                 </div>
 //               </div>
 //             ) : (
-//               <p className="text-gray-400 mb-6 leading-relaxed max-w-md">
+//               <p className="text-ink-caption mb-6 leading-relaxed max-w-md">
 //                 {content.personalInfo.description}
 //               </p>
 //             )}
@@ -205,7 +205,7 @@
 
 //           {/* Quick Links */}
 //           <div>
-//             <h3 className="text-gray-700 dark:text-white font-semibold mb-4">
+//             <h3 className="text-ink-paragraph dark:text-white font-semibold mb-4">
 //               Quick Links
 //             </h3>
 //             <ul className="space-y-2">
@@ -226,7 +226,7 @@
 //                             });
 //                           }}
 //                           maxLength={CHAR_LIMITS.linkLabel}
-//                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+//                           className="w-full px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning focus:outline-none"
 //                           placeholder="Label"
 //                         />
 //                         <div
@@ -251,7 +251,7 @@
 //                             });
 //                           }}
 //                           maxLength={CHAR_LIMITS.linkHref}
-//                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+//                           className="w-full px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning focus:outline-none"
 //                           placeholder="#section"
 //                         />
 //                         <div
@@ -268,7 +268,7 @@
 //                     <motion.button
 //                       whileHover={{ x: 5 }}
 //                       onClick={() => scrollToSection(link.href)}
-//                       className="text-gray-400 hover:text-accent-orange transition"
+//                       className="text-ink-caption hover:text-accent-orange transition"
 //                     >
 //                       {link.label}
 //                     </motion.button>
@@ -280,7 +280,7 @@
 
 //           {/* More + Newsletter */}
 //           <div>
-//             <h3 className="text-gray-700 dark:text-white font-semibold mb-4">
+//             <h3 className="text-ink-paragraph dark:text-white font-semibold mb-4">
 //               More
 //             </h3>
 //             <ul className="space-y-2 mb-6">
@@ -301,7 +301,7 @@
 //                             });
 //                           }}
 //                           maxLength={CHAR_LIMITS.linkLabel}
-//                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+//                           className="w-full px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning focus:outline-none"
 //                           placeholder="Label"
 //                         />
 //                         <div
@@ -326,7 +326,7 @@
 //                             });
 //                           }}
 //                           maxLength={CHAR_LIMITS.linkHref}
-//                           className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+//                           className="w-full px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning focus:outline-none"
 //                           placeholder="#section"
 //                         />
 //                         <div
@@ -343,7 +343,7 @@
 //                     <motion.button
 //                       whileHover={{ x: 5 }}
 //                       onClick={() => scrollToSection(link.href)}
-//                       className="text-gray-400 hover:text-accent-orange transition"
+//                       className="text-ink-caption hover:text-accent-orange transition"
 //                     >
 //                       {link.label}
 //                     </motion.button>
@@ -572,9 +572,9 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
   };
 
   const getCharCountClass = (current: number, limit: number) => {
-    if (current >= limit) return "text-red-500";
-    if (current >= limit * 0.8) return "text-yellow-500";
-    return "text-gray-500";
+    if (current >= limit) return "text-status-error";
+    if (current >= limit * 0.8) return "text-brand-gold";
+    return "text-ink-caption";
   };
 
   // Format last saved time for display
@@ -595,14 +595,14 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
   };
 
   return (
-    <footer className="bg-dark-300 text-justify border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
+    <footer className="bg-dark-300 text-justify border-t border-ink-light dark:border-gray-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
         {onSave && (
           <div className="absolute top-6 right-6 z-20 flex gap-3 items-center">
             {isEditing ? (
               <>
                 {/* Auto-save indicator */}
-                <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-2 mr-2 text-sm text-ink-caption dark:text-gray-400">
                   {isAutoSaving ? (
                     <div className="flex items-center gap-1">
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -610,12 +610,12 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     </div>
                   ) : hasUnsavedChanges ? (
                     <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
                       <span>Unsaved changes</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div className="w-2 h-2 bg-status-success rounded-full"></div>
                       <span>Saved {formatLastSavedTime()}</span>
                     </div>
                   )}
@@ -623,14 +623,14 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
 
                 <button
                   onClick={handleSave}
-                  className="p-3 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md hover:shadow-lg transition-all"
+                  className="p-3 bg-status-success hover:bg-status-success text-white rounded-full shadow-md hover:shadow-lg transition-all"
                   title="Save updates"
                 >
                   <Save className="w-5 h-5" />
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-md hover:shadow-lg transition-all"
+                  className="p-3 bg-status-error hover:bg-status-error text-white rounded-full shadow-md hover:shadow-lg transition-all"
                   title="Cancel updates"
                 >
                   <X className="w-5 h-5" />
@@ -639,7 +639,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
             ) : (
               <button
                 onClick={handleEditStart}
-                className="p-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full shadow-md hover:shadow-lg transition-all"
+                className="p-3 bg-ink-light dark:bg-gray-700 text-ink dark:text-white rounded-full shadow-md hover:shadow-lg transition-all"
                 title="Edit footer section"
               >
                 <Edit className="w-5 h-5" />
@@ -655,7 +655,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               whileHover={{ scale: 1.02 }}
               className="flex items-center space-x-2 mb-4"
             >
-              <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+              <div className="rounded-full bg-brand-gold text-ink h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
                 <span className="uppercase">
                   {editedContent.personalInfo.name[0] || "P"}
                 </span>
@@ -670,7 +670,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                       handlePersonalInfoChange("name", e.target.value)
                     }
                     maxLength={CHAR_LIMITS.personalName}
-                    className="text-2xl font-bold text-blue-500 dark:text-orange-500 bg-transparent border-b border-orange-400 focus:outline-none"
+                    className="text-2xl font-bold text-status-info dark:text-orange-500 bg-transparent border-b border-status-warning focus:outline-none"
                   />
                   <div
                     className={`text-xs mt-1 ${getCharCountClass(
@@ -683,7 +683,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                   </div>
                 </div>
               ) : (
-                <span className="text-2xl font-bold truncate capitalize text-yellow-500">
+                <span className="text-2xl font-bold truncate capitalize text-brand-gold">
                   {editedContent.personalInfo.name}
                 </span>
               )}
@@ -697,7 +697,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     handlePersonalInfoChange("description", e.target.value)
                   }
                   maxLength={CHAR_LIMITS.personalDescription}
-                  className="w-full bg-gray-800 border border-gray-700 text-gray-300 rounded-lg p-3 focus:border-orange-500 focus:outline-none resize-none"
+                  className="w-full bg-ink-charcoal border border-ink-paragraph text-ink-light rounded-lg p-3 focus:border-status-warning focus:outline-none resize-none"
                   rows={3}
                 />
                 <div
@@ -711,7 +711,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-400 mb-6 leading-relaxed max-w-md">
+              <p className="text-ink-caption mb-6 leading-relaxed max-w-md">
                 {editedContent.personalInfo.description}
               </p>
             )}
@@ -719,7 +719,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-gray-700 dark:text-white font-semibold mb-4">
+            <h3 className="text-ink-paragraph dark:text-white font-semibold mb-4">
               Quick Links
             </h3>
             <ul className="space-y-2">
@@ -739,7 +739,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                             )
                           }
                           maxLength={CHAR_LIMITS.linkLabel}
-                          className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+                          className="w-full px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning focus:outline-none"
                           placeholder="Label"
                         />
                         <div
@@ -759,7 +759,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                             handleQuickLinkChange(index, "href", e.target.value)
                           }
                           maxLength={CHAR_LIMITS.linkHref}
-                          className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+                          className="w-full px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning focus:outline-none"
                           placeholder="#section"
                         />
                         <div
@@ -776,7 +776,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     <motion.button
                       whileHover={{ x: 5 }}
                       onClick={() => scrollToSection(link.href)}
-                      className="text-gray-400 hover:text-accent-orange transition"
+                      className="text-ink-caption hover:text-accent-orange transition"
                     >
                       {link.label}
                     </motion.button>
@@ -788,7 +788,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
 
           {/* More + Newsletter */}
           <div>
-            <h3 className="text-gray-700 dark:text-white font-semibold mb-4">
+            <h3 className="text-ink-paragraph dark:text-white font-semibold mb-4">
               More
             </h3>
             <ul className="space-y-2 mb-6">
@@ -804,7 +804,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                             handleMoreLinkChange(index, "label", e.target.value)
                           }
                           maxLength={CHAR_LIMITS.linkLabel}
-                          className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+                          className="w-full px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning focus:outline-none"
                           placeholder="Label"
                         />
                         <div
@@ -824,7 +824,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                             handleMoreLinkChange(index, "href", e.target.value)
                           }
                           maxLength={CHAR_LIMITS.linkHref}
-                          className="w-full px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500 focus:outline-none"
+                          className="w-full px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning focus:outline-none"
                           placeholder="#section"
                         />
                         <div
@@ -841,7 +841,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     <motion.button
                       whileHover={{ x: 5 }}
                       onClick={() => scrollToSection(link.href)}
-                      className="text-gray-400 hover:text-accent-orange transition"
+                      className="text-ink-caption hover:text-accent-orange transition"
                     >
                       {link.label}
                     </motion.button>
