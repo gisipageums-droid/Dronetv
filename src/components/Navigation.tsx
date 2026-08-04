@@ -180,7 +180,7 @@ const Navigation = () => {
               onMouseLeave={() => setIsAboutOpen(false)}
             >
               <motion.button
-                onClick={() => { closeAllDropdowns(); setIsAboutOpen(s => !s); }}
+                onClick={() => { closeAllDropdowns(); handleNavigation("/about"); }}
                 className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-ink flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${aboutItems.some(i => location.pathname === i.path) ? "bg-ink/10" : ""}`}
               >
                 <span className="relative z-10">About Us</span>
