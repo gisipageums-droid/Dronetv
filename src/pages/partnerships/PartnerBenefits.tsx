@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import CompactHero from '../../components/common/CompactHero';
+import { SLOT_DEFINITIONS, DURATION_OPTIONS } from '../../components/UserDashboard/pages/PagePlacements';
 
 const packages = [
   {
@@ -123,6 +124,64 @@ export default function PartnerBenefitsPage() {
           <p className="text-sm text-ink-paragraph">
             All prices exclusive of GST. 100% advance payment required before onboarding begins. Packages are annual (12 months).
           </p>
+        </div>
+
+        {/* Page Placement (banner ad) pricing — pay-per-day placements, separate
+            from the annual partnership packages above. Booked from the User
+            Dashboard > Page Placements after logging in. */}
+        <div className="pt-4">
+          <h2 className="text-lg font-extrabold text-ink mb-1">Advertise on DroneTv.in — Page Placement Pricing</h2>
+          <p className="text-sm text-ink-paragraph mb-6">
+            Book a banner placement on a specific page for as little as a day, or as long as a month — no annual commitment. Pay with tokens, from your Dashboard.
+          </p>
+
+          <div className="space-y-6">
+            {Array.from(new Set(SLOT_DEFINITIONS.map(s => s.category))).map(cat => (
+              <div key={cat}>
+                <div className="text-[11px] font-bold text-ink-caption uppercase tracking-widest mb-2">{cat}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {SLOT_DEFINITIONS.filter(s => s.category === cat).map(slot => (
+                    <div key={slot.id} className="bg-surface-card rounded-lg border border-ink-light p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="text-sm font-bold text-ink">{slot.label}</span>
+                        {slot.disabled ? (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-ink-light text-ink-paragraph flex-shrink-0">{slot.disabledReason}</span>
+                        ) : (
+                          <span className="text-right flex-shrink-0">
+                            <span className="text-sm font-black text-brand-gold">{slot.costPerDay} ₮</span>
+                            <span className="block text-[10px] text-ink-caption">per day</span>
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-ink-caption mt-1">{slot.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 bg-surface-card rounded-xl border border-ink-light p-5">
+            <div className="text-[11px] font-bold text-ink-caption uppercase tracking-widest mb-3">Duration discounts</div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {DURATION_OPTIONS.map(d => (
+                <div key={d.days} className="text-center bg-ink-light rounded-lg py-3">
+                  <div className="text-sm font-bold text-ink">{d.label}</div>
+                  {d.discount && <div className="text-xs text-status-success font-semibold mt-0.5">{d.discount}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link
+              to="/user-page-placements"
+              className="inline-block bg-brand-yellow text-ink font-bold text-sm px-6 py-2.5 rounded-lg hover:bg-brand-gold transition-colors"
+            >
+              Book a Placement →
+            </Link>
+            <p className="text-xs text-ink-caption mt-2">Login required. Tokens can be purchased from your Dashboard.</p>
+          </div>
         </div>
       </div>
     </div>

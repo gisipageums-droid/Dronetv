@@ -97,7 +97,7 @@ function getNavGroups(_role: string, isAdmin: boolean): NavGroup[] {
         { icon: Calendar,      label: "Event Organizers",    href: "/user-content/event-organizer" },
         { icon: GraduationCap, label: "Education Partners",  href: "/user-content/education-partner" },
         { icon: Briefcase,     label: "Industry Players",    href: "/user-content/industry-player" },
-        { icon: Star,          label: "Partner Benefits",    href: "/partnerships/benefits" },
+        { icon: Star,          label: "Advertising Plans",   href: "/advertising-plans" },
         { icon: Handshake,     label: "Become a Partner",   href: "/partnerships/become-a-partner" },
       ],
     },

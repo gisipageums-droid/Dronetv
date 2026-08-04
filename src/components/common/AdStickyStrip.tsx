@@ -5,12 +5,12 @@ import AdSlot from './AdSlot';
 import { ExpoAdCreative, getAdsFor } from './adCreatives';
 
 // Pages excluded from ad placements entirely (per explicit user instruction):
-// Home, About Us, Contact, Purchase (which is /partnerships/benefits) — plus
-// internal editor/form/admin/dashboard routes where a fixed overlay would sit
-// on top of active UI instead of content. Note "/professional/" (singular,
+// Home, About Us, Contact, Advertising Plans (which is /advertising-plans) —
+// plus internal editor/form/admin/dashboard routes where a fixed overlay would
+// sit on top of active UI instead of content. Note "/professional/" (singular,
 // trailing slash) only matches the form/edit/select/t1/t2 routes, not the
 // public "/professionals/..." (plural) listing pages this strip should cover.
-const EXCLUDED_EXACT_PATHS = ['/', '/about', '/contact', '/partnerships/benefits'];
+const EXCLUDED_EXACT_PATHS = ['/', '/about', '/contact', '/advertising-plans'];
 const EXCLUDED_PREFIXES = ['/admin', '/company', '/professional/', '/template', '/edit', '/user', '/form', '/events/form', '/event/leads'];
 
 // Zone 5: single site-wide bottom sticky strip, mounted once in App.tsx rather

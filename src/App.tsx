@@ -258,7 +258,7 @@ const AppContent = () => {
           <Route path="/partnerships/event-organizers" element={<EventOrganizersPage />} />
           <Route path="/partnerships/education-partners" element={<EducationPartnersPage />} />
           <Route path="/partnerships/industry-players" element={<IndustryPlayersPage />} />
-          <Route path="/partnerships/benefits" element={<PartnerBenefitsPage />} />
+          <Route path="/advertising-plans" element={<PartnerBenefitsPage />} />
           <Route path="/partnerships/become-a-partner" element={<BecomePartnerPage />} />
 
           <Route path="/professionals" element={<ProfessionalsPage />} />

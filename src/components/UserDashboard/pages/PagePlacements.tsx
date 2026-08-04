@@ -8,7 +8,7 @@ const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profil
 const TOKEN_SPEND = LAMBDA.tokenSpend;
 const ADS_UPLOAD_API = `${LAMBDA.eventsImageUpload}/upload/ads`;
 
-const DURATION_OPTIONS = [
+export const DURATION_OPTIONS = [
   { days: 1,  label: "1 Day",   discount: "" },
   { days: 7,  label: "1 Week",  discount: "Save 10%" },
   { days: 14, label: "2 Weeks", discount: "Save 15%" },

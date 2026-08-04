@@ -312,7 +312,7 @@ const Navigation = () => {
             </div>
 
             {/* Advertising Plans */}
-            <Link to="/partnerships/benefits" className={`relative px-2.5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/partnerships/benefits" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
+            <Link to="/advertising-plans" className={`relative px-2.5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/advertising-plans" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
               <span className="relative z-10">Advertising Plans</span>
               <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
             </Link>
@@ -460,7 +460,7 @@ const Navigation = () => {
               <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
             ))}
 
-            <button onClick={() => handleNavigation("/partnerships/benefits")} className="w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-ink-charcoal/10 text-ink">Advertising Plans</button>
+            <button onClick={() => handleNavigation("/advertising-plans")} className="w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-ink-charcoal/10 text-ink">Advertising Plans</button>
             <button onClick={() => handleNavigation("/contact")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Contact</button>
 
             {isLogin || isAdminLogin ? (
