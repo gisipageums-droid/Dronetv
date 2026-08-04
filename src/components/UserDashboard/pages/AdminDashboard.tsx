@@ -1,21 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Search, Coins, Award } from "lucide-react";
 import { useUserAuth } from "../../context/context";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from "recharts";
 import axios from "axios";
 import { ADMIN_API, AUTH_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
 
@@ -72,25 +57,6 @@ const AdminDashboard: React.FC = () => {
     { label: "Professionals", value: professionalCount, note: "Your published profiles", topBorder: "border-t-brand-gold" },
     { label: "Events", value: eventCount, note: "Your published events", topBorder: "border-t-status-success" },
   ];
-
-  const visitorData = [
-    { name: "Direct", value: 400 },
-    { name: "Organic", value: 300 },
-    { name: "Referral", value: 200 },
-    { name: "Social", value: 150 },
-  ];
-
-  const leadsData = [
-    { name: "Jan", leads: 45, visits: 240 },
-    { name: "Feb", leads: 52, visits: 280 },
-    { name: "Mar", leads: 38, visits: 200 },
-    { name: "Apr", leads: 61, visits: 320 },
-    { name: "May", leads: 55, visits: 290 },
-    { name: "Jun", leads: 67, visits: 350 },
-  ];
-
-  // Design-system tokens only (DESIGN_SYSTEM.md) — no ad-hoc chart colors.
-  const COLORS = ["#2563EB", "#E8B400", "#22C55E", "#F59E0B"];
 
   const { user } = useUserAuth();
   const userDetails = user?.userData;
@@ -310,116 +276,9 @@ const AdminDashboard: React.FC = () => {
           </div>
           <div className="text-right flex-shrink-0">
             <p className="text-brand-yellow font-extrabold text-xl">{pkg.price}</p>
-            <a href="/user-my-package" className="text-[11px] text-white/50 hover:text-white transition-colors">View details →</a>
           </div>
         </div>
       )}
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-        {/* Pie Chart */}
-        <div className="bg-surface-card border border-ink-light rounded-lg p-5">
-          <h2 className="text-[12.5px] font-bold text-ink mb-4">
-            Visitors by Source
-          </h2>
-          <ResponsiveContainer width="100%" height={280}>
-            <PieChart>
-              <Pie
-                data={visitorData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, value }) => `${name}: ${value}`}
-                outerRadius={80}
-                fill="#F8C400"
-                dataKey="value"
-              >
-                {visitorData.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Bar Chart - Leads */}
-        <div className="bg-surface-card border border-ink-light rounded-lg p-5">
-          <h2 className="text-[12.5px] font-bold text-ink mb-4">
-            Leads & Visits by Month
-          </h2>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={leadsData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="name" stroke="#8B8B8B" />
-              <YAxis stroke="#8B8B8B" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#FFFFFF",
-                  border: "1px solid #E5E7EB",
-                  borderRadius: "8px",
-                  color: "#111111",
-                }}
-              />
-              <Legend />
-              <Bar
-                dataKey="leads"
-                fill="#2563EB"
-                name="Leads"
-                radius={[8, 8, 0, 0]}
-              />
-              <Bar
-                dataKey="visits"
-                fill="#22C55E"
-                name="Visits"
-                radius={[8, 8, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Line Chart - Trends */}
-      <div className="bg-surface-card border border-ink-light rounded-lg p-5 mb-6">
-        <h2 className="text-[12.5px] font-bold text-ink mb-4">
-          Lead & Visit Trends
-        </h2>
-        <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={leadsData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-            <XAxis dataKey="name" stroke="#8B8B8B" />
-            <YAxis stroke="#8B8B8B" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#111111",
-                border: "none",
-                borderRadius: "8px",
-                color: "#FFFFFF",
-              }}
-            />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="leads"
-              stroke="#2563EB"
-              strokeWidth={2}
-              dot={{ fill: "#2563EB" }}
-              name="Leads"
-            />
-            <Line
-              type="monotone"
-              dataKey="visits"
-              stroke="#22C55E"
-              strokeWidth={2}
-              dot={{ fill: "#22C55E" }}
-              name="Visits"
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
 
       {/* Recent Leads — card style */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
