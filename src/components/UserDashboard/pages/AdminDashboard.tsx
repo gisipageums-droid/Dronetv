@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Search, Users, Briefcase, Calendar, Coins } from "lucide-react";
+import { Search, Users, Briefcase, Calendar, Coins, Building2, Phone } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import {
   PieChart,
@@ -72,18 +72,21 @@ const AdminDashboard: React.FC = () => {
       value: companyCount,
       icon: Briefcase,
       color: "bg-status-info",
+      topBorder: "border-t-status-info",
     },
     {
       label: "Professionals",
       value: professionalCount,
       icon: Users,
       color: "bg-brand-gold",
+      topBorder: "border-t-brand-gold",
     },
     {
       label: "Events",
       value: eventCount,
       icon: Calendar,
       color: "bg-status-success",
+      topBorder: "border-t-status-success",
     },
   ];
 
@@ -103,7 +106,8 @@ const AdminDashboard: React.FC = () => {
     { name: "Jun", leads: 67, visits: 350 },
   ];
 
-  const COLORS = ["#3b82f6", "#a855f7", "#10b981", "#f59e0b"];
+  // Design-system tokens only (DESIGN_SYSTEM.md) — no ad-hoc chart colors.
+  const COLORS = ["#2563EB", "#E8B400", "#22C55E", "#F59E0B"];
 
   const { user } = useUserAuth();
   const userDetails = user?.userData;
@@ -259,18 +263,17 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-full bg-ink-light p-6 md:p-8">
+    <div className="min-h-full bg-surface-main p-6 md:p-8">
       {/* Header */}
-      <div className="mb-8">
-        <p className="text-xs font-bold tracking-widest text-brand-gold uppercase mb-1">Dashboard</p>
-        <h1 className="text-2xl font-extrabold text-ink mb-1">
-          Welcome back, {userDetails?.fullName?.split(" ")[0] || "there"} 👋
+      <div className="mb-6">
+        <h1 className="text-xl font-extrabold text-ink mb-1">
+          Welcome back, {userDetails?.fullName?.split(" ")[0] || "there"}
         </h1>
-        <p className="text-sm text-ink-caption">Here's your business overview.</p>
+        <p className="text-xs text-ink-caption">Here's your business overview.</p>
       </div>
 
       {/* Search Bar */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="relative max-w-lg">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-caption w-4 h-4" />
           <input
@@ -278,53 +281,46 @@ const AdminDashboard: React.FC = () => {
             placeholder="Search by company name, location, or sector..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-6 py-2.5 bg-surface-card border border-ink-light rounded-xl text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow transition-all"
+            className="w-full pl-11 pr-6 py-2.5 bg-surface-card border border-ink-light rounded-lg text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow transition-all"
           />
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
+      {/* KPI Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 mb-6">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
-            <div key={idx} className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-ink-caption text-xs font-semibold uppercase tracking-wide mb-1">{stat.label}</p>
-                  <p className="text-3xl font-extrabold text-ink">{stat.value}</p>
-                </div>
-                <div className="w-12 h-12 bg-brand-yellow rounded-xl flex items-center justify-center">
-                  <Icon size={22} className="text-ink" />
-                </div>
+            <div key={idx} className={`bg-surface-card border border-ink-light border-t-[3px] ${stat.topBorder} rounded-lg p-4`}>
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-ink-caption text-[10px] font-bold uppercase tracking-wide">{stat.label}</p>
+                <Icon size={14} className="text-ink-caption" />
               </div>
+              <p className="text-2xl font-extrabold text-ink leading-none">{stat.value}</p>
             </div>
           );
         })}
         {/* Token balance card */}
-        <a href="/user-recharge" className="bg-ink border border-ink-paragraph rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow block">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Token Balance</p>
-              <p className="text-3xl font-extrabold text-brand-yellow">
-                {tokenBalance === null ? "…" : tokenBalance.toLocaleString()}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-brand-yellow/15 rounded-xl flex items-center justify-center">
-              <Coins size={22} className="text-brand-yellow" />
-            </div>
+        <a href="/user-recharge" className="bg-ink rounded-lg p-4 block relative overflow-hidden">
+          <div className="absolute top-0 left-0 bottom-0 w-1 bg-brand-yellow" />
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-white/50 text-[10px] font-bold uppercase tracking-wide">Token Balance</p>
+            <Coins size={14} className="text-brand-yellow" />
           </div>
+          <p className="text-2xl font-extrabold text-brand-yellow leading-none">
+            {tokenBalance === null ? "…" : tokenBalance.toLocaleString()}
+          </p>
         </a>
       </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
         {/* Pie Chart */}
-        <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm">
-          <h2 className="text-sm font-bold text-ink mb-4">
+        <div className="bg-surface-card border border-ink-light rounded-lg p-5">
+          <h2 className="text-xs font-bold text-ink uppercase tracking-wide mb-4">
             Visitors by Source
           </h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
                 data={visitorData}
@@ -333,7 +329,7 @@ const AdminDashboard: React.FC = () => {
                 labelLine={false}
                 label={({ name, value }) => `${name}: ${value}`}
                 outerRadius={80}
-                fill="#8884d8"
+                fill="#F8C400"
                 dataKey="value"
               >
                 {visitorData.map((_, index) => (
@@ -349,33 +345,33 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Bar Chart - Leads */}
-        <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm">
-          <h2 className="text-sm font-bold text-ink mb-4">
+        <div className="bg-surface-card border border-ink-light rounded-lg p-5">
+          <h2 className="text-xs font-bold text-ink uppercase tracking-wide mb-4">
             Leads & Visits by Month
           </h2>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <BarChart data={leadsData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-              <XAxis dataKey="name" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="name" stroke="#8B8B8B" />
+              <YAxis stroke="#8B8B8B" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #e5e7eb",
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E5E7EB",
                   borderRadius: "8px",
-                  color: "#111827",
+                  color: "#111111",
                 }}
               />
               <Legend />
               <Bar
                 dataKey="leads"
-                fill="#3b82f6"
+                fill="#2563EB"
                 name="Leads"
                 radius={[8, 8, 0, 0]}
               />
               <Bar
                 dataKey="visits"
-                fill="#10b981"
+                fill="#22C55E"
                 name="Visits"
                 radius={[8, 8, 0, 0]}
               />
@@ -385,276 +381,140 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Line Chart - Trends */}
-      <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-ink mb-4">
+      <div className="bg-surface-card border border-ink-light rounded-lg p-5 mb-6">
+        <h2 className="text-xs font-bold text-ink uppercase tracking-wide mb-4">
           Lead & Visit Trends
         </h2>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={280}>
           <LineChart data={leadsData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-            <XAxis dataKey="name" stroke="#9ca3af" />
-            <YAxis stroke="#9ca3af" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+            <XAxis dataKey="name" stroke="#8B8B8B" />
+            <YAxis stroke="#8B8B8B" />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#1e293b",
+                backgroundColor: "#111111",
                 border: "none",
                 borderRadius: "8px",
-                color: "#fff",
+                color: "#FFFFFF",
               }}
             />
             <Legend />
             <Line
               type="monotone"
               dataKey="leads"
-              stroke="#3b82f6"
+              stroke="#2563EB"
               strokeWidth={2}
-              dot={{ fill: "#3b82f6" }}
+              dot={{ fill: "#2563EB" }}
               name="Leads"
             />
             <Line
               type="monotone"
               dataKey="visits"
-              stroke="#10b981"
+              stroke="#22C55E"
               strokeWidth={2}
-              dot={{ fill: "#10b981" }}
+              dot={{ fill: "#22C55E" }}
               name="Visits"
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Recent Companies Leads List */}
-      <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-ink mb-4">
-          Recent Companies Leads ({recentLeads.length})
-        </h2>
-
-        {loading && (
-          <div className="text-center py-4">
-            <p className="text-ink-caption text-sm">Loading leads...</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-4">
-            <p className="text-status-error">Error: {error}</p>
-          </div>
-        )}
-
-        {!loading && !error && (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-ink-light">
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Category
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Subject
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentLeads.map((lead) => (
-                  <tr
-                    key={lead.leadId}
-                    className="border-b border-ink-light hover:bg-ink-offwhite transition-colors"
-                  >
-                    <td className="py-3 px-4 text-ink text-sm">
-                      {lead.firstName} {lead.lastName}
-                    </td>
-                    <td className="py-3 px-4 text-ink-caption text-sm">
-                      {lead.category}
-                    </td>
-                    <td className="py-3 px-4 text-ink-caption text-sm">{lead.subject}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                          lead.viewed
-                        )}`}
-                      >
-                        {getStatusText(lead.viewed)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-ink-caption text-sm">
-                      {formatDate(lead.submittedAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {!loading && !error && recentLeads.length === 0 && (
-          <div className="text-center py-4">
-            <p className="text-ink-caption text-sm">No leads found</p>
-          </div>
-        )}
-      </div>
-
-      {/* Recent Professional Leads List */}
-      <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-ink mb-4">
-          Recent Professional Leads ({recentProfessional.length})
-        </h2>
-
-        {professionalLoading && (
-          <div className="text-center py-4">
-            <p className="text-ink-caption text-sm">Loading professional leads...</p>
-          </div>
-        )}
-
-        {professionalError && (
-          <div className="text-center py-4">
-            <p className="text-status-error">Error: {professionalError}</p>
-          </div>
-        )}
-
-        {!professionalLoading && !professionalError && (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-ink-light">
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Phone
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Subject
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentProfessional.map((lead) => (
-                  <tr
-                    key={lead.leadId}
-                    className="border-b border-ink-light hover:bg-ink-offwhite transition-colors"
-                  >
-                    <td className="py-3 px-4 text-ink text-sm">{lead.firstName} </td>
-                    <td className="py-3 px-4 text-ink text-sm">{lead.phone}</td>
-                    <td className="py-3 px-4 text-ink-caption text-sm">{lead.subject}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                          lead.viewed
-                        )}`}
-                      >
-                        {getStatusText(lead.viewed)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-ink-caption text-sm">
-                      {formatDate(lead.submittedAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {!professionalLoading &&
-          !professionalError &&
-          recentProfessional.length === 0 && (
-            <div className="text-center py-4">
-              <p className="text-ink-caption text-sm">No professional leads found</p>
-            </div>
-          )}
-      </div>
-
-      {/* Recent Events Leads List */}
-      <div className="bg-surface-card border border-ink-light rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-ink mb-4">
-          Recent Event Leads ({recentEvent.length})
-        </h2>
-
-        {eventLoading && (
-          <div className="text-center py-4">
-            <p className="text-ink-caption text-sm">Loading event leads...</p>
-          </div>
-        )}
-
-        {eventError && (
-          <div className="text-center py-4">
-            <p className="text-status-error">Error: {eventError}</p>
-          </div>
-        )}
-
-        {!eventLoading && !eventError && (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-ink-light">
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Phone
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Subject
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-ink-caption font-semibold text-xs uppercase tracking-wide">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentEvent.map((lead) => (
-                  <tr
-                    key={lead.leadId}
-                    className="border-b border-ink-light hover:bg-ink-offwhite transition-colors"
-                  >
-                    <td className="py-3 px-4 text-ink text-sm">{lead.firstName} </td>
-                    <td className="py-3 px-4 text-ink text-sm">{lead.phone}</td>
-                    <td className="py-3 px-4 text-ink-caption text-sm">{lead.subject}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                          lead.viewed
-                        )}`}
-                      >
-                        {getStatusText(lead.viewed)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-ink-caption text-sm">
-                      {formatDate(lead.submittedAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {!eventLoading && !eventError && recentEvent.length === 0 && (
-          <div className="text-center py-4">
-            <p className="text-ink-caption text-sm">No event leads found</p>
-          </div>
-        )}
+      {/* Recent Leads — card style */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <LeadListSection
+          title="Recent Companies Leads"
+          icon={Building2}
+          leads={recentLeads}
+          loading={loading}
+          error={error}
+          emptyText="No leads found"
+          subtitleField="category"
+          getStatusColor={getStatusColor}
+          getStatusText={getStatusText}
+          formatDate={formatDate}
+        />
+        <LeadListSection
+          title="Recent Professional Leads"
+          icon={Users}
+          leads={recentProfessional}
+          loading={professionalLoading}
+          error={professionalError}
+          emptyText="No professional leads found"
+          subtitleField="phone"
+          getStatusColor={getStatusColor}
+          getStatusText={getStatusText}
+          formatDate={formatDate}
+        />
+        <LeadListSection
+          title="Recent Event Leads"
+          icon={Calendar}
+          leads={recentEvent}
+          loading={eventLoading}
+          error={eventError}
+          emptyText="No event leads found"
+          subtitleField="phone"
+          getStatusColor={getStatusColor}
+          getStatusText={getStatusText}
+          formatDate={formatDate}
+        />
       </div>
     </div>
   );
 };
+
+// Card-list presentation for a "recent leads" section — same lead data/fields
+// as before, just styled to match the DroneTv design system's card language
+// instead of a plain HTML table.
+interface LeadListSectionProps {
+  title: string;
+  icon: React.ElementType;
+  leads: Lead[];
+  loading: boolean;
+  error: string | null;
+  emptyText: string;
+  subtitleField: "category" | "phone";
+  getStatusColor: (viewed: boolean) => string;
+  getStatusText: (viewed: boolean) => string;
+  formatDate: (d: string) => string;
+}
+
+const LeadListSection: React.FC<LeadListSectionProps> = ({
+  title, icon: Icon, leads, loading, error, emptyText, subtitleField, getStatusColor, getStatusText, formatDate,
+}) => (
+  <div className="bg-surface-card border border-ink-light rounded-lg overflow-hidden">
+    <div className="px-4 py-3 border-b border-ink-light flex items-center justify-between">
+      <span className="text-xs font-bold text-ink uppercase tracking-wide">{title}</span>
+      <span className="text-[11px] text-ink-caption font-semibold">{leads.length}</span>
+    </div>
+    <div className="p-3 space-y-2 max-h-[420px] overflow-y-auto">
+      {loading && <p className="text-ink-caption text-xs text-center py-4">Loading...</p>}
+      {error && <p className="text-status-error text-xs text-center py-4">Error: {error}</p>}
+      {!loading && !error && leads.length === 0 && (
+        <p className="text-ink-caption text-xs text-center py-4">{emptyText}</p>
+      )}
+      {!loading && !error && leads.map((lead) => (
+        <div key={lead.leadId} className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-ink-offwhite transition-colors">
+          <div className="w-8 h-8 rounded-full bg-surface-main flex items-center justify-center flex-shrink-0">
+            <Icon size={14} className="text-ink-paragraph" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-ink truncate">{lead.firstName} {lead.lastName}</p>
+            <p className="text-[11px] text-ink-caption flex items-center gap-1 truncate">
+              {subtitleField === "phone" ? <Phone size={10} /> : null}
+              {subtitleField === "category" ? lead.category : lead.phone}
+            </p>
+            {lead.subject && <p className="text-xs text-ink-paragraph mt-1 line-clamp-2">{lead.subject}</p>}
+            <div className="flex items-center justify-between mt-1.5">
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${getStatusColor(lead.viewed)}`}>
+                {getStatusText(lead.viewed)}
+              </span>
+              <span className="text-[10px] text-ink-caption">{formatDate(lead.submittedAt)}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 export default AdminDashboard;
