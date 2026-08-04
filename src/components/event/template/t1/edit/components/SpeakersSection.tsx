@@ -877,7 +877,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
             Render UI
      -------------------------- */
   return (
-    <section id="speakers" className="py-12 md:py-20 bg-ink-offwhite min-h-screen">
+    <section id="speakers" className="py-12 md:py-20 bg-surface-main min-h-screen">
       <div className="container mx-auto px-3 sm:px-4 max-w-7xl relative">
         
         {/* Header */}

@@ -48,9 +48,9 @@ const GallerySection: React.FC = () => {
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16 relative">
           <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
-            Exhibitors <span className="text-[#FF0000]">Interview</span>
+            Exhibitors <span className="text-[#DC2626]">Interview</span>
           </h2>
-          <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p className="text-ink-paragraph text-lg max-w-2xl mx-auto">
             Catch our exclusive interviews with top exhibitors sharing their
             insights and innovations.

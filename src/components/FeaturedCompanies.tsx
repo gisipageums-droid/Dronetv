@@ -76,7 +76,7 @@ const FeaturedCompanies: React.FC = () => {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: `linear-gradient(45deg, #FFEB3B 25%, transparent 25%), linear-gradient(-45deg, #FDD835 25%, transparent 25%)`,
+            backgroundImage: `linear-gradient(45deg, #F8C400 25%, transparent 25%), linear-gradient(-45deg, #E8B400 25%, transparent 25%)`,
             backgroundSize: '60px 60px',
             backgroundPosition: '0 0, 30px 30px'
           }}

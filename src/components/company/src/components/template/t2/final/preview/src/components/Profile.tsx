@@ -37,12 +37,12 @@ const Profile = ({ profileData }) => {
                 />
                 {/* <div 
                   className="absolute bottom-0 left-0 w-full h-16 bg-opacity-90"
-                  style={{ backgroundColor: "#facc15" }}
+                  style={{ backgroundColor: "#F8C400" }}
                 ></div> */}
               </div>
               <div className="p-6 text-center">
                 <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
-                <p className="font-medium mb-3" style={{ color: "#facc15" }}>
+                <p className="font-medium mb-3" style={{ color: "#F8C400" }}>
                   {member.role}
                 </p>
                 <p

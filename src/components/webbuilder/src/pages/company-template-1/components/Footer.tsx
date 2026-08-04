@@ -70,8 +70,8 @@ const Footer: React.FC<FooterProps> = ({
                 <img src={footerLogo} alt="Logo" className="h-14 w-18 object-contain rounded-full" />
               ) : (
                 <span className="text-3xl font-bold">
-                  <span className="text-[#FFD400]">Drone</span>
-                  <span className="text-[#FF0000]">Tech</span>
+                  <span className="text-[#F8C400]">Drone</span>
+                  <span className="text-[#DC2626]">Tech</span>
                 </span>
               )}
             </div>
@@ -82,28 +82,28 @@ const Footer: React.FC<FooterProps> = ({
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <Mail size={18} className="text-[#FF0000]" />
+                <Mail size={18} className="text-[#DC2626]" />
                 <span className="text-ink-caption">{email}</span>
               </div>
               <div className="flex items-center gap-3">
-                <Phone size={18} className="text-[#FF0000]" />
+                <Phone size={18} className="text-[#DC2626]" />
                 <span className="text-ink-caption">{phone}</span>
               </div>
               <div className="flex items-center gap-3">
-                <MapPin size={18} className="text-[#FF0000]" />
+                <MapPin size={18} className="text-[#DC2626]" />
                 <span className="text-ink-caption">{address}</span>
               </div>
             </div>
           </div>
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-[#FFD400]">Quick Links</h3>
+            <h3 className="text-xl font-bold mb-4 text-[#F8C400]">Quick Links</h3>
             <ul className="space-y-2">
               {footerNavLinks.map((link, index) => (
                 <li key={index}>
                   <button
                     onClick={() => scrollToSection(link.link)}
-                    className="text-ink-caption hover:text-[#FFD400] transition-colors duration-300 hover:translate-x-1 transform inline-block"
+                    className="text-ink-caption hover:text-[#F8C400] transition-colors duration-300 hover:translate-x-1 transform inline-block"
                   >
                     {link.label}
                   </button>
@@ -113,10 +113,10 @@ const Footer: React.FC<FooterProps> = ({
           </div>
           {/* Services */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-[#FFD400]">Services</h3>
+            <h3 className="text-xl font-bold mb-4 text-[#F8C400]">Services</h3>
             <ul className="space-y-2">
               {services.map((service, index) => (
-                <li key={index} className="text-ink-caption hover:text-[#FFD400] transition-colors duration-300">
+                <li key={index} className="text-ink-caption hover:text-[#F8C400] transition-colors duration-300">
                   {service}
                 </li>
               ))}
@@ -124,7 +124,7 @@ const Footer: React.FC<FooterProps> = ({
           </div>
           {/* Newsletter */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-[#FFD400]">Stay Updated</h3>
+            <h3 className="text-xl font-bold mb-4 text-[#F8C400]">Stay Updated</h3>
             <p className="text-ink-caption mb-4">
               Subscribe to our newsletter for the latest drone technology updates.
             </p>
@@ -132,9 +132,9 @@ const Footer: React.FC<FooterProps> = ({
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="px-4 py-2 bg-ink-charcoal border border-ink-paragraph rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-white placeholder-ink-caption"
+                className="px-4 py-2 bg-ink-charcoal border border-ink-paragraph rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent transition-all duration-300 text-white placeholder-ink-caption"
               />
-              <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+              <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
                 Subscribe
               </button>
             </div>
@@ -156,7 +156,7 @@ const Footer: React.FC<FooterProps> = ({
                     aria-label={social!.label}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
+                    className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#DC2626] transition-all duration-300 transform hover:scale-110"
                   >
                     {social!.icon}
                   </a>

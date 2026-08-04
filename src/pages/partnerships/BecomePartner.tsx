@@ -44,7 +44,7 @@ export default function BecomePartnerPage() {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Become a Partner <span>on DroneTv.in</span></>}
         stats={[

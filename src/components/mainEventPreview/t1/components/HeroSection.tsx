@@ -249,22 +249,22 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
       <div className="container mx-auto px-4 relative z-20 text-center pt-32">
         <div className="max-w-4xl mx-auto">
           {/* Title */}
-          <h1 className="text-5xl md:text-7xl font-bold text-[#FFD400] mb-6 leading-tight">
+          <h1 className="text-5xl md:text-7xl font-bold text-[#F8C400] mb-6 leading-tight">
             {heroContent.title}
           </h1>
 
           {/* Date / Time / Location */}
           <div className="flex flex-wrap justify-center gap-6 mb-8 text-white">
             <div className="flex items-center gap-2">
-              <Calendar size={20} className="text-[#FFD400]" />
+              <Calendar size={20} className="text-[#F8C400]" />
               <span>{heroContent.date}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock size={20} className="text-[#FFD400]" />
+              <Clock size={20} className="text-[#F8C400]" />
               <span>{heroContent.time}</span>
             </div>
             <div className="flex items-center gap-2">
-              <MapPin size={20} className="text-[#FFD400]" />
+              <MapPin size={20} className="text-[#F8C400]" />
               <span>{heroContent.location}</span>
             </div>
           </div>
@@ -299,7 +299,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
                 </h3>
                 <div className="flex justify-center gap-4 md:gap-6">
                   <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                    <div className="text-2xl md:text-3xl font-bold text-[#F8C400]">
                       {countdown.days}
                     </div>
                     <div className="text-sm md:text-base text-white/80">
@@ -307,7 +307,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
                     </div>
                   </div>
                   <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                    <div className="text-2xl md:text-3xl font-bold text-[#F8C400]">
                       {countdown.hours}
                     </div>
                     <div className="text-sm md:text-base text-white/80">
@@ -315,7 +315,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
                     </div>
                   </div>
                   <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                    <div className="text-2xl md:text-3xl font-bold text-[#F8C400]">
                       {countdown.minutes}
                     </div>
                     <div className="text-sm md:text-base text-white/80">
@@ -323,7 +323,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
                     </div>
                   </div>
                   <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                    <div className="text-2xl md:text-3xl font-bold text-[#F8C400]">
                       {countdown.seconds}
                     </div>
                     <div className="text-sm md:text-base text-white/80">

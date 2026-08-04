@@ -55,12 +55,12 @@ const Navigation: React.FC = () => {
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
                 className={`relative font-medium transition-colors duration-300 group ${isScrolled
-                  ? 'text-ink hover:text-[#FF0000]'
-                  : 'text-white hover:text-[#FFD400]'
+                  ? 'text-ink hover:text-[#DC2626]'
+                  : 'text-white hover:text-[#F8C400]'
                   }`}
               >
                 {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0000] transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC2626] transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
           </div>
@@ -71,7 +71,7 @@ const Navigation: React.FC = () => {
               href="https://www.droneexpo.in/visitor-registration"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
+              className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
             >
               Register Now
             </a>
@@ -93,7 +93,7 @@ const Navigation: React.FC = () => {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-4 py-3 text-ink hover:text-[#FF0000] hover:bg-ink-light transition-colors"
+                className="block w-full text-left px-4 py-3 text-ink hover:text-[#DC2626] hover:bg-ink-light transition-colors"
               >
                 {item.name}
               </button>
@@ -102,7 +102,7 @@ const Navigation: React.FC = () => {
               href="https://www.droneexpo.in/visitor-registration"
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full mt-4 mx-4 bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-3 rounded-full font-semibold transition-colors text-center"
+              className="block w-full mt-4 mx-4 bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-3 rounded-full font-semibold transition-colors text-center"
             >
               Register Now
             </a>

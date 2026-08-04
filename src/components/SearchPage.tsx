@@ -435,7 +435,7 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero / Search */}
       <CompactHero title={<>Search <span>Results</span></>} />
 

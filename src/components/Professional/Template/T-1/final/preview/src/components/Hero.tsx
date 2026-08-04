@@ -79,7 +79,7 @@ const Hero: React.FC<HeroProps> = ({ content }) => {
   return (
     <section
       id="home"
-      className="min-h-screen bg-surface-card dark:bg-gray-900 transition-colors duration-300 pt-40"
+      className="min-h-screen bg-surface-main dark:bg-gray-900 transition-colors duration-300 pt-40"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-40 relative">
         {/* Hero Content */}

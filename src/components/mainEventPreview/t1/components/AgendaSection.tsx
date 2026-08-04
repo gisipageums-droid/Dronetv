@@ -67,11 +67,11 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData }) => {
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
             {agendaContent.title}{" "}
-            <span className="text-[#FF0000]">
+            <span className="text-[#DC2626]">
               {agendaContent.titleHighlight}
             </span>
           </h2>
-          <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
+          <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-4"></div>
           <p className="text-ink-paragraph text-lg max-w-2xl mx-auto text-justify">
             {agendaContent.subtitle}
           </p>
@@ -89,8 +89,8 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData }) => {
                     onClick={() => setActiveDay(dayNum)}
                     className={`px-6 py-2 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
                       activeDay === dayNum
-                        ? "bg-[#FF0000] text-white shadow-lg"
-                        : "text-ink-paragraph hover:text-[#FF0000]"
+                        ? "bg-[#DC2626] text-white shadow-lg"
+                        : "text-ink-paragraph hover:text-[#DC2626]"
                     }`}
                   >
                     Day {day}

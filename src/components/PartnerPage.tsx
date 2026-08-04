@@ -71,7 +71,7 @@ const PartnerPage = () => {
   ];
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero title={<>Partner <span>With Us</span> · 50+ Partners · 25+ Countries</>} />
 

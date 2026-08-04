@@ -201,13 +201,13 @@ const App: React.FC = () => {
         style={{ background: 'linear-gradient(135deg, #0a0a14 0%, #12122a 50%, #0a0a14 100%)' }}>
         {/* Subtle dot grid background */}
         <div className="absolute inset-0 opacity-[0.07]"
-          style={{ backgroundImage: 'radial-gradient(circle, #FFEB3B 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+          style={{ backgroundImage: 'radial-gradient(circle, #F8C400 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
         {/* Glow orb top-right */}
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #FFEB3B 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
+          style={{ background: 'radial-gradient(circle, #F8C400 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
         {/* Glow orb bottom-left */}
         <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full opacity-10 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #FFEB3B 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }} />
+          style={{ background: 'radial-gradient(circle, #F8C400 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }} />
 
         <div className="max-w-md w-full relative z-10">
           {/* Icon + heading */}
@@ -247,7 +247,7 @@ const App: React.FC = () => {
                     className="h-2 rounded-full transition-all duration-1000 ease-out"
                     style={{
                       width: `${Math.min(95, (pollElapsed / 300000) * 100)}%`,
-                      background: 'linear-gradient(90deg, #FFEB3B, #FFA000)',
+                      background: 'linear-gradient(90deg, #F8C400, #FFA000)',
                       boxShadow: '0 0 10px rgba(251,191,36,0.6)'
                     }}
                   />
@@ -280,7 +280,7 @@ const App: React.FC = () => {
                         className="w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0 transition-all duration-300"
                         style={{
                           background: isActive
-                            ? '#FFEB3B'
+                            ? '#F8C400'
                             : isCompleted
                             ? '#22c55e'
                             : 'rgba(255,255,255,0.1)',
@@ -361,7 +361,7 @@ const App: React.FC = () => {
 
   return (
     <DarkModeProvider>
-      <div className="relative min-h-screen transition-colors duration-300 bg-surface-card dark:bg-gray-900">
+      <div className="relative min-h-screen transition-colors duration-300 bg-surface-main dark:bg-gray-900">
         <Navbar
           content={AIGenData.content.headerContent}
           onSave={(updatedHeader) =>

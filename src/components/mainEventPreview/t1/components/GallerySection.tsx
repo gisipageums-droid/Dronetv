@@ -88,9 +88,9 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData }) => {
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
-            {galleryContent.title} <span className="text-[#FF0000]">{galleryContent.titleHighlight}</span>
+            {galleryContent.title} <span className="text-[#DC2626]">{galleryContent.titleHighlight}</span>
           </h2>
-          <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p className="text-ink-paragraph text-lg max-w-2xl mx-auto text-justify">
             {galleryContent.subtitle}
           </p>

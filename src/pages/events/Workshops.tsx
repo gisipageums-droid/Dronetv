@@ -83,7 +83,7 @@ export default function WorkshopsPage() {
   );
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Drone <span>Workshops</span></>}
         stats={[

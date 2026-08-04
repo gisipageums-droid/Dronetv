@@ -73,7 +73,7 @@ export default function TechTrendsPage() {
   const displayItems = !loading && items.length > 0 ? null : staticTrends;
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Tech <span>Trends</span> 2026</>}
         stats={[

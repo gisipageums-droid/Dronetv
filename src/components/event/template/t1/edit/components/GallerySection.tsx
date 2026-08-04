@@ -256,14 +256,14 @@
 //                     value={galleryContent.titleHighlight}
 //                     onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
 //                     maxLength={50}
-//                     className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
+//                     className="text-4xl md:text-5xl font-bold text-[#DC2626] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
 //                   />
 //                   <div className="text-sm text-ink-caption text-right mt-1">
 //                     {galleryContent.titleHighlight.length}/50
 //                   </div>
 //                 </div>
 //               </div>
-//               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+//               <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
 //               <div className="max-w-2xl mx-auto">
 //                 <textarea
 //                   value={galleryContent.subtitle}
@@ -280,9 +280,9 @@
 //           ) : (
 //             <>
 //               <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
-//                 {galleryContent.title} <span className="text-[#FF0000]">{galleryContent.titleHighlight}</span>
+//                 {galleryContent.title} <span className="text-[#DC2626]">{galleryContent.titleHighlight}</span>
 //               </h2>
-//               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+//               <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
 //               <p className="text-ink-paragraph text-lg max-w-2xl mx-auto text-justify">
 //                 {galleryContent.subtitle}
 //               </p>
@@ -707,14 +707,14 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
                     value={galleryContent.titleHighlight}
                     onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
                     maxLength={50}
-                    className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
+                    className="text-4xl md:text-5xl font-bold text-[#DC2626] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
                   />
                   <div className="text-sm text-ink-caption text-right mt-1">
                     {galleryContent.titleHighlight.length}/50
                   </div>
                 </div>
               </div>
-              <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+              <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
               <div className="max-w-2xl mx-auto">
                 <textarea
                   value={galleryContent.subtitle}
@@ -731,9 +731,9 @@ const GallerySection: React.FC<GallerySectionProps> = ({ galleryData, onStateCha
           ) : (
             <>
               <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
-                {galleryContent.title} <span className="text-[#FF0000]">{galleryContent.titleHighlight}</span>
+                {galleryContent.title} <span className="text-[#DC2626]">{galleryContent.titleHighlight}</span>
               </h2>
-              <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+              <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
               <p className="text-ink-paragraph text-lg max-w-2xl mx-auto text-center">
                 {galleryContent.subtitle}
               </p>

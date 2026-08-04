@@ -379,7 +379,7 @@ const VideosPage = () => {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero title={<>Video <span>Library</span> · {allVideos.length} Videos</>} />
 
@@ -501,27 +501,27 @@ const VideosPage = () => {
 .vd-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
 .vd-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
 .vd-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
-.vd-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.vd-sidebar-title{font-size:13px;font-weight:800;color:#111111;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .vd-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
 .vd-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .vd-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
 .vd-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
-.vd-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.vd-chip.active{background:#111111;color:#F8C400;border-color:#111111}
 .vd-chips{display:flex;gap:5px;flex-wrap:wrap}
 .vd-main{min-width:0}
 .vd-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.vd-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.vd-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#111111;font-family:inherit}
 .vd-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
 .vd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px}
 .vd-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
 .vd-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
-.vd-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.vd-page-btn.active{background:#111111;color:#F8C400;border-color:#111111}
 .vd-filter-toggle{display:none}
 @media(max-width:960px){
   .vd-layout{grid-template-columns:1fr}
   .vd-sidebar{position:static;display:none}
   .vd-sidebar.open{display:block}
-  .vd-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+  .vd-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#111111;color:#F8C400;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
 }
 @media(max-width:600px){.vd-wrap{padding:12px 14px}.vd-grid{grid-template-columns:1fr}}
 `}</style>
@@ -554,7 +554,7 @@ const VideosPage = () => {
             </div>
 
             <button onClick={() => setShowAddVideoForm(true)}
-              style={{width:'100%',padding:'8px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
+              style={{width:'100%',padding:'8px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#111111',color:'#F8C400',border:'none',cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
               <Plus size={13} /> Add Video
             </button>
           </aside>
@@ -568,8 +568,8 @@ const VideosPage = () => {
             {/* Featured Videos */}
             {filteredFeaturedVideos.length > 0 && (
               <div className="bg-surface-card border border-ink-light rounded-xl mb-4 p-4">
-                <h2 style={{fontSize:'13px',fontWeight:800,color:'#0A0A0A',marginBottom:12,display:'flex',alignItems:'center',gap:6}}>
-                  <Star size={14} color="#F5C518" fill="#F5C518" /> Featured Videos ({filteredFeaturedVideos.length})
+                <h2 style={{fontSize:'13px',fontWeight:800,color:'#111111',marginBottom:12,display:'flex',alignItems:'center',gap:6}}>
+                  <Star size={14} color="#F8C400" fill="#F8C400" /> Featured Videos ({filteredFeaturedVideos.length})
                 </h2>
                 <div className="vd-grid">
                   {filteredFeaturedVideos.map(video => (

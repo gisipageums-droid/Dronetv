@@ -43,7 +43,7 @@ const decodeHTML = (s: string): string => {
 };
 
 const CAT_COLORS: Record<string, string> = {
-  Survey: '#0B5CB5', Agriculture: '#1a7a3a', Defence: '#CC1F1F', Infrastructure: '#c05800',
+  Survey: '#0B5CB5', Agriculture: '#22C55E', Defence: '#DC2626', Infrastructure: '#c05800',
   GIS: '#1a5a9a', AI: '#6B2FB5', Media: '#9a3a1a', Training: '#444',
   Inspection: '#0B5CB5', LiDAR: '#3a6a1a', General: '#777',
 };
@@ -52,7 +52,7 @@ function barColor(cat: string): string {
   for (const [k, v] of Object.entries(CAT_COLORS)) {
     if (cat.toLowerCase().includes(k.toLowerCase())) return v;
   }
-  return '#F5C518';
+  return '#F8C400';
 }
 
 const CAT_ICONS: Record<string, string> = {
@@ -69,20 +69,20 @@ function catIcon(cat: string): string {
 }
 
 const SERVICES_CSS = `
-.sv-page { background: #F8F8F8; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
-.sv-hero { background: #0A0A0A; color: #fff; border-bottom: 2px solid #F5C518; }
+.sv-page { background: #FFF8D6; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
+.sv-hero { background: #111111; color: #fff; border-bottom: 2px solid #F8C400; }
 .sv-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .sv-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; white-space: nowrap; }
-.sv-hero h1 span { color: #F5C518; }
+.sv-hero h1 span { color: #F8C400; }
 .sv-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; }
-.sv-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
+.sv-stat-n { font-size: 15px; font-weight: 900; color: #F8C400; line-height: 1; }
 .sv-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
 .sv-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
 
 /* Sidebar layout */
 .sv-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
 .sv-sidebar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); position: sticky; top: 120px; }
-.sv-sidebar-title { font-size: 13px; font-weight: 800; color: #0A0A0A; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.sv-sidebar-title { font-size: 13px; font-weight: 800; color: #111111; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
 .sv-filter-grp { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0; }
 .sv-filter-grp:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 .sv-fl-label { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
@@ -90,7 +90,7 @@ const SERVICES_CSS = `
 .sv-chip { padding: 4px 10px; border-radius: 14px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
 .sv-main { min-width: 0; }
 .sv-search-bar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.sv-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
+.sv-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #111111; font-family: 'Poppins',sans-serif; }
 .sv-note { background: #FFFBE8; border: 1px solid #C9A010; border-radius: 8px; padding: 7px 12px; font-size: 11.5px; color: #7a5800; margin-bottom: 12px; }
 .sv-resbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 7px; }
 .sv-sort { padding: 6px 10px; border: 1.5px solid #E5E5E5; border-radius: 8px; font-size: 12.5px; color: #444; background: #fff; cursor: pointer; font-family: 'Poppins',sans-serif; }
@@ -100,27 +100,27 @@ const SERVICES_CSS = `
 .sv-pages { display: flex; justify-content: center; margin-top: 32px; gap: 6px; flex-wrap: wrap; }
 .sv-page-btn { padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins',sans-serif; }
 .sv-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; }
-.sv-card.featured { border: 2px solid #F5C518; }
+.sv-card.featured { border: 2px solid #F8C400; }
 .sv-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.14); transform: translateY(-2px); }
 .sv-card-img { height: 120px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #F4F4F4; }
 .sv-card-img img { width: 100%; height: 100%; object-fit: cover; }
 .sv-card-icon { font-size: 38px; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
 .sv-card-body { padding: 13px 14px; flex: 1; display: flex; flex-direction: column; }
-.sv-card-title { font-size: 14px; font-weight: 700; color: #0A0A0A; margin-bottom: 3px; line-height: 1.3; cursor: pointer; }
+.sv-card-title { font-size: 14px; font-weight: 700; color: #111111; margin-bottom: 3px; line-height: 1.3; cursor: pointer; }
 .sv-card-co { font-size: 12px; color: #444; margin-bottom: 8px; }
 .sv-card-desc { font-size: 12.5px; color: #777; line-height: 1.6; flex: 1; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .sv-card-foot { padding: 10px 14px; border-top: 1px solid #E5E5E5; background: #FAFAFA; }
 .sv-foot-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
-.sv-price { font-size: 13px; font-weight: 800; color: #0A0A0A; }
-.sv-rating { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #F5C518; }
+.sv-price { font-size: 13px; font-weight: 800; color: #111111; }
+.sv-rating { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #F8C400; }
 .sv-btns { display: flex; gap: 6px; }
-.sv-btn-red { flex: 1; background: #CC1F1F; color: #fff; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; text-align: center; font-family: 'Poppins',sans-serif; }
-.sv-btn-out { background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; }
+.sv-btn-red { flex: 1; background: #DC2626; color: #fff; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; text-align: center; font-family: 'Poppins',sans-serif; }
+.sv-btn-out { background: #fff; color: #111111; border: 1.5px solid #E5E5E5; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; }
 @media (max-width: 960px) {
   .sv-layout { grid-template-columns: 1fr; }
   .sv-sidebar { position: static; display: none; }
   .sv-sidebar.open { display: block; }
-  .sv-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #0A0A0A; color: #F5C518; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
+  .sv-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #111111; color: #F8C400; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
 }
 @media (max-width: 600px) {
   .sv-hero-i { padding: 8px 14px; gap: 10px; }
@@ -213,9 +213,9 @@ const ServicesPage: React.FC = () => {
   };
 
   const chipStyle = (on: boolean): React.CSSProperties => ({
-    background: on ? '#0A0A0A' : 'transparent',
-    color: on ? '#F5C518' : '#444',
-    border: `1.5px solid ${on ? '#0A0A0A' : '#E5E5E5'}`,
+    background: on ? '#111111' : 'transparent',
+    color: on ? '#F8C400' : '#444',
+    border: `1.5px solid ${on ? '#111111' : '#E5E5E5'}`,
   });
 
   const activeFiltersCount = selCats.length + (verifiedOnly ? 1 : 0);
@@ -227,7 +227,7 @@ const ServicesPage: React.FC = () => {
       <div className="sv-sidebar-title">
         <SlidersHorizontal size={14} /> Filters
         {activeFiltersCount > 0 && (
-          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#CC1F1F', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
+          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#DC2626', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
             {activeFiltersCount}
           </span>
         )}
@@ -255,7 +255,7 @@ const ServicesPage: React.FC = () => {
 
       {activeFiltersCount > 0 && (
         <button onClick={() => { setSelCats([]); setVerifiedOnly(false); setPage(1); }}
-          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#CC1F1F', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#DC2626', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
           <X size={12} /> Clear all filters
         </button>
       )}
@@ -305,7 +305,7 @@ const ServicesPage: React.FC = () => {
 
               <div className="sv-resbar">
                 <div style={{ fontSize: 12.5, color: '#777' }}>
-                  <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> service{filtered.length !== 1 ? 's' : ''}
+                  <b style={{ color: '#111111' }}>{filtered.length}</b> service{filtered.length !== 1 ? 's' : ''}
                 </div>
                 <select className="sv-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
                   <option value="timestamp">Newest first</option>
@@ -317,7 +317,7 @@ const ServicesPage: React.FC = () => {
               {current.length === 0 ? (
                 <div className="sv-empty">
                   <div style={{ fontSize: 48, marginBottom: 12 }}>🔧</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No services found</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#111111', marginBottom: 6 }}>No services found</div>
                   <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
                 </div>
               ) : (
@@ -330,7 +330,7 @@ const ServicesPage: React.FC = () => {
             <div className="sv-pages">
               <button className="sv-page-btn"
                 onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
+                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#111111', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
                 Previous
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).filter(p =>
@@ -342,13 +342,13 @@ const ServicesPage: React.FC = () => {
                 <span key={`e${i}`} style={{ padding: '7px 4px', color: '#777' }}>…</span>
               ) : (
                 <button key={p} className="sv-page-btn" onClick={() => setPage(p as number)}
-                  style={{ border: `1.5px solid ${page === p ? '#0A0A0A' : '#E5E5E5'}`, background: page === p ? '#0A0A0A' : '#fff', color: page === p ? '#F5C518' : '#1A1A1A', cursor: 'pointer' }}>
+                  style={{ border: `1.5px solid ${page === p ? '#111111' : '#E5E5E5'}`, background: page === p ? '#111111' : '#fff', color: page === p ? '#F8C400' : '#111111', cursor: 'pointer' }}>
                   {p}
                 </button>
               ))}
               <button className="sv-page-btn"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
+                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#111111', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
                 Next
               </button>
             </div>
@@ -378,7 +378,7 @@ const ServiceCard: React.FC<{ service: Service; onView: () => void }> = ({ servi
           <div className="sv-card-icon">{icon}</div>
         )}
         {service.featured && (
-          <span style={{ position: 'absolute', top: 8, right: 8, background: '#F5C518', color: '#0A0A0A', fontSize: 9.5, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>FEATURED</span>
+          <span style={{ position: 'absolute', top: 8, right: 8, background: '#F8C400', color: '#111111', fontSize: 9.5, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>FEATURED</span>
         )}
       </div>
 
@@ -410,7 +410,7 @@ const ServiceCard: React.FC<{ service: Service; onView: () => void }> = ({ servi
         <div className="sv-foot-top">
           <div>
             <div className="sv-price">{service.price}</div>
-            <div className="sv-rating"><Star size={11} fill="#F5C518" />{service.rating.toFixed(1)}</div>
+            <div className="sv-rating"><Star size={11} fill="#F8C400" />{service.rating.toFixed(1)}</div>
           </div>
         </div>
         <div className="sv-btns">

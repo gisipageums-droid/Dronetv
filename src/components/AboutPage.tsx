@@ -74,7 +74,7 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero
         title={<>About <span>Drone TV</span></>}

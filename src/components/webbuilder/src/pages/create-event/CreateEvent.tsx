@@ -211,8 +211,8 @@ const CreateEvent: React.FC = () => {
                 onClick={() => handleInputChange('selectedTemplate', '1')}
                 className={`cursor-pointer rounded-2xl overflow-hidden border-4 transition-all duration-300 ${
                   formData.selectedTemplate === '1' 
-                    ? 'border-[#FF0000] shadow-2xl transform scale-105' 
-                    : 'border-ink-light hover:border-[#FFD400]'
+                    ? 'border-[#DC2626] shadow-2xl transform scale-105' 
+                    : 'border-ink-light hover:border-[#F8C400]'
                 }`}
               >
                 <div className="bg-surface-card p-6">
@@ -234,13 +234,13 @@ const CreateEvent: React.FC = () => {
                 onClick={() => handleInputChange('selectedTemplate', '2')}
                 className={`cursor-pointer rounded-2xl overflow-hidden border-4 transition-all duration-300 ${
                   formData.selectedTemplate === '2' 
-                    ? 'border-[#FF0000] shadow-2xl transform scale-105' 
-                    : 'border-ink-light hover:border-[#FFD400]'
+                    ? 'border-[#DC2626] shadow-2xl transform scale-105' 
+                    : 'border-ink-light hover:border-[#F8C400]'
                 }`}
               >
                 <div className="bg-surface-card p-6">
                   <div className="h-48 bg-ink rounded-lg mb-4 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-[#FFD400]">Template 2</span>
+                    <span className="text-2xl font-bold text-[#F8C400]">Template 2</span>
                   </div>
                   <h4 className="text-xl font-bold text-ink mb-2">Creative Expo Style</h4>
                   <p className="text-ink-paragraph mb-4">Vibrant, animated design ideal for expos, fairs, and creative events</p>
@@ -267,7 +267,7 @@ const CreateEvent: React.FC = () => {
                 type="text"
                 value={formData.eventName}
                 onChange={(e) => handleInputChange('eventName', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Drone Innovation Summit 2025"
               />
             </div>
@@ -279,7 +279,7 @@ const CreateEvent: React.FC = () => {
                   type="date"
                   value={formData.eventDate}
                   onChange={(e) => handleInputChange('eventDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
               <div>
@@ -288,7 +288,7 @@ const CreateEvent: React.FC = () => {
                   type="time"
                   value={formData.eventTime}
                   onChange={(e) => handleInputChange('eventTime', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
               <div>
@@ -310,7 +310,7 @@ const CreateEvent: React.FC = () => {
                 type="text"
                 value={formData.venue}
                 onChange={(e) => handleInputChange('venue', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Tech Convention Center, San Francisco"
               />
             </div>
@@ -340,7 +340,7 @@ const CreateEvent: React.FC = () => {
                   type="text"
                   value={formData.primaryCTA.text}
                   onChange={(e) => handleNestedInputChange('primaryCTA', 'text', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
               <div>
@@ -349,7 +349,7 @@ const CreateEvent: React.FC = () => {
                   type="text"
                   value={formData.primaryCTA.link}
                   onChange={(e) => handleNestedInputChange('primaryCTA', 'link', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
             </div>
@@ -361,7 +361,7 @@ const CreateEvent: React.FC = () => {
                   type="text"
                   value={formData.secondaryCTA.text}
                   onChange={(e) => handleNestedInputChange('secondaryCTA', 'text', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
               <div>
@@ -370,7 +370,7 @@ const CreateEvent: React.FC = () => {
                   type="text"
                   value={formData.secondaryCTA.link}
                   onChange={(e) => handleNestedInputChange('secondaryCTA', 'link', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
             </div>
@@ -388,7 +388,7 @@ const CreateEvent: React.FC = () => {
                 type="text"
                 value={formData.aboutTitle}
                 onChange={(e) => handleInputChange('aboutTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
               />
             </div>
 
@@ -398,7 +398,7 @@ const CreateEvent: React.FC = () => {
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={6}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Describe your event, its purpose, and what attendees can expect..."
               />
             </div>
@@ -409,7 +409,7 @@ const CreateEvent: React.FC = () => {
                 type="url"
                 value={formData.videoEmbedUrl}
                 onChange={(e) => handleInputChange('videoEmbedUrl', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="https://youtube.com/embed/..."
               />
             </div>
@@ -419,7 +419,7 @@ const CreateEvent: React.FC = () => {
                 <label className="block text-sm font-medium text-ink-paragraph">Key Objectives</label>
                 <button
                   onClick={() => addArrayItem('objectives', '')}
-                  className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                  className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
                 >
                   <Plus size={16} />
                   Add Objective
@@ -433,7 +433,7 @@ const CreateEvent: React.FC = () => {
                       type="text"
                       value={objective}
                       onChange={(e) => updateArrayItem('objectives', index, e.target.value)}
-                      className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       placeholder="Event objective"
                     />
                     <button
@@ -456,7 +456,7 @@ const CreateEvent: React.FC = () => {
               <h3 className="text-2xl font-bold text-ink">Speakers & Guests</h3>
               <button
                 onClick={() => addArrayItem('speakers', { name: '', role: '', topic: '', photo: '', featured: false })}
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Speaker
@@ -482,7 +482,7 @@ const CreateEvent: React.FC = () => {
                           type="text"
                           value={speaker.name}
                           onChange={(e) => updateArrayItem('speakers', index, { ...speaker, name: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Dr. Jane Smith"
                         />
                       </div>
@@ -492,7 +492,7 @@ const CreateEvent: React.FC = () => {
                           type="text"
                           value={speaker.role}
                           onChange={(e) => updateArrayItem('speakers', index, { ...speaker, role: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="CEO, TechCorp"
                         />
                       </div>
@@ -515,7 +515,7 @@ const CreateEvent: React.FC = () => {
                       type="text"
                       value={speaker.topic}
                       onChange={(e) => updateArrayItem('speakers', index, { ...speaker, topic: e.target.value })}
-                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       placeholder="The Future of AI Technology"
                     />
                   </div>
@@ -539,7 +539,7 @@ const CreateEvent: React.FC = () => {
               <h3 className="text-2xl font-bold text-ink">Event Agenda</h3>
               <button
                 onClick={() => addArrayItem('agenda', { day: 1, time: '', title: '', speaker: '', location: '', type: 'session', duration: '1 hour' })}
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Session
@@ -555,7 +555,7 @@ const CreateEvent: React.FC = () => {
                       <select
                         value={session.day}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, day: parseInt(e.target.value) })}
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       >
                         <option value={1}>Day 1</option>
                         <option value={2}>Day 2</option>
@@ -568,7 +568,7 @@ const CreateEvent: React.FC = () => {
                         type="time"
                         value={session.time}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, time: e.target.value })}
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       />
                     </div>
                     <div>
@@ -577,7 +577,7 @@ const CreateEvent: React.FC = () => {
                         type="text"
                         value={session.title}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, title: e.target.value })}
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         placeholder="Session title"
                       />
                     </div>
@@ -587,7 +587,7 @@ const CreateEvent: React.FC = () => {
                         type="text"
                         value={session.speaker}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, speaker: e.target.value })}
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         placeholder="Speaker name"
                       />
                     </div>
@@ -597,7 +597,7 @@ const CreateEvent: React.FC = () => {
                         type="text"
                         value={session.location}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, location: e.target.value })}
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         placeholder="Room/Location"
                       />
                     </div>
@@ -614,7 +614,7 @@ const CreateEvent: React.FC = () => {
                       <select
                         value={session.type}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, type: e.target.value })}
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       >
                         <option value="keynote">Keynote</option>
                         <option value="panel">Panel</option>
@@ -630,7 +630,7 @@ const CreateEvent: React.FC = () => {
                         type="text"
                         value={session.duration}
                         onChange={(e) => updateArrayItem('agenda', index, { ...session, duration: e.target.value })}
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         placeholder="1 hour"
                       />
                     </div>
@@ -652,7 +652,7 @@ const CreateEvent: React.FC = () => {
               {formData.selectedTemplate === '2' && (
                 <button
                   onClick={() => addArrayItem('highlights', { icon: 'zap', title: '', description: '' })}
-                  className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                  className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
                 >
                   <Plus size={16} />
                   Add Highlight
@@ -670,7 +670,7 @@ const CreateEvent: React.FC = () => {
                         <select
                           value={highlight.icon}
                           onChange={(e) => updateArrayItem('highlights', index, { ...highlight, icon: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         >
                           <option value="zap">Zap</option>
                           <option value="trophy">Trophy</option>
@@ -685,7 +685,7 @@ const CreateEvent: React.FC = () => {
                           type="text"
                           value={highlight.title}
                           onChange={(e) => updateArrayItem('highlights', index, { ...highlight, title: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Highlight title"
                         />
                       </div>
@@ -695,7 +695,7 @@ const CreateEvent: React.FC = () => {
                           value={highlight.description}
                           onChange={(e) => updateArrayItem('highlights', index, { ...highlight, description: e.target.value })}
                           rows={2}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Brief description"
                         />
                       </div>
@@ -725,7 +725,7 @@ const CreateEvent: React.FC = () => {
               <h3 className="text-2xl font-bold text-ink">Sponsors & Partners</h3>
               <button
                 onClick={() => addArrayItem('sponsors', { name: '', logo: '', website: '', tier: 'silver' })}
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Sponsor
@@ -751,7 +751,7 @@ const CreateEvent: React.FC = () => {
                           type="text"
                           value={sponsor.name}
                           onChange={(e) => updateArrayItem('sponsors', index, { ...sponsor, name: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Company Name"
                         />
                       </div>
@@ -761,7 +761,7 @@ const CreateEvent: React.FC = () => {
                           type="url"
                           value={sponsor.website}
                           onChange={(e) => updateArrayItem('sponsors', index, { ...sponsor, website: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="https://company.com"
                         />
                       </div>
@@ -770,7 +770,7 @@ const CreateEvent: React.FC = () => {
                         <select
                           value={sponsor.tier}
                           onChange={(e) => updateArrayItem('sponsors', index, { ...sponsor, tier: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         >
                           <option value="platinum">Platinum</option>
                           <option value="gold">Gold</option>
@@ -799,7 +799,7 @@ const CreateEvent: React.FC = () => {
               <h3 className="text-2xl font-bold text-ink">Event Gallery</h3>
               <button
                 onClick={() => addArrayItem('galleryItems', { type: 'image', src: '', title: '', category: 'Event' })}
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Media
@@ -825,7 +825,7 @@ const CreateEvent: React.FC = () => {
                           type="text"
                           value={item.title}
                           onChange={(e) => updateArrayItem('galleryItems', index, { ...item, title: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Media title"
                         />
                       </div>
@@ -835,7 +835,7 @@ const CreateEvent: React.FC = () => {
                           type="text"
                           value={item.category}
                           onChange={(e) => updateArrayItem('galleryItems', index, { ...item, category: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Category"
                         />
                       </div>
@@ -844,7 +844,7 @@ const CreateEvent: React.FC = () => {
                         <select
                           value={item.type}
                           onChange={(e) => updateArrayItem('galleryItems', index, { ...item, type: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         >
                           <option value="image">Image</option>
                           <option value="video">Video</option>
@@ -877,7 +877,7 @@ const CreateEvent: React.FC = () => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   placeholder="info@event.com"
                 />
               </div>
@@ -887,7 +887,7 @@ const CreateEvent: React.FC = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
@@ -899,7 +899,7 @@ const CreateEvent: React.FC = () => {
                 type="url"
                 value={formData.mapEmbedUrl}
                 onChange={(e) => handleInputChange('mapEmbedUrl', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="https://maps.google.com/embed?..."
               />
             </div>
@@ -910,7 +910,7 @@ const CreateEvent: React.FC = () => {
                 value={formData.contactFormMessage}
                 onChange={(e) => handleInputChange('contactFormMessage', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
               />
             </div>
 
@@ -923,7 +923,7 @@ const CreateEvent: React.FC = () => {
                     type="url"
                     value={formData.socialLinks.facebook}
                     onChange={(e) => handleNestedInputChange('socialLinks', 'facebook', e.target.value)}
-                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                     placeholder="https://facebook.com/..."
                   />
                 </div>
@@ -933,7 +933,7 @@ const CreateEvent: React.FC = () => {
                     type="url"
                     value={formData.socialLinks.twitter}
                     onChange={(e) => handleNestedInputChange('socialLinks', 'twitter', e.target.value)}
-                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                     placeholder="https://twitter.com/..."
                   />
                 </div>
@@ -943,7 +943,7 @@ const CreateEvent: React.FC = () => {
                     type="url"
                     value={formData.socialLinks.instagram}
                     onChange={(e) => handleNestedInputChange('socialLinks', 'instagram', e.target.value)}
-                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                     placeholder="https://instagram.com/..."
                   />
                 </div>
@@ -953,7 +953,7 @@ const CreateEvent: React.FC = () => {
                     type="url"
                     value={formData.socialLinks.linkedin}
                     onChange={(e) => handleNestedInputChange('socialLinks', 'linkedin', e.target.value)}
-                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                     placeholder="https://linkedin.com/..."
                   />
                 </div>
@@ -981,7 +981,7 @@ const CreateEvent: React.FC = () => {
                 <label className="block text-sm font-medium text-ink-paragraph">Footer Navigation Links</label>
                 <button
                   onClick={() => addArrayItem('footerNavLinks', { label: '', link: '' })}
-                  className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                  className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
                 >
                   <Plus size={16} />
                   Add Link
@@ -995,14 +995,14 @@ const CreateEvent: React.FC = () => {
                       type="text"
                       value={link.label}
                       onChange={(e) => updateArrayItem('footerNavLinks', index, { ...link, label: e.target.value })}
-                      className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       placeholder="Link label"
                     />
                     <input
                       type="text"
                       value={link.link}
                       onChange={(e) => updateArrayItem('footerNavLinks', index, { ...link, link: e.target.value })}
-                      className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       placeholder="Link URL"
                     />
                     <button
@@ -1024,13 +1024,13 @@ const CreateEvent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-ink-offwhite">
+    <div className="min-h-screen bg-surface-main">
       {/* Header */}
       <header className="bg-ink text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
-              Drone<span className="text-[#FFD400]">TV</span>
+              Drone<span className="text-[#F8C400]">TV</span>
             </div>
             <nav>
               <span className="text-white">Event Form Builder</span>
@@ -1052,7 +1052,7 @@ const CreateEvent: React.FC = () => {
           </div>
           <div className="w-full bg-ink-light rounded-full h-2">
             <div 
-              className="bg-[#FF0000] h-2 rounded-full transition-all duration-300"
+              className="bg-[#DC2626] h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / steps.length) * 100}%` }}
             ></div>
           </div>
@@ -1072,9 +1072,9 @@ const CreateEvent: React.FC = () => {
                     onClick={() => setCurrentStep(index + 1)}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                       currentStep === index + 1
-                        ? 'bg-[#FF0000] text-white'
+                        ? 'bg-[#DC2626] text-white'
                         : currentStep > index + 1
-                        ? 'bg-[#FFD400] text-ink'
+                        ? 'bg-[#F8C400] text-ink'
                         : 'bg-ink-light text-ink-paragraph'
                     }`}
                   >
@@ -1104,7 +1104,7 @@ const CreateEvent: React.FC = () => {
                 <button
                   onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
                   disabled={currentStep === 1 && !formData.selectedTemplate}
-                  className="flex items-center gap-2 px-6 py-3 bg-[#FF0000] text-white rounded-lg font-semibold hover:bg-[#FF0000]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-3 bg-[#DC2626] text-white rounded-lg font-semibold hover:bg-[#DC2626]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                   <ArrowRight size={20} />
@@ -1112,7 +1112,7 @@ const CreateEvent: React.FC = () => {
               ) : (
                 <button
                   onClick={handleSubmit}
-                  className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-ink rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
+                  className="flex items-center gap-2 px-8 py-3 bg-[#F8C400] text-ink rounded-lg font-semibold hover:bg-[#F8C400]/90 transition-colors"
                 >
                   <Save size={20} />
                   Create Event Page

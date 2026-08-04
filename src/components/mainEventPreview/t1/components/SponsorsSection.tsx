@@ -41,7 +41,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
           {sponsorsContent.title} <span className="text-status-error">{sponsorsContent.titleHighlight}</span>
         </h2>
 
-        <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-10"></div>
+        <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-10"></div>
 
         <div className="max-w-6xl mx-auto rounded-[28px] bg-surface-card shadow-xl p-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-12">

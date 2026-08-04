@@ -38,7 +38,7 @@
 //           {/* Brand */}
 //           <div className="md:col-span-2">
 //             <div className="text-3xl font-bold mb-4">
-//               Drone<span className="text-[#FFD400]">TV</span>
+//               Drone<span className="text-[#F8C400]">TV</span>
 //             </div>
 //             <p className="text-ink-caption mb-6 max-w-md">
 //               Professional drone services capturing the world from above. 
@@ -52,7 +52,7 @@
 //                   key={index}
 //                   href={social.href}
 //                   aria-label={social.label}
-//                   className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-[#FF0000] hover:bg-ink-paragraph transition-all duration-300 transform hover:scale-110"
+//                   className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-[#DC2626] hover:bg-ink-paragraph transition-all duration-300 transform hover:scale-110"
 //                 >
 //                   {social.icon}
 //                 </a>
@@ -62,13 +62,13 @@
           
 //           {/* Quick Links */}
 //           <div>
-//             <h3 className="text-xl font-bold mb-4 text-[#FFD400]">Quick Links</h3>
+//             <h3 className="text-xl font-bold mb-4 text-[#F8C400]">Quick Links</h3>
 //             <ul className="space-y-2">
 //               {quickLinks.map((link, index) => (
 //                 <li key={index}>
 //                   <a
 //                     href={link.href}
-//                     className="text-ink-caption hover:text-[#FFD400] transition-colors duration-300 hover:translate-x-1 transform inline-block"
+//                     className="text-ink-caption hover:text-[#F8C400] transition-colors duration-300 hover:translate-x-1 transform inline-block"
 //                   >
 //                     {link.name}
 //                   </a>
@@ -79,10 +79,10 @@
           
 //           {/* Services */}
 //           <div>
-//             <h3 className="text-xl font-bold mb-4 text-[#FFD400]">Services</h3>
+//             <h3 className="text-xl font-bold mb-4 text-[#F8C400]">Services</h3>
 //             <ul className="space-y-2">
 //               {services.map((service, index) => (
-//                 <li key={index} className="text-ink-caption hover:text-[#FFD400] transition-colors duration-300">
+//                 <li key={index} className="text-ink-caption hover:text-[#F8C400] transition-colors duration-300">
 //                   {service}
 //                 </li>
 //               ))}
@@ -94,7 +94,7 @@
 //         <div className="bg-ink rounded-2xl p-8 mb-12">
 //           <div className="text-center">
 //             <h3 className="text-2xl font-bold mb-4">
-//               Stay Updated with <span className="text-[#FFD400]">DroneTV</span>
+//               Stay Updated with <span className="text-[#F8C400]">DroneTV</span>
 //             </h3>
 //             <p className="text-ink-caption mb-6">
 //               Get the latest updates on drone technology, photography tips, and exclusive offers.
@@ -103,9 +103,9 @@
 //               <input
 //                 type="email"
 //                 placeholder="Enter your email"
-//                 className="flex-1 px-4 py-3 bg-ink-charcoal border border-ink-paragraph rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-white placeholder-ink-caption"
+//                 className="flex-1 px-4 py-3 bg-ink-charcoal border border-ink-paragraph rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent transition-all duration-300 text-white placeholder-ink-caption"
 //               />
-//               <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+//               <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
 //                 Subscribe
 //               </button>
 //             </div>
@@ -123,7 +123,7 @@
 //               <span className="text-ink-caption text-sm">Back to top</span>
 //               <button
 //                 onClick={scrollToTop}
-//                 className="w-10 h-10 bg-[#FF0000] rounded-full flex items-center justify-center text-white hover:bg-[#FF0000]/90 transition-all duration-300 transform hover:scale-110"
+//                 className="w-10 h-10 bg-[#DC2626] rounded-full flex items-center justify-center text-white hover:bg-[#DC2626]/90 transition-all duration-300 transform hover:scale-110"
 //               >
 //                 <ArrowUp size={20} />
 //               </button>
@@ -168,8 +168,8 @@ const Footer: React.FC<FooterProps> = ({
   phone = "+65 9006 2901",
   location = "Singapore & Hyderabad, India",
   services = [],
-  primaryColor = "#FFD400",
-  accentColor = "#FF0000"
+  primaryColor = "#F8C400",
+  accentColor = "#DC2626"
 }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -211,7 +211,7 @@ const Footer: React.FC<FooterProps> = ({
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="text-3xl font-bold mb-4">
-              Drone<span className="text-[#FFD400]" style={{ color: primaryColor }}>TV</span>
+              Drone<span className="text-[#F8C400]" style={{ color: primaryColor }}>TV</span>
             </div>
             <p className="text-ink-caption mb-6 max-w-md">
               Leading IPage UM Services since 2008 across Singapore and India—driving innovation in 

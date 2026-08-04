@@ -44,8 +44,8 @@ const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="md:col-span-1">
             <div className="text-3xl font-bold mb-6">
-              <span className="text-[#FFD400]">Drone</span>
-              <span className="text-[#FF0000]">Flight</span>
+              <span className="text-[#F8C400]">Drone</span>
+              <span className="text-[#DC2626]">Flight</span>
             </div>
             <p className="text-ink-caption mb-6 leading-relaxed">
               Pioneering the future of flight with revolutionary drone technology solutions 
@@ -55,15 +55,15 @@ const Footer: React.FC = () => {
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center gap-3 group">
-                <Mail size={16} className="text-[#FF0000] group-hover:text-[#FFD400] transition-colors" />
+                <Mail size={16} className="text-[#DC2626] group-hover:text-[#F8C400] transition-colors" />
                 <span className="text-ink-caption group-hover:text-white transition-colors">contact@droneflight.com</span>
               </div>
               <div className="flex items-center gap-3 group">
-                <Phone size={16} className="text-[#FF0000] group-hover:text-[#FFD400] transition-colors" />
+                <Phone size={16} className="text-[#DC2626] group-hover:text-[#F8C400] transition-colors" />
                 <span className="text-ink-caption group-hover:text-white transition-colors">+1 (555) 123-DRONE</span>
               </div>
               <div className="flex items-center gap-3 group">
-                <MapPin size={16} className="text-[#FF0000] group-hover:text-[#FFD400] transition-colors" />
+                <MapPin size={16} className="text-[#DC2626] group-hover:text-[#F8C400] transition-colors" />
                 <span className="text-ink-caption group-hover:text-white transition-colors">Silicon Valley, CA</span>
               </div>
             </div>
@@ -71,13 +71,13 @@ const Footer: React.FC = () => {
           
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold mb-6 text-[#FFD400]">Quick Links</h3>
+            <h3 className="text-xl font-bold mb-6 text-[#F8C400]">Quick Links</h3>
             <ul className="space-y-3">
               {quickLinks.map((link, index) => (
                 <li key={index}>
                   <button
                     onClick={() => scrollToSection(link.href)}
-                    className="text-ink-caption hover:text-[#FFD400] transition-colors duration-300 hover:translate-x-2 transform inline-block"
+                    className="text-ink-caption hover:text-[#F8C400] transition-colors duration-300 hover:translate-x-2 transform inline-block"
                   >
                     {link.name}
                   </button>
@@ -88,10 +88,10 @@ const Footer: React.FC = () => {
           
           {/* Services */}
           <div>
-            <h3 className="text-xl font-bold mb-6 text-[#FFD400]">Solutions</h3>
+            <h3 className="text-xl font-bold mb-6 text-[#F8C400]">Solutions</h3>
             <ul className="space-y-3">
               {services.map((service, index) => (
-                <li key={index} className="text-ink-caption hover:text-[#FFD400] transition-colors duration-300 cursor-pointer">
+                <li key={index} className="text-ink-caption hover:text-[#F8C400] transition-colors duration-300 cursor-pointer">
                   {service}
                 </li>
               ))}
@@ -100,7 +100,7 @@ const Footer: React.FC = () => {
           
           {/* Newsletter */}
           <div>
-            <h3 className="text-xl font-bold mb-6 text-[#FFD400]">Stay Connected</h3>
+            <h3 className="text-xl font-bold mb-6 text-[#F8C400]">Stay Connected</h3>
             <p className="text-ink-caption mb-6">
               Subscribe for the latest updates on drone technology and industry insights.
             </p>
@@ -108,9 +108,9 @@ const Footer: React.FC = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="px-4 py-3 bg-ink-charcoal/50 border border-ink-paragraph rounded-lg focus:ring-2 focus:ring-[#FFD400] focus:border-transparent transition-all duration-300 text-white placeholder-ink-caption"
+                className="px-4 py-3 bg-ink-charcoal/50 border border-ink-paragraph rounded-lg focus:ring-2 focus:ring-[#F8C400] focus:border-transparent transition-all duration-300 text-white placeholder-ink-caption"
               />
-              <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+              <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
                 Subscribe
               </button>
             </div>
@@ -132,7 +132,7 @@ const Footer: React.FC = () => {
                     key={index}
                     href={social.href}
                     aria-label={social.label}
-                    className={`w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-[#FF0000] ${social.color} transition-all duration-300 transform hover:scale-110 hover:bg-ink-paragraph`}
+                    className={`w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-[#DC2626] ${social.color} transition-all duration-300 transform hover:scale-110 hover:bg-ink-paragraph`}
                   >
                     {social.icon}
                   </a>
@@ -142,7 +142,7 @@ const Footer: React.FC = () => {
               {/* Back to Top */}
               <button
                 onClick={scrollToTop}
-                className="w-10 h-10 bg-[#FFD400] rounded-full flex items-center justify-center text-ink hover:bg-[#FFD400]/90 transition-all duration-300 transform hover:scale-110 shadow-lg"
+                className="w-10 h-10 bg-[#F8C400] rounded-full flex items-center justify-center text-ink hover:bg-[#F8C400]/90 transition-all duration-300 transform hover:scale-110 shadow-lg"
               >
                 <ArrowUp size={20} />
               </button>

@@ -18,9 +18,9 @@ const CompanyPreview: React.FC = () => {
 
   if (!formData) {
     return (
-      <div className="min-h-screen bg-surface-card flex items-center justify-center">
+      <div className="min-h-screen bg-surface-main flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#FF0000] mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#DC2626] mx-auto mb-4"></div>
           <p className="text-ink-paragraph">Loading your company page...</p>
         </div>
       </div>
@@ -30,7 +30,7 @@ const CompanyPreview: React.FC = () => {
   const isTemplate2 = templateId === '2';
 
   return (
-    <div className={`min-h-screen ${isTemplate2 ? 'bg-ink text-white' : 'bg-surface-card'}`}>
+    <div className={`min-h-screen ${isTemplate2 ? 'bg-ink text-white' : 'bg-surface-main'}`}>
       {/* Preview Header */}
       <header className="bg-ink text-white py-4 sticky top-0 z-50">
         <div className="container mx-auto px-4">
@@ -38,7 +38,7 @@ const CompanyPreview: React.FC = () => {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => navigate('/create-company')}
-                className="flex items-center gap-2 text-white hover:text-[#FFD400] transition-colors"
+                className="flex items-center gap-2 text-white hover:text-[#F8C400] transition-colors"
               >
                 <ArrowLeft size={20} />
                 Back to Form
@@ -51,12 +51,12 @@ const CompanyPreview: React.FC = () => {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => navigate('/create-company')}
-                className="flex items-center gap-2 bg-[#FFD400] text-ink px-4 py-2 rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
+                className="flex items-center gap-2 bg-[#F8C400] text-ink px-4 py-2 rounded-lg font-semibold hover:bg-[#F8C400]/90 transition-colors"
               >
                 <Edit size={16} />
                 Edit
               </button>
-              <button className="flex items-center gap-2 bg-[#FF0000] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#FF0000]/90 transition-colors">
+              <button className="flex items-center gap-2 bg-[#DC2626] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#DC2626]/90 transition-colors">
                 <Download size={16} />
                 Export
               </button>
@@ -70,19 +70,19 @@ const CompanyPreview: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className={`${isTemplate2 ? 'bg-ink' : 'bg-surface-card'} rounded-lg shadow-lg overflow-hidden`}>
             {/* Hero Section Preview */}
-            <section className={`${isTemplate2 ? 'bg-ink' : 'bg-[#FFD400]'} py-20 text-center relative`}>
+            <section className={`${isTemplate2 ? 'bg-ink' : 'bg-[#F8C400]'} py-20 text-center relative`}>
               <div className="container mx-auto px-4">
-                <h1 className={`text-6xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
+                <h1 className={`text-6xl font-bold ${isTemplate2 ? 'text-[#F8C400]' : 'text-ink'} mb-4`}>
                   {formData.heroHeadline || 'Your Company Headline'}
                 </h1>
                 <p className={`text-xl ${isTemplate2 ? 'text-ink-light' : 'text-ink/80'} max-w-2xl mx-auto mb-8`}>
                   {formData.heroSubheadline || 'Your company subheadline goes here'}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className={`${isTemplate2 ? 'bg-[#FFD400] text-ink' : 'bg-[#FF0000] text-white'} px-8 py-4 rounded-full font-semibold`}>
+                  <button className={`${isTemplate2 ? 'bg-[#F8C400] text-ink' : 'bg-[#DC2626] text-white'} px-8 py-4 rounded-full font-semibold`}>
                     {formData.primaryCTA?.text || 'Explore Products'}
                   </button>
-                  <button className={`${isTemplate2 ? 'bg-[#FF0000] text-white' : 'bg-ink text-white'} px-8 py-4 rounded-full font-semibold`}>
+                  <button className={`${isTemplate2 ? 'bg-[#DC2626] text-white' : 'bg-ink text-white'} px-8 py-4 rounded-full font-semibold`}>
                     {formData.secondaryCTA?.text || 'Contact Us'}
                   </button>
                 </div>
@@ -93,10 +93,10 @@ const CompanyPreview: React.FC = () => {
             <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-surface-card'}`}>
               <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                  <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
+                  <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#F8C400]' : 'text-ink'} mb-4`}>
                     {formData.aboutTitle || 'About Our Company'}
                   </h2>
-                  <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#FFD400]' : 'bg-[#FFD400]'} mx-auto`}></div>
+                  <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#F8C400]' : 'bg-[#F8C400]'} mx-auto`}></div>
                 </div>
                 <div className="max-w-4xl mx-auto text-center">
                   <div className={`w-32 h-32 ${isTemplate2 ? 'bg-ink-charcoal' : 'bg-ink-light'} rounded-full mx-auto mb-8 flex items-center justify-center`}>
@@ -111,7 +111,7 @@ const CompanyPreview: React.FC = () => {
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                       {formData.companyValues.map((value: any, index: number) => (
                         <div key={index} className={`${isTemplate2 ? 'bg-ink' : 'bg-ink-offwhite'} rounded-lg p-6`}>
-                          <h3 className={`font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-2`}>{value.title}</h3>
+                          <h3 className={`font-bold ${isTemplate2 ? 'text-[#F8C400]' : 'text-ink'} mb-2`}>{value.title}</h3>
                           <p className={`text-sm ${isTemplate2 ? 'text-ink-caption' : 'text-ink-paragraph'}`}>{value.description}</p>
                         </div>
                       ))}
@@ -123,21 +123,21 @@ const CompanyPreview: React.FC = () => {
 
             {/* Services Section Preview */}
             {formData.services && formData.services.length > 0 && (
-              <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-[#FFD400]'}`}>
+              <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-[#F8C400]'}`}>
                 <div className="container mx-auto px-4">
                   <div className="text-center mb-16">
-                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
+                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#F8C400]' : 'text-ink'} mb-4`}>
                       {formData.servicesTitle || 'Our Services'}
                     </h2>
-                    <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#FFD400]' : 'bg-ink'} mx-auto`}></div>
+                    <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#F8C400]' : 'bg-ink'} mx-auto`}></div>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {formData.services.map((service: any, index: number) => (
                       <div key={index} className={`${isTemplate2 ? 'bg-ink hover:bg-ink-charcoal' : 'bg-surface-card hover:bg-ink-charcoal hover:text-white'} rounded-lg p-6 transition-colors group`}>
-                        <div className={`w-16 h-16 ${isTemplate2 ? 'bg-[#FF0000]' : 'bg-[#FF0000]'} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                        <div className={`w-16 h-16 ${isTemplate2 ? 'bg-[#DC2626]' : 'bg-[#DC2626]'} rounded-full flex items-center justify-center mx-auto mb-4`}>
                           <span className="text-white font-bold">{service.icon.charAt(0).toUpperCase()}</span>
                         </div>
-                        <h3 className={`text-xl font-bold mb-4 ${isTemplate2 ? 'text-white group-hover:text-[#FFD400]' : 'text-ink group-hover:text-white'}`}>
+                        <h3 className={`text-xl font-bold mb-4 ${isTemplate2 ? 'text-white group-hover:text-[#F8C400]' : 'text-ink group-hover:text-white'}`}>
                           {service.title}
                         </h3>
                         <p className={`${isTemplate2 ? 'text-ink-caption group-hover:text-ink-light' : 'text-ink/80 group-hover:text-ink-light'}`}>
@@ -155,10 +155,10 @@ const CompanyPreview: React.FC = () => {
               <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-surface-card'}`}>
                 <div className="container mx-auto px-4">
                   <div className="text-center mb-16">
-                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
+                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#F8C400]' : 'text-ink'} mb-4`}>
                       {formData.productsTitle || 'Our Products'}
                     </h2>
-                    <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#FFD400]' : 'bg-[#FFD400]'} mx-auto`}></div>
+                    <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#F8C400]' : 'bg-[#F8C400]'} mx-auto`}></div>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {formData.products.map((product: any, index: number) => (
@@ -169,7 +169,7 @@ const CompanyPreview: React.FC = () => {
                         <div className="p-6">
                           <h3 className={`text-xl font-bold ${isTemplate2 ? 'text-white' : 'text-ink'} mb-3`}>{product.title}</h3>
                           <p className={`${isTemplate2 ? 'text-ink-caption' : 'text-ink-paragraph'} mb-4`}>{product.description}</p>
-                          <button className={`${isTemplate2 ? 'text-[#FF0000] hover:text-[#FFD400]' : 'text-[#FF0000] hover:text-[#FF0000]/80'} font-semibold`}>
+                          <button className={`${isTemplate2 ? 'text-[#DC2626] hover:text-[#F8C400]' : 'text-[#DC2626] hover:text-[#DC2626]/80'} font-semibold`}>
                             Learn More →
                           </button>
                         </div>
@@ -185,17 +185,17 @@ const CompanyPreview: React.FC = () => {
               <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-ink-offwhite'}`}>
                 <div className="container mx-auto px-4">
                   <div className="text-center mb-16">
-                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
+                    <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#F8C400]' : 'text-ink'} mb-4`}>
                       What Our Clients Say
                     </h2>
-                    <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#FFD400]' : 'bg-[#FFD400]'} mx-auto`}></div>
+                    <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#F8C400]' : 'bg-[#F8C400]'} mx-auto`}></div>
                   </div>
                   <div className="grid md:grid-cols-3 gap-8">
                     {formData.testimonials.map((testimonial: any, index: number) => (
                       <div key={index} className={`${isTemplate2 ? 'bg-ink' : 'bg-surface-card'} rounded-lg p-6 shadow-lg`}>
                         <div className="flex items-center gap-1 mb-4">
                           {[...Array(testimonial.rating)].map((_, i) => (
-                            <span key={i} className="text-[#FFD400]">★</span>
+                            <span key={i} className="text-[#F8C400]">★</span>
                           ))}
                         </div>
                         <p className={`${isTemplate2 ? 'text-ink-light' : 'text-ink-paragraph'} mb-6 italic`}>
@@ -221,10 +221,10 @@ const CompanyPreview: React.FC = () => {
             <section className={`py-20 ${isTemplate2 ? 'bg-ink' : 'bg-surface-card'}`}>
               <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
-                  <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#FFD400]' : 'text-ink'} mb-4`}>
+                  <h2 className={`text-4xl font-bold ${isTemplate2 ? 'text-[#F8C400]' : 'text-ink'} mb-4`}>
                     {formData.contactTitle || 'Get In Touch'}
                   </h2>
-                  <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#FFD400]' : 'bg-[#FFD400]'} mx-auto mb-6`}></div>
+                  <div className={`w-24 h-1 ${isTemplate2 ? 'bg-[#F8C400]' : 'bg-[#F8C400]'} mx-auto mb-6`}></div>
                   <p className={`${isTemplate2 ? 'text-ink-light' : 'text-ink-paragraph'} max-w-2xl mx-auto`}>
                     {formData.contactFormText || 'Ready to work with us? Send us a message.'}
                   </p>
@@ -237,27 +237,27 @@ const CompanyPreview: React.FC = () => {
                         <input
                           type="text"
                           placeholder="Your Name"
-                          className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-surface-card border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent`}
+                          className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-surface-card border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent`}
                         />
                         <input
                           type="email"
                           placeholder="Your Email"
-                          className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-surface-card border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent`}
+                          className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-surface-card border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent`}
                         />
                       </div>
                       <input
                         type="text"
                         placeholder="Subject"
-                        className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-surface-card border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent`}
+                        className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-surface-card border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent`}
                       />
                       <textarea
                         rows={6}
                         placeholder="Your Message"
-                        className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-surface-card border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent resize-none`}
+                        className={`w-full px-4 py-3 ${isTemplate2 ? 'bg-ink-charcoal border-ink-paragraph text-white' : 'bg-surface-card border-ink-light'} border rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent resize-none`}
                       />
                       <button
                         type="submit"
-                        className="w-full bg-[#FF0000] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#FF0000]/90 transition-colors"
+                        className="w-full bg-[#DC2626] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#DC2626]/90 transition-colors"
                       >
                         {formData.submitButtonText || 'Send Message'}
                       </button>
@@ -270,7 +270,7 @@ const CompanyPreview: React.FC = () => {
                     </div>
                     <div className="space-y-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center">
                           <span className="text-white">@</span>
                         </div>
                         <div>
@@ -279,7 +279,7 @@ const CompanyPreview: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center">
                           <span className="text-white">📞</span>
                         </div>
                         <div>
@@ -288,7 +288,7 @@ const CompanyPreview: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center">
                           <span className="text-white">📍</span>
                         </div>
                         <div>
@@ -307,29 +307,29 @@ const CompanyPreview: React.FC = () => {
               <div className="container mx-auto px-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold mb-4">
-                    Your<span className="text-[#FFD400]">Company</span>
+                    Your<span className="text-[#F8C400]">Company</span>
                   </div>
                   <p className="text-ink-caption mb-6">
                     {formData.footerText || '© 2025 Your Company. All rights reserved.'}
                   </p>
                   <div className="flex justify-center gap-4">
                     {formData.socialLinks.linkedin && (
-                      <a href={formData.socialLinks.linkedin} className="text-[#FF0000] hover:text-[#FFD400] transition-colors">
+                      <a href={formData.socialLinks.linkedin} className="text-[#DC2626] hover:text-[#F8C400] transition-colors">
                         LinkedIn
                       </a>
                     )}
                     {formData.socialLinks.instagram && (
-                      <a href={formData.socialLinks.instagram} className="text-[#FF0000] hover:text-[#FFD400] transition-colors">
+                      <a href={formData.socialLinks.instagram} className="text-[#DC2626] hover:text-[#F8C400] transition-colors">
                         Instagram
                       </a>
                     )}
                     {formData.socialLinks.youtube && (
-                      <a href={formData.socialLinks.youtube} className="text-[#FF0000] hover:text-[#FFD400] transition-colors">
+                      <a href={formData.socialLinks.youtube} className="text-[#DC2626] hover:text-[#F8C400] transition-colors">
                         YouTube
                       </a>
                     )}
                     {formData.socialLinks.website && (
-                      <a href={formData.socialLinks.website} className="text-[#FF0000] hover:text-[#FFD400] transition-colors">
+                      <a href={formData.socialLinks.website} className="text-[#DC2626] hover:text-[#F8C400] transition-colors">
                         Website
                       </a>
                     )}

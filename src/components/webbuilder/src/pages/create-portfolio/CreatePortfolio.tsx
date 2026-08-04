@@ -40,16 +40,16 @@ const CreatePortfolio: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-surface-card">
+    <div className="min-h-screen bg-surface-main">
       {/* Header */}
       <header className="bg-ink text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
-              Drone<span className="text-[#FFD400]">TV</span>
+              Drone<span className="text-[#F8C400]">TV</span>
             </div>
             <nav>
-              <a href="/company" className="text-white hover:text-[#FFD400] transition-colors">
+              <a href="/company" className="text-white hover:text-[#F8C400] transition-colors">
                 ← Back to Home
               </a>
             </nav>
@@ -62,9 +62,9 @@ const CreatePortfolio: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-ink mb-6">
-              Create Your <span className="text-[#FF0000]">Company Portfolio</span>
+              Create Your <span className="text-[#DC2626]">Company Portfolio</span>
             </h1>
-            <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+            <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
             <p className="text-ink-paragraph text-xl max-w-2xl mx-auto">
              Choose your company category to get started with our professional templates and showcase your products, services, and innovations to a wide audience.
             </p>
@@ -78,7 +78,7 @@ const CreatePortfolio: React.FC = () => {
                 onClick={() => handleCategorySelect(category.id)}
                 className={`relative bg-surface-card rounded-2xl p-8 shadow-lg border-2 transition-all duration-300 ${
                   category.available
-                    ? 'border-[#FFD400] hover:border-[#FF0000] hover:shadow-xl cursor-pointer transform hover:scale-105'
+                    ? 'border-[#F8C400] hover:border-[#DC2626] hover:shadow-xl cursor-pointer transform hover:scale-105'
                     : 'border-ink-light opacity-50 cursor-not-allowed'
                 }`}
               >
@@ -92,7 +92,7 @@ const CreatePortfolio: React.FC = () => {
 
                 <div className="text-center">
                   <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 ${
-                    category.available ? 'bg-[#FFD400] text-ink' : 'bg-ink-light text-ink-caption'
+                    category.available ? 'bg-[#F8C400] text-ink' : 'bg-ink-light text-ink-caption'
                   }`}>
                     {category.icon}
                   </div>
@@ -106,7 +106,7 @@ const CreatePortfolio: React.FC = () => {
                   </p>
 
                   {category.available && (
-                    <div className="flex items-center justify-center gap-2 text-[#FF0000] font-semibold">
+                    <div className="flex items-center justify-center gap-2 text-[#DC2626] font-semibold">
                       <span>Get Started</span>
                       <ArrowRight size={20} />
                     </div>
@@ -117,7 +117,7 @@ const CreatePortfolio: React.FC = () => {
           </div>
 
           {/* Features Section */}
-          <div className="mt-20 bg-[#FFD400] rounded-3xl p-12">
+          <div className="mt-20 bg-[#F8C400] rounded-3xl p-12">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-ink mb-4">
                 Why Choose Our Portfolio Builder?
@@ -129,7 +129,7 @@ const CreatePortfolio: React.FC = () => {
 
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-16 h-16 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-4">
                   <User size={32} className="text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-ink mb-2">Easy Customization</h3>
@@ -137,7 +137,7 @@ const CreatePortfolio: React.FC = () => {
               </div>
 
               <div className="text-center">
-                <div className="w-16 h-16 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-4">
                   <Building2 size={32} className="text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-ink mb-2">Professional Templates</h3>
@@ -145,7 +145,7 @@ const CreatePortfolio: React.FC = () => {
               </div>
 
               <div className="text-center">
-                <div className="w-16 h-16 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-4">
                   <Calendar size={32} className="text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-ink mb-2">Instant Preview</h3>

@@ -205,7 +205,7 @@ export default function Edit_event_t2() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-ink-offwhite flex items-center justify-center">
+      <div className="min-h-screen bg-surface-main flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-status-info"></div>
       </div>
     );
@@ -213,7 +213,7 @@ export default function Edit_event_t2() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-ink-offwhite flex items-center justify-center">
+      <div className="min-h-screen bg-surface-main flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Error Loading Page</h2>
           <p className="text-ink-paragraph mb-4">{error}</p>
@@ -230,7 +230,7 @@ export default function Edit_event_t2() {
 
   if (!AIGenData || !AIGenData.content) {
     return (
-      <div className="min-h-screen bg-ink-offwhite flex items-center justify-center">
+      <div className="min-h-screen bg-surface-main flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">No Data Found</h2>
           <p className="text-ink-paragraph">
@@ -242,7 +242,7 @@ export default function Edit_event_t2() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-card transition-colors duration-300">
+    <div className="min-h-screen bg-surface-main transition-colors duration-300">
       {/* Navigation */}
       <Navigation
         activeSection={activeSection}

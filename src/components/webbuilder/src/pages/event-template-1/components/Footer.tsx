@@ -56,20 +56,20 @@ const Footer: React.FC = () => {
 
             <div className="space-y-3 text-sm">
               <div className="flex items-center gap-3">
-                <Mail size={16} className="text-[#FF0000]" />
+                <Mail size={16} className="text-[#DC2626]" />
                 <span className="text-ink-caption">
                   info@droneexpo.in
                 </span>
               </div>
               <div className="flex items-start gap-3">
-                <Phone size={16} className="text-[#FF0000]" />
+                <Phone size={16} className="text-[#DC2626]" />
                 <span className="text-ink-caption leading-snug">
                   +91 9354688923, +91 8882210038, <br />
                   +91 738837522
                 </span>
               </div>
               <div className="flex items-start gap-3">
-                <MapPin size={16} className="text-[#FF0000]" />
+                <MapPin size={16} className="text-[#DC2626]" />
                 <span className="text-ink-caption leading-snug">
                   D-4 LSC, A Block, Naraina Vihar, <br />
                   New Delhi - 110028
@@ -80,7 +80,7 @@ const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-[#FFD400]">
+            <h3 className="text-xl font-bold mb-4 text-[#F8C400]">
               Quick Links
             </h3>
             <ul className="space-y-2">
@@ -88,7 +88,7 @@ const Footer: React.FC = () => {
                 <li key={index}>
                   <button
                     onClick={() => scrollToSection(link.href)}
-                    className="text-ink-caption hover:text-[#FFD400] transition-all duration-300 hover:translate-x-1 transform inline-block"
+                    className="text-ink-caption hover:text-[#F8C400] transition-all duration-300 hover:translate-x-1 transform inline-block"
                   >
                     {link.name}
                   </button>
@@ -99,7 +99,7 @@ const Footer: React.FC = () => {
 
           {/* Newsletter */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-[#FFD400]">
+            <h3 className="text-xl font-bold mb-4 text-[#F8C400]">
               Stay Updated
             </h3>
             <p className="text-ink-caption mb-4">
@@ -109,9 +109,9 @@ const Footer: React.FC = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="px-4 py-2 bg-ink-charcoal border border-ink-paragraph rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-white placeholder-ink-caption"
+                className="px-4 py-2 bg-ink-charcoal border border-ink-paragraph rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent transition-all duration-300 text-white placeholder-ink-caption"
               />
-              <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+              <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
                 Subscribe
               </button>
             </div>
@@ -130,7 +130,7 @@ const Footer: React.FC = () => {
                   key={index}
                   href={social.href}
                   aria-label={social.label}
-                  className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
+                  className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#DC2626] transition-all duration-300 transform hover:scale-110"
                 >
                   {social.icon}
                 </a>

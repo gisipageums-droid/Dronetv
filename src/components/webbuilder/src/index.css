@@ -30,28 +30,28 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FFD400;
+  background: #F8C400;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF0000;
+  background: #DC2626;
 }
 
 /* Swiper Pagination Styles */
 .testimonials-swiper .swiper-pagination-bullet {
-  background: #FFD400;
+  background: #F8C400;
   opacity: 0.5;
 }
 
 .testimonials-swiper .swiper-pagination-bullet-active {
-  background: #FF0000;
+  background: #DC2626;
   opacity: 1;
 }
 
 .testimonials-swiper .swiper-button-next,
 .testimonials-swiper .swiper-button-prev {
-  color: #FF0000;
+  color: #DC2626;
 }
 
 /* Animation Keyframes */
@@ -81,7 +81,7 @@ html {
 }
 
 .animate-gradient {
-  background: linear-gradient(-45deg, #FFD400, #FF0000, #FFD400, #FF0000);
+  background: linear-gradient(-45deg, #F8C400, #DC2626, #F8C400, #DC2626);
   background-size: 400% 400%;
   animation: gradient-shift 3s ease infinite;
 }
@@ -102,7 +102,7 @@ html {
 }
 
 .testimonials-swiper-2 .swiper-pagination-bullet {
-  background: #FFD400 !important;
+  background: #F8C400 !important;
   opacity: 0.5 !important;
   width: 12px !important;
   height: 12px !important;
@@ -110,7 +110,7 @@ html {
 }
 
 .testimonials-swiper-2 .swiper-pagination-bullet-active {
-  background: #FF0000 !important;
+  background: #DC2626 !important;
   opacity: 1 !important;
   transform: scale(1.3) !important;
 }
@@ -120,7 +120,7 @@ html {
 .group textarea:focus ~ label {
   transform: translateY(-12px);
   font-size: 0.75rem;
-  color: #FF0000;
+  color: #DC2626;
 }
 
 /* Hover Effects */
@@ -139,7 +139,7 @@ html {
 
 /* Custom Button Styles */
 .btn-primary {
-  background: linear-gradient(135deg, #FF0000 0%, #FFD400 100%);
+  background: linear-gradient(135deg, #DC2626 0%, #F8C400 100%);
   color: white;
   padding: 12px 32px;
   border-radius: 50px;
@@ -156,7 +156,7 @@ html {
 /* Loading Animation */
 .loading-spinner {
   border: 3px solid rgba(255, 212, 0, 0.3);
-  border-top: 3px solid #FFD400;
+  border-top: 3px solid #F8C400;
   border-radius: 50%;
   width: 40px;
   height: 40px;

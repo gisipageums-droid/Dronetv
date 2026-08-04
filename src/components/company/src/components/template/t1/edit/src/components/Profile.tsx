@@ -797,7 +797,7 @@
 //                       transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
 //                       className="flex items-center gap-2 p-3 bg-surface-main rounded-xl"
 //                     >
-//                       <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
+//                       <div className="w-2 h-2 bg-[#F8C400] rounded-full"></div>
 //                       {isEditing ? (
 //                         <div className="flex items-center gap-2 w-full">
 //                           <div className="relative flex-1">
@@ -1918,7 +1918,7 @@
 //                       transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
 //                       className="flex items-center gap-2 p-3 bg-surface-main rounded-xl"
 //                     >
-//                       <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
+//                       <div className="w-2 h-2 bg-[#F8C400] rounded-full"></div>
 //                       {isEditing ? (
 //                         <div className="flex items-center gap-2 w-full">
 //                           <div className="relative flex-1">
@@ -3079,7 +3079,7 @@ export default function EditableCompanyProfile({
                       transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
                       className="flex items-center gap-2 p-3 bg-surface-main rounded-xl"
                     >
-                      <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
+                      <div className="w-2 h-2 bg-[#F8C400] rounded-full"></div>
                       {isEditing ? (
                         <div className="flex items-center gap-2 w-full">
                           <div className="relative flex-1">

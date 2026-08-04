@@ -286,7 +286,7 @@
 //               value={theme.title}
 //               onChange={handleInputChange}
 //               maxLength={100}
-//               className="w-full text-xl md:text-2xl font-bold text-ink border-b border-ink-light focus:outline-none focus:border-[#FF0000] transition-colors bg-transparent text-center"
+//               className="w-full text-xl md:text-2xl font-bold text-ink border-b border-ink-light focus:outline-none focus:border-[#DC2626] transition-colors bg-transparent text-center"
 //             />
 //             <div className="text-sm text-ink-caption text-right mt-1">
 //               {theme.title.length}/100
@@ -440,14 +440,14 @@
 //                     value={agendaContent.titleHighlight}
 //                     onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
 //                     maxLength={50}
-//                     className="text-4xl md:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
+//                     className="text-4xl md:text-5xl font-bold text-[#DC2626] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
 //                   />
 //                   <div className="text-sm text-ink-caption text-right mt-1">
 //                     {agendaContent.titleHighlight.length}/50
 //                   </div>
 //                 </div>
 //               </div>
-//               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
+//               <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-4"></div>
 //               <div className="max-w-2xl mx-auto">
 //                 <textarea
 //                   value={agendaContent.subtitle}
@@ -465,11 +465,11 @@
 //             <>
 //               <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
 //                 {agendaContent.title}{" "}
-//                 <span className="text-[#FF0000]">
+//                 <span className="text-[#DC2626]">
 //                   {agendaContent.titleHighlight}
 //                 </span>
 //               </h2>
-//               <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
+//               <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-4"></div>
 //               <p className="text-ink-paragraph text-lg max-w-2xl mx-auto text-justify">
 //                 {agendaContent.subtitle}
 //               </p>
@@ -494,8 +494,8 @@
 //                       }}
 //                       className={`px-6 py-2 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
 //                         activeDay === dayNum
-//                           ? "bg-[#FF0000] text-white shadow-lg"
-//                           : "text-ink-paragraph hover:text-[#FF0000]"
+//                           ? "bg-[#DC2626] text-white shadow-lg"
+//                           : "text-ink-paragraph hover:text-[#DC2626]"
 //                       }`}
 //                       disabled={editMode}
 //                     >
@@ -628,7 +628,7 @@ const ThemeCard = memo(
                 value={editForm?.title || ""}
                 onChange={(e) => onFormChange({ ...editForm, title: e.target.value })}
                 maxLength={100}
-                className="w-full text-xl md:text-2xl font-bold text-ink border-b border-ink-light focus:outline-none focus:border-[#FF0000] transition-colors bg-transparent text-center"
+                className="w-full text-xl md:text-2xl font-bold text-ink border-b border-ink-light focus:outline-none focus:border-[#DC2626] transition-colors bg-transparent text-center"
               />
               <div className="text-sm text-ink-caption text-right mt-1">
                 {editForm?.title?.length || 0}/100
@@ -1090,14 +1090,14 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                     value={agendaContent.titleHighlight}
                     onChange={(e) => updateHeaderField('titleHighlight', e.target.value)}
                     maxLength={50}
-                    className="w-full sm:w-auto text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#FF0000] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center px-2"
+                    className="w-full sm:w-auto text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#DC2626] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center px-2"
                   />
                   <div className="text-xs sm:text-sm text-ink-caption text-right mt-1">
                     {agendaContent.titleHighlight.length}/50
                   </div>
                 </div>
               </div>
-              <div className="w-16 sm:w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
+              <div className="w-16 sm:w-24 h-1 bg-[#F8C400] mx-auto mb-4"></div>
               <div className="max-w-2xl mx-auto px-4">
                 <textarea
                   value={agendaContent.subtitle}
@@ -1115,11 +1115,11 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
             <>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ink mb-4">
                 {agendaContent.title}{" "}
-                <span className="text-[#FF0000]">
+                <span className="text-[#DC2626]">
                   {agendaContent.titleHighlight}
                 </span>
               </h2>
-              <div className="w-16 sm:w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
+              <div className="w-16 sm:w-24 h-1 bg-[#F8C400] mx-auto mb-4"></div>
               <p className="text-ink-paragraph text-base md:text-lg max-w-2xl mx-auto px-4">
                 {agendaContent.subtitle}
               </p>
@@ -1142,8 +1142,8 @@ const AgendaSection: React.FC<AgendaSectionProps> = ({ agendaData, onStateChange
                   }}
                   className={`px-4 sm:px-5 md:px-6 py-2 rounded-full text-sm sm:text-base font-semibold transition-all duration-300 whitespace-nowrap ${
                     activeDay === day
-                      ? "bg-[#FF0000] text-white shadow-lg"
-                      : "text-ink-paragraph hover:text-[#FF0000] hover:bg-ink-light"
+                      ? "bg-[#DC2626] text-white shadow-lg"
+                      : "text-ink-paragraph hover:text-[#DC2626] hover:bg-ink-light"
                   }`}
                 >
                   Day {day}

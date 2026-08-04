@@ -5,7 +5,7 @@
 
 /* You can add this in globals.css if needed for any custom adjustments */
 .loader {
-  border-top-color: #facc15; /* yellow-400 for theme */
+  border-top-color: #F8C400; /* yellow-400 for theme */
 }
 
 
@@ -139,10 +139,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ffeb3b;
+  background: #F8C400;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #fdd835;
+  background: #E8B400;
 }

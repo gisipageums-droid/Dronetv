@@ -128,7 +128,7 @@ export default function NetworkingPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Drone Professional <span>Networking</span></>}
         stats={[

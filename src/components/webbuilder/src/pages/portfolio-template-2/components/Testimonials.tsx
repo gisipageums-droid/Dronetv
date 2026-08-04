@@ -60,9 +60,9 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Client <span className="text-[#FFD400]">Testimonials</span>
+            Client <span className="text-[#F8C400]">Testimonials</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FF0000] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#DC2626] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-caption max-w-2xl mx-auto">
             Don't just take my word for it. Here's what my clients say about working with me.
           </p>
@@ -93,16 +93,16 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
             >
               {testimonials.map((testimonial) => (
                 <SwiperSlide key={testimonial.id}>
-                  <div className="relative bg-ink rounded-3xl p-8 h-full shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 border border-[#FFD400]/20">
+                  <div className="relative bg-ink rounded-3xl p-8 h-full shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 border border-[#F8C400]/20">
                     {/* Quote Icon */}
-                    <div className="absolute -top-4 left-8 w-8 h-8 bg-[#FF0000] rounded-full flex items-center justify-center">
+                    <div className="absolute -top-4 left-8 w-8 h-8 bg-[#DC2626] rounded-full flex items-center justify-center">
                       <Quote size={16} className="text-white" />
                     </div>
                     
                     {/* Rating */}
                     <div className="flex items-center gap-1 mb-6 mt-4">
                       {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} size={16} className="text-[#FFD400] fill-current" />
+                        <Star key={i} size={16} className="text-[#F8C400] fill-current" />
                       ))}
                     </div>
                     
@@ -117,19 +117,19 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
                         <img 
                           src={testimonial.image} 
                           alt={testimonial.name}
-                          className="w-14 h-14 rounded-full object-cover border-2 border-[#FFD400]"
+                          className="w-14 h-14 rounded-full object-cover border-2 border-[#F8C400]"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80';
                           }}
                         />
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FFD400]/20 to-[#FF0000]/20"></div>
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F8C400]/20 to-[#DC2626]/20"></div>
                       </div>
                       
                       <div>
                         <h4 className="font-bold text-white text-lg">
                           {testimonial.name}
                         </h4>
-                        <p className="text-[#FFD400] text-sm font-medium">
+                        <p className="text-[#F8C400] text-sm font-medium">
                           {testimonial.position}
                         </p>
                         {testimonial.company && (
@@ -152,7 +152,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
 
         {/* Call to Action */}
         <div data-aos="fade-up" data-aos-delay="800" className="text-center mt-16">
-          <div className="bg-gradient-to-r from-[#FFD400] to-[#FFD400]/80 rounded-3xl p-12 max-w-3xl mx-auto">
+          <div className="bg-gradient-to-r from-[#F8C400] to-[#F8C400]/80 rounded-3xl p-12 max-w-3xl mx-auto">
             <h3 className="text-3xl font-bold text-ink mb-4">
               Ready to Create Something Amazing?
             </h3>
@@ -160,7 +160,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
               Join these satisfied clients and let's bring your vision to life with stunning aerial content.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+              <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
                 Start Your Project
               </button>
               <button className="border-2 border-ink text-ink hover:bg-ink-charcoal hover:text-white px-8 py-4 rounded-full font-semibold transition-all duration-300">
@@ -173,13 +173,13 @@ const Testimonials: React.FC<TestimonialsProps> = ({ apiResponse }) => {
 
       <style>{`
         .testimonial-bullet {
-          background: #FFD400 !important;
+          background: #F8C400 !important;
           opacity: 0.5 !important;
           width: 12px !important;
           height: 12px !important;
         }
         .testimonial-bullet-active {
-          background: #FF0000 !important;
+          background: #DC2626 !important;
           opacity: 1 !important;
           transform: scale(1.2) !important;
         }

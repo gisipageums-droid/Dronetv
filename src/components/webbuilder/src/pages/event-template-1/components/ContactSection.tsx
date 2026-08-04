@@ -23,9 +23,9 @@ const ContactSection: React.FC = () => {
     <section id="contact" className="py-20 bg-surface-card">
       <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink mb-4">
-            Register & <span className="text-[#FF0000]">Contact</span>
+            Register & <span className="text-[#DC2626]">Contact</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph text-lg max-w-2xl mx-auto">
             Ready to join us? Register now or get in touch for more information about the summit.
           </p>

@@ -113,7 +113,7 @@ export default function AdminLogin() {
                 placeholder="admin@dronetv.in"
                 required
                 autoComplete="email"
-                onFocus={e => (e.currentTarget.style.borderColor = "#facc15")}
+                onFocus={e => (e.currentTarget.style.borderColor = "#F8C400")}
                 onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
               />
             </div>
@@ -136,7 +136,7 @@ export default function AdminLogin() {
                   placeholder="Enter your password"
                   required
                   autoComplete="current-password"
-                  onFocus={e => { (e.currentTarget.parentElement as HTMLElement).style.borderColor = "#facc15"; }}
+                  onFocus={e => { (e.currentTarget.parentElement as HTMLElement).style.borderColor = "#F8C400"; }}
                   onBlur={e => { (e.currentTarget.parentElement as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)"; }}
                 />
                 <button

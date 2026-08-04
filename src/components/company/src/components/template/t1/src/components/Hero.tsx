@@ -85,7 +85,7 @@ export default function Hero() {
             >
               <a
                 href='#contact'
-                className='bg-[#ffeb3b] hover:bg-brand-yellow-soft text-ink rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block'
+                className='bg-[#F8C400] hover:bg-brand-yellow-soft text-ink rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block'
               >
                 Get Started
               </a>

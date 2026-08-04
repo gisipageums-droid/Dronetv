@@ -18,9 +18,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
-            Project <span className="text-[#FF0000]">Gallery</span>
+            Project <span className="text-[#DC2626]">Gallery</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph dark:text-gray-400 max-w-2xl mx-auto">
             {projects.length > 0 
               ? "A collection of my recent projects and work."
@@ -49,7 +49,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
                 <p className="text-ink-paragraph dark:text-gray-400 mt-2">
                   {project.description}
                 </p>
-                <span className="inline-block mt-3 px-3 py-1 bg-[#FFD400] text-ink rounded-full text-sm">
+                <span className="inline-block mt-3 px-3 py-1 bg-[#F8C400] text-ink rounded-full text-sm">
                   {project.category}
                 </span>
               </div>

@@ -60,7 +60,7 @@ export default function NewsPulsePage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Drone Industry <span>News Pulse</span></>}
         stats={[

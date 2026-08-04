@@ -176,7 +176,7 @@ export default function JobBoardPage() {
   });
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Drone, GIS &amp; AI <span>Job Board</span></>}
         stats={[

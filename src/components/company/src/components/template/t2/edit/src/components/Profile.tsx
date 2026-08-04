@@ -755,7 +755,7 @@
 //                         maxLength={60}
 //                         className={`font-medium mb-3 border-b bg-transparent text-center w-full ${member.role.length >= 60 ? "border-status-error" : ""
 //                           }`}
-//                         style={{ color: "#facc15" }}
+//                         style={{ color: "#F8C400" }}
 //                       />
 //                       <div className="text-right text-xs text-ink-caption mt-1">
 //                         {member.role.length}/60
@@ -769,7 +769,7 @@
 //                   ) : (
 //                     <p
 //                       className="font-medium mb-3"
-//                       style={{ color: "#facc15" }}
+//                       style={{ color: "#F8C400" }}
 //                     >
 //                       {member.role}
 //                     </p>
@@ -1804,7 +1804,7 @@ const Profile = ({
                         maxLength={60}
                         className={`font-medium mb-3 border-b bg-transparent text-center w-full ${member.role.length >= 60 ? "border-status-error" : ""
                           }`}
-                        style={{ color: "#facc15" }}
+                        style={{ color: "#F8C400" }}
                         placeholder="Position/Role"
                       />
                       <div className="text-right text-xs text-ink-caption mt-1">
@@ -1819,7 +1819,7 @@ const Profile = ({
                   ) : (
                     <p
                       className="font-medium mb-3"
-                      style={{ color: "#facc15" }}
+                      style={{ color: "#F8C400" }}
                     >
                       {member.role}
                     </p>

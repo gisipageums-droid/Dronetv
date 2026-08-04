@@ -34,7 +34,7 @@
 //   return (
 //     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
 //       {/* Animated Background */}
-//       <div className="absolute inset-0 bg-gradient-to-br from-[#FFD400] via-[#FFD400]/90 to-[#FFD400]/80">
+//       <div className="absolute inset-0 bg-gradient-to-br from-[#F8C400] via-[#F8C400]/90 to-[#F8C400]/80">
 //         <div
 //           className="absolute inset-0 opacity-20"
 //           style={{
@@ -47,13 +47,13 @@
 //         <div className="text-center max-w-4xl mx-auto">
 //           <div data-aos="fade-up" data-aos-delay="300">
 //             <h1 className="text-6xl md:text-8xl font-bold text-ink mb-6 leading-tight">
-//               Sumit <span className="text-[#FF0000]">Krishnan</span>
+//               Sumit <span className="text-[#DC2626]">Krishnan</span>
 //             </h1>
 //           </div>
 
 //           <div data-aos="fade-up" data-aos-delay="600" className="mb-8">
 //             <div className="text-2xl md:text-3xl font-semibold text-ink">
-//               I'm a <span ref={typedRef} className="text-[#FF0000]"></span>
+//               I'm a <span ref={typedRef} className="text-[#DC2626]"></span>
 //             </div>
 //           </div>
 
@@ -75,9 +75,9 @@
 //       </div>
 
 //       {/* Floating Elements */}
-//       <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-[#FF0000] rounded-full animate-ping"></div>
+//       <div className="absolute top-1/4 left-1/4 w-4 h-4 bg-[#DC2626] rounded-full animate-ping"></div>
 //       <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-ink rounded-full animate-pulse"></div>
-//       <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-[#FF0000] rounded-full animate-bounce"></div>
+//       <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-[#DC2626] rounded-full animate-bounce"></div>
 //     </section>
 //   );
 // };
@@ -109,8 +109,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   rotatingTitles = "DGCA RPAS Instructor,Aerospace Educator,Drone Pilot Trainer,Flight Mechanics Expert",
   tagline = "Empowering India's drone workforce with certified training, real-world simulations, and aerospace expertise.",
   location = "Hyderabad, India",
-  primaryColor = "#FFD400",
-  accentColor = "#FF0000",
+  primaryColor = "#F8C400",
+  accentColor = "#DC2626",
   button1Text = "Hire Me",
   button1Link = "#contact",
   button2Text = "Download CV",

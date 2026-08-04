@@ -726,7 +726,7 @@ export default function EditableHero({
             <EditableText
               value={tempHeroState.badgeText}
               field="badgeText"
-              className="text-lg sm:text-xl md:text-2xl text-left text-[#facc15] relative z-20 mb-12 inline-block max-w-[530px]"
+              className="text-lg sm:text-xl md:text-2xl text-left text-[#F8C400] relative z-20 mb-12 inline-block max-w-[530px]"
               placeholder="Company Name"
               maxLength={50}
             />

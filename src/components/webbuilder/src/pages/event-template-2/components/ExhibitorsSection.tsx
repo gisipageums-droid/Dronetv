@@ -71,8 +71,8 @@ const ExhibitorsSection: React.FC = () => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Manufacturing': return 'bg-[#FF0000] text-white';
-      case 'Software': return 'bg-[#FFD400] text-ink';
+      case 'Manufacturing': return 'bg-[#DC2626] text-white';
+      case 'Software': return 'bg-[#F8C400] text-ink';
       case 'Services': return 'bg-status-info text-white';
       case 'Research': return 'bg-brand-gold text-white';
       case 'Hardware': return 'bg-status-success text-white';
@@ -87,10 +87,10 @@ const ExhibitorsSection: React.FC = () => {
     <section id="exhibitors" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#F8C400] mb-4">
             Our <span className="text-white">Exhibitors</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Discover innovative products and services from leading companies in the drone industry.
           </p>
@@ -103,7 +103,7 @@ const ExhibitorsSection: React.FC = () => {
               key={index}
               data-aos="fade-up" 
               data-aos-delay={index * 100}
-              className="group bg-ink/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
+              className="group bg-ink/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-ink-charcoal hover:border-[#F8C400]/50 transition-all duration-500 transform hover:scale-105"
             >
               {/* Logo */}
               <div className="relative h-32 bg-white/5 flex items-center justify-center p-4">
@@ -122,10 +122,10 @@ const ExhibitorsSection: React.FC = () => {
               {/* Content */}
               <div className="p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#FFD400] transition-colors">
+                  <h3 className="text-lg font-bold text-white group-hover:text-[#F8C400] transition-colors">
                     {exhibitor.name}
                   </h3>
-                  <span className="text-[#FF0000] font-semibold text-sm">
+                  <span className="text-[#DC2626] font-semibold text-sm">
                     {exhibitor.booth}
                   </span>
                 </div>
@@ -136,7 +136,7 @@ const ExhibitorsSection: React.FC = () => {
                 
                 <a 
                   href={exhibitor.website}
-                  className="inline-flex items-center gap-2 text-[#FFD400] hover:text-white transition-colors text-sm font-semibold"
+                  className="inline-flex items-center gap-2 text-[#F8C400] hover:text-white transition-colors text-sm font-semibold"
                 >
                   <span>Visit Booth</span>
                   <ExternalLink size={14} />
@@ -144,7 +144,7 @@ const ExhibitorsSection: React.FC = () => {
               </div>
 
               {/* Hover Effect */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#FF0000]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#DC2626]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
             </div>
           ))}
         </div>
@@ -160,10 +160,10 @@ const ExhibitorsSection: React.FC = () => {
               from hardware innovations to software solutions.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+              <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
                 Download Floor Plan
               </button>
-              <button className="border-2 border-[#FFD400] text-[#FFD400] hover:bg-[#FFD400] hover:text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300">
+              <button className="border-2 border-[#F8C400] text-[#F8C400] hover:bg-[#F8C400] hover:text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300">
                 Book Your Booth
               </button>
             </div>
@@ -173,19 +173,19 @@ const ExhibitorsSection: React.FC = () => {
         {/* Stats */}
         <div data-aos="fade-up" data-aos-delay="1000" className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16">
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#FF0000] mb-2">100+</div>
+            <div className="text-3xl font-bold text-[#DC2626] mb-2">100+</div>
             <div className="text-ink-caption">Exhibitors</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#FF0000] mb-2">25+</div>
+            <div className="text-3xl font-bold text-[#DC2626] mb-2">25+</div>
             <div className="text-ink-caption">Countries</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#FF0000] mb-2">50+</div>
+            <div className="text-3xl font-bold text-[#DC2626] mb-2">50+</div>
             <div className="text-ink-caption">Product Launches</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#FF0000] mb-2">10K+</div>
+            <div className="text-3xl font-bold text-[#DC2626] mb-2">10K+</div>
             <div className="text-ink-caption">Sq Ft Exhibition</div>
           </div>
         </div>

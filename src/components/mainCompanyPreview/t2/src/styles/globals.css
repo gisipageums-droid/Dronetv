@@ -6,15 +6,15 @@
   --card-foreground: #000000;
   --popover: #ffffff;
   --popover-foreground: #000000;
-  --primary: #facc15;
+  --primary: #F8C400;
   --primary-foreground: #000000;
   --secondary: #f5f5f5;
   --secondary-foreground: #000000;
   --muted: #f5f5f5;
   --muted-foreground: #6b7280;
-  --accent: #facc15;
+  --accent: #F8C400;
   --accent-foreground: #000000;
-  --red-accent: #ff0000;
+  --red-accent: #DC2626;
   --red-accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
@@ -24,40 +24,40 @@
   --switch-background: #e5e7eb;
   --font-weight-medium: 600;
   --font-weight-normal: 400;
-  --ring: #facc15;
-  --chart-1: #facc15;
+  --ring: #F8C400;
+  --chart-1: #F8C400;
   --chart-2: #000000;
-  --chart-3: #ff0000;
+  --chart-3: #DC2626;
   --chart-4: #f3f4f6;
   --chart-5: #d1d5db;
   --radius: 0.5rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #000000;
-  --sidebar-primary: #facc15;
+  --sidebar-primary: #F8C400;
   --sidebar-primary-foreground: #000000;
   --sidebar-accent: #f9fafb;
   --sidebar-accent-foreground: #000000;
   --sidebar-border: rgba(0, 0, 0, 0.1);
-  --sidebar-ring: #facc15;
+  --sidebar-ring: #F8C400;
 }
 
 /* Dark mode variables */
 :root.dark {
-  --background: #0a0a0a;
+  --background: #111111;
   --foreground: #fafafa;
-  --card: #1a1a1a;
+  --card: #111111;
   --card-foreground: #fafafa;
-  --popover: #1a1a1a;
+  --popover: #111111;
   --popover-foreground: #fafafa;
-  --primary: #facc15;
+  --primary: #F8C400;
   --primary-foreground: #000000;
   --secondary: #262626;
   --secondary-foreground: #fafafa;
   --muted: #262626;
   --muted-foreground: #a1a1aa;
-  --accent: #facc15;
+  --accent: #F8C400;
   --accent-foreground: #000000;
-  --red-accent: #ff0000;
+  --red-accent: #DC2626;
   --red-accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #fafafa;
@@ -65,20 +65,20 @@
   --input: transparent;
   --input-background: #1f1f1f;
   --switch-background: #374151;
-  --ring: #facc15;
-  --chart-1: #facc15;
+  --ring: #F8C400;
+  --chart-1: #F8C400;
   --chart-2: #fafafa;
-  --chart-3: #ff0000;
+  --chart-3: #DC2626;
   --chart-4: #262626;
   --chart-5: #404040;
-  --sidebar: #0a0a0a;
+  --sidebar: #111111;
   --sidebar-foreground: #fafafa;
-  --sidebar-primary: #facc15;
+  --sidebar-primary: #F8C400;
   --sidebar-primary-foreground: #000000;
   --sidebar-accent: #1f1f1f;
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #facc15;
+  --sidebar-ring: #F8C400;
 }
 
 @theme inline {

@@ -99,7 +99,7 @@ export default function VideoSpotlightPage() {
     : items.filter(i => i.category === activeFilter);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>DroneTv <span>Video Spotlight</span></>}
         stats={[

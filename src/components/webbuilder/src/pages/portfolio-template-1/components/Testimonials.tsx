@@ -57,9 +57,9 @@ const Testimonials: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
-            Client <span className="text-[#FF0000]">Testimonials</span>
+            Client <span className="text-[#DC2626]">Testimonials</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph dark:text-gray-300 max-w-2xl mx-auto">
             Don't just take my word for it. Here's what my clients say about working with me.
           </p>
@@ -84,14 +84,14 @@ const Testimonials: React.FC = () => {
               <SwiperSlide key={testimonial.id}>
                 <div className="bg-ink-offwhite dark:bg-gray-800 rounded-2xl p-8 h-full relative group hover:shadow-xl transition-all duration-300">
                   {/* Quote Icon */}
-                  <div className="absolute top-6 right-6 text-[#FFD400] opacity-50 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-6 right-6 text-[#F8C400] opacity-50 group-hover:opacity-100 transition-opacity">
                     <Quote size={32} />
                   </div>
                   
                   {/* Rating */}
                   <div className="flex items-center gap-1 mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} size={16} className="text-[#FFD400] fill-current" />
+                      <Star key={i} size={16} className="text-[#F8C400] fill-current" />
                     ))}
                   </div>
                   
@@ -108,7 +108,7 @@ const Testimonials: React.FC = () => {
                         alt={testimonial.name}
                         className="w-12 h-12 rounded-full object-cover"
                       />
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FFD400] to-[#FF0000] opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F8C400] to-[#DC2626] opacity-0 group-hover:opacity-20 transition-opacity"></div>
                     </div>
                     
                     <div>
@@ -118,7 +118,7 @@ const Testimonials: React.FC = () => {
                       <p className="text-sm text-ink-paragraph dark:text-gray-400">
                         {testimonial.position}
                       </p>
-                      <p className="text-xs text-[#FF0000] font-medium">
+                      <p className="text-xs text-[#DC2626] font-medium">
                         {testimonial.company}
                       </p>
                     </div>
@@ -131,14 +131,14 @@ const Testimonials: React.FC = () => {
 
         {/* Call to Action */}
         <div data-aos="fade-up" data-aos-delay="800" className="text-center mt-16">
-          <div className="bg-[#FFD400] rounded-2xl p-8 max-w-2xl mx-auto">
+          <div className="bg-[#F8C400] rounded-2xl p-8 max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold text-ink mb-4">
               Ready to Work Together?
             </h3>
             <p className="text-ink/80 mb-6">
               Join these satisfied clients and let's create something amazing together.
             </p>
-            <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-8 py-3 rounded-full font-semibold transition-colors">
+            <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-8 py-3 rounded-full font-semibold transition-colors">
               Start Your Project
             </button>
           </div>

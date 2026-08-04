@@ -23,7 +23,7 @@ const HeroSection: React.FC = () => {
 
       {/* Floating Drone SVG */}
       <div className="absolute top-1/4 right-1/4 opacity-10 animate-float">
-        <svg width="200" height="120" viewBox="0 0 200 120" className="text-[#FFD400]">
+        <svg width="200" height="120" viewBox="0 0 200 120" className="text-[#F8C400]">
           <rect x="80" y="50" width="40" height="20" rx="10" fill="currentColor" />
           <circle cx="60" cy="30" r="20" fill="none" stroke="currentColor" strokeWidth="2" className="animate-spin" style={{ animationDuration: '0.1s' }} />
           <circle cx="140" cy="30" r="20" fill="none" stroke="currentColor" strokeWidth="2" className="animate-spin" style={{ animationDuration: '0.1s' }} />
@@ -42,7 +42,7 @@ const HeroSection: React.FC = () => {
           <h1 
             data-aos="fade-up" 
             data-aos-delay="300"
-            className="text-6xl md:text-8xl font-bold text-[#FFD400] mb-6 leading-tight"
+            className="text-6xl md:text-8xl font-bold text-[#F8C400] mb-6 leading-tight"
           >
             Empowering the Future of <span className="text-white">Flight</span>
           </h1>
@@ -61,12 +61,12 @@ const HeroSection: React.FC = () => {
             data-aos-delay="900"
             className="flex flex-col sm:flex-row gap-6 justify-center"
           >
-            <button className="group bg-[#FFD400] hover:bg-[#FFD400]/90 text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            <button className="group bg-[#F8C400] hover:bg-[#F8C400]/90 text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
               <span>Explore Fleet</span>
               <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
             </button>
 
-            <button className="group bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
+            <button className="group bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 shadow-lg hover:shadow-xl">
               <span>Get Quote</span>
               <ArrowRight size={20} className="transform group-hover:translate-x-1 transition-transform" />
             </button>
@@ -81,18 +81,18 @@ const HeroSection: React.FC = () => {
         >
           <button 
             onClick={scrollToNext}
-            className="flex flex-col items-center text-[#FFD400] hover:text-white transition-colors group"
+            className="flex flex-col items-center text-[#F8C400] hover:text-white transition-colors group"
           >
             <span className="text-sm mb-2 font-medium">Discover More</span>
-            <ChevronDown size={24} className="animate-bounce group-hover:text-[#FF0000]" />
+            <ChevronDown size={24} className="animate-bounce group-hover:text-[#DC2626]" />
           </button>
         </div>
       </div>
 
       {/* Animated Particles */}
-      <div className="absolute top-1/3 left-1/4 w-2 h-2 bg-[#FF0000] rounded-full animate-ping"></div>
-      <div className="absolute top-1/2 right-1/3 w-1 h-1 bg-[#FFD400] rounded-full animate-pulse"></div>
-      <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-[#FF0000] rounded-full animate-bounce opacity-60"></div>
+      <div className="absolute top-1/3 left-1/4 w-2 h-2 bg-[#DC2626] rounded-full animate-ping"></div>
+      <div className="absolute top-1/2 right-1/3 w-1 h-1 bg-[#F8C400] rounded-full animate-pulse"></div>
+      <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-[#DC2626] rounded-full animate-bounce opacity-60"></div>
     </section>
   );
 };

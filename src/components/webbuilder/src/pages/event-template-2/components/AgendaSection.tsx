@@ -141,8 +141,8 @@ const AgendaSection: React.FC = () => {
 
   const getTypeStyle = (type: string) => {
     switch (type) {
-      case 'keynote': return { bg: 'bg-[#FF0000]', text: 'text-white', border: 'border-[#FF0000]' };
-      case 'panel': return { bg: 'bg-[#FFD400]', text: 'text-ink', border: 'border-[#FFD400]' };
+      case 'keynote': return { bg: 'bg-[#DC2626]', text: 'text-white', border: 'border-[#DC2626]' };
+      case 'panel': return { bg: 'bg-[#F8C400]', text: 'text-ink', border: 'border-[#F8C400]' };
       case 'workshop': return { bg: 'bg-status-info', text: 'text-white', border: 'border-status-info' };
       case 'demo': return { bg: 'bg-status-success', text: 'text-white', border: 'border-status-success' };
       case 'competition': return { bg: 'bg-brand-gold', text: 'text-white', border: 'border-brand-gold' };
@@ -157,10 +157,10 @@ const AgendaSection: React.FC = () => {
     <section id="schedule" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#F8C400] mb-4">
             Event <span className="text-white">Schedule</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Two action-packed days of competitions, demonstrations, workshops, and networking opportunities.
           </p>
@@ -175,8 +175,8 @@ const AgendaSection: React.FC = () => {
                 onClick={() => setActiveDay(day)}
                 className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
                   activeDay === day
-                    ? 'bg-[#FF0000] text-white shadow-lg transform scale-105'
-                    : 'text-ink-caption hover:text-[#FFD400]'
+                    ? 'bg-[#DC2626] text-white shadow-lg transform scale-105'
+                    : 'text-ink-caption hover:text-[#F8C400]'
                 }`}
               >
                 <Calendar size={16} />
@@ -196,12 +196,12 @@ const AgendaSection: React.FC = () => {
                   key={index}
                   data-aos="fade-up" 
                   data-aos-delay={index * 100}
-                  className="group bg-ink/50 backdrop-blur-sm rounded-2xl p-6 border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-300 hover:transform hover:scale-[1.02]"
+                  className="group bg-ink/50 backdrop-blur-sm rounded-2xl p-6 border border-ink-charcoal hover:border-[#F8C400]/50 transition-all duration-300 hover:transform hover:scale-[1.02]"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center gap-6">
                     {/* Time & Type */}
                     <div className="flex-shrink-0 lg:w-48">
-                      <div className="text-2xl font-bold text-[#FFD400] mb-2">{session.time}</div>
+                      <div className="text-2xl font-bold text-[#F8C400] mb-2">{session.time}</div>
                       <div className="flex items-center gap-2 mb-2">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase ${typeStyle.bg} ${typeStyle.text}`}>
                           {session.type}
@@ -212,21 +212,21 @@ const AgendaSection: React.FC = () => {
 
                     {/* Content */}
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#FFD400] transition-colors">
+                      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#F8C400] transition-colors">
                         {session.title}
                       </h3>
                       
                       <div className="flex flex-wrap gap-6 text-sm text-ink-caption">
                         <div className="flex items-center gap-2">
-                          <User size={16} className="text-[#FFD400]" />
+                          <User size={16} className="text-[#F8C400]" />
                           <span>{session.speaker}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <MapPin size={16} className="text-[#FFD400]" />
+                          <MapPin size={16} className="text-[#F8C400]" />
                           <span>{session.location}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Clock size={16} className="text-[#FFD400]" />
+                          <Clock size={16} className="text-[#F8C400]" />
                           <span>{session.duration}</span>
                         </div>
                       </div>
@@ -234,7 +234,7 @@ const AgendaSection: React.FC = () => {
 
                     {/* Action Button */}
                     <div className="flex-shrink-0">
-                      <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+                      <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
                         Add to Calendar
                       </button>
                     </div>
@@ -254,7 +254,7 @@ const AgendaSection: React.FC = () => {
             <p className="text-ink-caption mb-6">
               Get the complete event schedule with detailed session information and speaker bios.
             </p>
-            <button className="bg-[#FFD400] hover:bg-[#FFD400]/90 text-ink px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+            <button className="bg-[#F8C400] hover:bg-[#F8C400]/90 text-ink px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
               Download PDF Schedule
             </button>
           </div>

@@ -594,7 +594,7 @@
 //               transition={{ duration: 0.6, ease: "easeOut" }}
 //               className="inline-block mb-4"
 //             >
-//               <Badge className="bg-[#ffeb3b] text-ink px-5 py-2 shadow-md">
+//               <Badge className="bg-[#F8C400] text-ink px-5 py-2 shadow-md">
 //                 Our Gallery
 //               </Badge>
 //             </motion.div>
@@ -1767,7 +1767,7 @@
 //               transition={{ duration: 0.6, ease: "easeOut" }}
 //               className="inline-block mb-4"
 //             >
-//               <Badge className="bg-[#ffeb3b] text-ink px-5 py-2 shadow-md">
+//               <Badge className="bg-[#F8C400] text-ink px-5 py-2 shadow-md">
 //                 Our Gallery
 //               </Badge>
 //             </motion.div>
@@ -2954,7 +2954,7 @@ export default function EditableGallerySection({
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="inline-block mb-4"
             >
-              <Badge className="bg-[#ffeb3b] text-ink px-5 py-2 shadow-md">
+              <Badge className="bg-[#F8C400] text-ink px-5 py-2 shadow-md">
                 Our Gallery
               </Badge>
             </motion.div>

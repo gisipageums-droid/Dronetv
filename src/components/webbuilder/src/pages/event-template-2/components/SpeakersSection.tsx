@@ -78,10 +78,10 @@ const SpeakersSection: React.FC = () => {
     <section id="speakers" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#F8C400] mb-4">
             Featured <span className="text-white">Speakers</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Learn from visionary leaders and technical experts who are shaping the future of drone technology.
           </p>
@@ -98,11 +98,11 @@ const SpeakersSection: React.FC = () => {
                 key={speaker.id}
                 data-aos="fade-up" 
                 data-aos-delay={index * 200}
-                className="group relative bg-ink/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
+                className="group relative bg-ink/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-ink-charcoal hover:border-[#F8C400]/50 transition-all duration-500 transform hover:scale-105"
               >
                 {/* Featured Badge */}
                 <div className="absolute top-4 right-4 z-10">
-                  <span className="bg-[#FF0000] text-white px-3 py-1 rounded-full text-xs font-semibold">
+                  <span className="bg-[#DC2626] text-white px-3 py-1 rounded-full text-xs font-semibold">
                     KEYNOTE
                   </span>
                 </div>
@@ -120,13 +120,13 @@ const SpeakersSection: React.FC = () => {
                   <div className="absolute bottom-6 left-6 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <a 
                       href={speaker.linkedin}
-                      className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-[#FF0000] hover:bg-[#FF0000] hover:text-white transition-colors"
+                      className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626] hover:text-white transition-colors"
                     >
                       <Linkedin size={18} />
                     </a>
                     <a 
                       href={speaker.twitter}
-                      className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-[#FF0000] hover:bg-[#FF0000] hover:text-white transition-colors"
+                      className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626] hover:text-white transition-colors"
                     >
                       <Twitter size={18} />
                     </a>
@@ -135,10 +135,10 @@ const SpeakersSection: React.FC = () => {
                 
                 {/* Content */}
                 <div className="p-8">
-                  <h3 className="text-2xl font-bold text-[#FFD400] mb-2 group-hover:text-white transition-colors">
+                  <h3 className="text-2xl font-bold text-[#F8C400] mb-2 group-hover:text-white transition-colors">
                     {speaker.name}
                   </h3>
-                  <p className="text-[#FFD400] font-semibold mb-1">{speaker.title}</p>
+                  <p className="text-[#F8C400] font-semibold mb-1">{speaker.title}</p>
                   <p className="text-ink-caption mb-4">{speaker.company}</p>
                   <div className="border-t border-ink-charcoal pt-4">
                     <p className="text-sm text-ink-caption mb-2">Speaking on:</p>
@@ -161,7 +161,7 @@ const SpeakersSection: React.FC = () => {
                 key={speaker.id}
                 data-aos="fade-up" 
                 data-aos-delay={index * 100}
-                className="group bg-ink/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105"
+                className="group bg-ink/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-ink-charcoal hover:border-[#F8C400]/50 transition-all duration-500 transform hover:scale-105"
               >
                 {/* Image */}
                 <div className="relative h-48 overflow-hidden">
@@ -173,17 +173,17 @@ const SpeakersSection: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
                   
                   {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-[#FF0000]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-[#DC2626]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <ExternalLink size={24} className="text-white" />
                   </div>
                 </div>
                 
                 {/* Content */}
                 <div className="p-6">
-                  <h4 className="text-lg font-bold text-white mb-1 group-hover:text-[#FFD400] transition-colors">
+                  <h4 className="text-lg font-bold text-white mb-1 group-hover:text-[#F8C400] transition-colors">
                     {speaker.name}
                   </h4>
-                  <p className="text-[#FFD400] text-sm font-semibold mb-1">{speaker.title}</p>
+                  <p className="text-[#F8C400] text-sm font-semibold mb-1">{speaker.title}</p>
                   <p className="text-ink-caption text-sm mb-3">{speaker.company}</p>
                   <p className="text-ink-caption text-xs">{speaker.topic}</p>
                 </div>

@@ -50,20 +50,20 @@ function getIcon(cat: string, title: string): string {
 }
 
 const PRODUCTS_CSS = `
-.pr-page { background: #F8F8F8; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
-.pr-hero { background: #0A0A0A; color: #fff; border-bottom: 2px solid #F5C518; }
+.pr-page { background: #FFF8D6; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
+.pr-hero { background: #111111; color: #fff; border-bottom: 2px solid #F8C400; }
 .pr-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .pr-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; white-space: nowrap; }
-.pr-hero h1 span { color: #F5C518; }
+.pr-hero h1 span { color: #F8C400; }
 .pr-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; }
-.pr-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
+.pr-stat-n { font-size: 15px; font-weight: 900; color: #F8C400; line-height: 1; }
 .pr-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
 .pr-wrap { max-width: 1280px; margin: 0 auto; padding: 20px 22px; }
 
 /* Sidebar layout */
 .pr-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
 .pr-sidebar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); position: sticky; top: 120px; }
-.pr-sidebar-title { font-size: 13px; font-weight: 800; color: #0A0A0A; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.pr-sidebar-title { font-size: 13px; font-weight: 800; color: #111111; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
 .pr-filter-grp { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0; }
 .pr-filter-grp:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 .pr-fl-label { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
@@ -71,7 +71,7 @@ const PRODUCTS_CSS = `
 .pr-chip { padding: 4px 10px; border-radius: 14px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
 .pr-main { min-width: 0; }
 .pr-search-bar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.pr-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
+.pr-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #111111; font-family: 'Poppins',sans-serif; }
 .pr-note { background: #FFFBE8; border: 1px solid #C9A010; border-radius: 8px; padding: 7px 12px; font-size: 11.5px; color: #7a5800; margin-bottom: 12px; }
 .pr-resbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 7px; }
 .pr-sort { padding: 6px 10px; border: 1.5px solid #E5E5E5; border-radius: 8px; font-size: 12.5px; color: #444; background: #fff; cursor: pointer; font-family: 'Poppins',sans-serif; }
@@ -86,17 +86,17 @@ const PRODUCTS_CSS = `
 .pr-card-img img { width: 100%; height: 100%; object-fit: cover; }
 .pr-card-icon { font-size: 40px; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
 .pr-card-body { padding: 13px 14px; flex: 1; display: flex; flex-direction: column; }
-.pr-card-title { font-size: 14px; font-weight: 700; color: #0A0A0A; margin-bottom: 3px; line-height: 1.3; cursor: pointer; }
+.pr-card-title { font-size: 14px; font-weight: 700; color: #111111; margin-bottom: 3px; line-height: 1.3; cursor: pointer; }
 .pr-card-co { font-size: 12px; color: #777; margin-bottom: 8px; }
 .pr-card-desc { font-size: 12.5px; color: #777; line-height: 1.6; flex: 1; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .pr-card-foot { padding: 10px 14px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.pr-btn-out { background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; }
-.pr-btn-red { background: #CC1F1F; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
+.pr-btn-out { background: #fff; color: #111111; border: 1.5px solid #E5E5E5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; }
+.pr-btn-red { background: #DC2626; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
 @media (max-width: 960px) {
   .pr-layout { grid-template-columns: 1fr; }
   .pr-sidebar { position: static; display: none; }
   .pr-sidebar.open { display: block; }
-  .pr-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #0A0A0A; color: #F5C518; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
+  .pr-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #111111; color: #F8C400; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
 }
 @media (max-width: 600px) {
   .pr-hero-i { padding: 8px 14px; gap: 10px; }
@@ -207,9 +207,9 @@ const ProductsPage: React.FC = () => {
   };
 
   const chipStyle = (on: boolean): React.CSSProperties => ({
-    background: on ? '#0A0A0A' : 'transparent',
-    color: on ? '#F5C518' : '#444',
-    border: `1.5px solid ${on ? '#0A0A0A' : '#E5E5E5'}`,
+    background: on ? '#111111' : 'transparent',
+    color: on ? '#F8C400' : '#444',
+    border: `1.5px solid ${on ? '#111111' : '#E5E5E5'}`,
   });
 
   const priceOptions = [{ v: '', l: 'All Prices' }, { v: 'free', l: 'On Request' }, { v: 'lt1l', l: 'Under ₹1L' }, { v: '1l5l', l: '₹1L – ₹5L' }, { v: 'gt5l', l: 'Above ₹5L' }];
@@ -222,7 +222,7 @@ const ProductsPage: React.FC = () => {
       <div className="pr-sidebar-title">
         <SlidersHorizontal size={14} /> Filters
         {activeFiltersCount > 0 && (
-          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#CC1F1F', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
+          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#DC2626', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
             {activeFiltersCount}
           </span>
         )}
@@ -252,7 +252,7 @@ const ProductsPage: React.FC = () => {
 
       {activeFiltersCount > 0 && (
         <button onClick={() => { setSelCats([]); setPriceFilter(''); setPage(1); }}
-          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#CC1F1F', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#DC2626', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
           <X size={12} /> Clear all filters
         </button>
       )}
@@ -316,7 +316,7 @@ const ProductsPage: React.FC = () => {
               {/* RESULTS BAR */}
               <div className="pr-resbar">
                 <div style={{ fontSize: 12.5, color: '#777' }}>
-                  <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> product{filtered.length !== 1 ? 's' : ''}
+                  <b style={{ color: '#111111' }}>{filtered.length}</b> product{filtered.length !== 1 ? 's' : ''}
                 </div>
                 <select className="pr-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
                   <option value="timestamp">Newest first</option>
@@ -331,7 +331,7 @@ const ProductsPage: React.FC = () => {
               {current.length === 0 ? (
                 <div className="pr-empty">
               <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No products found</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#111111', marginBottom: 6 }}>No products found</div>
               <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
             </div>
           ) : (
@@ -345,7 +345,7 @@ const ProductsPage: React.FC = () => {
             <div className="pr-pages">
               <button className="pr-page-btn"
                 onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
+                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#111111', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
                 Previous
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).filter(p =>
@@ -357,13 +357,13 @@ const ProductsPage: React.FC = () => {
                 <span key={`e${i}`} style={{ padding: '7px 4px', color: '#777' }}>…</span>
               ) : (
                 <button key={p} className="pr-page-btn" onClick={() => setPage(p as number)}
-                  style={{ border: `1.5px solid ${page === p ? '#0A0A0A' : '#E5E5E5'}`, background: page === p ? '#0A0A0A' : '#fff', color: page === p ? '#F5C518' : '#1A1A1A', cursor: 'pointer' }}>
+                  style={{ border: `1.5px solid ${page === p ? '#111111' : '#E5E5E5'}`, background: page === p ? '#111111' : '#fff', color: page === p ? '#F8C400' : '#111111', cursor: 'pointer' }}>
                   {p}
                 </button>
               ))}
               <button className="pr-page-btn"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
+                style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#111111', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
                 Next
               </button>
             </div>
@@ -391,9 +391,9 @@ const ProductCard: React.FC<{ product: Product; onView: () => void }> = ({ produ
           <div className="pr-card-icon">{icon}</div>
         )}
         {product.featured && (
-          <span style={{ position: 'absolute', top: 8, left: 8, background: '#F5C518', color: '#0A0A0A', fontSize: 9.5, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>FEATURED</span>
+          <span style={{ position: 'absolute', top: 8, left: 8, background: '#F8C400', color: '#111111', fontSize: 9.5, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>FEATURED</span>
         )}
-        <span style={{ position: 'absolute', top: 8, right: 8, background: '#1a7a3a', color: '#fff', fontSize: 9.5, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>CERTIFIED</span>
+        <span style={{ position: 'absolute', top: 8, right: 8, background: '#22C55E', color: '#fff', fontSize: 9.5, fontWeight: 800, padding: '2px 8px', borderRadius: 8 }}>CERTIFIED</span>
       </div>
 
       <div className="pr-card-body">
@@ -413,9 +413,9 @@ const ProductCard: React.FC<{ product: Product; onView: () => void }> = ({ produ
 
       <div className="pr-card-foot">
         <div>
-          <div style={{ fontSize: 13, fontWeight: 800, color: '#0A0A0A' }}>{product.price}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: '#F5C518' }}>
-            <Star size={11} fill="#F5C518" />{product.rating.toFixed(1)}
+          <div style={{ fontSize: 13, fontWeight: 800, color: '#111111' }}>{product.price}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: '#F8C400' }}>
+            <Star size={11} fill="#F8C400" />{product.rating.toFixed(1)}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 6 }}>

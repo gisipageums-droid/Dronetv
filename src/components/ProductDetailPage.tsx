@@ -148,7 +148,7 @@ export default function ProductDetailPage() {
 
   if (!product)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-ink-offwhite">
+      <div className="min-h-screen flex items-center justify-center bg-surface-main">
         <p className="text-lg font-semibold">Product not found.</p>
       </div>
     );
@@ -169,7 +169,7 @@ export default function ProductDetailPage() {
     ));
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {/* LEFT: Images + Thumbnails */}
@@ -301,7 +301,7 @@ export default function ProductDetailPage() {
         </div>
         <div className="mt-8 flex justify-center">
           <Link to={template === "template-1" ? `/company/${companyName}#contact` : `/companies/${companyName}#contact`}>
-            <button className="px-6 py-2.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
+            <button className="px-6 py-2.5 bg-[#111111] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
               Contact us
             </button>
           </Link>

@@ -57,9 +57,9 @@
 //       <div className="container mx-auto px-4">
 //         <div className="text-center mb-16">
 //           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
-//             {title} <span className="text-[#FF0000]">{highlightText}</span>
+//             {title} <span className="text-[#DC2626]">{highlightText}</span>
 //           </h2>
-//           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto"></div>
+//           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#F8C400] mx-auto"></div>
 //         </div>
 
 //         <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -75,7 +75,7 @@
 //             </div>
             
 //             {/* Floating Badge */}
-//             <div className="absolute -bottom-6 -right-6 bg-[#FFD400] text-ink px-6 py-3 rounded-full font-bold shadow-lg">
+//             <div className="absolute -bottom-6 -right-6 bg-[#F8C400] text-ink px-6 py-3 rounded-full font-bold shadow-lg">
 //               {experienceYears}+ Years Experience
 //             </div>
 //           </div>
@@ -99,7 +99,7 @@
 //             <div className="space-y-4 mb-8">
 //               {contactInfo.map((info, index) => (
 //                 <div key={index} className="flex items-center gap-4">
-//                   <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center">
+//                   <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center">
 //                     {iconMap[info.type]}
 //                   </div>
 //                   <div>
@@ -112,7 +112,7 @@
 
 //             {/* Signature */}
 //             <div className="relative">
-//               <div className="text-4xl font-bold text-[#FFD400] opacity-50">
+//               <div className="text-4xl font-bold text-[#F8C400] opacity-50">
 //                 {signatureText}
 //               </div>
 //             </div>
@@ -162,8 +162,8 @@ const AboutMe: React.FC<AboutMeProps> = ({
   profileImage = '',
   signatureText = 'Dev R', // From API fullName
   contactInfo, // Will build from API
-  primaryColor = '#FFD400',
-  accentColor = '#FF0000',
+  primaryColor = '#F8C400',
+  accentColor = '#DC2626',
   bio = '',
   email = '',
   phone = '',

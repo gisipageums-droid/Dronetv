@@ -66,7 +66,7 @@ const packages = [
 
 export default function PartnerBenefitsPage() {
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Partnership Benefits <span>and Packages</span></>}
         stats={[

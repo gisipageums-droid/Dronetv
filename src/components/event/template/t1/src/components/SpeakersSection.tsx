@@ -107,7 +107,7 @@ const SpeakersSection = () => {
   const speakersToday = speakersData[activeDay]?.speakers?.length || 0;
 
   return (
-    <section className="py-20 bg-ink-offwhite min-h-screen">
+    <section className="py-20 bg-surface-main min-h-screen">
       <div className="container mx-auto px-4 max-w-7xl relative">
         {/* Header */}
         <div className="text-center mb-16">

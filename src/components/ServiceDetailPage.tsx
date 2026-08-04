@@ -138,7 +138,7 @@ export default function ServiceDetailPage() {
 
   if (error)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-ink-offwhite p-6">
+      <div className="min-h-screen flex items-center justify-center bg-surface-main p-6">
         <div className="bg-surface-card rounded-2xl p-8 shadow-md w-full max-w-xl text-center">
           <h2 className="text-2xl font-bold text-status-error mb-4">Error</h2>
           <p className="mb-6 text-ink-paragraph">{error}</p>
@@ -151,7 +151,7 @@ export default function ServiceDetailPage() {
 
   if (!service)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-ink-offwhite">
+      <div className="min-h-screen flex items-center justify-center bg-surface-main">
         <p className="text-lg font-semibold">Service not found.</p>
       </div>
     );
@@ -170,7 +170,7 @@ export default function ServiceDetailPage() {
     ));
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
 
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
@@ -320,7 +320,7 @@ export default function ServiceDetailPage() {
 
 
           <Link to={template === "template-1" ? `/company/${companyName}#contact` : `/companies/${companyName}#contact`}>
-            <button className="px-6 py-2.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
+            <button className="px-6 py-2.5 bg-[#111111] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
               Contact us
             </button>
           </Link>

@@ -53,11 +53,11 @@ const Contact: React.FC = () => {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-[#FFD400]">
+    <section id="contact" className="py-20 bg-[#F8C400]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink mb-4">
-            Get in <span className="text-[#FF0000]">Touch with Us</span>
+            Get in <span className="text-[#DC2626]">Touch with Us</span>
           </h2>
           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-ink mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink/80 max-w-2xl mx-auto text-lg">
@@ -69,7 +69,7 @@ const Contact: React.FC = () => {
           <div data-aos="fade-up" data-aos-delay="600">
             <div className="bg-surface-card rounded-3xl p-8 lg:p-12 shadow-2xl">
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageCircle size={32} className="text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-ink mb-2">
@@ -99,10 +99,10 @@ const Contact: React.FC = () => {
                         value={formData[field as keyof typeof formData]}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-6 py-4 bg-ink-offwhite border-2 border-ink-light rounded-2xl focus:border-[#FF0000] focus:bg-surface-card transition-all duration-300 text-ink placeholder-transparent peer"
+                        className="w-full px-6 py-4 bg-ink-offwhite border-2 border-ink-light rounded-2xl focus:border-[#DC2626] focus:bg-surface-card transition-all duration-300 text-ink placeholder-transparent peer"
                         placeholder={field === 'email' ? 'your@email.com' : 'Your name'}
                       />
-                      <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FF0000] peer-valid:top-1 peer-valid:text-sm">
+                      <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#DC2626] peer-valid:top-1 peer-valid:text-sm">
                         {field === 'email' ? 'Email Address *' : 'Your Name *'}
                       </label>
                     </div>
@@ -116,10 +116,10 @@ const Contact: React.FC = () => {
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-6 py-4 bg-ink-offwhite border-2 border-ink-light rounded-2xl focus:border-[#FF0000] focus:bg-surface-card transition-all duration-300 text-ink placeholder-transparent peer"
+                    className="w-full px-6 py-4 bg-ink-offwhite border-2 border-ink-light rounded-2xl focus:border-[#DC2626] focus:bg-surface-card transition-all duration-300 text-ink placeholder-transparent peer"
                     placeholder="Subject"
                   />
-                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FF0000] peer-valid:top-1 peer-valid:text-sm">
+                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#DC2626] peer-valid:top-1 peer-valid:text-sm">
                     Subject *
                   </label>
                 </div>
@@ -131,10 +131,10 @@ const Contact: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full px-6 py-4 bg-ink-offwhite border-2 border-ink-light rounded-2xl focus:border-[#FF0000] focus:bg-surface-card transition-all duration-300 text-ink placeholder-transparent peer resize-none"
+                    className="w-full px-6 py-4 bg-ink-offwhite border-2 border-ink-light rounded-2xl focus:border-[#DC2626] focus:bg-surface-card transition-all duration-300 text-ink placeholder-transparent peer resize-none"
                     placeholder="Your message..."
                   />
-                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FF0000] peer-valid:top-1 peer-valid:text-sm">
+                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#DC2626] peer-valid:top-1 peer-valid:text-sm">
                     Message *
                   </label>
                 </div>
@@ -142,7 +142,7 @@ const Contact: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#FF0000] hover:bg-[#FF0000]/90 disabled:bg-ink-caption text-white py-4 px-8 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl"
+                  className="w-full bg-[#DC2626] hover:bg-[#DC2626]/90 disabled:bg-ink-caption text-white py-4 px-8 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl"
                 >
                   {isSubmitting ? (
                     <>
@@ -164,7 +164,7 @@ const Contact: React.FC = () => {
           <div data-aos="fade-up" data-aos-delay="800" className="grid md:grid-cols-3 gap-6 mt-12">
             {contactInfo.map((info, index) => (
               <div key={index} className="bg-ink rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
-                <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-4">
                   {info.icon}
                 </div>
                 <h4 className="font-bold text-white mb-2">{info.title}</h4>

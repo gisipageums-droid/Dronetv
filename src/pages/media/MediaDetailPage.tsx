@@ -26,7 +26,7 @@ export default function MediaDetailPage({ contentType, backPath, backLabel, exte
 
   if (loading) {
     return (
-      <div className="pt-[104px] min-h-screen bg-ink-offwhite flex items-center justify-center">
+      <div className="pt-[104px] min-h-screen bg-surface-main flex items-center justify-center">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-yellow" />
       </div>
     );
@@ -34,7 +34,7 @@ export default function MediaDetailPage({ contentType, backPath, backLabel, exte
 
   if (!item) {
     return (
-      <div className="pt-[104px] min-h-screen bg-ink-offwhite flex items-center justify-center">
+      <div className="pt-[104px] min-h-screen bg-surface-main flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-bold text-ink mb-3">Content Not Found</h2>
           <Link to={backPath} className="text-brand-gold font-bold text-sm hover:text-brand-yellow">← Back to {backLabel}</Link>
@@ -51,7 +51,7 @@ export default function MediaDetailPage({ contentType, backPath, backLabel, exte
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <div className="bg-ink text-white">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <Link to={backPath} className="flex items-center gap-2 text-white/50 hover:text-brand-yellow text-sm font-semibold mb-5 transition-colors w-fit">

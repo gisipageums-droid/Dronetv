@@ -57,12 +57,12 @@ const HeroSection: React.FC = () => {
             data-aos-delay="300"
             className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
           >
-            Drone <span className="text-[#FFD400]">Expo 2026</span>
+            Drone <span className="text-[#F8C400]">Expo 2026</span>
           </h1>
 
           {/* Paid Event Badge */}
           <div data-aos="fade-up" data-aos-delay="400" className="flex justify-center mb-4">
-            <span className="bg-[#FF0000] text-white text-sm font-bold px-5 py-2 rounded-full uppercase tracking-widest shadow-lg">
+            <span className="bg-[#DC2626] text-white text-sm font-bold px-5 py-2 rounded-full uppercase tracking-widest shadow-lg">
               Paid Event
             </span>
           </div>
@@ -73,15 +73,15 @@ const HeroSection: React.FC = () => {
             className="flex flex-wrap justify-center gap-6 mb-8 text-white"
           >
             <div className="flex items-center gap-2">
-              <Calendar size={20} className="text-[#FFD400]" />
+              <Calendar size={20} className="text-[#F8C400]" />
               <span>17th – 18th April 2026</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock size={20} className="text-[#FFD400]" />
+              <Clock size={20} className="text-[#F8C400]" />
               <span>9:00 AM - 6:00 PM</span>
             </div>
             <div className="flex items-center gap-2">
-              <MapPin size={20} className="text-[#FFD400]" />
+              <MapPin size={20} className="text-[#F8C400]" />
               <span>Bangalore International Exhibition Centre, Bengaluru</span>
             </div>
           </div>
@@ -98,8 +98,8 @@ const HeroSection: React.FC = () => {
               { label: 'Minutes', value: timeLeft.minutes },
               { label: 'Seconds', value: timeLeft.seconds }
             ].map((item, index) => (
-              <div key={index} className="bg-ink/50 backdrop-blur-sm rounded-lg p-4 border border-[#FFD400]/30">
-                <div className="text-2xl font-bold text-[#FFD400]">{item.value.toString().padStart(2, '0')}</div>
+              <div key={index} className="bg-ink/50 backdrop-blur-sm rounded-lg p-4 border border-[#F8C400]/30">
+                <div className="text-2xl font-bold text-[#F8C400]">{item.value.toString().padStart(2, '0')}</div>
                 <div className="text-sm text-ink-light">{item.label}</div>
               </div>
             ))}

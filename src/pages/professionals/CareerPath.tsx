@@ -76,7 +76,7 @@ const SALARY_BY_SECTOR = [
 
 export default function CareerPathPage() {
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero title={<>Drone Industry <span>Career Path</span></>} />
 

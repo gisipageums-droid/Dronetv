@@ -869,7 +869,7 @@ const toggleMute = () => {
               </div>
             </div>
           ) : (
-            <h1 className="text-5xl md:text-7xl font-bold text-[#FFD400] mb-6 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold text-[#F8C400] mb-6 leading-tight">
               {heroContent.title}
             </h1>
           )}
@@ -877,7 +877,7 @@ const toggleMute = () => {
           {/* Date / Time / Location */}
           <div className="flex flex-wrap justify-center gap-6 mb-8 text-white">
             <div className="flex items-center gap-2">
-              <Calendar size={20} className="text-[#FFD400]" />
+              <Calendar size={20} className="text-[#F8C400]" />
               {editMode ? (
                 <div className="flex flex-col">
                   <input
@@ -899,7 +899,7 @@ const toggleMute = () => {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <Clock size={20} className="text-[#FFD400]" />
+              <Clock size={20} className="text-[#F8C400]" />
               {editMode ? (
                 <div className="flex flex-col">
                   <input
@@ -921,7 +921,7 @@ const toggleMute = () => {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <MapPin size={20} className="text-[#FFD400]" />
+              <MapPin size={20} className="text-[#F8C400]" />
               {editMode ? (
                 <div className="flex flex-col">
                   <input
@@ -974,7 +974,7 @@ const toggleMute = () => {
                 </h3>
                 <div className="flex justify-center gap-4 md:gap-6">
                   <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                    <div className="text-2xl md:text-3xl font-bold text-[#F8C400]">
                       {countdown.days}
                     </div>
                     <div className="text-sm md:text-base text-white/80">
@@ -982,7 +982,7 @@ const toggleMute = () => {
                     </div>
                   </div>
                   <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                    <div className="text-2xl md:text-3xl font-bold text-[#F8C400]">
                       {countdown.hours}
                     </div>
                     <div className="text-sm md:text-base text-white/80">
@@ -990,7 +990,7 @@ const toggleMute = () => {
                     </div>
                   </div>
                   <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                    <div className="text-2xl md:text-3xl font-bold text-[#F8C400]">
                       {countdown.minutes}
                     </div>
                     <div className="text-sm md:text-base text-white/80">
@@ -998,7 +998,7 @@ const toggleMute = () => {
                     </div>
                   </div>
                   <div className="bg-ink/40 backdrop-blur-sm rounded-xl px-4 py-3 md:px-6 md:py-4 border border-white/20">
-                    <div className="text-2xl md:text-3xl font-bold text-[#FFD400]">
+                    <div className="text-2xl md:text-3xl font-bold text-[#F8C400]">
                       {countdown.seconds}
                     </div>
                     <div className="text-sm md:text-base text-white/80">

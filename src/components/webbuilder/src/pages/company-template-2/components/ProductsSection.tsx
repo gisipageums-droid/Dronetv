@@ -73,10 +73,10 @@ const ProductsSection: React.FC = () => {
     <section id="products" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#F8C400] mb-4">
             Our <span className="text-white">Fleet</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Cutting-edge drone technology engineered for superior performance across diverse mission requirements.
           </p>
@@ -91,13 +91,13 @@ const ProductsSection: React.FC = () => {
                 onClick={() => setActiveFilter(category)}
                 className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
                   activeFilter === category
-                    ? 'bg-[#FF0000] text-white shadow-lg transform scale-105'
-                    : 'text-ink-caption hover:text-[#FFD400] hover:bg-white/5'
+                    ? 'bg-[#DC2626] text-white shadow-lg transform scale-105'
+                    : 'text-ink-caption hover:text-[#F8C400] hover:bg-white/5'
                 }`}
               >
                 {category}
                 {activeFilter === category && (
-                  <span className="ml-2 w-2 h-0.5 bg-[#FFD400] inline-block"></span>
+                  <span className="ml-2 w-2 h-0.5 bg-[#F8C400] inline-block"></span>
                 )}
               </button>
             ))}
@@ -122,7 +122,7 @@ const ProductsSection: React.FC = () => {
           >
             {filteredProducts.map((product) => (
               <SwiperSlide key={product.id}>
-                <div className="group bg-ink/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 transform hover:scale-105">
+                <div className="group bg-ink/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-ink-charcoal hover:border-[#F8C400]/50 transition-all duration-500 transform hover:scale-105">
                   {/* Image */}
                   <div className="relative overflow-hidden">
                     <img 
@@ -134,14 +134,14 @@ const ProductsSection: React.FC = () => {
                     
                     {/* Category Badge */}
                     <div className="absolute top-4 left-4">
-                      <span className="bg-[#FF0000] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      <span className="bg-[#DC2626] text-white px-3 py-1 rounded-full text-sm font-semibold">
                         {product.category}
                       </span>
                     </div>
                     
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-ink/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <button className="bg-[#FFD400] text-ink px-6 py-2 rounded-full font-semibold hover:bg-[#FFD400]/90 transition-colors flex items-center gap-2">
+                      <button className="bg-[#F8C400] text-ink px-6 py-2 rounded-full font-semibold hover:bg-[#F8C400]/90 transition-colors flex items-center gap-2">
                         <Eye size={16} />
                         View Details
                       </button>
@@ -150,11 +150,11 @@ const ProductsSection: React.FC = () => {
                   
                   {/* Content */}
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-[#FFD400] mb-2 group-hover:text-white transition-colors">
+                    <h3 className="text-xl font-bold text-[#F8C400] mb-2 group-hover:text-white transition-colors">
                       {product.name}
                     </h3>
                     
-                    <p className="text-sm text-[#FF0000] font-semibold mb-3 bg-[#FF0000]/10 px-3 py-1 rounded-full inline-block">
+                    <p className="text-sm text-[#DC2626] font-semibold mb-3 bg-[#DC2626]/10 px-3 py-1 rounded-full inline-block">
                       {product.specs}
                     </p>
                     
@@ -163,8 +163,8 @@ const ProductsSection: React.FC = () => {
                     </p>
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-[#FFD400] font-bold">{product.price}</span>
-                      <button className="group/btn flex items-center gap-2 text-[#FF0000] font-semibold hover:text-[#FFD400] transition-colors">
+                      <span className="text-[#F8C400] font-bold">{product.price}</span>
+                      <button className="group/btn flex items-center gap-2 text-[#DC2626] font-semibold hover:text-[#F8C400] transition-colors">
                         <span>Learn More</span>
                         <ArrowRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />
                       </button>
@@ -180,14 +180,14 @@ const ProductsSection: React.FC = () => {
       <style jsx>{`
         .products-swiper .swiper-button-next,
         .products-swiper .swiper-button-prev {
-          color: #FFD400;
+          color: #F8C400;
         }
         .products-swiper .swiper-pagination-bullet {
-          background: #FFD400;
+          background: #F8C400;
           opacity: 0.5;
         }
         .products-swiper .swiper-pagination-bullet-active {
-          background: #FF0000;
+          background: #DC2626;
           opacity: 1;
         }
       `}</style>

@@ -145,9 +145,9 @@ const ProfessionalForm: React.FC = () => {
     selectedTemplate: "",
 
     logo: undefined,
-    primaryColor: "#FFD400",
+    primaryColor: "#F8C400",
     textColor: "#000000",
-    accentColor: "#FF0000",
+    accentColor: "#DC2626",
 
     fullName: "",
     rotatingTitles: "",
@@ -399,8 +399,8 @@ const ProfessionalForm: React.FC = () => {
                   key={template.id}
                   className={`rounded-2xl overflow-hidden border-4 transition-all duration-300 ${
                     formData.selectedTemplate === template.id
-                      ? "border-[#FF0000] shadow-2xl transform scale-105"
-                      : "border-ink-light hover:border-[#FFD400]"
+                      ? "border-[#DC2626] shadow-2xl transform scale-105"
+                      : "border-ink-light hover:border-[#F8C400]"
                   }`}
                 >
                   <div className="bg-surface-card p-6">
@@ -433,7 +433,7 @@ const ProfessionalForm: React.FC = () => {
                         onClick={() =>
                           handleInputChange("selectedTemplate", template.id)
                         }
-                        className="bg-[#FFD400] text-ink px-4 py-2 rounded-md font-semibold hover:bg-brand-yellow transition"
+                        className="bg-[#F8C400] text-ink px-4 py-2 rounded-md font-semibold hover:bg-brand-yellow transition"
                       >
                         Select
                       </button>
@@ -473,7 +473,7 @@ const ProfessionalForm: React.FC = () => {
                 {logoUploadLoading && (
                   <div className="flex items-center justify-center mt-2">
                     <svg
-                      className="animate-spin h-5 w-5 text-[#FFD400]"
+                      className="animate-spin h-5 w-5 text-[#F8C400]"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -483,16 +483,16 @@ const ProfessionalForm: React.FC = () => {
                         cx="12"
                         cy="12"
                         r="10"
-                        stroke="#FFD400"
+                        stroke="#F8C400"
                         strokeWidth="4"
                       ></circle>
                       <path
                         className="opacity-75"
-                        fill="#FFD400"
+                        fill="#F8C400"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                       ></path>
                     </svg>
-                    <span className="ml-2 text-[#FFD400] text-sm font-semibold">
+                    <span className="ml-2 text-[#F8C400] text-sm font-semibold">
                       Uploading...
                     </span>
                   </div>
@@ -547,7 +547,7 @@ const ProfessionalForm: React.FC = () => {
                 />
 
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
+                  className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink text-sm"
                   onClick={() =>
                     document.getElementById("logo-upload-input")?.click()
                   }
@@ -589,7 +589,7 @@ const ProfessionalForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange("primaryColor", e.target.value)
                     }
-                    className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -613,7 +613,7 @@ const ProfessionalForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange("textColor", e.target.value)
                     }
-                    className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -637,7 +637,7 @@ const ProfessionalForm: React.FC = () => {
                     onChange={(e) =>
                       handleInputChange("accentColor", e.target.value)
                     }
-                    className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -658,7 +658,7 @@ const ProfessionalForm: React.FC = () => {
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => handleInputChange("fullName", e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="John Doe"
               />
             </div>
@@ -673,7 +673,7 @@ const ProfessionalForm: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange("rotatingTitles", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Drone Pilot, UAV Engineer, Content Creator"
               />
             </div>
@@ -686,7 +686,7 @@ const ProfessionalForm: React.FC = () => {
                 value={formData.tagline}
                 onChange={(e) => handleInputChange("tagline", e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Capturing the world from above with cutting-edge drone technology"
               />
             </div> */}
@@ -697,7 +697,7 @@ const ProfessionalForm: React.FC = () => {
               promptPrefix="Write a compelling and concise tagline for this description:"
               multiline
               rows={3}
-              inputClassName="w-[45vw] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+              inputClassName="w-[45vw] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
               onChange={(value) => handleInputChange("tagline", value)}
             />
 
@@ -715,7 +715,7 @@ const ProfessionalForm: React.FC = () => {
                 {heroBgUploadLoading && (
                   <div className="flex items-center justify-center mt-2">
                     <svg
-                      className="animate-spin h-5 w-5 text-[#FFD400]"
+                      className="animate-spin h-5 w-5 text-[#F8C400]"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -725,16 +725,16 @@ const ProfessionalForm: React.FC = () => {
                         cx="12"
                         cy="12"
                         r="10"
-                        stroke="#FFD400"
+                        stroke="#F8C400"
                         strokeWidth="4"
                       ></circle>
                       <path
                         className="opacity-75"
-                        fill="#FFD400"
+                        fill="#F8C400"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                       ></path>
                     </svg>
-                    <span className="ml-2 text-[#FFD400] text-sm font-semibold">
+                    <span className="ml-2 text-[#F8C400] text-sm font-semibold">
                       Uploading...
                     </span>
                   </div>
@@ -790,7 +790,7 @@ const ProfessionalForm: React.FC = () => {
                   onClick={() =>
                     document.getElementById("hero-bg-upload-input")?.click()
                   }
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
+                  className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink text-sm"
                 >
                   Choose File
                 </button>
@@ -819,7 +819,7 @@ const ProfessionalForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange("button1Text", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
               <div>
@@ -832,7 +832,7 @@ const ProfessionalForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange("button1Link", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
             </div>
@@ -848,7 +848,7 @@ const ProfessionalForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange("button2Text", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
               <div>
@@ -861,7 +861,7 @@ const ProfessionalForm: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange("button2Link", e.target.value)
                   }
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
             </div>
@@ -887,7 +887,7 @@ const ProfessionalForm: React.FC = () => {
                 {profilePicUploadLoading && (
                   <div className="flex items-center justify-center mt-2">
                     <svg
-                      className="animate-spin h-5 w-5 text-[#FFD400]"
+                      className="animate-spin h-5 w-5 text-[#F8C400]"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -897,16 +897,16 @@ const ProfessionalForm: React.FC = () => {
                         cx="12"
                         cy="12"
                         r="10"
-                        stroke="#FFD400"
+                        stroke="#F8C400"
                         strokeWidth="4"
                       ></circle>
                       <path
                         className="opacity-75"
-                        fill="#FFD400"
+                        fill="#F8C400"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                       ></path>
                     </svg>
-                    <span className="ml-2 text-[#FFD400] text-sm font-semibold">
+                    <span className="ml-2 text-[#F8C400] text-sm font-semibold">
                       Uploading...
                     </span>
                   </div>
@@ -958,7 +958,7 @@ const ProfessionalForm: React.FC = () => {
                 />
 
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
+                  className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink text-sm"
                   onClick={() =>
                     document.getElementById("profile-pic-upload-input")?.click()
                   }
@@ -989,7 +989,7 @@ const ProfessionalForm: React.FC = () => {
                 value={formData.bio}
                 onChange={(e) => handleInputChange("bio", e.target.value)}
                 rows={6}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Tell your story..."
               />
             </div> */}
@@ -1000,7 +1000,7 @@ const ProfessionalForm: React.FC = () => {
               promptPrefix="Write a professional, friendly introduction based on:"
               multiline
               rows={6}
-              inputClassName="w-[45vw] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+              inputClassName="w-[45vw] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
               onChange={(value) => handleInputChange("bio", value)}
             />
 
@@ -1013,7 +1013,7 @@ const ProfessionalForm: React.FC = () => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
               <div>
@@ -1024,7 +1024,7 @@ const ProfessionalForm: React.FC = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange("phone", e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
             </div>
@@ -1037,7 +1037,7 @@ const ProfessionalForm: React.FC = () => {
                 type="text"
                 value={formData.location}
                 onChange={(e) => handleInputChange("location", e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="City, Country"
               />
             </div>
@@ -1057,7 +1057,7 @@ const ProfessionalForm: React.FC = () => {
                     proficiency: 0,
                   })
                 }
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Skill
@@ -1080,7 +1080,7 @@ const ProfessionalForm: React.FC = () => {
                             category: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       >
                         <option value="Frontend">Frontend</option>
                         <option value="Backend">Backend</option>
@@ -1100,7 +1100,7 @@ const ProfessionalForm: React.FC = () => {
                             name: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         placeholder="React"
                       />
                     </div>
@@ -1119,7 +1119,7 @@ const ProfessionalForm: React.FC = () => {
                             proficiency: parseInt(e.target.value),
                           })
                         }
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       />
                     </div>
                     <button
@@ -1151,7 +1151,7 @@ const ProfessionalForm: React.FC = () => {
                     description: "",
                   })
                 }
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Service
@@ -1178,7 +1178,7 @@ const ProfessionalForm: React.FC = () => {
                             icon: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       >
                         <option value="camera">Camera</option>
                         <option value="video">Video</option>
@@ -1202,7 +1202,7 @@ const ProfessionalForm: React.FC = () => {
                             title: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         placeholder="Aerial Photography"
                       />
                     </div>
@@ -1219,7 +1219,7 @@ const ProfessionalForm: React.FC = () => {
                         multiline
                         rows={2}
                         value={service.description}
-                        inputClassName="w-full min-h-[42px] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        inputClassName="w-full min-h-[42px] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         onChange={(value) =>
                           updateArrayItem("services", index, {
                             ...service,
@@ -1262,7 +1262,7 @@ const ProfessionalForm: React.FC = () => {
                     description: "",
                   })
                 }
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Project
@@ -1290,7 +1290,7 @@ const ProfessionalForm: React.FC = () => {
                         {projectImageUploadLoading[index] && (
                           <div className="flex items-center justify-center mt-2">
                             <svg
-                              className="animate-spin h-5 w-5 text-[#FFD400]"
+                              className="animate-spin h-5 w-5 text-[#F8C400]"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
                               viewBox="0 0 24 24"
@@ -1300,16 +1300,16 @@ const ProfessionalForm: React.FC = () => {
                                 cx="12"
                                 cy="12"
                                 r="10"
-                                stroke="#FFD400"
+                                stroke="#F8C400"
                                 strokeWidth="4"
                               ></circle>
                               <path
                                 className="opacity-75"
-                                fill="#FFD400"
+                                fill="#F8C400"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                               ></path>
                             </svg>
-                            <span className="ml-2 text-[#FFD400] text-sm font-semibold">
+                            <span className="ml-2 text-[#F8C400] text-sm font-semibold">
                               Uploading...
                             </span>
                           </div>
@@ -1383,7 +1383,7 @@ const ProfessionalForm: React.FC = () => {
                         />
 
                         <button
-                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
+                          className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink text-sm"
                           onClick={() =>
                             document
                               .getElementById(
@@ -1423,7 +1423,7 @@ const ProfessionalForm: React.FC = () => {
                               title: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Project Name"
                         />
                       </div>
@@ -1439,7 +1439,7 @@ const ProfessionalForm: React.FC = () => {
                               category: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         >
                           <option value="Web">Web</option>
                           <option value="Drone">Drone</option>
@@ -1455,7 +1455,7 @@ const ProfessionalForm: React.FC = () => {
                     promptPrefix="Write a short and clear project description based on:"
                     multiline
                     rows={3}
-                    inputClassName="w-[45vw] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    inputClassName="w-[45vw] px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                     onChange={(value) =>
                       updateArrayItem("projects", index, {
                         ...project,
@@ -1492,7 +1492,7 @@ const ProfessionalForm: React.FC = () => {
                     quote: "",
                   })
                 }
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Testimonial
@@ -1519,7 +1519,7 @@ const ProfessionalForm: React.FC = () => {
                         {testimonialPhotoUploadLoading[index] && (
                           <div className="flex items-center justify-center mt-2">
                             <svg
-                              className="animate-spin h-5 w-5 text-[#FFD400]"
+                              className="animate-spin h-5 w-5 text-[#F8C400]"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
                               viewBox="0 0 24 24"
@@ -1529,16 +1529,16 @@ const ProfessionalForm: React.FC = () => {
                                 cx="12"
                                 cy="12"
                                 r="10"
-                                stroke="#FFD400"
+                                stroke="#F8C400"
                                 strokeWidth="4"
                               ></circle>
                               <path
                                 className="opacity-75"
-                                fill="#FFD400"
+                                fill="#F8C400"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                               ></path>
                             </svg>
-                            <span className="ml-2 text-[#FFD400] text-sm font-semibold">
+                            <span className="ml-2 text-[#F8C400] text-sm font-semibold">
                               Uploading...
                             </span>
                           </div>
@@ -1619,7 +1619,7 @@ const ProfessionalForm: React.FC = () => {
                         />
 
                         <button
-                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
+                          className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink text-sm"
                           onClick={() =>
                             document
                               .getElementById(
@@ -1663,7 +1663,7 @@ const ProfessionalForm: React.FC = () => {
                               name: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="John Smith"
                         />
                       </div>
@@ -1680,7 +1680,7 @@ const ProfessionalForm: React.FC = () => {
                               role: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="CEO, Company Name"
                         />
                       </div>
@@ -1700,7 +1700,7 @@ const ProfessionalForm: React.FC = () => {
                               }
                               className={`${
                                 star <= testimonial.rating
-                                  ? "text-[#FFD400]"
+                                  ? "text-[#F8C400]"
                                   : "text-ink-light"
                               }`}
                             >
@@ -1724,7 +1724,7 @@ const ProfessionalForm: React.FC = () => {
                         })
                       }
                       rows={3}
-                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       placeholder="What did they say about your work?"
                     />
                   </div> */}
@@ -1735,7 +1735,7 @@ const ProfessionalForm: React.FC = () => {
                     promptPrefix="Client feedback for a portfolio:"
                     multiline
                     rows={3}
-                    inputClassName="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    inputClassName="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                     onChange={(value) =>
                       updateArrayItem("testimonials", index, {
                         ...testimonial,
@@ -1773,7 +1773,7 @@ const ProfessionalForm: React.FC = () => {
                     url: "",
                   })
                 }
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Blog Post
@@ -1801,7 +1801,7 @@ const ProfessionalForm: React.FC = () => {
                         {blogImageUploadLoading[index] && (
                           <div className="flex items-center justify-center mt-2">
                             <svg
-                              className="animate-spin h-5 w-5 text-[#FFD400]"
+                              className="animate-spin h-5 w-5 text-[#F8C400]"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
                               viewBox="0 0 24 24"
@@ -1811,16 +1811,16 @@ const ProfessionalForm: React.FC = () => {
                                 cx="12"
                                 cy="12"
                                 r="10"
-                                stroke="#FFD400"
+                                stroke="#F8C400"
                                 strokeWidth="4"
                               ></circle>
                               <path
                                 className="opacity-75"
-                                fill="#FFD400"
+                                fill="#F8C400"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                               ></path>
                             </svg>
-                            <span className="ml-2 text-[#FFD400] text-sm font-semibold">
+                            <span className="ml-2 text-[#F8C400] text-sm font-semibold">
                               Uploading...
                             </span>
                           </div>
@@ -1894,7 +1894,7 @@ const ProfessionalForm: React.FC = () => {
                         />
 
                         <button
-                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
+                          className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink text-sm"
                           onClick={() =>
                             document
                               .getElementById(
@@ -1938,7 +1938,7 @@ const ProfessionalForm: React.FC = () => {
                               title: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Blog post title"
                         />
                       </div>
@@ -1955,7 +1955,7 @@ const ProfessionalForm: React.FC = () => {
                               url: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="https://blog.example.com/post"
                         />
                       </div>
@@ -1974,7 +1974,7 @@ const ProfessionalForm: React.FC = () => {
                         })
                       }
                       rows={3}
-                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       placeholder="Brief description of the blog post..."
                     />
                   </div> */}
@@ -1985,7 +1985,7 @@ const ProfessionalForm: React.FC = () => {
                     promptPrefix="Write a brief blog excerpt:"
                     multiline
                     rows={3}
-                    inputClassName="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                    inputClassName="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                     onChange={(value) =>
                       updateArrayItem("blogPosts", index, {
                         ...post,
@@ -2024,7 +2024,7 @@ const ProfessionalForm: React.FC = () => {
                   handleInputChange("contactMessage", e.target.value)
                 }
                 rows={3}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Available for freelance drone work and collaborations."
               />
             </div>
@@ -2044,7 +2044,7 @@ const ProfessionalForm: React.FC = () => {
                       e.target.value
                     )
                   }
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   placeholder="https://instagram.com/username"
                 />
               </div>
@@ -2062,7 +2062,7 @@ const ProfessionalForm: React.FC = () => {
                       e.target.value
                     )
                   }
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   placeholder="https://linkedin.com/in/username"
                 />
               </div>
@@ -2083,7 +2083,7 @@ const ProfessionalForm: React.FC = () => {
                       e.target.value
                     )
                   }
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   placeholder="https://github.com/username"
                 />
               </div>
@@ -2101,7 +2101,7 @@ const ProfessionalForm: React.FC = () => {
                       e.target.value
                     )
                   }
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   placeholder="+1234567890"
                 />
               </div>
@@ -2115,7 +2115,7 @@ const ProfessionalForm: React.FC = () => {
                 type="url"
                 value={formData.mapUrl}
                 onChange={(e) => handleInputChange("mapUrl", e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="https://maps.google.com/embed?..."
               />
             </div>
@@ -2137,7 +2137,7 @@ const ProfessionalForm: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange("footerText", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="© 2024 Your Name. All rights reserved."
               />
             </div>
@@ -2156,7 +2156,7 @@ const ProfessionalForm: React.FC = () => {
                 {footerLogoUploadLoading && (
                   <div className="flex items-center justify-center mt-2">
                     <svg
-                      className="animate-spin h-5 w-5 text-[#FFD400]"
+                      className="animate-spin h-5 w-5 text-[#F8C400]"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -2166,16 +2166,16 @@ const ProfessionalForm: React.FC = () => {
                         cx="12"
                         cy="12"
                         r="10"
-                        stroke="#FFD400"
+                        stroke="#F8C400"
                         strokeWidth="4"
                       ></circle>
                       <path
                         className="opacity-75"
-                        fill="#FFD400"
+                        fill="#F8C400"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                       ></path>
                     </svg>
-                    <span className="ml-2 text-[#FFD400] text-sm font-semibold">
+                    <span className="ml-2 text-[#F8C400] text-sm font-semibold">
                       Uploading...
                     </span>
                   </div>
@@ -2226,7 +2226,7 @@ const ProfessionalForm: React.FC = () => {
                 />
 
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink text-sm"
+                  className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink text-sm"
                   onClick={() =>
                     document.getElementById("footer-logo-upload-input")?.click()
                   }
@@ -2255,18 +2255,18 @@ const ProfessionalForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-ink-offwhite">
+    <div className="min-h-screen bg-surface-main">
       {/* Header */}
       <header className="bg-ink text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
-              Drone<span className="text-[#FFD400]">TV</span>
+              Drone<span className="text-[#F8C400]">TV</span>
             </div>
             <nav>
               <button
                 onClick={() => navigate("/create-portfolio/professional")}
-                className="flex items-center gap-2 text-white hover:text-[#FFD400] transition-colors"
+                className="flex items-center gap-2 text-white hover:text-[#F8C400] transition-colors"
               >
                 <ArrowLeft size={20} />
                 Back to Templates
@@ -2289,7 +2289,7 @@ const ProfessionalForm: React.FC = () => {
           </div>
           <div className="w-full bg-ink-light rounded-full h-2">
             <div
-              className="bg-[#FF0000] h-2 rounded-full transition-all duration-300"
+              className="bg-[#DC2626] h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / steps.length) * 100}%` }}
             ></div>
           </div>
@@ -2309,9 +2309,9 @@ const ProfessionalForm: React.FC = () => {
                     onClick={() => setCurrentStep(index + 1)}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                       currentStep === index + 1
-                        ? "bg-[#FF0000] text-white"
+                        ? "bg-[#DC2626] text-white"
                         : currentStep > index + 1
-                        ? "bg-[#FFD400] text-ink"
+                        ? "bg-[#F8C400] text-ink"
                         : "bg-ink-light text-ink-paragraph"
                     }`}
                   >
@@ -2342,7 +2342,7 @@ const ProfessionalForm: React.FC = () => {
                   onClick={() =>
                     setCurrentStep(Math.min(steps.length, currentStep + 1))
                   }
-                  className="flex items-center gap-2 px-6 py-3 bg-[#FF0000] text-white rounded-lg font-semibold hover:bg-[#FF0000]/90 transition-colors"
+                  className="flex items-center gap-2 px-6 py-3 bg-[#DC2626] text-white rounded-lg font-semibold hover:bg-[#DC2626]/90 transition-colors"
                 >
                   Next
                   <ArrowRight size={20} />
@@ -2355,7 +2355,7 @@ const ProfessionalForm: React.FC = () => {
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-ink rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-8 py-3 bg-[#F8C400] text-ink rounded-lg font-semibold hover:bg-[#F8C400]/90 transition-colors disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       "Creating..."

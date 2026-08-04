@@ -60,10 +60,10 @@ const ContactSection: React.FC<ContactSectionProps> = ({ id }) => {
       {/* Header */}
       <div className="text-center mb-16">
         <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
-          Register & <span className="text-[#FF0000]">Contact</span>
+          Register & <span className="text-[#DC2626]">Contact</span>
         </h2>
 
-        <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+        <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
 
         <p className="text-ink-paragraph text-lg max-w-2xl mx-auto">
           Ready to participate? Fill the form below & our team will contact you

@@ -24,8 +24,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   rotatingTitles = "Founder and CEO of IPage Group|Voice-over-IP Systems Specialist|Geospatial Innovation Advocate|Drone Services Strategist",
   tagline = "Leading IPage UM Services since 2008 across Singapore and India",
   location = "Singapore & Hyderabad, India",
-  primaryColor = "#FFD400",
-  accentColor = "#FF0000",
+  primaryColor = "#F8C400",
+  accentColor = "#DC2626",
   button1Text = "Contact Me",
   button1Link = "#contact",
   button2Text = "Download CV",
@@ -82,7 +82,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   }, [imagePaths.length]);
 
   return (
-    <section id="home" className="min-h-screen bg-surface-card dark:bg-gray-900 flex items-center pt-20">
+    <section id="home" className="min-h-screen bg-surface-main dark:bg-gray-900 flex items-center pt-20">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Section */}

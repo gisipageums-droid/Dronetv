@@ -36,9 +36,9 @@ const AgendaSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
-            Event <span className="text-[#FF0000]">Themes</span>
+            Event <span className="text-[#DC2626]">Themes</span>
           </h2>
-          <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-4"></div>
+          <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-4"></div>
           <p className="text-ink-paragraph text-lg max-w-2xl mx-auto">
             Each day focuses on a powerful industry-relevant theme.
           </p>
@@ -53,8 +53,8 @@ const AgendaSection = () => {
                 onClick={() => setActiveDay(day as 1 | 2 | 3)}
                 className={`px-6 py-2 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
                   activeDay === day
-                    ? 'bg-[#FF0000] text-white shadow-lg'
-                    : 'text-ink-paragraph hover:text-[#FF0000]'
+                    ? 'bg-[#DC2626] text-white shadow-lg'
+                    : 'text-ink-paragraph hover:text-[#DC2626]'
                 }`}
               >
                 Day {day}

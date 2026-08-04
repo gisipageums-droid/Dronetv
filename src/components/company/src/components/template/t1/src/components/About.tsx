@@ -40,7 +40,7 @@
 //             animate={aboutVisible ? { opacity: 1, x: 0 } : {}}
 //             transition={{ duration: 0.8 }}
 //           >
-//             <Badge className="bg-[#ffeb3b] text-ink mb-4">
+//             <Badge className="bg-[#F8C400] text-ink mb-4">
 //               About Company
 //             </Badge>
 //             <h2 className="text-3xl font-bold text-ink mb-6">
@@ -83,7 +83,7 @@
 //               </div>
 //             </div>
 
-//             <Button className="bg-[#ffeb3b] text-ink hover:bg-[#ffeb3b]/90 rounded-full mt-6">
+//             <Button className="bg-[#F8C400] text-ink hover:bg-[#F8C400]/90 rounded-full mt-6">
 //               Learn More
 //             </Button>
 //           </motion.div>

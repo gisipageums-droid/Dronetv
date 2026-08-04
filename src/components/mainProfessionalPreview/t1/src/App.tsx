@@ -192,7 +192,7 @@ const FinalT1: React.FC = () => {
 
   return (
     <DarkModeProvider>
-      <div className="relative min-h-screen transition-colors duration-300 bg-surface-card dark:bg-gray-900">
+      <div className="relative min-h-screen transition-colors duration-300 bg-surface-main dark:bg-gray-900">
         <Navbar content={content.headerContent} />
         <Hero content={content.heroContent} />
         <About content={content.aboutContent} />

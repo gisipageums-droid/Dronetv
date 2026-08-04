@@ -29,10 +29,10 @@ const AboutSection: React.FC = () => {
     <section id="about" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#F8C400] mb-4">
             About <span className="text-white">DroneFlight</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto leading-relaxed">
             Leading the drone revolution with innovative technology solutions that transform industries and empower businesses to reach new heights.
           </p>
@@ -49,8 +49,8 @@ const AboutSection: React.FC = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent rounded-2xl"></div>
               <div className="absolute bottom-6 left-6 right-6">
-                <div className="bg-ink/80 backdrop-blur-sm rounded-lg p-4 border border-[#FFD400]/30">
-                  <h3 className="text-[#FFD400] font-bold text-lg mb-2">Next-Gen Technology</h3>
+                <div className="bg-ink/80 backdrop-blur-sm rounded-lg p-4 border border-[#F8C400]/30">
+                  <h3 className="text-[#F8C400] font-bold text-lg mb-2">Next-Gen Technology</h3>
                   <p className="text-ink-light text-sm">Pioneering autonomous flight systems with AI-powered navigation and advanced sensor integration.</p>
                 </div>
               </div>
@@ -62,7 +62,7 @@ const AboutSection: React.FC = () => {
             <div className="space-y-8">
               <div>
                 <h3 className="text-3xl font-bold text-white mb-6">
-                  Pioneering Aerial Innovation Since <span className="text-[#FF0000]">2018</span>
+                  Pioneering Aerial Innovation Since <span className="text-[#DC2626]">2018</span>
                 </h3>
                 <p className="text-ink-light text-lg leading-relaxed mb-6">
                   DroneFlight stands at the forefront of unmanned aerial vehicle technology, delivering 
@@ -78,16 +78,16 @@ const AboutSection: React.FC = () => {
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-6">
-                <div className="text-center p-4 bg-ink/50 rounded-lg border border-ink-charcoal hover:border-[#FFD400]/50 transition-colors">
-                  <div className="text-2xl font-bold text-[#FF0000] mb-1">10K+</div>
+                <div className="text-center p-4 bg-ink/50 rounded-lg border border-ink-charcoal hover:border-[#F8C400]/50 transition-colors">
+                  <div className="text-2xl font-bold text-[#DC2626] mb-1">10K+</div>
                   <div className="text-sm text-ink-caption">Drones Deployed</div>
                 </div>
-                <div className="text-center p-4 bg-ink/50 rounded-lg border border-ink-charcoal hover:border-[#FFD400]/50 transition-colors">
-                  <div className="text-2xl font-bold text-[#FF0000] mb-1">25+</div>
+                <div className="text-center p-4 bg-ink/50 rounded-lg border border-ink-charcoal hover:border-[#F8C400]/50 transition-colors">
+                  <div className="text-2xl font-bold text-[#DC2626] mb-1">25+</div>
                   <div className="text-sm text-ink-caption">Countries Served</div>
                 </div>
-                <div className="text-center p-4 bg-ink/50 rounded-lg border border-ink-charcoal hover:border-[#FFD400]/50 transition-colors">
-                  <div className="text-2xl font-bold text-[#FF0000] mb-1">500+</div>
+                <div className="text-center p-4 bg-ink/50 rounded-lg border border-ink-charcoal hover:border-[#F8C400]/50 transition-colors">
+                  <div className="text-2xl font-bold text-[#DC2626] mb-1">500+</div>
                   <div className="text-sm text-ink-caption">Enterprise Clients</div>
                 </div>
               </div>
@@ -102,14 +102,14 @@ const AboutSection: React.FC = () => {
               key={index}
               data-aos="fade-up" 
               data-aos-delay={index * 200}
-              className="group bg-ink/30 backdrop-blur-sm rounded-2xl p-8 border border-ink-charcoal hover:border-[#FFD400]/50 transition-all duration-500 hover:transform hover:scale-105"
+              className="group bg-ink/30 backdrop-blur-sm rounded-2xl p-8 border border-ink-charcoal hover:border-[#F8C400]/50 transition-all duration-500 hover:transform hover:scale-105"
             >
-              <div className="w-16 h-16 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-[#FFD400] group-hover:text-ink transition-all duration-300">
+              <div className="w-16 h-16 bg-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-[#F8C400] group-hover:text-ink transition-all duration-300">
                 <div className="text-white group-hover:text-ink transition-colors">
                   {value.icon}
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-[#FFD400] mb-4 text-center group-hover:text-white transition-colors">
+              <h3 className="text-xl font-bold text-[#F8C400] mb-4 text-center group-hover:text-white transition-colors">
                 {value.title}
               </h3>
               <p className="text-ink-caption text-center leading-relaxed group-hover:text-ink-light transition-colors">

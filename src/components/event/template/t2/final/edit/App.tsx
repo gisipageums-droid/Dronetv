@@ -141,7 +141,7 @@ export default function FinalEdit_event_t2() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-surface-card flex items-center justify-center">
+      <div className="min-h-screen bg-surface-main flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold mx-auto"></div>
           <p className="mt-4 text-ink-paragraph">Loading event template data...</p>
@@ -151,7 +151,7 @@ export default function FinalEdit_event_t2() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-card transition-colors duration-300">
+    <div className="min-h-screen bg-surface-main transition-colors duration-300">
       {/* Navigation */}
       <Navigation
         activeSection={activeSection}

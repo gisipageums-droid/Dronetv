@@ -47,10 +47,10 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="text-2xl font-bold">
-            <span className={isScrolled ? 'text-[#FFD400]' : 'text-ink dark:text-white'}>
+            <span className={isScrolled ? 'text-[#F8C400]' : 'text-ink dark:text-white'}>
               Drone
             </span>
-            <span className="text-[#FF0000]">TV</span>
+            <span className="text-[#DC2626]">TV</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -61,19 +61,19 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
                 onClick={() => scrollToSection(item.href)}
                 className={`relative font-medium transition-all duration-300 group ${
                   isScrolled 
-                    ? 'text-white hover:text-[#FFD400]' 
-                    : 'text-ink dark:text-white hover:text-[#FF0000]'
+                    ? 'text-white hover:text-[#F8C400]' 
+                    : 'text-ink dark:text-white hover:text-[#DC2626]'
                 }`}
               >
                 {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0000] transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC2626] transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
           </div>
 
           {/* Right Side */}
           <div className="flex items-center space-x-4">
-            <button className="hidden md:block bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+            <button className="hidden md:block bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
               Hire Me
             </button>
             
@@ -107,12 +107,12 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-4 py-3 text-white hover:text-[#FFD400] hover:bg-white/10 transition-colors"
+                className="block w-full text-left px-4 py-3 text-white hover:text-[#F8C400] hover:bg-white/10 transition-colors"
               >
                 {item.name}
               </button>
             ))}
-            <button className="w-full mt-4 mx-4 bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300">
+            <button className="w-full mt-4 mx-4 bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300">
               Hire Me
             </button>
           </div>

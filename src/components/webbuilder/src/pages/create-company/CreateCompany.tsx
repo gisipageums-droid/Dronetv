@@ -408,11 +408,11 @@ const CreateCompany: React.FC = () => {
                 {/* Loader & message UI */}
                 {imageUploadLoading && (
                   <div className="flex items-center justify-center mt-2">
-                    <svg className="animate-spin h-6 w-6 text-[#FFD400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#FFD400" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="#FFD400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    <svg className="animate-spin h-6 w-6 text-[#F8C400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#F8C400" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="#F8C400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    <span className="ml-2 text-[#FFD400] font-semibold">Uploading image...</span>
+                    <span className="ml-2 text-[#F8C400] font-semibold">Uploading image...</span>
                   </div>
                 )}
                 {imageUploadMessage && (
@@ -446,7 +446,7 @@ const CreateCompany: React.FC = () => {
                   }}
                 />
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
+                  className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink"
                   onClick={() => document.getElementById('company-logo-input')?.click()}
                   type="button"
                 >
@@ -474,11 +474,11 @@ const CreateCompany: React.FC = () => {
                 {/* Loader & message UI */}
                 {heroImageUploadLoading && (
                   <div className="flex items-center justify-center mt-2">
-                    <svg className="animate-spin h-6 w-6 text-[#FFD400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#FFD400" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="#FFD400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    <svg className="animate-spin h-6 w-6 text-[#F8C400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#F8C400" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="#F8C400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    <span className="ml-2 text-[#FFD400] font-semibold">Uploading image...</span>
+                    <span className="ml-2 text-[#F8C400] font-semibold">Uploading image...</span>
                   </div>
                 )}
                 {heroImageUploadMessage && (
@@ -511,7 +511,7 @@ const CreateCompany: React.FC = () => {
                   }}
                 />
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
+                  className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink"
                   onClick={() => document.getElementById('hero-background-input')?.click()}
                   type="button"
                 >
@@ -535,7 +535,7 @@ const CreateCompany: React.FC = () => {
                 type="text"
                 value={formData.heroHeadline}
                 onChange={e => handleInputChange('heroHeadline', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#F8C400] focus:border-transparent"
                 placeholder="Advanced Drone Solutions"
               />
             </div>
@@ -547,7 +547,7 @@ const CreateCompany: React.FC = () => {
                 value={formData.heroSubheadline}
                 onChange={e => handleInputChange('heroSubheadline', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#F8C400] focus:border-transparent"
                 placeholder="Pioneering the future of aerial technology..."
               />
             </div>
@@ -560,7 +560,7 @@ const CreateCompany: React.FC = () => {
                   type="text"
                   value={formData.primaryCTA.text}
                   onChange={e => handleNestedInputChange('primaryCTA', 'text', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#F8C400] focus:border-transparent"
                   placeholder="Explore Services"
                 />
               </div>
@@ -570,7 +570,7 @@ const CreateCompany: React.FC = () => {
                   type="text"
                   value={formData.primaryCTA.link}
                   onChange={e => handleNestedInputChange('primaryCTA', 'link', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#F8C400] focus:border-transparent"
                   placeholder="#services"
                 />
               </div>
@@ -582,7 +582,7 @@ const CreateCompany: React.FC = () => {
                   type="text"
                   value={formData.secondaryCTA.text}
                   onChange={e => handleNestedInputChange('secondaryCTA', 'text', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#F8C400] focus:border-transparent"
                   placeholder="Contact Us"
                 />
               </div>
@@ -592,7 +592,7 @@ const CreateCompany: React.FC = () => {
                   type="text"
                   value={formData.secondaryCTA.link}
                   onChange={e => handleNestedInputChange('secondaryCTA', 'link', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FFD400] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#F8C400] focus:border-transparent"
                   placeholder="#contact"
                 />
               </div>
@@ -612,7 +612,7 @@ const CreateCompany: React.FC = () => {
                 type="text"
                 value={formData.aboutTitle}
                 onChange={e => handleInputChange('aboutTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="About DroneTech"
               />
             </div>
@@ -624,7 +624,7 @@ const CreateCompany: React.FC = () => {
                 value={formData.aboutDescription}
                 onChange={e => handleInputChange('aboutDescription', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="DroneTech is a pioneering company in the UAV industry, specializing in advanced drone solutions for various sectors..."
               />
             </div>
@@ -636,7 +636,7 @@ const CreateCompany: React.FC = () => {
                 value={formData.aboutTeamExperience}
                 onChange={e => handleInputChange('aboutTeamExperience', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="With over 5 years of experience and a team of expert engineers, we deliver cutting-edge drone technology..."
               />
             </div>
@@ -651,11 +651,11 @@ const CreateCompany: React.FC = () => {
                 {/* Loader & message UI */}
                 {aboutImageUploadLoading && (
                   <div className="flex items-center justify-center mt-2">
-                    <svg className="animate-spin h-6 w-6 text-[#FFD400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#FFD400" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="#FFD400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    <svg className="animate-spin h-6 w-6 text-[#F8C400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#F8C400" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="#F8C400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    <span className="ml-2 text-[#FFD400] font-semibold">Uploading image...</span>
+                    <span className="ml-2 text-[#F8C400] font-semibold">Uploading image...</span>
                   </div>
                 )}
                 {aboutImageUploadMessage && (
@@ -688,7 +688,7 @@ const CreateCompany: React.FC = () => {
                   }}
                 />
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
+                  className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink"
                   onClick={() => document.getElementById('about-image-input')?.click()}
                   type="button"
                 >
@@ -714,7 +714,7 @@ const CreateCompany: React.FC = () => {
                 min={1}
                 value={formData.aboutExperienceYears || 5}
                 onChange={e => handleInputChange('aboutExperienceYears', parseInt(e.target.value))}
-                className="w-32 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-32 px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="5"
               />
               <span className="ml-2 text-ink-paragraph text-sm">Years</span>
@@ -726,7 +726,7 @@ const CreateCompany: React.FC = () => {
                 <label className="block text-sm font-medium text-ink-paragraph">Company Values (Mission, Vision, Values)</label>
                 <button
                   onClick={() => addArrayItem('companyValues', { icon: 'target', title: '', description: '' })}
-                  className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                  className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
                 >
                   <Plus size={16} />
                   Add Value
@@ -793,7 +793,7 @@ const CreateCompany: React.FC = () => {
                     description: ''
                   })
                 }
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Service
@@ -806,7 +806,7 @@ const CreateCompany: React.FC = () => {
                 type="text"
                 value={formData.servicesTitle}
                 onChange={e => handleInputChange('servicesTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Our Services"
               />
             </div>
@@ -816,7 +816,7 @@ const CreateCompany: React.FC = () => {
                 value={formData.servicesDescription || ''}
                 onChange={e => handleInputChange('servicesDescription', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Comprehensive drone solutions tailored to meet the unique needs of various industries and applications."
               />
             </div>
@@ -836,7 +836,7 @@ const CreateCompany: React.FC = () => {
                             icon: e.target.value
                           })
                         }
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       >
                         <option value="camera">Camera (Aerial Surveying)</option>
                         <option value="zap">Zap (Agricultural Monitoring)</option>
@@ -856,7 +856,7 @@ const CreateCompany: React.FC = () => {
                             title: e.target.value
                           })
                         }
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         placeholder="e.g. Aerial Surveying"
                       />
                     </div>
@@ -872,7 +872,7 @@ const CreateCompany: React.FC = () => {
                           })
                         }
                         rows={2}
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         placeholder="Describe the service..."
                       />
                     </div>
@@ -897,7 +897,7 @@ const CreateCompany: React.FC = () => {
               <h3 className="text-2xl font-bold text-ink">Products Section</h3>
               <button
                 onClick={() => addArrayItem('products', { image: '', title: '', description: '', link: '' })}
-                className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
               >
                 <Plus size={16} />
                 Add Product
@@ -910,7 +910,7 @@ const CreateCompany: React.FC = () => {
                 type="text"
                 value={formData.productsTitle}
                 onChange={(e) => handleInputChange('productsTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
               />
             </div>
 
@@ -920,7 +920,7 @@ const CreateCompany: React.FC = () => {
                 type="text"
                 value={formData.productCategories}
                 onChange={(e) => handleInputChange('productCategories', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="All, Surveillance, Agriculture, Custom"
               />
             </div>
@@ -938,11 +938,11 @@ const CreateCompany: React.FC = () => {
                         {/* Loader & message UI */}
                         {productImageUploadLoading[index] && (
                           <div className="flex items-center justify-center mt-2">
-                            <svg className="animate-spin h-6 w-6 text-[#FFD400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#FFD400" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="#FFD400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            <svg className="animate-spin h-6 w-6 text-[#F8C400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#F8C400" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="#F8C400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                             </svg>
-                            <span className="ml-2 text-[#FFD400] font-semibold">Uploading image...</span>
+                            <span className="ml-2 text-[#F8C400] font-semibold">Uploading image...</span>
                           </div>
                         )}
                         {productImageUploadMessage[index] && (
@@ -972,7 +972,7 @@ const CreateCompany: React.FC = () => {
                           }}
                         />
                         <button
-                          className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
+                          className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink"
                           onClick={() => document.getElementById(`product-image-input-${index}`)?.click()}
                           type="button"
                         >
@@ -996,7 +996,7 @@ const CreateCompany: React.FC = () => {
                           type="text"
                           value={product.title}
                           onChange={(e) => updateArrayItem('products', index, { ...product, title: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Product name"
                         />
                       </div>
@@ -1006,7 +1006,7 @@ const CreateCompany: React.FC = () => {
                           type="text"
                           value={product.link}
                           onChange={(e) => updateArrayItem('products', index, { ...product, link: e.target.value })}
-                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                          className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                           placeholder="Product link"
                         />
                       </div>
@@ -1018,7 +1018,7 @@ const CreateCompany: React.FC = () => {
                       value={product.description}
                       onChange={(e) => updateArrayItem('products', index, { ...product, description: e.target.value })}
                       rows={3}
-                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                       placeholder="Product description..."
                     />
                   </div>
@@ -1046,7 +1046,7 @@ const CreateCompany: React.FC = () => {
                 <label className="block text-sm font-medium text-ink-paragraph">Clients</label>
                 <button
                   onClick={() => addArrayItem('clients', { name: '', logo: '', industry: '' })}
-                  className="bg-[#FFD400] text-ink px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FFD400]/90"
+                  className="bg-[#F8C400] text-ink px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#F8C400]/90"
                 >
                   <Plus size={16} />
                   Add Client
@@ -1069,9 +1069,9 @@ const CreateCompany: React.FC = () => {
                         {/* Loader & Message */}
                         {clientLogoUploadLoading[idx] && (
                           <div className="flex items-center ml-2">
-                            <svg className="animate-spin h-5 w-5 text-[#FFD400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#FFD400" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="#FFD400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            <svg className="animate-spin h-5 w-5 text-[#F8C400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#F8C400" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="#F8C400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                             </svg>
                           </div>
                         )}
@@ -1079,7 +1079,7 @@ const CreateCompany: React.FC = () => {
                           <span className="text-status-success text-xs ml-2">{clientLogoUploadMessage[idx]}</span>
                         )}
                         <button
-                          className="bg-[#FFD400] text-ink px-2 py-1 text-xs rounded"
+                          className="bg-[#F8C400] text-ink px-2 py-1 text-xs rounded"
                           type="button"
                           onClick={() => {
                             const input = document.createElement('input');
@@ -1148,7 +1148,7 @@ const CreateCompany: React.FC = () => {
                 <label className="block text-sm font-medium text-ink-paragraph">Testimonials</label>
                 <button
                   onClick={() => addArrayItem('testimonials', { name: '', role: '', quote: '', photo: '', rating: 5 })}
-                  className="bg-[#FF0000] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#FF0000]/90"
+                  className="bg-[#DC2626] text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#DC2626]/90"
                 >
                   <Plus size={16} />
                   Add Testimonial
@@ -1168,11 +1168,11 @@ const CreateCompany: React.FC = () => {
                           {/* Loader & message UI */}
                           {testimonialPhotoUploadLoading[index] && (
                             <div className="flex items-center justify-center mt-2">
-                              <svg className="animate-spin h-6 w-6 text-[#FFD400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#FFD400" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="#FFD400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                              <svg className="animate-spin h-6 w-6 text-[#F8C400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#F8C400" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="#F8C400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                               </svg>
-                              <span className="ml-2 text-[#FFD400] font-semibold">Uploading image...</span>
+                              <span className="ml-2 text-[#F8C400] font-semibold">Uploading image...</span>
                             </div>
                           )}
                           {testimonialPhotoUploadMessage[index] && (
@@ -1202,7 +1202,7 @@ const CreateCompany: React.FC = () => {
                             }}
                           />
                           <button
-                            className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
+                            className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink"
                             onClick={() => document.getElementById(`testimonial-photo-input-${index}`)?.click()}
                             type="button"
                           >
@@ -1225,7 +1225,7 @@ const CreateCompany: React.FC = () => {
                             type="text"
                             value={testimonial.name}
                             onChange={(e) => updateArrayItem('testimonials', index, { ...testimonial, name: e.target.value })}
-                            className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                            className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                             placeholder="John Smith"
                           />
                         </div>
@@ -1235,7 +1235,7 @@ const CreateCompany: React.FC = () => {
                             type="text"
                             value={testimonial.role}
                             onChange={(e) => updateArrayItem('testimonials', index, { ...testimonial, role: e.target.value })}
-                            className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                            className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                             placeholder="CEO, Company Name"
                           />
                         </div>
@@ -1246,7 +1246,7 @@ const CreateCompany: React.FC = () => {
                               <button
                                 key={star}
                                 onClick={() => updateArrayItem('testimonials', index, { ...testimonial, rating: star })}
-                                className={`${star <= testimonial.rating ? 'text-[#FFD400]' : 'text-ink-light'}`}
+                                className={`${star <= testimonial.rating ? 'text-[#F8C400]' : 'text-ink-light'}`}
                               >
                                 <Star size={20} fill="currentColor" />
                               </button>
@@ -1261,7 +1261,7 @@ const CreateCompany: React.FC = () => {
                         value={testimonial.quote}
                         onChange={(e) => updateArrayItem('testimonials', index, { ...testimonial, quote: e.target.value })}
                         rows={3}
-                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                         placeholder="What did they say about your company?"
                       />
                     </div>
@@ -1290,7 +1290,7 @@ const CreateCompany: React.FC = () => {
                 type="text"
                 value={formData.contactTitle}
                 onChange={(e) => handleInputChange('contactTitle', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
               />
             </div>
 
@@ -1301,7 +1301,7 @@ const CreateCompany: React.FC = () => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
               <div>
@@ -1310,7 +1310,7 @@ const CreateCompany: React.FC = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 />
               </div>
             </div>
@@ -1365,7 +1365,7 @@ const CreateCompany: React.FC = () => {
                 type="url"
                 value={formData.mapEmbedUrl}
                 onChange={(e) => handleInputChange('mapEmbedUrl', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="https://maps.google.com/embed?..."
               />
             </div>
@@ -1376,7 +1376,7 @@ const CreateCompany: React.FC = () => {
                 value={formData.contactFormText}
                 onChange={(e) => handleInputChange('contactFormText', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
               />
             </div>
 
@@ -1386,7 +1386,7 @@ const CreateCompany: React.FC = () => {
                 type="text"
                 value={formData.submitButtonText}
                 onChange={(e) => handleInputChange('submitButtonText', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
               />
             </div>
           </div>
@@ -1407,11 +1407,11 @@ const CreateCompany: React.FC = () => {
                 {/* Loader & message UI */}
                 {footerLogoUploadLoading && (
                   <div className="flex items-center justify-center mt-2">
-                    <svg className="animate-spin h-6 w-6 text-[#FFD400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#FFD400" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="#FFD400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    <svg className="animate-spin h-6 w-6 text-[#F8C400]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#F8C400" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="#F8C400" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    <span className="ml-2 text-[#FFD400] font-semibold">Uploading image...</span>
+                    <span className="ml-2 text-[#F8C400] font-semibold">Uploading image...</span>
                   </div>
                 )}
                 {footerLogoUploadMessage && (
@@ -1445,7 +1445,7 @@ const CreateCompany: React.FC = () => {
                   }}
                 />
                 <button
-                  className="bg-[#FFD400] px-3 py-1 mt-2 rounded text-ink"
+                  className="bg-[#F8C400] px-3 py-1 mt-2 rounded text-ink"
                   onClick={() => document.getElementById('footer-logo-input')?.click()}
                   type="button"
                 >
@@ -1470,7 +1470,7 @@ const CreateCompany: React.FC = () => {
                 value={formData.footerDescription || ''}
                 onChange={e => handleInputChange('footerDescription', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                 placeholder="Short company description for the footer..."
               />
             </div>
@@ -1482,7 +1482,7 @@ const CreateCompany: React.FC = () => {
                 type="text"
                 value={formData.footerText || ''}
                 onChange={e => handleInputChange('footerText', e.target.value)}
-                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
               />
             </div>
 
@@ -1494,7 +1494,7 @@ const CreateCompany: React.FC = () => {
                   type="email"
                   value={formData.footerEmail || ''}
                   onChange={e => handleInputChange('footerEmail', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   placeholder="info@dronetech.com"
                 />
               </div>
@@ -1504,7 +1504,7 @@ const CreateCompany: React.FC = () => {
                   type="text"
                   value={formData.footerPhone || ''}
                   onChange={e => handleInputChange('footerPhone', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   placeholder="+91 98765 43210"
                 />
               </div>
@@ -1514,7 +1514,7 @@ const CreateCompany: React.FC = () => {
                   type="text"
                   value={formData.footerAddress || ''}
                   onChange={e => handleInputChange('footerAddress', e.target.value)}
-                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
                   placeholder="Bangalore, Karnataka"
                 />
               </div>
@@ -1552,7 +1552,7 @@ const CreateCompany: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => addArrayItem('footerNavLinks', { label: '', link: '' })}
-                  className="text-[#FF0000] mt-2 px-2 py-1 rounded border border-[#FF0000]"
+                  className="text-[#DC2626] mt-2 px-2 py-1 rounded border border-[#DC2626]"
                 >
                   + Add Link
                 </button>
@@ -1643,7 +1643,7 @@ const CreateCompany: React.FC = () => {
                 checked={!!formData.newsletterEnabled}
                 onChange={e => handleInputChange('newsletterEnabled', e.target.checked)}
                 id="newsletterEnabled"
-                className="w-5 h-5 border-ink-caption rounded focus:ring-2 focus:ring-[#FF0000]"
+                className="w-5 h-5 border-ink-caption rounded focus:ring-2 focus:ring-[#DC2626]"
               />
               <label htmlFor="newsletterEnabled" className="text-ink-paragraph text-sm font-medium">
                 Enable Newsletter Signup in Footer
@@ -1673,13 +1673,13 @@ const CreateCompany: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-ink-offwhite">
+    <div className="min-h-screen bg-surface-main">
       {/* Header */}
       <header className="bg-ink text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">
-              Drone<span className="text-[#FFD400]">TV</span>
+              Drone<span className="text-[#F8C400]">TV</span>
             </div>
             <nav>
               <span className="text-white">Company Form Builder</span>
@@ -1701,7 +1701,7 @@ const CreateCompany: React.FC = () => {
           </div>
           <div className="w-full bg-ink-light rounded-full h-2">
             <div
-              className="bg-[#FF0000] h-2 rounded-full transition-all duration-300"
+              className="bg-[#DC2626] h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / steps.length) * 100}%` }}
             ></div>
           </div>
@@ -1720,9 +1720,9 @@ const CreateCompany: React.FC = () => {
                     key={index}
                     onClick={() => setCurrentStep(index + 1)}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${currentStep === index + 1
-                      ? 'bg-[#FF0000] text-white'
+                      ? 'bg-[#DC2626] text-white'
                       : currentStep > index + 1
-                        ? 'bg-[#FFD400] text-ink'
+                        ? 'bg-[#F8C400] text-ink'
                         : 'bg-ink-light text-ink-paragraph'
                       }`}
                   >
@@ -1762,7 +1762,7 @@ const CreateCompany: React.FC = () => {
                     setPromoCodeError(''); // clear error if valid
                     setCurrentStep(Math.min(steps.length, currentStep + 1));
                   }}
-                  className="flex items-center gap-2 px-6 py-3 bg-[#FF0000] text-white rounded-lg font-semibold hover:bg-[#FF0000]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-3 bg-[#DC2626] text-white rounded-lg font-semibold hover:bg-[#DC2626]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                   <ArrowRight size={20} />
@@ -1771,7 +1771,7 @@ const CreateCompany: React.FC = () => {
               ) : (
                 <button
                   onClick={handleSubmit}
-                  className="flex items-center gap-2 px-8 py-3 bg-[#FFD400] text-ink rounded-lg font-semibold hover:bg-[#FFD400]/90 transition-colors"
+                  className="flex items-center gap-2 px-8 py-3 bg-[#F8C400] text-ink rounded-lg font-semibold hover:bg-[#F8C400]/90 transition-colors"
                 >
                   <Save size={20} />
                   Create Company Page

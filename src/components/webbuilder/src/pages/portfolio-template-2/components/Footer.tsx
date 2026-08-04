@@ -47,8 +47,8 @@ const Footer: React.FC<FooterProps> = ({
     { name: 'Contact', href: '#contact' },
   ],
   services = [],
-  primaryColor = "#FFD400",
-  accentColor = "#FF0000"
+  primaryColor = "#F8C400",
+  accentColor = "#DC2626"
 }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

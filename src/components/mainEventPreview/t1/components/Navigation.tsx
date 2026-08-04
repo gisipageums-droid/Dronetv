@@ -77,12 +77,12 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
                   onClick={() => scrollToSection(item.href)}
                   className={`relative font-medium transition-colors duration-300 group text-sm xl:text-base ${
                     isScrolled
-                      ? "text-ink hover:text-[#FF0000]"
-                      : "text-white hover:text-[#FFD400]"
+                      ? "text-ink hover:text-[#DC2626]"
+                      : "text-white hover:text-[#F8C400]"
                   }`}
                 >
                   {item.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0000] transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC2626] transition-all duration-300 group-hover:w-full"></span>
                 </button>
               </div>
             ))}
@@ -92,7 +92,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
           <div className="hidden lg:block flex-shrink-0">
             <a
               href={"#contact"}
-              className="whitespace-nowrap bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-4 py-2 xl:px-6 xl:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 text-sm xl:text-base"
+              className="whitespace-nowrap bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-4 py-2 xl:px-6 xl:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 text-sm xl:text-base"
             >
               {navContent.ctaText}
             </a>
@@ -116,7 +116,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
               <button
                 key={index}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-4 py-3 text-ink hover:text-[#FF0000] hover:bg-ink-light transition-colors"
+                className="block w-full text-left px-4 py-3 text-ink hover:text-[#DC2626] hover:bg-ink-light transition-colors"
               >
                 {item.name}
               </button>
@@ -124,7 +124,7 @@ const Navigation: React.FC<NavigationProps> = ({ headerData }) => {
             <div className="px-4 mt-4">
               <a
                 href={"#contact"}
-                className="block w-full bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-3 rounded-full font-semibold transition-colors text-center"
+                className="block w-full bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-3 rounded-full font-semibold transition-colors text-center"
               >
                 {navContent.ctaText}
               </a>

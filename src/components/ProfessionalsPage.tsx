@@ -166,7 +166,7 @@ const ProfessionalsPage: React.FC = () => {
   }
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero
         title={<>Professionals <span>Directory</span> · {allProfessionals.length || '0'} Profiles</>}
@@ -188,27 +188,27 @@ const ProfessionalsPage: React.FC = () => {
 .prf-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
 .prf-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
 .prf-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
-.prf-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.prf-sidebar-title{font-size:13px;font-weight:800;color:#111111;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .prf-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
 .prf-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .prf-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
 .prf-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
-.prf-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.prf-chip.active{background:#111111;color:#F8C400;border-color:#111111}
 .prf-chips{display:flex;gap:5px;flex-wrap:wrap}
 .prf-main{min-width:0}
 .prf-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.prf-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.prf-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#111111;font-family:inherit}
 .prf-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
 .prf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:13px}
 .prf-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
 .prf-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
-.prf-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.prf-page-btn.active{background:#111111;color:#F8C400;border-color:#111111}
 .prf-filter-toggle{display:none}
 @media(max-width:960px){
   .prf-layout{grid-template-columns:1fr}
   .prf-sidebar{position:static;display:none}
   .prf-sidebar.open{display:block}
-  .prf-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+  .prf-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#111111;color:#F8C400;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
 }
 @media(max-width:600px){.prf-wrap{padding:12px 14px}.prf-grid{grid-template-columns:repeat(2,1fr)}}
 `}</style>
@@ -242,7 +242,7 @@ const ProfessionalsPage: React.FC = () => {
 
             {(searchQuery || selectedCategory !== "All") && (
               <button onClick={() => { setSearchQuery(''); setSelectedCategory('All'); setCurrentPage(1); }}
-                style={{width:'100%',padding:'7px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit'}}>
+                style={{width:'100%',padding:'7px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#111111',color:'#F8C400',border:'none',cursor:'pointer',fontFamily:'inherit'}}>
                 Clear All Filters
               </button>
             )}

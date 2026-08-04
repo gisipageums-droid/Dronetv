@@ -50,12 +50,12 @@ const ContactSection: React.FC = () => {
           data-aos="fade-up"
           className="text-4xl md:text-5xl font-bold text-ink mb-4"
         >
-          Register & <span className="text-[#FF0000]">Contact</span>
+          Register & <span className="text-[#DC2626]">Contact</span>
         </h2>
         <div
           data-aos="fade-up"
           data-aos-delay="200"
-          className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"
+          className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"
         ></div>
         <p
           data-aos="fade-up"
@@ -203,8 +203,8 @@ const ContactSection: React.FC = () => {
         */}
 
         <div className="bg-surface-card rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center text-center space-y-6">
-          <div className="w-16 h-16 bg-[#FF0000]/10 rounded-full flex items-center justify-center">
-            <ExternalLink size={32} className="text-[#FF0000]" />
+          <div className="w-16 h-16 bg-[#DC2626]/10 rounded-full flex items-center justify-center">
+            <ExternalLink size={32} className="text-[#DC2626]" />
           </div>
           <h3 className="text-2xl font-bold text-ink">
             Register on the Official Drone Expo Website
@@ -218,7 +218,7 @@ const ContactSection: React.FC = () => {
               href="https://www.droneexpo.in/visitor-registration"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[#FF0000] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#cc0000] transition-all flex items-center justify-center gap-2"
+              className="bg-[#DC2626] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#cc0000] transition-all flex items-center justify-center gap-2"
             >
               Visitor Registration <ExternalLink size={16} />
             </a>
@@ -226,7 +226,7 @@ const ContactSection: React.FC = () => {
               href="https://www.droneexpo.in/exhibitor-registration"
               target="_blank"
               rel="noopener noreferrer"
-              className="border-2 border-[#FF0000] text-[#FF0000] px-6 py-3 rounded-full font-semibold hover:bg-[#FF0000] hover:text-white transition-all flex items-center justify-center gap-2"
+              className="border-2 border-[#DC2626] text-[#DC2626] px-6 py-3 rounded-full font-semibold hover:bg-[#DC2626] hover:text-white transition-all flex items-center justify-center gap-2"
             >
               Exhibitor Enquiry <ExternalLink size={16} />
             </a>
@@ -238,7 +238,7 @@ const ContactSection: React.FC = () => {
               href="https://www.droneexpo.in"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#FF0000] underline"
+              className="text-[#DC2626] underline"
             >
               www.droneexpo.in
             </a>

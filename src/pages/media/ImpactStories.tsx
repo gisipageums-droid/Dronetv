@@ -38,7 +38,7 @@ export default function ImpactStoriesPage() {
   const filtered = activeCategory === 'All' ? items : items.filter(i => (i.category || 'General') === activeCategory);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Drone <span>Impact Stories</span></>}
         stats={[

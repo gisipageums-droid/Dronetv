@@ -44,7 +44,7 @@ export default function EducationPartnersPage() {
   const filtered = activeCategory === 'All' ? items : items.filter(i => (i.category || 'General') === activeCategory);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Education <span>Partners</span></>}
         stats={[

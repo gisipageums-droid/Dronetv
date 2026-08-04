@@ -77,7 +77,7 @@ export default function CommunityPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>India's Drone <span>Community</span></>}
         stats={[

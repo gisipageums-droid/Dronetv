@@ -38,10 +38,10 @@ const ContactSection: React.FC = () => {
     <section id="contact" className="py-20 bg-ink">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#FFD400] mb-4">
+          <h2 data-aos="fade-up" className="text-4xl md:text-6xl font-bold text-[#F8C400] mb-4">
             Let's <span className="text-white">Connect</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-32 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-light text-lg max-w-3xl mx-auto">
             Ready to revolutionize your operations with cutting-edge drone technology? Get in touch with our experts today.
           </p>
@@ -52,10 +52,10 @@ const ContactSection: React.FC = () => {
           <div data-aos="fade-right">
             <div className="bg-ink/50 backdrop-blur-sm rounded-3xl p-8 border border-ink-charcoal">
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-[#FF0000] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#DC2626] rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageCircle size={32} className="text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-[#FFD400] mb-2">
+                <h3 className="text-2xl font-bold text-[#F8C400] mb-2">
                   Get a Quote
                 </h3>
                 <p className="text-ink-caption">
@@ -81,10 +81,10 @@ const ContactSection: React.FC = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-6 py-4 bg-ink-charcoal/50 border-2 border-ink-paragraph rounded-2xl focus:border-[#FFD400] focus:bg-ink-charcoal transition-all duration-300 text-white placeholder-transparent peer"
+                      className="w-full px-6 py-4 bg-ink-charcoal/50 border-2 border-ink-paragraph rounded-2xl focus:border-[#F8C400] focus:bg-ink-charcoal transition-all duration-300 text-white placeholder-transparent peer"
                       placeholder="Your name"
                     />
-                    <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FFD400] peer-valid:top-1 peer-valid:text-sm">
+                    <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#F8C400] peer-valid:top-1 peer-valid:text-sm">
                       Full Name *
                     </label>
                   </div>
@@ -96,10 +96,10 @@ const ContactSection: React.FC = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-6 py-4 bg-ink-charcoal/50 border-2 border-ink-paragraph rounded-2xl focus:border-[#FFD400] focus:bg-ink-charcoal transition-all duration-300 text-white placeholder-transparent peer"
+                      className="w-full px-6 py-4 bg-ink-charcoal/50 border-2 border-ink-paragraph rounded-2xl focus:border-[#F8C400] focus:bg-ink-charcoal transition-all duration-300 text-white placeholder-transparent peer"
                       placeholder="your@email.com"
                     />
-                    <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FFD400] peer-valid:top-1 peer-valid:text-sm">
+                    <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#F8C400] peer-valid:top-1 peer-valid:text-sm">
                       Email Address *
                     </label>
                   </div>
@@ -111,10 +111,10 @@ const ContactSection: React.FC = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-6 py-4 bg-ink-charcoal/50 border-2 border-ink-paragraph rounded-2xl focus:border-[#FFD400] focus:bg-ink-charcoal transition-all duration-300 text-white placeholder-transparent peer"
+                    className="w-full px-6 py-4 bg-ink-charcoal/50 border-2 border-ink-paragraph rounded-2xl focus:border-[#F8C400] focus:bg-ink-charcoal transition-all duration-300 text-white placeholder-transparent peer"
                     placeholder="+1 (555) 123-4567"
                   />
-                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FFD400] peer-valid:top-1 peer-valid:text-sm">
+                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#F8C400] peer-valid:top-1 peer-valid:text-sm">
                     Phone Number
                   </label>
                 </div>
@@ -126,10 +126,10 @@ const ContactSection: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full px-6 py-4 bg-ink-charcoal/50 border-2 border-ink-paragraph rounded-2xl focus:border-[#FFD400] focus:bg-ink-charcoal transition-all duration-300 text-white placeholder-transparent peer resize-none"
+                    className="w-full px-6 py-4 bg-ink-charcoal/50 border-2 border-ink-paragraph rounded-2xl focus:border-[#F8C400] focus:bg-ink-charcoal transition-all duration-300 text-white placeholder-transparent peer resize-none"
                     placeholder="Tell us about your project..."
                   />
-                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#FFD400] peer-valid:top-1 peer-valid:text-sm">
+                  <label className="absolute left-6 top-4 text-ink-caption transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#F8C400] peer-valid:top-1 peer-valid:text-sm">
                     Project Details *
                   </label>
                 </div>
@@ -137,7 +137,7 @@ const ContactSection: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#FF0000] hover:bg-[#FF0000]/90 disabled:bg-ink-paragraph text-white py-4 px-8 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl"
+                  className="w-full bg-[#DC2626] hover:bg-[#DC2626]/90 disabled:bg-ink-paragraph text-white py-4 px-8 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 disabled:transform-none shadow-lg hover:shadow-xl"
                 >
                   {isSubmitting ? (
                     <>
@@ -160,7 +160,7 @@ const ContactSection: React.FC = () => {
             {/* Map Placeholder */}
             <div className="bg-ink-charcoal/50 backdrop-blur-sm rounded-3xl h-64 flex items-center justify-center mb-8 border border-ink-paragraph">
               <div className="text-center">
-                <MapPin size={48} className="text-[#FFD400] mx-auto mb-4" />
+                <MapPin size={48} className="text-[#F8C400] mx-auto mb-4" />
                 <p className="text-ink-caption text-lg font-medium">Interactive Map</p>
                 <p className="text-sm text-ink-caption">Google Maps integration</p>
               </div>
@@ -168,37 +168,37 @@ const ContactSection: React.FC = () => {
             
             {/* Contact Info Cards */}
             <div className="space-y-6">
-              <div className="bg-ink/50 backdrop-blur-sm rounded-2xl p-6 border border-ink-charcoal hover:border-[#FFD400]/50 transition-colors group">
+              <div className="bg-ink/50 backdrop-blur-sm rounded-2xl p-6 border border-ink-charcoal hover:border-[#F8C400]/50 transition-colors group">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center group-hover:bg-[#FFD400] transition-colors">
+                  <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center group-hover:bg-[#F8C400] transition-colors">
                     <Mail size={20} className="text-white group-hover:text-ink" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[#FFD400] group-hover:text-white transition-colors">Email</h4>
+                    <h4 className="font-semibold text-[#F8C400] group-hover:text-white transition-colors">Email</h4>
                     <p className="text-ink-caption group-hover:text-ink-light transition-colors">contact@droneflight.com</p>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-ink/50 backdrop-blur-sm rounded-2xl p-6 border border-ink-charcoal hover:border-[#FFD400]/50 transition-colors group">
+              <div className="bg-ink/50 backdrop-blur-sm rounded-2xl p-6 border border-ink-charcoal hover:border-[#F8C400]/50 transition-colors group">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center group-hover:bg-[#FFD400] transition-colors">
+                  <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center group-hover:bg-[#F8C400] transition-colors">
                     <Phone size={20} className="text-white group-hover:text-ink" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[#FFD400] group-hover:text-white transition-colors">Phone</h4>
+                    <h4 className="font-semibold text-[#F8C400] group-hover:text-white transition-colors">Phone</h4>
                     <p className="text-ink-caption group-hover:text-ink-light transition-colors">+1 (555) 123-DRONE</p>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-ink/50 backdrop-blur-sm rounded-2xl p-6 border border-ink-charcoal hover:border-[#FFD400]/50 transition-colors group">
+              <div className="bg-ink/50 backdrop-blur-sm rounded-2xl p-6 border border-ink-charcoal hover:border-[#F8C400]/50 transition-colors group">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center group-hover:bg-[#FFD400] transition-colors">
+                  <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center group-hover:bg-[#F8C400] transition-colors">
                     <MapPin size={20} className="text-white group-hover:text-ink" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[#FFD400] group-hover:text-white transition-colors">Address</h4>
+                    <h4 className="font-semibold text-[#F8C400] group-hover:text-white transition-colors">Address</h4>
                     <p className="text-ink-caption group-hover:text-ink-light transition-colors">Silicon Valley, CA 94025</p>
                   </div>
                 </div>

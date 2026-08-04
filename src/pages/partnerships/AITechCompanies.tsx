@@ -45,7 +45,7 @@ export default function AITechCompaniesPage() {
   });
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>AI Tech <span>Companies</span></>}
         stats={[

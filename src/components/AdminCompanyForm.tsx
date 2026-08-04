@@ -87,7 +87,7 @@ const AdminCompanyForm: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-ink-offwhite">
+    <div className="flex flex-col w-full min-h-screen bg-surface-main">
       <div className="flex-1">
         {renderStep()}
       </div>

@@ -219,7 +219,7 @@ export default function CompanyProfile({ profileData }) {
                     transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
                     className="flex items-center gap-2 p-3 bg-surface-main rounded-xl"
                   >
-                    <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
+                    <div className="w-2 h-2 bg-[#F8C400] rounded-full"></div>
                     <span className="text-ink-charcoal font-medium">{value}</span>
                   </motion.div>
                 ))}

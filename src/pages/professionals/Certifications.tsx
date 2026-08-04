@@ -114,7 +114,7 @@ export default function CertificationsPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>DGCA Drone <span>Certifications</span> India 2026</>}
         stats={[

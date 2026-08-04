@@ -85,7 +85,7 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
           {/* Event Info */}
           <div className="md:col-span-2">
             <div className="mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-[#FFD400] mb-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-[#F8C400] mb-4">
                 {footerContent.eventName}
               </h2>
             </div>
@@ -96,7 +96,7 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold text-[#FFD400] mb-4">
+            <h3 className="text-xl font-bold text-[#F8C400] mb-4">
               {footerContent.quickLinksTitle}
             </h3>
             <ul className="space-y-2">
@@ -104,7 +104,7 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
                 <li key={index}>
                   <button
                     onClick={() => scrollToSection(link.href)}
-                    className="text-ink-caption hover:text-[#FFD400] transition-all duration-300 hover:translate-x-1 transform inline-block"
+                    className="text-ink-caption hover:text-[#F8C400] transition-all duration-300 hover:translate-x-1 transform inline-block"
                   >
                     {link.name}
                   </button>
@@ -128,7 +128,7 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
                     key={index}
                     href={social.href}
                     aria-label={social.label}
-                    className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
+                    className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#DC2626] transition-all duration-300 transform hover:scale-110"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

@@ -119,7 +119,7 @@ export default function CompanyProfile({ profileData }) {
               animate={profileVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2, duration: 0.7 }}
             >
-              <Badge className="bg-[#ffeb3b] text-ink px-4 py-1.5 mb-4">
+              <Badge className="bg-[#F8C400] text-ink px-4 py-1.5 mb-4">
                 Since {establishedYear}
               </Badge>
               <h2 className="text-4xl md:text-5xl font-extrabold text-ink leading-tight">
@@ -197,7 +197,7 @@ export default function CompanyProfile({ profileData }) {
                     transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
                     className="flex items-center gap-2 p-3 bg-surface-main rounded-xl"
                   >
-                    <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
+                    <div className="w-2 h-2 bg-[#F8C400] rounded-full"></div>
                     <span className="text-ink-charcoal font-medium">{value}</span>
                   </motion.div>
                 ))}

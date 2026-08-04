@@ -100,7 +100,7 @@ export default function MediaHubPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>DroneTv <span>Media Hub</span></>}
         stats={[

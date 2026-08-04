@@ -287,7 +287,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
               {aboutContent.heading}
             </h2>
           )}
-          <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
 
           {editMode ? (
             <div className="max-w-4xl mx-auto">
@@ -328,7 +328,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
             {aboutContent.features.map((item, index) => (
               <div
                 key={index}
-                className="bg-ink-offwhite p-6 rounded-xl border-[solid] border-[black] border-[1px] shadow-md hover:bg-[#FFD400] hover:text-ink transition-all duration-300 relative"
+                className="bg-ink-offwhite p-6 rounded-xl border-[solid] border-[black] border-[1px] shadow-md hover:bg-[#F8C400] hover:text-ink transition-all duration-300 relative"
               >
                 {editMode && (
                   <button
@@ -401,7 +401,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                     value={aboutContent.zonesTitle}
                     onChange={(e) => setAboutContent({ ...aboutContent, zonesTitle: e.target.value })}
                     maxLength={50}
-                    className="text-3xl font-bold text-[#FFD400] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
+                    className="text-3xl font-bold text-[#F8C400] bg-transparent border-b-2 border-ink-light focus:border-status-info outline-none text-center"
                   />
                   <div className="text-xs text-ink-caption text-right mt-1">
                     {aboutContent.zonesTitle.length}/50
@@ -438,7 +438,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
           ) : (
             <>
               <h3 className="text-3xl font-bold text-ink mb-4">
-                <span className="text-[#FFD400]">{aboutContent.zonesTitle}</span> {aboutContent.zonesTitleHighlight}
+                <span className="text-[#F8C400]">{aboutContent.zonesTitle}</span> {aboutContent.zonesTitleHighlight}
               </h3>
               <p className="text-ink-paragraph text-lg max-w-3xl mx-auto text-center">
                 {aboutContent.zonesSubtitle}
@@ -484,14 +484,14 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutData, onStateChange })
                       value={zone.title}
                       onChange={(e) => updateZone(index, 'title', e.target.value)}
                       maxLength={100}
-                      className="text-xl font-semibold text-[#FF0000] px-2 py-1 rounded-md w-full border border-ink-light"
+                      className="text-xl font-semibold text-[#DC2626] px-2 py-1 rounded-md w-full border border-ink-light"
                     />
                     <div className="text-xs text-ink-caption text-right mt-1">
                       {zone.title.length}/100
                     </div>
                   </div>
                 ) : (
-                  <h4 className="text-xl text-center font-semibold text-[#FF0000] mb-2">
+                  <h4 className="text-xl text-center font-semibold text-[#DC2626] mb-2">
                     {zone.title}
                   </h4>
                 )}

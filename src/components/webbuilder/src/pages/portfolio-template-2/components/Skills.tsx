@@ -32,8 +32,8 @@ interface SkillsProps {
 const Skills: React.FC<SkillsProps> = ({
   skills = [],
   certifications = [],
-  primaryColor = "#FFD400",
-  accentColor = "#FF0000",
+  primaryColor = "#F8C400",
+  accentColor = "#DC2626",
 }) => {
   // Default skills if none passed
   const defaultSkills: Skill[] = [

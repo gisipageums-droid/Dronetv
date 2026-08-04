@@ -21,7 +21,7 @@ function Home() {
           </Link>
           <Link
             to="/create-portfolio"
-            className="inline-block bg-[#FFD400] hover:bg-[#FFD400]/90 text-ink font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="inline-block bg-[#F8C400] hover:bg-[#F8C400]/90 text-ink font-semibold py-3 px-6 rounded-lg transition-colors"
           >
             Create Your Portfolio
           </Link>

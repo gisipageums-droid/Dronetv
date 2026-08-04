@@ -91,7 +91,7 @@ const AIInputField: FC<AIInputFieldProps> = ({
             rows={rows}
             className={
               inputClassName ||
-              "w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+              "w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
             }
           />
         ) : (
@@ -105,7 +105,7 @@ const AIInputField: FC<AIInputFieldProps> = ({
             placeholder={placeholder}
             className={
               inputClassName ||
-              "w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#FF0000] focus:border-transparent"
+              "w-full px-3 py-2 border border-ink-light rounded-md focus:ring-2 focus:ring-[#DC2626] focus:border-transparent"
             }
           />
         )}

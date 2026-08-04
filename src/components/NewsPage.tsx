@@ -33,7 +33,7 @@ export default function NewsPage() {
   const paginated = filtered.slice((currentPage - 1) * articlesPerPage, currentPage * articlesPerPage);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero title={<>News <span>&amp; Insights</span> · {items.length || '0'} Articles</>} />
 
@@ -41,27 +41,27 @@ export default function NewsPage() {
 .nw-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
 .nw-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
 .nw-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
-.nw-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.nw-sidebar-title{font-size:13px;font-weight:800;color:#111111;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .nw-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
 .nw-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .nw-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
 .nw-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
-.nw-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.nw-chip.active{background:#111111;color:#F8C400;border-color:#111111}
 .nw-chips{display:flex;gap:5px;flex-wrap:wrap}
 .nw-main{min-width:0}
 .nw-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.nw-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.nw-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#111111;font-family:inherit}
 .nw-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
 .nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:13px}
 .nw-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
 .nw-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
-.nw-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.nw-page-btn.active{background:#111111;color:#F8C400;border-color:#111111}
 .nw-filter-toggle{display:none}
 @media(max-width:960px){
   .nw-layout{grid-template-columns:1fr}
   .nw-sidebar{position:static;display:none}
   .nw-sidebar.open{display:block}
-  .nw-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+  .nw-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#111111;color:#F8C400;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
 }
 @media(max-width:600px){.nw-wrap{padding:12px 14px}.nw-grid{grid-template-columns:1fr}}
 `}</style>
@@ -95,7 +95,7 @@ export default function NewsPage() {
 
             {(search || selectedCategory !== 'All') && (
               <button onClick={() => { setSearch(''); setSelectedCategory('All'); setCurrentPage(1); }}
-                style={{width:'100%',padding:'7px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit'}}>
+                style={{width:'100%',padding:'7px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#111111',color:'#F8C400',border:'none',cursor:'pointer',fontFamily:'inherit'}}>
                 Clear All Filters
               </button>
             )}

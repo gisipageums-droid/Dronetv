@@ -64,9 +64,9 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
-            Latest <span className="text-[#FF0000]">Blog Posts</span>
+            Latest <span className="text-[#DC2626]">Blog Posts</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph dark:text-gray-400 max-w-2xl mx-auto">
             Stay updated with the latest insights, tips, and trends in drone technology and aerial photography.
           </p>
@@ -97,7 +97,7 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
                   
                   {/* Category Badge */}
                   <div className="absolute top-6 left-6">
-                    <span className="bg-[#FF0000] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    <span className="bg-[#DC2626] text-white px-3 py-1 rounded-full text-sm font-semibold">
                       {post.category}
                     </span>
                   </div>
@@ -118,10 +118,10 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
                       <User size={16} />
                       <span>{post.author}</span>
                     </div>
-                    <span className="text-[#FF0000] font-medium">{post.readTime}</span>
+                    <span className="text-[#DC2626] font-medium">{post.readTime}</span>
                   </div>
 
-                  <h3 className="text-2xl lg:text-3xl font-bold text-ink dark:text-white mb-4 group-hover:text-[#FF0000] transition-colors duration-300">
+                  <h3 className="text-2xl lg:text-3xl font-bold text-ink dark:text-white mb-4 group-hover:text-[#DC2626] transition-colors duration-300">
                     {post.title}
                   </h3>
 
@@ -133,11 +133,11 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
                     href={post.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="group/btn inline-flex items-center gap-3 text-[#FF0000] font-semibold hover:gap-4 transition-all duration-300"
+                    className="group/btn inline-flex items-center gap-3 text-[#DC2626] font-semibold hover:gap-4 transition-all duration-300"
                   >
                     <span>Read More</span>
                     <ArrowRight size={20} className="transform group-hover/btn:translate-x-1 transition-transform duration-300" />
-                    <div className="w-0 h-0.5 bg-[#FF0000] group-hover/btn:w-8 transition-all duration-300"></div>
+                    <div className="w-0 h-0.5 bg-[#DC2626] group-hover/btn:w-8 transition-all duration-300"></div>
                   </a>
                 </div>
               </div>
@@ -151,7 +151,7 @@ const Blog: React.FC<BlogProps> = ({ apiResponse }) => {
 
         {/* View All Button */}
         <div data-aos="fade-up" data-aos-delay="800" className="text-center mt-16">
-          <button className="bg-[#FFD400] hover:bg-[#FFD400]/90 text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          <button className="bg-[#F8C400] hover:bg-[#F8C400]/90 text-ink px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
             View All Blog Posts
           </button>
         </div>

@@ -14,7 +14,7 @@ import Service from "./components/Service";
 const App: React.FC = () => {
   return (
     <DarkModeProvider>
-      <div className="min-h-screen bg-surface-card dark:bg-gray-900 transition-colors duration-300">
+      <div className="min-h-screen bg-surface-main dark:bg-gray-900 transition-colors duration-300">
         <Navbar />
         <Hero />
         <About />

@@ -49,9 +49,9 @@ const AboutSection: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
-            Drone <span className="text-[#FF0000]">Expo & Conference 2025</span>
+            Drone <span className="text-[#DC2626]">Expo & Conference 2025</span>
           </h2>
-          <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+          <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
           <p className="text-ink-paragraph text-lg max-w-4xl mx-auto leading-relaxed">
             Join us in Mumbai for the premier Drone Expo & Conference where technology, innovation, and opportunity converge.
             Explore industry advancements across UAVs, Robotics, AR/VR, Geospatial, and more.
@@ -62,9 +62,9 @@ const AboutSection: React.FC = () => {
           {features.map((item, index) => (
             <div
               key={index}
-              className="bg-ink-offwhite p-6 rounded-xl shadow-md hover:bg-[#FFD400] hover:text-ink transition-all duration-300"
+              className="bg-ink-offwhite p-6 rounded-xl shadow-md hover:bg-[#F8C400] hover:text-ink transition-all duration-300"
             >
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#FF0000] text-white mb-4">
+              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#DC2626] text-white mb-4">
                 {item.icon}
               </div>
               <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
@@ -75,7 +75,7 @@ const AboutSection: React.FC = () => {
 
         <div className="text-center mb-12">
           <h3 className="text-3xl font-bold text-ink mb-4">
-            <span className="text-[#FFD400]">Specialized Zones</span> to Explore
+            <span className="text-[#F8C400]">Specialized Zones</span> to Explore
           </h3>
           <p className="text-ink-paragraph text-lg max-w-3xl mx-auto">
             Discover dynamic pavilions focused on start-ups, education, students, and innovation.
@@ -88,7 +88,7 @@ const AboutSection: React.FC = () => {
               key={index}
               className="bg-surface-card p-6 rounded-2xl shadow-md border border-brand-yellow-soft hover:shadow-xl transition-all"
             >
-              <h4 className="text-xl font-semibold text-[#FF0000] mb-2">{zone.title}</h4>
+              <h4 className="text-xl font-semibold text-[#DC2626] mb-2">{zone.title}</h4>
               <p className="text-ink-paragraph leading-relaxed">{zone.description}</p>
             </div>
           ))}

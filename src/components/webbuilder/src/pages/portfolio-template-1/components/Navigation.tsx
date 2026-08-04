@@ -46,7 +46,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="text-2xl font-bold text-ink dark:text-white">
-            Drone<span className="text-[#FF0000]">TV</span>
+            Drone<span className="text-[#DC2626]">TV</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -55,10 +55,10 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="relative text-ink dark:text-white hover:text-[#FF0000] transition-colors duration-300 font-medium group"
+                className="relative text-ink dark:text-white hover:text-[#DC2626] transition-colors duration-300 font-medium group"
               >
                 {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0000] transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC2626] transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
           </div>
@@ -89,7 +89,7 @@ const Navigation: React.FC<NavigationProps> = ({ darkMode, toggleDarkMode }) => 
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-4 py-2 text-ink dark:text-white hover:text-[#FF0000] hover:bg-ink-light dark:hover:bg-gray-800 transition-colors"
+                className="block w-full text-left px-4 py-2 text-ink dark:text-white hover:text-[#DC2626] hover:bg-ink-light dark:hover:bg-gray-800 transition-colors"
               >
                 {item.name}
               </button>

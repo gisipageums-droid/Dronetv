@@ -66,7 +66,7 @@ export default function PortfolioPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="pt-[104px] min-h-screen bg-surface-card font-sans">
+    <div className="pt-[104px] min-h-screen bg-surface-main font-sans">
 
       {/* ── HERO ── */}
       <section className="bg-ink text-white">
@@ -120,10 +120,10 @@ export default function PortfolioPage() {
           { bg:'bg-ink', sub:'Industry 01', title:'Drone Industry', icon:'🚁',
             desc:'Manufacturers, service providers, training institutes, operators, distributors, and pilots across all drone application sectors in India.',
             tags:['Agriculture','Survey','Defence','Inspection','Logistics','Training','Manufacturers','Media'] },
-          { bg:'bg-[#1A5FA8]', sub:'Industry 02', title:'GIS Industry', icon:'🌐',
+          { bg:'bg-[#2563EB]', sub:'Industry 02', title:'GIS Industry', icon:'🌐',
             desc:'Geospatial data companies, aerial survey and mapping firms, LiDAR specialists, remote sensing experts, and GIS software providers across India.',
             tags:['Photogrammetry','LiDAR','Remote Sensing','GIS Software','Land Survey','Urban Planning','Satellite Data'] },
-          { bg:'bg-[#1A7A3C]', sub:'Industry 03', title:'AI Industry', icon:'🤖',
+          { bg:'bg-[#22C55E]', sub:'Industry 03', title:'AI Industry', icon:'🤖',
             desc:'AI analytics companies, computer vision specialists, autonomous systems developers, and machine learning platforms for drone and geospatial applications.',
             tags:['Computer Vision','Analytics','Autonomous Systems','ML / Deep Learning','AI Payloads','Geospatial AI','Inspection AI'] },
         ].map(({ bg, sub, title, icon, desc, tags }) => (
@@ -187,21 +187,21 @@ export default function PortfolioPage() {
       {/* ── 03 GIS ── */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-status-info/10">
         <div className="max-w-7xl mx-auto">
-          <SectionHead num="03" eyebrow="GIS Industry" numColor="text-[#1A5FA8]" eyebrowColor="text-[#1A5FA8]"
-            title={<span className="text-[#1A5FA8]">What DroneTv.in Offers GIS Companies</span>}
-            titleColor="text-[#1A5FA8]" descColor="text-ink-caption"
+          <SectionHead num="03" eyebrow="GIS Industry" numColor="text-[#2563EB]" eyebrowColor="text-[#2563EB]"
+            title={<span className="text-[#2563EB]">What DroneTv.in Offers GIS Companies</span>}
+            titleColor="text-[#2563EB]" descColor="text-ink-caption"
             desc="GIS and geospatial companies have a dedicated audience on DroneTv.in — drone operators, infrastructure developers, agriculture companies, and government bodies actively searching for mapping and survey services. All packages and features apply equally to GIS companies." />
           <FeatGrid>
             {[
-              { badge:<Chip label="Mapping & Survey" color="bg-status-info/15 text-[#1A5FA8]" />, title:'Aerial Survey & Mapping Firms', desc:'Photogrammetry, LiDAR, topographic survey, and orthophoto service companies receive project enquiries from qualified clients.', bullets:['Service listing by survey type','B2B enquiry from infrastructure and government clients','Project portfolio on profile page','Aerial reel and demo video content'], bulletColor:'bg-[#1A5FA8]' },
-              { badge:<Chip label="GIS Software" color="bg-status-info/15 text-[#1A5FA8]" />, title:'GIS Software & Platforms', desc:'GIS processing software, point cloud tools, digital twin platforms, and geospatial analytics solutions reach their exact target market.', bullets:['Software product listings with demos','Product demo video production','Editorial articles on platform','Lead generation from active buyers'], bulletColor:'bg-[#1A5FA8]' },
-              { badge:<Chip label="Remote Sensing" color="bg-status-info/15 text-[#1A5FA8]" />, title:'Remote Sensing & Satellite Data', desc:'Multispectral, hyperspectral, and satellite data companies connect with agriculture, environment, and infrastructure clients.', bullets:['Technology showcase and listing','Use case articles and content','B2B enquiry from application sectors','Interview content on use cases'], bulletColor:'bg-[#1A5FA8]' },
-              { badge:<Chip label="Land Survey" color="bg-status-info/15 text-[#1A5FA8]" />, title:'Land & Cadastral Survey', desc:'Land survey and cadastral mapping firms reach government bodies, real estate developers, and infrastructure project owners.', bullets:['Service listing for survey categories','Government and B2B enquiry routing','Project case study articles','Magazine advertisement placements'], bulletColor:'bg-[#1A5FA8]' },
-              { badge:<Chip label="Urban GIS" color="bg-status-info/15 text-[#1A5FA8]" />, title:'Urban Planning & Infrastructure GIS', desc:'GIS consulting firms working on smart city, utility mapping, and infrastructure asset management reach their target clients.', bullets:['Consulting profile and service listing','Government and corporate buyer enquiries','Knowledge content and case studies','Industry professional networking'], bulletColor:'bg-[#1A5FA8]' },
-              { badge:<Chip label="GIS Training" color="bg-status-info/15 text-[#1A5FA8]" />, title:'GIS Training & Education', desc:'Institutes offering GIS, QGIS, ArcGIS, photogrammetry, and geospatial data certifications reach professionals and students.', bullets:['Institute and course listing','Career awareness content','Student and professional audience','Social media promotion of programs'], bulletColor:'bg-[#1A5FA8]' },
+              { badge:<Chip label="Mapping & Survey" color="bg-status-info/15 text-[#2563EB]" />, title:'Aerial Survey & Mapping Firms', desc:'Photogrammetry, LiDAR, topographic survey, and orthophoto service companies receive project enquiries from qualified clients.', bullets:['Service listing by survey type','B2B enquiry from infrastructure and government clients','Project portfolio on profile page','Aerial reel and demo video content'], bulletColor:'bg-[#2563EB]' },
+              { badge:<Chip label="GIS Software" color="bg-status-info/15 text-[#2563EB]" />, title:'GIS Software & Platforms', desc:'GIS processing software, point cloud tools, digital twin platforms, and geospatial analytics solutions reach their exact target market.', bullets:['Software product listings with demos','Product demo video production','Editorial articles on platform','Lead generation from active buyers'], bulletColor:'bg-[#2563EB]' },
+              { badge:<Chip label="Remote Sensing" color="bg-status-info/15 text-[#2563EB]" />, title:'Remote Sensing & Satellite Data', desc:'Multispectral, hyperspectral, and satellite data companies connect with agriculture, environment, and infrastructure clients.', bullets:['Technology showcase and listing','Use case articles and content','B2B enquiry from application sectors','Interview content on use cases'], bulletColor:'bg-[#2563EB]' },
+              { badge:<Chip label="Land Survey" color="bg-status-info/15 text-[#2563EB]" />, title:'Land & Cadastral Survey', desc:'Land survey and cadastral mapping firms reach government bodies, real estate developers, and infrastructure project owners.', bullets:['Service listing for survey categories','Government and B2B enquiry routing','Project case study articles','Magazine advertisement placements'], bulletColor:'bg-[#2563EB]' },
+              { badge:<Chip label="Urban GIS" color="bg-status-info/15 text-[#2563EB]" />, title:'Urban Planning & Infrastructure GIS', desc:'GIS consulting firms working on smart city, utility mapping, and infrastructure asset management reach their target clients.', bullets:['Consulting profile and service listing','Government and corporate buyer enquiries','Knowledge content and case studies','Industry professional networking'], bulletColor:'bg-[#2563EB]' },
+              { badge:<Chip label="GIS Training" color="bg-status-info/15 text-[#2563EB]" />, title:'GIS Training & Education', desc:'Institutes offering GIS, QGIS, ArcGIS, photogrammetry, and geospatial data certifications reach professionals and students.', bullets:['Institute and course listing','Career awareness content','Student and professional audience','Social media promotion of programs'], bulletColor:'bg-[#2563EB]' },
             ].map(c => <FeatCard key={c.title} {...c} />)}
           </FeatGrid>
-          <div className="mt-5 bg-surface-card border-l-4 border-[#1A5FA8] px-4 py-3 text-xs text-ink-caption leading-relaxed rounded-r">
+          <div className="mt-5 bg-surface-card border-l-4 border-[#2563EB] px-4 py-3 text-xs text-ink-caption leading-relaxed rounded-r">
             <strong className="text-ink">GIS on DroneTv.in:</strong> GIS is one of the platform's three primary sectors. All three packages — Reach, Scale, and Brand — are fully available to GIS companies at the same pricing. All content production, magazine, lead generation, and event coverage features apply to GIS companies without restriction.
           </div>
         </div>
@@ -211,21 +211,21 @@ export default function PortfolioPage() {
       {/* ── 04 AI ── */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-status-success/10">
         <div className="max-w-7xl mx-auto">
-          <SectionHead num="04" eyebrow="AI Industry" numColor="text-[#1A7A3C]" eyebrowColor="text-[#1A7A3C]"
+          <SectionHead num="04" eyebrow="AI Industry" numColor="text-[#22C55E]" eyebrowColor="text-[#22C55E]"
             title={<span className="text-[#155c2d]">What DroneTv.in Offers AI Companies</span>}
             titleColor="text-[#155c2d]" descColor="text-ink-caption"
             desc="AI technology companies working on drone analytics, computer vision, autonomous systems, and geospatial intelligence reach an audience of drone operators, manufacturers, and GIS firms on DroneTv.in — the exact buyers and integrators they need." />
           <FeatGrid>
             {[
-              { badge:<Chip label="Analytics" color="bg-status-success/15 text-[#1A7A3C]" />, title:'Drone Data Analytics', desc:'AI companies processing drone data for agriculture, infrastructure, and construction reach operators and manufacturers who need analytics platforms.', bullets:['Product and platform listing','B2B enquiry from drone operators','Product demo video content','Case study articles on DroneTv.in'], bulletColor:'bg-[#1A7A3C]' },
-              { badge:<Chip label="Computer Vision" color="bg-status-success/15 text-[#1A7A3C]" />, title:'Computer Vision & Object Detection', desc:'Object detection, segmentation, and classification companies for drone video and imagery reach manufacturers and service providers.', bullets:['Technology showcase on profile','Editorial articles explaining applications','Interview content for awareness','Lead generation from manufacturers'], bulletColor:'bg-[#1A7A3C]' },
-              { badge:<Chip label="Autonomous" color="bg-status-success/15 text-[#1A7A3C]" />, title:'Autonomous & Intelligent Drone Systems', desc:'AI-based flight planning, obstacle avoidance, and smart mission execution companies reach drone OEMs and enterprise operators.', bullets:['Technology and product listing','Product demo video production','B2B enquiry from drone manufacturers','Magazine editorial for innovation coverage'], bulletColor:'bg-[#1A7A3C]' },
-              { badge:<Chip label="AgriTech AI" color="bg-status-success/15 text-[#1A7A3C]" />, title:'AI for Precision Agriculture', desc:'NDVI, crop health, pest detection, and yield prediction AI companies reach agriculture drone operators and farming companies.', bullets:['AgriTech product listing','Agriculture vertical promotion','Case study video and article content','B2B enquiry from agri-drone operators'], bulletColor:'bg-[#1A7A3C]' },
-              { badge:<Chip label="Inspection AI" color="bg-status-success/15 text-[#1A7A3C]" />, title:'AI-Based Infrastructure Inspection', desc:'Automated damage detection and defect classification companies reach infrastructure owners and inspection service providers.', bullets:['Technology showcase and listing','Government and corporate buyer leads','Interview content on inspection use cases','Press release and news publishing'], bulletColor:'bg-[#1A7A3C]' },
-              { badge:<Chip label="Geospatial AI" color="bg-status-success/15 text-[#1A7A3C]" />, title:'AI for GIS & Geospatial Data', desc:'ML companies processing drone and satellite imagery for land use, change detection, and environmental monitoring reach GIS firms and government buyers.', bullets:['Platform and product listing','Content for GIS professional audience','B2B enquiry from GIS firms','Editorial articles on AI + GIS convergence'], bulletColor:'bg-[#1A7A3C]' },
+              { badge:<Chip label="Analytics" color="bg-status-success/15 text-[#22C55E]" />, title:'Drone Data Analytics', desc:'AI companies processing drone data for agriculture, infrastructure, and construction reach operators and manufacturers who need analytics platforms.', bullets:['Product and platform listing','B2B enquiry from drone operators','Product demo video content','Case study articles on DroneTv.in'], bulletColor:'bg-[#22C55E]' },
+              { badge:<Chip label="Computer Vision" color="bg-status-success/15 text-[#22C55E]" />, title:'Computer Vision & Object Detection', desc:'Object detection, segmentation, and classification companies for drone video and imagery reach manufacturers and service providers.', bullets:['Technology showcase on profile','Editorial articles explaining applications','Interview content for awareness','Lead generation from manufacturers'], bulletColor:'bg-[#22C55E]' },
+              { badge:<Chip label="Autonomous" color="bg-status-success/15 text-[#22C55E]" />, title:'Autonomous & Intelligent Drone Systems', desc:'AI-based flight planning, obstacle avoidance, and smart mission execution companies reach drone OEMs and enterprise operators.', bullets:['Technology and product listing','Product demo video production','B2B enquiry from drone manufacturers','Magazine editorial for innovation coverage'], bulletColor:'bg-[#22C55E]' },
+              { badge:<Chip label="AgriTech AI" color="bg-status-success/15 text-[#22C55E]" />, title:'AI for Precision Agriculture', desc:'NDVI, crop health, pest detection, and yield prediction AI companies reach agriculture drone operators and farming companies.', bullets:['AgriTech product listing','Agriculture vertical promotion','Case study video and article content','B2B enquiry from agri-drone operators'], bulletColor:'bg-[#22C55E]' },
+              { badge:<Chip label="Inspection AI" color="bg-status-success/15 text-[#22C55E]" />, title:'AI-Based Infrastructure Inspection', desc:'Automated damage detection and defect classification companies reach infrastructure owners and inspection service providers.', bullets:['Technology showcase and listing','Government and corporate buyer leads','Interview content on inspection use cases','Press release and news publishing'], bulletColor:'bg-[#22C55E]' },
+              { badge:<Chip label="Geospatial AI" color="bg-status-success/15 text-[#22C55E]" />, title:'AI for GIS & Geospatial Data', desc:'ML companies processing drone and satellite imagery for land use, change detection, and environmental monitoring reach GIS firms and government buyers.', bullets:['Platform and product listing','Content for GIS professional audience','B2B enquiry from GIS firms','Editorial articles on AI + GIS convergence'], bulletColor:'bg-[#22C55E]' },
             ].map(c => <FeatCard key={c.title} {...c} />)}
           </FeatGrid>
-          <div className="mt-5 bg-surface-card border-l-4 border-[#1A7A3C] px-4 py-3 text-xs text-ink-caption leading-relaxed rounded-r">
+          <div className="mt-5 bg-surface-card border-l-4 border-[#22C55E] px-4 py-3 text-xs text-ink-caption leading-relaxed rounded-r">
             <strong className="text-ink">AI on DroneTv.in:</strong> AI technology companies selling to drone operators, manufacturers, or GIS firms find a ready-made audience on DroneTv.in. AI is one of the platform's three primary sectors. All packages, add-ons, content production, and lead generation features are equally available to AI companies.
           </div>
         </div>
@@ -559,7 +559,7 @@ export default function PortfolioPage() {
                 ['Manufacturers & OEMs','Fixed-wing, multi-rotor, VTOL, and hybrid UAV makers'],
                 ['Media & Filmmaking','Aerial cinematography and creative drone services'],
               ]},
-              { hBg:'bg-[#1A5FA8]', hText:'text-white', label:'GIS Industry Verticals', items:[
+              { hBg:'bg-[#2563EB]', hText:'text-white', label:'GIS Industry Verticals', items:[
                 ['Photogrammetry','2D orthophoto, 3D model, and point cloud generation'],
                 ['LiDAR Services','Aerial scanning, terrain modelling, vegetation analysis'],
                 ['Remote Sensing','Satellite imagery, multispectral, hyperspectral data'],
@@ -569,7 +569,7 @@ export default function PortfolioPage() {
                 ['Environmental Monitoring','Forest mapping, wetland, and land-use change analysis'],
                 ['GIS Training','QGIS, ArcGIS, photogrammetry certification programs'],
               ]},
-              { hBg:'bg-[#1A7A3C]', hText:'text-white', label:'AI Industry Verticals', items:[
+              { hBg:'bg-[#22C55E]', hText:'text-white', label:'AI Industry Verticals', items:[
                 ['Drone Data Analytics','AI processing of drone imagery for agriculture and infrastructure'],
                 ['Computer Vision','Object detection, segmentation, and counting for UAV imagery'],
                 ['Autonomous Systems','AI flight planning, obstacle avoidance, mission automation'],
@@ -608,14 +608,14 @@ export default function PortfolioPage() {
               { badge:'Drone', badgeColor:'bg-ink text-brand-yellow', title:'Drone Service Providers', desc:'Agriculture, inspection, survey, and logistics companies generating B2B leads.' },
               { badge:'Drone', badgeColor:'bg-ink text-brand-yellow', title:'Training Institutes', desc:'DGCA-approved institutes promoting pilot courses to students.' },
               { badge:'Drone', badgeColor:'bg-ink text-brand-yellow', title:'Parts & Components', desc:'Propulsion, battery, frame, and payload suppliers reaching drone OEMs.' },
-              { badge:'GIS', badgeColor:'bg-status-info/15 text-[#1A5FA8]', title:'Survey & Mapping Firms', desc:'Photogrammetry, LiDAR, and aerial survey companies reaching infrastructure clients.' },
-              { badge:'GIS', badgeColor:'bg-status-info/15 text-[#1A5FA8]', title:'GIS Software Companies', desc:'Geospatial platform and processing tool vendors reaching professionals and enterprises.' },
-              { badge:'GIS', badgeColor:'bg-status-info/15 text-[#1A5FA8]', title:'Remote Sensing Specialists', desc:'Satellite and multispectral data companies reaching agriculture and environment clients.' },
-              { badge:'GIS', badgeColor:'bg-status-info/15 text-[#1A5FA8]', title:'GIS Consultancies', desc:'Urban planning and infrastructure GIS firms reaching government and developers.' },
-              { badge:'AI', badgeColor:'bg-status-success/15 text-[#1A7A3C]', title:'AI Analytics Companies', desc:'Drone data analytics platforms reaching operators and manufacturers.' },
-              { badge:'AI', badgeColor:'bg-status-success/15 text-[#1A7A3C]', title:'Computer Vision Firms', desc:'Object detection companies reaching drone OEMs and service providers.' },
-              { badge:'AI', badgeColor:'bg-status-success/15 text-[#1A7A3C]', title:'Autonomous Systems', desc:'AI flight and mission automation companies reaching manufacturers.' },
-              { badge:'AI', badgeColor:'bg-status-success/15 text-[#1A7A3C]', title:'Geospatial AI Platforms', desc:'ML companies for satellite and drone imagery reaching GIS firms and government.' },
+              { badge:'GIS', badgeColor:'bg-status-info/15 text-[#2563EB]', title:'Survey & Mapping Firms', desc:'Photogrammetry, LiDAR, and aerial survey companies reaching infrastructure clients.' },
+              { badge:'GIS', badgeColor:'bg-status-info/15 text-[#2563EB]', title:'GIS Software Companies', desc:'Geospatial platform and processing tool vendors reaching professionals and enterprises.' },
+              { badge:'GIS', badgeColor:'bg-status-info/15 text-[#2563EB]', title:'Remote Sensing Specialists', desc:'Satellite and multispectral data companies reaching agriculture and environment clients.' },
+              { badge:'GIS', badgeColor:'bg-status-info/15 text-[#2563EB]', title:'GIS Consultancies', desc:'Urban planning and infrastructure GIS firms reaching government and developers.' },
+              { badge:'AI', badgeColor:'bg-status-success/15 text-[#22C55E]', title:'AI Analytics Companies', desc:'Drone data analytics platforms reaching operators and manufacturers.' },
+              { badge:'AI', badgeColor:'bg-status-success/15 text-[#22C55E]', title:'Computer Vision Firms', desc:'Object detection companies reaching drone OEMs and service providers.' },
+              { badge:'AI', badgeColor:'bg-status-success/15 text-[#22C55E]', title:'Autonomous Systems', desc:'AI flight and mission automation companies reaching manufacturers.' },
+              { badge:'AI', badgeColor:'bg-status-success/15 text-[#22C55E]', title:'Geospatial AI Platforms', desc:'ML companies for satellite and drone imagery reaching GIS firms and government.' },
               { badge:'All Sectors', badgeColor:'bg-ink-light text-ink-caption', title:'Students & Job Seekers', desc:'Students from Drone, GIS, and AI discovering training and career paths.' },
               { badge:'All Sectors', badgeColor:'bg-ink-light text-ink-caption', title:'Government Bodies', desc:'Accessing Drone, GIS, and AI technology and communicating requirements.' },
               { badge:'All Sectors', badgeColor:'bg-ink-light text-ink-caption', title:'Investors & Researchers', desc:'Tracking the Drone, GIS, and AI ecosystem through media and directory.' },

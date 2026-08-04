@@ -60,7 +60,7 @@ const ContactPage = () => {
   ];
 
   return (
-    <div className="pt-20 min-h-screen bg-ink-offwhite">
+    <div className="pt-20 min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero
         title={<>Get In <span>Touch</span></>}

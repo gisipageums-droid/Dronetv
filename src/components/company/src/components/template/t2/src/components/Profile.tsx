@@ -76,7 +76,7 @@ const Profile = () => {
                 <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
                 <p 
                   className="font-medium mb-3"
-                  style={{ color: "#facc15" }}
+                  style={{ color: "#F8C400" }}
                 >
                   {member.role}
                 </p>

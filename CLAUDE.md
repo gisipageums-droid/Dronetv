@@ -12,3 +12,7 @@ Every color, gradient, typography color, button state, badge, spacing value, and
 - Gradients are reserved for hero sections, premium sections, or special highlights only — not general UI.
 
 Read `DESIGN_SYSTEM.md` before writing or editing any styled component in this repo.
+
+## Styling mechanism — Tailwind classes only
+
+Use Tailwind utility classes (the tokens defined in `tailwind.config.js` — `bg-brand-yellow`, `text-ink`, `bg-surface-main`, etc.) for all styling. Do not write new inline `<style>{...}` blocks, CSS-in-template-string constants, or `style={{...}}` props with hardcoded colors. The whole app should draw from the one Tailwind config, not scattered per-component stylesheets — several older pages (`ProductsPage.tsx`, `ServicesPage.tsx`, `CompaniesPage.tsx`, `Portfolio.tsx`, and some webbuilder templates) still have legacy inline CSS with raw hex codes; when you touch one of those files, migrate what you touch to Tailwind classes rather than adding more inline CSS to it.

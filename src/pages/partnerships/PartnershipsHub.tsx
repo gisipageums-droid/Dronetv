@@ -70,7 +70,7 @@ const packages = [
 
 export default function PartnershipsHubPage() {
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Partner with <span>DroneTv.in</span></>}
         stats={[

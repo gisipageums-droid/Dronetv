@@ -42,8 +42,8 @@ const Navigation: React.FC = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="text-2xl font-bold">
-            <span className="text-[#FFD400]">Drone</span>
-            <span className="text-[#FF0000]">Fair</span>
+            <span className="text-[#F8C400]">Drone</span>
+            <span className="text-[#DC2626]">Fair</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -52,20 +52,20 @@ const Navigation: React.FC = () => {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="relative font-medium text-white hover:text-[#FFD400] transition-colors duration-300 group"
+                className="relative font-medium text-white hover:text-[#F8C400] transition-colors duration-300 group"
               >
                 {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0000] transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC2626] transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
           </div>
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-4">
-            <button className="border-2 border-[#FFD400] text-[#FFD400] hover:bg-[#FFD400] hover:text-ink px-6 py-2 rounded-full font-semibold transition-all duration-300">
+            <button className="border-2 border-[#F8C400] text-[#F8C400] hover:bg-[#F8C400] hover:text-ink px-6 py-2 rounded-full font-semibold transition-all duration-300">
               Book Stall
             </button>
-            <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+            <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
               Attend Event
             </button>
           </div>
@@ -86,16 +86,16 @@ const Navigation: React.FC = () => {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-4 py-3 text-white hover:text-[#FFD400] hover:bg-white/5 transition-colors"
+                className="block w-full text-left px-4 py-3 text-white hover:text-[#F8C400] hover:bg-white/5 transition-colors"
               >
                 {item.name}
               </button>
             ))}
             <div className="flex flex-col gap-2 px-4 mt-4">
-              <button className="border-2 border-[#FFD400] text-[#FFD400] hover:bg-[#FFD400] hover:text-ink px-6 py-2 rounded-full font-semibold transition-colors">
+              <button className="border-2 border-[#F8C400] text-[#F8C400] hover:bg-[#F8C400] hover:text-ink px-6 py-2 rounded-full font-semibold transition-colors">
                 Book Stall
               </button>
-              <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-2 rounded-full font-semibold transition-colors">
+              <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-2 rounded-full font-semibold transition-colors">
                 Attend Event
               </button>
             </div>

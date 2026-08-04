@@ -43,11 +43,11 @@
 
 /* Dark mode variables */
 :root.dark {
-  --background: #0a0a0a;
+  --background: #111111;
   --foreground: #fafafa;
-  --card: #1a1a1a;
+  --card: #111111;
   --card-foreground: #fafafa;
-  --popover: #1a1a1a;
+  --popover: #111111;
   --popover-foreground: #fafafa;
   --primary: #F8C400;
   --primary-foreground: #000000;
@@ -71,7 +71,7 @@
   --chart-3: #E8B400;
   --chart-4: #262626;
   --chart-5: #404040;
-  --sidebar: #0a0a0a;
+  --sidebar: #111111;
   --sidebar-foreground: #fafafa;
   --sidebar-primary: #F8C400;
   --sidebar-primary-foreground: #000000;

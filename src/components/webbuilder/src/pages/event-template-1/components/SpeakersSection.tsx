@@ -65,7 +65,7 @@ const SpeakersSection = () => {
     <section id="speakers" className="py-20 bg-ink-offwhite">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-10">
-          <span className="text-[#FFD400]">Drone Expo 2025</span> Speakers
+          <span className="text-[#F8C400]">Drone Expo 2025</span> Speakers
         </h2>
 
         {allSpeakers.map((dayGroup, index) => (
@@ -88,11 +88,11 @@ const SpeakersSection = () => {
               {dayGroup.speakers.map((spk) => (
                 <SwiperSlide key={spk.id}>
                   <div className="bg-surface-card rounded-2xl shadow-lg p-6 text-center h-full hover:shadow-2xl transition-all duration-300">
-                    <div className="w-10 h-10 rounded-full bg-[#FF0000] text-white flex items-center justify-center mx-auto font-bold mb-4">
+                    <div className="w-10 h-10 rounded-full bg-[#DC2626] text-white flex items-center justify-center mx-auto font-bold mb-4">
                       {spk.id}
                     </div>
                     <h4 className="text-lg font-semibold text-ink mb-1">{spk.name}</h4>
-                    {spk.title && <p className="text-sm text-[#FFD400] font-medium">{spk.title}</p>}
+                    {spk.title && <p className="text-sm text-[#F8C400] font-medium">{spk.title}</p>}
                     {spk.company && <p className="text-sm text-ink-paragraph">{spk.company}</p>}
                   </div>
                 </SwiperSlide>

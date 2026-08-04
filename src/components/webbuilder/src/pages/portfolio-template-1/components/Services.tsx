@@ -75,8 +75,8 @@ const Services: React.FC<ServicesProps> = ({
     },
   ],
   iconMap = defaultIconMap,
-  primaryColor = "#FFD400",
-  accentColor = "#FF0000",
+  primaryColor = "#F8C400",
+  accentColor = "#DC2626",
 }) => {
   return (
     <section id="services" className="py-20" style={{ backgroundColor: primaryColor }}>

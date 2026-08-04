@@ -35,18 +35,18 @@
 //   };
 
 //   return (
-//     <div className="min-h-screen bg-surface-card">
+//     <div className="min-h-screen bg-surface-main">
 //       {/* Header */}
 //       <header className="bg-ink text-white py-6">
 //         <div className="container mx-auto px-4">
 //           <div className="flex items-center justify-between">
 //             <div className="text-2xl font-bold">
-//               Drone<span className="text-[#FFD400]">TV</span>
+//               Drone<span className="text-[#F8C400]">TV</span>
 //             </div>
 //             <nav>
 //               <button 
 //                 onClick={() => navigate('/create-portfolio')}
-//                 className="flex items-center gap-2 text-white hover:text-[#FFD400] transition-colors"
+//                 className="flex items-center gap-2 text-white hover:text-[#F8C400] transition-colors"
 //               >
 //                 <ArrowLeft size={20} />
 //                 Back to Categories
@@ -61,9 +61,9 @@
 //         <div className="container mx-auto px-4">
 //           <div className="text-center mb-16">
 //             <h1 className="text-5xl font-bold text-ink mb-6">
-//               Choose Your <span className="text-[#FF0000]">Template</span>
+//               Choose Your <span className="text-[#DC2626]">Template</span>
 //             </h1>
-//             <div className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+//             <div className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
 //             <p className="text-ink-paragraph text-xl max-w-2xl mx-auto">
 //               Select a professional template that best represents your style and customize it to your needs
 //             </p>
@@ -110,7 +110,7 @@
 //                     <div className="grid grid-cols-2 gap-2">
 //                       {template.features.map((feature, index) => (
 //                         <div key={index} className="flex items-center gap-2">
-//                           <div className="w-2 h-2 bg-[#FF0000] rounded-full"></div>
+//                           <div className="w-2 h-2 bg-[#DC2626] rounded-full"></div>
 //                           <span className="text-ink-paragraph text-sm">{feature}</span>
 //                         </div>
 //                       ))}
@@ -121,7 +121,7 @@
 //                   <div className="flex gap-4">
 //                     <button
 //                       onClick={() => handleTemplateSelect(template.id)}
-//                       className="flex-1 bg-[#FF0000] hover:bg-[#FF0000]/90 text-white py-3 px-6 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105"
+//                       className="flex-1 bg-[#DC2626] hover:bg-[#DC2626]/90 text-white py-3 px-6 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105"
 //                     >
 //                       <span>Customize This Template</span>
 //                       <ArrowRight size={20} />
@@ -129,7 +129,7 @@
                     
 //                     <button
 //                       onClick={() => handlePreview(template.previewUrl)}
-//                       className="border-2 border-[#FFD400] text-ink hover:bg-[#FFD400] py-3 px-6 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2"
+//                       className="border-2 border-[#F8C400] text-ink hover:bg-[#F8C400] py-3 px-6 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2"
 //                     >
 //                       <Eye size={20} />
 //                       Preview
@@ -141,7 +141,7 @@
 //           </div>
 
 //           {/* Help Section */}
-//           <div className="mt-20 bg-[#FFD400] rounded-3xl p-12 text-center">
+//           <div className="mt-20 bg-[#F8C400] rounded-3xl p-12 text-center">
 //             <h2 className="text-3xl font-bold text-ink mb-4">
 //               Need Help Choosing?
 //             </h2>

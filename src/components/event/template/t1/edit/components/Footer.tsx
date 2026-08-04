@@ -312,7 +312,7 @@
 //                   </div>
 //                 </div>
 //               ) : (
-//                 <h2 className="text-2xl md:text-3xl font-bold text-[#FFD400] mb-4">
+//                 <h2 className="text-2xl md:text-3xl font-bold text-[#F8C400] mb-4">
 //                   {footerContent.eventName}
 //                 </h2>
 //               )}
@@ -359,7 +359,7 @@
 //                   </div>
 //                 </div>
 //               ) : (
-//                 <h3 className="text-xl font-bold text-[#FFD400]">
+//                 <h3 className="text-xl font-bold text-[#F8C400]">
 //                   {footerContent.quickLinksTitle}
 //                 </h3>
 //               )}
@@ -421,7 +421,7 @@
 //                   ) : (
 //                     <button
 //                       onClick={() => scrollToSection(link.href)}
-//                       className="text-ink-caption hover:text-[#FFD400] transition-all duration-300 hover:translate-x-1 transform inline-block"
+//                       className="text-ink-caption hover:text-[#F8C400] transition-all duration-300 hover:translate-x-1 transform inline-block"
 //                     >
 //                       {link.name}
 //                     </button>
@@ -511,7 +511,7 @@
 //                       <a
 //                         href={social.href}
 //                         aria-label={social.label}
-//                         className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
+//                         className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#DC2626] transition-all duration-300 transform hover:scale-110"
 //                         target="_blank"
 //                         rel="noopener noreferrer"
 //                       >
@@ -887,7 +887,7 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                   </div>
                 </div>
               ) : (
-                <h2 className="text-2xl md:text-3xl font-bold text-[#FFD400] mb-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-[#F8C400] mb-4">
                   {footerContent.eventName}
                 </h2>
               )}
@@ -934,7 +934,7 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                   </div>
                 </div>
               ) : (
-                <h3 className="text-xl font-bold text-[#FFD400]">
+                <h3 className="text-xl font-bold text-[#F8C400]">
                   {footerContent.quickLinksTitle}
                 </h3>
               )}
@@ -996,7 +996,7 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                   ) : (
                     <button
                       onClick={() => scrollToSection(link.href)}
-                      className="text-ink-caption hover:text-[#FFD400] transition-all duration-300 hover:translate-x-1 transform inline-block"
+                      className="text-ink-caption hover:text-[#F8C400] transition-all duration-300 hover:translate-x-1 transform inline-block"
                     >
                       {link.name}
                     </button>
@@ -1086,7 +1086,7 @@ const Footer: React.FC<FooterProps> = ({ footerData, onStateChange }) => {
                       <a
                         href={social.href}
                         aria-label={social.label}
-                        className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#FF0000] transition-all duration-300 transform hover:scale-110"
+                        className="w-10 h-10 bg-ink-charcoal rounded-full flex items-center justify-center text-ink-caption hover:text-white hover:bg-[#DC2626] transition-all duration-300 transform hover:scale-110"
                         target="_blank"
                         rel="noopener noreferrer"
                       >

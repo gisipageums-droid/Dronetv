@@ -34,9 +34,9 @@
 //       <div className="container mx-auto px-4">
 //         <div className="text-center mb-16">
 //           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
-//             Get In <span className="text-[#FF0000]">Touch</span>
+//             Get In <span className="text-[#DC2626]">Touch</span>
 //           </h2>
-//           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
+//           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
 //           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph dark:text-gray-300 max-w-2xl mx-auto">
 //             Connect with me for drone training, aerospace education, or research collaboration. I'm currently based in Hyderabad and actively mentoring drone pilots across India.
 //           </p>
@@ -56,22 +56,22 @@
 //                 <div className="grid md:grid-cols-2 gap-6">
 //                   <div className="group">
 //                     <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Name *</label>
-//                     <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-ink dark:text-white" placeholder="Your name" />
+//                     <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent transition-all duration-300 text-ink dark:text-white" placeholder="Your name" />
 //                   </div>
 //                   <div className="group">
 //                     <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Email *</label>
-//                     <input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-ink dark:text-white" placeholder="your@email.com" />
+//                     <input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent transition-all duration-300 text-ink dark:text-white" placeholder="your@email.com" />
 //                   </div>
 //                 </div>
 //                 <div className="group">
 //                   <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Subject *</label>
-//                   <input type="text" name="subject" value={formData.subject} onChange={handleInputChange} required className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-ink dark:text-white" placeholder="Training inquiry / Partnership" />
+//                   <input type="text" name="subject" value={formData.subject} onChange={handleInputChange} required className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent transition-all duration-300 text-ink dark:text-white" placeholder="Training inquiry / Partnership" />
 //                 </div>
 //                 <div className="group">
 //                   <label className="block text-sm font-medium text-ink-paragraph dark:text-gray-300 mb-2">Message *</label>
-//                   <textarea name="message" value={formData.message} onChange={handleInputChange} required rows={6} className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#FF0000] focus:border-transparent transition-all duration-300 text-ink dark:text-white resize-none" placeholder="Tell me how I can help you..." />
+//                   <textarea name="message" value={formData.message} onChange={handleInputChange} required rows={6} className="w-full px-4 py-3 bg-ink-offwhite dark:bg-gray-800 border border-ink-light dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#DC2626] focus:border-transparent transition-all duration-300 text-ink dark:text-white resize-none" placeholder="Tell me how I can help you..." />
 //                 </div>
-//                 <button type="submit" disabled={isSubmitting} className="w-full bg-[#FF0000] hover:bg-[#FF0000]/90 disabled:bg-ink-caption text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 disabled:transform-none">
+//                 <button type="submit" disabled={isSubmitting} className="w-full bg-[#DC2626] hover:bg-[#DC2626]/90 disabled:bg-ink-caption text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 disabled:transform-none">
 //                   {isSubmitting ? (<><div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> Sending...</>) : (<><Send size={20} />Send Message</>)}
 //                 </button>
 //               </form>
@@ -84,7 +84,7 @@
 //                 <h3 className="text-2xl font-bold text-ink dark:text-white mb-6">Contact Information</h3>
 //                 <div className="space-y-6">
 //                   <div className="flex items-center gap-4">
-//                     <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center">
+//                     <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center">
 //                       <Mail size={20} className="text-white" />
 //                     </div>
 //                     <div>
@@ -94,7 +94,7 @@
 //                     </div>
 //                   </div>
 //                   <div className="flex items-center gap-4">
-//                     <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center">
+//                     <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center">
 //                       <Phone size={20} className="text-white" />
 //                     </div>
 //                     <div>
@@ -103,7 +103,7 @@
 //                     </div>
 //                   </div>
 //                   <div className="flex items-center gap-4">
-//                     <div className="w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center">
+//                     <div className="w-12 h-12 bg-[#DC2626] rounded-full flex items-center justify-center">
 //                       <MapPin size={20} className="text-white" />
 //                     </div>
 //                     <div>
@@ -113,7 +113,7 @@
 //                   </div>
 //                 </div>
 //               </div>
-//               <div className="bg-[#FFD400] rounded-2xl p-8">
+//               <div className="bg-[#F8C400] rounded-2xl p-8">
 //                 <h3 className="text-2xl font-bold text-ink mb-4">Available for Training & Collaborations</h3>
 //                 <p className="text-ink/80 mb-6">I’m actively involved in drone pilot training, curriculum development, and UAV-based research. Feel free to connect for academic sessions, workshops, or institutional partnerships.</p>
 //                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -157,8 +157,8 @@ interface ContactProps {
 }
 
 const Contact: React.FC<ContactProps> = ({
-  primaryColor = '#FFD400',
-  accentColor = '#FF0000',
+  primaryColor = '#F8C400',
+  accentColor = '#DC2626',
   contactMessage = "Whether it's aerial mapping, drone training, or media partnerships—we're excited to collaborate with you. Reach out today!",
   email = 'bd@ipageums.com',
   phone = '+65 9006 2901',

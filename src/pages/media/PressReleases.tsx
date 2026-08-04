@@ -33,7 +33,7 @@ export default function PressReleasesPage() {
   );
 
   return (
-    <div className="pt-[104px] min-h-screen bg-ink-offwhite">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
         title={<>Press <span>Releases</span></>}
         stats={[

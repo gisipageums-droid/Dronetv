@@ -201,24 +201,42 @@ const Navigation = () => {
               )}
             </div>
 
-            {/* Media Hub dropdown */}
-            <div className="relative" ref={mediaRef}
-              onMouseEnter={() => { closeAllDropdowns(); setIsMediaOpen(true); }}
-              onMouseLeave={() => setIsMediaOpen(false)}
+            {/* Companies */}
+            <Link to="/listed-companies" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/listed-companies" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
+              <span className="relative z-10">Companies</span>
+              <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+            </Link>
+
+            {/* Products */}
+            <Link to="/products" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/products" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
+              <span className="relative z-10">Products</span>
+              <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+            </Link>
+
+            {/* Services */}
+            <Link to="/services" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/services" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
+              <span className="relative z-10">Services</span>
+              <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+            </Link>
+
+            {/* Professionals dropdown */}
+            <div className="relative" ref={professionalsRef}
+              onMouseEnter={() => { closeAllDropdowns(); setIsProfessionalsOpen(true); }}
+              onMouseLeave={() => setIsProfessionalsOpen(false)}
             >
               <motion.button
-                onClick={() => { closeAllDropdowns(); handleNavigation("/media"); }}
-                className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-ink flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${mediaItems.some(i => location.pathname === i.path) ? "bg-ink/10" : ""}`}
+                onClick={() => { closeAllDropdowns(); handleNavigation("/professionals"); }}
+                className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-ink flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${professionalsItems.some(i => location.pathname === i.path) || location.pathname === "/professionals" ? "bg-ink/10" : ""}`}
               >
-                <span className="relative z-10">Media Hub</span>
+                <span className="relative z-10">Professionals</span>
                 {chevron}
                 <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
               </motion.button>
               <div className="absolute top-full left-0 h-1 w-full" />
-              {isMediaOpen && (
+              {isProfessionalsOpen && (
                 <motion.div {...dropdownMotion} className={dropdownBase}>
                   <div className="p-2 flex flex-col">
-                    {mediaItems.map(i => navDropdownItem(i.path, i.label))}
+                    {professionalsItems.map(i => navDropdownItem(i.path, i.label))}
                   </div>
                 </motion.div>
               )}
@@ -247,35 +265,6 @@ const Navigation = () => {
               )}
             </div>
 
-            {/* Companies */}
-            <Link to="/listed-companies" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/listed-companies" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
-              <span className="relative z-10">Companies</span>
-              <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-            </Link>
-
-            {/* Professionals dropdown */}
-            <div className="relative" ref={professionalsRef}
-              onMouseEnter={() => { closeAllDropdowns(); setIsProfessionalsOpen(true); }}
-              onMouseLeave={() => setIsProfessionalsOpen(false)}
-            >
-              <motion.button
-                onClick={() => { closeAllDropdowns(); handleNavigation("/professionals"); }}
-                className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-ink flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${professionalsItems.some(i => location.pathname === i.path) || location.pathname === "/professionals" ? "bg-ink/10" : ""}`}
-              >
-                <span className="relative z-10">Professionals</span>
-                {chevron}
-                <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-              </motion.button>
-              <div className="absolute top-full left-0 h-1 w-full" />
-              {isProfessionalsOpen && (
-                <motion.div {...dropdownMotion} className={dropdownBase}>
-                  <div className="p-2 flex flex-col">
-                    {professionalsItems.map(i => navDropdownItem(i.path, i.label))}
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
             {/* Partnerships dropdown */}
             <div className="relative" ref={partnershipsRef}
               onMouseEnter={() => { closeAllDropdowns(); setIsPartnershipsOpen(true); }}
@@ -299,27 +288,38 @@ const Navigation = () => {
               )}
             </div>
 
-            {/* Products */}
-            <Link to="/products" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/products" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
-              <span className="relative z-10">Products</span>
-              <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-            </Link>
+            {/* Media Hub dropdown */}
+            <div className="relative" ref={mediaRef}
+              onMouseEnter={() => { closeAllDropdowns(); setIsMediaOpen(true); }}
+              onMouseLeave={() => setIsMediaOpen(false)}
+            >
+              <motion.button
+                onClick={() => { closeAllDropdowns(); handleNavigation("/media"); }}
+                className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-ink flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${mediaItems.some(i => location.pathname === i.path) ? "bg-ink/10" : ""}`}
+              >
+                <span className="relative z-10">Media Hub</span>
+                {chevron}
+                <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+              </motion.button>
+              <div className="absolute top-full left-0 h-1 w-full" />
+              {isMediaOpen && (
+                <motion.div {...dropdownMotion} className={dropdownBase}>
+                  <div className="p-2 flex flex-col">
+                    {mediaItems.map(i => navDropdownItem(i.path, i.label))}
+                  </div>
+                </motion.div>
+              )}
+            </div>
 
-            {/* Services */}
-            <Link to="/services" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/services" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
-              <span className="relative z-10">Services</span>
+            {/* Advertising Plans */}
+            <Link to="/partnerships/benefits" className={`relative px-2.5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/partnerships/benefits" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
+              <span className="relative z-10">Advertising Plans</span>
               <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
             </Link>
 
             {/* Contact */}
             <Link to="/contact" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/contact" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
               <span className="relative z-10">Contact</span>
-              <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-            </Link>
-
-            {/* Purchase */}
-            <Link to="/partnerships/benefits" className={`relative px-2.5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/partnerships/benefits" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
-              <span className="relative z-10">Purchase</span>
               <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
             </Link>
 
@@ -436,8 +436,12 @@ const Navigation = () => {
               <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
             ))}
 
-            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Media Hub</p>
-            {mediaItems.map(i => (
+            <button onClick={() => handleNavigation("/listed-companies")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Companies</button>
+            <button onClick={() => handleNavigation("/products")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Products</button>
+            <button onClick={() => handleNavigation("/services")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Services</button>
+
+            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Professionals</p>
+            {professionalsItems.map(i => (
               <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
             ))}
 
@@ -446,22 +450,18 @@ const Navigation = () => {
               <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
             ))}
 
-            <button onClick={() => handleNavigation("/listed-companies")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Companies</button>
-
-            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Professionals</p>
-            {professionalsItems.map(i => (
-              <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
-            ))}
-
             <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Partnerships</p>
             {partnershipsItems.map(i => (
               <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
             ))}
 
-            <button onClick={() => handleNavigation("/products")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Products</button>
-            <button onClick={() => handleNavigation("/services")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Services</button>
+            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Media Hub</p>
+            {mediaItems.map(i => (
+              <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
+            ))}
+
+            <button onClick={() => handleNavigation("/partnerships/benefits")} className="w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-ink-charcoal/10 text-ink">Advertising Plans</button>
             <button onClick={() => handleNavigation("/contact")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Contact</button>
-            <button onClick={() => handleNavigation("/partnerships/benefits")} className="w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-ink-charcoal/10 text-ink">Purchase</button>
 
             {isLogin || isAdminLogin ? (
               <>
