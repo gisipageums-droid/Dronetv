@@ -3707,12 +3707,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
                   />
                   <div className="md:col-span-2">
                     <FormInput
-                      label="Contact Email"
+                      label="Company Email"
                       type="email"
                       value={formData.altContactEmail}
                       onChange={(value) => updateFormData({ altContactEmail: value })}
-                      required={false}
-                      placeholder="contact@company.com"
+                      required
+                      placeholder="company@yourcompany.com"
                     />
                   </div>
                 </div>

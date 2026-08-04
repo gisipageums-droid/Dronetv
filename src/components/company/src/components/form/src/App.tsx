@@ -776,6 +776,10 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       toast.error("Director Email is required.");
       return false;
     }
+    if (!formData.altContactEmail || formData.altContactEmail.trim() === "") {
+      toast.error("Company Email is required.");
+      return false;
+    }
     if (!formData.gstin || formData.gstin.trim() === "") {
       toast.error("GST/CIN/LLPIN verification is required to list your company.");
       return false;
