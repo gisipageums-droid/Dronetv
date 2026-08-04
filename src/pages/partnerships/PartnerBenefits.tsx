@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import CompactHero from '../../components/common/CompactHero';
 import { SLOT_DEFINITIONS, DURATION_OPTIONS } from '../../components/UserDashboard/pages/PagePlacements';
 
 const packages = [
@@ -68,14 +67,6 @@ const packages = [
 export default function PartnerBenefitsPage() {
   return (
     <div className="pt-[104px] min-h-screen bg-surface-main">
-      <CompactHero
-        title={<>Partnership Benefits <span>and Packages</span></>}
-        stats={[
-          { n: '3', l: 'Tiers' },
-          { n: '14', l: 'Feature Benefits' },
-        ]}
-      />
-
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {packages.map((p) => (

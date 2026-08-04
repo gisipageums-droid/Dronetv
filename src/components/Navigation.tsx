@@ -9,7 +9,6 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [isEventsOpen, setIsEventsOpen] = useState(false);
   const [isProfessionalsOpen, setIsProfessionalsOpen] = useState(false);
@@ -20,7 +19,6 @@ const Navigation = () => {
 
   const { isLogin, isAdminLogin, setHaveAccount } = useUserAuth();
   const languageRef = useRef<HTMLDivElement>(null);
-  const authRef = useRef<HTMLDivElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
   const eventsRef = useRef<HTMLDivElement>(null);
   const professionalsRef = useRef<HTMLDivElement>(null);
@@ -44,7 +42,6 @@ const Navigation = () => {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (languageRef.current && !languageRef.current.contains(e.target as Node)) setIsLanguageOpen(false);
-      if (authRef.current && !authRef.current.contains(e.target as Node)) setIsAuthOpen(false);
       if (accountRef.current && !accountRef.current.contains(e.target as Node)) setIsAccountOpen(false);
       if (mediaRef.current && !mediaRef.current.contains(e.target as Node)) setIsMediaOpen(false);
       if (eventsRef.current && !eventsRef.current.contains(e.target as Node)) setIsEventsOpen(false);
@@ -88,7 +85,6 @@ const Navigation = () => {
 
   const closeAllDropdowns = () => {
     setIsAccountOpen(false);
-    setIsAuthOpen(false);
     setIsMediaOpen(false);
     setIsEventsOpen(false);
     setIsProfessionalsOpen(false);
@@ -356,30 +352,12 @@ const Navigation = () => {
                 )}
               </div>
             ) : (
-              <div className="relative" ref={authRef}
-                onMouseEnter={() => { closeAllDropdowns(); setIsAuthOpen(true); }}
-                onMouseLeave={() => setIsAuthOpen(false)}
+              <Link to="/login" onClick={() => setHaveAccount(true)}
+                className="relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap text-ink hover:text-ink"
               >
-                <motion.button
-                  onClick={() => setIsAuthOpen(s => !s)}
-                  className="relative px-2.5 py-2 rounded-lg text-sm font-medium text-ink hover:text-ink flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap"
-                >
-                  <span className="relative z-10">Login</span>
-                  {chevron}
-                  <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-                </motion.button>
-                <div className="absolute top-full left-0 h-2 w-48" />
-                {isAuthOpen && (
-                  <motion.div {...dropdownMotion} className="absolute z-50 mt-1 font-medium bg-brand-yellow-soft border-2 border-ink/20 rounded-xl shadow-lg shadow-ink/15 left-0">
-                    <div className="p-2 flex flex-col min-w-[140px]">
-                      <Link to="/login" onClick={() => { setHaveAccount(true); setIsAuthOpen(false); }}
-                        className="px-3 py-2 rounded-lg text-sm font-medium text-ink hover:bg-brand-yellow-soft">Login</Link>
-                      <Link to="/login" onClick={() => { setHaveAccount(false); setIsAuthOpen(false); }}
-                        className="px-3 py-2 rounded-lg text-sm font-medium text-ink hover:bg-brand-yellow-soft">Register</Link>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
+                <span className="relative z-10">Login</span>
+                <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+              </Link>
             )}
 
           </div>
@@ -469,10 +447,7 @@ const Navigation = () => {
                 <button onClick={() => handleNavigation("/logout")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-status-error">Logout</button>
               </>
             ) : (
-              <>
-                <button onClick={() => { setHaveAccount(true); handleNavigation("/login"); }} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Login</button>
-                <button onClick={() => { setHaveAccount(false); handleNavigation("/login"); }} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Register</button>
-              </>
+              <button onClick={() => { setHaveAccount(true); handleNavigation("/login"); }} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Login</button>
             )}
 
           </div>
