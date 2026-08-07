@@ -1,44 +1,51 @@
+// Global fallback — legacy all-or-nothing switch, kept for backward compatibility.
 const BACKEND = import.meta.env.VITE_BACKEND_URL || '';
 
+// Per-service overrides — set only the ones you've cut over to Coolify.
+// e.g. VITE_BACKEND_URL_AUTH=https://api-dev.dronetv.in while everything
+// else keeps using Lambda. Falls back to the global BACKEND switch, then to
+// Lambda (null) when neither is set. This is what makes incremental,
+// service-by-service cutover possible instead of an all-or-nothing flip.
+const SERVICE_OVERRIDES: Record<string, string> = {
+  auth: import.meta.env.VITE_BACKEND_URL_AUTH || '',
+  company: import.meta.env.VITE_BACKEND_URL_COMPANY || '',
+  professional: import.meta.env.VITE_BACKEND_URL_PROFESSIONAL || '',
+  events: import.meta.env.VITE_BACKEND_URL_EVENTS || '',
+  media: import.meta.env.VITE_BACKEND_URL_MEDIA || '',
+  leads: import.meta.env.VITE_BACKEND_URL_LEADS || '',
+  payment: import.meta.env.VITE_BACKEND_URL_PAYMENT || '',
+  admin: import.meta.env.VITE_BACKEND_URL_ADMIN || '',
+  jobApplications: import.meta.env.VITE_BACKEND_URL_JOB_APPLICATIONS || '',
+};
+
+function serviceBase(name: keyof typeof SERVICE_OVERRIDES, path: string): string | null {
+  const base = SERVICE_OVERRIDES[name] || BACKEND;
+  return base ? `${base}/api/v1/${path}` : null;
+}
+
 // Auth service
-export const AUTH_API = BACKEND
-  ? `${BACKEND}/api/v1/auth`
-  : null;
+export const AUTH_API = serviceBase('auth', 'auth');
 
 // Company service
-export const COMPANY_API = BACKEND
-  ? `${BACKEND}/api/v1/company`
-  : null;
+export const COMPANY_API = serviceBase('company', 'company');
 
 // Professional service
-export const PROFESSIONAL_API = BACKEND
-  ? `${BACKEND}/api/v1/professional`
-  : null;
+export const PROFESSIONAL_API = serviceBase('professional', 'professional');
 
 // Events service
-export const EVENTS_API = BACKEND
-  ? `${BACKEND}/api/v1/events`
-  : null;
+export const EVENTS_API = serviceBase('events', 'events');
 
 // Media service
-export const MEDIA_API = BACKEND
-  ? `${BACKEND}/api/v1/media`
-  : null;
+export const MEDIA_API = serviceBase('media', 'media');
 
 // Leads service
-export const LEADS_API = BACKEND
-  ? `${BACKEND}/api/v1/leads`
-  : null;
+export const LEADS_API = serviceBase('leads', 'leads');
 
 // Payment service
-export const PAYMENT_API = BACKEND
-  ? `${BACKEND}/api/v1/payment`
-  : null;
+export const PAYMENT_API = serviceBase('payment', 'payment');
 
 // Admin service
-export const ADMIN_API = BACKEND
-  ? `${BACKEND}/api/v1/admin`
-  : null;
+export const ADMIN_API = serviceBase('admin', 'admin');
 
 // Lambda base URLs (fallback — used when VITE_BACKEND_URL is not set)
 export const LAMBDA = {
@@ -146,6 +153,4 @@ export const LAMBDA = {
 };
 
 // Job Board ATS (applications) service
-export const JOB_APPLICATIONS_API = BACKEND
-  ? `${BACKEND}/api/v1/job-applications`
-  : null;
+export const JOB_APPLICATIONS_API = serviceBase('jobApplications', 'job-applications');
