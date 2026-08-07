@@ -6,7 +6,11 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+# npm install, not npm ci: the committed lockfile is missing an optional
+# platform dep entry (npm ci requires an exact match, npm install resolves
+# it) - not touching the lockfile itself since regenerating it bumps
+# hundreds of unrelated versions, far too broad a change for this fix.
+RUN npm install
 
 COPY . .
 
