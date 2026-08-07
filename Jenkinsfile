@@ -36,10 +36,10 @@ pipeline {
                         --label traefik.http.middlewares.dronetv-frontend-testdev-https-redirect.redirectscheme.permanent=true \
                         dronetv-frontend-testdev-img:latest
                     for i in 1 2 3 4 5; do
-                        docker exec dronetv-frontend-testdev wget -qO- http://localhost/health && break
+                        docker exec dronetv-frontend-testdev wget -qO- http://127.0.0.1/health && break
                         sleep 3
                     done
-                    docker exec dronetv-frontend-testdev wget -qO- http://localhost/health || (docker logs --tail 60 dronetv-frontend-testdev; exit 1)
+                    docker exec dronetv-frontend-testdev wget -qO- http://127.0.0.1/health || (docker logs --tail 60 dronetv-frontend-testdev; exit 1)
                 '''
             }
         }
