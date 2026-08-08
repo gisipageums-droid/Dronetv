@@ -1,12 +1,13 @@
 import { TokenPlan } from './App';
-import { ADMIN_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
+import { PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
-const API_URL = ADMIN_API ? `${ADMIN_API}/dev` : `${LAMBDA.plansAdmin}/dev`;
-const GET_API_URL = PAYMENT_API ? `${PAYMENT_API}/dev` : `${LAMBDA.plans}/dev`;
+const API_URL = PAYMENT_API ? `${PAYMENT_API}/plans` : `${LAMBDA.plansAdmin}/dev`;
+const GET_API_URL = PAYMENT_API ? `${PAYMENT_API}/plans` : `${LAMBDA.plans}/dev`;
 
 export const fetchPlans = async () => {
     try {
-        const response = await fetch(GET_API_URL);
+        const response = await fetch(GET_API_URL, { headers: authHeader() });
         if (!response.ok) {
             throw new Error('Failed to fetch plans');
         }
@@ -22,17 +23,17 @@ export const addUpdatePlan = async (plan: Partial<TokenPlan>) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                ...authHeader(),
             },
             body: JSON.stringify({
-                plan: {
-                    id: plan.id,
-                    name: plan.name,
-                    tokens: plan.tokens,
-                    price: plan.price,
-                    discount: plan.discount,
-                    type: plan.type,
-                    features: plan.features
-                }
+                id: plan.id,
+                name: plan.name,
+                tokens: plan.tokens,
+                price: plan.price,
+                discount: plan.discount,
+                type: plan.type,
+                features: plan.features,
+                ...(PAYMENT_API ? {} : { plan }),
             }),
         });
 
@@ -52,6 +53,7 @@ export const updateTokenPrice = async (tokenPriceINR: string) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                ...authHeader(),
             },
             body: JSON.stringify({
                 tokenPriceINR: tokenPriceINR,
@@ -74,6 +76,7 @@ export const deletePlan = async (deleteId: string) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                ...authHeader(),
             },
             body: JSON.stringify({
                 deleteId: deleteId,

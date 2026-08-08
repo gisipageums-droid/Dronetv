@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import FormApp from "../../company/src/components/form/src/App";
 import { COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 
+const adminAuthHeader = () => ({ Authorization: `Bearer ${localStorage.getItem("adminToken")}` });
+
 const CARDS_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards` : `${LAMBDA.company}/dashboard-cards`;
 const UPDATE_API = COMPANY_API ? `${COMPANY_API}/draft/update` : `${LAMBDA.companyDraft2}/update`;
 const DETAILS_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details` : `${LAMBDA.company}/dashboard-cards/published-details`;
@@ -61,7 +63,7 @@ const AdminCompanyEdit: React.FC = () => {
 
   useEffect(() => {
     if (!userId) return;
-    fetch(`${CARDS_API}?userId=${userId}`)
+    fetch(`${CARDS_API}?userId=${userId}&viewType=admin`, { headers: adminAuthHeader() })
       .then(r => r.json())
       .then(data => {
         const cards: Company[] = data.cards || [];
@@ -93,7 +95,7 @@ const AdminCompanyEdit: React.FC = () => {
       let existingContent: any = {};
       try {
         const detailsRes = await fetch(`${DETAILS_API}/${company.publishedId}`, {
-          headers: { "Content-Type": "application/json", "X-User-Id": company.userId },
+          headers: { "Content-Type": "application/json", "X-User-Id": company.userId, ...adminAuthHeader() },
         });
         const details = await detailsRes.json();
         existingContent = details?.content || {};
@@ -130,7 +132,7 @@ const AdminCompanyEdit: React.FC = () => {
 
       await fetch(UPDATE_API, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminAuthHeader() },
         body: JSON.stringify({
           publishedId: company.publishedId,
           userId: company.userId,

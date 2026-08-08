@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { CheckCircle2, XCircle, Clock, Star, FileText } from "lucide-react";
 import { toast } from "react-toastify";
 import { MEDIA_API, LAMBDA } from "../../lib/apiConfig";
+import { authHeader } from "../../lib/authService";
 
 const CONTENT_API = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
 
@@ -41,7 +42,7 @@ export default function AdminUserContentPage() {
   const fetchItems = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${CONTENT_API}/admin?type=user-content`);
+      const res = await fetch(`${CONTENT_API}/admin?type=user-content`, { headers: authHeader() });
       const data = await res.json();
       const list: UserContentItem[] = data.items || [];
       list.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
@@ -60,7 +61,7 @@ export default function AdminUserContentPage() {
     try {
       const res = await fetch(CONTENT_API, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeader() },
         body: JSON.stringify({
           contentType: "user-content",
           contentId: item.contentId,

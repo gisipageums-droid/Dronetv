@@ -761,7 +761,8 @@ const apiService = {
   async fetchCompanyCredentials(draftId: string, userId: string): Promise<any> {
     try {
       const response = await fetch(
-        COMPANY_API ? `${COMPANY_API}/restore-js?draftId=${draftId}&userId=${userId}` : `${LAMBDA.companyRestoreJs}/js?draftId=${draftId}&userId=${userId}`
+        COMPANY_API ? `${COMPANY_API}/restore-js?draftId=${draftId}&userId=${userId}` : `${LAMBDA.companyRestoreJs}/js?draftId=${draftId}&userId=${userId}`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
       );
 
       if (!response.ok) {
@@ -782,7 +783,10 @@ const apiService = {
         COMPANY_API ? `${COMPANY_API}/admin/templates/review` : `${LAMBDA.companyAdmin}/admin/templates/review`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
           body,
         }
       );
@@ -803,7 +807,10 @@ const apiService = {
         COMPANY_API ? `${COMPANY_API}/admin/templates/review` : `${LAMBDA.companyAdmin}/admin/templates/review`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
           body,
         }
       );
@@ -826,7 +833,11 @@ const apiService = {
         COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${publishedId}`,
         {
           method: "GET",
-          headers: { "Content-Type": "application/json", "X-User-Id": userId },
+          headers: {
+            "Content-Type": "application/json",
+            "X-User-Id": userId,
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
         }
       );
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Search, Download, CheckCircle, XCircle, Clock } from "lucide-react";
 import { toast } from "react-toastify";
 import { PAYMENT_API, LAMBDA } from '../../../../lib/apiConfig';
+import { authHeader } from '../../../../lib/authService';
 
 interface Transaction {
   id: string;
@@ -41,13 +42,33 @@ export function TransactionHistory() {
     const fetchTransactions = async () => {
       try {
         const response = await fetch(
-          PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/Transaction-History/All-users-data` : `${LAMBDA.transactions}/Transaction-History/All-users-data`,
-          { signal: controller.signal }
+          PAYMENT_API ? `${PAYMENT_API}/admin/transactions?limit=200` : `${LAMBDA.transactions}/Transaction-History/All-users-data`,
+          { signal: controller.signal, headers: authHeader() }
         );
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data: TransactionResponse = await response.json();
+        const data = await response.json();
         if (data.success) {
-          setTransactions(data.transactions);
+          const txns: Transaction[] = PAYMENT_API
+            ? (data.transactions || []).map((t: any) => ({
+                id: t.id,
+                date: t.date,
+                description: t.description,
+                amount: t.amount,
+                category: t.service || '',
+                type: t.tokenCount > 0 ? 'purchase' : 'spend',
+                paymentStatus: t.status,
+                currency: 'INR',
+                tokenCount: t.tokenCount,
+                userId: '',
+                userName: '',
+                userEmail: '',
+                userPhone: '',
+                planName: t.service || '',
+                planId: '',
+                period: '',
+              }))
+            : (data as TransactionResponse).transactions;
+          setTransactions(txns);
         }
       } catch (error) {
         if ((error as Error)?.name === "AbortError") return;
