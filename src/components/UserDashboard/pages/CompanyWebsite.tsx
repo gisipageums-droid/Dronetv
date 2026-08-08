@@ -81,7 +81,7 @@ const CompanyWebsite: React.FC = () => {
   useEffect(() => {
     if (!company) return;
     const template = company.templateSelection || "template-1";
-    fetch(COMPANY_API ? `${COMPANY_API}/api/draft/${company.userId}/${company.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${company.userId}/${company.draftId}?template=${template}`)
+    fetch(COMPANY_API ? `${COMPANY_API}/draft/${company.userId}/${company.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${company.userId}/${company.draftId}?template=${template}`)
       .then((r) => r.json())
       .then((data) => {
         const cats: string[] = data?.formData?.companyCategory;
