@@ -125,7 +125,7 @@ export function Testimonials() {
                   <div className="w-12 h-12 rounded-full overflow-hidden">
                     <div className="w-full h-full bg-gradient-to-br from-brand-yellow to-brand-gold flex items-center justify-center">
                       <span className="text-ink text-lg">
-                        {testimonial.name.charAt(0)}
+                        {(testimonial.name || "?").charAt(0)}
                       </span>
                     </div>
                   </div>

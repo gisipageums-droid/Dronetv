@@ -79,7 +79,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
 
   // Get first character in uppercase for avatar
   const getAvatarLetter = (text: string) => {
-    return text.charAt(0).toUpperCase();
+    return (text || "P").charAt(0).toUpperCase();
   };
 
   return (
@@ -92,11 +92,11 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
               {/* Display Mode - Only Avatar (No Text) */}
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-brand-yellow-soft flex items-center justify-center text-ink font-bold text-lg border-2 border-brand-yellow-soft shadow-lg">
-                  {getAvatarLetter(data.logoText)}
+                  {getAvatarLetter(data.logoText || (data as any)?.name)}
                 </div>
                 {/* Logo Text displayed to the right of avatar */}
                 <span className="text-xl font-semibold text-foreground">
-                  {data.logoText}
+                  {data.logoText || (data as any)?.name || "MyLogo"}
                 </span>
               </div>
             </div>
