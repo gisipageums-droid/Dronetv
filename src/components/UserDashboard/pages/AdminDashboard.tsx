@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Search, Coins, Award } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
-import { AUTH_API, COMPANY_API, PROFESSIONAL_API, EVENTS_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
+import { AUTH_API, COMPANY_API, PROFESSIONAL_API, EVENTS_API, LEADS_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 
 interface Lead {
@@ -105,10 +105,16 @@ const AdminDashboard: React.FC = () => {
         { headers: AUTH_API ? authHeader() : {} }
       )
         .then(r => {
-          setTokenBalance((AUTH_API ? r.data?.tokenBalance : r.data?.profile?.tokenBalance) ?? 0);
+          if (!PAYMENT_API) setTokenBalance((AUTH_API ? r.data?.tokenBalance : r.data?.profile?.tokenBalance) ?? 0);
           setPackageType(((AUTH_API ? r.data?.packageType : r.data?.profile?.packageType) || "").toLowerCase());
         })
-        .catch(() => setTokenBalance(0));
+        .catch(() => { if (!PAYMENT_API) setTokenBalance(0); });
+
+      if (PAYMENT_API) {
+        axios.get(`${PAYMENT_API}/wallet?userId=${userDetails.email}`)
+          .then(r => setTokenBalance(r.data?.tokenBalance ?? 0))
+          .catch(() => setTokenBalance(0));
+      }
     }
   }, [getCategory, getProfessionalCount, getEventCount, userDetails?.email]);
 
