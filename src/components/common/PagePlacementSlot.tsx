@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import AdSlot from './AdSlot';
-import { LAMBDA } from '../../lib/apiConfig';
+import { LAMBDA, PAYMENT_API } from '../../lib/apiConfig';
 
 const TOKEN_SPEND = LAMBDA.tokenSpend;
 
@@ -26,7 +26,10 @@ export default function PagePlacementSlot({ slotId, width, height, aspect, minHe
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`${TOKEN_SPEND}/placement/active?slotId=${encodeURIComponent(slotId)}`, { signal: controller.signal })
+    const url = PAYMENT_API
+      ? `${PAYMENT_API}/placements/active?slotId=${encodeURIComponent(slotId)}`
+      : `${TOKEN_SPEND}/placement/active?slotId=${encodeURIComponent(slotId)}`;
+    fetch(url, { signal: controller.signal })
       .then(r => r.ok ? r.json() : null)
       .then(data => {
         if (data?.active && data?.imageUrl) {

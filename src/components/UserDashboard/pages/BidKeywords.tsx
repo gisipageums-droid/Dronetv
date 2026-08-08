@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Target, Coins, TrendingUp, Clock, CheckCircle, AlertCircle, Info, RefreshCw, X } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
-import { AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
 
 const PROFILE_API   = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND   = LAMBDA.tokenSpend;
@@ -50,8 +50,13 @@ const BidKeywordsPage: React.FC = () => {
   const fetchProfile = useCallback(async () => {
     if (!userId) return;
     try {
-      const r = await axios.get(`${PROFILE_API}?userId=${userId}`);
-      setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
+      if (PAYMENT_API) {
+        const r = await axios.get(`${PAYMENT_API}/wallet?userId=${userId}`);
+        setTokenBalance(r.data?.tokenBalance ?? 0);
+      } else {
+        const r = await axios.get(`${PROFILE_API}?userId=${userId}`);
+        setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
+      }
     } catch {}
   }, [userId]);
 
@@ -59,7 +64,7 @@ const BidKeywordsPage: React.FC = () => {
     if (!userId) return;
     setLoadingBids(true);
     try {
-      const r = await axios.get(`${TOKEN_SPEND}/bids?userId=${userId}`);
+      const r = await axios.get(PAYMENT_API ? `${PAYMENT_API}/bids?userId=${userId}` : `${TOKEN_SPEND}/bids?userId=${userId}`);
       setMyBids(r.data?.bids ?? []);
     } catch {
       setMyBids([]);
@@ -83,13 +88,16 @@ const BidKeywordsPage: React.FC = () => {
     setPlacing(true);
     setError("");
     try {
-      const r = await axios.post(`${TOKEN_SPEND}/bid`, {
-        userId,
-        keyword: selectedKeyword,
-        bidAmount,
-        durationDays: dur.days,
-        totalCost,
-      });
+      const r = await axios.post(
+        PAYMENT_API ? `${PAYMENT_API}/bids` : `${TOKEN_SPEND}/bid`,
+        {
+          userId,
+          keyword: selectedKeyword,
+          bidAmount,
+          durationDays: dur.days,
+          totalCost,
+        }
+      );
       if (r.data.success) {
         setTokenBalance(r.data.newBalance);
         setSuccess(true);
@@ -109,7 +117,9 @@ const BidKeywordsPage: React.FC = () => {
   const handleCancelBid = async (bidId: string) => {
     setCancelling(bidId);
     try {
-      const r = await axios.delete(`${TOKEN_SPEND}/bid?bidId=${bidId}&userId=${userId}`);
+      const r = await axios.delete(
+        PAYMENT_API ? `${PAYMENT_API}/bids/${bidId}?userId=${userId}` : `${TOKEN_SPEND}/bid?bidId=${bidId}&userId=${userId}`
+      );
       if (r.data.success) {
         setTokenBalance(prev => prev + (r.data.refunded || 0));
         await fetchBids();

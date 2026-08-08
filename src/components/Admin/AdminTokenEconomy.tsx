@@ -6,12 +6,20 @@ import {
   Upload, ImageIcon, Link as LinkIcon,
 } from "lucide-react";
 import axios from "axios";
-import { LAMBDA } from "../../lib/apiConfig";
+import { LAMBDA, PAYMENT_API } from "../../lib/apiConfig";
 import { SLOT_DEFINITIONS } from "../UserDashboard/pages/PagePlacements";
 
 const TOKEN_SPEND = LAMBDA.tokenSpend;
 const ADS_UPLOAD_API = `${LAMBDA.eventsImageUpload}/upload/ads`;
 const SLOT_LABELS: Record<string, string> = Object.fromEntries(SLOT_DEFINITIONS.map(s => [s.id, s.label]));
+
+// The admin session token is stored under a separate localStorage key from
+// the regular user token, so it isn't picked up by the global axios
+// Authorization header set in context.tsx — attach it explicitly here.
+function adminAuthHeader(): Record<string, string> {
+  const token = localStorage.getItem("adminToken");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 interface AdminStats {
   totalTokensSpent: number;
@@ -73,9 +81,15 @@ const AdminTokenEconomy: React.FC = () => {
     setLoading(true);
     try {
       const [statsR, ledgerR, slotsR] = await Promise.all([
-        axios.get(`${TOKEN_SPEND}/admin/stats`),
-        axios.get(`${TOKEN_SPEND}/admin/ledger`),
-        axios.get(`${TOKEN_SPEND}/slots`),
+        axios.get(
+          PAYMENT_API ? `${PAYMENT_API}/admin/token-economy/stats` : `${TOKEN_SPEND}/admin/stats`,
+          { headers: adminAuthHeader() }
+        ),
+        axios.get(
+          PAYMENT_API ? `${PAYMENT_API}/admin/token-economy/ledger` : `${TOKEN_SPEND}/admin/ledger`,
+          { headers: adminAuthHeader() }
+        ),
+        axios.get(PAYMENT_API ? `${PAYMENT_API}/placements/slots` : `${TOKEN_SPEND}/slots`),
       ]);
       setStatsResp(statsR.data ?? null);
       setLedger(ledgerR.data?.entries ?? []);
@@ -119,9 +133,11 @@ const AdminTokenEconomy: React.FC = () => {
       const imageUrl = uploadRes.data.s3Url;
       const linkUrl = linkDraft[slotId] || "";
 
-      const saveRes = await axios.put(`${TOKEN_SPEND}/admin/placement-creative`, {
-        slotId, slotLabel, imageUrl, linkUrl,
-      });
+      const saveRes = await axios.put(
+        PAYMENT_API ? `${PAYMENT_API}/admin/placement-creative` : `${TOKEN_SPEND}/admin/placement-creative`,
+        { slotId, slotLabel, imageUrl, linkUrl },
+        { headers: adminAuthHeader() }
+      );
       if (!saveRes.data?.success) throw new Error(saveRes.data?.message || "Could not save creative");
 
       await fetchData();

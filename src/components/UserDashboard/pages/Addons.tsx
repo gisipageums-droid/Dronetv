@@ -7,7 +7,7 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useUserAuth } from "../../context/context";
-import { AUTH_API, LAMBDA } from '../../../lib/apiConfig';
+import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND = LAMBDA.tokenSpend;
@@ -163,13 +163,16 @@ const Addons: React.FC = () => {
     setConfirmAddon(null);
 
     try {
-      const r = await axios.post(`${TOKEN_SPEND}/bid`, {
-        userId,
-        keyword: `[Addon] ${confirmAddon.title}`,
-        bidAmount: confirmAddon.tokens,
-        durationDays: 1,
-        totalCost: confirmAddon.tokens,
-      });
+      const r = await axios.post(
+        PAYMENT_API ? `${PAYMENT_API}/bids` : `${TOKEN_SPEND}/bid`,
+        {
+          userId,
+          keyword: `[Addon] ${confirmAddon.title}`,
+          bidAmount: confirmAddon.tokens,
+          durationDays: 1,
+          totalCost: confirmAddon.tokens,
+        }
+      );
       if (!r.data?.success) {
         toast.error(r.data?.message || "Purchase failed. Please try again.");
         setPurchasing(null);

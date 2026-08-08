@@ -9,8 +9,6 @@ import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND = LAMBDA.tokenSpend;
-// NOTE: the new payment service has no /bid or /bids endpoints at all (only
-// /placements/*) - bids stay on the Lambda gateway until that's built.
 
 interface Bid {
   bidId: string; keyword: string; bidAmount: number; totalCost: number;
@@ -37,14 +35,15 @@ const ActiveCampaigns: React.FC = () => {
     if (!userId) return;
     setLoading(true);
     try {
-      const [profileR, bidsR, placR] = await Promise.all([
-        axios.get(`${PROFILE_API}?userId=${userId}`),
-        axios.get(`${TOKEN_SPEND}/bids?userId=${userId}`),
+      const [profileR, walletR, bidsR, placR] = await Promise.all([
+        axios.get(`${PROFILE_API}?userId=${userId}`).catch(() => null),
+        PAYMENT_API ? axios.get(`${PAYMENT_API}/wallet?userId=${userId}`) : Promise.resolve(null),
+        axios.get(PAYMENT_API ? `${PAYMENT_API}/bids?userId=${userId}` : `${TOKEN_SPEND}/bids?userId=${userId}`),
         axios.get(PAYMENT_API ? `${PAYMENT_API}/placements?userId=${userId}` : `${TOKEN_SPEND}/placements?userId=${userId}`),
       ]);
-      const prof = profileR.data?.profile ?? {};
-      setTokenBalance(prof.tokenBalance ?? 0);
-      setTotalSpent(Math.max(0, prof.totalTokensSpent ?? 0));
+      const prof = profileR?.data?.profile ?? {};
+      setTokenBalance(walletR ? (walletR.data?.tokenBalance ?? 0) : (prof.tokenBalance ?? 0));
+      setTotalSpent(Math.max(0, (walletR ? walletR.data?.totalTokensSpent : prof.totalTokensSpent) ?? 0));
       setBids(bidsR.data?.bids ?? []);
       setPlacements(placR.data?.placements ?? []);
     } catch {
@@ -62,7 +61,9 @@ const ActiveCampaigns: React.FC = () => {
   const handleCancelBid = async (bidId: string) => {
     setCancelling(bidId);
     try {
-      const r = await axios.delete(`${TOKEN_SPEND}/bid?bidId=${bidId}&userId=${userId}`);
+      const r = await axios.delete(
+        PAYMENT_API ? `${PAYMENT_API}/bids/${bidId}?userId=${userId}` : `${TOKEN_SPEND}/bid?bidId=${bidId}&userId=${userId}`
+      );
       if (r.data.success) { setTokenBalance(prev => prev + (r.data.refunded || 0)); await fetchAll(); }
     } catch {}
     setCancelling(null);
