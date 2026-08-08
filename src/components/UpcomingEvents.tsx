@@ -56,6 +56,14 @@ function isEventEnded(dateStr: string): boolean {
   return endDate.getTime() < Date.now();
 }
 
+function eventSlug(event: EventCard): string {
+  let slug = (event as any).cleanUrl || (event as any).urlSlug || event.name;
+  if (slug && slug.startsWith("http")) {
+    slug = slug.split("/").pop() || event.name;
+  }
+  return slug;
+}
+
 const UpcomingEvents = () => {
   const navigate = useNavigate();
 
@@ -88,6 +96,7 @@ const UpcomingEvents = () => {
             status: card.isApproved ? "upcoming" : "draft",
             featured: true,
             urlSlug: card.urlSlug,
+            cleanUrl: card.cleanUrl,
           }));
 
           // 🟡 Ab state me API se aaya data set kar rahe (ended events hide out)
@@ -135,7 +144,7 @@ const UpcomingEvents = () => {
               image={event.image}
               imageAlt={event.name}
               className={events.length === 1 ? 'max-w-xl w-full' : 'w-full'}
-              onClick={() => navigate(`/event/${event.name}`)}
+              onClick={() => navigate(`/event/${eventSlug(event)}`)}
             >
               <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">
                 {event.price || 'Premium'}
@@ -164,7 +173,7 @@ const UpcomingEvents = () => {
               </div>
 
               <Link
-                to={`/event/${event.name}`}
+                to={`/event/${eventSlug(event)}`}
                 onClick={(e) => e.stopPropagation()}
                 className="mt-auto inline-flex items-center justify-center gap-2 bg-brand-yellow text-ink px-4 py-2.5 rounded-lg font-bold text-sm hover:bg-brand-yellow-soft transition-colors"
               >
