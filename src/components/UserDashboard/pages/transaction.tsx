@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useUserAuth } from "../../context/context";
 import { PAYMENT_API, LAMBDA, AUTH_API } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -56,219 +57,40 @@ const TransactionHistory: React.FC = () => {
 
             const response = await axios.get(
                 PAYMENT_API
-                    ? `${PAYMENT_API}/transaction-history/${userId}`
-                    : `${LAMBDA.transactions}/Transaction-History/${userId}`
+                    ? `${PAYMENT_API}/transactions/${userId}`
+                    : `${LAMBDA.transactions}/Transaction-History/${userId}`,
+                PAYMENT_API ? { headers: authHeader() } : undefined
             );
 
             if (response.data.success) {
+                const rawTransactions = response.data.transactions || [];
+                const mapped: Transaction[] = PAYMENT_API
+                    ? rawTransactions.map((t: any) => ({
+                        id: t.id,
+                        date: t.date,
+                        description: t.description,
+                        amount: t.amount,
+                        category: t.service || (t.tokenCount >= 0 ? 'Token Purchase' : 'Token Usage'),
+                        type: t.tokenCount >= 0 ? 'credit' : 'debit',
+                        paymentStatus: (t.status || '').toUpperCase(),
+                        currency: t.currency || 'INR',
+                        tokenCount: Math.abs(t.tokenCount || 0),
+                        userId,
+                    }))
+                    : rawTransactions;
                 setTransactionHistoryData(response.data);
-                setTransactions(response.data.transactions || []);
+                setTransactions(mapped);
             } else {
                 throw new Error(response.data.message || 'Failed to fetch transactions');
             }
         } catch {
-            setError('Failed to load transactions. Showing demo data.');
-
-            // Fallback to mock data
-            const mockTransactions: Transaction[] = [
-                {
-                    id: "67eb97910589f0b6e99bccc962728db3",
-                    date: "2025-11-24T05:21:39.267Z",
-                    description: "Token Purchase - 500 tokens (475 INR)",
-                    amount: 500,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 500,
-                    userId: "example2@gmail.com"
-                },
-                {
-                    id: "774231324d576de675670648ec1ead3a",
-                    date: "2025-11-22T17:38:12.028Z",
-                    description: "Token Purchase - 2500 tokens (2400 INR)",
-                    amount: 2500,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "CAPTURED",
-                    currency: "INR",
-                    tokenCount: 2500,
-                    userId: "example2@gmail.com"
-                },
-                {
-                    id: "b41c2435438d17bdf40c6e209c27f86b",
-                    date: "2025-11-22T17:37:51.367Z",
-                    description: "Token Purchase - 2500 tokens (2400 INR)",
-                    amount: 2500,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 2500,
-                    userId: "example2@gmail.com"
-                },
-                {
-                    id: "574d88d38d702471750f51d99b7a3c76",
-                    date: "2025-11-22T17:34:21.231Z",
-                    description: "Token Purchase - 100 tokens (5000 INR)",
-                    amount: 100,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 100,
-                    userId: "example2@gmail.com"
-                },
-                {
-                    id: "9ed02273f280f09f1b635a17e9ff5ca1",
-                    date: "2025-11-22T15:16:59.748Z",
-                    description: "Token Purchase - 2092 tokens (20923 INR)",
-                    amount: 2092,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 2092,
-                    userId: "example999@gmail.com"
-                },
-                {
-                    id: "1c2d805234659e263a65c15525acd815",
-                    date: "2025-11-22T15:16:12.050Z",
-                    description: "Token Purchase - 88 tokens (886 INR)",
-                    amount: 88,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 88,
-                    userId: "example999@gmail.com"
-                },
-                {
-                    id: "90ff7d54f94ed8e837b4eb39f8d7263e",
-                    date: "2025-11-22T14:47:03.452Z",
-                    description: "Token Purchase - 88 tokens (886 INR)",
-                    amount: 88,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 88,
-                    userId: "example999@gmail.com"
-                },
-                {
-                    id: "c2dc1e76a2d222cd2ad9ebbbb53ab8ac",
-                    date: "2025-11-21T06:10:59.677Z",
-                    description: "Token Purchase - 88 tokens (886 INR)",
-                    amount: 88,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 88,
-                    userId: "example2@gmail.com"
-                },
-                {
-                    id: "dca900cdf0b82c4d599134bd93f2c99e",
-                    date: "2025-11-21T06:09:28.014Z",
-                    description: "Token Purchase - 88 tokens (886 INR)",
-                    amount: 88,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "CAPTURED",
-                    currency: "INR",
-                    tokenCount: 88,
-                    userId: "example2@gmail.com"
-                },
-                {
-                    id: "f50eb5b91a4b232f03b91e6d62ae05e3",
-                    date: "2025-11-21T05:31:58.118Z",
-                    description: "Token Purchase - 1 tokens (10 INR)",
-                    amount: 1,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 1,
-                    userId: "example999@gmail.com"
-                },
-                {
-                    id: "2a36895346571dfbfe0fd2fec71ca3f5",
-                    date: "2025-11-21T05:31:29.903Z",
-                    description: "Token Purchase - 88 tokens (886 INR)",
-                    amount: 88,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 88,
-                    userId: "example999@gmail.com"
-                },
-                {
-                    id: "eae7f2ce07081419fec78cc51ad4b517",
-                    date: "2025-11-20T17:44:16.806Z",
-                    description: "Token Purchase - 88 tokens (886 INR)",
-                    amount: 88,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 88,
-                    userId: "example999@gmail.com"
-                },
-                {
-                    id: "c094898ae27a692014086d95ed9d94de",
-                    date: "2025-11-20T15:45:27.920Z",
-                    description: "Token Purchase - 851 tokens (8510 INR)",
-                    amount: 851,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 851,
-                    userId: "example999@gmail.com"
-                },
-                {
-                    id: "1315032a4c893843fdb6076eba0f81b2",
-                    date: "2025-11-20T15:43:56.072Z",
-                    description: "Token Purchase - 177 tokens (1772 INR)",
-                    amount: 177,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "CAPTURED",
-                    currency: "INR",
-                    tokenCount: 177,
-                    userId: "example999@gmail.com"
-                },
-                {
-                    id: "4477185bb305bd6504d70189c51e9156",
-                    date: "2025-11-20T15:42:24.576Z",
-                    description: "Token Purchase - 88 tokens (886 INR)",
-                    amount: 88,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "PENDING",
-                    currency: "INR",
-                    tokenCount: 88,
-                    userId: "example999@gmail.com"
-                },
-                {
-                    id: "89f5a8eaad84e3f707f01d172651faba",
-                    date: "2025-11-20T15:29:24.706Z",
-                    description: "Token Purchase - 177 tokens (1772 INR)",
-                    amount: 177,
-                    category: "Token Purchase",
-                    type: "credit",
-                    paymentStatus: "CAPTURED",
-                    currency: "INR",
-                    tokenCount: 177,
-                    userId: "example999@gmail.com"
-                }
-            ];
-            setTransactions(mockTransactions);
+            setError('Failed to load transactions.');
+            setTransactions([]);
         } finally {
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         transactionHistory();
