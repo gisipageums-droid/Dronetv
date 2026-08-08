@@ -157,10 +157,10 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
           <div className="text-center mb-16 relative transform translate-y-12 animate-[slideUp_0.8s_ease-out_0.4s_forwards]">
             <h2 className="text-4xl lg:text-5xl font-bold mb-4">
               <span className="text-ink dark:text-white">
-                {skillContent.heading.split(" ")[0]}
+                {(skillContent.heading || (skillContent as any)?.header?.title || "Technical Skills").split(" ")[0]}
               </span>{" "}
               <span className="text-status-warning">
-                {skillContent.heading.split(" ").slice(1).join(" ")}
+                {(skillContent.heading || (skillContent as any)?.header?.title || "Technical Skills").split(" ").slice(1).join(" ")}
               </span>
             </h2>
 

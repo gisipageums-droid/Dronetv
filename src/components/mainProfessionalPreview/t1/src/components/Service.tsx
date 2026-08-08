@@ -50,9 +50,9 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
           className="mb-16 text-center"
         >
           <h2 className="mb-4 text-4xl font-bold text-ink lg:text-5xl dark:text-white">
-            {serviceContent.heading.split(" ")[0]}{" "}
+            {(serviceContent.heading || "What I Do").split(" ")[0]}{" "}
             <span className="text-status-warning">
-              {serviceContent.heading.split(" ").slice(1).join(" ")}
+              {(serviceContent.heading || "What I Do").split(" ").slice(1).join(" ")}
             </span>
           </h2>
           <p className="max-w-3xl mx-auto text-xl text-center text-ink-paragraph dark:text-gray-400">

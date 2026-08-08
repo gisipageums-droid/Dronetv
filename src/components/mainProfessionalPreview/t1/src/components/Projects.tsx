@@ -74,9 +74,9 @@ const Projects: React.FC<ProjectsProps> = ({ content }) => {
             className="relative mb-16 text-center"
           >
             <h2 className="mb-4 text-4xl font-bold text-ink lg:text-5xl dark:text-white">
-              {projectContent.heading.split(" ")[0]}{" "}
+              {(projectContent.heading || "Featured Projects").split(" ")[0]}{" "}
               <span className="text-status-warning">
-                {projectContent.heading.split(" ").slice(1).join(" ")}
+                {(projectContent.heading || "Featured Projects").split(" ").slice(1).join(" ")}
               </span>
             </h2>
             <p className="mx-auto max-w-3xl text-xl text-ink-paragraph dark:text-gray-400 text-center">

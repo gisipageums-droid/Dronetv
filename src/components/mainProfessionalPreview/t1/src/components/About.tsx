@@ -42,10 +42,10 @@ const About: React.FC<AboutProps> = ({ content }) => {
           <motion.div variants={itemVariants} className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold mb-4">
               <span className="text-ink dark:text-white">
-                {content.heading.split(" ")[0]}
+                {(content.heading || "About Me").split(" ")[0]}
               </span>{" "}
               <span className="text-status-warning">
-                {content.heading.split(" ").slice(1).join(" ")}
+                {(content.heading || "About Me").split(" ").slice(1).join(" ")}
               </span>
             </h2>
             <p className="text-xl text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto text-center">
