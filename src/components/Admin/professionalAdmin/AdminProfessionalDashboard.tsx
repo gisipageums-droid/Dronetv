@@ -457,7 +457,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
 }) => {
   // Create a placeholder image using professional name
   const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
-    professional.professionalName?.charAt(0) || "P"
+    professional.professionalName?.charAt(0) || professional.userId?.charAt(0)?.toUpperCase() || "P"
   }%3C/text%3E%3C/svg%3E`;
 
   // Format date
@@ -512,7 +512,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             <div className="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-ink-light flex items-center justify-center sm:w-12 sm:h-12">
               <img
                 src={professional.previewImage || placeholderImg}
-                alt={`${professional.professionalName} profile`}
+                alt={`${professional.professionalName || professional.userId} profile`}
                 className="w-full h-full object-cover"
                 onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                   const target = e.target as HTMLImageElement;
@@ -522,7 +522,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             </div>
             <div className="max-w-[calc(100%-60px)] md:max-w-none">
               <h3 className="text-lg md:text-xl font-bold text-ink line-clamp-2">
-                {professional.professionalName || "Unnamed Professional"}
+                {professional.professionalName || professional.userId || "Unnamed Professional"}
               </h3>
               <div className="flex items-center text-ink-paragraph mt-1">
                 <MapPin className="w-3 h-3 mr-1" />
@@ -1244,6 +1244,10 @@ const AdminProfessionalDashboard: React.FC = () => {
         !searchTerm ||
         (professional.professionalName &&
           professional.professionalName
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())) ||
+        (professional.userId &&
+          professional.userId
             .toLowerCase()
             .includes(searchTerm.toLowerCase())) ||
         (professional.location &&
