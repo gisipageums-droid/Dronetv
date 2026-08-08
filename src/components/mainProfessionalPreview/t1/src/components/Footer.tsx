@@ -46,16 +46,16 @@ const Footer: React.FC<FooterProps> = ({ content }) => {
             >
               <div className="rounded-full bg-brand-gold text-ink h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
                 <span className="uppercase">
-                  {footerContent?.personalInfo.name[0] || "P"}
+                  {(footerContent?.personalInfo?.name || (footerContent as any)?.logoText || "P")[0]}
                 </span>
               </div>
               <span className="text-2xl font-bold truncate capitalize text-brand-gold">
-                {footerContent?.personalInfo.name || "MyLogo"}
+                {footerContent?.personalInfo?.name || (footerContent as any)?.logoText || "MyLogo"}
               </span>
             </motion.div>
 
             <p className="text-ink-caption mb-6 leading-relaxed max-w-md">
-              {content.personalInfo.description}
+              {content?.personalInfo?.description || (content as any)?.description}
             </p>
           </div>
 
