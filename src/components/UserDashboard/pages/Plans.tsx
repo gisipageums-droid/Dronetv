@@ -98,16 +98,25 @@ const RechargePlans: React.FC = () => {
     if (!user) { toast.error('Please login to purchase'); navigate('/login'); return; }
     setProcessingPlanId(plan.id);
     try {
-      const orderData = {
-        userId: user?.userData?.userId || userId,
-        amount: plan.price,
-        tokenCount: plan.tokens,
-        currency: 'INR',
-        email: user?.userData?.email || '',
-        name: user?.userData?.fullName || '',
-        phone: user?.userData?.phone || '',
-        notes: { planId: plan.id, planName: plan.name, period: plan.type },
-      };
+      const orderData = PAYMENT_API
+        ? {
+            userId: user?.userData?.userId || userId,
+            planId: plan.id,
+            currency: 'INR',
+            email: user?.userData?.email || '',
+            name: user?.userData?.fullName || '',
+            phone: user?.userData?.phone || '',
+          }
+        : {
+            userId: user?.userData?.userId || userId,
+            amount: plan.price,
+            tokenCount: plan.tokens,
+            currency: 'INR',
+            email: user?.userData?.email || '',
+            name: user?.userData?.fullName || '',
+            phone: user?.userData?.phone || '',
+            notes: { planId: plan.id, planName: plan.name, period: plan.type },
+          };
       const placeRes = await axios.post(PAYMENT_API ? `${PAYMENT_API}/place-order` : `${LAMBDA.tokenGateway}/place-order`, orderData);
       if (!placeRes.data.success) throw new Error(placeRes.data.message || 'Failed to create order');
       const { transactionId, razorpayOrderId, key, order } = placeRes.data.data;

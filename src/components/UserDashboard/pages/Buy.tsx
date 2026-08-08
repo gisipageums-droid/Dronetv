@@ -97,16 +97,34 @@ const BuyTokenPage: React.FC = () => {
     setErrorMessage('');
 
     try {
-      const orderData = {
-        userId: user?.userData?.userId || userId,
-        amount: finalAmount,
-        tokenCount: tokens,
-        currency: 'INR',
-        email: user?.userData?.email || '',
-        name: user?.userData?.fullName || '',
-        phone: user?.userData?.phone || '',
-        ...(selectedPlan ? { notes: { planId: selectedPlan.id, planName: selectedPlan.name, period: selectedPlan.type } } : {}),
-      };
+      const orderData = PAYMENT_API
+        ? (selectedPlan
+            ? {
+                userId: user?.userData?.userId || userId,
+                planId: selectedPlan.id,
+                currency: 'INR',
+                email: user?.userData?.email || '',
+                name: user?.userData?.fullName || '',
+                phone: user?.userData?.phone || '',
+              }
+            : {
+                userId: user?.userData?.userId || userId,
+                tokenCount: tokens,
+                currency: 'INR',
+                email: user?.userData?.email || '',
+                name: user?.userData?.fullName || '',
+                phone: user?.userData?.phone || '',
+              })
+        : {
+            userId: user?.userData?.userId || userId,
+            amount: finalAmount,
+            tokenCount: tokens,
+            currency: 'INR',
+            email: user?.userData?.email || '',
+            name: user?.userData?.fullName || '',
+            phone: user?.userData?.phone || '',
+            ...(selectedPlan ? { notes: { planId: selectedPlan.id, planName: selectedPlan.name, period: selectedPlan.type } } : {}),
+          };
 
       const placeRes = await placeOrder(orderData);
       if (!placeRes.success) throw new Error(placeRes.message || 'Failed to create order');
