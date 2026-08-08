@@ -193,23 +193,35 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const createRazorpayOrder = async (amount: number, tokenCount: number) => {
+  const createRazorpayOrder = async (bonusPackageId: string, amount: number, tokenCount: number) => {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/place-order` : `${LAMBDA.tokenGateway}/place-order`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+      const body = PAYMENT_API
+        ? {
+            userId: userDetails.email,
+            bonusPackageId,
+            email: userDetails.email || '',
+            name: userDetails.fullName || '',
+            phone: userDetails.phone || '',
+            currency: 'INR',
+          }
+        : {
             userId: userDetails.email,
             amount: amount,
             tokenCount: tokenCount,
             currency: 'INR'
-          }),
+          };
+
+      const response = await fetch(
+        PAYMENT_API ? `${PAYMENT_API}/place-order` : `${LAMBDA.tokenGateway}/place-order`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeader(),
+          },
+          body: JSON.stringify(body),
         }
       );
 
@@ -231,17 +243,25 @@ const ProfilePage: React.FC = () => {
   const handlePaymentSuccess = async (response: any, transactionId: string) => {
     try {
       const confirmResponse = await fetch(
-        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`,
+        PAYMENT_API ? `${PAYMENT_API}/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...authHeader(),
           },
-          body: JSON.stringify({
-            payment_id: response.razorpay_payment_id,
-            order_id: response.razorpay_order_id,
-            transactionId: transactionId
-          }),
+          body: JSON.stringify(PAYMENT_API
+            ? {
+                payment_id: response.razorpay_payment_id,
+                order_id: response.razorpay_order_id,
+                signature: response.razorpay_signature,
+                transactionId: transactionId
+              }
+            : {
+                payment_id: response.razorpay_payment_id,
+                order_id: response.razorpay_order_id,
+                transactionId: transactionId
+              }),
         }
       );
 
@@ -263,9 +283,9 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const openRazorpayCheckout = async (amount: number, tokenCount: number) => {
+  const openRazorpayCheckout = async (bonusPackageId: string, amount: number, tokenCount: number) => {
     try {
-      const orderData = await createRazorpayOrder(amount, tokenCount);
+      const orderData = await createRazorpayOrder(bonusPackageId, amount, tokenCount);
 
       const options = {
         key: orderData.key || import.meta.env.VITE_RAZORPAY_KEY,
@@ -300,10 +320,10 @@ const ProfilePage: React.FC = () => {
   };
 
   const tokenPackages = [
-    { tokens: 100, price: 100, bonus: 0 },
-    { tokens: 550, price: 500, bonus: 50 },
-    { tokens: 1200, price: 1000, bonus: 200 },
-    { tokens: 2500, price: 2000, bonus: 500 }
+    { id: 'pkg100', tokens: 100, price: 100, bonus: 0 },
+    { id: 'pkg550', tokens: 550, price: 500, bonus: 50 },
+    { id: 'pkg1200', tokens: 1200, price: 1000, bonus: 200 },
+    { id: 'pkg2500', tokens: 2500, price: 2000, bonus: 500 }
   ];
 
   const formatDate = (timestamp: string) => {
@@ -483,7 +503,7 @@ const ProfilePage: React.FC = () => {
                       <span className="text-lg font-bold text-brand-gold">₹{pkg.price}</span>
                     </div>
                     <button
-                      onClick={() => openRazorpayCheckout(pkg.price, pkg.tokens + pkg.bonus)}
+                      onClick={() => openRazorpayCheckout(pkg.id, pkg.price, pkg.tokens + pkg.bonus)}
                       disabled={loading}
                       className="w-full bg-brand-gold hover:bg-brand-gold text-white font-medium py-2 px-4 rounded-lg transition duration-300 disabled:opacity-50"
                     >
