@@ -67,8 +67,11 @@ const AdminCompanyEdit: React.FC = () => {
       .then(r => r.json())
       .then(data => {
         const cards: Company[] = data.cards || [];
+        // Never fall back to an arbitrary card when a specific publishedId was
+        // requested — showing the wrong company's data here means an admin
+        // could edit/save over a completely unrelated company.
         const found = publishedId
-          ? cards.find(c => c.publishedId === publishedId) ?? cards[0]
+          ? cards.find(c => c.publishedId === publishedId)
           : cards[0];
         if (found) setCompany(found);
       })
