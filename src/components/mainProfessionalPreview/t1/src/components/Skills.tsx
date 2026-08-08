@@ -181,9 +181,9 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Content Wrapper */}
-        <div className="opacity-0 animate-[fadeIn_1s_ease-out_0.2s_forwards]">
+        <div>
           {/* Header */}
-          <div className="text-center mb-16 relative transform translate-y-12 animate-[slideUp_0.8s_ease-out_0.4s_forwards]">
+          <div className="text-center mb-16 relative">
             <h2 className="text-4xl lg:text-5xl font-bold mb-4">
               <span className="text-ink dark:text-white">
                 {(skillContent.heading || (skillContent as any)?.header?.title || "Technical Skills").split(" ")[0]}
@@ -203,8 +203,7 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
             {skillContent.categories.map((category, categoryIndex) => (
               <div
                 key={categoryIndex}
-                className="bg-ink-offwhite dark:bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-ink-light dark:border-gray-700 hover:border-status-warning/50 transition-all duration-300 hover:scale-[1.01] relative group shadow-2xl dark:shadow-none transform translate-y-12 animate-[slideUp_0.8s_ease-out_forwards]"
-                style={{ animationDelay: `${0.8 + categoryIndex * 0.1}s` }}
+                className="bg-ink-offwhite dark:bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-ink-light dark:border-gray-700 hover:border-status-warning/50 transition-all duration-300 hover:scale-[1.01] relative group shadow-2xl dark:shadow-none"
               >
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center flex-1">
@@ -264,7 +263,7 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
           </div>
 
           {/* Technologies */}
-          <div className="mt-20 transform translate-y-12 animate-[slideUp_0.8s_ease-out_1.2s_forwards]">
+          <div className="mt-20">
             <h3 className="text-3xl font-bold text-ink dark:text-white text-center mb-8 border-b-2 border-status-warning/50 pb-2 max-w-lg mx-auto">
               Technologies
             </h3>
