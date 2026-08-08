@@ -21,6 +21,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "motion/react";
 import { EVENTS_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 // -------------------- Types --------------------
 interface Event {
@@ -1248,7 +1249,7 @@ const EventAdminDashboard: React.FC = () => {
     try {
       const response = await fetch(
         EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=admin` : `${LAMBDA.events}/events-dashboard?viewType=admin`,
-        { signal }
+        { signal, headers: authHeader() }
       );
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
@@ -1264,11 +1265,13 @@ const EventAdminDashboard: React.FC = () => {
 
   const handleApproveAction = async (eventId: string, userId: string) => {
     const response = await fetch(
-      EVENTS_API ? `${EVENTS_API}/event/${eventId}` : `${LAMBDA.eventsAdmin}/event/${eventId}`,
+      EVENTS_API ? `${EVENTS_API}/admin/review` : `${LAMBDA.eventsAdmin}/event/${eventId}`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, action: "approve", userId }),
+        headers: { "Content-Type": "application/json", ...authHeader() },
+        body: EVENTS_API
+          ? JSON.stringify({ eventId, action: "approve" })
+          : JSON.stringify({ eventId, action: "approve", userId }),
       }
     );
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -1278,11 +1281,13 @@ const EventAdminDashboard: React.FC = () => {
 
   const handleRejectAction = async (eventId: string, userId: string) => {
     const response = await fetch(
-      EVENTS_API ? `${EVENTS_API}/event/${eventId}` : `${LAMBDA.eventsAdmin}/event/${eventId}`,
+      EVENTS_API ? `${EVENTS_API}/admin/review` : `${LAMBDA.eventsAdmin}/event/${eventId}`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, action: "reject", userId }),
+        headers: { "Content-Type": "application/json", ...authHeader() },
+        body: EVENTS_API
+          ? JSON.stringify({ eventId, action: "reject" })
+          : JSON.stringify({ eventId, action: "reject", userId }),
       }
     );
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -1292,11 +1297,11 @@ const EventAdminDashboard: React.FC = () => {
 
   const handleDeleteAction = async (eventId: string) => {
     const response = await fetch(
-      `${LAMBDA.eventsDelete}/delete-event`,
+      EVENTS_API ? `${EVENTS_API}/delete-event` : `${LAMBDA.eventsDelete}/delete-event`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, action: "delete" }),
+        headers: { "Content-Type": "application/json", ...authHeader() },
+        body: JSON.stringify({ eventId }),
       }
     );
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
