@@ -232,6 +232,7 @@ function AppInner() {
       } catch (err) {
         console.error("Failed to load form data:", err);
         setLoading(false);
+        setFormLoader(false);
       }
     };
 
@@ -357,7 +358,7 @@ function AppInner() {
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 border-4 border-status-info border-t-transparent rounded-full animate-spin"></div>
 
-          <p className="text-status-info/25 text-lg">
+          <p className="text-white text-lg">
             Please wait while we load your form
           </p>
         </div>
