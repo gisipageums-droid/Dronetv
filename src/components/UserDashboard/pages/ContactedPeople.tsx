@@ -355,12 +355,15 @@ const ContactedPeople: React.FC = () => {
 
       setLoading(true);
       try {
-        const res = await fetch(
-          LEADS_API ? `${LEADS_API}/chat/leads?mode=recent&sort=latest&userId=${userId}` : `${LAMBDA.leadsChat}/chat/leads?mode=recent&sort=latest&userId=${userId}`,
-          {
-            headers: { "X-User-Email": userId },
-          }
-        );
+        const res = LEADS_API
+          ? await fetch(
+              `${LEADS_API}/chat/leads?mode=recent&sort=latest&userId=${userId}`,
+              { headers: authHeader() }
+            )
+          : await fetch(
+              `${LAMBDA.leadsChat}/chat/leads?mode=recent&sort=latest&userId=${userId}`,
+              { headers: { "X-User-Email": userId } }
+            );
 
         const data = await res.json();
 
