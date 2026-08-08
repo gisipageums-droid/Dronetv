@@ -323,7 +323,7 @@ const ServicesPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="sv-grid">
-                  {withInlineAds(current, s => <ServiceCard key={s.id} service={s} onView={() => navigate(`/service/${s.publishedId}`)} />)}
+                  {withInlineAds(current, s => <ServiceCard key={s.id} service={s} onView={() => navigate(`/service/${s.id}`)} />)}
                 </div>
               )}
 

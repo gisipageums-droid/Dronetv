@@ -88,7 +88,14 @@ export default function ServiceDetailPage() {
     setLoading(true);
     setError(null);
 
-    const API_URL = COMPANY_API ? `${COMPANY_API}/services/details/${id}` : `${LAMBDA.products}/services/details/${id}`;
+    // id is a composite "<companyPublishedId>-<indexWithinCompanysServiceArray>"
+    // built by ServicesPage.tsx; split off the trailing numeric index so we
+    // fetch by the real publishedId but still show the specific item clicked.
+    const lastDash = id.lastIndexOf("-");
+    const publishedId = lastDash >= 0 ? id.slice(0, lastDash) : id;
+    const itemIndex = lastDash >= 0 ? parseInt(id.slice(lastDash + 1), 10) : 0;
+
+    const API_URL = COMPANY_API ? `${COMPANY_API}/services/details/${publishedId}` : `${LAMBDA.products}/services/details/${publishedId}`;
 
     axios
       .get(API_URL)
@@ -114,7 +121,7 @@ export default function ServiceDetailPage() {
           return;
         }
 
-        const s = serviceArray[0];
+        const s = serviceArray[itemIndex] ?? serviceArray[0];
 
         const mapped: Service = {
           id: id ?? "unknown",

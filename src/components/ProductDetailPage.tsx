@@ -61,7 +61,14 @@ export default function ProductDetailPage() {
     setLoading(true);
     setError(null);
 
-    const API_URL = COMPANY_API ? `${COMPANY_API}/product/details/${id}` : `${LAMBDA.products}/product/details/${id}`;
+    // id is a composite "<companyPublishedId>-<indexWithinCompanysProductArray>"
+    // built by ProductsPage.tsx; split off the trailing numeric index so we
+    // fetch by the real publishedId but still show the specific item clicked.
+    const lastDash = id.lastIndexOf("-");
+    const publishedId = lastDash >= 0 ? id.slice(0, lastDash) : id;
+    const itemIndex = lastDash >= 0 ? parseInt(id.slice(lastDash + 1), 10) : 0;
+
+    const API_URL = COMPANY_API ? `${COMPANY_API}/product/details/${publishedId}` : `${LAMBDA.products}/product/details/${publishedId}`;
 
     axios
       .get(API_URL)
@@ -91,7 +98,7 @@ export default function ProductDetailPage() {
           return;
         }
 
-        const p = productArray[0];
+        const p = productArray[itemIndex] ?? productArray[0];
 
         const parsedPrice = (() => {
           const priceStr = p.pricing ?? "";

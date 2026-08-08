@@ -337,7 +337,7 @@ const ProductsPage: React.FC = () => {
             </div>
           ) : (
             <div className="pr-grid">
-              {withInlineAds(current, p => <ProductCard key={p.id} product={p} onView={() => navigate(`/product/${p.publishedId}`)} />)}
+              {withInlineAds(current, p => <ProductCard key={p.id} product={p} onView={() => navigate(`/product/${p.id}`)} />)}
             </div>
           )}
 
