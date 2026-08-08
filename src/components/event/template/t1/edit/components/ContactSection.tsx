@@ -31,16 +31,17 @@ const ContactSection: React.FC<ContactSectionProps> = ({ id }) => {
 
     try {
       const res = await fetch(
-        LEADS_API ? `${LEADS_API}/event-leads-resource` : `${LAMBDA.profile}/event-leads-resource`,
+        LEADS_API ? `${LEADS_API}/event` : `${LAMBDA.profile}/event-leads-resource`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            ...formData,
-            publishedEventId: id,
-          }),
+          body: JSON.stringify(
+            LEADS_API
+              ? { ...formData, eventId: id }
+              : { ...formData, publishedEventId: id }
+          ),
         }
       );
 
