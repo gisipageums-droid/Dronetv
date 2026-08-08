@@ -153,7 +153,7 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Textarea } from "../components/ui/textarea";
 import { toast } from "react-toastify";
-import { AUTH_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { LEADS_API, AUTH_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function Contact({ content, publishId }) {
   const contactData = content;
@@ -190,7 +190,7 @@ export default function Contact({ content, publishId }) {
 
     try {
       const response = await fetch(
-        AUTH_API ? `${AUTH_API}/leads-resource/submit` : `${LAMBDA.profile}/leads-resource/submit`,
+        LEADS_API ? `${LEADS_API}/company` : `${LAMBDA.profile}/leads-resource/submit`,
         {
           method: "POST",
           headers: {
