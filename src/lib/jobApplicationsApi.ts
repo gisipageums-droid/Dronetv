@@ -2,6 +2,11 @@ import { JOB_APPLICATIONS_API, LAMBDA } from './apiConfig';
 
 const BASE = JOB_APPLICATIONS_API ? `${JOB_APPLICATIONS_API}` : `${LAMBDA.jobApplications}/job-applications`;
 
+function adminAuthHeaders(): Record<string, string> {
+  const token = localStorage.getItem('adminToken');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export interface ActivityEntry {
   action: string;
   timestamp: string;
@@ -45,14 +50,14 @@ export interface JobApplication {
 }
 
 export async function fetchApplications(jobId: string): Promise<JobApplication[]> {
-  const res = await fetch(`${BASE}?jobId=${encodeURIComponent(jobId)}`);
+  const res = await fetch(`${BASE}?jobId=${encodeURIComponent(jobId)}`, { headers: adminAuthHeaders() });
   if (!res.ok) throw new Error('Failed to fetch applications');
   const data = await res.json();
   return data.items || [];
 }
 
 export async function fetchApplication(jobId: string, applicationId: string): Promise<JobApplication> {
-  const res = await fetch(`${BASE}?jobId=${encodeURIComponent(jobId)}&id=${encodeURIComponent(applicationId)}`);
+  const res = await fetch(`${BASE}?jobId=${encodeURIComponent(jobId)}&id=${encodeURIComponent(applicationId)}`, { headers: adminAuthHeaders() });
   if (!res.ok) throw new Error('Failed to fetch application');
   const data = await res.json();
   return data.item;
@@ -76,7 +81,7 @@ export async function updateApplication(
 ): Promise<void> {
   const res = await fetch(BASE, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
     body: JSON.stringify({ jobId, applicationId, ...updates }),
   });
   if (!res.ok) throw new Error('Failed to update application');
@@ -85,6 +90,7 @@ export async function updateApplication(
 export async function deleteApplication(jobId: string, applicationId: string): Promise<void> {
   const res = await fetch(`${BASE}?jobId=${encodeURIComponent(jobId)}&id=${encodeURIComponent(applicationId)}`, {
     method: 'DELETE',
+    headers: adminAuthHeaders(),
   });
   if (!res.ok) throw new Error('Failed to delete application');
 }
@@ -111,7 +117,7 @@ export async function uploadResumeFile(file: File): Promise<string> {
 }
 
 export async function getResumeViewUrl(key: string): Promise<string> {
-  const res = await fetch(`${BASE}/resume-url?key=${encodeURIComponent(key)}`);
+  const res = await fetch(`${BASE}/resume-url?key=${encodeURIComponent(key)}`, { headers: adminAuthHeaders() });
   if (!res.ok) throw new Error('Failed to get resume URL');
   const data = await res.json();
   return data.url;
@@ -120,7 +126,7 @@ export async function getResumeViewUrl(key: string): Promise<string> {
 export async function sendCandidateMessage(jobId: string, applicationId: string, message: string): Promise<void> {
   const res = await fetch(`${BASE}/message`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
     body: JSON.stringify({ jobId, applicationId, message }),
   });
   if (!res.ok) {

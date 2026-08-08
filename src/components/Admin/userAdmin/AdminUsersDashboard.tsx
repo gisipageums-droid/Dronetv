@@ -11,6 +11,11 @@ import { COMPANY_API, PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
 const COMPANIES_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=admin` : `${LAMBDA.company}/dashboard-cards?viewType=admin`;
 const PROFESSIONALS_API = PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`;
 
+function adminAuthHeaders(): Record<string, string> {
+  const token = localStorage.getItem('adminToken');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 interface UserRecord {
   email: string;
   displayName: string;
@@ -77,7 +82,7 @@ function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: Use
     try {
       const res = await fetch(COMPANY_API ? `${COMPANY_API}/admin/templates/review` : `${LAMBDA.companyAdmin}/admin/templates/review`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
         body: JSON.stringify({ publishedId: user.publishedId, action }),
       });
       if (!res.ok) throw new Error();
@@ -418,8 +423,8 @@ export default function AdminUsersDashboard() {
     setError(null);
     try {
       const [compRes, proRes] = await Promise.all([
-        fetch(COMPANIES_API, { signal }),
-        fetch(PROFESSIONALS_API, { signal }),
+        fetch(COMPANIES_API, { signal, headers: adminAuthHeaders() }),
+        fetch(PROFESSIONALS_API, { signal, headers: adminAuthHeaders() }),
       ]);
       const compData = compRes.ok ? await compRes.json() : { cards: [] };
       const proData = proRes.ok ? await proRes.json() : { cards: [] };

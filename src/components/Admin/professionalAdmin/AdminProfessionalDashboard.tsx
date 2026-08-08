@@ -887,7 +887,7 @@ const apiService = {
   async fetchProfessionalDetails(professionalId: string): Promise<any> {
     try {
       const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professionals/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`
       );
 
       if (!response.ok) {
@@ -909,6 +909,7 @@ const apiService = {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
           },
           body: JSON.stringify({ publishedId, action: "approve", userId }),
         }
@@ -933,6 +934,7 @@ const apiService = {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
           },
           body: JSON.stringify({ publishedId, action: "reject", userId }),
         }
