@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
-import { ADMIN_API, LAMBDA } from '../../../lib/apiConfig';
+import { AUTH_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface LoginData {
   email: string;
   password: string;
 }
 
-const ADMIN_LOGIN_API = ADMIN_API ? `${ADMIN_API}/login` : `${LAMBDA.adminLogin}/dev`;
+const ADMIN_LOGIN_API = AUTH_API ? `${AUTH_API}/admin-login` : `${LAMBDA.adminLogin}/dev`;
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,23 +45,25 @@ export default function AdminLogin() {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success(data.message || "Admin login successful!");
+        toast.success("Admin login successful!");
+        const info = data.userData || data.adminData || {};
         adminLogin({
-          email: data.adminData?.email || loginData.email,
-          name: data.adminData?.userName || "Admin User",
+          email: info.email || data.email || loginData.email,
+          name: info.fullName || info.userName || data.fullName || "Admin User",
+          token: data.token,
           adminData: {
-            ...data.adminData,
-            city: data.adminData?.city,
-            role: data.adminData?.role,
-            isAdmin: data.adminData?.isAdmin,
-            state: data.adminData?.state,
-            userName: data.adminData?.userName,
+            ...info,
+            city: info.city,
+            role: info.role,
+            isAdmin: info.isAdmin ?? data.isAdmin,
+            state: info.state,
+            userName: info.fullName || info.userName,
           },
         });
         setLoginData({ email: "", password: "" });
         navigate("/admin/plans");
       } else {
-        toast.error(data.message || "Login failed. Please check your credentials.");
+        toast.error(data.detail || data.message || "Login failed. Please check your credentials.");
       }
     } catch {
       toast.error("Network error. Please try again later.");
