@@ -105,7 +105,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
           <div className="flex items-center space-x-6">
             {/* Desktop Navigation - Static (Non-editable) */}
             <nav className="hidden space-x-8 md:flex">
-              {data.navLinks.map((link, index) => (
+              {(data.navLinks || []).map((link, index) => (
                 <a
                   key={index}
                   href={link.href}
@@ -135,7 +135,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
         {/* Mobile Navigation - Static (Non-editable) */}
         {isMenuOpen && (
           <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-border">
-            {data.navLinks.map((link, index) => (
+            {(data.navLinks || []).map((link, index) => (
               <a
                 key={index}
                 href={link.href}
