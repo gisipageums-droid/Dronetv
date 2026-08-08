@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   Search,
   MessageCircle,
@@ -215,6 +215,11 @@ const ContactedPeople: React.FC = () => {
   // CHAT FUNCTIONS
   // -------------------------------
   const handleChat = (contact: Lead) => {
+    if (intervalId.current) {
+      clearInterval(intervalId.current);
+      intervalId.current = null;
+    }
+
     setSelectedContact(contact);
     setChatMessages([]);
     lastMessageIdRef.current = "";
@@ -350,19 +355,20 @@ const ContactedPeople: React.FC = () => {
   // FETCH LEADS
   // -------------------------------
   useEffect(() => {
-    async function load() {
-      if (!userId) return;
+    if (!userId) return;
+    const controller = new AbortController();
 
+    async function load() {
       setLoading(true);
       try {
         const res = LEADS_API
           ? await fetch(
               `${LEADS_API}/chat/leads?mode=recent&sort=latest&userId=${userId}`,
-              { headers: authHeader() }
+              { headers: authHeader(), signal: controller.signal }
             )
           : await fetch(
               `${LAMBDA.leadsChat}/chat/leads?mode=recent&sort=latest&userId=${userId}`,
-              { headers: { "X-User-Email": userId } }
+              { headers: { "X-User-Email": userId }, signal: controller.signal }
             );
 
         const data = await res.json();
@@ -373,29 +379,34 @@ const ContactedPeople: React.FC = () => {
           toast.error("Failed to load conversations");
         }
       } catch (e) {
-        console.error(e);
+        if ((e as Error)?.name !== "AbortError") console.error(e);
       } finally {
         setLoading(false);
       }
     }
     load();
+    return () => controller.abort();
   }, [userId]);
 
-  const filteredContacts = contactedEntities.filter((c) => {
-    const name = getDisplayName(c);
-    const q = searchQuery.toLowerCase();
+  const filteredContacts = useMemo(
+    () =>
+      contactedEntities.filter((c) => {
+        const name = getDisplayName(c);
+        const q = searchQuery.toLowerCase();
 
-    const matchesSearch =
-      name.toLowerCase().includes(q) ||
-      c.email.toLowerCase().includes(q) ||
-      c.category?.toLowerCase().includes(q);
+        const matchesSearch =
+          name.toLowerCase().includes(q) ||
+          (c.email || "").toLowerCase().includes(q) ||
+          c.category?.toLowerCase().includes(q);
 
-    const matchesCategory =
-      selectedCategory === "all" ||
-      c.category?.toLowerCase() === selectedCategory.slice(0, -1);
+        const matchesCategory =
+          selectedCategory === "all" ||
+          c.category?.toLowerCase() === selectedCategory.slice(0, -1);
 
-    return matchesSearch && matchesCategory;
-  });
+        return matchesSearch && matchesCategory;
+      }),
+    [contactedEntities, searchQuery, selectedCategory]
+  );
 
   const closeChatModal = () => {
     setSelectedContact(null);
