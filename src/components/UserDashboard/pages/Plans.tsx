@@ -78,10 +78,18 @@ const RechargePlans: React.FC = () => {
     if (userId) {
       axios.get(`${PROFILE_API}?userId=${userId}`)
         .then(r => {
-          setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
           setPackageType((r.data?.profile?.packageType ?? '').toLowerCase());
         })
         .catch(() => {});
+      if (PAYMENT_API) {
+        axios.get(`${PAYMENT_API}/wallet?userId=${userId}`)
+          .then(r => setTokenBalance(r.data?.tokenBalance ?? 0))
+          .catch(() => {});
+      } else {
+        axios.get(`${PROFILE_API}?userId=${userId}`)
+          .then(r => setTokenBalance(r.data?.profile?.tokenBalance ?? 0))
+          .catch(() => {});
+      }
     }
   }, [userId]);
 
