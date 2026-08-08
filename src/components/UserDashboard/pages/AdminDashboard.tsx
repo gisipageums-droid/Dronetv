@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Search, Coins, Award } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
-import { ADMIN_API, AUTH_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
+import { AUTH_API, COMPANY_API, PROFESSIONAL_API, EVENTS_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 interface Lead {
   leadId: string;
@@ -62,31 +63,34 @@ const AdminDashboard: React.FC = () => {
   const userDetails = user?.userData;
 
   const getCategory = useCallback(async () => {
-    const fetchData = await fetch(
-      ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates1}/user-templates/${userDetails.email} `
-    );
+    const url = COMPANY_API
+      ? `${COMPANY_API}/dashboard-cards?viewType=user&userId=${encodeURIComponent(userDetails.email)}`
+      : `${LAMBDA.adminUserTemplates1}/user-templates/${userDetails.email} `;
+    const fetchData = await fetch(url, { headers: COMPANY_API ? authHeader() : {} });
     const resData = await fetchData.json();
-    setCompanyCount(resData.count);
+    setCompanyCount(COMPANY_API ? (resData.totalCount ?? 0) : resData.count);
   }, [userDetails.email]);
 
   const getProfessionalCount = useCallback(() => {
+    const url = PROFESSIONAL_API
+      ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${encodeURIComponent(userDetails.email)}`
+      : `${LAMBDA.adminUserTemplates3}/user-templates/${userDetails.email} `;
     axios
-      .get(
-        ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates3}/user-templates/${userDetails.email} `
-      )
+      .get(url, { headers: PROFESSIONAL_API ? authHeader() : {} })
       .then((res) => {
-        setProfessionalCount(res.data.count);
+        setProfessionalCount(PROFESSIONAL_API ? (res.data.totalCount ?? 0) : res.data.count);
       })
       .catch(() => {});
   }, [userDetails.email]);
 
   const getEventCount = useCallback(() => {
+    const url = EVENTS_API
+      ? `${EVENTS_API}/events-dashboard?viewType=user&userId=${encodeURIComponent(userDetails.email)}`
+      : `${LAMBDA.adminUserTemplates2}/user-templates/${userDetails.email} `;
     axios
-      .get(
-        ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates2}/user-templates/${userDetails.email} `
-      )
+      .get(url, { headers: EVENTS_API ? authHeader() : {} })
       .then((res) => {
-        setEventCount(res.data.count);
+        setEventCount(EVENTS_API ? (res.data.totalCount ?? 0) : res.data.count);
       })
       .catch(() => {});
   }, [userDetails.email]);
@@ -96,10 +100,13 @@ const AdminDashboard: React.FC = () => {
     getProfessionalCount();
     getEventCount();
     if (userDetails?.email) {
-      axios.get(AUTH_API ? `${AUTH_API}/profile?userId=${userDetails.email}` : `${LAMBDA.profile}/profile?userId=${userDetails.email}`)
+      axios.get(
+        AUTH_API ? `${AUTH_API}/profile?userId=${userDetails.email}` : `${LAMBDA.profile}/profile?userId=${userDetails.email}`,
+        { headers: AUTH_API ? authHeader() : {} }
+      )
         .then(r => {
-          setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
-          setPackageType((r.data?.profile?.packageType || "").toLowerCase());
+          setTokenBalance((AUTH_API ? r.data?.tokenBalance : r.data?.profile?.tokenBalance) ?? 0);
+          setPackageType(((AUTH_API ? r.data?.packageType : r.data?.profile?.packageType) || "").toLowerCase());
         })
         .catch(() => setTokenBalance(0));
     }
@@ -110,7 +117,8 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        AUTH_API ? `${AUTH_API}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0` : `${LAMBDA.profile}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
+        LEADS_API ? `${LEADS_API}/leads?userId=${userDetails?.email}&mode=all&limit=7&offset=0` : `${LAMBDA.profile}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`,
+        { headers: LEADS_API ? authHeader() : {} }
       );
 
       if (!response.ok) {
@@ -136,7 +144,8 @@ const AdminDashboard: React.FC = () => {
     try {
       setProfessionalLoading(true);
       const response = await fetch(
-        LEADS_API ? `${LEADS_API}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7` : `${LAMBDA.profLeadsGet}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`
+        LEADS_API ? `${LEADS_API}/professional-leads?userId=${userDetails?.email}&limit=7` : `${LAMBDA.profLeadsGet}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`,
+        { headers: LEADS_API ? authHeader() : {} }
       );
 
       if (!response.ok) {
@@ -164,7 +173,8 @@ const AdminDashboard: React.FC = () => {
     try {
       setEventLoading(true);
       const response = await fetch(
-        AUTH_API ? `${AUTH_API}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0` : `${LAMBDA.profile}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0`
+        LEADS_API ? `${LEADS_API}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0` : `${LAMBDA.profile}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0`,
+        { headers: LEADS_API ? authHeader() : {} }
       );
 
       if (!response.ok) {
