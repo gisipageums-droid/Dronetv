@@ -365,12 +365,12 @@ const ProfilePage: React.FC = () => {
                     <input
                       type="text"
                       name={key}
-                      value={(userDetails as any)[key] || ''}
+                      value={(userDetails as any)?.[key] || ''}
                       onChange={handleChange}
                       className="w-full border border-brand-yellow-soft rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-gold text-ink bg-surface-card"
                     />
                   ) : (
-                    <p className="text-brand-gold font-medium">{(userDetails as any)[key] || 'Not provided'}</p>
+                    <p className="text-brand-gold font-medium">{(userDetails as any)?.[key] || 'Not provided'}</p>
                   )}
                 </div>
               ))}
