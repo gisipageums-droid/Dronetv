@@ -404,12 +404,13 @@ const Professinal: React.FC = () => {
   }, [user, fetchProfessionals]);
 
   const filteredProfessionals = useMemo(() => {
+    const term = searchTerm.toLowerCase();
     return professionals?.cards.filter(
       (p) =>
-        p.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.categories.some((c) =>
-          c.toLowerCase().includes(searchTerm.toLowerCase())
+        (p.fullName ?? "").toLowerCase().includes(term) ||
+        (p.location ?? "").toLowerCase().includes(term) ||
+        (p.categories ?? []).some((c) =>
+          (c ?? "").toLowerCase().includes(term)
         )
     );
   }, [professionals, searchTerm]);
