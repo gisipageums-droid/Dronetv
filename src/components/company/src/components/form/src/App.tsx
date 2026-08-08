@@ -428,27 +428,35 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     const template = companyData.templateSelection || 'template-1';
     setIsDraftLoading(true);
 
-    const draftUrl = COMPANY_API ? `${COMPANY_API}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}`;
+    const draftUrl = COMPANY_API ? `${COMPANY_API}/draft/${companyData.userId}/${companyData.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}`;
     const publishedUrl = companyData.publishedId
       ? COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${companyData.publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${companyData.publishedId}`
       : null;
 
+    const publishedAuthToken = localStorage.getItem('adminToken') || localStorage.getItem('token');
+
     Promise.all([
       fetch(draftUrl).then(r => r.json()).catch(() => ({})),
       publishedUrl
-        ? fetch(publishedUrl, { headers: { 'X-User-Id': companyData.userId } }).then(r => r.json()).catch(() => ({}))
+        ? fetch(publishedUrl, {
+            headers: {
+              'X-User-Id': companyData.userId,
+              ...(publishedAuthToken ? { Authorization: `Bearer ${publishedAuthToken}` } : {}),
+            },
+          }).then(r => r.json()).catch(() => ({}))
         : Promise.resolve({}),
     ]).then(([draftData, publishedData]) => {
       // Extract services & products from published template content (AI-generated after registration —
       // usually more complete than the raw registration form, which often only has placeholder entries)
-      const publishedServices: any[] = publishedData?.content?.services?.services || [];
-      const publishedProducts: any[] = publishedData?.content?.products?.products || [];
-      const publishedAboutImage: string = publishedData?.content?.about?.officeImage || '';
-      const publishedHeroImage: string = publishedData?.content?.hero?.mainHeroImage || '';
+      const publishedContent = publishedData?.websiteContent || publishedData?.content || {};
+      const publishedServices: any[] = publishedContent?.services?.services || [];
+      const publishedProducts: any[] = publishedContent?.products?.products || [];
+      const publishedAboutImage: string = publishedContent?.about?.officeImage || '';
+      const publishedHeroImage: string = publishedContent?.hero?.mainHeroImage || '';
 
       const formDataFromDraft = draftData?.formData || {};
       // Previously saved Update Details selections (saved on last submit)
-      const cachedFields: any = publishedData?.content?._updateCache || {};
+      const cachedFields: any = publishedContent?._updateCache || {};
       // In-progress edits from this browser that never reached a final submit
       let localDraft: any = {};
       try {
