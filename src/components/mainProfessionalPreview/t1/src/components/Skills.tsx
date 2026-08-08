@@ -22,7 +22,10 @@ import skill4 from '../../../../Professional/Images/skill4.png';
 import skill5 from '../../../../Professional/Images/skill5.jpeg';
 
 interface Skill {
+  id?: string;
   name: string;
+  title?: string;
+  description?: string;
   level: number;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
@@ -34,10 +37,13 @@ interface SkillCategory {
 }
 
 export interface SkillContent {
-  heading: string;
-  subtitle: string;
-  categories: SkillCategory[];
-  technologies: string[];
+  heading?: string;
+  subtitle?: string;
+  categories?: SkillCategory[];
+  technologies?: string[];
+  // Real backend shape: a flat skills array + header, not nested categories.
+  skills?: Array<{ id?: string; icon?: string; title: string; description?: string; level: number }>;
+  header?: { title?: string; subtitle?: string };
 }
 
 interface SkillsProps {
@@ -105,24 +111,47 @@ const Skills: React.FC<SkillsProps> = ({ content }) => {
   };
 
   useEffect(() => {
-    if (content) {
-      const processedContent = {
-        ...content,
-        categories: (content.categories || []).map((category) => ({
-          ...category,
-          skills: (category.skills || []).map((skill) => ({
-            ...skill,
-            icon: getIconForSkill(skill.name),
-            level:
-              typeof skill.level === "number"
-                ? Math.max(0, Math.min(100, skill.level))
-                : 50,
-          })),
+    if (!content) return;
+
+    // Real backend shape is a flat `skills` array + `header`, not nested
+    // `categories` — synthesize a single category so the existing grid
+    // layout keeps working without a full rewrite.
+    const rawCategories: SkillCategory[] =
+      content.categories && content.categories.length > 0
+        ? content.categories
+        : content.skills && content.skills.length > 0
+        ? [
+            {
+              title: content.header?.title || content.heading || "Skills",
+              color: "",
+              skills: content.skills.map((s) => ({
+                id: s.id,
+                name: s.title || (s as any).name || "Skill",
+                level: s.level,
+                icon: undefined as any,
+              })),
+            },
+          ]
+        : [];
+
+    const processedContent: SkillContent = {
+      ...content,
+      heading: content.heading || content.header?.title,
+      subtitle: content.subtitle || content.header?.subtitle,
+      categories: rawCategories.map((category) => ({
+        ...category,
+        skills: (category.skills || []).map((skill) => ({
+          ...skill,
+          icon: getIconForSkill(skill.name || ""),
+          level:
+            typeof skill.level === "number"
+              ? Math.max(0, Math.min(100, skill.level))
+              : 50,
         })),
-        technologies: content.technologies || [],
-      };
-      setSkillContent(processedContent);
-    }
+      })),
+      technologies: content.technologies || [],
+    };
+    setSkillContent(processedContent);
   }, [content]);
 
   if (!skillContent) {
