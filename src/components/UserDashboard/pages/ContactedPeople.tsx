@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { LEADS_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 interface ApiResponse {
   success: boolean;
@@ -220,14 +221,15 @@ const ContactedPeople: React.FC = () => {
 
     const id = setInterval(async () => {
       try {
-        const response = await fetch(
-          LEADS_API ? `${LEADS_API}/chat/messages?leadId=${contact.leadId}&markAsRead=false` : `${LAMBDA.leadsChat}/chat/messages?leadId=${contact.leadId}&markAsRead=false`,
-          {
-            headers: {
-              "X-User-Email": userId,
-            },
-          }
-        );
+        const response = LEADS_API
+          ? await fetch(
+              `${LEADS_API}/chat/messages?leadId=${contact.leadId}&userId=${encodeURIComponent(userId)}&markAsRead=false`,
+              { headers: authHeader() }
+            )
+          : await fetch(
+              `${LAMBDA.leadsChat}/chat/messages?leadId=${contact.leadId}&markAsRead=false`,
+              { headers: { "X-User-Email": userId } }
+            );
 
         const data = await response.json();
 
@@ -282,20 +284,29 @@ const ContactedPeople: React.FC = () => {
     setChatMessages((prev) => [...prev, tempMessage]);
 
     try {
-      const res = await fetch(
-        LEADS_API ? `${LEADS_API}/chat/send` : `${LAMBDA.leadsChat}/chat/send`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-User-Email": userId,
-          },
-          body: JSON.stringify({
-            leadId: selectedContact.leadId,
-            message: txt,
-          }),
-        }
-      );
+      const res = LEADS_API
+        ? await fetch(`${LEADS_API}/chat/send`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", ...authHeader() },
+            body: JSON.stringify({
+              leadId: selectedContact.leadId,
+              userId,
+              message: txt,
+              senderType: mySenderType,
+              senderName: user?.userData?.fullName || user?.fullName || "You",
+            }),
+          })
+        : await fetch(`${LAMBDA.leadsChat}/chat/send`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-User-Email": userId,
+            },
+            body: JSON.stringify({
+              leadId: selectedContact.leadId,
+              message: txt,
+            }),
+          });
 
       const data = await res.json();
 

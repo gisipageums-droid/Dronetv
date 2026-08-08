@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Layout, Coins, CheckCircle, AlertCircle, RefreshCw, X, Info, Upload, ImageIcon, Link as LinkIcon } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
-import { AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND = LAMBDA.tokenSpend;
@@ -65,8 +65,8 @@ const PagePlacements: React.FC = () => {
     try {
       const [profileR, slotsR, placR] = await Promise.all([
         axios.get(`${PROFILE_API}?userId=${userId}`),
-        axios.get(`${TOKEN_SPEND}/slots`),
-        axios.get(`${TOKEN_SPEND}/placements?userId=${userId}`),
+        axios.get(PAYMENT_API ? `${PAYMENT_API}/placements/slots` : `${TOKEN_SPEND}/slots`),
+        axios.get(PAYMENT_API ? `${PAYMENT_API}/placements?userId=${userId}` : `${TOKEN_SPEND}/placements?userId=${userId}`),
       ]);
       setTokenBalance(profileR.data?.profile?.tokenBalance ?? 0);
       setPackageType((profileR.data?.profile?.packageType || "").toLowerCase());
@@ -93,7 +93,7 @@ const PagePlacements: React.FC = () => {
     if (!selectedSlot || !slotDef || !durOpt) return;
     setBooking(true); setError("");
     try {
-      const r = await axios.post(`${TOKEN_SPEND}/placement`, {
+      const r = await axios.post(PAYMENT_API ? `${PAYMENT_API}/placements` : `${TOKEN_SPEND}/placement`, {
         userId, slotId: selectedSlot, slotLabel: slotDef.label, durationDays: durOpt.days,
       });
       if (r.data.success) {
@@ -115,7 +115,11 @@ const PagePlacements: React.FC = () => {
   const handleCancel = async (placementId: string) => {
     setCancelling(placementId);
     try {
-      const r = await axios.delete(`${TOKEN_SPEND}/placement?placementId=${placementId}&userId=${userId}`);
+      const r = await axios.delete(
+        PAYMENT_API
+          ? `${PAYMENT_API}/placements/${placementId}?userId=${userId}`
+          : `${TOKEN_SPEND}/placement?placementId=${placementId}&userId=${userId}`
+      );
       if (r.data.success) {
         setTokenBalance(prev => prev + (r.data.refunded || 0));
         await fetchAll();
@@ -145,9 +149,10 @@ const PagePlacements: React.FC = () => {
       const imageUrl = uploadRes.data.s3Url;
       const linkUrl = linkDraft[placementId] || "";
 
-      const saveRes = await axios.put(`${TOKEN_SPEND}/placement/creative`, {
-        placementId, userId, imageUrl, linkUrl,
-      });
+      const saveRes = await axios.put(
+        PAYMENT_API ? `${PAYMENT_API}/placements/creative` : `${TOKEN_SPEND}/placement/creative`,
+        { placementId, userId, imageUrl, linkUrl }
+      );
       if (!saveRes.data?.success) throw new Error(saveRes.data?.message || "Could not save creative");
 
       setSuccess("Ad banner uploaded!");

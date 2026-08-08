@@ -13,6 +13,7 @@ import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
 import { PROFESSIONAL_API, AUTH_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -320,7 +321,8 @@ const Professinal: React.FC = () => {
       setLoading(true);
 
       const res = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}`
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}`,
+        { headers: authHeader() }
       );
 
       if (!res.ok) throw new Error("Failed to fetch companies");
@@ -391,7 +393,7 @@ const Professinal: React.FC = () => {
     const userId = user?.userData?.email || "";
     if (!userId) return;
     fetchProfessionals();
-    fetch(`${PROFILE_API}?userId=${userId}`)
+    fetch(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
       .then(r => r.json())
       .then(d => {
         const p = d?.profile ?? {};

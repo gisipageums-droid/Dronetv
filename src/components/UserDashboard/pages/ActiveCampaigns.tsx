@@ -5,10 +5,12 @@ import {
 } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
-import { AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND = LAMBDA.tokenSpend;
+// NOTE: the new payment service has no /bid or /bids endpoints at all (only
+// /placements/*) - bids stay on the Lambda gateway until that's built.
 
 interface Bid {
   bidId: string; keyword: string; bidAmount: number; totalCost: number;
@@ -38,7 +40,7 @@ const ActiveCampaigns: React.FC = () => {
       const [profileR, bidsR, placR] = await Promise.all([
         axios.get(`${PROFILE_API}?userId=${userId}`),
         axios.get(`${TOKEN_SPEND}/bids?userId=${userId}`),
-        axios.get(`${TOKEN_SPEND}/placements?userId=${userId}`),
+        axios.get(PAYMENT_API ? `${PAYMENT_API}/placements?userId=${userId}` : `${TOKEN_SPEND}/placements?userId=${userId}`),
       ]);
       const prof = profileR.data?.profile ?? {};
       setTokenBalance(prof.tokenBalance ?? 0);
@@ -69,7 +71,11 @@ const ActiveCampaigns: React.FC = () => {
   const handleCancelPlacement = async (placementId: string) => {
     setCancelling(placementId);
     try {
-      const r = await axios.delete(`${TOKEN_SPEND}/placement?placementId=${placementId}&userId=${userId}`);
+      const r = await axios.delete(
+        PAYMENT_API
+          ? `${PAYMENT_API}/placements/${placementId}?userId=${userId}`
+          : `${TOKEN_SPEND}/placement?placementId=${placementId}&userId=${userId}`
+      );
       if (r.data.success) { setTokenBalance(prev => prev + (r.data.refunded || 0)); await fetchAll(); }
     } catch {}
     setCancelling(null);

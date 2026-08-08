@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { useRazorpay } from 'react-razorpay';
 import { X, Lock, Search } from 'lucide-react';
 import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 interface Transaction {
   transactionId: string;
@@ -66,10 +67,16 @@ const ProfilePage: React.FC = () => {
   const [recentToken, setRecentToken] = useState<any>(null);
   async function getRecentToken() {
     try {
-      const response = await fetch(AUTH_API ? `${AUTH_API}/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5` : `${LAMBDA.profile}/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5`);
+      const response = PAYMENT_API
+        ? await fetch(`${PAYMENT_API}/transactions/${stored?.email}`, { headers: authHeader() })
+        : await fetch(`${LAMBDA.profile}/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5`);
       if (response.ok) {
         const data = await response.json();
-        setRecentToken(data);
+        if (PAYMENT_API) {
+          setRecentToken({ ...data, transactions: (data.transactions || []).slice(0, 5) });
+        } else {
+          setRecentToken(data);
+        }
       } else {
       }
     } catch (error) {
@@ -90,10 +97,27 @@ const ProfilePage: React.FC = () => {
 
   async function getAllToken() {
     try {
-      const response = await fetch(AUTH_API ? `${AUTH_API}/transactions/all?userId=${stored?.email}&publishedId=all` : `${LAMBDA.profile}/transactions/all?userId=${stored?.email}&publishedId=all`);
+      const response = PAYMENT_API
+        ? await fetch(`${PAYMENT_API}/transactions/${stored?.email}`, { headers: authHeader() })
+        : await fetch(`${LAMBDA.profile}/transactions/all?userId=${stored?.email}&publishedId=all`);
       if (response.ok) {
         const data = await response.json();
-        setAllTokenData(data);
+        if (PAYMENT_API) {
+          const txns = data.transactions || [];
+          setAllTokenData({
+            success: data.success,
+            transactions: txns,
+            totalCount: txns.length,
+            currentPage: 1,
+            totalPages: 1,
+            hasMore: false,
+            offset: 0,
+            limit: txns.length,
+            spendingByCompany: {},
+          });
+        } else {
+          setAllTokenData(data);
+        }
       }
     } catch (error) {
     }
@@ -127,13 +151,24 @@ const ProfilePage: React.FC = () => {
         phone: userDetails.phone
       };
 
-      const response = await fetch(AUTH_API ? `${AUTH_API}/leads/update-profile` : `${LAMBDA.profile}/leads/update-profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData)
-      });
+      const response = AUTH_API
+        ? await fetch(`${AUTH_API}/me`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', ...authHeader() },
+            body: JSON.stringify({
+              fullName: userDetails.fullName,
+              city: userDetails.city,
+              state: userDetails.state,
+              phone: userDetails.phone,
+            }),
+          })
+        : await fetch(`${LAMBDA.profile}/leads/update-profile`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData)
+          });
 
       if (response.ok) {
         localStorage.setItem("userDetails", JSON.stringify(userDetails));

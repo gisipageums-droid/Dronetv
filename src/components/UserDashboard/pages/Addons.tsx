@@ -7,9 +7,9 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useUserAuth } from "../../context/context";
-import { LEADS_API, LAMBDA } from '../../../lib/apiConfig';
+import { AUTH_API, LAMBDA } from '../../../lib/apiConfig';
 
-const PROFILE_API = LEADS_API ? `${LEADS_API}/profile` : `${LAMBDA.profile}/profile`;
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND = LAMBDA.tokenSpend;
 
 function getStoredActive(email: string): string[] {

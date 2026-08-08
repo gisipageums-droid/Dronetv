@@ -5,12 +5,22 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { CheckCircle, X } from "lucide-react";
 import { COMPANY_API, PROFESSIONAL_API, EVENTS_API, LAMBDA } from '../../lib/apiConfig';
 import { validateToken, getMe, clearSession } from '../../lib/authService';
+
+function applyAxiosAuthHeader(token: string | null) {
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common['Authorization'];
+  }
+}
+applyAxiosAuthHeader(localStorage.getItem('token'));
 
 // User Authentication Types and Context
 interface User {
@@ -100,6 +110,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     localStorage.setItem("user", JSON.stringify(userToStore));
     if (userData.token) {
       localStorage.setItem("token", userData.token);
+      applyAxiosAuthHeader(userData.token);
     }
     setUser(userToStore);
   };
@@ -172,6 +183,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
 
   const logout = () => {
     clearSession();
+    applyAxiosAuthHeader(null);
     setUser(null);
     setAdmin(null);
   };

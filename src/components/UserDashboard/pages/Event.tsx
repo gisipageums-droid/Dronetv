@@ -14,6 +14,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
 import { EVENTS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+import { authHeader } from "../../../lib/authService";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const DEFAULT_EVENT_IMAGE_PATHS = new Set(["/assets/default-event-image.png", "/images/default-event-image.png"]);
@@ -134,14 +135,19 @@ const EventCard: React.FC<EventCardProps> = ({
     if (!thumbUrl.trim()) return;
     setThumbSaving(true);
     try {
-      await fetch(
-        EVENTS_API ? `${EVENTS_API}/event/${event.eventId}` : `${LAMBDA.eventsAdmin}/event/${event.eventId}`,
-        {
+      if (EVENTS_API) {
+        await fetch(`${EVENTS_API}/event/${event.eventId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', ...authHeader() },
+          body: JSON.stringify({ thumbnailUrl: thumbUrl.trim() }),
+        });
+      } else {
+        await fetch(`${LAMBDA.eventsAdmin}/event/${event.eventId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ eventId: event.eventId, action: 'update', userId: event.userId, thumbnailUrl: thumbUrl.trim() }),
-        }
-      );
+        });
+      }
       event.thumbnailUrl = thumbUrl.trim();
       setThumbModal(false);
     } catch { /* best effort */ }
@@ -152,14 +158,19 @@ const EventCard: React.FC<EventCardProps> = ({
     if (!titleValue.trim()) return;
     setTitleSaving(true);
     try {
-      await fetch(
-        EVENTS_API ? `${EVENTS_API}/event/${event.eventId}` : `${LAMBDA.eventsAdmin}/event/${event.eventId}`,
-        {
+      if (EVENTS_API) {
+        await fetch(`${EVENTS_API}/event/${event.eventId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', ...authHeader() },
+          body: JSON.stringify({ eventName: titleValue.trim() }),
+        });
+      } else {
+        await fetch(`${LAMBDA.eventsAdmin}/event/${event.eventId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ eventId: event.eventId, action: 'update', userId: event.userId, eventName: titleValue.trim() }),
-        }
-      );
+        });
+      }
       event.eventName = titleValue.trim();
       setTitleModal(false);
     } catch { /* best effort */ }
@@ -423,7 +434,7 @@ const Events: React.FC = () => {
     }).finally(() => {
       setloading(false);
     });
-    fetch(`${PROFILE_API}?userId=${userId}`)
+    fetch(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
       .then(r => r.json())
       .then(d => {
         const p = d?.profile ?? {};

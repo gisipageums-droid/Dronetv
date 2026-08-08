@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import CompanyLeads from "../components/common/CompanyLeads";
 import { COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 const API = COMPANY_API ? `${COMPANY_API}/dashboard-cards` : `${LAMBDA.company}/dashboard-cards`;
 
@@ -16,7 +17,7 @@ const CompanyLeadsPage: React.FC = () => {
 
   useEffect(() => {
     if (!userId) return;
-    fetch(`${API}?userId=${userId}`)
+    fetch(`${API}?userId=${userId}`, COMPANY_API ? { headers: authHeader() } : undefined)
       .then((r) => r.json())
       .then((data) => {
         const list: any[] = data?.cards || data?.companies || data?.data || [];

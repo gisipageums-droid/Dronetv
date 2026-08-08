@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { AnimatePresence, motion } from "motion/react";
 import FormApp from "../../company/src/components/form/src/App";
 import { COMPANY_API, MEDIA_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 interface Company {
   publishedId: string;
@@ -52,7 +53,7 @@ const CompanyWebsite: React.FC = () => {
 
     const tryNext = (idx: number) => {
       if (idx >= idsToTry.length) { setLoading(false); onDone?.(); return; }
-      fetch(`${CARDS_API}?userId=${idsToTry[idx]}`)
+      fetch(`${CARDS_API}?userId=${idsToTry[idx]}`, COMPANY_API ? { headers: authHeader() } : undefined)
         .then((r) => r.json())
         .then((data) => {
           const cards: Company[] = data.cards || [];
@@ -81,7 +82,10 @@ const CompanyWebsite: React.FC = () => {
   useEffect(() => {
     if (!company) return;
     const template = company.templateSelection || "template-1";
-    fetch(COMPANY_API ? `${COMPANY_API}/draft/${company.userId}/${company.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${company.userId}/${company.draftId}?template=${template}`)
+    fetch(
+      COMPANY_API ? `${COMPANY_API}/draft/${company.userId}/${company.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${company.userId}/${company.draftId}?template=${template}`,
+      COMPANY_API ? { headers: authHeader() } : undefined
+    )
       .then((r) => r.json())
       .then((data) => {
         const cats: string[] = data?.formData?.companyCategory;
@@ -206,7 +210,7 @@ const CompanyWebsite: React.FC = () => {
       const newCompanyName = ((newContent.profile?.companyName || newContent.company?.name) as string || '').trim();
       await fetch(COMPANY_API ? `${COMPANY_API}/update` : `${LAMBDA.companyDraft2}/update`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(COMPANY_API ? authHeader() : {}) },
         body: JSON.stringify({
           publishedId: company.publishedId,
           userId: company.userId,
@@ -271,8 +275,8 @@ const CompanyWebsite: React.FC = () => {
       fd.append("templateSelection", company.templateSelection);
 
       const uploadRes = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${company.publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${company.publishedId}`,
-        { method: "POST", body: fd }
+        COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${company.publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${company.publishedId}`,
+        { method: "POST", body: fd, headers: COMPANY_API ? authHeader() : undefined }
       );
       if (!uploadRes.ok) throw new Error("Upload failed");
       const { imageUrl } = await uploadRes.json();
@@ -280,7 +284,7 @@ const CompanyWebsite: React.FC = () => {
       // 2. Fetch current company content
       const detailsRes = await fetch(
         COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${company.publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${company.publishedId}`,
-        { headers: { "Content-Type": "application/json", "X-User-Id": company.userId } }
+        { headers: { "Content-Type": "application/json", "X-User-Id": company.userId, ...(COMPANY_API ? authHeader() : {}) } }
       );
       const details = await detailsRes.json();
       const content = details?.content || {};
@@ -293,7 +297,7 @@ const CompanyWebsite: React.FC = () => {
       };
       await fetch(COMPANY_API ? `${COMPANY_API}/update` : `${LAMBDA.companyDraft2}/update`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(COMPANY_API ? authHeader() : {}) },
         body: JSON.stringify({
           publishedId: company.publishedId,
           userId: company.userId,

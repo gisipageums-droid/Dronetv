@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
 import { COMPANY_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+import { authHeader } from "../../../lib/authService";
 
 const SUREPASS_PROXY = import.meta.env.VITE_SUREPASS_PROXY_URL;
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
@@ -447,9 +448,9 @@ const CompanyPage: React.FC = () => {
   const fetchCompanies = async (userId: string) => {
     try {
       setLoading(true);
-      const res = await fetch(
-        COMPANY_API ? `${COMPANY_API}/dashboard-cards?userId=${userId}` : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?userId=${userId}`
-      );
+      const res = COMPANY_API
+        ? await fetch(`${COMPANY_API}/dashboard-cards?userId=${userId}`, { headers: authHeader() })
+        : await fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?userId=${userId}`);
       if (!res.ok) throw new Error("Failed to fetch companies");
       const data = await res.json();
       const cards = (data.cards || []).map((c: any) => ({
@@ -516,10 +517,13 @@ const CompanyPage: React.FC = () => {
     userId: string,
     cb: (data: PublishedDetailsResponse) => void
   ) => {
-    const res = await fetch(
-      COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${publishedId}` : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
-      { headers: { "Content-Type": "application/json", "X-User-Id": userId } }
-    );
+    const res = COMPANY_API
+      ? await fetch(`${COMPANY_API}/dashboard-cards/published-details/${publishedId}`, {
+          headers: { "Content-Type": "application/json", "X-User-Id": userId, ...authHeader() },
+        })
+      : await fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`, {
+          headers: { "Content-Type": "application/json", "X-User-Id": userId },
+        });
     if (!res.ok) {
       const messages: Record<number, string> = {
         401: "User not authenticated.",
@@ -722,9 +726,13 @@ const CompanyPage: React.FC = () => {
         return;
       }
       // Server-side check
-      fetch(
-        COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${c.publishedId}` : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${c.publishedId}`,
-        { headers: { "Content-Type": "application/json", "X-User-Id": userId } }
+      (COMPANY_API
+        ? fetch(`${COMPANY_API}/dashboard-cards/published-details/${c.publishedId}`, {
+            headers: { "Content-Type": "application/json", "X-User-Id": userId, ...authHeader() },
+          })
+        : fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${c.publishedId}`, {
+            headers: { "Content-Type": "application/json", "X-User-Id": userId },
+          })
       )
         .then((r) => r.json())
         .then((data) => {
