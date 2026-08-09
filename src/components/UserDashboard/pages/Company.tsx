@@ -569,12 +569,39 @@ const CompanyPage: React.FC = () => {
 
   // ---- Aadhaar / Publish flow ----
 
+  // Tries our own backend's DigiLocker proxy first, falls back to the legacy
+  // Lambda proxy if it fails outright (e.g. a revoked Surepass token) - same
+  // pattern as the GST/CIN verifySurepass helper in Step1CompanyCategory.
+  const digilockerInit = async () => {
+    if (COMPANY_API) {
+      try {
+        const ownRes = await axios.post(`${COMPANY_API}/verify/digilocker-init`, {});
+        if (ownRes.data?.success && ownRes.data?.data?.url) return ownRes;
+      } catch {
+        // fall through to the Lambda proxy below
+      }
+    }
+    return axios.post(SUREPASS_PROXY, { action: 'digilocker-init' });
+  };
+
+  const digilockerPoll = async (clientId: string) => {
+    if (COMPANY_API) {
+      try {
+        const ownRes = await axios.get(`${COMPANY_API}/verify/digilocker-poll/${clientId}`);
+        if (ownRes.data?.success) return ownRes;
+      } catch {
+        // fall through to the Lambda proxy below
+      }
+    }
+    return axios.post(SUREPASS_PROXY, { action: 'digilocker-poll', client_id: clientId });
+  };
+
   const initDigiBoost = async () => {
     setDigiStatus('loading');
     setDigiUrl('');
     setDigiClientId('');
     try {
-      const res = await axios.post(SUREPASS_PROXY, { action: 'digilocker-init' });
+      const res = await digilockerInit();
       if (!res.data?.success || !res.data?.data?.url) throw new Error('Init failed');
       setDigiUrl(res.data.data.url);
       setDigiClientId(res.data.data.client_id);
@@ -591,7 +618,7 @@ const CompanyPage: React.FC = () => {
     pollRef.current = setInterval(async () => {
       attempts++;
       try {
-        const res = await axios.post(SUREPASS_PROXY, { action: 'digilocker-poll', client_id: clientId });
+        const res = await digilockerPoll(clientId);
         if (res.data?.success) {
           clearInterval(pollRef.current!);
           popupRef.current?.close();
@@ -604,7 +631,7 @@ const CompanyPage: React.FC = () => {
       if (popupRef.current?.closed) {
         clearInterval(pollRef.current!);
         try {
-          const finalRes = await axios.post(SUREPASS_PROXY, { action: 'digilocker-poll', client_id: clientId });
+          const finalRes = await digilockerPoll(clientId);
           if (finalRes.data?.success) {
             setDigiStatus('verified');
             toast.success('Aadhaar verified successfully!');

@@ -17,6 +17,33 @@ import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 // the whole "list my company" submit fails with a ValidationException.
 const FILE_UPLOAD_API_URL = COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
 
+// Tries our own backend's Surepass proxy first (company service, /verify/gstin
+// or /verify/cin) and only falls back to the legacy Lambda proxy if our own
+// call fails outright or comes back without real data (e.g. a revoked
+// Surepass token) - keeps GST/CIN verification working uninterrupted while
+// the self-hosted backend's own Surepass token gets sorted out.
+const verifySurepass = async (action: 'gstin' | 'cin', idNumber: string) => {
+  if (COMPANY_API) {
+    try {
+      const ownResponse = await axios.post(
+        `${COMPANY_API}/verify/${action}`,
+        { id_number: idNumber },
+        { timeout: 15000 }
+      );
+      if (ownResponse.data?.success && ownResponse.data?.data) {
+        return ownResponse;
+      }
+    } catch {
+      // fall through to the Lambda proxy below
+    }
+  }
+  return axios.post(
+    import.meta.env.VITE_SUREPASS_PROXY_URL,
+    { action, id_number: idNumber },
+    { timeout: 15000 }
+  );
+};
+
 const uploadImageFile = async (file: File, fieldName: string, userId: string): Promise<string> => {
   const presignRes = await axios.post(
     FILE_UPLOAD_API_URL,
@@ -1143,11 +1170,7 @@ const GSTVerificationSection: React.FC<{
       if (!gstNumber || gstNumber.length < 4) return;
       setIsVerifyingCIN(true);
       try {
-        const response = await axios.post(
-          import.meta.env.VITE_SUREPASS_PROXY_URL,
-          { action: 'cin', id_number: gstNumber },
-          { timeout: 15000 }
-        );
+        const response = await verifySurepass('cin', gstNumber);
         if (response.data?.success && response.data?.data) {
           const d = response.data.data;
           const info = d.details?.company_info || {};
@@ -2288,11 +2311,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         let response;
         let apiUnavailable = false;
         try {
-          response = await axios.post(
-            import.meta.env.VITE_SUREPASS_PROXY_URL,
-            { action: 'gstin', id_number: gstNumber },
-            { timeout: 15000 }
-          );
+          response = await verifySurepass('gstin', gstNumber);
         } catch (apiErr: any) {
           if (apiErr?.response?.status === 401 || apiErr?.response?.status === 403) {
             apiUnavailable = true;
