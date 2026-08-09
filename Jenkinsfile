@@ -16,6 +16,7 @@ pipeline {
                         --build-arg VITE_BACKEND_URL_PAYMENT=https://payment-api-dev.dronetv.in \
                         --build-arg VITE_BACKEND_URL_ADMIN=https://admin-api-dev.dronetv.in \
                         --build-arg VITE_BACKEND_URL_JOB_APPLICATIONS=https://jobboard-api-dev.dronetv.in \
+                        --build-arg VITE_SUREPASS_PROXY_URL=https://fiwnyd2mrg.execute-api.ap-south-1.amazonaws.com/prod/verify \
                         -f Dockerfile .
                     docker rm -f dronetv-frontend-testdev 2>/dev/null || true
                     docker run -d \
