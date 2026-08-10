@@ -25,7 +25,12 @@ const USER_KEY = 'user';
 // ─── Token helpers ────────────────────────────────────────────────────────────
 
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  // Admin login (context.tsx adminLogin) stores its JWT under a separate
+  // "adminToken" key, not TOKEN_KEY - falling back to it here so every
+  // admin-panel call that goes through authHeader()/getToken() actually
+  // sends a token instead of silently making an unauthenticated request
+  // (which 403s on any /admin or viewType=admin endpoint).
+  return localStorage.getItem(TOKEN_KEY) || localStorage.getItem('adminToken');
 }
 
 export function getStoredUser(): UserData | null {
