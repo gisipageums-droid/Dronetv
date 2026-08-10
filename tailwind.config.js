@@ -42,6 +42,52 @@ export default {
           premium: '#FFF1C2',
           'premium-text': '#A66A00',
         },
+        // shadcn/ui-style tokens used throughout the company/professional/event
+        // T2 template components (Product/Services/Blog modals, ui/card,
+        // ui/alert, ui/tabs, ui/switch, etc.) - these components already ship
+        // real light/dark CSS custom properties in each template's own
+        // globals.css (:root { --card: ...; } / :root.dark { --card: ...; }),
+        // but tailwind.config.js never mapped Tailwind classes to them, so
+        // bg-card/bg-background/bg-popover/bg-muted/etc. silently resolved to
+        // transparent everywhere (invisible modal backgrounds, unreadable
+        // overlapping text, low-contrast nav buttons). Referencing var(...)
+        // here - not hardcoded hex - so each template's own light/dark values
+        // keep being respected, and templates that don't define these
+        // variables are unaffected (var() with no match resolves the same
+        // transparent way it already did, so this can't regress anything).
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        card: {
+          DEFAULT: 'var(--card)',
+          foreground: 'var(--card-foreground)',
+        },
+        popover: {
+          DEFAULT: 'var(--popover)',
+          foreground: 'var(--popover-foreground)',
+        },
+        primary: {
+          DEFAULT: 'var(--primary)',
+          foreground: 'var(--primary-foreground)',
+        },
+        secondary: {
+          DEFAULT: 'var(--secondary)',
+          foreground: 'var(--secondary-foreground)',
+        },
+        muted: {
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          foreground: 'var(--accent-foreground)',
+        },
+        destructive: {
+          DEFAULT: 'var(--destructive)',
+          foreground: 'var(--destructive-foreground)',
+        },
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
       },
     },
   },
