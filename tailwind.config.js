@@ -44,50 +44,50 @@ export default {
         },
         // shadcn/ui-style tokens used throughout the company/professional/event
         // T2 template components (Product/Services/Blog modals, ui/card,
-        // ui/alert, ui/tabs, ui/switch, etc.) - these components already ship
-        // real light/dark CSS custom properties in each template's own
-        // globals.css (:root { --card: ...; } / :root.dark { --card: ...; }),
-        // but tailwind.config.js never mapped Tailwind classes to them, so
-        // bg-card/bg-background/bg-popover/bg-muted/etc. silently resolved to
-        // transparent everywhere (invisible modal backgrounds, unreadable
-        // overlapping text, low-contrast nav buttons). Referencing var(...)
-        // here - not hardcoded hex - so each template's own light/dark values
-        // keep being respected, and templates that don't define these
-        // variables are unaffected (var() with no match resolves the same
-        // transparent way it already did, so this can't regress anything).
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
+        // ui/alert, ui/tabs, ui/switch, etc.) - tailwind.config.js never mapped
+        // Tailwind classes to these at all, so bg-card/bg-background/bg-primary/
+        // etc. silently resolved to transparent everywhere (invisible modal
+        // backgrounds, unreadable overlapping text, low-contrast nav buttons).
+        // Some templates' globals.css define real light/dark CSS custom
+        // properties for these (:root { --card: ...; } / :root.dark {...}),
+        // which var(--x, fallback) respects when present - but several template
+        // entry points (confirmed: mainCompanyPreview/t2/src/App.tsx) never
+        // actually import their own globals.css, so the variable is undefined
+        // there. The fallback (second var() argument, DESIGN_SYSTEM.md's light
+        // values) is what actually renders for those - not just a safety net.
+        background: 'var(--background, #FFFFFF)',
+        foreground: 'var(--foreground, #111111)',
         card: {
-          DEFAULT: 'var(--card)',
-          foreground: 'var(--card-foreground)',
+          DEFAULT: 'var(--card, #FFFFFF)',
+          foreground: 'var(--card-foreground, #111111)',
         },
         popover: {
-          DEFAULT: 'var(--popover)',
-          foreground: 'var(--popover-foreground)',
+          DEFAULT: 'var(--popover, #FFFFFF)',
+          foreground: 'var(--popover-foreground, #111111)',
         },
         primary: {
-          DEFAULT: 'var(--primary)',
-          foreground: 'var(--primary-foreground)',
+          DEFAULT: 'var(--primary, #F8C400)',
+          foreground: 'var(--primary-foreground, #111111)',
         },
         secondary: {
-          DEFAULT: 'var(--secondary)',
-          foreground: 'var(--secondary-foreground)',
+          DEFAULT: 'var(--secondary, #FFD84D)',
+          foreground: 'var(--secondary-foreground, #111111)',
         },
         muted: {
-          DEFAULT: 'var(--muted)',
-          foreground: 'var(--muted-foreground)',
+          DEFAULT: 'var(--muted, #E5E7EB)',
+          foreground: 'var(--muted-foreground, #6B7280)',
         },
         accent: {
-          DEFAULT: 'var(--accent)',
-          foreground: 'var(--accent-foreground)',
+          DEFAULT: 'var(--accent, #FFF3B0)',
+          foreground: 'var(--accent-foreground, #111111)',
         },
         destructive: {
-          DEFAULT: 'var(--destructive)',
-          foreground: 'var(--destructive-foreground)',
+          DEFAULT: 'var(--destructive, #DC2626)',
+          foreground: 'var(--destructive-foreground, #FFFFFF)',
         },
-        border: 'var(--border)',
-        input: 'var(--input)',
-        ring: 'var(--ring)',
+        border: 'var(--border, #EFEFEF)',
+        input: 'var(--input, #DDDDDD)',
+        ring: 'var(--ring, #F8C400)',
       },
     },
   },
