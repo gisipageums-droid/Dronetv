@@ -265,7 +265,36 @@ function DetailDrawer({ user, onClose, onDeleted, onStatusChanged }: { user: Use
                   <span className="text-brand-gold text-sm font-semibold">Edit Company Details</span>
                   <ChevronRight size={14} className="text-brand-gold" />
                 </button>
+              </div>
+            )}
 
+            {/* Website Steps (professional only) — same quick-edit link
+                companies get above; professionals had no equivalent way to
+                reach their editor from this panel at all. */}
+            {user.type === "professional" && user.professionalId && (
+              <div className="space-y-2">
+                <h3 className="text-[11px] font-bold text-ink-caption uppercase tracking-wider flex items-center gap-1.5">
+                  <Globe size={11} />
+                  Website
+                </h3>
+
+                <button
+                  onClick={() => navigate(`/user/professionals/edit/${user.templateSelection || "1"}/${user.professionalId}/${user.email}`)}
+                  className="flex items-center justify-between w-full px-4 py-3 rounded-xl bg-surface-main hover:bg-brand-yellow-soft border border-brand-yellow-soft transition-all"
+                >
+                  <span className="text-brand-gold text-sm font-semibold">Edit Professional Details</span>
+                  <ChevronRight size={14} className="text-brand-gold" />
+                </button>
+              </div>
+            )}
+
+            {/* Review checklist + approve/reject — company only. There's no
+                admin review endpoint for professionals on the backend yet
+                (handleReviewAction always POSTs to the company template
+                review route), so this stays scoped to company to avoid
+                wiring up a button that would silently fail for professionals. */}
+            {user.type === "company" && user.publishedId && (
+              <div className="space-y-2">
                 <div className="rounded-xl overflow-hidden border border-ink-light bg-surface-card">
                   {[
                     { label: "Company Registered", done: true },
