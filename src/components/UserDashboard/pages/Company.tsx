@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase, Users, Mail, Phone, Send } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
-import { fetchAdminContent, createContent, MediaItem } from "../../../lib/mediaApi";
+import { fetchAdminContent, fetchMyContent, createContent, MediaItem } from "../../../lib/mediaApi";
 import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
@@ -241,8 +241,8 @@ const MyPostedJobs: React.FC<{ onPostJob: () => void; refreshKey?: number }> = (
   useEffect(() => {
     if (!userId) { setJobs([]); return; }
     const controller = new AbortController();
-    fetchAdminContent(controller.signal, 'job')
-      .then(all => setJobs(all.filter(j => j.author === userId && !j.title.startsWith('[Application]'))))
+    fetchMyContent(controller.signal, 'job')
+      .then(all => setJobs(all.filter(j => !j.title.startsWith('[Application]'))))
       .catch(() => {});
     return () => controller.abort();
   }, [userId, refreshKey]);

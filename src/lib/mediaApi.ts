@@ -1,10 +1,6 @@
 import { MEDIA_API, LAMBDA } from './apiConfig';
+import { authHeader } from './authService';
 const BASE = MEDIA_API ? `${MEDIA_API}` : `${LAMBDA.media}/media-content`;
-
-function adminAuthHeaders(): Record<string, string> {
-  const token = localStorage.getItem('adminToken');
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
 
 export interface MediaItem {
   contentType: string;
@@ -56,7 +52,18 @@ export async function fetchContent(type: ContentType, signal?: AbortSignal): Pro
 
 export async function fetchAdminContent(signal?: AbortSignal, type?: ContentType): Promise<MediaItem[]> {
   const url = type ? `${BASE}/admin?type=${type}` : `${BASE}/admin`;
-  const res = await fetch(url, { signal, headers: adminAuthHeaders() });
+  const res = await fetch(url, { signal, headers: authHeader() });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  return data.items || [];
+}
+
+// A member's own submissions (published or draft) — scoped server-side to
+// whoever the auth token belongs to, unlike fetchAdminContent's /admin
+// listing which requires an actual admin token.
+export async function fetchMyContent(signal?: AbortSignal, type?: ContentType): Promise<MediaItem[]> {
+  const url = type ? `${BASE}/mine?type=${type}` : `${BASE}/mine`;
+  const res = await fetch(url, { signal, headers: authHeader() });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   return data.items || [];
@@ -65,7 +72,7 @@ export async function fetchAdminContent(signal?: AbortSignal, type?: ContentType
 export async function createContent(item: Omit<MediaItem, 'contentId' | 'createdAt' | 'updatedAt'>): Promise<MediaItem> {
   const res = await fetch(BASE, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify(item),
   });
   if (!res.ok) {
@@ -79,7 +86,7 @@ export async function createContent(item: Omit<MediaItem, 'contentId' | 'created
 export async function updateContent(item: Partial<MediaItem> & { contentType: string; contentId: string }): Promise<void> {
   const res = await fetch(BASE, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify(item),
   });
   if (!res.ok) {
@@ -89,7 +96,7 @@ export async function updateContent(item: Partial<MediaItem> & { contentType: st
 }
 
 export async function deleteContent(type: string, id: string): Promise<void> {
-  const res = await fetch(`${BASE}?type=${type}&id=${id}`, { method: 'DELETE', headers: adminAuthHeaders() });
+  const res = await fetch(`${BASE}?type=${type}&id=${id}`, { method: 'DELETE', headers: authHeader() });
   if (!res.ok) {
     const body = await res.json().catch(() => null);
     throw new Error(body?.error || body?.message || `HTTP ${res.status}`);

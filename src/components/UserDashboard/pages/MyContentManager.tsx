@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { Eye, EyeOff, Trash2, Edit, Search, X, Check } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { fetchAdminContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
+import { fetchMyContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
 import { FIELD_CONFIG, FIELD_LABELS, FIELD_PLACEHOLDER, FIELD_TYPE, FieldKey } from '../../../lib/contentFieldConfig';
 import { useUserAuth } from '../../context/context';
 import PostContentCTA from '../../common/PostContentCTA';
@@ -102,10 +102,9 @@ export default function MyContentManager() {
   const load = useCallback(() => {
     if (!userId) { setLoading(false); return; }
     setLoading(true);
-    fetchAdminContent(undefined)
+    fetchMyContent(undefined)
       .then(all => setGroupItems(all.filter(i =>
-        (i.author === userId || i.userId === userId) &&
-        (!group || group.types.some(t => t.value === i.contentType))
+        !group || group.types.some(t => t.value === i.contentType)
       )))
       .catch(() => toast.error('Failed to load your posts'))
       .finally(() => setLoading(false));
