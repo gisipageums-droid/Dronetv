@@ -7,10 +7,12 @@ import {
   MapPin,
   Plus,
   Search,
+  Trash2,
   Users,
 } from "lucide-react";
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useTemplate, useUserAuth } from "../../context/context";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
 import { EVENTS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
@@ -116,11 +118,13 @@ interface EventCardProps {
   event: EventCard;
   onEdit: (eventId: string, templateSelection: string) => Promise<void>;
   onPreview: (eventId: string, templateSelection: string) => Promise<void>;
+  onDelete: (event: EventCard) => void;
 }
 
 // =================== Event card ==============================
 const EventCard: React.FC<EventCardProps> = ({
   onEdit,
+  onDelete,
   event,
 }) => {
   const placeholderImg = event?.eventName?.charAt(0) || "E";
@@ -225,6 +229,7 @@ const EventCard: React.FC<EventCardProps> = ({
   };
 
   const statusStyle = getStatusBadge(event?.reviewStatus || "default");
+  const isLive = event?.reviewStatus?.toLowerCase() === "approved";
 
   return (
     <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 hover:shadow-xl hover:border-brand-yellow group">
@@ -344,17 +349,31 @@ const EventCard: React.FC<EventCardProps> = ({
             Edit form
           </button> */}
 
-          <button
-            onClick={() =>
-              navigate(
-                `/event/leads/${event.eventName}/${event.eventId}`
-              )
-            }
-            className="flex-1 px-3 py-2 bg-brand-yellow-soft text-brand-gold rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-yellow"
-          >
-            <Eye className="w-4 h-4" />
-            View leads
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() =>
+                navigate(
+                  `/event/leads/${event.eventName}/${event.eventId}`
+                )
+              }
+              className="flex-1 px-3 py-2 bg-brand-yellow-soft text-brand-gold rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-yellow"
+            >
+              <Eye className="w-4 h-4" />
+              View leads
+            </button>
+            {!isLive && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(event);
+                }}
+                title="Delete this draft"
+                className="px-3 py-2 bg-status-error/10 text-status-error rounded-lg hover:bg-status-error/20 transition-colors text-sm font-semibold flex items-center justify-center"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
 
       </div>
@@ -416,6 +435,12 @@ const Events: React.FC = () => {
 
   const { user } = useUserAuth();
   const [events, setEvents] = useState<EventCard[]>([]);
+  // Plan limits and the "X / Y" banner should only count events that are
+  // actually live, not every scheduled/incomplete draft.
+  const publishedEvents = useMemo(
+    () => events.filter(e => e.reviewStatus?.toLowerCase() === "approved"),
+    [events]
+  );
   const [loading, setloading] = useState(true);
   const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
   // Tracks whether the plan/token profile fetch has resolved. Until it has,
@@ -465,6 +490,21 @@ const Events: React.FC = () => {
       }
     } catch (error) {
       alert("Failed to load template for preview. Please try again.");
+    }
+  };
+
+  const handleDeleteEvent = async (event: EventCard) => {
+    if (!window.confirm(`Delete "${event.eventName || "this event"}"? This draft will be permanently removed and cannot be recovered.`)) return;
+    try {
+      await axios.post(
+        EVENTS_API ? `${EVENTS_API}/delete-event` : `${LAMBDA.eventsDelete}/delete-event`,
+        { eventId: event.eventId },
+        { headers: { 'Content-Type': 'application/json', ...(EVENTS_API ? authHeader() : {}) } }
+      );
+      toast.success('Draft deleted');
+      setEvents(prev => prev.filter(e => e.eventId !== event.eventId));
+    } catch {
+      toast.error('Failed to delete. Please try again.');
     }
   };
   const filteredEvents = useMemo(() => {
@@ -545,12 +585,12 @@ const Events: React.FC = () => {
           <p className="text-ink-paragraph mb-2">
             Browse and manage your events and registrations
           </p>
-          <ListingLimitBanner count={events?.length ?? 0} type="event" label="Events" />
+          <ListingLimitBanner count={publishedEvents.length} type="event" label="Events" />
         </div>
 
         {(() => {
           const limit = getEventLimit(totalTokensEarned);
-          const atLimit = profileLoaded && isFinite(limit) && events.length >= limit;
+          const atLimit = profileLoaded && isFinite(limit) && publishedEvents.length >= limit;
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}
@@ -618,6 +658,7 @@ const Events: React.FC = () => {
               event={event}
               onPreview={handlePreview}
               onEdit={handleEdit}
+              onDelete={handleDeleteEvent}
             />
           ))}
         </div>

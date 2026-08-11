@@ -5,9 +5,11 @@ import {
   MapPin,
   Plus,
   Search,
+  Trash2,
   Users,
 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
@@ -85,11 +87,13 @@ interface ProfessinalCardProps {
     professionalId: string,
     templateSelection: string
   ) => Promise<void>;
+  onDelete: (professional: IProfessional) => void;
 }
 
 // =================== Professinal card ==============================
 const Card: React.FC<ProfessinalCardProps> = ({
   onEdit,
+  onDelete,
   professional,
 }) => {
   const placeholderImg =
@@ -143,6 +147,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
   };
 
   const statusStyle = getStatusBadge(professional?.reviewStatus || "default");
+  const isPublished = professional?.reviewStatus?.toLowerCase() === "approved";
 
   return (
     <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 hover:shadow-xl hover:border-brand-yellow group">
@@ -242,19 +247,33 @@ const Card: React.FC<ProfessinalCardProps> = ({
             </button>
           </div>
 
-          <button
-            onClick={() =>
-              navigate(
-                `/user-professional/leads/${encodeURIComponent(
-                  professional?.fullName || "Professional"
-                )}/${professional.professionalId}`
-              )
-            }
-            className="flex-1 px-3 py-2 bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-status-success"
-          >
-            <Users className="w-4 h-4" />
-            Leads
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() =>
+                navigate(
+                  `/user-professional/leads/${encodeURIComponent(
+                    professional?.fullName || "Professional"
+                  )}/${professional.professionalId}`
+                )
+              }
+              className="flex-1 px-3 py-2 bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-status-success"
+            >
+              <Users className="w-4 h-4" />
+              Leads
+            </button>
+            {!isPublished && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(professional);
+                }}
+                title="Delete this draft"
+                className="px-3 py-2 bg-status-error/10 text-status-error rounded-lg hover:bg-status-error/20 transition-colors text-sm font-semibold flex items-center justify-center"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
            {/* <button
             onClick={() =>
               navigate(
@@ -296,6 +315,12 @@ const Professinal: React.FC = () => {
   const { user }: { user: User | null } = useUserAuth();
   const [professionals, setProfessionals] =
     useState<IProfessionalApiResponse | null>(null);
+  // Plan limits and the "X / Y" banner should only count profiles that are
+  // actually live, not every unpublished draft.
+  const publishedProfessionals = useMemo(
+    () => (professionals?.cards ?? []).filter(p => p.reviewStatus?.toLowerCase() === "approved"),
+    [professionals]
+  );
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
@@ -389,6 +414,21 @@ const Professinal: React.FC = () => {
     }
   };
 
+  const handleDeleteProfessional = async (professional: IProfessional) => {
+    if (!window.confirm(`Delete "${professional.fullName || "this profile"}"? This draft will be permanently removed and cannot be recovered.`)) return;
+    try {
+      await axios.post(
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/delete-prof-tem` : `${LAMBDA.profDelete}/delete-prof-tem`,
+        { professionalId: professional.professionalId },
+        { headers: { 'Content-Type': 'application/json', ...(PROFESSIONAL_API ? authHeader() : {}) } }
+      );
+      toast.success('Draft deleted');
+      setProfessionals(prev => prev ? { ...prev, cards: prev.cards.filter(p => p.professionalId !== professional.professionalId) } : prev);
+    } catch {
+      toast.error('Failed to delete. Please try again.');
+    }
+  };
+
   useEffect(() => {
     const userId = user?.userData?.email || "";
     if (!userId) return;
@@ -474,12 +514,12 @@ const Professinal: React.FC = () => {
           <p className="text-ink-paragraph mb-2">
             Browse and manage professional submissions
           </p>
-          <ListingLimitBanner count={professionals?.cards?.length ?? 0} type="professional" label="Professionals" />
+          <ListingLimitBanner count={publishedProfessionals.length} type="professional" label="Professionals" />
         </div>
 
         {(() => {
           const limit = getProfessionalLimit(totalTokensEarned);
-          const atLimit = profileLoaded && isFinite(limit) && (professionals?.cards?.length ?? 0) >= limit;
+          const atLimit = profileLoaded && isFinite(limit) && publishedProfessionals.length >= limit;
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}
@@ -533,6 +573,7 @@ const Professinal: React.FC = () => {
               professional={professional}
               onPreview={handlePreview}
               onEdit={handleEdit}
+              onDelete={handleDeleteProfessional}
             />
           ))}
         </div>

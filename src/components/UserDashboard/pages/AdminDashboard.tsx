@@ -47,6 +47,7 @@ const AdminDashboard: React.FC = () => {
   );
   const [eventError, setEventError] = useState<string | null>(null);
   const [companyCount, setCompanyCount] = useState(0);
+  const [companyDraftCount, setCompanyDraftCount] = useState(0);
   const [professionalCount, setProfessionalCount] = useState(0);
   const [eventCount, setEventCount] = useState(0);
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
@@ -54,7 +55,7 @@ const AdminDashboard: React.FC = () => {
 
   // Mock data (keeping other static data as is for now)
   const stats = [
-    { label: "Total Companies", value: companyCount, note: "Your submitted companies", topBorder: "border-t-status-info" },
+    { label: "Published Companies", value: companyCount, note: companyDraftCount > 0 ? `+${companyDraftCount} in draft` : "Your live companies", topBorder: "border-t-status-info" },
     { label: "Professionals", value: professionalCount, note: "Your submitted profiles", topBorder: "border-t-brand-gold" },
     { label: "Events", value: eventCount, note: "Your submitted events", topBorder: "border-t-status-success" },
   ];
@@ -68,7 +69,18 @@ const AdminDashboard: React.FC = () => {
       : `${LAMBDA.adminUserTemplates1}/user-templates/${userDetails.email} `;
     const fetchData = await fetch(url, { headers: COMPANY_API ? authHeader() : {} });
     const resData = await fetchData.json();
-    setCompanyCount(COMPANY_API ? (resData.totalCount ?? 0) : resData.count);
+    if (COMPANY_API) {
+      // "Companies" on this dashboard should mean live/published companies, not
+      // every draft — a company only counts as published once reviewStatus is
+      // "approved"; everything else (ai_completed, active, etc.) is still a draft.
+      const cards: any[] = resData.cards || [];
+      const published = cards.filter(c => c?.reviewStatus?.toLowerCase() === 'approved').length;
+      setCompanyCount(published);
+      setCompanyDraftCount(cards.length - published);
+    } else {
+      setCompanyCount(resData.count ?? 0);
+      setCompanyDraftCount(0);
+    }
   }, [userDetails.email]);
 
   const getProfessionalCount = useCallback(() => {

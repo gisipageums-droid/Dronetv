@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase, Users, Mail, Phone, Send } from "lucide-react";
+import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase, Users, Mail, Phone, Send, Trash2 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import { fetchAdminContent, fetchMyContent, createContent, MediaItem } from "../../../lib/mediaApi";
@@ -39,6 +39,7 @@ interface CompanyCardProps {
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
   onPublish: (company: Company) => void;
+  onDelete: (company: Company) => void;
   isDetailsUpdated?: boolean;
 }
 
@@ -83,7 +84,7 @@ interface PublishedDetailsResponse {
 }
 
 // =================== Company card ==============================
-const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublish, isDetailsUpdated }) => {
+const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublish, onDelete, isDetailsUpdated }) => {
   const placeholderImg =
     company.previewImage || company?.companyName?.charAt(0) || "C";
   const navigate = useNavigate();
@@ -207,18 +208,30 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
             </button>
           )}
 
-          {/* Publish Button — only shown if not yet approved */}
+          {/* Publish / Delete — only shown for drafts, not yet approved */}
           {!isPublished && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onPublish(company);
-              }}
-              className="w-full px-3 py-2 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors text-sm font-semibold flex items-center justify-center gap-2"
-            >
-              <Upload className="w-4 h-4" />
-              Publish Live
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPublish(company);
+                }}
+                className="flex-1 px-3 py-2 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Publish Live
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(company);
+                }}
+                title="Delete this draft"
+                className="px-3 py-2 bg-status-error/10 text-status-error rounded-lg hover:bg-status-error/20 transition-colors text-sm font-semibold flex items-center justify-center"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
           )}
 
         </div>
@@ -418,6 +431,13 @@ const JobApplicationsReceived: React.FC<{ companyNames: string[] }> = ({ company
 const CompanyPage: React.FC = () => {
   const { user } = useUserAuth();
   const [companies, setCompanies] = useState<Company[]>([]);
+  // Plan limits and the "X / Y" banner should only count companies that are
+  // actually live — an unpublished draft (ai_completed, active, etc.) isn't
+  // a real listing yet and shouldn't count against the user's package.
+  const publishedCompanies = useMemo(
+    () => companies.filter(c => c.reviewStatus?.toLowerCase() === "approved"),
+    [companies]
+  );
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const { setFinaleDataReview, setFinalTemplate } = useTemplate();
@@ -672,6 +692,21 @@ const CompanyPage: React.FC = () => {
     setDigiStatus('idle');
   };
 
+  const handleDeleteCompany = async (company: Company) => {
+    if (!window.confirm(`Delete "${company.companyName}"? This draft will be permanently removed and cannot be recovered.`)) return;
+    try {
+      await axios.post(
+        COMPANY_API ? `${COMPANY_API}/admin/templates/delete` : 'https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete',
+        { publishedId: company.publishedId },
+        { headers: { 'Content-Type': 'application/json', ...(COMPANY_API ? authHeader() : {}) } }
+      );
+      toast.success('Draft deleted');
+      setCompanies(prev => prev.filter(c => c.publishedId !== company.publishedId));
+    } catch {
+      toast.error('Failed to delete. Please try again.');
+    }
+  };
+
   const handleConfirmPublish = async () => {
     if (!publishingCompany || digiStatus !== 'verified') return;
     setIsPublishing(true);
@@ -680,7 +715,7 @@ const CompanyPage: React.FC = () => {
       await axios.post(
         COMPANY_API ? `${COMPANY_API}/admin/templates/review` : 'https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review',
         { publishedId: publishingCompany.publishedId, action: 'approve' },
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers: { 'Content-Type': 'application/json', ...(COMPANY_API ? authHeader() : {}) } }
       );
       // Best-effort: sync company status in profile Lambda so leads work
       fetch(COMPANY_API ? `${COMPANY_API}/leads/company-activate` : `${LAMBDA.profile}/leads/company-activate`, {
@@ -818,16 +853,16 @@ const CompanyPage: React.FC = () => {
             Company Directory
           </h1>
           <p className="text-ink-paragraph mb-3">Browse and manage company submissions</p>
-          <ListingLimitBanner count={companies.length} type="company" label="Companies" />
+          <ListingLimitBanner count={publishedCompanies.length} type="company" label="Companies" />
         </div>
         {(() => {
           const limit = getCompanyLimit(totalTokensEarned);
-          const atLimit = profileLoaded && isFinite(limit) && companies.length >= limit;
+          const atLimit = profileLoaded && isFinite(limit) && publishedCompanies.length >= limit;
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}
               className="bg-ink-light text-sm font-medium text-ink-caption flex items-center gap-2 px-4 py-4 rounded-lg align-top border border-ink-light cursor-not-allowed"
-              title={`Plan limit reached (${companies.length}/${limit}). Upgrade to add more.`}
+              title={`Plan limit reached (${publishedCompanies.length}/${limit}). Upgrade to add more.`}
             >
               <Plus className="w-5 h-5" />
               Limit Reached — Upgrade
@@ -870,6 +905,7 @@ const CompanyPage: React.FC = () => {
               onPreview={handlePreview}
               onEdit={handleEdit}
               onPublish={handleOpenPublishModal}
+              onDelete={handleDeleteCompany}
               isDetailsUpdated={detailsUpdatedIds.has(company.publishedId)}
             />
           ))}
