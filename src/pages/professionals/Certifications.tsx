@@ -133,25 +133,27 @@ export default function CertificationsPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {certCategories.map((cat) => (
-              <ContentCard key={cat.title} className={`relative ${cat.popular ? 'border-brand-yellow border-2' : ''}`}>
+              <div key={cat.title} className="relative">
                 {cat.popular && (
-                  <span className="absolute -top-3 left-5 bg-brand-yellow text-ink text-xs font-bold px-3 py-0.5 rounded-full">Most Popular</span>
+                  <span className="absolute -top-3 left-5 z-10 bg-brand-yellow text-ink text-xs font-bold px-3 py-0.5 rounded-full">Most Popular</span>
                 )}
-                <div className="text-3xl mb-3">{cat.icon}</div>
-                <h3 className="font-extrabold text-ink text-lg mb-1">{cat.title}</h3>
-                <p className="text-xs text-ink-caption mb-3">{cat.subtitle}</p>
-                <p className="text-sm text-ink-paragraph leading-relaxed mb-4">{cat.desc}</p>
-                <div className="mt-auto pt-4 border-t border-ink-light space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-ink-caption font-semibold">Course Cost</span>
-                    <span className="text-sm font-extrabold text-ink">{cat.cost}</span>
+                <ContentCard className={cat.popular ? 'border-brand-yellow border-2' : ''}>
+                  <div className="text-3xl mb-3">{cat.icon}</div>
+                  <h3 className="font-extrabold text-ink text-lg mb-1">{cat.title}</h3>
+                  <p className="text-xs text-ink-caption mb-3">{cat.subtitle}</p>
+                  <p className="text-sm text-ink-paragraph leading-relaxed mb-4">{cat.desc}</p>
+                  <div className="mt-auto pt-4 border-t border-ink-light space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-ink-caption font-semibold">Course Cost</span>
+                      <span className="text-sm font-extrabold text-ink">{cat.cost}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-ink-caption font-semibold">Duration</span>
+                      <span className="text-xs font-bold text-brand-gold bg-surface-main px-2 py-0.5 rounded">{cat.duration}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-ink-caption font-semibold">Duration</span>
-                    <span className="text-xs font-bold text-brand-gold bg-surface-main px-2 py-0.5 rounded">{cat.duration}</span>
-                  </div>
-                </div>
-              </ContentCard>
+                </ContentCard>
+              </div>
             ))}
           </div>
         </div>
