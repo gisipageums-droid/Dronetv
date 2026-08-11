@@ -24,6 +24,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { COMPANY_API, AUTH_API, LAMBDA } from '../../../lib/apiConfig';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
+const PROFILE_BATCH_API = AUTH_API ? `${AUTH_API}/profile/batch` : null;
 
 interface CompanySubscription {
   userId: string;
@@ -716,42 +717,44 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
 const apiService = {
   async fetchAllCompanies(signal?: AbortSignal): Promise<ApiResponse> {
     try {
+      // Old Lambda's admin view had a hard ~100-record cap, which is why this
+      // used to double-fetch admin+main and merge client-side. Our own
+      // backend's admin view respects `limit` directly (no hidden cap), so a
+      // single call with a high limit covers everything in one request.
       const adminUrl = COMPANY_API
-        ? `${COMPANY_API}/dashboard-cards?viewType=admin&limit=500`
+        ? `${COMPANY_API}/dashboard-cards?viewType=admin&limit=1000`
         : `${LAMBDA.company}/dashboard-cards?viewType=admin&limit=500`;
-      const mainUrl = COMPANY_API
-        ? `${COMPANY_API}/dashboard-cards?viewType=main`
-        : `${LAMBDA.company}/dashboard-cards?viewType=main`;
 
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
       };
 
-      const [adminResp, mainResp] = await Promise.all([
-        fetch(adminUrl, { method: "GET", headers, signal }),
-        fetch(mainUrl, { method: "GET", headers, signal }),
-      ]);
+      const adminResp = await fetch(adminUrl, { method: "GET", headers, signal });
 
       if (!adminResp.ok) {
         throw new Error(`HTTP error! status: ${adminResp.status}`);
       }
 
-      const adminData: ApiResponse = await adminResp.json();
-      const mainData = mainResp.ok ? await mainResp.json() : { cards: [] };
+      if (!COMPANY_API) {
+        // Lambda fallback still needs the old double-fetch merge - its admin
+        // view really is capped.
+        const mainUrl = `${LAMBDA.company}/dashboard-cards?viewType=main`;
+        const adminData: ApiResponse = await adminResp.json();
+        const mainResp = await fetch(mainUrl, { method: "GET", headers, signal });
+        const mainData = mainResp.ok ? await mainResp.json() : { cards: [] };
+        const adminIds = new Set((adminData.cards || []).map((c) => c.publishedId));
+        const extra = (mainData.cards || []).filter(
+          (c: Company) => c.publishedId && !adminIds.has(c.publishedId)
+        );
+        return {
+          ...adminData,
+          cards: [...(adminData.cards || []), ...extra],
+          totalCount: (adminData.totalCount || 0) + extra.length,
+        };
+      }
 
-      // Lambda admin view has a hard cap (~100 records). Supplement with main view
-      // so newly registered companies are not hidden from admin.
-      const adminIds = new Set((adminData.cards || []).map((c) => c.publishedId));
-      const extra = (mainData.cards || []).filter(
-        (c: Company) => c.publishedId && !adminIds.has(c.publishedId)
-      );
-
-      return {
-        ...adminData,
-        cards: [...(adminData.cards || []), ...extra],
-        totalCount: (adminData.totalCount || 0) + extra.length,
-      };
+      return await adminResp.json();
     } catch (error: any) {
       if (error?.name === "AbortError") throw error;
       throw error;
@@ -1068,9 +1071,48 @@ const AdminDashboard: React.FC = () => {
     companies.forEach((c) => {
       if (c.userId && !uniqueByUser.has(c.userId)) uniqueByUser.set(c.userId, c);
     });
+    const uniqueCompanies = Array.from(uniqueByUser.values());
+
+    // Single batched call instead of one /profile request per company (each
+    // of which also fanned out to payment service internally) - was firing
+    // up to hundreds of parallel requests every time this tab opened.
+    if (PROFILE_BATCH_API) {
+      fetch(PROFILE_BATCH_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+        body: JSON.stringify({ userIds: uniqueCompanies.map((c) => c.userId) }),
+        signal: controller.signal,
+      })
+        .then((res) => (res.ok ? res.json() : { profiles: [] }))
+        .then((data) => {
+          const byUser = new Map((data.profiles || []).map((p: any) => [p.userId, p]));
+          const results = uniqueCompanies
+            .map((company) => {
+              const profile: any = byUser.get(company.userId);
+              if (!profile) return null;
+              return {
+                userId: company.userId,
+                companyName: company.companyName,
+                packageType: profile.packageType || "",
+                packageExpiry: profile.packageExpiry || "",
+                tokenBalance: profile.tokenBalance ?? 0,
+              } as CompanySubscription;
+            })
+            .filter((r): r is CompanySubscription => r !== null);
+          setSubscriptions(results);
+        })
+        .catch((err) => {
+          if (err?.name !== "AbortError") setSubscriptions([]);
+        })
+        .finally(() => setSubscriptionsLoading(false));
+      return () => controller.abort();
+    }
 
     Promise.all(
-      Array.from(uniqueByUser.values()).map(async (company) => {
+      uniqueCompanies.map(async (company) => {
         try {
           const res = await fetch(`${PROFILE_API}?userId=${company.userId}`, { signal: controller.signal });
           if (!res.ok) return null;

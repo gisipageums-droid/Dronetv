@@ -1248,7 +1248,7 @@ const EventAdminDashboard: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=admin` : `${LAMBDA.events}/events-dashboard?viewType=admin`,
+        EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=admin&limit=500` : `${LAMBDA.events}/events-dashboard?viewType=admin`,
         { signal, headers: authHeader() }
       );
       if (!response.ok) throw new Error(`HTTP ${response.status}`);

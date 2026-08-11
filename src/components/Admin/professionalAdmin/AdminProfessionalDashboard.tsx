@@ -861,7 +861,7 @@ const apiService = {
   async fetchAllProfessionals(signal?: AbortSignal): Promise<ApiResponse> {
     try {
       const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`,
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin&limit=500` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`,
         {
           method: "GET",
           headers: {
