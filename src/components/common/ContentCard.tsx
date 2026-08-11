@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 
 interface ContentCardProps {
   image?: string;
@@ -27,13 +27,29 @@ export default function ContentCard({
   className = '',
   onClick,
 }: ContentCardProps) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const [retryNonce, setRetryNonce] = useState(0);
+  const retriedRef = useRef(false);
+
+  const handleImgError = () => {
+    if (retriedRef.current) {
+      setImgFailed(true);
+      return;
+    }
+    retriedRef.current = true;
+    // Many card images are hotlinked from third-party sites; a cold DNS/TLS
+    // handshake to one on first paint can fail even though the URL is fine —
+    // give it a moment then force one fresh request before giving up.
+    setTimeout(() => setRetryNonce(n => n + 1), 800);
+  };
+
   return (
     <div
       onClick={onClick}
       className={`flex flex-col bg-surface-card rounded-[20px] border border-surface-cardborder shadow-sm hover:shadow-md transition-shadow overflow-hidden ${onClick ? 'cursor-pointer' : ''} ${className}`}
     >
-      {image ? (
-        <img src={image} alt={imageAlt} className={`w-full ${imgHeight} object-cover flex-shrink-0`} />
+      {image && !imgFailed ? (
+        <img key={retryNonce} src={image} alt={imageAlt} onError={handleImgError} className={`w-full ${imgHeight} object-cover flex-shrink-0`} />
       ) : imageFallback ? (
         <div className={`w-full ${imgHeight} bg-surface-darksection flex items-center justify-center flex-shrink-0`}>{imageFallback}</div>
       ) : null}
