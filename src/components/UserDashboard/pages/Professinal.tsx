@@ -137,7 +137,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
         return {
           bg: "bg-brand-yellow-soft",
           text: "text-brand-gold",
-          label: "Published",
+          label: "Draft",
         };
     }
   };

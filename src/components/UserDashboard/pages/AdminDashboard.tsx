@@ -54,9 +54,9 @@ const AdminDashboard: React.FC = () => {
 
   // Mock data (keeping other static data as is for now)
   const stats = [
-    { label: "Total Companies", value: companyCount, note: "Your published companies", topBorder: "border-t-status-info" },
-    { label: "Professionals", value: professionalCount, note: "Your published profiles", topBorder: "border-t-brand-gold" },
-    { label: "Events", value: eventCount, note: "Your published events", topBorder: "border-t-status-success" },
+    { label: "Total Companies", value: companyCount, note: "Your submitted companies", topBorder: "border-t-status-info" },
+    { label: "Professionals", value: professionalCount, note: "Your submitted profiles", topBorder: "border-t-brand-gold" },
+    { label: "Events", value: eventCount, note: "Your submitted events", topBorder: "border-t-status-success" },
   ];
 
   const { user } = useUserAuth();

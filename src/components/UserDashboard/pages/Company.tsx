@@ -113,7 +113,7 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
       case "rejected":
         return { bg: "bg-status-error/15", text: "text-status-error", label: "Rejected" };
       default:
-        return { bg: "bg-brand-yellow-soft", text: "text-brand-gold", label: "Published" };
+        return { bg: "bg-brand-yellow-soft", text: "text-brand-gold", label: "Draft" };
     }
   };
 
