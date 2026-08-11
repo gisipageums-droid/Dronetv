@@ -12,6 +12,7 @@ const CompanyLeadsPage: React.FC = () => {
   const navigate = useNavigate();
   const userId = user?.email || user?.userData?.email || "";
   const [companies, setCompanies] = useState<any[]>([]);
+  const [hasUnpublishedOnly, setHasUnpublishedOnly] = useState(false);
   const [selected, setSelected] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -21,8 +22,12 @@ const CompanyLeadsPage: React.FC = () => {
       .then((r) => r.json())
       .then((data) => {
         const list: any[] = data?.cards || data?.companies || data?.data || [];
-        setCompanies(list);
-        if (list.length === 1) setSelected(list[0]);
+        // Leads only exist for companies that are actually live — an
+        // unpublished AI draft can't have received real customer inquiries.
+        const published = list.filter((c) => c?.reviewStatus?.toLowerCase() === "approved");
+        setCompanies(published);
+        setHasUnpublishedOnly(list.length > 0 && published.length === 0);
+        if (published.length === 1) setSelected(published[0]);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -39,7 +44,9 @@ const CompanyLeadsPage: React.FC = () => {
   if (!companies.length) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3 text-ink-caption">
-        <p className="text-lg font-medium">No companies found.</p>
+        <p className="text-lg font-medium">
+          {hasUnpublishedOnly ? "No published companies yet." : "No companies found."}
+        </p>
         <button
           onClick={() => navigate("/user-companies")}
           className="px-4 py-2 bg-brand-yellow text-ink rounded-lg font-semibold hover:bg-brand-gold transition"
