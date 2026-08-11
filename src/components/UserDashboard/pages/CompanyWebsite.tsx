@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   CheckCircle, AlertCircle, Loader2, ExternalLink,
   BadgeCheck, Upload, Edit, X, Globe,
@@ -28,6 +28,10 @@ const CompanyWebsite: React.FC = () => {
 
   const [company, setCompany] = useState<Company | null>(null);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
+  const publishedCompanies = useMemo(
+    () => allCompanies.filter(c => c.reviewStatus?.toLowerCase() === "approved"),
+    [allCompanies]
+  );
   const [loading, setLoading] = useState(true);
   const [companyCategory, setCompanyCategory] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -61,7 +65,13 @@ const CompanyWebsite: React.FC = () => {
             setAllCompanies(cards);
             setCompany(prev => {
               const match = prev ? cards.find(c => c.publishedId === prev.publishedId) : null;
-              return match || cards[0];
+              if (match) return match;
+              // Default to a genuinely live company rather than whichever
+              // draft happens to be first — most users have several
+              // incomplete/duplicate AI-generated drafts alongside their
+              // one real published site.
+              const published = cards.find(c => c.reviewStatus?.toLowerCase() === "approved");
+              return published || cards[0];
             });
             setLoading(false);
             onDone?.();
@@ -412,7 +422,7 @@ const CompanyWebsite: React.FC = () => {
       {/* Header */}
       <div className="flex items-start justify-between px-4 sm:px-6 pt-5 pb-4 gap-3">
         <div className="min-w-0 flex-1">
-          {allCompanies.length > 1 ? (
+          {publishedCompanies.length > 1 ? (
             <div className="mb-1">
               <label className="text-xs text-ink-caption font-medium mb-1 block">Select Company</label>
               <select
@@ -423,7 +433,7 @@ const CompanyWebsite: React.FC = () => {
                 }}
                 className="text-sm font-semibold text-ink border border-ink-light rounded-lg px-3 py-1.5 bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow max-w-xs w-full"
               >
-                {allCompanies.map(c => (
+                {publishedCompanies.map(c => (
                   <option key={c.publishedId} value={c.publishedId}>{c.companyName}</option>
                 ))}
               </select>

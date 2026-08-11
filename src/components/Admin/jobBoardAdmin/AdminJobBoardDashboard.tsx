@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Briefcase, Search, FileText, User, Award, FolderKanban, Paperclip, Activity, ExternalLink, GraduationCap, Code2, MessageSquare, X, SlidersHorizontal, Clock, MapPin, Trash2, AlertTriangle } from 'lucide-react';
+import { Briefcase, Search, FileText, User, Award, FolderKanban, Paperclip, Activity, ExternalLink, GraduationCap, Code2, MessageSquare, X, SlidersHorizontal, Clock, MapPin, Trash2, AlertTriangle, ChevronLeft } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, deleteContent, MediaItem } from '../../../lib/mediaApi';
 import { fetchApplications, updateApplication, getResumeViewUrl, sendCandidateMessage, JobApplication } from '../../../lib/jobApplicationsApi';
@@ -57,6 +57,21 @@ export default function AdminJobBoardDashboard() {
   const [loadingApplications, setLoadingApplications] = useState(false);
   const [candidateSearch, setCandidateSearch] = useState('');
   const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null);
+
+  // Below the lg breakpoint the three panes (jobs / candidates / profile)
+  // don't fit side by side, so only one is shown at a time — this tracks
+  // which one, and stays unused (all three render together) at lg+.
+  const [mobileView, setMobileView] = useState<'jobs' | 'candidates' | 'profile'>('jobs');
+
+  const selectJob = (jobId: string) => {
+    setSelectedJobId(jobId);
+    setMobileView('candidates');
+  };
+
+  const selectApplication = (applicationId: string) => {
+    setSelectedApplicationId(applicationId);
+    setMobileView('profile');
+  };
 
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
@@ -188,7 +203,7 @@ export default function AdminJobBoardDashboard() {
     <div className="flex flex-col h-[70vh] min-h-[500px] bg-ink-offwhite border border-ink-light rounded-xl overflow-hidden">
       <div className="flex flex-1 min-h-0">
         {/* Jobs pane */}
-        <div className="w-[300px] flex-shrink-0 border-r border-ink-light bg-surface-card flex flex-col">
+        <div className={`w-full lg:w-[300px] flex-shrink-0 border-r border-ink-light bg-surface-card flex-col ${mobileView === 'jobs' ? 'flex' : 'hidden'} lg:flex`}>
           <div className="p-3 border-b border-ink-light">
             <div className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Jobs ({jobs.length})</div>
             <div className="relative mb-2">
@@ -215,7 +230,7 @@ export default function AdminJobBoardDashboard() {
             ) : filteredJobs.map(job => (
               <div key={job.contentId}
                 className={`group w-full px-3 py-3 border-b border-ink-offwhite hover:bg-ink-offwhite transition-colors flex gap-2.5 ${selectedJobId === job.contentId ? 'bg-surface-main border-l-2 border-l-brand-yellow' : ''}`}>
-                <button onClick={() => setSelectedJobId(job.contentId)} className="flex gap-2.5 flex-1 min-w-0 text-left">
+                <button onClick={() => selectJob(job.contentId)} className="flex gap-2.5 flex-1 min-w-0 text-left">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold ${colorFor(job.contentId)}`}>
                     <Briefcase size={14} />
                   </div>
@@ -243,8 +258,11 @@ export default function AdminJobBoardDashboard() {
         </div>
 
         {/* Candidates pane */}
-        <div className="w-[300px] flex-shrink-0 border-r border-ink-light bg-surface-card flex flex-col">
+        <div className={`w-full lg:w-[300px] flex-shrink-0 border-r border-ink-light bg-surface-card flex-col ${mobileView === 'candidates' ? 'flex' : 'hidden'} lg:flex`}>
           <div className="p-3 border-b border-ink-light">
+            <button onClick={() => setMobileView('jobs')} className="lg:hidden flex items-center gap-1 text-xs font-semibold text-ink-caption hover:text-ink-paragraph mb-2">
+              <ChevronLeft size={14} /> Jobs
+            </button>
             <div className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Candidates ({applications.length})</div>
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-caption" />
@@ -260,7 +278,7 @@ export default function AdminJobBoardDashboard() {
             ) : filteredCandidates.length === 0 ? (
               <div className="p-4 text-xs text-ink-caption text-center">No applications yet</div>
             ) : filteredCandidates.map(app => (
-              <button key={app.applicationId} onClick={() => setSelectedApplicationId(app.applicationId)}
+              <button key={app.applicationId} onClick={() => selectApplication(app.applicationId)}
                 className={`w-full text-left px-3 py-3 border-b border-ink-offwhite hover:bg-ink-offwhite transition-colors flex gap-2.5 ${selectedApplicationId === app.applicationId ? 'bg-surface-main border-l-2 border-l-brand-yellow' : ''}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[11px] font-bold ${colorFor(app.applicationId)}`}>
                   {initials(app.fullName || '?')}
@@ -283,15 +301,18 @@ export default function AdminJobBoardDashboard() {
         </div>
 
         {/* Profile pane */}
-        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+        <div className={`flex-1 min-w-0 flex-col overflow-hidden ${mobileView === 'profile' ? 'flex' : 'hidden'} lg:flex`}>
           {!selectedApplication ? (
             <div className="flex-1 flex items-center justify-center text-sm text-ink-caption">
               {selectedJob ? 'Select a candidate to view their profile' : 'Select a job to get started'}
             </div>
           ) : (
             <>
-              <div className="px-6 py-4 border-b border-ink-light bg-surface-card flex-shrink-0">
-                <div className="flex items-start justify-between gap-3">
+              <div className="px-4 sm:px-6 py-4 border-b border-ink-light bg-surface-card flex-shrink-0">
+                <button onClick={() => setMobileView('candidates')} className="lg:hidden flex items-center gap-1 text-xs font-semibold text-ink-caption hover:text-ink-paragraph mb-3">
+                  <ChevronLeft size={14} /> Candidates
+                </button>
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold ${colorFor(selectedApplication.applicationId)}`}>
                       {initials(selectedApplication.fullName || '?')}
@@ -329,7 +350,7 @@ export default function AdminJobBoardDashboard() {
                 </div>
               </div>
 
-              <div className="flex border-b border-ink-light bg-surface-card px-6 flex-shrink-0 overflow-x-auto">
+              <div className="flex border-b border-ink-light bg-surface-card px-4 sm:px-6 flex-shrink-0 overflow-x-auto">
                 {TABS.map(t => (
                   <button key={t.key} onClick={() => setActiveTab(t.key)}
                     className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-semibold border-b-2 whitespace-nowrap transition-colors ${activeTab === t.key ? 'border-brand-yellow text-ink' : 'border-transparent text-ink-caption hover:text-ink-paragraph'}`}>
@@ -338,9 +359,9 @@ export default function AdminJobBoardDashboard() {
                 ))}
               </div>
 
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6">
                 {activeTab === 'overview' && (
-                  <div className="flex gap-8">
+                  <div className="flex flex-col lg:flex-row gap-8">
                     <div className="flex-1 min-w-0 space-y-6">
                       <div>
                         <h3 className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Professional Summary</h3>
@@ -377,7 +398,7 @@ export default function AdminJobBoardDashboard() {
                         </div>
                       )}
                     </div>
-                    <div className="w-[260px] flex-shrink-0">
+                    <div className="w-full lg:w-[260px] flex-shrink-0">
                       <h3 className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-3">Personal Details</h3>
                       <div className="space-y-4">
                         <div><p className="text-[10px] text-ink-caption uppercase font-bold">Email</p><p className="text-sm text-ink-charcoal break-words">{selectedApplication.email}</p></div>
