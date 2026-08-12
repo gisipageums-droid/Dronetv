@@ -816,8 +816,11 @@ const CompanyPage: React.FC = () => {
     });
   }, [companies, user]);
 
+  // Company Directory only ever shows companies that are actually live —
+  // unpublished/incomplete drafts aren't real listings and have no place
+  // here now that duplicate-draft creation is prevented at the source.
   const filteredCompanies = useMemo(() => {
-    return companies.filter(
+    return publishedCompanies.filter(
       (company) =>
         company.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         company.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -825,7 +828,7 @@ const CompanyPage: React.FC = () => {
           sector.toLowerCase().includes(searchTerm.toLowerCase())
         )
     );
-  }, [searchTerm, companies]);
+  }, [searchTerm, publishedCompanies]);
 
   const SkeletonCard: React.FC = () => (
     <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 group animate-pulse p-6">
