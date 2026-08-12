@@ -924,7 +924,9 @@ export default function AdminMediaDashboard() {
                 </div>
               ) : (
                 <div>
-                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Image URL</label>
+                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">
+                    Image URL <span className="font-normal normal-case text-ink-caption">(recommended size: 1200×90 or 900×60)</span>
+                  </label>
                   <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
                     className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
                     placeholder="https://..." />

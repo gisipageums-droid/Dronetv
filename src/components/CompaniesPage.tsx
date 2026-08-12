@@ -99,6 +99,7 @@ const CSS = `
 .co-resbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 7px; }
 .co-sort { padding: 6px 10px; border: 1.5px solid #E5E5E5; border-radius: 8px; font-size: 12.5px; color: #444; background: #fff; cursor: pointer; font-family: 'Poppins',sans-serif; }
 .co-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 13px; }
+.co-grid > * { min-width: 0; }
 .co-empty { padding: 64px 0; text-align: center; }
 .co-pages { display: flex; justify-content: center; margin-top: 28px; gap: 6px; flex-wrap: wrap; }
 .co-page-btn { padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins',sans-serif; }
