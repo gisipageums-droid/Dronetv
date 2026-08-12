@@ -488,13 +488,22 @@ const CompanyPage: React.FC = () => {
       setCompanies(cards);
       setLoading(false); // Show cards immediately, update name in background
 
-      // Fetch template company names in parallel from the public preview Lambda
+      // Fetch template company names in parallel from the public preview Lambda.
+      // Only for cards whose name is already a known placeholder - editing the
+      // template builder never syncs the real name back to the companies row,
+      // so this re-fetch is genuinely needed for those, but firing it for every
+      // company on every load (most of which already have a real name) was
+      // pure waste.
       const previewBase = COMPANY_API
         ? `${COMPANY_API}/template`
         : `${LAMBDA.companyPreviewLoad}/template`;
 
+      const needsEnrichment = cards.filter((c) =>
+        PLACEHOLDER_NAMES.has(c.companyName.toLowerCase().trim())
+      );
+
       const updates = await Promise.allSettled(
-        cards.map(async (c) => {
+        needsEnrichment.map(async (c) => {
           const urlSlug = (data.cards || []).find((raw: any) => raw.publishedId === c.publishedId)?.urlSlug;
           if (!urlSlug) return null;
           const r = await fetch(`${previewBase}?companyName=${encodeURIComponent(urlSlug)}`);
