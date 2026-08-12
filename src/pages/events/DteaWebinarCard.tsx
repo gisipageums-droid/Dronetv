@@ -95,8 +95,8 @@ export default function DteaWebinarCard() {
     }
   };
 
-  const inputCls = "w-full px-3.5 py-3 border border-[#CFCFCF] rounded-lg text-sm text-[#1F1F1F] bg-white focus:outline-none focus:border-[#E8B400]";
-  const labelCls = "block text-xs font-bold text-[#2F2F2F] mb-1.5";
+  const inputCls = "w-full px-4 py-3.5 border border-[#CFCFCF] rounded-lg text-base text-[#1F1F1F] bg-white focus:outline-none focus:border-[#E8B400]";
+  const labelCls = "block text-sm font-bold text-[#2F2F2F] mb-2";
 
   return (
     <div className="rounded-2xl overflow-hidden shadow-lg border border-[#E2C25A]">
@@ -159,8 +159,8 @@ export default function DteaWebinarCard() {
         <div className="px-6 sm:px-8 py-7">
           <h3 className="text-lg font-bold text-[#2F2F2F] mb-4">Register for the Webinar</h3>
           {!submitted ? (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className={labelCls}>Full Name *</label>
                   <input required placeholder="Enter your full name" value={form.fullName} onChange={set('fullName')} className={inputCls} />
@@ -170,7 +170,7 @@ export default function DteaWebinarCard() {
                   <input required placeholder="e.g. CEO, Engineer, Student, Researcher" value={form.designation} onChange={set('designation')} className={inputCls} />
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className={labelCls}>Company / Organisation *</label>
                   <input required placeholder="Enter company / organisation name" value={form.organisation} onChange={set('organisation')} className={inputCls} />
@@ -180,7 +180,7 @@ export default function DteaWebinarCard() {
                   <input required placeholder="Enter your city" value={form.city} onChange={set('city')} className={inputCls} />
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className={labelCls}>Email Address *</label>
                   <input type="email" required placeholder="e.g. john@company.com" value={form.email} onChange={set('email')} className={inputCls} />
