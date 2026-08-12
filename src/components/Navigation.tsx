@@ -407,47 +407,47 @@ const Navigation = () => {
         <div className={`lg:hidden transition-all duration-500 ease-out overflow-hidden ${isMenuOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"}`}>
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-brand-yellow max-h-[70vh] overflow-y-auto rounded-b-2xl">
 
-            <button onClick={() => handleNavigation("/")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Home</button>
+            <Link to="/" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Home</Link>
 
             <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">About</p>
             {aboutItems.map(i => (
-              <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
+              <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
 
-            <button onClick={() => handleNavigation("/listed-companies")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Companies</button>
-            <button onClick={() => handleNavigation("/products")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Products</button>
-            <button onClick={() => handleNavigation("/services")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Services</button>
+            <Link to="/listed-companies" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Companies</Link>
+            <Link to="/products" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Products</Link>
+            <Link to="/services" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Services</Link>
 
             <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Professionals</p>
             {professionalsItems.map(i => (
-              <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
+              <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
 
             <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Events</p>
             {eventsItems.map(i => (
-              <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
+              <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
 
             <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Partnerships</p>
             {partnershipsItems.map(i => (
-              <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
+              <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
 
             <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Media Hub</p>
             {mediaItems.map(i => (
-              <button key={i.path} onClick={() => handleNavigation(i.path)} className="w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</button>
+              <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
 
-            <button onClick={() => handleNavigation("/advertising-plans")} className="w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-ink-charcoal/10 text-ink">Advertising Plans</button>
-            <button onClick={() => handleNavigation("/contact")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Contact</button>
+            <Link to="/advertising-plans" className="block w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-ink-charcoal/10 text-ink">Advertising Plans</Link>
+            <Link to="/contact" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Contact</Link>
 
             {isLogin || isAdminLogin ? (
               <>
-                <button onClick={() => handleNavigation(isAdminLogin ? "/admin/company/dashboard" : "/user-dashboard")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Dashboard</button>
-                <button onClick={() => handleNavigation("/logout")} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-status-error">Logout</button>
+                <Link to={isAdminLogin ? "/admin/company/dashboard" : "/user-dashboard"} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Dashboard</Link>
+                <Link to="/logout" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-status-error">Logout</Link>
               </>
             ) : (
-              <button onClick={() => { setHaveAccount(true); handleNavigation("/login"); }} className="w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Login</button>
+              <Link to="/login" onClick={() => setHaveAccount(true)} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Login</Link>
             )}
 
           </div>
