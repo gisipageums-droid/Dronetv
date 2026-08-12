@@ -36,8 +36,6 @@ export const professionalsItems: NavItem[] = [
   { path: "/professionals/certifications", label: "Certifications" },
   { path: "/professionals/training", label: "Training" },
   { path: "/professionals/career-path", label: "Career Path" },
-  { path: "/professionals/networking", label: "Networking" },
-  { path: "/professionals/community", label: "Community" },
 ];
 
 export const partnershipsItems: NavItem[] = [

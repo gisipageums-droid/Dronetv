@@ -1561,14 +1561,14 @@ const GSTVerificationSection: React.FC<{
           </div>
 
           {/* Combined State & Pincode Field from API */}
-          <div className="grid grid-cols-3 gap-3 p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4">
             {/* Combined State & Pincode Field */}
-            <div className="col-span-2">
+            <div className="sm:col-span-2 min-w-0">
               {StatePincodeInput}
             </div>
 
             {/* Registration Date */}
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0">
               <div className="text-xs text-ink-caption font-medium">
                 Date of Incorporation
               </div>

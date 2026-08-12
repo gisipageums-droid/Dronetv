@@ -237,7 +237,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
                     professional.templateSelection
                   );
               }}
-              className="flex-1 px-3 py-2 bg-brand-yellow text-brand-gold rounded-lg hover:bg-brand-gold transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-gold"
+              className="flex-1 px-3 py-2 bg-brand-yellow text-ink rounded-lg hover:bg-brand-gold transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-gold"
             >
               <Edit className="w-4 h-4" />
               Edit
