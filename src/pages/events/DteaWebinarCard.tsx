@@ -160,7 +160,7 @@ export default function DteaWebinarCard() {
           <h3 className="text-lg font-bold text-[#2F2F2F] mb-4">Register for the Webinar</h3>
           {!submitted ? (
             <form onSubmit={handleSubmit} className="space-y-3.5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 gap-3.5">
                 <div>
                   <label className={labelCls}>Full Name *</label>
                   <input required placeholder="Enter your full name" value={form.fullName} onChange={set('fullName')} className={inputCls} />
@@ -170,7 +170,7 @@ export default function DteaWebinarCard() {
                   <input required placeholder="e.g. CEO, Engineer, Student, Researcher" value={form.designation} onChange={set('designation')} className={inputCls} />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 gap-3.5">
                 <div>
                   <label className={labelCls}>Company / Organisation *</label>
                   <input required placeholder="Enter company / organisation name" value={form.organisation} onChange={set('organisation')} className={inputCls} />
@@ -180,7 +180,7 @@ export default function DteaWebinarCard() {
                   <input required placeholder="Enter your city" value={form.city} onChange={set('city')} className={inputCls} />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 gap-3.5">
                 <div>
                   <label className={labelCls}>Email Address *</label>
                   <input type="email" required placeholder="e.g. john@company.com" value={form.email} onChange={set('email')} className={inputCls} />
