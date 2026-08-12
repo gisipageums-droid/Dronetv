@@ -187,7 +187,7 @@ export default function DteaWebinarCard() {
                 </div>
                 <div>
                   <label className={labelCls}>Mobile / WhatsApp *</label>
-                  <input type="tel" inputMode="numeric" maxLength={10} required placeholder="10-digit mobile number"
+                  <input type="tel" inputMode="numeric" maxLength={10} required placeholder="9876543211"
                     value={form.phone} onChange={setPhone} className={inputCls} />
                   {phoneError && <p className="text-xs text-[#FF1F1F] font-medium mt-1">{phoneError}</p>}
                 </div>
