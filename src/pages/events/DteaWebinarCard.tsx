@@ -7,6 +7,7 @@ const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/cont
 const INDUSTRY_OPTIONS = ['Drone / UAV', 'GIS / Geospatial', 'AI / Technology', 'Surveying / Mapping', 'Startup', 'Academia / Training', 'Government', 'Student', 'Corporate', 'Other'];
 const MEMBERSHIP_INTEREST_OPTIONS = ['Yes, I am interested', 'Maybe, send more information', 'Already a member', 'Not currently'];
 const MEMBERSHIP_CATEGORY_OPTIONS = ['Professional Member', 'Student Member', 'Startup Member', 'Corporate Member', 'Institutional Member', 'Need Guidance'];
+const SOURCE_OPTIONS = ['DroneTV.in', 'DTEA', 'WhatsApp Group', 'LinkedIn', 'Instagram', 'Email', 'Friend / Industry Contact', 'Drone Expo 2026', 'Other'];
 
 interface DteaForm {
   fullName: string;
@@ -19,11 +20,14 @@ interface DteaForm {
   membershipInterest: string;
   membershipCategory: string;
   expectation: string;
+  source: string;
+  consent: boolean;
 }
 
 const EMPTY_FORM: DteaForm = {
   fullName: '', designation: '', organisation: '', city: '', email: '', phone: '',
   industry: '', membershipInterest: '', membershipCategory: '', expectation: '',
+  source: '', consent: false,
 };
 
 // Arbitrary-value hex classes (not the design-system token names like
@@ -40,6 +44,9 @@ export default function DteaWebinarCard() {
   const set = (key: keyof DteaForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm(f => ({ ...f, [key]: e.target.value }));
 
+  const setConsent = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm(f => ({ ...f, consent: e.target.checked }));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -54,6 +61,7 @@ export default function DteaWebinarCard() {
         `Interested in DTEA Membership: ${form.membershipInterest}`,
         `Preferred Membership Category: ${form.membershipCategory || '—'}`,
         `What they'd like DTEA to focus on: ${form.expectation || '—'}`,
+        `How did you hear about this webinar: ${form.source || '—'}`,
       ].join('\n');
       const res = await fetch(CONTACT_URL, {
         method: 'POST',
@@ -137,31 +145,31 @@ export default function DteaWebinarCard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className={labelCls}>Full Name *</label>
-                  <input required value={form.fullName} onChange={set('fullName')} className={inputCls} />
+                  <input required placeholder="Enter your full name" value={form.fullName} onChange={set('fullName')} className={inputCls} />
                 </div>
                 <div>
                   <label className={labelCls}>Designation *</label>
-                  <input required value={form.designation} onChange={set('designation')} className={inputCls} />
+                  <input required placeholder="e.g. CEO, Engineer, Student, Researcher" value={form.designation} onChange={set('designation')} className={inputCls} />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className={labelCls}>Company / Organisation *</label>
-                  <input required value={form.organisation} onChange={set('organisation')} className={inputCls} />
+                  <input required placeholder="Enter company / organisation name" value={form.organisation} onChange={set('organisation')} className={inputCls} />
                 </div>
                 <div>
                   <label className={labelCls}>City *</label>
-                  <input required value={form.city} onChange={set('city')} className={inputCls} />
+                  <input required placeholder="Enter your city" value={form.city} onChange={set('city')} className={inputCls} />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className={labelCls}>Email Address *</label>
-                  <input type="email" required value={form.email} onChange={set('email')} className={inputCls} />
+                  <input type="email" required placeholder="e.g. name@company.com" value={form.email} onChange={set('email')} className={inputCls} />
                 </div>
                 <div>
                   <label className={labelCls}>Mobile / WhatsApp *</label>
-                  <input type="tel" required value={form.phone} onChange={set('phone')} className={inputCls} />
+                  <input type="tel" required placeholder="e.g. +91 98765 43210" value={form.phone} onChange={set('phone')} className={inputCls} />
                 </div>
               </div>
               <div>
@@ -187,7 +195,21 @@ export default function DteaWebinarCard() {
               </div>
               <div>
                 <label className={labelCls}>What would you like DTEA to focus on?</label>
-                <textarea rows={3} value={form.expectation} onChange={set('expectation')} className={`${inputCls} resize-none`} />
+                <textarea rows={3} placeholder="e.g. Networking, industry collaboration, business opportunities, training, technology updates" value={form.expectation} onChange={set('expectation')} className={`${inputCls} resize-none`} />
+              </div>
+              <div>
+                <label className={labelCls}>How did you hear about this webinar?</label>
+                <select value={form.source} onChange={set('source')} className={inputCls}>
+                  <option value="">Select how you heard about the webinar</option>
+                  {SOURCE_OPTIONS.map(o => <option key={o}>{o}</option>)}
+                </select>
+              </div>
+              <div className="flex items-start gap-2.5 pt-1">
+                <input type="checkbox" id="dtea-consent" required checked={form.consent} onChange={setConsent}
+                  className="mt-0.5 w-4 h-4 flex-shrink-0 accent-[#FF1F1F]" />
+                <label htmlFor="dtea-consent" className="text-sm text-[#2F2F2F] leading-snug">
+                  I agree to receive webinar updates, DTEA membership information and relevant industry communication from DTEA and DroneTV.
+                </label>
               </div>
               {submitError && (
                 <p className="text-xs text-[#FF1F1F] font-medium">Registration failed. Please check your connection and try again.</p>
