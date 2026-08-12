@@ -59,28 +59,28 @@ const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
     return (
       <div
         ref={ref}
-        className="flex-1 h-32 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
+        className="flex-1 h-24 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
         style={{
           scrollBehavior: "smooth",
           WebkitOverflowScrolling: "touch",
         }}
       >
-        <div className="h-12"></div>
+        <div className="h-8"></div>
         {items.map((item) => (
           <div
             key={item.value}
             data-value={item.value}
-            className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
+            className={`h-8 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
               ${selectedValue === item.value
-                ? "text-brand-gold font-bold text-lg scale-105 rounded-lg mx-1"
-                : "text-ink-caption hover:text-ink-paragraph"
+                ? "text-brand-gold font-bold text-base scale-105 rounded-lg mx-1"
+                : "text-ink-caption hover:text-ink-paragraph text-sm"
               }`}
             onClick={() => handleClick(item.value)}
           >
             {item.label}
           </div>
         ))}
-        <div className="h-12"></div>
+        <div className="h-8"></div>
       </div>
     );
   }
@@ -685,13 +685,12 @@ const ScrollDatePicker: React.FC<{
   }, []);
 
   return (
-    <div className="bg-surface-card border border-brand-yellow-soft rounded-xl p-4 date-picker-card animate-fade-in-up">
-      <div className="text-center mb-4">
-        <h3 className="font-semibold text-ink-charcoal">Date of Birth</h3>
-        <p className="text-xs text-ink-paragraph mt-1">Select your date of birth</p>
+    <div className="bg-surface-card border border-brand-yellow-soft rounded-xl p-2 date-picker-card animate-fade-in-up">
+      <div className="text-center mb-2">
+        <h3 className="text-sm font-semibold text-ink-charcoal">Date of Birth</h3>
       </div>
 
-      <div className="flex items-center justify-between mb-2 px-4">
+      <div className="flex items-center justify-between mb-1 px-4">
         <div className="flex-1 text-center">
           <span className="text-xs font-medium text-ink-caption">DAY</span>
         </div>
@@ -704,9 +703,9 @@ const ScrollDatePicker: React.FC<{
       </div>
 
       <div className="relative">
-        <div className="absolute left-0 right-0 top-20 transform -translate-y-1/2 h-12 bg-brand-yellow-soft border-2 border-brand-yellow-soft rounded-lg pointer-events-none date-picker-highlight"></div>
+        <div className="absolute left-0 right-0 top-12 transform -translate-y-1/2 h-8 bg-brand-yellow-soft border-2 border-brand-yellow-soft rounded-lg pointer-events-none date-picker-highlight"></div>
 
-        <div className="flex items-stretch h-32 relative z-10">
+        <div className="flex items-stretch h-24 relative z-10">
           <ScrollColumn
             ref={dayRef}
             items={days.map((day) => ({
@@ -739,9 +738,8 @@ const ScrollDatePicker: React.FC<{
         </div>
       </div>
 
-      <div className="text-center mt-4 p-3 bg-surface-main rounded-lg border border-brand-yellow-soft">
-        <p className="text-sm text-ink-paragraph">Selected Date</p>
-        <p className="font-semibold text-brand-gold">
+      <div className="text-center mt-2 p-2 bg-surface-main rounded-lg border border-brand-yellow-soft">
+        <p className="text-xs font-semibold text-brand-gold">
           {parseInt(selectedDate.day)}{" "}
           {months.find((m) => m.value === selectedDate.month)?.name}{" "}
           {selectedDate.year}
@@ -1362,8 +1360,7 @@ export const Step1 = ({
     const isPhoneField =
       (f.type === "tel" ||
         f.id.toLowerCase().includes("phone") ||
-        f.id.toLowerCase().includes("mobile") ||
-        f.id.toLowerCase().includes("contact")) &&
+        f.id.toLowerCase().includes("mobile")) &&
       !isPhoneFieldWithCode;
 
     if (isPhoneField) {

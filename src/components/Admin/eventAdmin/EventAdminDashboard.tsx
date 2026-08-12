@@ -892,7 +892,7 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
   };
 
   const getStatusBadge = (reviewStatus?: string) => {
-    if (reviewStatus === "under_review")
+    if (reviewStatus === "under_review" || reviewStatus === "published" || reviewStatus === "ai_completed" || reviewStatus === "ai_processing" || reviewStatus === "ai_failed")
       return {
         bg: "bg-brand-yellow-soft",
         text: "text-brand-gold",
@@ -1351,7 +1351,8 @@ const EventAdminDashboard: React.FC = () => {
 
       const matchesStatus =
         statusFilter === "all" ||
-        (statusFilter === "under_review" && event.reviewStatus === "under_review") ||
+        (statusFilter === "under_review" &&
+         (event.reviewStatus === "under_review" || event.reviewStatus === "published" || event.reviewStatus === "ai_completed" || event.reviewStatus === "ai_processing" || event.reviewStatus === "ai_failed")) ||
         (statusFilter === "approved" && event.reviewStatus === "approved") ||
         (statusFilter === "rejected" && event.reviewStatus === "rejected");
 
@@ -1499,7 +1500,7 @@ const EventAdminDashboard: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
           { label: "Total", value: viewFilteredEvents.length, color: "border-t-brand-yellow" },
-          { label: "Pending Review", value: viewFilteredEvents.filter(e => e.reviewStatus === "under_review").length, color: "border-t-status-warning" },
+          { label: "Pending Review", value: viewFilteredEvents.filter(e => e.reviewStatus === "under_review" || e.reviewStatus === "published" || e.reviewStatus === "ai_completed" || e.reviewStatus === "ai_processing" || e.reviewStatus === "ai_failed").length, color: "border-t-status-warning" },
           { label: "Approved", value: viewFilteredEvents.filter(e => e.reviewStatus === "approved").length, color: "border-t-status-success" },
           { label: "Rejected", value: viewFilteredEvents.filter(e => e.reviewStatus === "rejected").length, color: "border-t-status-error" },
         ].map(stat => (

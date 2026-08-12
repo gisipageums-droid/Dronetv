@@ -513,6 +513,7 @@ const VideosPage = () => {
 .vd-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#111111;font-family:inherit}
 .vd-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
 .vd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px}
+.vd-grid > *{min-width:0}
 .vd-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
 .vd-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
 .vd-page-btn.active{background:#111111;color:#F8C400;border-color:#111111}

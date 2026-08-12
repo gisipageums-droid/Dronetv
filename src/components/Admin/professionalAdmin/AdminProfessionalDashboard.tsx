@@ -488,7 +488,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         text: "text-status-error",
         label: "Rejected",
       };
-    } else if (reviewStatus === "approved") {
+    } else if (reviewStatus === "approved" || reviewStatus === "published") {
       return {
         bg: "bg-status-success/15",
         text: "text-status-success",
@@ -1262,9 +1262,9 @@ const AdminProfessionalDashboard: React.FC = () => {
       // Status filter logic - Updated to match EventAdminDashboard
       const matchesStatus =
         statusFilter === "all" ||
-        (statusFilter === "under_review" && 
+        (statusFilter === "under_review" &&
          (professional.reviewStatus === "active" || professional.reviewStatus === "under_review")) ||
-        (statusFilter === "approved" && professional.reviewStatus === "approved") ||
+        (statusFilter === "approved" && (professional.reviewStatus === "approved" || professional.reviewStatus === "published")) ||
         (statusFilter === "rejected" && professional.reviewStatus === "rejected");
 
       return matchesSearch && matchesStatus;
@@ -1421,7 +1421,7 @@ const AdminProfessionalDashboard: React.FC = () => {
         {[
           { label: "Total", value: professionals.length, color: "border-t-brand-yellow" },
           { label: "Pending Review", value: professionals.filter((p: any) => p.reviewStatus === "under_review").length, color: "border-t-status-warning" },
-          { label: "Approved", value: professionals.filter((p: any) => p.reviewStatus === "approved").length, color: "border-t-status-success" },
+          { label: "Approved", value: professionals.filter((p: any) => p.reviewStatus === "approved" || p.reviewStatus === "published").length, color: "border-t-status-success" },
           { label: "Rejected", value: professionals.filter((p: any) => p.reviewStatus === "rejected").length, color: "border-t-status-error" },
         ].map(stat => (
           <div key={stat.label} className={`bg-surface-card rounded-lg border border-ink-light border-t-4 ${stat.color} p-4 shadow-sm`}>

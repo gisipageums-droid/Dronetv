@@ -511,7 +511,7 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
           : "Date";
 
   const getStatusBadge = (reviewStatus?: string) => {
-    if (reviewStatus === "active" || reviewStatus === "under_review" || reviewStatus === "ai_completed" || reviewStatus === "ai_processing")
+    if (reviewStatus === "active" || reviewStatus === "under_review" || reviewStatus === "ai_completed" || reviewStatus === "ai_processing" || reviewStatus === "ai_failed" || reviewStatus === "ai_failed_insufficient_tokens")
       return {
         bg: "bg-brand-yellow-soft",
         text: "text-brand-gold",
@@ -1162,8 +1162,8 @@ const AdminDashboard: React.FC = () => {
       // Status filter logic - Updated to match EventAdminDashboard
       const matchesStatus =
         statusFilter === "all" ||
-        (statusFilter === "under_review" && 
-         (company.reviewStatus === "active" || company.reviewStatus === "under_review" || company.reviewStatus === "ai_completed" || company.reviewStatus === "ai_processing")) ||
+        (statusFilter === "under_review" &&
+         (company.reviewStatus === "active" || company.reviewStatus === "under_review" || company.reviewStatus === "ai_completed" || company.reviewStatus === "ai_processing" || company.reviewStatus === "ai_failed" || company.reviewStatus === "ai_failed_insufficient_tokens")) ||
         (statusFilter === "approved" && company.reviewStatus === "approved") ||
         (statusFilter === "rejected" && company.reviewStatus === "rejected");
 
@@ -1493,7 +1493,7 @@ const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
           { label: "Total", value: companies.length, color: "border-t-brand-yellow" },
-          { label: "Pending Review", value: companies.filter(c => c.reviewStatus === "under_review" || c.reviewStatus === "active" || c.reviewStatus === "ai_completed" || c.reviewStatus === "ai_processing").length, color: "border-t-status-warning" },
+          { label: "Pending Review", value: companies.filter(c => c.reviewStatus === "under_review" || c.reviewStatus === "active" || c.reviewStatus === "ai_completed" || c.reviewStatus === "ai_processing" || c.reviewStatus === "ai_failed" || c.reviewStatus === "ai_failed_insufficient_tokens").length, color: "border-t-status-warning" },
           { label: "Approved", value: companies.filter(c => c.reviewStatus === "approved").length, color: "border-t-status-success" },
           { label: "Rejected", value: companies.filter(c => c.reviewStatus === "rejected").length, color: "border-t-status-error" },
         ].map(stat => (

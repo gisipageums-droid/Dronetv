@@ -19,7 +19,7 @@ export const uploadFile = async (userId: string, fieldName: string, file: File) 
 };
 
 export const submitForm = async (payload: any) => {
-  const res = await axios.post(PROFESSIONAL_API ? `${PROFESSIONAL_API}/` : `${LAMBDA.profForm}/`, payload);
+  const res = await axios.post(PROFESSIONAL_API ? `${PROFESSIONAL_API}/submit` : `${LAMBDA.profForm}/`, payload);
   return res.data;
 };
 

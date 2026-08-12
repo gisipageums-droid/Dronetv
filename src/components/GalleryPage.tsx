@@ -274,6 +274,7 @@ const GalleryPage = () => {
 .gl-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#111111;font-family:inherit}
 .gl-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
 .gl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.gl-grid > *{min-width:0}
 .gl-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
 .gl-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
 .gl-page-btn.active{background:#111111;color:#F8C400;border-color:#111111}
