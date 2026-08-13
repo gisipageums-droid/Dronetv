@@ -199,7 +199,7 @@ export default function WebinarsPage() {
               className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
               Submit Webinar
             </a>
-            <a href="/packages"
+            <a href="/partnerships/benefits"
               className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">
               View Packages
             </a>
