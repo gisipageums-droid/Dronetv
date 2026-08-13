@@ -16,11 +16,14 @@ import axios from "axios";
 import { useUserAuth } from "../../../context/context";
 import { AlertTriangle, X } from "lucide-react";
 import { toast } from "sonner";
-import { EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../../../lib/apiConfig';
+import { PROFESSIONAL_API, PAYMENT_API, AUTH_API, LAMBDA } from '../../../../lib/apiConfig';
 
-// ✅ Token Validation API URL
-const TOKEN_VALIDATION_API_URL =
-  EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsFormBase}/`;
+// ✅ Token Validation API URL — same wallet/profile source the dashboard
+// sidebar uses to display the real balance. This used to POST to the events
+// service's base URL (a leftover from the Lambda era with no self-hosted
+// equivalent), which returned no real token balance and made every
+// submission look like it had 0 tokens.
+const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
 // ================== Token validation function ====================
 const validateUserTokens = async (
@@ -32,38 +35,28 @@ const validateUserTokens = async (
   userExists: boolean;
 }> => {
   try {
-    const response = await axios.post(
-      TOKEN_VALIDATION_API_URL,
-      { email },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        timeout: 10000,
-      }
-    );
+    const response = PAYMENT_API
+      ? await axios.get(`${PAYMENT_API}/wallet?userId=${email}`, { timeout: 10000 })
+      : await axios.get(`${PROFILE_API}?userId=${email}`, { timeout: 10000 });
 
-    // faild case
-    if (
-      response.data?.tokenBalance < 100 ||
-      (response.data?.success === false && response.data?.userExists)
-    ) {
+    const tokenBalance = PAYMENT_API
+      ? (response.data?.tokenBalance ?? 0)
+      : (response.data?.profile?.tokenBalance ?? 0);
+
+    if (tokenBalance < 100) {
       return {
         success: false,
-        tokenBalance: response.data.tokenBalance,
-        message:
-          response.data.message ||
-          "Insufficient tokens to create a template. Please purchase more tokens.",
+        tokenBalance,
+        message: "Insufficient tokens to create a template. Please purchase more tokens.",
         userExists: true,
       };
     }
 
-    // success case
     return {
       success: true,
-      tokenBalance: response.data.tokenBalance,
-      message: response.data.message || "Token validation successful",
-      userExists: response.data?.userExists,
+      tokenBalance,
+      message: "Token validation successful",
+      userExists: true,
     };
   } catch (error: unknown) {
     console.error("Token validation error:", error);

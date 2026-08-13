@@ -8,18 +8,19 @@ import { X, Lock, Search } from 'lucide-react';
 import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 
+// Matches payment service's real TransactionOut schema — this table only
+// ever records token-purchase orders (no running balance, no debit rows),
+// so every entry is inherently a credit; "status" (pending/success/failed)
+// is what should drive the color, not a credit/debit type that doesn't exist.
 interface Transaction {
-  transactionId: string;
-  type: string;
-  amount: number;
-  category: string;
+  id: string;
+  date: string;
   description: string;
-  publishedId: string;
-  companyName: string;
-  balanceBefore: number;
-  balanceAfter: number;
-  timestamp: string;
-  referenceId: string;
+  amount: number;
+  status: string;
+  tokenCount: number;
+  service?: string;
+  currency?: string;
 }
 
 interface UserDetails {
@@ -49,6 +50,17 @@ const ProfilePage: React.FC = () => {
 
   async function getTokenData() {
     try {
+      // Real wallet balance lives in the payment service, same source the
+      // dashboard sidebar reads — the auth service's /profile record isn't
+      // kept in sync with token purchases/spend, so it always read 0 here.
+      if (PAYMENT_API) {
+        const response = await fetch(`${PAYMENT_API}/wallet?userId=${stored?.email}`, { headers: authHeader() });
+        if (response.ok) {
+          const data = await response.json();
+          setTotalTokens(data?.tokenBalance ?? 0);
+        }
+        return;
+      }
       const response = await fetch(AUTH_API ? `${AUTH_API}/profile?userId=${stored?.email}` : `${LAMBDA.profile}/profile?userId=${stored?.email}`, {
         headers: {
           Authorization: `Bearer ${user?.token}`
@@ -57,8 +69,7 @@ const ProfilePage: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setTotalTokens(data || 0);
-      } else {
+        setTotalTokens(data?.profile?.tokenBalance ?? 0);
       }
     } catch (error) {
     }
@@ -427,7 +438,7 @@ const ProfilePage: React.FC = () => {
               </div>
               <h3 className="text-lg font-medium text-brand-gold">Total Tokens</h3>
               <p className="text-3xl font-bold text-brand-gold mt-1">
-                {totalTokens?.profile?.tokenBalance || 0}
+                {totalTokens ?? 0}
               </p>
 
               <Link to="/user-recharge">
@@ -444,18 +455,17 @@ const ProfilePage: React.FC = () => {
 
               {recentToken && recentToken.transactions && recentToken.transactions.length > 0 ?
                 recentToken.transactions.map((transaction: Transaction) => (
-                  <div key={transaction.transactionId} className="flex justify-between items-center p-4 bg-surface-main rounded-lg border border-brand-yellow-soft">
+                  <div key={transaction.id} className="flex justify-between items-center p-4 bg-surface-main rounded-lg border border-brand-yellow-soft">
                     <div>
-                      <p className={`font-medium ${transaction.type === 'credit' ? 'text-status-success' : 'text-status-error'}`}>
-                        {transaction.type === 'credit' ? '+' : '-'}{transaction.amount} tokens
+                      <p className={`font-medium ${transaction.status === 'success' ? 'text-status-success' : transaction.status === 'failed' || transaction.status === 'cancelled' ? 'text-status-error' : 'text-brand-gold'}`}>
+                        +{transaction.tokenCount} tokens
                       </p>
                       <p className="text-sm text-brand-gold">{transaction.description}</p>
-                      <p className="text-xs text-brand-gold">{transaction.category}</p>
+                      <p className="text-xs text-brand-gold capitalize">{transaction.status}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-brand-gold">{formatDate(transaction.timestamp)}</p>
-                      <p className="text-xs text-brand-gold">{formatTime(transaction.timestamp)}</p>
-                      <p className="text-xs text-brand-gold">Balance: {transaction.balanceAfter}</p>
+                      <p className="text-sm font-medium text-brand-gold">{formatDate(transaction.date)}</p>
+                      <p className="text-xs text-brand-gold">{formatTime(transaction.date)}</p>
                     </div>
                   </div>
                 )) : (
@@ -578,12 +588,11 @@ const ProfilePage: React.FC = () => {
                 <table className="w-full">
                   <thead className="bg-surface-main text-left sticky top-0">
                     <tr>
-                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Type</th>
-                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Amount</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Status</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Tokens</th>
                       <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Description</th>
-                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Category</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Amount</th>
                       <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Date & Time</th>
-                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Balance</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -591,36 +600,37 @@ const ProfilePage: React.FC = () => {
                       .filter(transaction => {
                         const matchesSearch =
                           transaction.description.toLowerCase().includes(transactionSearch.toLowerCase()) ||
-                          transaction.category.toLowerCase().includes(transactionSearch.toLowerCase()) ||
-                          transaction.amount.toString().includes(transactionSearch) ||
-                          transaction.type.toLowerCase().includes(transactionSearch.toLowerCase());
+                          (transaction.service || '').toLowerCase().includes(transactionSearch.toLowerCase()) ||
+                          transaction.tokenCount.toString().includes(transactionSearch) ||
+                          transaction.status.toLowerCase().includes(transactionSearch.toLowerCase());
 
                         if (!dateFilter) return matchesSearch;
 
-                        const transactionDate = new Date(transaction.timestamp).toISOString().split('T')[0];
+                        const transactionDate = new Date(transaction.date).toISOString().split('T')[0];
                         return matchesSearch && transactionDate === dateFilter;
                       })
                       .map((transaction) => (
-                        <tr key={transaction.transactionId} className="border-b border-brand-yellow-soft hover:bg-surface-main">
+                        <tr key={transaction.id} className="border-b border-brand-yellow-soft hover:bg-surface-main">
                           <td className="py-4 px-4">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${transaction.type === 'credit'
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${transaction.status === 'success'
                               ? 'bg-status-success/15 text-status-success'
-                              : 'bg-status-error/15 text-status-error'
+                              : transaction.status === 'failed' || transaction.status === 'cancelled'
+                              ? 'bg-status-error/15 text-status-error'
+                              : 'bg-brand-yellow-soft text-brand-gold'
                               }`}>
-                              {transaction.type}
+                              {transaction.status}
                             </span>
                           </td>
-                          <td className={`py-4 px-4 font-medium ${transaction.type === 'credit' ? 'text-status-success' : 'text-status-error'
+                          <td className={`py-4 px-4 font-medium ${transaction.status === 'success' ? 'text-status-success' : transaction.status === 'failed' || transaction.status === 'cancelled' ? 'text-status-error' : 'text-brand-gold'
                             }`}>
-                            {transaction.type === 'credit' ? '+' : '-'}{transaction.amount}
+                            +{transaction.tokenCount}
                           </td>
                           <td className="py-4 px-4 text-brand-gold text-sm">{transaction.description}</td>
-                          <td className="py-4 px-4 text-brand-gold text-sm">{transaction.category}</td>
+                          <td className="py-4 px-4 text-brand-gold text-sm">₹{transaction.amount}</td>
                           <td className="py-4 px-4">
-                            <div className="text-brand-gold text-sm">{formatDate(transaction.timestamp)}</div>
-                            <div className="text-brand-gold text-xs">{formatTime(transaction.timestamp)}</div>
+                            <div className="text-brand-gold text-sm">{formatDate(transaction.date)}</div>
+                            <div className="text-brand-gold text-xs">{formatTime(transaction.date)}</div>
                           </td>
-                          <td className="py-4 px-4 text-brand-gold font-medium text-sm">{transaction.balanceAfter}</td>
                         </tr>
                       ))}
                   </tbody>

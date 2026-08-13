@@ -441,6 +441,12 @@ const Events: React.FC = () => {
     () => events.filter(e => e.reviewStatus?.toLowerCase() === "approved"),
     [events]
   );
+  // Scoped to the currently selected tab so the limit banner reads "Expos: 0/2"
+  // on the Expos tab instead of always showing the combined all-events count.
+  const publishedEventsInView = useMemo(
+    () => publishedEvents.filter(e => matchesView(e, viewFilter)),
+    [publishedEvents, viewFilter]
+  );
   const [loading, setloading] = useState(true);
   const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
   // Tracks whether the plan/token profile fetch has resolved. Until it has,
@@ -585,7 +591,7 @@ const Events: React.FC = () => {
           <p className="text-ink-paragraph mb-2">
             Browse and manage your events and registrations
           </p>
-          <ListingLimitBanner count={publishedEvents.length} type="event" label="Events" />
+          <ListingLimitBanner count={publishedEventsInView.length} type="event" label={viewLabel === "Events Directory" ? "Events" : viewLabel} />
         </div>
 
         {(() => {

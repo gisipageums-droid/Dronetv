@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Coins, TrendingUp } from "lucide-react";
 import { useUserAuth } from "../../../context/context";
-import { AUTH_API, LAMBDA } from '../../../../lib/apiConfig';
+import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../../lib/apiConfig';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -36,6 +36,16 @@ const ListingLimitBanner: React.FC<Props> = ({ count, type, label }) => {
 
   useEffect(() => {
     if (!userId) return;
+    // Real token totals live in the payment service's wallet — the auth
+    // service's /profile record isn't kept in sync with purchases/spend, so
+    // reading it here always looked like the Free tier regardless of the
+    // user's actual package.
+    if (PAYMENT_API) {
+      axios.get(`${PAYMENT_API}/wallet?userId=${userId}`)
+        .then(r => setTokens(r.data?.totalTokensEarned ?? r.data?.tokenBalance ?? 0))
+        .catch(() => setTokens(0));
+      return;
+    }
     axios.get(`${PROFILE_API}?userId=${userId}`)
       .then(r => {
         const p = r.data?.profile ?? {};
