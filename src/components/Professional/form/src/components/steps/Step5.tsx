@@ -341,11 +341,15 @@ export const Step5 = ({ step }: { step: any }) => {
   // ✅ Get template from BOTH sources: form context (for prefill) OR URL state (for new forms)
   const templateSelection = data.templateSelection || location.state?.templateId;
 
-  // Function to handle file replacement
+  // Function to handle file replacement - upserts: replaces the existing
+  // entry for this field if there is one, otherwise appends. A plain .map()
+  // only ever replaces, so a field's *first* upload (nothing to match yet)
+  // would silently do nothing.
   const handleFileReplace = (fieldName: string, newFileData: any) => {
-    const updatedMedia = data.media.map((item: any) => 
-      item.fieldName === fieldName ? newFileData : item
-    );
+    const exists = data.media.some((item: any) => item.fieldName === fieldName);
+    const updatedMedia = exists
+      ? data.media.map((item: any) => (item.fieldName === fieldName ? newFileData : item))
+      : [...data.media, newFileData];
     updateField('media', updatedMedia);
   };
 

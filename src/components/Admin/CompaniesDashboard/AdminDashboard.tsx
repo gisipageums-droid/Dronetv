@@ -21,7 +21,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CredentialsModal from "./credentialProp/Prop";
 import { motion, AnimatePresence } from "motion/react";
-import { COMPANY_API, AUTH_API, LAMBDA } from '../../../lib/apiConfig';
+import { COMPANY_API, AUTH_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const PROFILE_BATCH_API = AUTH_API ? `${AUTH_API}/profile/batch` : null;
@@ -1052,8 +1052,11 @@ const AdminDashboard: React.FC = () => {
     const controller = new AbortController();
     setLeadsLoading(true);
     setLeadsError(null);
-    const url = `${LAMBDA.adminLeads}/admin-leads`;
-    fetch(url, { signal: controller.signal })
+    const url = LEADS_API ? `${LEADS_API}/admin-leads?limit=200` : `${LAMBDA.adminLeads}/admin-leads`;
+    fetch(url, {
+      signal: controller.signal,
+      headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+    })
       .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
       .then(data => setLeads(data.items || []))
       .catch(err => { if (err.name !== 'AbortError') setLeadsError('Failed to load leads.'); })

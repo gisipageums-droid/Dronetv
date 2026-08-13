@@ -1986,7 +1986,7 @@ export const Step1 = ({
                 <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   User Name
                   <span className="text-status-error ml-1">*</span>
-                  <span className="ml-2 text-status-info">https://www.dronetv.in/professional/{data.basicInfo?.user_name}</span>
+                  <span className="block text-xs text-status-info break-all mt-0.5">https://www.dronetv.in/professional/{data.basicInfo?.user_name}</span>
                 </label>
                 <input
                   type="text"
