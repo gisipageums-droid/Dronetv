@@ -72,6 +72,7 @@ const EventAdminDashboard = lazy(() => import("./components/Admin/eventAdmin/Eve
 const UserEvent = lazy(() => import("./components/UserEvent"));
 const AdminProfessional = lazy(() => import("./components/Admin/professionalAdmin/AdminProfessionalDashboard"));
 const AdminUsersDashboard = lazy(() => import("./components/Admin/userAdmin/AdminUsersDashboard"));
+const StaffManagement = lazy(() => import("./components/Admin/staffAdmin/StaffManagement"));
 const AdminCompanyEdit = lazy(() => import("./components/Admin/userAdmin/AdminCompanyEdit"));
 const UserProfessional = lazy(() => import("./components/profissionalDirectory"));
 
@@ -406,6 +407,7 @@ const AppContent = () => {
           />
           <Route path="/user/professional" element={<UserProfessional />} />
           <Route path="/admin/users" element={<AdminProtectedRoute><AdminLayout><AdminUsersDashboard /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/staff" element={<AdminProtectedRoute><AdminLayout><StaffManagement /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/companies/details/:publishedId/:userId" element={<AdminProtectedRoute><AdminCompanyEdit /></AdminProtectedRoute>} />
           <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route

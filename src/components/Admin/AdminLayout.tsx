@@ -60,6 +60,7 @@ interface NavGroup {
   icon: React.ReactNode;
   path?: string;
   sub?: SubItem[];
+  superAdminOnly?: boolean;
 }
 
 interface Section {
@@ -88,6 +89,13 @@ const NAV: Section[] = [
         label: "Users",
         icon: <UserCircle size={17} />,
         path: "/admin/users",
+      },
+      {
+        id: "staff",
+        label: "Staff & Roles",
+        icon: <Users2 size={17} />,
+        path: "/admin/staff",
+        superAdminOnly: true,
       },
       {
         id: "companies",
@@ -420,7 +428,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {section.heading}
               </div>
             )}
-            {section.items.map(item => {
+            {section.items.filter(item => !item.superAdminOnly || admin?.adminData?.role === "super_admin").map(item => {
               const isGroupActive = currentGroupId === item.id;
               const isOpen = openGroup === item.id;
 
