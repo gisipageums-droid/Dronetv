@@ -274,6 +274,11 @@ export default function AdminMediaDashboard() {
   const [appLoading, setAppLoading] = useState(false);
   const [appError, setAppError] = useState(false);
   const [appSearch, setAppSearch] = useState('');
+  // Applications-only sub-filter — the table mixes webinar registrations in
+  // with general partner/contact submissions with no type field to tell them
+  // apart, so this splits on the message text instead.
+  const [appSubType, setAppSubType] = useState<'all' | 'webinar' | 'other'>('all');
+  const isWebinarSubmission = (sub: AppSubmission) => (sub.message || '').toLowerCase().includes('webinar registration');
 
   useEffect(() => {
     setActiveType(urlType ?? 'all');
@@ -327,7 +332,12 @@ export default function AdminMediaDashboard() {
     return () => controller.abort();
   }, [activeType]);
 
+  const webinarAppCount = appSubmissions.filter(isWebinarSubmission).length;
+  const otherAppCount = appSubmissions.length - webinarAppCount;
+
   const filteredAppSubmissions = appSubmissions.filter(sub => {
+    const matchesSubType = appSubType === 'all' || (appSubType === 'webinar' ? isWebinarSubmission(sub) : !isWebinarSubmission(sub));
+    if (!matchesSubType) return false;
     const q = appSearch.trim().toLowerCase();
     if (!q) return true;
     return (sub.name || '').toLowerCase().includes(q) ||
@@ -487,12 +497,28 @@ export default function AdminMediaDashboard() {
         </div>
 
         {activeType !== 'job' && (
-          <div className="relative w-full max-w-xs mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input type="text" placeholder={activeType === 'applications' ? 'Search applications...' : 'Search content...'}
-              value={activeType === 'applications' ? appSearch : search}
-              onChange={e => activeType === 'applications' ? setAppSearch(e.target.value) : setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <div className="relative w-full max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input type="text" placeholder={activeType === 'applications' ? 'Search applications...' : 'Search content...'}
+                value={activeType === 'applications' ? appSearch : search}
+                onChange={e => activeType === 'applications' ? setAppSearch(e.target.value) : setSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+            </div>
+            {activeType === 'applications' && (
+              <div className="flex gap-1.5">
+                {([
+                  ['all', `All (${appSubmissions.length})`],
+                  ['webinar', `Webinar (${webinarAppCount})`],
+                  ['other', `Applications (${otherAppCount})`],
+                ] as const).map(([value, label]) => (
+                  <button key={value} onClick={() => setAppSubType(value)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${appSubType === value ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
