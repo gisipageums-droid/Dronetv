@@ -39,6 +39,7 @@ export default function DteaWebinarCard() {
   const [form, setForm] = useState<DteaForm>(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [phoneError, setPhoneError] = useState('');
 
@@ -87,7 +88,12 @@ export default function DteaWebinarCard() {
         body: JSON.stringify({ name: form.fullName, email: form.email, phone: form.phone, message }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setSubmitted(true);
+      const result = await res.json().catch(() => ({}));
+      if (result?.alreadyRegistered) {
+        setAlreadyRegistered(true);
+      } else {
+        setSubmitted(true);
+      }
     } catch {
       setSubmitError(true);
     } finally {
@@ -158,7 +164,7 @@ export default function DteaWebinarCard() {
         {/* Form */}
         <div className="px-6 sm:px-8 py-7">
           <h3 className="text-lg font-bold text-[#2F2F2F] mb-4">Register for the Webinar</h3>
-          {!submitted ? (
+          {!submitted && !alreadyRegistered ? (
             <form onSubmit={handleSubmit} className="space-y-3.5">
               <div className="grid grid-cols-1 gap-3.5">
                 <div>
@@ -239,6 +245,11 @@ export default function DteaWebinarCard() {
                 {submitting ? 'Registering...' : 'REGISTER NOW'}
               </button>
             </form>
+          ) : alreadyRegistered ? (
+            <div className="bg-[#FFF1B8] border border-[#E8B400] rounded-lg p-4 text-center">
+              <p className="text-sm font-bold text-[#2F2F2F] mb-1">You're already registered!</p>
+              <p className="text-xs text-[#2F2F2F]/80">This email has already been registered for this webinar. Check your inbox at {form.email} for the confirmation and joining details.</p>
+            </div>
           ) : (
             <div className="bg-[#FFF4F4] border border-[#FF1F1F] rounded-lg p-4 text-center">
               <p className="text-sm font-bold text-[#2F2F2F] mb-1">Thank you, {form.fullName.split(' ')[0]}!</p>
