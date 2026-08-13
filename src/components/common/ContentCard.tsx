@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 
 interface ContentCardProps {
   image?: string;
@@ -26,13 +26,31 @@ export default function ContentCard({
   className = '',
   onClick,
 }: ContentCardProps) {
+  const retriedRef = useRef(false);
+  const [failed, setFailed] = useState(false);
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!retriedRef.current) {
+      retriedRef.current = true;
+      // Transient network/CDN blips are common — retry once with a
+      // cache-busting param before giving up and showing the fallback.
+      const target = e.currentTarget;
+      const separator = image!.includes('?') ? '&' : '?';
+      setTimeout(() => {
+        target.src = `${image}${separator}retry=${Date.now()}`;
+      }, 400);
+      return;
+    }
+    setFailed(true);
+  };
+
   return (
     <div
       onClick={onClick}
       className={`flex flex-col bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden ${onClick ? 'cursor-pointer' : ''} ${className}`}
     >
-      {image ? (
-        <img src={image} alt={imageAlt} className={`w-full ${imgHeight} object-cover flex-shrink-0`} />
+      {image && !failed ? (
+        <img src={image} alt={imageAlt} onError={handleImageError} className={`w-full ${imgHeight} object-cover flex-shrink-0`} />
       ) : imageFallback ? (
         <div className={`w-full ${imgHeight} bg-zinc-900 flex items-center justify-center flex-shrink-0`}>{imageFallback}</div>
       ) : null}
