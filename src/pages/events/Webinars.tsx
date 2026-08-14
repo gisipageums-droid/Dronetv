@@ -5,7 +5,6 @@ import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
-import PostContentCTA from '../../components/common/PostContentCTA';
 import DteaWebinarCard from './DteaWebinarCard';
 
 const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
@@ -206,9 +205,6 @@ export default function WebinarsPage() {
           </div>
         </div>
 
-        <PostContentCTA contentType="webinar" typeLabel="Webinar"
-          ctaTitle="Submit Instantly"
-          ctaDescription="Prefer instant self-listing over manual review? Post your webinar directly." />
         </div>
         <AdSidebarRail />
       </div>
