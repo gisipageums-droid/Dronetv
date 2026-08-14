@@ -251,12 +251,20 @@ export default function DteaWebinarCard() {
           ) : alreadyRegistered ? (
             <div className="bg-[#FFF1B8] border border-[#E8B400] rounded-lg p-4 text-center">
               <p className="text-sm font-bold text-[#2F2F2F] mb-1">You're already registered!</p>
-              <p className="text-xs text-[#2F2F2F]/80">This email has already been registered for this webinar. Check your inbox at {form.email} for the confirmation and joining details.</p>
+              <p className="text-xs text-[#2F2F2F]/80 mb-3">This email has already been registered for this webinar. Check your inbox at {form.email} for the confirmation and joining details.</p>
+              <a href={WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#25D366] hover:opacity-90 text-white font-bold text-xs px-3.5 py-2 rounded-lg transition-opacity">
+                <FaWhatsapp className="w-3.5 h-3.5" /> Follow on WhatsApp
+              </a>
             </div>
           ) : (
             <div className="bg-[#FFF4F4] border border-[#FF1F1F] rounded-lg p-4 text-center">
               <p className="text-sm font-bold text-[#2F2F2F] mb-1">Thank you, {form.fullName.split(' ')[0]}!</p>
-              <p className="text-xs text-[#2F2F2F]/80">Your registration has been received. Webinar details will be shared with you at {form.email}.</p>
+              <p className="text-xs text-[#2F2F2F]/80 mb-3">Your registration has been received. Webinar details will be shared with you at {form.email}.</p>
+              <a href={WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#25D366] hover:opacity-90 text-white font-bold text-xs px-3.5 py-2 rounded-lg transition-opacity">
+                <FaWhatsapp className="w-3.5 h-3.5" /> Follow on WhatsApp
+              </a>
             </div>
           )}
         </div>
