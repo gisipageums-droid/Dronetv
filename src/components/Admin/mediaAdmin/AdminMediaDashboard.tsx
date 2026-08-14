@@ -332,6 +332,26 @@ export default function AdminMediaDashboard() {
     return () => controller.abort();
   }, [activeType]);
 
+  const [appDeleteConfirm, setAppDeleteConfirm] = useState<AppSubmission | null>(null);
+  const [appDeleting, setAppDeleting] = useState(false);
+
+  const confirmDeleteApp = async () => {
+    if (!appDeleteConfirm) return;
+    setAppDeleting(true);
+    try {
+      const url = ADMIN_API ? `${ADMIN_API}/contact/${appDeleteConfirm.id}` : `${LAMBDA.contact}/contact?id=${appDeleteConfirm.id}`;
+      const res = await fetch(url, { method: 'DELETE' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setAppSubmissions(prev => prev.filter(s => s.id !== appDeleteConfirm.id));
+      toast.success('Application deleted');
+      setAppDeleteConfirm(null);
+    } catch {
+      toast.error('Delete failed');
+    } finally {
+      setAppDeleting(false);
+    }
+  };
+
   const webinarAppCount = appSubmissions.filter(isWebinarSubmission).length;
   const otherAppCount = appSubmissions.length - webinarAppCount;
 
@@ -536,15 +556,18 @@ export default function AdminMediaDashboard() {
               <table className="w-full min-w-[600px] text-sm">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
+                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide w-12">#</th>
                     <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Name</th>
                     <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Contact</th>
                     <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Message</th>
                     <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide whitespace-nowrap">Submitted</th>
+                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {filteredAppSubmissions.map(sub => (
+                  {filteredAppSubmissions.map((sub, idx) => (
                     <tr key={sub.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-gray-500 text-xs align-top">{idx + 1}</td>
                       <td className="px-4 py-3 font-medium text-gray-900 align-top whitespace-nowrap">{sub.name}</td>
                       <td className="px-4 py-3 text-gray-500 text-xs align-top whitespace-nowrap">
                         <div>{sub.email}</div>
@@ -553,6 +576,12 @@ export default function AdminMediaDashboard() {
                       <td className="px-4 py-3 text-gray-600 text-xs align-top max-w-md">{sub.message}</td>
                       <td className="px-4 py-3 text-gray-500 text-xs align-top whitespace-nowrap">
                         {sub.submittedAt ? new Date(sub.submittedAt).toLocaleString('en-IN') : '—'}
+                      </td>
+                      <td className="px-4 py-3 align-top">
+                        <button onClick={() => setAppDeleteConfirm(sub)} title="Delete"
+                          className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-red-600 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -1045,6 +1074,29 @@ export default function AdminMediaDashboard() {
               <button onClick={confirmDelete} disabled={deleting}
                 className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700 disabled:opacity-50">
                 {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {appDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/60 z-[10000000] flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0" />
+              <h3 className="text-lg font-bold text-gray-900">Delete Application</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-5">
+              Delete the application from <span className="font-semibold">"{appDeleteConfirm.name}"</span>? This cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setAppDeleteConfirm(null)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Cancel
+              </button>
+              <button onClick={confirmDeleteApp} disabled={appDeleting}
+                className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700 disabled:opacity-50">
+                {appDeleting ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>
