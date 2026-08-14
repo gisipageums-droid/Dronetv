@@ -29,7 +29,7 @@ interface NavGroup {
   paths: string[];
 }
 
-function getNavGroups(_role: string, isAdmin: boolean): NavGroup[] {
+function getNavGroups(role: string, isAdmin: boolean): NavGroup[] {
   // Every logged-in user can list a company, a professional profile, and events —
   // these aren't mutually exclusive, so listing options are never role-gated.
   const listingItems: SubItem[] = [
@@ -148,6 +148,20 @@ function getNavGroups(_role: string, isAdmin: boolean): NavGroup[] {
       ],
     }] : []),
   ];
+
+  // Company Account role per the RBAC design doc's "Company Dashboard" list
+  // (profile, products/services, team, events, jobs, ads, analytics, leads,
+  // enquiries, subscription, payment history - all already covered by the
+  // groups above) does not include the Professionals-community-engagement
+  // group (Job Board browsing/Certifications/Training/Community/Networking)
+  // or the Media Hub posting group (News/Magazine/etc.) - those belong to
+  // the Professional and Media Editor roles respectively. "My Listings"
+  // stays visible for every role on purpose (existing product decision,
+  // see comment above - any account can also list a professional profile).
+  // Admins and every other role keep seeing everything, unchanged.
+  if (role === "company" && !isAdmin) {
+    return groups.filter(g => g.id !== "professionals" && g.id !== "media");
+  }
 
   return groups;
 }
