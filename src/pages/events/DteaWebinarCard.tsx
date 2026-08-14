@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { CalendarDays, Clock, Globe2 } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
+
+const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029VbBjDcVIXnloFSQOoj13';
 
 const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
 
@@ -272,6 +275,15 @@ export default function DteaWebinarCard() {
             <img src="/images/drone-expo-2026-logo.jpg" alt="Drone Expo 2026" className="max-w-full h-24 object-contain rounded" />
           </div>
         </div>
+      </div>
+
+      {/* WhatsApp Channel */}
+      <div className="bg-[#FFC515] border-t border-[#2F2F2F]/10 px-6 sm:px-8 py-5 flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
+        <p className="text-sm font-bold text-[#2F2F2F]">Stay updated on DTEA webinars and events</p>
+        <a href={WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-[#25D366] hover:opacity-90 text-white font-bold text-sm px-4 py-2 rounded-lg transition-opacity">
+          <FaWhatsapp className="w-4 h-4" /> Follow on WhatsApp
+        </a>
       </div>
 
       <div className="bg-[#2F2F2F] text-white text-center py-3.5 text-sm font-bold">

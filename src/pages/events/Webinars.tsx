@@ -195,7 +195,7 @@ export default function WebinarsPage() {
             <p className="text-xs text-white/40 mt-1">✉ bd@dronetv.in &nbsp;|&nbsp; 📞 +91 7520123555</p>
           </div>
           <div className="flex gap-3 flex-shrink-0">
-            <a href="mailto:bd@dronetv.in?subject=Submit Webinar"
+            <a href="/form"
               className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
               Submit Webinar
             </a>
