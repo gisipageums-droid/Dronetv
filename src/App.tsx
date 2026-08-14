@@ -73,6 +73,18 @@ const UserEvent = lazy(() => import("./components/UserEvent"));
 const AdminProfessional = lazy(() => import("./components/Admin/professionalAdmin/AdminProfessionalDashboard"));
 const AdminUsersDashboard = lazy(() => import("./components/Admin/userAdmin/AdminUsersDashboard"));
 const StaffManagement = lazy(() => import("./components/Admin/staffAdmin/StaffManagement"));
+const CompanyPortalLayout = lazy(() => import("./components/CompanyPortal/CompanyPortalLayout"));
+const CompanyPortalDashboard = lazy(() => import("./components/CompanyPortal/pages/Dashboard"));
+const CompanyPortalProfile = lazy(() => import("./components/CompanyPortal/pages/profile/CompanyProfilePage"));
+const CompanyPortalListings = lazy(() => import("./components/CompanyPortal/pages/Listings"));
+const CompanyPortalLeads = lazy(() => import("./components/CompanyPortal/pages/Leads"));
+const CompanyPortalContent = lazy(() => import("./components/CompanyPortal/pages/Content"));
+const CompanyPortalMagazine = lazy(() => import("./components/CompanyPortal/pages/Magazine"));
+const CompanyPortalPress = lazy(() => import("./components/CompanyPortal/pages/Press"));
+const CompanyPortalAnalytics = lazy(() => import("./components/CompanyPortal/pages/Analytics"));
+const CompanyPortalPackage = lazy(() => import("./components/CompanyPortal/pages/Package"));
+const CompanyPortalInvoices = lazy(() => import("./components/CompanyPortal/pages/Invoices"));
+const CompanyPortalSettings = lazy(() => import("./components/CompanyPortal/pages/Settings"));
 const AdminCompanyEdit = lazy(() => import("./components/Admin/userAdmin/AdminCompanyEdit"));
 const UserProfessional = lazy(() => import("./components/profissionalDirectory"));
 
@@ -539,6 +551,17 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/company-portal" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalDashboard /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/profile" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalProfile /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/listings" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalListings /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/leads" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalLeads /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/content" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalContent /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/magazine" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMagazine /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/press" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalPress /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/analytics" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalAnalytics /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/package" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalPackage /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/invoices" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalInvoices /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/settings" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalSettings /></CompanyPortalLayout></ProtectedRoute>} />
           <Route
             path="/user-profile"
             element={
