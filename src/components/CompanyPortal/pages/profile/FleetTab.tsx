@@ -35,7 +35,7 @@ export default function FleetTab({ profile, save }: TabProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <div className="flex gap-6 px-4.5 py-3.5 bg-surface-card border border-ink-light rounded-lg flex-1">
+        <div className="flex gap-6 px-4 py-3.5 bg-surface-card border border-ink-light rounded-lg flex-1">
           <div><span className="text-xl font-extrabold text-brand-gold">{fleet.length}</span> <span className="text-xs text-ink-caption ml-1">Total Drones</span></div>
           <div><span className="text-xl font-extrabold text-brand-gold">{fleet.filter(f => f.status === "Active").length}</span> <span className="text-xs text-ink-caption ml-1">Active</span></div>
         </div>

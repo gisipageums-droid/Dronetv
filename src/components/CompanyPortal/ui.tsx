@@ -79,8 +79,8 @@ export function Btn({
   disabled?: boolean;
   className?: string;
 }) {
-  const base = "inline-flex items-center gap-1.5 rounded-md font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
-  const sizeCls = size === "sm" ? "px-3 py-1.5 text-xs" : "px-4.5 py-2.5 text-[13px]";
+  const base = "inline-flex items-center gap-1.5 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+  const sizeCls = size === "sm" ? "px-3 py-1.5 text-xs" : "px-4 py-2.5 text-sm";
   const variantCls = {
     primary: "bg-brand-yellow text-ink hover:bg-brand-gold",
     outline: "bg-white text-ink border border-ink-light hover:border-ink-dark",

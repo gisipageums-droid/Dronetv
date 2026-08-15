@@ -32,7 +32,7 @@ export default function TeamTab({ profile, save }: TabProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <div className="px-4.5 py-3.5 bg-surface-card border border-ink-light rounded-lg flex-1">
+        <div className="px-4 py-3.5 bg-surface-card border border-ink-light rounded-lg flex-1">
           <span className="text-xl font-extrabold text-brand-gold">{team.length}</span> <span className="text-xs text-ink-caption ml-1">Team Members</span>
         </div>
         <Btn onClick={() => setShowForm(!showForm)} className="ml-4">+ Add Member</Btn>
