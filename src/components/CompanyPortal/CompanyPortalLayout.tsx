@@ -72,8 +72,103 @@ const TITLES: Record<string, string> = {
   "/company-portal/settings": "Account Settings",
 };
 
+interface SidebarContentProps {
+  expanded: boolean;
+  displayName: string;
+  initials: string;
+  email?: string;
+  pathname: string;
+  onToggle?: () => void;
+  onNavigate?: () => void;
+  onLogout: () => void;
+}
+
+function SidebarContent({ expanded, displayName, initials, email, pathname, onToggle, onNavigate, onLogout }: SidebarContentProps) {
+  return (
+    <>
+      <div className="px-4 pt-5 pb-3.5 border-b border-white/10 flex items-center justify-between">
+        {expanded && (
+          <div>
+            <div className="text-base font-extrabold text-white">
+              Drone<span className="text-brand-yellow">Tv</span>.in
+            </div>
+            <div className="text-[8.5px] text-white/30 uppercase tracking-widest mt-0.5">Company Portal</div>
+          </div>
+        )}
+        {onToggle && (
+          <button onClick={onToggle} className="text-white/50 hover:text-white p-1 flex-shrink-0" title="Toggle sidebar">
+            {expanded ? <X size={16} /> : <Menu size={16} />}
+          </button>
+        )}
+      </div>
+
+      {expanded && (
+        <div className="px-4 py-3.5 bg-brand-yellow/10 border-b border-white/5 flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-md bg-brand-yellow flex items-center justify-center text-sm font-extrabold text-ink flex-shrink-0">
+            {initials}
+          </div>
+          <div className="min-w-0">
+            <div className="text-[12.5px] font-bold text-white leading-tight truncate">{displayName}</div>
+            <div className="text-[10px] text-brand-yellow font-semibold">🏅 Portal Active</div>
+          </div>
+        </div>
+      )}
+
+      <nav className="flex-1 overflow-y-auto py-2.5">
+        {NAV.map((section, si) => (
+          <div key={si}>
+            {expanded && section.heading && (
+              <div className="px-4 pt-3 pb-1 text-[9px] font-bold text-white/25 uppercase tracking-widest">
+                {section.heading}
+              </div>
+            )}
+            {section.items.map(item => {
+              const active = pathname === item.path;
+              return (
+                <NavLink
+                  key={item.id}
+                  to={item.path}
+                  end={item.path === "/company-portal"}
+                  onClick={onNavigate}
+                  className={`flex items-center gap-2.5 px-4 py-2.5 text-[12.5px] font-medium border-l-[3px] transition-colors whitespace-nowrap ${
+                    active
+                      ? "bg-brand-yellow/10 text-brand-yellow border-brand-yellow"
+                      : "text-white/60 border-transparent hover:bg-white/5 hover:text-white"
+                  }`}
+                  title={!expanded ? item.label : undefined}
+                >
+                  <item.icon size={16} className="flex-shrink-0" />
+                  {expanded && <span>{item.label}</span>}
+                </NavLink>
+              );
+            })}
+          </div>
+        ))}
+      </nav>
+
+      {expanded && (
+        <div className="px-4 py-3.5 border-t border-white/10">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-8 h-8 rounded-full bg-brand-yellow flex items-center justify-center text-xs font-extrabold text-ink flex-shrink-0">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-semibold text-white truncate">{displayName}</div>
+              <div className="text-[10px] text-white/35 truncate">{email}</div>
+            </div>
+          </div>
+          <button onClick={onLogout} className="flex items-center gap-1.5 text-xs text-status-error hover:text-red-400">
+            <LogOut size={13} /> Sign Out
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function CompanyPortalLayout({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useUserAuth();
@@ -88,92 +183,47 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
   };
 
   return (
-    <div className="flex min-h-screen bg-surface-main">
-      {/* Sidebar */}
+    <div className="flex fixed inset-0 pt-20 bg-surface-main">
+      {/* Desktop sidebar */}
       <aside
-        className={`fixed top-0 left-0 bottom-0 z-40 bg-ink flex flex-col transition-all duration-200 overflow-hidden ${
-          isOpen ? "w-[230px]" : "w-0 lg:w-[64px]"
+        className={`hidden lg:flex flex-shrink-0 h-full bg-ink flex-col transition-all duration-200 overflow-hidden ${
+          isOpen ? "w-[230px]" : "w-[64px]"
         }`}
       >
-        <div className="px-4 pt-5 pb-3.5 border-b border-white/10 flex items-center justify-between">
-          {isOpen && (
-            <div>
-              <div className="text-base font-extrabold text-white">
-                Drone<span className="text-brand-yellow">Tv</span>.in
-              </div>
-              <div className="text-[8.5px] text-white/30 uppercase tracking-widest mt-0.5">Company Portal</div>
-            </div>
-          )}
-          <button onClick={() => setIsOpen(!isOpen)} className="text-white/50 hover:text-white p-1 flex-shrink-0" title="Toggle sidebar">
-            {isOpen ? <X size={16} /> : <Menu size={16} />}
-          </button>
-        </div>
-
-        {isOpen && (
-          <div className="px-4 py-3.5 bg-brand-yellow/10 border-b border-white/5 flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-md bg-brand-yellow flex items-center justify-center text-sm font-extrabold text-ink flex-shrink-0">
-              {initials}
-            </div>
-            <div className="min-w-0">
-              <div className="text-[12.5px] font-bold text-white leading-tight truncate">{displayName}</div>
-              <div className="text-[10px] text-brand-yellow font-semibold">🏅 Portal Active</div>
-            </div>
-          </div>
-        )}
-
-        <nav className="flex-1 overflow-y-auto py-2.5">
-          {NAV.map((section, si) => (
-            <div key={si}>
-              {isOpen && section.heading && (
-                <div className="px-4 pt-3 pb-1 text-[9px] font-bold text-white/25 uppercase tracking-widest">
-                  {section.heading}
-                </div>
-              )}
-              {section.items.map(item => {
-                const active = location.pathname === item.path;
-                return (
-                  <NavLink
-                    key={item.id}
-                    to={item.path}
-                    end={item.path === "/company-portal"}
-                    className={`flex items-center gap-2.5 px-4 py-2.5 text-[12.5px] font-medium border-l-[3px] transition-colors whitespace-nowrap ${
-                      active
-                        ? "bg-brand-yellow/10 text-brand-yellow border-brand-yellow"
-                        : "text-white/60 border-transparent hover:bg-white/5 hover:text-white"
-                    }`}
-                    title={!isOpen ? item.label : undefined}
-                  >
-                    <item.icon size={16} className="flex-shrink-0" />
-                    {isOpen && <span>{item.label}</span>}
-                  </NavLink>
-                );
-              })}
-            </div>
-          ))}
-        </nav>
-
-        {isOpen && (
-          <div className="px-4 py-3.5 border-t border-white/10">
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-full bg-brand-yellow flex items-center justify-center text-xs font-extrabold text-ink flex-shrink-0">
-                {initials}
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-semibold text-white truncate">{displayName}</div>
-                <div className="text-[10px] text-white/35 truncate">{user?.email}</div>
-              </div>
-            </div>
-            <button onClick={handleLogout} className="flex items-center gap-1.5 text-xs text-status-error hover:text-red-400">
-              <LogOut size={13} /> Sign Out
-            </button>
-          </div>
-        )}
+        <SidebarContent
+          expanded={isOpen}
+          displayName={displayName}
+          initials={initials}
+          email={user?.email}
+          pathname={location.pathname}
+          onToggle={() => setIsOpen(!isOpen)}
+          onLogout={handleLogout}
+        />
       </aside>
 
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 top-20 z-50 flex">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
+          <aside className="relative w-[230px] h-full bg-ink flex flex-col">
+            <SidebarContent
+              expanded
+              displayName={displayName}
+              initials={initials}
+              email={user?.email}
+              pathname={location.pathname}
+              onToggle={() => setMobileOpen(false)}
+              onNavigate={() => setMobileOpen(false)}
+              onLogout={handleLogout}
+            />
+          </aside>
+        </div>
+      )}
+
       {/* Main */}
-      <div className={`flex-1 min-w-0 flex flex-col transition-all duration-200 ${isOpen ? "ml-[230px]" : "ml-0 lg:ml-[64px]"}`}>
+      <div className="flex-1 min-w-0 flex flex-col overflow-y-auto">
         <header className="h-[58px] bg-white border-b border-ink-light flex items-center px-4 sm:px-6 gap-3 sm:gap-4 sticky top-0 z-30 shadow-sm">
-          <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden text-ink-caption p-1" title="Toggle sidebar">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-ink-caption p-1" title="Open menu">
             <Menu size={18} />
           </button>
           <div className="flex-1 text-sm font-bold text-ink truncate">{pageTitle}</div>

@@ -15,16 +15,31 @@ export default function Leads() {
     getMyCompany(userId).then(setCompany).finally(() => setLoading(false));
   }, [userId]);
 
-  return (
-    <div>
-      <PageHeader title="B2B Leads" sub="Buyer inquiries submitted to your company profile" />
-      {loading ? (
+  if (loading) {
+    return (
+      <div>
+        <PageHeader title="B2B Leads" sub="Buyer inquiries submitted to your company profile" />
         <Card className="text-center py-16 text-ink-caption">Loading...</Card>
-      ) : !company ? (
+      </div>
+    );
+  }
+
+  if (!company) {
+    return (
+      <div>
+        <PageHeader title="B2B Leads" sub="Buyer inquiries submitted to your company profile" />
         <Card><EmptyState text="No published company found. Publish your profile to start receiving leads." /></Card>
-      ) : (
-        <CompanyLeads overrideCompanyName={company.companyName} overridePublishedId={company.publishedId} />
-      )}
+      </div>
+    );
+  }
+
+  // CompanyLeads renders its own full header/search/table chrome and
+  // padding (min-h-screen p-4 md:p-6) - it's designed as a standalone page,
+  // not an embeddable widget. Negating the portal's own <main> padding here
+  // avoids a duplicated header and doubled-up spacing around it.
+  return (
+    <div className="-m-4 sm:-m-6">
+      <CompanyLeads overrideCompanyName={company.companyName} overridePublishedId={company.publishedId} />
     </div>
   );
 }

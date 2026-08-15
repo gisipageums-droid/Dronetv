@@ -21,6 +21,11 @@ export default function Settings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+
   useEffect(() => {
     if (!userId) { setLoading(false); return; }
     const base = AUTH_API || LAMBDA.auth;
@@ -49,6 +54,34 @@ export default function Settings() {
       toast.error("Failed to save changes");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const changePassword = async () => {
+    if (!currentPassword || !newPassword) {
+      toast.error("Enter your current and new password");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New password and confirmation don't match");
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters");
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      const base = AUTH_API || LAMBDA.auth;
+      await axios.post(`${base}/change-password`, { currentPassword, newPassword }, { headers: authHeader() });
+      toast.success("Password changed successfully");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.detail || "Failed to change password");
+    } finally {
+      setChangingPassword(false);
     }
   };
 
@@ -87,6 +120,26 @@ export default function Settings() {
           </div>
         </Card>
       )}
+
+      <Card className="mt-5">
+        <CardHeader title="Change Password" />
+        <div className="p-4">
+          <FormGrid>
+            <Field label="Current Password" required wide>
+              <input className={inputCls} type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} autoComplete="current-password" />
+            </Field>
+            <Field label="New Password" required>
+              <input className={inputCls} type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} autoComplete="new-password" />
+            </Field>
+            <Field label="Confirm New Password" required>
+              <input className={inputCls} type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} autoComplete="new-password" />
+            </Field>
+          </FormGrid>
+          <div className="mt-5">
+            <ActionBar onSave={changePassword} saveLabel={changingPassword ? "Changing..." : "Change Password"} />
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }
