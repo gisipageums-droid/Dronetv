@@ -97,7 +97,7 @@ export default function EditTemp_2() {
 
     const tryFetch = async () => {
       try {
-        const response = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/api/professional/${userId}/${draftId}?template=template-2` : `${LAMBDA.profTemplateLoad}/api/professional/${userId}/${draftId}?template=template-2`);
+        const response = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/draft/${userId}/${draftId}?template=template-2` : `${LAMBDA.profTemplateLoad}/api/professional/${userId}/${draftId}?template=template-2`);
 
         if (!response.ok) {
           if (response.status === 404 && elapsed < POLL_MAX_WAIT) {

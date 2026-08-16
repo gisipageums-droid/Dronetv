@@ -38,7 +38,7 @@ export default function App() {
     if (!userId || !draftId || loadedRef.current) return;
     loadedRef.current = true;
 
-    const API_URL = COMPANY_API ? `${COMPANY_API}/api/draft/${userId}/${draftId}?template=template-1` : `${LAMBDA.companyDraft}/api/draft/${userId}/${draftId}?template=template-1`;
+    const API_URL = COMPANY_API ? `${COMPANY_API}/draft/${userId}/${draftId}?template=template-1` : `${LAMBDA.companyDraft}/api/draft/${userId}/${draftId}?template=template-1`;
 
     // Form passed data directly — show template immediately
     if (location.state?.aiGenData) {

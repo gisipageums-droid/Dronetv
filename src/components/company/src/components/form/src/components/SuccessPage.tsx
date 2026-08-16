@@ -16,7 +16,7 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({ formData }) => {
   const { draftDetails, setAIGenData, AIGenData } = useAuth();
   const navigate = useNavigate(); // Use the useNavigate hook
 
-  const API = COMPANY_API ? `${COMPANY_API}/api/draft` : `${LAMBDA.companyDraft}/api/draft`;
+  const API = COMPANY_API ? `${COMPANY_API}/draft` : `${LAMBDA.companyDraft}/api/draft`;
 //  const Dummyapi = COMPANY_API ? `${COMPANY_API}/api/draft/alok-12345/draft-alok-aerospace-2025-002?template=template-2` : `${LAMBDA.companyDraft}/api/draft/alok-12345/draft-alok-aerospace-2025-002?template=template-2`;
   async function handleClick() {
     try {

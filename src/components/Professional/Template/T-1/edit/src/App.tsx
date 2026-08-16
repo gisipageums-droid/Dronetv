@@ -137,7 +137,7 @@ const App: React.FC = () => {
     const tryFetch = async () => {
       try {
         const response = await fetch(
-          PROFESSIONAL_API ? `${PROFESSIONAL_API}/api/professional/${userId}/${draftId}?template=template-1` : `${LAMBDA.profTemplateLoad}/api/professional/${userId}/${draftId}?template=template-1`
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/draft/${userId}/${draftId}?template=template-1` : `${LAMBDA.profTemplateLoad}/api/professional/${userId}/${draftId}?template=template-1`
         );
 
         if (!response.ok) {
