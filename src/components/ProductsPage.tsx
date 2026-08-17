@@ -117,7 +117,6 @@ const ProductsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selCats, setSelCats] = useState<string[]>([]);
-  const [priceFilter, setPriceFilter] = useState('');
   const [sortBy, setSortBy] = useState('timestamp');
   const [page, setPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -178,17 +177,6 @@ const ProductsPage: React.FC = () => {
       const q = search.toLowerCase();
       list = list.filter(p => p.title.toLowerCase().includes(q) || p.companyName.toLowerCase().includes(q) || p.description.toLowerCase().includes(q));
     }
-    if (priceFilter) {
-      list = list.filter(p => {
-        const raw = (p.price || '').replace(/[₹,\s]/g, '');
-        const num = parseFloat(raw);
-        if (priceFilter === 'free') return isNaN(num) || raw === '';
-        if (priceFilter === 'lt1l') return !isNaN(num) && num < 100000;
-        if (priceFilter === '1l5l') return !isNaN(num) && num >= 100000 && num <= 500000;
-        if (priceFilter === 'gt5l') return !isNaN(num) && num > 500000;
-        return true;
-      });
-    }
     return [...list].sort((a, b) => {
       if (sortBy === 'rating') return b.rating - a.rating;
       if (sortBy === 'featured') return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
@@ -196,7 +184,7 @@ const ProductsPage: React.FC = () => {
       if (sortBy === 'pricedesc') { const na = parseFloat(a.price.replace(/[₹,\s]/g,'')); const nb = parseFloat(b.price.replace(/[₹,\s]/g,'')); return (isNaN(nb)?Infinity:nb)-(isNaN(na)?Infinity:na); }
       return new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime();
     });
-  }, [allProducts, selCats, search, priceFilter, sortBy]);
+  }, [allProducts, selCats, search, sortBy]);
 
   const totalPages = Math.ceil(filtered.length / perPage);
   const current = filtered.slice((page - 1) * perPage, page * perPage);
@@ -213,8 +201,7 @@ const ProductsPage: React.FC = () => {
     border: `1.5px solid ${on ? '#111111' : '#E5E5E5'}`,
   });
 
-  const priceOptions = [{ v: '', l: 'All Prices' }, { v: 'free', l: 'On Request' }, { v: 'lt1l', l: 'Under ₹1L' }, { v: '1l5l', l: '₹1L – ₹5L' }, { v: 'gt5l', l: 'Above ₹5L' }];
-  const activeFiltersCount = selCats.length + (priceFilter ? 1 : 0);
+  const activeFiltersCount = selCats.length;
 
   if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Products..." />;
 
@@ -227,16 +214,6 @@ const ProductsPage: React.FC = () => {
             {activeFiltersCount}
           </span>
         )}
-      </div>
-
-      <div className="pr-filter-grp">
-        <div className="pr-fl-label">Price Range</div>
-        <div className="pr-chips">
-          {priceOptions.map(opt => (
-            <button key={opt.v} className="pr-chip" onClick={() => { setPriceFilter(opt.v); setPage(1); }}
-              style={chipStyle(priceFilter === opt.v)}>{opt.l}</button>
-          ))}
-        </div>
       </div>
 
       {categories.length > 1 && (
@@ -252,7 +229,7 @@ const ProductsPage: React.FC = () => {
       )}
 
       {activeFiltersCount > 0 && (
-        <button onClick={() => { setSelCats([]); setPriceFilter(''); setPage(1); }}
+        <button onClick={() => { setSelCats([]); setPage(1); }}
           style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#DC2626', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
           <X size={12} /> Clear all filters
         </button>
