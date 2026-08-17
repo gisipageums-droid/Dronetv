@@ -46,6 +46,7 @@ import {
   Megaphone,
 } from "lucide-react";
 import { COMPANY_API, EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
+import { authHeader } from '../../lib/authService';
 
 // ── Types ──────────────────────────────────────────────────────────
 interface SubItem {
@@ -350,7 +351,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       ];
       const results = await Promise.allSettled(
         sources.map(s =>
-          fetch(s.url).then(r => r.json()).then(d => ({
+          fetch(s.url, { headers: authHeader() }).then(r => r.json()).then(d => ({
             label: s.label,
             path: s.path,
             count: (d?.cards ?? d?.data ?? []).filter(
