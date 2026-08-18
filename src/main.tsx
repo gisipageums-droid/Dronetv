@@ -15,6 +15,14 @@ createRoot(document.getElementById('root')!).render(
   position="top-right"
   autoClose={3000}
   style={{ zIndex: 9999999999 }}
+  toastStyle={{
+    borderRadius: '20px',
+    boxShadow: '0 8px 25px rgba(0,0,0,.08)',
+    border: '1px solid #EFEFEF',
+    fontFamily: 'Poppins, sans-serif',
+    color: '#111111',
+  }}
+  progressStyle={{ background: '#F8C400' }}
 />
     </Provider>
 

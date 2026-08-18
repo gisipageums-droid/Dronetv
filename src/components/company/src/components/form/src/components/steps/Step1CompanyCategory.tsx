@@ -2616,7 +2616,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           clearInterval(timer);
           setAutoFillStep('error');
           setIsAutoFilling(false);
-          toast.error('Website analysis failed. Please fill the form manually.');
+          toast.error("Couldn't reach that website — please double-check the URL, or fill the form manually.");
           return;
         }
 
