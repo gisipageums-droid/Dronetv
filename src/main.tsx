@@ -22,7 +22,6 @@ createRoot(document.getElementById('root')!).render(
     fontFamily: 'Poppins, sans-serif',
     color: '#111111',
   }}
-  progressStyle={{ background: '#F8C400' }}
 />
     </Provider>
 

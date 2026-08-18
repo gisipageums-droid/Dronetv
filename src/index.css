@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --toastify-color-success: #22C55E;
+  --toastify-color-error: #DC2626;
+  --toastify-color-warning: #F59E0B;
+  --toastify-color-info: #2563EB;
+  --toastify-color-progress-success: #22C55E;
+  --toastify-color-progress-error: #DC2626;
+  --toastify-color-progress-warning: #F59E0B;
+  --toastify-color-progress-info: #2563EB;
+}
+
 @layer utilities {
   .animate-float {
     animation: float 6s ease-in-out infinite;
