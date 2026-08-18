@@ -59,8 +59,13 @@ export default function App() {
           const res = await fetch(API_URL, { headers: authHeader() });
           if (res.ok) {
             const data = await res.json();
-            if (data?.content || data?.publishedId) {
-              if (!cancelled) { setAIGenData(data); setIsLoading(false); }
+            // /draft/{userId}/{draftId} returns the saved content under
+            // "websiteContent", but every consumer here (and finalTemplate
+            // in context.tsx) reads AIGenData.content — normalize the shape
+            // so a hard reload/deep link doesn't hand components undefined.
+            const normalized = data?.content ? data : { ...data, content: data?.websiteContent };
+            if (normalized?.content || normalized?.publishedId) {
+              if (!cancelled) { setAIGenData(normalized); setIsLoading(false); }
               return;
             }
           }
