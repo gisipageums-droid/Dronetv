@@ -17,6 +17,7 @@ import { useLocation, useParams } from "react-router-dom";
 import EditableGallerySection from "./components/Gallery";
 import EditableCompanyProfile from "./components/Profile";
 import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
+import { authHeader } from '../../../../../../../../lib/authService';
 
 export default function App() {
   const [componentStates, setComponentStates] = useState({});
@@ -55,7 +56,7 @@ export default function App() {
       for (let i = 0; i < MAX; i++) {
         if (cancelled) return;
         try {
-          const res = await fetch(API_URL);
+          const res = await fetch(API_URL, { headers: authHeader() });
           if (res.ok) {
             const data = await res.json();
             if (data?.content || data?.publishedId) {
