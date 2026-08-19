@@ -7,7 +7,6 @@ import Blog from "./components/Blog";
 import Testimonials from "./components/Testimonials";
 import Clients from "./components/Clients";
 import Contact from "./components/Contact";
-import Footer from "./components/Footer";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useTemplate } from "../../../context/context";
 import { useEffect, useState } from "react";
@@ -153,9 +152,6 @@ export default function App() {
           )}
         </main>
         <Back />
-        <Footer
-          footerData={finaleDataReview.content.footer}
-        />
       </div>
     </ThemeProvider>
   );

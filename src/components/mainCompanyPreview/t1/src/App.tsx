@@ -8,7 +8,6 @@ import Products from "./components/Products";
 import Blog from "./components/Blog";
 import Testimonials from "./components/Testimonials";
 import Contact from "./components/Contact";
-import Footer from "./components/Footer";
 import { useTemplate } from "../../../context/context";
 import { useParams, useNavigate } from "react-router-dom";
 import Documents from "./components/Documents";
@@ -151,9 +150,6 @@ export default function App() {
         publishedId={finaleDataReview.publishedId}
       />
       <Back />
-      <Footer
-        content={finaleDataReview.content.footer}
-      />
     </div>
   );
 }
