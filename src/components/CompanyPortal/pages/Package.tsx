@@ -3,11 +3,15 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Check, Zap, TrendingUp, Crown } from "lucide-react";
 import { useUserAuth } from "../../context/context";
-import { AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
 import { PageHeader, Card, CardHeader, Btn, Badge, KpiRow, KpiCard } from "../ui";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
-const UPGRADE_API = AUTH_API ? `${AUTH_API}/upgrade-package` : `${LAMBDA.profile}/upgrade-package`;
+// Payment service (not auth) owns this - it deducts real tokens for the
+// upgrade before persisting the new package type, see payment service's
+// /upgrade-package for why this moved off auth's field-mismatched, non-
+// deducting route.
+const UPGRADE_API = PAYMENT_API ? `${PAYMENT_API}/upgrade-package` : `${LAMBDA.tokenGateway}/upgrade-package`;
 
 const PACKAGES = [
   {
@@ -60,7 +64,7 @@ export default function PackagePage() {
         toast.error(res.data?.message || "Upgrade failed");
       }
     } catch (e: any) {
-      toast.error(e.response?.data?.message || "Upgrade failed. Please try again.");
+      toast.error(e.response?.data?.detail || e.response?.data?.message || "Upgrade failed. Please try again.");
     } finally {
       setUpgrading(false);
     }
