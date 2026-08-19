@@ -18,7 +18,7 @@ function getLimit(tokens: number, type: "company" | "professional" | "event") {
 
 function tierName(tokens: number) {
   if (tokens >= 8000) return "Brand";
-  if (tokens >= 2000) return "Scale";
+  if (tokens >= 2000) return "Expand";
   if (tokens >= 500) return "Reach";
   return "Free";
 }

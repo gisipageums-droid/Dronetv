@@ -317,7 +317,7 @@ export default function JobBoardPage() {
             <p className="text-sm text-white/60 max-w-lg">
               Hiring drone pilots, GIS analysts, geospatial engineers, survey/mapping specialists, AI/computer-vision engineers, UAV instructors, or operations staff? Reach 39,890 certified pilots across India.
             </p>
-            <p className="text-xs text-white/40 mt-1">Scale and Brand subscribers post unlimited jobs as part of their package.</p>
+            <p className="text-xs text-white/40 mt-1">Expand and Brand subscribers post unlimited jobs as part of their package.</p>
           </div>
           <div className="flex gap-3 flex-shrink-0">
             {userId ? (

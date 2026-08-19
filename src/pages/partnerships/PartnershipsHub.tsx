@@ -8,7 +8,7 @@ const whyPartner = [
   { icon: '📹', title: 'Professional Video Production', desc: 'In-house production team delivers 5-minute video interviews published on YouTube (@indiadronetv) and embedded permanently on your company profile. Both promoted via social media on publish week across LinkedIn, Instagram, and Facebook.' },
   { icon: '🏛️', title: 'Expo Media Partnership', desc: 'DroneTv.in is the official Digital Broadcast Media Partner for major drone expos including Drone Expo 2026 Bengaluru. Brand partners receive expo stall branding credit and on-ground media coverage at DroneTv partner events.' },
   { icon: '📊', title: 'B2B Lead Generation', desc: 'Verified leads from buyers actively searching for your product or service category. Lead notification emails sent immediately. Brand package subscribers see full buyer contact details — name, company, email, and phone — directly on the platform.' },
-  { icon: '📖', title: 'Magazine and Editorial Coverage', desc: "Scale and Brand partners receive advertising and editorial coverage in DroneTv's quarterly digital magazine — half-page or full-page ads, editorial articles, and cover page eligibility for Brand tier partners." },
+  { icon: '📖', title: 'Magazine and Editorial Coverage', desc: "Expand and Brand partners receive advertising and editorial coverage in DroneTv's quarterly digital magazine — half-page or full-page ads, editorial articles, and cover page eligibility for Brand tier partners." },
   { icon: '🌐', title: 'Dedicated Company Profile', desc: 'A single-page website on DroneTv.in with product listings, service descriptions, video embeds, contact details, and an active B2B enquiry form — updated as part of your subscription and permanently indexed on the platform.' },
 ];
 
@@ -64,8 +64,8 @@ const categories = [
 
 const packages = [
   { name: 'Reach', price: 'Rs.25,000/yr', highlight: false, headline: 'Verified profile + single-page website + 10 product listings' },
-  { name: 'Scale', price: 'Rs.75,000/yr', highlight: true, headline: 'Everything in Reach + video interview + editorial article + monthly social posts' },
-  { name: 'Brand', price: 'Rs.1,50,000/yr', highlight: false, headline: 'Everything in Scale + expo stall branding + priority placement + 4 posts/month' },
+  { name: 'Expand', price: 'Rs.75,000/yr', highlight: true, headline: 'Everything in Reach + video interview + editorial article + monthly social posts' },
+  { name: 'Brand', price: 'Rs.1,50,000/yr', highlight: false, headline: 'Everything in Expand + expo stall branding + priority placement + 4 posts/month' },
 ];
 
 export default function PartnershipsHubPage() {

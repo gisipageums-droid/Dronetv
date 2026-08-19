@@ -878,7 +878,7 @@ export default function AdminMediaDashboard() {
                         <select value={form.packageType} onChange={e => setForm(f => ({ ...f, packageType: e.target.value }))} className={inp}>
                           <option value="">Select tier...</option>
                           <option value="reach">Reach</option>
-                          <option value="scale">Scale</option>
+                          <option value="scale">Expand</option>
                           <option value="brand">Brand</option>
                         </select>
                       </div>

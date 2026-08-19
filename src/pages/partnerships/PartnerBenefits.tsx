@@ -23,7 +23,7 @@ const packages = [
     ],
   },
   {
-    name: 'Scale',
+    name: 'Expand',
     price: 'Rs.75,000',
     period: '/year + GST',
     popular: true,

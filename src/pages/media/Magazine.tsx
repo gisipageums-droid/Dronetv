@@ -183,7 +183,7 @@ export default function MagazinePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { icon: '📰', title: 'Directory Listing', desc: 'Logo, company name, and category in the DroneTv Industry Directory — included in every magazine issue for the full subscription year.', badge: 'All Packages', badgeColor: 'bg-status-success/15 text-status-success', note: 'All 4 issues per year' },
-              { icon: '📄', title: 'Half-Page Advertisement', desc: 'Half-page advertisement in 2 issues of DroneTv magazine. Professionally placed in relevant vertical sections.', badge: 'Scale Package', badgeColor: 'bg-status-info/15 text-status-info', note: '2 issues per year' },
+              { icon: '📄', title: 'Half-Page Advertisement', desc: 'Half-page advertisement in 2 issues of DroneTv magazine. Professionally placed in relevant vertical sections.', badge: 'Expand Package', badgeColor: 'bg-status-info/15 text-status-info', note: '2 issues per year' },
               { icon: '📑', title: 'Full-Page Advertisement', desc: 'Full-page advertisement in all 4 quarterly issues plus 1 full editorial article (2–3 pages) in one selected issue. Cover page eligibility included.', badge: 'Brand Package', badgeColor: 'bg-brand-yellow-soft text-brand-gold', note: '4 issues + editorial article' },
               { icon: '🏆', title: 'Cover Page Feature', desc: 'Cover page feature photo eligibility for Brand package subscribers, subject to editorial schedule. The highest-visibility placement in the DroneTv media ecosystem.', badge: 'Brand Package Only', badgeColor: 'bg-status-warning/15 text-status-warning', note: 'Subject to editorial calendar' },
             ].map((item, i) => (

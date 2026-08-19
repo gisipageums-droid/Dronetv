@@ -15,7 +15,7 @@ const PACKAGES = [
     benefits: ["1 Company Profile listing", "Up to 5 product/service listings", "Lead contact details via token unlock", "500 tokens included", "Social media tag in 2 posts"],
   },
   {
-    id: "scale", name: "Scale", price: 75000, tokens: 2000, icon: TrendingUp, popular: true,
+    id: "scale", name: "Expand", price: 75000, tokens: 2000, icon: TrendingUp, popular: true,
     benefits: ["1 Company Profile listing", "Up to 20 product/service listings", "Lead contact details via token unlock", "2,000 tokens included", "1 Video Interview (5 min)", "4 Social media posts", "2 Short Reels", "Featured category placement"],
   },
   {

@@ -32,7 +32,7 @@ const PACKAGES = [
   },
   {
     id: "scale",
-    name: "Scale",
+    name: "Expand",
     price: 75000,
     tokens: 2000,
     color: "yellow",

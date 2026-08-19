@@ -17,7 +17,7 @@ const steps = [
 ];
 
 const companyTypes = ['Drone Manufacturer', 'Service Provider', 'RPTO', 'Event Organizer', 'Tech Company', 'Other'];
-const packages = ['Reach — Rs.25,000/year + GST', 'Scale — Rs.75,000/year + GST', 'Brand — Rs.1,50,000/year + GST', 'Not sure yet'];
+const packages = ['Reach — Rs.25,000/year + GST', 'Expand — Rs.75,000/year + GST', 'Brand — Rs.1,50,000/year + GST', 'Not sure yet'];
 
 export default function BecomePartnerPage() {
   const [form, setForm] = useState({
@@ -211,7 +211,7 @@ export default function BecomePartnerPage() {
             <div className="bg-surface-card border border-ink-light rounded-b-xl px-4 py-4 space-y-3">
               {[
                 { name: 'Reach', price: 'Rs.25,000/yr', highlight: false },
-                { name: 'Scale', price: 'Rs.75,000/yr', highlight: true },
+                { name: 'Expand', price: 'Rs.75,000/yr', highlight: true },
                 { name: 'Brand', price: 'Rs.1,50,000/yr', highlight: false },
               ].map((p) => (
                 <div key={p.name} className={`flex items-center justify-between py-2 px-3 rounded-lg ${p.highlight ? 'bg-surface-main border border-brand-yellow-soft' : ''}`}>

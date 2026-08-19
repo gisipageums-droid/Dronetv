@@ -39,7 +39,7 @@ const SUBSCRIPTION_PLANS = [
     features: ['1 Company Profile', 'Up to 5 listings', 'Lead unlocks via tokens', '500 tokens included', '2 social media tags'],
   },
   {
-    id: 'scale', name: 'Scale', price: 75000, tokens: 2000, color: 'yellow',
+    id: 'scale', name: 'Expand', price: 75000, tokens: 2000, color: 'yellow',
     icon: TrendingUp, popular: true,
     features: ['1 Company Profile', 'Up to 20 listings', 'Lead unlocks via tokens', '2,000 tokens included', '1 Video Interview', '4 social posts', '2 Reels', 'Featured category placement'],
   },

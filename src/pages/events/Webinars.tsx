@@ -189,7 +189,7 @@ export default function WebinarsPage() {
           <div>
             <h3 className="font-bold text-white text-base mb-1">Promote Your Webinar on DroneTv.in</h3>
             <p className="text-sm text-white/60 max-w-lg">
-              Brand and Scale package subscribers get social media promotion for their webinars across DroneTv's LinkedIn, Instagram, Facebook, and YouTube channels.
+              Brand and Expand package subscribers get social media promotion for their webinars across DroneTv's LinkedIn, Instagram, Facebook, and YouTube channels.
             </p>
             <p className="text-xs text-white/40 mt-1">✉ bd@dronetv.in &nbsp;|&nbsp; 📞 +91 7520123555</p>
           </div>
