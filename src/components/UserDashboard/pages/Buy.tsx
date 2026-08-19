@@ -162,7 +162,7 @@ const BuyTokenPage: React.FC = () => {
           email: user?.userData?.email || '',
           contact: user?.userData?.phone || '9999999999',
         },
-        theme: { color: '#F59E0B' },
+        theme: { color: '#F8C400' },
         modal: {
           ondismiss: () => {
             setIsProcessing(false);

@@ -11,7 +11,11 @@ import {
 } from 'lucide-react';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
-const UPGRADE_API = AUTH_API ? `${AUTH_API}/upgrade-package` : `${LAMBDA.profile}/upgrade-package`;
+// Payment service (not auth) owns this - it deducts real tokens for the
+// upgrade before persisting the new package type, see payment service's
+// /upgrade-package for why this moved off auth's field-mismatched, non-
+// deducting route.
+const UPGRADE_API = PAYMENT_API ? `${PAYMENT_API}/upgrade-package` : `${LAMBDA.tokenGateway}/upgrade-package`;
 const TOKEN_RATE = 10; // ₹10 = 1 token, must match backend
 
 interface Plan {
@@ -150,7 +154,7 @@ const RechargePlans: React.FC = () => {
           }
         },
         prefill: { name: user?.userData?.fullName || '', email: user?.userData?.email || '', contact: user?.userData?.phone || '' },
-        theme: { color: '#F59E0B' },
+        theme: { color: '#F8C400' },
         modal: { ondismiss: () => setProcessingPlanId(null) },
       };
       new Razorpay(options).open();
@@ -175,7 +179,7 @@ const RechargePlans: React.FC = () => {
         toast.error(res.data?.message || 'Upgrade failed');
       }
     } catch (e: any) {
-      toast.error(e.response?.data?.message || 'Upgrade failed. Please try again.');
+      toast.error(e.response?.data?.detail || e.response?.data?.message || 'Upgrade failed. Please try again.');
     } finally {
       setUpgrading(false);
     }
