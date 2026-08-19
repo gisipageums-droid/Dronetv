@@ -140,6 +140,19 @@ const CSS = `
 
 const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
 
+// Addresses often end "...City, State, Pincode" — the state is the last
+// non-numeric, non-"India" comma segment, not simply the last segment
+// (which is frequently the pincode itself, e.g. "Nellore, Andhra Pradesh,
+// 524002" was showing "524002" as the state filter chip).
+function extractState(location: string | undefined): string {
+  const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const p = parts[i];
+    if (p && !/^\d+$/.test(p) && p.toLowerCase() !== 'india') return p;
+  }
+  return '';
+}
+
 const CompaniesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
@@ -166,8 +179,7 @@ const CompaniesPage: React.FC = () => {
         setAllCompanies(raw);
         const stateSet = new Set<string>();
         raw.forEach(c => {
-          const parts = (c.location || '').split(',');
-          const st = parts[parts.length - 1]?.trim().replace(/\s+India$/i, '').trim();
+          const st = extractState(c.location);
           if (st && st.length > 1 && st.length < 30) stateSet.add(st);
         });
         setStates(Array.from(stateSet).slice(0, 10));
@@ -181,11 +193,7 @@ const CompaniesPage: React.FC = () => {
     if (industry !== 'all') list = list.filter(c => getIndustry(c) === industry);
     if (selSectors.length) list = list.filter(c => selSectors.some(s => getSectors(c).includes(s)));
     if (selStates.length) {
-      list = list.filter(c => {
-        const parts = (c.location || '').split(',');
-        const st = parts[parts.length - 1]?.trim().replace(/\s+India$/i, '').trim();
-        return selStates.includes(st);
-      });
+      list = list.filter(c => selStates.includes(extractState(c.location)));
     }
     if (verifiedOnly) list = list.filter(c => c.reviewStatus === 'approved');
     if (search) {
