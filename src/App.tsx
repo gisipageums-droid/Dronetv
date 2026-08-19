@@ -219,7 +219,6 @@ const HomePage = () => (
 const AppContent = () => {
   const location = useLocation();
   const hideFooter =
-    location.pathname.startsWith("/company/") ||
     location.pathname.startsWith("/company-portal") ||
     location.pathname.startsWith("/form") ||
     location.pathname.startsWith("/user") ||
