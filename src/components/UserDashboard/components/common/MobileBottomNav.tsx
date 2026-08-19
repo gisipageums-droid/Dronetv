@@ -11,34 +11,40 @@ const MobileBottomNav: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useUserAuth();
   const navigate = useNavigate();
+  const isCompany = user?.role === "company";
 
+  // Company accounts have their own dedicated area (/company-portal) with a
+  // "My Package" page that actually deducts tokens correctly - this nav was
+  // sending every account, company or not, through the shared personal
+  // /user-* pages regardless of role, which is what made Recharge open the
+  // generic page under the wrong URL for company accounts.
   const allLinks = [
-    { icon: User,         label: "Dashboard",   href: "/user-dashboard" },
+    { icon: User,         label: "Dashboard",   href: isCompany ? "/company-portal" : "/user-dashboard" },
     { icon: Building2,    label: "Companies",   href: "/user-companies" },
     { icon: Users,        label: "Professionals", href: "/user-professionals" },
     { icon: Calendar,     label: "Events",      href: "/user-events" },
     { icon: Share2,       label: "Posts",       href: "/user-posts" },
     { icon: Video,        label: "Media Hub",   href: "/user-media-hub" },
     { icon: ShoppingBag,  label: "Addons",      href: "/user-addons" },
-    { icon: FileText,     label: "Leads",       href: "/user-leads" },
+    { icon: FileText,     label: "Leads",       href: isCompany ? "/company-portal/leads" : "/user-leads" },
     { icon: Globe,        label: "Website",     href: "/user-website" },
-    { icon: Wallet,       label: "Recharge",    href: "/user-recharge" },
+    { icon: Wallet,       label: "Recharge",    href: isCompany ? "/company-portal/package" : "/user-recharge" },
     { icon: Target,       label: "Keywords",    href: "/user-bid-keywords" },
     { icon: Layout,       label: "Placements",  href: "/user-page-placements" },
-    { icon: Package,      label: "My Package",  href: "/user-plans" },
-    { icon: Clock1,       label: "Transactions", href: "/user-transactions" },
+    { icon: Package,      label: "My Package",  href: isCompany ? "/company-portal/package" : "/user-plans" },
+    { icon: Clock1,       label: "Transactions", href: isCompany ? "/company-portal/invoices" : "/user-transactions" },
     { icon: MessageSquare, label: "Contacted",  href: "/user-contacted" },
-    { icon: UserCog,       label: "Profile",    href: "/user-profile" },
+    { icon: UserCog,       label: "Profile",    href: isCompany ? "/company-portal/settings" : "/user-profile" },
     ...(user?.email === "dronesimulatorpro@gmail.com"
       ? [{ icon: Brain, label: "AI", href: "/user-ai" }]
       : []),
   ];
 
   const quickLinks = [
-    { icon: User,      label: "Dashboard", href: "/user-dashboard" },
+    { icon: User,      label: "Dashboard", href: isCompany ? "/company-portal" : "/user-dashboard" },
     { icon: Building2, label: "Companies", href: "/user-companies" },
-    { icon: Wallet,    label: "Recharge",  href: "/user-recharge" },
-    { icon: FileText,  label: "Leads",     href: "/user-leads" },
+    { icon: Wallet,    label: "Recharge",  href: isCompany ? "/company-portal/package" : "/user-recharge" },
+    { icon: FileText,  label: "Leads",     href: isCompany ? "/company-portal/leads" : "/user-leads" },
   ];
 
   const handleLogout = () => {
