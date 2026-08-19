@@ -744,7 +744,7 @@ const ConsentModal: React.FC<{
 
   return (
     <div className="fixed inset-0 z-[9999999999999999] flex items-center justify-center p-4 bg-ink/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-surface-card rounded-xl shadow-2xl max-w-xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-status-info/15 pb-2 animate-scale-in">
+      <div className="bg-surface-card rounded-xl shadow-2xl max-w-xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-brand-yellow/20 pb-2 animate-scale-in">
         {/* Modal Header */}
         <div className="p-5 border-b border-ink-light flex justify-between items-center bg-surface-card">
           <h2 className="text-xl font-bold text-ink-charcoal">User Consent for Identity Verification</h2>
@@ -774,7 +774,7 @@ const ConsentModal: React.FC<{
                   "Compliance with applicable Indian laws and regulations"
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-status-info flex-shrink-0" />
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-yellow flex-shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -794,7 +794,7 @@ const ConsentModal: React.FC<{
                     "Documents shared via DigiLocker (such as Aadhaar, PAN, or professional certificates)"
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-status-info flex-shrink-0" />
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-yellow flex-shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -821,7 +821,7 @@ const ConsentModal: React.FC<{
         <div className="p-4 bg-surface-card flex justify-end">
           <button
             onClick={onClose}
-            className="px-8 py-2 bg-[#2563EB] text-white font-medium rounded-md hover:bg-status-info transition-all shadow-sm active:scale-[0.98]"
+            className="px-8 py-2 bg-brand-yellow text-ink font-medium rounded-md hover:bg-brand-gold transition-all shadow-sm active:scale-[0.98]"
           >
             Close
           </button>
@@ -967,7 +967,7 @@ const CombinedAadharSection: React.FC<{
                 <button
                   type="button"
                   onClick={() => setShowConsentDetails(true)}
-                  className="text-xs text-status-info hover:text-status-info hover:underline flex items-center mt-1 text-left"
+                  className="text-xs text-ink-link hover:text-brand-gold hover:underline flex items-center mt-1 text-left"
                 >
                   View consent details
                   <ChevronDown className="w-3 h-3 ml-1" />
@@ -980,8 +980,8 @@ const CombinedAadharSection: React.FC<{
               type="button"
               disabled={!localConsent}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 whitespace-nowrap ${localConsent
-                ? 'bg-status-info text-white hover:bg-status-info focus:ring-status-info'
-                : 'bg-status-info/40 text-white cursor-not-allowed'
+                ? 'bg-brand-yellow text-ink hover:bg-brand-gold focus:ring-brand-gold'
+                : 'bg-brand-yellow/40 text-ink/60 cursor-not-allowed'
                 }`}
             >
               Fill Aadhar Details
@@ -991,14 +991,14 @@ const CombinedAadharSection: React.FC<{
           {/* Helper text for Aadhar verification */}
           {!isVerified && localConsent && (
             <div className="mt-3">
-              <p className="text-[10px] text-status-info">
+              <p className="text-[10px] text-ink-caption">
                 Click "Fill Aadhar Details" to redirect to DigiLocker for secure verification.
               </p>
             </div>
           )}
           {!isVerified && !localConsent && (
             <div className="mt-3">
-              <p className="text-[10px] text-status-info">
+              <p className="text-[10px] text-ink-caption">
                 Please select the consent checkbox to enable Aadhar verification.
               </p>
             </div>
@@ -1065,7 +1065,7 @@ const PANVerificationSection: React.FC<{
   isVerified: boolean;
 }> = ({ panNumber, onPanChange, fullName, onNameChange, dob, onDobChange, onVerify, isVerifying, isVerified }) => {
   return (
-    <div className="mb-6 p-4 bg-surface-card border border-status-info/25 rounded-lg">
+    <div className="mb-6 p-4 bg-surface-card border border-brand-yellow/30 rounded-lg">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-sm font-bold text-ink">
           PAN Verification
@@ -1089,7 +1089,7 @@ const PANVerificationSection: React.FC<{
               value={dob}
               onChange={(e) => onDobChange(e.target.value)}
               disabled={isVerified}
-              className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info disabled:bg-ink-offwhite disabled:text-ink-caption"
+              className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold disabled:bg-ink-offwhite disabled:text-ink-caption"
             />
           </div>
         </div>
@@ -1106,7 +1106,7 @@ const PANVerificationSection: React.FC<{
             type="button"
             onClick={onVerify}
             disabled={isVerifying || !panNumber || !fullName || !dob}
-            className="w-full px-4 py-2 bg-status-info text-white text-sm font-medium rounded-lg hover:bg-status-info transition-colors focus:outline-none focus:ring-2 focus:ring-status-info disabled:bg-status-info/40 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2 bg-brand-yellow text-ink text-sm font-medium rounded-lg hover:bg-brand-gold transition-colors focus:outline-none focus:ring-2 focus:ring-brand-gold disabled:bg-brand-yellow/40 disabled:text-ink/60 disabled:cursor-not-allowed"
           >
             {isVerifying ? "Verifying..." : "Verify PAN"}
           </button>
@@ -1364,7 +1364,7 @@ const GSTVerificationSection: React.FC<{
             });
           }}
           placeholder="State - Pincode (e.g., Telangana - 500055)"
-          className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
+          className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
         />
         {verifiedData?.state && (
           <p className="text-xs text-status-success mt-1">From GST data</p>
@@ -1373,8 +1373,8 @@ const GSTVerificationSection: React.FC<{
     ), [verifiedData?.state, verifiedData?.pincode]);
 
     return (
-      <div className="bg-[#F0F8FF] border border-status-info/25 rounded-xl p-6 shadow-sm">
-        <div className="border-b border-status-info/25 pb-3 mb-4 flex justify-between items-center">
+      <div className="bg-surface-alt/30 border border-brand-yellow/30 rounded-xl p-6 shadow-sm">
+        <div className="border-b border-brand-yellow/30 pb-3 mb-4 flex justify-between items-center">
           <h3 className="text-ink font-semibold select-none">
             Verify GST
           </h3>
@@ -1402,7 +1402,7 @@ const GSTVerificationSection: React.FC<{
                 value={verificationType}
                 onChange={(e) => { setVerificationType(e.target.value); onGSTChange(''); }}
                 disabled={isVerified}
-                className={`w-full h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-ink-charcoal bg-surface-card ${isVerified ? 'border-status-success/40 bg-status-success/10 cursor-not-allowed' : 'border-status-info/40 focus:ring-status-info focus:border-status-info'}`}
+                className={`w-full h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-ink-charcoal bg-surface-card ${isVerified ? 'border-status-success/40 bg-status-success/10 cursor-not-allowed' : 'border-brand-yellow/50 focus:ring-brand-gold focus:border-brand-gold'}`}
               >
                 <option value="">Select verification type</option>
                 <option value="GST">GST</option>
@@ -1430,7 +1430,7 @@ const GSTVerificationSection: React.FC<{
                   disabled={isVerified}
                   className={`flex-1 h-10 px-3 text-sm border rounded-lg focus:outline-none focus:ring-2 text-ink-charcoal placeholder-ink-caption ${isVerified
                     ? 'border-status-success/40 bg-status-success/10'
-                    : 'border-status-info/40 bg-surface-card focus:ring-status-info focus:border-status-info'
+                    : 'border-brand-yellow/50 bg-surface-card focus:ring-brand-gold focus:border-brand-gold'
                     }`}
                   maxLength={verificationType === 'GST' ? 15 : verificationType === 'LLPIN' ? 8 : 21}
                 />
@@ -1445,7 +1445,7 @@ const GSTVerificationSection: React.FC<{
             )}
 
             {/* Consent + Action — all types */}
-            {verificationType && <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-status-info/50 rounded-xl border border-status-info/25 gap-4 mt-4 mb-2 transition-all duration-300">
+            {verificationType && <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-surface-card rounded-xl border border-brand-yellow/30 gap-4 mt-4 mb-2 transition-all duration-300">
               <div className="flex items-start space-x-3">
                 <div className="flex items-center h-5 mt-0.5">
                   <input
@@ -1464,7 +1464,7 @@ const GSTVerificationSection: React.FC<{
                   <button
                     type="button"
                     onClick={() => setShowConsentDetails(true)}
-                    className="text-xs text-status-info hover:text-status-info hover:underline flex items-center mt-1 text-left w-fit group"
+                    className="text-xs text-ink-link hover:text-brand-gold hover:underline flex items-center mt-1 text-left w-fit group"
                   >
                     View consent details
                     <ChevronDown className="w-3 h-3 ml-1 group-hover:translate-y-0.5 transition-transform" />
@@ -1478,15 +1478,15 @@ const GSTVerificationSection: React.FC<{
                   type="button"
                   onClick={handleVerifyClick}
                   disabled={isVerifying || isVerifyingCIN || !isValidInput || !localConsent}
-                  className={`px-8 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-status-info focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
+                  className={`px-8 py-2.5 text-sm font-bold rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2 flex items-center justify-center transition-all transform active:scale-[0.98] shrink-0
                     ${isValidInput && localConsent && !isVerifying && !isVerifyingCIN
-                      ? 'bg-[#4F9CF9] text-white hover:bg-status-info shadow-lg shadow-status-info/15'
-                      : 'bg-status-info/40 text-white cursor-not-allowed opacity-70'
+                      ? 'bg-brand-yellow text-ink hover:bg-brand-gold shadow-lg shadow-brand-yellow/25'
+                      : 'bg-brand-yellow/40 text-ink/60 cursor-not-allowed opacity-70'
                     }`}
                 >
                   {(isVerifying || isVerifyingCIN) ? (
                     <>
-                      <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                      <div className="w-4 h-4 mr-2 border-2 border-ink rounded-full border-t-transparent animate-spin"></div>
                       Verifying...
                     </>
                   ) : (
@@ -1534,10 +1534,10 @@ const GSTVerificationSection: React.FC<{
         )}
 
         {/* GST Details Section - now always visible */}
-        <div className="border border-status-info/25 rounded-lg bg-surface-card">
-          <div className="p-3 bg-status-info/10 border-b border-status-info/25 rounded-t-lg">
+        <div className="border border-brand-yellow/30 rounded-lg bg-surface-card">
+          <div className="p-3 bg-brand-yellow/10 border-b border-brand-yellow/30 rounded-t-lg">
             <h4 className="text-sm font-semibold text-ink-charcoal flex items-center">
-              <Briefcase className="w-4 h-4 mr-2 text-status-info" />
+              <Briefcase className="w-4 h-4 mr-2 text-ink-link" />
               {isVerified ? "Verified Company Details" : "Company Details"}
             </h4>
           </div>
@@ -1554,7 +1554,7 @@ const GSTVerificationSection: React.FC<{
                 onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), companyName: e.target.value })}
                 placeholder="Enter company name"
                 disabled={isVerified}
-                className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info disabled:bg-ink-offwhite disabled:text-ink-caption"
+                className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold disabled:bg-ink-offwhite disabled:text-ink-caption"
               />
             </div>
 
@@ -1567,7 +1567,7 @@ const GSTVerificationSection: React.FC<{
                 value={verifiedData?.legalName || ""}
                 onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), legalName: e.target.value })}
                 placeholder="Enter Legal Name"
-                className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph font-mono focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
+                className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph font-mono focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
               />
             </div>
 
@@ -1575,7 +1575,7 @@ const GSTVerificationSection: React.FC<{
             <div className="space-y-1">
               <div className="flex items-center text-xs text-ink-caption font-medium w-full">
                 <div className="flex items-center">
-                  <MapPin className="w-3 h-3 mr-1 text-status-info" />
+                  <MapPin className="w-3 h-3 mr-1 text-ink-link" />
                   Registered Address
                 </div>
               </div>
@@ -1584,7 +1584,7 @@ const GSTVerificationSection: React.FC<{
                 onChange={(e) => handleAddressChange(e.target.value)}
                 placeholder="Enter complete registered address (excluding state and pincode)"
                 rows={3}
-                className="w-full px-3 py-2 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info resize-none"
+                className="w-full px-3 py-2 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold resize-none"
               />
               {!address && (
                 <p className="text-xs text-status-error mt-1">
@@ -1611,7 +1611,7 @@ const GSTVerificationSection: React.FC<{
                 value={verifiedData?.registrationDate || ""}
                 onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), registrationDate: e.target.value })}
                 placeholder="DD/MM/YYYY"
-                className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
+                className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
               />
             </div>
           </div>
@@ -1649,7 +1649,7 @@ const GSTVerificationSection: React.FC<{
               placeholder="Enter communication address"
               rows={3}
               disabled={formData.sameAsRegisteredAddress}
-              className={`w-full px-3 py-2 text-sm border ${formData.sameAsRegisteredAddress ? 'bg-ink-offwhite' : 'bg-surface-card'} border-ink-light rounded text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info resize-none`}
+              className={`w-full px-3 py-2 text-sm border ${formData.sameAsRegisteredAddress ? 'bg-ink-offwhite' : 'bg-surface-card'} border-ink-light rounded text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold resize-none`}
             />
           </div>
         </div>
@@ -1679,7 +1679,7 @@ const GSTVerificationSection: React.FC<{
             value={formData.businessField || ""}
             onChange={(e) => updateFormData({ ...formData, businessField: e.target.value })}
             placeholder="Enter your business field (e.g., IT Services, Manufacturing)"
-            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
+            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
           />
         </div>
 
@@ -1694,7 +1694,7 @@ const GSTVerificationSection: React.FC<{
             onChange={(e) => updateFormData({ ...formData, panNumber: e.target.value.toUpperCase() })}
             placeholder="Enter PAN Number (e.g., ABCDE1234F)"
             maxLength={10}
-            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
+            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
           />
           {formData.panNumber && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(formData.panNumber) && (
             <p className="text-xs text-status-error mt-1">Please enter a valid PAN number (e.g., ABCDE1234F)</p>
@@ -1711,7 +1711,7 @@ const GSTVerificationSection: React.FC<{
             value={formData.natureOfBusiness || ""}
             onChange={(e) => updateFormData({ ...formData, natureOfBusiness: e.target.value })}
             placeholder="Enter Nature of Business (e.g., Retail Business, Trading)"
-            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
+            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
           />
         </div>
 
@@ -1725,7 +1725,7 @@ const GSTVerificationSection: React.FC<{
             value={verifiedData?.cin || ""}
             onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), cin: e.target.value })}
             placeholder="Enter CIN"
-            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
+            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
           />
         </div>
 
@@ -1739,7 +1739,7 @@ const GSTVerificationSection: React.FC<{
             value={verifiedData?.udyamRegistrationNumber || ""}
             onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), udyamRegistrationNumber: e.target.value })}
             placeholder="Enter UDYAM Registration Number"
-            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
+            className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
           />
         </div>
 
@@ -1812,7 +1812,7 @@ const GSTVerificationSection: React.FC<{
               </div>
             )}
             <div className="flex-1">
-              <label className={`cursor-pointer inline-flex items-center gap-2 px-3 py-2 text-sm font-medium border rounded-lg transition-colors ${isUploadingLogo ? 'text-ink-caption border-ink-light cursor-not-allowed' : 'text-status-info border-status-info/40 hover:bg-status-info/10'}`}>
+              <label className={`cursor-pointer inline-flex items-center gap-2 px-3 py-2 text-sm font-medium border rounded-lg transition-colors ${isUploadingLogo ? 'text-ink-caption border-ink-light cursor-not-allowed' : 'text-ink-link border-brand-yellow/50 hover:bg-brand-yellow/10'}`}>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                 {isUploadingLogo ? 'Uploading...' : formData.companyLogoUrl ? 'Change Logo' : 'Upload Logo'}
                 <input
@@ -3256,7 +3256,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               type="email"
               value={tempDirectorEmail}
               onChange={(e) => handleModalEmailChange(e.target.value)}
-              className="w-full px-3 py-2 border border-ink-light rounded-lg focus:outline-none focus:ring-2 focus:ring-status-info focus:border-status-info"
+              className="w-full px-3 py-2 border border-ink-light rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
               placeholder="director@company.com"
               autoFocus
             />
@@ -3285,11 +3285,11 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             <button
               onClick={handleModalSubmit}
               disabled={checkingEmail || !tempDirectorEmail}
-              className="px-4 py-2 text-sm font-medium text-white bg-status-info rounded-lg hover:bg-status-info disabled:bg-status-info/40 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium text-ink bg-brand-yellow rounded-lg hover:bg-brand-gold disabled:bg-brand-yellow/40 disabled:text-ink/60 disabled:cursor-not-allowed"
             >
               {checkingEmail ? (
                 <div className="flex items-center">
-                  <div className="w-4 h-4 mr-2 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                  <div className="w-4 h-4 mr-2 border-2 border-ink rounded-full border-t-transparent animate-spin"></div>
                   Checking...
                 </div>
               ) : (
@@ -3424,9 +3424,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
               type="button"
               onClick={handleProceed}
               disabled={!aadharConsentAccepted}
-              className={`px-4 py-2 text-sm font-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-status-info ${aadharConsentAccepted
-                ? 'bg-status-info hover:bg-status-info'
-                : 'bg-status-info/40 cursor-not-allowed'
+              className={`px-4 py-2 text-sm font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-gold ${aadharConsentAccepted
+                ? 'text-ink bg-brand-yellow hover:bg-brand-gold'
+                : 'text-ink/60 bg-brand-yellow/40 cursor-not-allowed'
                 }`}
             >
               Proceed with Aadhar Verification
