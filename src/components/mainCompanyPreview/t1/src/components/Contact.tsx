@@ -114,12 +114,16 @@ export default function Contact({ content, publishedId }) {
 
         {/* Main Card */}
         <div className="grid grid-cols-1  gap-8">
-          {/* Left: Contact Form */}
+          {/* Left: Contact Form - opacity-only fade, no x transform. A
+          transform on this wrapper made tap-to-focus on the inputs
+          unreliable on mobile (first tap could land while the transform was
+          still resolving and fail to register), requiring multiple taps
+          before typing worked. */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
             className="col-span-2 bg-surface-card dark:bg-gray-800 rounded-2xl shadow-md p-8 lg:p-10"
           >
             <h3 className="text-xl font-semibold text-ink dark:text-white mb-2">

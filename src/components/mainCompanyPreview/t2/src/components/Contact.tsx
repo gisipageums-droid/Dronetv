@@ -140,11 +140,15 @@ export default function Contact({ contactData, publishedId }) {
         </motion.div>
 
         <div className="max-w-[700px] mx-auto">
-          {/*  Contact Form with API integration */}
+          {/*  Contact Form with API integration - opacity-only fade, no x
+          transform. A transform on this wrapper made tap-to-focus on the
+          inputs unreliable on mobile (first tap could land while the
+          transform was still resolving and fail to register), requiring
+          multiple taps before typing worked. */}
           <motion.div
-            initial={{ x: -100, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
             <Card className="bg-card border-border relative overflow-hidden hover-lift">
