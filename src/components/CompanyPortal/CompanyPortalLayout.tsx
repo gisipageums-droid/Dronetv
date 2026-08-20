@@ -3,9 +3,10 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Package, Inbox, Film, BookOpen, Megaphone,
   BarChart2, ShieldCheck, Receipt, Settings as SettingsIcon, Menu, X,
-  Bell, ExternalLink, LogOut,
+  ExternalLink, LogOut,
 } from "lucide-react";
 import { useUserAuth } from "../context/context";
+import NotificationBell from "./NotificationBell";
 
 interface NavItem {
   id: string;
@@ -235,10 +236,7 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
           >
             <ExternalLink size={13} /> View Profile
           </a>
-          <button className="text-white/50 hover:text-white p-1.5 relative" title="Notifications">
-            <Bell size={17} />
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-status-error border-2 border-ink" />
-          </button>
+          <NotificationBell />
           <div className="w-8 h-8 rounded-full bg-brand-yellow/15 flex items-center justify-center text-xs font-extrabold text-brand-yellow flex-shrink-0">
             {initials}
           </div>
