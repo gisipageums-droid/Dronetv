@@ -24,8 +24,8 @@ export default function Analytics() {
       setCompany(c);
       const base = LEADS_API || LAMBDA.leads;
       const leadsUrl = c
-        ? `${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=500&offset=0&filter=all&publishedId=${c.publishedId}`
-        : `${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=500&offset=0&filter=all`;
+        ? `${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=200&offset=0&filter=all&publishedId=${c.publishedId}`
+        : `${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=200&offset=0&filter=all`;
       axios.get(leadsUrl, { headers: authHeaders() }).then((r) => setLeads(r.data?.leads || r.data?.data || [])).catch(() => {});
     }).finally(() => setLoading(false));
 
