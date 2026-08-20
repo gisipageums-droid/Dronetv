@@ -63,6 +63,7 @@ const issues = [
 
 export default function MagazinePage() {
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [articles, setArticles] = useState<MagazineArticle[]>([]);
 
@@ -75,6 +76,13 @@ export default function MagazinePage() {
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
+    // Browser's native type="email" check is too lenient (accepts "a@b"
+    // with no real domain) - a real regex catches what it lets through.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
+      setEmailError('Please enter a valid email address.');
+      return;
+    }
+    setEmailError('');
     setSubmitted(true);
     setEmail('');
   };
@@ -212,21 +220,24 @@ export default function MagazinePage() {
             {submitted ? (
               <p className="text-brand-yellow font-bold text-sm">Subscribed! You'll receive the next issue on release.</p>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="Your email address"
-                  className="px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow w-full sm:w-64"
-                />
-                <button
-                  type="submit"
-                  className="bg-brand-yellow text-ink font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-brand-gold transition-colors whitespace-nowrap"
-                >
+              <form onSubmit={handleSubscribe} className="flex flex-col gap-1.5">
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); if (emailError) setEmailError(''); }}
+                    required
+                    placeholder="Your email address"
+                    className={`px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow w-full sm:w-64 ${emailError ? 'ring-2 ring-status-error' : ''}`}
+                  />
+                  <button
+                    type="submit"
+                    className="bg-brand-yellow text-ink font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-brand-gold transition-colors whitespace-nowrap"
+                  >
                   Subscribe Free
-                </button>
+                  </button>
+                </div>
+                {emailError && <p className="text-status-error text-xs font-medium">{emailError}</p>}
               </form>
             )}
           </div>
