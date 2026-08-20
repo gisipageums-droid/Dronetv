@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Package, Inbox, Film, BookOpen, Megaphone,
   BarChart2, ShieldCheck, Receipt, Settings as SettingsIcon, Menu, X,
-  ExternalLink, LogOut,
+  ExternalLink, LogOut, Coins, Target, LayoutTemplate,
 } from "lucide-react";
 import { useUserAuth } from "../context/context";
 import NotificationBell from "./NotificationBell";
@@ -50,6 +50,14 @@ const NAV: NavSection[] = [
     ],
   },
   {
+    heading: "Growth Tools",
+    items: [
+      { id: "buy-tokens", label: "Buy Tokens", icon: Coins, path: "/company-portal/buy-tokens" },
+      { id: "keywords", label: "Keyword Bidding", icon: Target, path: "/company-portal/keywords" },
+      { id: "placements", label: "Page Placements", icon: LayoutTemplate, path: "/company-portal/placements" },
+    ],
+  },
+  {
     heading: "Account",
     items: [
       { id: "package", label: "My Package", icon: ShieldCheck, path: "/company-portal/package" },
@@ -68,6 +76,9 @@ const TITLES: Record<string, string> = {
   "/company-portal/magazine": "Magazine Coverage",
   "/company-portal/press": "Press Releases",
   "/company-portal/analytics": "Analytics",
+  "/company-portal/buy-tokens": "Buy Tokens",
+  "/company-portal/keywords": "Keyword Bidding",
+  "/company-portal/placements": "Page Placements",
   "/company-portal/package": "My Package",
   "/company-portal/invoices": "Invoices",
   "/company-portal/settings": "Account Settings",

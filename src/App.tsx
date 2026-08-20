@@ -571,6 +571,14 @@ const AppContent = () => {
           <Route path="/company-portal/press" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalPress /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/analytics" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalAnalytics /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/package" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalPackage /></CompanyPortalLayout></ProtectedRoute>} />
+          {/* Buy Tokens / Keyword Bidding / Page Placements existed only as
+              shared /user-* pages - company accounts got redirected away
+              from those into My Package (which has no such features), so
+              they lost access entirely. These reuse the exact same
+              components, just under CompanyPortalLayout instead. */}
+          <Route path="/company-portal/buy-tokens" element={<ProtectedRoute><CompanyPortalLayout><BuyTokenPage /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/keywords" element={<ProtectedRoute><CompanyPortalLayout><BidKeywords /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/placements" element={<ProtectedRoute><CompanyPortalLayout><PagePlacements /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/invoices" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalInvoices /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/settings" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalSettings /></CompanyPortalLayout></ProtectedRoute>} />
           <Route
@@ -603,7 +611,7 @@ const AppContent = () => {
             path="/user-buy"
             element={
               <ProtectedRoute>
-                <CompanyRedirectGuard to="/company-portal/package">
+                <CompanyRedirectGuard to="/company-portal/buy-tokens">
                   <UserDashboardLayout>
                     <BuyTokenPage />
                   </UserDashboardLayout>
@@ -681,7 +689,7 @@ const AppContent = () => {
             path="/user-bid-keywords"
             element={
               <ProtectedRoute>
-                <CompanyRedirectGuard to="/company-portal/package">
+                <CompanyRedirectGuard to="/company-portal/keywords">
                   <UserDashboardLayout>
                     <BidKeywords />
                   </UserDashboardLayout>
@@ -694,7 +702,7 @@ const AppContent = () => {
             path="/user-page-placements"
             element={
               <ProtectedRoute>
-                <CompanyRedirectGuard to="/company-portal/package">
+                <CompanyRedirectGuard to="/company-portal/placements">
                   <UserDashboardLayout>
                     <PagePlacements />
                   </UserDashboardLayout>
