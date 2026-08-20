@@ -5,7 +5,7 @@ export interface NavItem {
 
 export const aboutItems: NavItem[] = [
   { path: "/about", label: "About Us" },
-  { path: "/professionals/portfolio", label: "Platform Portfolio" },
+  { path: "/aboutus/portfolio", label: "Platform Portfolio" },
 ];
 
 export const mediaItems: NavItem[] = [

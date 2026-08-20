@@ -124,7 +124,7 @@ const Navigation = () => {
   };
 
   const currentSection = (() => {
-    if (location.pathname === "/about" || location.pathname === "/professionals/portfolio") return "about";
+    if (location.pathname === "/about" || location.pathname === "/aboutus/portfolio") return "about";
     if (location.pathname.startsWith("/media") || location.pathname === "/gallery") return "media";
     if (location.pathname === "/events" || location.pathname.startsWith("/events/")) return "events";
     if (location.pathname === "/professionals" || location.pathname.startsWith("/professionals/")) return "professionals";

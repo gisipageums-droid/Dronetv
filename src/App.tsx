@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import Navigation from "./components/Navigation";
@@ -403,7 +404,12 @@ const AppContent = () => {
           <Route path="/professionals/job-board" element={<JobBoardPage />} />
           <Route path="/professionals/pilot-directory" element={<PilotDirectoryPage />} />
           <Route path="/professionals/certifications" element={<CertificationsPage />} />
-          <Route path="/professionals/portfolio" element={<PortfolioPage />} />
+          {/* This is the platform's own "About" content (company entity,
+          packages, industry coverage), not a professionals-community page -
+          it only ever lived under /professionals/portfolio because that's
+          where it was first built. Redirect old links/bookmarks forward. */}
+          <Route path="/professionals/portfolio" element={<Navigate to="/aboutus/portfolio" replace />} />
+          <Route path="/aboutus/portfolio" element={<PortfolioPage />} />
           <Route path="/professionals/training" element={<TrainingPage />} />
           <Route path="/professionals/career-path" element={<CareerPathPage />} />
           <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
