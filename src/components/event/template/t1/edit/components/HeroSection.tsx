@@ -14,7 +14,7 @@ import {
 import Cropper from "react-easy-crop";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { MEDIA_API, LAMBDA } from '../../../../../../lib/apiConfig';
+import { EVENTS_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface HeroSectionProps {
   heroData?: {
@@ -330,26 +330,31 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       throw new Error("User ID is required for image upload");
     }
 
+    // Was posting to MEDIA_API's "/events-image-update", which was never a
+    // real backend route (404 on every attempt) - the events service's own
+    // "/upload-image" is the one that actually exists, takes a bare "file"
+    // field, requires the caller's auth token, and returns {url}, not
+    // {s3Url}. Every "stuck on Uploading..." report traced back to this.
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("userId", userId);
-    formData.append("fieldName", fieldName + Date.now());
 
+    const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
     const uploadResponse = await fetch(
-      MEDIA_API ? `${MEDIA_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`,
+      EVENTS_API ? `${EVENTS_API}/upload-image` : `${LAMBDA.eventImageUpdate}/upload-image`,
       {
         method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         body: formData,
       }
     );
 
     if (!uploadResponse.ok) {
       const errorData = await uploadResponse.json().catch(() => ({}));
-      throw new Error(errorData.message || "Image upload failed");
+      throw new Error(errorData.detail || errorData.message || "Image upload failed");
     }
 
     const uploadData = await uploadResponse.json();
-    return uploadData.s3Url;
+    return uploadData.url;
   };
 
   // Apply crop and UPLOAD IMMEDIATELY to AWS - UPDATED WITH AUTO-SAVE

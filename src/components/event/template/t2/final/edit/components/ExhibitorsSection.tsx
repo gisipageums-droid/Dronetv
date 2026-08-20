@@ -3,7 +3,7 @@ import { Building2, ExternalLink, Edit2, Loader2, Save, X, Plus, Trash2, Upload 
 import { toast } from 'sonner';
 import Cropper from 'react-easy-crop';
 import { motion } from 'motion/react'; // Add motion import
-import { MEDIA_API, LAMBDA } from '../../../../../../../lib/apiConfig';
+import { EVENTS_API, LAMBDA } from '../../../../../../../lib/apiConfig';
 
 // Text limits
 const TEXT_LIMITS = {
@@ -376,8 +376,9 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
     formData.append('userId', userId);
     formData.append(`fieldName`, fieldName + Date.now());
 
-    const uploadResponse = await fetch(MEDIA_API ? `${MEDIA_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`, {
+    const uploadResponse = await fetch(EVENTS_API ? `${EVENTS_API}/upload-image` : `${LAMBDA.eventImageUpdate}/upload-image`, {
       method: 'POST',
+      headers: (() => { const t = localStorage.getItem('token') || localStorage.getItem('adminToken'); return t ? { Authorization: `Bearer ${t}` } : undefined; })(),
       body: formData,
     });
 
@@ -387,7 +388,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
     }
 
     const uploadData = await uploadResponse.json();
-    return uploadData.s3Url;
+    return uploadData.url;
   };
 
   const handleEdit = () => {

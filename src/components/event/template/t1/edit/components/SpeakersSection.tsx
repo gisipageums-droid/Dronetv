@@ -4,7 +4,7 @@ import Cropper from 'react-easy-crop';
 import { toast } from 'sonner';
 import maleAvatar from "/logos/maleAvatar.png"
 import femaleAvatar from "/logos/femaleAvatar.png"
-import { MEDIA_API, LAMBDA } from '../../../../../../lib/apiConfig';
+import { EVENTS_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 interface Speaker {
   name: string;
@@ -480,9 +480,10 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
     formData.append('fieldName', fieldName + Date.now());
 
     const uploadResponse = await fetch(
-      MEDIA_API ? `${MEDIA_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`,
+      EVENTS_API ? `${EVENTS_API}/upload-image` : `${LAMBDA.eventImageUpdate}/upload-image`,
       {
         method: 'POST',
+        headers: (() => { const t = localStorage.getItem('token') || localStorage.getItem('adminToken'); return t ? { Authorization: `Bearer ${t}` } : undefined; })(),
         body: formData,
       }
     );
@@ -493,7 +494,7 @@ const SpeakersSection: React.FC<SpeakersSectionProps> = ({
     }
 
     const uploadData = await uploadResponse.json();
-    return uploadData.s3Url;
+    return uploadData.url;
   };
 
   // ---------- Image / crop helpers ----------

@@ -371,8 +371,9 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
     formData.append('userId', userId);
     formData.append(`fieldName`, fieldName+Date.now());
 
-    const uploadResponse = await fetch(EVENTS_API ? `${EVENTS_API}/events-image-update` : `${LAMBDA.eventImageUpdate}/events-image-update`, {
+    const uploadResponse = await fetch(EVENTS_API ? `${EVENTS_API}/upload-image` : `${LAMBDA.eventImageUpdate}/upload-image`, {
       method: 'POST',
+      headers: (() => { const t = localStorage.getItem('token') || localStorage.getItem('adminToken'); return t ? { Authorization: `Bearer ${t}` } : undefined; })(),
       body: formData,
     });
 
@@ -382,7 +383,7 @@ export function ExhibitorsSection({ exhibitorsData, onStateChange, userId, event
     }
 
     const uploadData = await uploadResponse.json();
-    return uploadData.s3Url;
+    return uploadData.url;
   };
 
   const handleEdit = () => {
