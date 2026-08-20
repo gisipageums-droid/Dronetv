@@ -65,14 +65,34 @@ export default function App() {
     }
   }, [urlSlug]);
 
-  // Scroll to the section named in the URL hash (e.g. #contact) once content has loaded
+  // Scroll to the section named in the URL hash (e.g. #contact) once content
+  // has loaded. The 300ms delay races against a user who starts scrolling
+  // or tapping the page themselves right after it loads - this fires anyway
+  // and yanks their scroll position back to the hash target mid-interaction
+  // (looked exactly like "tapping the Contact form scrolls it back to top",
+  // since #contact is usually where they land). Cancel the pending scroll
+  // the moment the user shows any sign of interacting on their own.
   useEffect(() => {
     if (isLoading || !window.location.hash) return;
     const id = window.location.hash.slice(1);
+    let cancelled = false;
+    const cancel = () => { cancelled = true; };
+    window.addEventListener('wheel', cancel, { passive: true, once: true });
+    window.addEventListener('touchstart', cancel, { passive: true, once: true });
+    window.addEventListener('pointerdown', cancel, { once: true });
+    window.addEventListener('keydown', cancel, { once: true });
     const timer = setTimeout(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (!cancelled) {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }, 300);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('wheel', cancel);
+      window.removeEventListener('touchstart', cancel);
+      window.removeEventListener('pointerdown', cancel);
+      window.removeEventListener('keydown', cancel);
+    };
   }, [isLoading]);
 
   if (isLoading) {
