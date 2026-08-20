@@ -56,8 +56,17 @@ export default function Contact({ contactData, publishedId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.message) {
-      alert("Please fill in required fields: Email and Message.");
+    // Explicit validation instead of relying on the native required-field
+    // popup - that popup can silently fail to render when the field lives
+    // inside a framer-motion animated (transformed) ancestor, which this
+    // form does, making the button look like it does nothing at all on
+    // some mobile browsers.
+    if (!formData.email || !formData.phone || !formData.message) {
+      toast.error("Please fill in required fields: Email, Phone, and Message.");
+      return;
+    }
+    if (!publishedId) {
+      toast.error("This company page isn't fully loaded yet - please refresh and try again.");
       return;
     }
 
@@ -183,7 +192,6 @@ export default function Contact({ contactData, publishedId }) {
                       placeholder="rahul.sharma@company.com"
                       value={formData.email}
                       onChange={handleChange}
-                      required
                       className="border-border focus:border-primary bg-input-background"
                     />
                   </div>
@@ -197,7 +205,6 @@ export default function Contact({ contactData, publishedId }) {
                       placeholder="Your Number"
                       value={formData.phone}
                       onChange={handleChange}
-                      required
                       className="border-border focus:border-primary bg-input-background"
                     />
                   </div>
@@ -239,7 +246,6 @@ export default function Contact({ contactData, publishedId }) {
                       placeholder="Tell us about your project and how we can help..."
                       value={formData.message}
                       onChange={handleChange}
-                      required
                       className="min-h-[120px] border-border focus:border-primary bg-input-background text-justify"
                     />
                   </div>

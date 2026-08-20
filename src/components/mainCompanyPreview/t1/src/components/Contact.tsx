@@ -34,6 +34,21 @@ export default function Contact({ content, publishedId }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Explicit validation instead of relying only on the browser's native
+    // required-field popup - that popup can silently fail to render when
+    // the field lives inside a framer-motion animated (transformed)
+    // ancestor, which this form does, making the button look like it does
+    // nothing at all on some mobile browsers.
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.message) {
+      toast.error("Please fill in all required fields (name, email, phone, and message).");
+      return;
+    }
+    if (!publishedId) {
+      toast.error("This company page isn't fully loaded yet - please refresh and try again.");
+      return;
+    }
+
     setLoading(true);
 
     const payload = {
@@ -126,7 +141,6 @@ export default function Contact({ content, publishedId }) {
                     placeholder="John"
                     value={formData.firstName}
                     onChange={handleChange}
-                    required
                   />
                 </div>
                 <div>
@@ -138,7 +152,6 @@ export default function Contact({ content, publishedId }) {
                     placeholder="Doe"
                     value={formData.lastName}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -155,7 +168,6 @@ export default function Contact({ content, publishedId }) {
                     placeholder="john@company.com"
                     value={formData.email}
                     onChange={handleChange}
-                    required
                   />
                 </div>
                 <div>
@@ -181,7 +193,6 @@ export default function Contact({ content, publishedId }) {
                   placeholder="+1234567890"
                   value={formData.phone}
                   onChange={handleChange}
-                  required
                 />
               </div>
 
@@ -216,7 +227,6 @@ export default function Contact({ content, publishedId }) {
                   className="resize-none bg-ink-light dark:bg-gray-700 text-ink dark:text-white border-ink-light dark:border-gray-600"
                   value={formData.message}
                   onChange={handleChange}
-                  required
                 />
               </div>
 
