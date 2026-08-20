@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Package, Users, FileText, Coins, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { LEADS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
-import { getMyCompany } from "../api";
+import { getMyCompany, authHeaders } from "../api";
 import { PageHeader, Card, CardHeader, KpiRow, KpiCard, Badge, Btn, EmptyState } from "../ui";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
@@ -25,7 +25,7 @@ export default function Dashboard() {
       setCompany(c);
       if (c) {
         const base = LEADS_API || LAMBDA.leads;
-        axios.get(`${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=5&offset=0&filter=all&publishedId=${c.publishedId}`)
+        axios.get(`${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=5&offset=0&filter=all&publishedId=${c.publishedId}`, { headers: authHeaders() })
           .then((r) => setLeads(r.data?.leads || r.data?.data || []))
           .catch(() => {});
       }
@@ -83,7 +83,7 @@ export default function Dashboard() {
                       <div className="text-sm font-bold text-white truncate">{l.subject || l.category || "Inquiry"}</div>
                       <div className="text-xs text-white/40 line-clamp-1">{l.message}</div>
                     </div>
-                    <Badge tone={l.viewed ? "success" : "warning"}>{l.viewed ? "Viewed" : "New"}</Badge>
+                    <Badge tone="info">{l.firstName} {l.lastName}</Badge>
                   </div>
                 ))}
               </div>

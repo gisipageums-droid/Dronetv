@@ -3,7 +3,7 @@ import axios from "axios";
 import { useUserAuth } from "../../context/context";
 import { LEADS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
 import { fetchMyContent } from "../../../lib/mediaApi";
-import { getMyCompany } from "../api";
+import { getMyCompany, authHeaders } from "../api";
 import { PageHeader, Card, CardHeader, KpiRow, KpiCard, EmptyState } from "../ui";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
@@ -26,7 +26,7 @@ export default function Analytics() {
       const leadsUrl = c
         ? `${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=500&offset=0&filter=all&publishedId=${c.publishedId}`
         : `${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=500&offset=0&filter=all`;
-      axios.get(leadsUrl).then((r) => setLeads(r.data?.leads || r.data?.data || [])).catch(() => {});
+      axios.get(leadsUrl, { headers: authHeaders() }).then((r) => setLeads(r.data?.leads || r.data?.data || [])).catch(() => {});
     }).finally(() => setLoading(false));
 
     fetchMyContent(undefined).then((items) => {
@@ -39,7 +39,8 @@ export default function Analytics() {
       .catch(() => {});
   }, [userId]);
 
-  const viewedLeads = leads.filter((l) => l.viewed).length;
+  const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const leadsThisWeek = leads.filter((l) => new Date(l.submittedAt || l.createdAt).getTime() > oneWeekAgo).length;
   const categoryBreakdown = leads.reduce((acc: Record<string, number>, l) => {
     const cat = l.category || "Other";
     acc[cat] = (acc[cat] || 0) + 1;
@@ -59,7 +60,7 @@ export default function Analytics() {
           <KpiRow>
             <KpiCard label="Profile Views" value={(company?.profileViews ?? 0).toLocaleString("en-IN")} note="Public page visits" accent="yellow" />
             <KpiCard label="Total Leads" value={leads.length} accent="green" />
-            <KpiCard label="Leads Viewed" value={viewedLeads} accent="blue" />
+            <KpiCard label="Leads This Week" value={leadsThisWeek} accent="blue" />
             <KpiCard label="Product Listings" value={company?.productsCount ?? 0} accent="red" />
           </KpiRow>
           <KpiRow>
@@ -69,28 +70,52 @@ export default function Analytics() {
             <KpiCard label="Token Balance" value={tokenBalance.toLocaleString("en-IN")} accent="yellow" />
           </KpiRow>
 
-          <Card>
-            <CardHeader title="Lead Inquiries by Category" />
-            <div className="p-4">
-              {topCategories.length === 0 ? (
-                <EmptyState text="No lead data yet." />
-              ) : (
-                <div className="space-y-3">
-                  {topCategories.map(([cat, count]) => (
-                    <div key={cat} className="min-w-0">
-                      <div className="flex justify-between text-xs text-white/70 mb-1">
-                        <span className="truncate">{cat}</span>
-                        <span className="font-bold flex-shrink-0">{count}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader title="Lead Inquiries by Category" />
+              <div className="p-4">
+                {topCategories.length === 0 ? (
+                  <EmptyState text="No lead data yet." />
+                ) : (
+                  <div className="space-y-3">
+                    {topCategories.map(([cat, count]) => (
+                      <div key={cat} className="min-w-0">
+                        <div className="flex justify-between text-xs text-white/70 mb-1">
+                          <span className="truncate">{cat}</span>
+                          <span className="font-bold flex-shrink-0">{count}</span>
+                        </div>
+                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div className="h-full bg-brand-yellow rounded-full" style={{ width: `${(count / maxCat) * 100}%` }} />
+                        </div>
                       </div>
-                      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                        <div className="h-full bg-brand-yellow rounded-full" style={{ width: `${(count / maxCat) * 100}%` }} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Card>
+
+            <Card>
+              <CardHeader title="Recent Lead Messages" />
+              <div className="max-h-80 overflow-y-auto">
+                {leads.length === 0 ? (
+                  <div className="p-4"><EmptyState text="No leads yet." /></div>
+                ) : (
+                  <div className="divide-y divide-white/10">
+                    {leads.slice(0, 8).map((l: any) => (
+                      <div key={l.leadId} className="p-3.5">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <span className="text-xs font-bold text-white truncate">{l.firstName} {l.lastName}{l.company ? ` · ${l.company}` : ""}</span>
+                          <span className="text-[10px] text-white/30 flex-shrink-0">{new Date(l.submittedAt).toLocaleDateString("en-IN")}</span>
+                        </div>
+                        <div className="text-[11px] text-white/50 mb-1">{l.subject}</div>
+                        <p className="text-xs text-white/70 line-clamp-2">{l.message}</p>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
         </>
       )}
     </div>

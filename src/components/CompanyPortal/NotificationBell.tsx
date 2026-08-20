@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Inbox } from "lucide-react";
 import { useUserAuth } from "../context/context";
-import { getMyCompany, LEADS_API, LAMBDA } from "./api";
+import { getMyCompany, authHeaders, LEADS_API, LAMBDA } from "./api";
 
 interface Lead {
   leadId: string;
@@ -26,7 +26,7 @@ export default function NotificationBell() {
   const navigate = useNavigate();
   const userId = (user as any)?.userData?.email || (user as any)?.email || "";
   const [open, setOpen] = useState(false);
-  const [newLeads, setNewLeads] = useState<Lead[]>([]);
+  const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,15 +34,21 @@ export default function NotificationBell() {
     getMyCompany(userId).then((c) => {
       if (!c?.publishedId) return;
       const base = LEADS_API || LAMBDA.profile;
-      fetch(`${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=50&offset=0&filter=all&publishedId=${c.publishedId}`)
+      fetch(`${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=50&offset=0&filter=all&publishedId=${c.publishedId}`, {
+        headers: authHeaders(),
+      })
         .then((r) => r.json())
         .then((data) => {
           const leads = (data.leads || data.data || []) as any[];
-          setNewLeads(leads.filter((l) => !l.viewed).slice(0, 8));
+          const sorted = [...leads].sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
+          setRecentLeads(sorted.slice(0, 8));
         })
         .catch(() => {});
     });
   }, [userId]);
+
+  const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const hasRecent = recentLeads.some((l) => new Date(l.submittedAt).getTime() > oneDayAgo);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
@@ -56,21 +62,19 @@ export default function NotificationBell() {
     <div className="relative" ref={ref}>
       <button onClick={() => setOpen((o) => !o)} className="text-white/50 hover:text-white p-1.5 relative" title="Notifications">
         <Bell size={17} />
-        {newLeads.length > 0 && (
+        {hasRecent && (
           <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-status-error border-2 border-ink" />
         )}
       </button>
 
       {open && (
         <div className="absolute right-0 top-full mt-2 w-80 bg-ink border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
-          <div className="px-4 py-3 border-b border-white/10 text-sm font-bold text-white">
-            Notifications {newLeads.length > 0 && <span className="text-white/40 font-normal">({newLeads.length} new)</span>}
-          </div>
+          <div className="px-4 py-3 border-b border-white/10 text-sm font-bold text-white">Recent Leads</div>
           <div className="max-h-80 overflow-y-auto">
-            {newLeads.length === 0 ? (
-              <div className="px-4 py-8 text-center text-xs text-white/40">No new notifications</div>
+            {recentLeads.length === 0 ? (
+              <div className="px-4 py-8 text-center text-xs text-white/40">No leads yet</div>
             ) : (
-              newLeads.map((l) => (
+              recentLeads.map((l) => (
                 <button
                   key={l.leadId}
                   onClick={() => { setOpen(false); navigate("/company-portal/leads"); }}
@@ -80,7 +84,7 @@ export default function NotificationBell() {
                     <Inbox size={13} />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-xs font-semibold text-white truncate">New lead: {l.subject || "Inquiry"}</div>
+                    <div className="text-xs font-semibold text-white truncate">Lead: {l.subject || "Inquiry"}</div>
                     <div className="text-[11px] text-white/40 truncate">{l.company}</div>
                     <div className="text-[10px] text-white/30 mt-0.5">{timeAgo(l.submittedAt)}</div>
                   </div>
@@ -88,7 +92,7 @@ export default function NotificationBell() {
               ))
             )}
           </div>
-          {newLeads.length > 0 && (
+          {recentLeads.length > 0 && (
             <button
               onClick={() => { setOpen(false); navigate("/company-portal/leads"); }}
               className="w-full py-2.5 text-center text-xs font-semibold text-brand-yellow hover:bg-white/5 border-t border-white/10 transition-colors"
