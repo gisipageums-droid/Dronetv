@@ -220,11 +220,15 @@ export default function Contact({ content, publishedId }) {
                 />
               </div>
 
-              {/* Send Message Button */}
+              {/* Send Message Button - mb-16 keeps it clear of the
+              site-wide fixed ScrollingFooter ticker (h-10, always pinned to
+              the viewport bottom), which otherwise sits on top of this
+              full-width button once scrolled near the end of the page,
+              making it untappable */}
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-brand-yellow hover:bg-brand-gold dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold py-4 transition-colors duration-300 text-lg"
+                className="w-full mb-16 bg-brand-yellow hover:bg-brand-gold dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold py-4 transition-colors duration-300 text-lg"
               >
                 {loading
                   ? "Sending..."

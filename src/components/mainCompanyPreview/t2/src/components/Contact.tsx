@@ -244,11 +244,15 @@ export default function Contact({ contactData, publishedId }) {
                     />
                   </div>
 
-                  {/* Submit */}
+                  {/* Submit - mb-16 keeps it clear of the site-wide fixed
+                  ScrollingFooter ticker (h-10, always pinned to the viewport
+                  bottom), which otherwise sits on top of this full-width
+                  button once scrolled near the end of the page, making it
+                  untappable */}
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 text-justify"
+                    className="w-full mb-16 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 text-justify"
                   >
                     {loading ? "Sending..." : "Send Message"}
                   </Button>
