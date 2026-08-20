@@ -339,6 +339,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
       EVENTS_API ? `${EVENTS_API}/upload-image` : `${LAMBDA.eventImageUpdate}/upload-image`,
       {
         method: "POST",
+        headers: (() => { const t = localStorage.getItem('token') || localStorage.getItem('adminToken'); return t ? { Authorization: `Bearer ${t}` } : undefined; })(),
         body: formData,
       }
     );
