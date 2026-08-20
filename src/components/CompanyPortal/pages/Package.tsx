@@ -77,7 +77,7 @@ export default function PackagePage() {
       <PageHeader title="My Package" sub="Manage your subscription and token balance" />
 
       {loading ? (
-        <Card className="text-center py-16 text-ink-caption">Loading...</Card>
+        <Card className="text-center py-16 text-white/40">Loading...</Card>
       ) : (
         <>
           <KpiRow>
@@ -96,13 +96,13 @@ export default function PackagePage() {
                   {pkg.popular && <Badge tone="warning">Most Popular</Badge>}
                   <div className="flex items-center gap-2 mt-2 mb-1">
                     <Icon className="w-5 h-5 text-brand-gold flex-shrink-0" />
-                    <h3 className="text-lg font-extrabold text-ink">{pkg.name}</h3>
+                    <h3 className="text-lg font-extrabold text-white">{pkg.name}</h3>
                   </div>
-                  <div className="text-2xl font-extrabold text-ink mb-1">₹{pkg.price.toLocaleString("en-IN")}</div>
-                  <div className="text-xs text-ink-caption mb-4">{pkg.tokens.toLocaleString("en-IN")} tokens included</div>
+                  <div className="text-2xl font-extrabold text-white mb-1">₹{pkg.price.toLocaleString("en-IN")}</div>
+                  <div className="text-xs text-white/40 mb-4">{pkg.tokens.toLocaleString("en-IN")} tokens included</div>
                   <ul className="space-y-2 mb-5 flex-1">
                     {pkg.benefits.map((b) => (
-                      <li key={b} className="flex items-start gap-2 text-xs text-ink-paragraph min-w-0">
+                      <li key={b} className="flex items-start gap-2 text-xs text-white/70 min-w-0">
                         <Check className="w-3.5 h-3.5 text-status-success mt-0.5 flex-shrink-0" />
                         <span className="min-w-0">{b}</span>
                       </li>
@@ -123,7 +123,7 @@ export default function PackagePage() {
           <Card className="w-full max-w-sm">
             <CardHeader title={`Upgrade to ${confirmPkg.name}?`} />
             <div className="p-5">
-              <p className="text-sm text-ink-paragraph mb-5">
+              <p className="text-sm text-white/70 mb-5">
                 You'll be charged ₹{confirmPkg.price.toLocaleString("en-IN")} and receive {confirmPkg.tokens.toLocaleString("en-IN")} tokens.
               </p>
               <div className="flex gap-3 justify-end">

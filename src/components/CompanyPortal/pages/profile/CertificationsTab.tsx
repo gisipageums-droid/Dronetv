@@ -32,7 +32,7 @@ export default function CertificationsTab({ profile, save }: TabProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <div className="text-sm text-ink-caption flex-1">Company DGCA permits, ISO certifications, and industry approvals</div>
+        <div className="text-sm text-white/40 flex-1">Company DGCA permits, ISO certifications, and industry approvals</div>
         <Btn onClick={() => setShowForm(!showForm)}>+ Add Certification</Btn>
       </div>
 
@@ -67,8 +67,8 @@ export default function CertificationsTab({ profile, save }: TabProps) {
           {certs.map((c, i) => (
             <Card key={i} className="p-4 flex items-center justify-between">
               <div>
-                <div className="text-sm font-bold text-ink">{c.type}</div>
-                <div className="text-xs text-ink-caption mt-0.5">{c.authority} {c.number && `· ${c.number}`} {c.expiryDate && `· Expires: ${c.expiryDate}`}</div>
+                <div className="text-sm font-bold text-white">{c.type}</div>
+                <div className="text-xs text-white/40 mt-0.5">{c.authority} {c.number && `· ${c.number}`} {c.expiryDate && `· Expires: ${c.expiryDate}`}</div>
               </div>
               <div className="flex items-center gap-3">
                 <Badge tone={c.status === "Active" ? "success" : c.status === "Expired" ? "error" : "warning"}>{c.status}</Badge>
@@ -78,7 +78,7 @@ export default function CertificationsTab({ profile, save }: TabProps) {
           ))}
         </div>
       )}
-      {saving && <div className="text-xs text-ink-caption mt-3">Saving...</div>}
+      {saving && <div className="text-xs text-white/40 mt-3">Saving...</div>}
     </div>
   );
 }

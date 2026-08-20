@@ -34,7 +34,7 @@ export default function Press() {
         <PostContentCTA contentType="press-release" typeLabel="Press Release" onSuccess={load} variant="button" />
       </div>
       {loading ? (
-        <Card className="text-center py-16 text-ink-caption">Loading...</Card>
+        <Card className="text-center py-16 text-white/40">Loading...</Card>
       ) : items.length === 0 ? (
         <Card><EmptyState text='No press releases yet. Click "Add Content" to submit one.' /></Card>
       ) : (
@@ -43,14 +43,14 @@ export default function Press() {
             <div key={item.contentId} className="p-4 flex items-start justify-between gap-3 min-w-0">
               <div className="min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-bold text-ink text-sm truncate">{item.title}</h3>
+                  <h3 className="font-bold text-white text-sm truncate">{item.title}</h3>
                   <Badge tone={item.isPublished ? "success" : "neutral"}>{item.isPublished ? "Published" : "Draft"}</Badge>
                 </div>
-                <p className="text-xs text-ink-caption line-clamp-2">{item.description}</p>
-                <p className="text-[11px] text-ink-caption mt-1">{item.date || new Date(item.createdAt).toLocaleDateString("en-IN")}</p>
+                <p className="text-xs text-white/40 line-clamp-2">{item.description}</p>
+                <p className="text-[11px] text-white/40 mt-1">{item.date || new Date(item.createdAt).toLocaleDateString("en-IN")}</p>
               </div>
               <button onClick={() => remove(item)} title="Delete"
-                className="p-1.5 rounded hover:bg-ink-light text-ink-caption hover:text-status-error transition-colors flex-shrink-0">
+                className="p-1.5 rounded hover:bg-white/10 text-white/40 hover:text-status-error transition-colors flex-shrink-0">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>

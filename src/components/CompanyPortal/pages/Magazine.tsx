@@ -42,7 +42,7 @@ export default function Magazine() {
         <PostContentCTA contentType="magazine" typeLabel="Magazine Feature" onSuccess={load} variant="button" />
       </div>
       {loading ? (
-        <Card className="text-center py-16 text-ink-caption">Loading...</Card>
+        <Card className="text-center py-16 text-white/40">Loading...</Card>
       ) : items.length === 0 ? (
         <Card><EmptyState text='No magazine features yet. Click "Add Content" to submit one.' /></Card>
       ) : (
@@ -54,17 +54,17 @@ export default function Magazine() {
               )}
               <div className="p-3.5 min-w-0">
                 <div className="flex items-start justify-between gap-2 mb-1.5">
-                  <h3 className="font-bold text-ink text-sm line-clamp-2 min-w-0">{item.title}</h3>
+                  <h3 className="font-bold text-white text-sm line-clamp-2 min-w-0">{item.title}</h3>
                   <Badge tone={item.isPublished ? "success" : "neutral"}>{item.isPublished ? "Published" : "Draft"}</Badge>
                 </div>
-                <p className="text-xs text-ink-caption line-clamp-2 mb-3">{item.description}</p>
+                <p className="text-xs text-white/40 line-clamp-2 mb-3">{item.description}</p>
                 <div className="flex items-center gap-2">
                   <button onClick={() => togglePublish(item)} title={item.isPublished ? "Unpublish" : "Publish"}
-                    className="p-1.5 rounded hover:bg-ink-light text-ink-caption hover:text-status-success transition-colors">
+                    className="p-1.5 rounded hover:bg-white/10 text-white/40 hover:text-status-success transition-colors">
                     {item.isPublished ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                   <button onClick={() => remove(item)} title="Delete"
-                    className="p-1.5 rounded hover:bg-ink-light text-ink-caption hover:text-status-error transition-colors">
+                    className="p-1.5 rounded hover:bg-white/10 text-white/40 hover:text-status-error transition-colors">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>

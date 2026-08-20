@@ -38,7 +38,7 @@ export default function GalleryTab({ publishedId, profile, save }: TabProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <div className="text-sm text-ink-caption flex-1">Showcase your fleet, projects, and team through photos</div>
+        <div className="text-sm text-white/40 flex-1">Showcase your fleet, projects, and team through photos</div>
         <Btn onClick={() => inputRef.current?.click()}>{uploading ? "Uploading..." : "+ Upload Photos"}</Btn>
         <input ref={inputRef} type="file" accept="image/*" multiple hidden onChange={e => handleFiles(e.target.files)} />
       </div>

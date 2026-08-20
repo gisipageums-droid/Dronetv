@@ -39,7 +39,7 @@ export default function Dashboard() {
       .catch(() => {});
   }, [userId]);
 
-  if (loading) return <Card className="text-center py-16 text-ink-caption">Loading...</Card>;
+  if (loading) return <Card className="text-center py-16 text-white/40">Loading...</Card>;
 
   if (!company) {
     return (
@@ -55,6 +55,7 @@ export default function Dashboard() {
     { label: "Product Listings", path: "/company-portal/listings", icon: Package },
     { label: "B2B Leads", path: "/company-portal/leads", icon: Users },
     { label: "My Content", path: "/company-portal/content", icon: FileText },
+    { label: "My Package", path: "/company-portal/package", icon: Coins },
   ];
 
   return (
@@ -79,8 +80,8 @@ export default function Dashboard() {
                 {leads.map((l: any) => (
                   <div key={l.leadId} className="py-3 flex items-center justify-between gap-3 min-w-0">
                     <div className="min-w-0">
-                      <div className="text-sm font-bold text-ink truncate">{l.subject || l.category || "Inquiry"}</div>
-                      <div className="text-xs text-ink-caption line-clamp-1">{l.message}</div>
+                      <div className="text-sm font-bold text-white truncate">{l.subject || l.category || "Inquiry"}</div>
+                      <div className="text-xs text-white/40 line-clamp-1">{l.message}</div>
                     </div>
                     <Badge tone={l.viewed ? "success" : "warning"}>{l.viewed ? "Viewed" : "New"}</Badge>
                   </div>
@@ -97,9 +98,9 @@ export default function Dashboard() {
               const Icon = q.icon;
               return (
                 <button key={q.path} onClick={() => navigate(q.path)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-md border border-ink-light hover:border-brand-yellow hover:bg-brand-yellow/5 transition-colors text-left">
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-md border border-white/10 hover:border-brand-yellow hover:bg-brand-yellow/5 transition-colors text-left">
                   <Icon className="w-4 h-4 text-brand-gold flex-shrink-0" />
-                  <span className="text-sm font-medium text-ink min-w-0 truncate">{q.label}</span>
+                  <span className="text-sm font-medium text-white min-w-0 truncate">{q.label}</span>
                 </button>
               );
             })}
@@ -111,16 +112,16 @@ export default function Dashboard() {
         <CardHeader title="Company Snapshot" />
         <div className="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <div className="text-[11px] font-bold text-ink-caption uppercase tracking-wide mb-1">Status</div>
+            <div className="text-[11px] font-bold text-white/40 uppercase tracking-wide mb-1">Status</div>
             <Badge tone={company.reviewStatus === "approved" ? "success" : "warning"}>{company.reviewStatus || "pending"}</Badge>
           </div>
           <div>
-            <div className="text-[11px] font-bold text-ink-caption uppercase tracking-wide mb-1">Location</div>
-            <div className="text-sm text-ink">{company.location || "—"}</div>
+            <div className="text-[11px] font-bold text-white/40 uppercase tracking-wide mb-1">Location</div>
+            <div className="text-sm text-white">{company.location || "—"}</div>
           </div>
           <div>
-            <div className="text-[11px] font-bold text-ink-caption uppercase tracking-wide mb-1">Last Updated</div>
-            <div className="text-sm text-ink">{company.lastModified ? new Date(company.lastModified).toLocaleDateString("en-IN") : "—"}</div>
+            <div className="text-[11px] font-bold text-white/40 uppercase tracking-wide mb-1">Last Updated</div>
+            <div className="text-sm text-white">{company.lastModified ? new Date(company.lastModified).toLocaleDateString("en-IN") : "—"}</div>
           </div>
         </div>
       </Card>

@@ -90,9 +90,9 @@ export default function Settings() {
       <PageHeader title="Settings" sub="Manage your account details" />
 
       {loading ? (
-        <Card className="text-center py-16 text-ink-caption">Loading...</Card>
+        <Card className="text-center py-16 text-white/40">Loading...</Card>
       ) : !account ? (
-        <Card className="text-center py-16 text-ink-caption">Unable to load account.</Card>
+        <Card className="text-center py-16 text-white/40">Unable to load account.</Card>
       ) : (
         <Card>
           <CardHeader title="Account Information" />

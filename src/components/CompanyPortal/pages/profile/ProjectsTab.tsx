@@ -34,7 +34,7 @@ function ProjectHistory({ profile, save }: TabProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <div className="text-sm text-ink-caption flex-1">Completed and ongoing drone service projects</div>
+        <div className="text-sm text-white/40 flex-1">Completed and ongoing drone service projects</div>
         <Btn onClick={() => setShowForm(!showForm)}>+ Add Project</Btn>
       </div>
 
@@ -72,8 +72,8 @@ function ProjectHistory({ profile, save }: TabProps) {
           {projects.map((p, i) => (
             <Card key={i} className="p-4 flex items-center justify-between">
               <div>
-                <div className="text-sm font-bold text-ink">{p.title}</div>
-                <div className="text-xs text-ink-caption mt-0.5">{p.client} {p.industry && `· ${p.industry}`} {p.location && `· ${p.location}`}</div>
+                <div className="text-sm font-bold text-white">{p.title}</div>
+                <div className="text-xs text-white/40 mt-0.5">{p.client} {p.industry && `· ${p.industry}`} {p.location && `· ${p.location}`}</div>
               </div>
               <div className="flex items-center gap-3">
                 <Badge tone={p.status === "Completed" ? "success" : p.status === "Ongoing" ? "info" : "warning"}>{p.status}</Badge>
@@ -83,7 +83,7 @@ function ProjectHistory({ profile, save }: TabProps) {
           ))}
         </div>
       )}
-      {saving && <div className="text-xs text-ink-caption mt-3">Saving...</div>}
+      {saving && <div className="text-xs text-white/40 mt-3">Saving...</div>}
     </div>
   );
 }
@@ -128,7 +128,7 @@ export default function ProjectsTab(props: TabProps) {
   return (
     <div>
       <ProjectHistory {...props} />
-      <div className="border-t border-ink-light mt-8" />
+      <div className="border-t border-white/10 mt-8" />
       <ProjectExpertise {...props} />
     </div>
   );

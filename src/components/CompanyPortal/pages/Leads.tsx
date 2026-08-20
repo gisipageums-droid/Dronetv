@@ -197,7 +197,7 @@ export default function Leads() {
     return (
       <div>
         <PageHeader title="B2B Leads" sub="Buyer inquiries submitted to your company profile" />
-        <Card className="text-center py-16 text-ink-caption">Loading...</Card>
+        <Card className="text-center py-16 text-white/40">Loading...</Card>
       </div>
     );
   }
@@ -224,7 +224,7 @@ export default function Leads() {
       <Card className="p-4 mb-5">
         <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between mb-3">
           <input
-            className="px-3.5 py-2.5 rounded-lg border border-ink-light text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+            className="px-3.5 py-2.5 rounded-lg border border-white/10 text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             placeholder="Search leads..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -253,14 +253,14 @@ export default function Leads() {
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`font-bold text-ink ${lead.viewed ? "" : "blur-sm select-none"}`}>
+                    <span className={`font-bold text-white ${lead.viewed ? "" : "blur-sm select-none"}`}>
                       {lead.firstName} {lead.lastName}
                     </span>
                     <Badge tone={lead.viewed ? "success" : "warning"}>{lead.viewed ? "Viewed" : "New"}</Badge>
                   </div>
-                  <div className={`text-xs text-ink-caption mt-0.5 ${lead.viewed ? "" : "blur-sm select-none"}`}>{lead.company}</div>
-                  <p className="text-sm text-ink-paragraph mt-2 line-clamp-2">{lead.message || "No message provided."}</p>
-                  <div className="flex items-center gap-3 mt-2 text-[11px] text-ink-caption">
+                  <div className={`text-xs text-white/40 mt-0.5 ${lead.viewed ? "" : "blur-sm select-none"}`}>{lead.company}</div>
+                  <p className="text-sm text-white/70 mt-2 line-clamp-2">{lead.message || "No message provided."}</p>
+                  <div className="flex items-center gap-3 mt-2 text-[11px] text-white/40">
                     {lead.subject && <span>Enquiry: {lead.subject}</span>}
                     <span>{timeAgo(lead.submittedAt)}</span>
                   </div>
@@ -286,13 +286,13 @@ export default function Leads() {
       {/* Token modal */}
       {showTokenModal && (
         <div className="fixed inset-0 bg-ink/50 flex items-center justify-center p-4 z-[1000]">
-          <div className="bg-surface-card rounded-2xl shadow-xl w-full max-w-md p-6">
+          <div className="bg-ink rounded-2xl shadow-xl w-full max-w-md p-6">
             <div className="flex justify-center mb-4">
               <div className="bg-brand-yellow-soft rounded-full p-3"><AlertTriangle size={24} className="text-brand-gold" /></div>
             </div>
-            <h3 className="text-lg font-bold text-center text-ink mb-2">Insufficient Tokens</h3>
-            <p className="text-sm text-ink-caption text-center mb-6">
-              You need at least 10 tokens to view lead details. Current balance: <span className="font-bold text-ink">{totalTokens}</span>
+            <h3 className="text-lg font-bold text-center text-white mb-2">Insufficient Tokens</h3>
+            <p className="text-sm text-white/40 text-center mb-6">
+              You need at least 10 tokens to view lead details. Current balance: <span className="font-bold text-white">{totalTokens}</span>
             </p>
             <div className="flex gap-3">
               <Btn variant="outline" className="flex-1 justify-center" onClick={() => setShowTokenModal(false)}>Cancel</Btn>
@@ -305,21 +305,21 @@ export default function Leads() {
       {/* Details modal */}
       {detailsLead && (
         <div className="fixed inset-0 bg-ink/50 flex items-center justify-center p-4 z-[1000]" onClick={() => setDetailsLead(null)}>
-          <div className="bg-surface-card rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-ink rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="bg-ink px-5 py-4 rounded-t-2xl flex justify-between items-center">
               <h3 className="text-sm font-bold text-white">Lead Details</h3>
               <button onClick={() => setDetailsLead(null)} className="text-white/70 hover:text-white"><X size={18} /></button>
             </div>
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div><div className="text-[10px] font-bold text-ink-caption uppercase">Name</div><div className="text-ink">{detailsLead.firstName} {detailsLead.lastName}</div></div>
-                <div><div className="text-[10px] font-bold text-ink-caption uppercase">Company</div><div className="text-ink">{detailsLead.company}</div></div>
-                <div><div className="text-[10px] font-bold text-ink-caption uppercase">Subject</div><div className="text-ink">{detailsLead.subject}</div></div>
-                <div><div className="text-[10px] font-bold text-ink-caption uppercase">Submitted</div><div className="text-ink">{new Date(detailsLead.submittedAt).toLocaleDateString("en-IN")}</div></div>
+                <div><div className="text-[10px] font-bold text-white/40 uppercase">Name</div><div className="text-white">{detailsLead.firstName} {detailsLead.lastName}</div></div>
+                <div><div className="text-[10px] font-bold text-white/40 uppercase">Company</div><div className="text-white">{detailsLead.company}</div></div>
+                <div><div className="text-[10px] font-bold text-white/40 uppercase">Subject</div><div className="text-white">{detailsLead.subject}</div></div>
+                <div><div className="text-[10px] font-bold text-white/40 uppercase">Submitted</div><div className="text-white">{new Date(detailsLead.submittedAt).toLocaleDateString("en-IN")}</div></div>
               </div>
               <div>
-                <div className="text-[10px] font-bold text-ink-caption uppercase mb-1.5">Message</div>
-                <div className="bg-surface-main rounded-lg p-3 text-sm text-ink-paragraph border border-ink-light">{detailsLead.message || "No message provided."}</div>
+                <div className="text-[10px] font-bold text-white/40 uppercase mb-1.5">Message</div>
+                <div className="bg-white/5 rounded-lg p-3 text-sm text-white/70 border border-white/10">{detailsLead.message || "No message provided."}</div>
               </div>
               <div className="p-3 bg-status-info/10 rounded-lg border border-status-info/25 text-xs text-status-info">
                 Contact details are kept private. Use Chat to communicate with this lead directly.
@@ -333,26 +333,26 @@ export default function Leads() {
       {/* Chat modal */}
       {chatLead && (
         <div className="fixed inset-0 bg-ink/50 flex items-center justify-center p-4 z-[1000]" onClick={closeChat}>
-          <div className="bg-surface-card rounded-2xl shadow-xl w-full max-w-lg h-[70vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-ink rounded-2xl shadow-xl w-full max-w-lg h-[70vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="bg-ink px-5 py-4 rounded-t-2xl flex justify-between items-center flex-shrink-0">
               <h3 className="text-sm font-bold text-white">{chatLead.firstName} {chatLead.lastName}</h3>
               <button onClick={closeChat} className="text-white/70 hover:text-white"><X size={18} /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
               {chatMessages.length === 0 ? (
-                <div className="text-center text-xs text-ink-caption py-8">No messages yet. Say hello!</div>
+                <div className="text-center text-xs text-white/40 py-8">No messages yet. Say hello!</div>
               ) : chatMessages.map((m) => (
                 <div key={m.id} className={`flex ${m.senderType === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${m.senderType === "user" ? "bg-brand-yellow text-ink" : "bg-surface-main text-ink border border-ink-light"}`}>
+                  <div className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${m.senderType === "user" ? "bg-brand-yellow text-ink" : "bg-white/10 text-white border border-white/10"}`}>
                     {m.message}
                   </div>
                 </div>
               ))}
               <div ref={chatEndRef} />
             </div>
-            <div className="p-3 border-t border-ink-light flex gap-2 flex-shrink-0">
+            <div className="p-3 border-t border-white/10 flex gap-2 flex-shrink-0">
               <input
-                className="flex-1 px-3.5 py-2.5 rounded-lg border border-ink-light text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+                className="flex-1 px-3.5 py-2.5 rounded-lg border border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 placeholder="Type a message..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}

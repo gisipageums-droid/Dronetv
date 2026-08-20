@@ -67,27 +67,27 @@ export default function Invoices() {
       </KpiRow>
 
       {loading ? (
-        <Card className="text-center py-16 text-ink-caption">Loading...</Card>
+        <Card className="text-center py-16 text-white/40">Loading...</Card>
       ) : transactions.length === 0 ? (
         <Card><EmptyState text="No transactions yet." /></Card>
       ) : (
         <Card className="overflow-x-auto">
           <table className="w-full min-w-[560px] text-sm">
-            <thead className="bg-ink-offwhite border-b border-ink-light">
+            <thead className="bg-white/5 border-b border-white/10">
               <tr>
-                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Date</th>
-                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Description</th>
-                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Category</th>
-                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Amount</th>
-                <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Status</th>
+                <th className="text-left px-4 py-3 font-bold text-white/70 text-xs uppercase tracking-wide">Date</th>
+                <th className="text-left px-4 py-3 font-bold text-white/70 text-xs uppercase tracking-wide">Description</th>
+                <th className="text-left px-4 py-3 font-bold text-white/70 text-xs uppercase tracking-wide">Category</th>
+                <th className="text-left px-4 py-3 font-bold text-white/70 text-xs uppercase tracking-wide">Amount</th>
+                <th className="text-left px-4 py-3 font-bold text-white/70 text-xs uppercase tracking-wide">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink-light">
               {transactions.map((t) => (
-                <tr key={t.id} className="hover:bg-ink-offwhite transition-colors">
-                  <td className="px-4 py-3 text-ink-caption text-xs whitespace-nowrap">{t.date ? new Date(t.date).toLocaleDateString("en-IN") : "—"}</td>
-                  <td className="px-4 py-3 text-ink min-w-0">{t.description}</td>
-                  <td className="px-4 py-3 text-ink-caption text-xs">{t.category}</td>
+                <tr key={t.id} className="hover:bg-white/5 transition-colors">
+                  <td className="px-4 py-3 text-white/40 text-xs whitespace-nowrap">{t.date ? new Date(t.date).toLocaleDateString("en-IN") : "—"}</td>
+                  <td className="px-4 py-3 text-white min-w-0">{t.description}</td>
+                  <td className="px-4 py-3 text-white/40 text-xs">{t.category}</td>
                   <td className={`px-4 py-3 font-bold text-xs whitespace-nowrap ${t.type === "credit" ? "text-status-success" : "text-status-error"}`}>
                     {t.type === "credit" ? "+" : "-"}₹{Math.abs(t.amount).toLocaleString("en-IN")}
                   </td>

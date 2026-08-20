@@ -22,12 +22,12 @@ export default function ProfileSettingsTab({ profile, save }: TabProps) {
 
   return (
     <Card className="p-6">
-      <div className="text-sm font-bold text-ink mb-5">Profile Visibility</div>
+      <div className="text-sm font-bold text-white mb-5">Profile Visibility</div>
       {ROWS.map((r, i) => (
-        <div key={r.key} className={`flex items-center justify-between py-3.5 ${i < ROWS.length - 1 ? "border-b border-ink-light" : ""}`}>
+        <div key={r.key} className={`flex items-center justify-between py-3.5 ${i < ROWS.length - 1 ? "border-b border-white/10" : ""}`}>
           <div>
-            <div className="text-[13px] font-medium text-ink">{r.title}</div>
-            <div className="text-[11px] text-ink-caption mt-0.5">{r.sub}</div>
+            <div className="text-[13px] font-medium text-white">{r.title}</div>
+            <div className="text-[11px] text-white/40 mt-0.5">{r.sub}</div>
           </div>
           <Toggle checked={values[r.key]} onChange={v => update(r.key, v)} />
         </div>

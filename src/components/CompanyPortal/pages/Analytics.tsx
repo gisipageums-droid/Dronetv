@@ -53,7 +53,7 @@ export default function Analytics() {
       <PageHeader title="Analytics" sub="How your company profile is performing" />
 
       {loading ? (
-        <Card className="text-center py-16 text-ink-caption">Loading...</Card>
+        <Card className="text-center py-16 text-white/40">Loading...</Card>
       ) : (
         <>
           <KpiRow>
@@ -77,11 +77,11 @@ export default function Analytics() {
                 <div className="space-y-3">
                   {topCategories.map(([cat, count]) => (
                     <div key={cat} className="min-w-0">
-                      <div className="flex justify-between text-xs text-ink-paragraph mb-1">
+                      <div className="flex justify-between text-xs text-white/70 mb-1">
                         <span className="truncate">{cat}</span>
                         <span className="font-bold flex-shrink-0">{count}</span>
                       </div>
-                      <div className="h-2 bg-ink-light rounded-full overflow-hidden">
+                      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                         <div className="h-full bg-brand-yellow rounded-full" style={{ width: `${(count / maxCat) * 100}%` }} />
                       </div>
                     </div>

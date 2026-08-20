@@ -66,10 +66,10 @@ export default function ServicesProductsTab({ profile, save }: TabProps) {
       {products.length > 0 && (
         <div className="space-y-2 mb-5">
           {products.map((p, i) => (
-            <div key={i} className="flex items-center justify-between p-3 bg-surface-card border border-ink-light rounded-md">
+            <div key={i} className="flex items-center justify-between p-3 bg-ink border border-white/10 rounded-md">
               <div>
-                <div className="text-sm font-semibold text-ink">{p.name}</div>
-                <div className="text-xs text-ink-caption">{p.category} {p.priceRange && `· ${p.priceRange}`}</div>
+                <div className="text-sm font-semibold text-white">{p.name}</div>
+                <div className="text-xs text-white/40">{p.category} {p.priceRange && `· ${p.priceRange}`}</div>
               </div>
               <button onClick={() => removeProduct(i)} className="text-status-error text-xs font-semibold">Remove</button>
             </div>

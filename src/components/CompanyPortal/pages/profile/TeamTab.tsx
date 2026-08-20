@@ -32,8 +32,8 @@ export default function TeamTab({ profile, save }: TabProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <div className="px-4 py-3.5 bg-surface-card border border-ink-light rounded-lg flex-1">
-          <span className="text-xl font-extrabold text-brand-gold">{team.length}</span> <span className="text-xs text-ink-caption ml-1">Team Members</span>
+        <div className="px-4 py-3.5 bg-ink border border-white/10 rounded-lg flex-1">
+          <span className="text-xl font-extrabold text-brand-gold">{team.length}</span> <span className="text-xs text-white/40 ml-1">Team Members</span>
         </div>
         <Btn onClick={() => setShowForm(!showForm)} className="ml-4">+ Add Member</Btn>
       </div>
@@ -64,21 +64,21 @@ export default function TeamTab({ profile, save }: TabProps) {
         <Card className="overflow-hidden">
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="bg-ink-offwhite border-b border-ink-light">
-                <th className="text-left px-4 py-2.5 text-[11px] font-bold text-ink-caption uppercase">Name</th>
-                <th className="text-left px-4 py-2.5 text-[11px] font-bold text-ink-caption uppercase">Role</th>
-                <th className="text-left px-4 py-2.5 text-[11px] font-bold text-ink-caption uppercase">Department</th>
-                <th className="text-left px-4 py-2.5 text-[11px] font-bold text-ink-caption uppercase">License</th>
+              <tr className="bg-white/5 border-b border-white/10">
+                <th className="text-left px-4 py-2.5 text-[11px] font-bold text-white/40 uppercase">Name</th>
+                <th className="text-left px-4 py-2.5 text-[11px] font-bold text-white/40 uppercase">Role</th>
+                <th className="text-left px-4 py-2.5 text-[11px] font-bold text-white/40 uppercase">Department</th>
+                <th className="text-left px-4 py-2.5 text-[11px] font-bold text-white/40 uppercase">License</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               {team.map((m, i) => (
-                <tr key={i} className="border-b border-ink-light last:border-0">
-                  <td className="px-4 py-2.5 font-medium text-ink">{m.name}</td>
+                <tr key={i} className="border-b border-white/10 last:border-0">
+                  <td className="px-4 py-2.5 font-medium text-white">{m.name}</td>
                   <td className="px-4 py-2.5">{m.role}</td>
-                  <td className="px-4 py-2.5 text-ink-caption">{m.department || "—"}</td>
-                  <td className="px-4 py-2.5">{m.license ? <Badge tone="success">{m.license}</Badge> : <span className="text-ink-caption">N/A</span>}</td>
+                  <td className="px-4 py-2.5 text-white/40">{m.department || "—"}</td>
+                  <td className="px-4 py-2.5">{m.license ? <Badge tone="success">{m.license}</Badge> : <span className="text-white/40">N/A</span>}</td>
                   <td className="px-4 py-2.5"><button onClick={() => removeMember(i)} className="text-status-error text-xs font-semibold">Remove</button></td>
                 </tr>
               ))}
@@ -86,7 +86,7 @@ export default function TeamTab({ profile, save }: TabProps) {
           </table>
         </Card>
       )}
-      {saving && <div className="text-xs text-ink-caption mt-3">Saving...</div>}
+      {saving && <div className="text-xs text-white/40 mt-3">Saving...</div>}
     </div>
   );
 }

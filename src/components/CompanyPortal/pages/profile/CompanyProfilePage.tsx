@@ -70,7 +70,7 @@ export default function CompanyProfilePage() {
     }
   };
 
-  if (loading) return <div className="py-16 text-center text-sm text-ink-caption">Loading profile...</div>;
+  if (loading) return <div className="py-16 text-center text-sm text-white/40">Loading profile...</div>;
   if (error || !publishedId) return <EmptyState text={error || "No company found"} />;
 
   const tabProps = { publishedId, profile, save };
@@ -79,13 +79,13 @@ export default function CompanyProfilePage() {
     <div>
       <PageHeader title="Company Profile" sub={`Manage ${companyName || "your company"}'s full profile shown to buyers on DroneTv.in`} />
 
-      <div className="flex gap-1 border-b border-ink-light mb-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-1 border-b border-white/10 mb-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
             className={`px-3.5 py-3 text-[12.5px] whitespace-nowrap border-b-2 transition-colors ${
-              activeTab === t.id ? "text-brand-gold border-brand-yellow font-semibold" : "text-ink-caption border-transparent hover:text-ink"
+              activeTab === t.id ? "text-brand-gold border-brand-yellow font-semibold" : "text-white/40 border-transparent hover:text-white"
             }`}
           >
             {t.label}

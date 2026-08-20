@@ -35,9 +35,9 @@ export default function FleetTab({ profile, save }: TabProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <div className="flex gap-6 px-4 py-3.5 bg-surface-card border border-ink-light rounded-lg flex-1">
-          <div><span className="text-xl font-extrabold text-brand-gold">{fleet.length}</span> <span className="text-xs text-ink-caption ml-1">Total Drones</span></div>
-          <div><span className="text-xl font-extrabold text-brand-gold">{fleet.filter(f => f.status === "Active").length}</span> <span className="text-xs text-ink-caption ml-1">Active</span></div>
+        <div className="flex gap-6 px-4 py-3.5 bg-ink border border-white/10 rounded-lg flex-1">
+          <div><span className="text-xl font-extrabold text-brand-gold">{fleet.length}</span> <span className="text-xs text-white/40 ml-1">Total Drones</span></div>
+          <div><span className="text-xl font-extrabold text-brand-gold">{fleet.filter(f => f.status === "Active").length}</span> <span className="text-xs text-white/40 ml-1">Active</span></div>
         </div>
         <Btn onClick={() => setShowForm(!showForm)} className="ml-4">+ Add Drone</Btn>
       </div>
@@ -86,23 +86,23 @@ export default function FleetTab({ profile, save }: TabProps) {
             <Card key={i} className="p-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="text-sm font-bold text-ink">{d.model}</div>
+                  <div className="text-sm font-bold text-white">{d.model}</div>
                   <div className="text-[10px] font-bold text-brand-gold uppercase mt-0.5">{d.type}</div>
                 </div>
                 <span className={`text-[10px] font-bold ${d.status === "Active" ? "text-status-success" : "text-brand-gold"}`}>● {d.status}</span>
               </div>
               <div className="grid grid-cols-2 gap-2 mt-3 text-[11px]">
-                <div><div className="text-ink-caption uppercase text-[10px]">Serial</div><div className="font-medium">{d.serial}</div></div>
-                <div><div className="text-ink-caption uppercase text-[10px]">UIN</div><div className="font-medium">{d.uin || "N/A"}</div></div>
-                <div><div className="text-ink-caption uppercase text-[10px]">Batteries</div><div className="font-medium">{d.batteries || "—"}</div></div>
-                <div><div className="text-ink-caption uppercase text-[10px]">Payload</div><div className="font-medium">{d.payload || "—"}</div></div>
+                <div><div className="text-white/40 uppercase text-[10px]">Serial</div><div className="font-medium">{d.serial}</div></div>
+                <div><div className="text-white/40 uppercase text-[10px]">UIN</div><div className="font-medium">{d.uin || "N/A"}</div></div>
+                <div><div className="text-white/40 uppercase text-[10px]">Batteries</div><div className="font-medium">{d.batteries || "—"}</div></div>
+                <div><div className="text-white/40 uppercase text-[10px]">Payload</div><div className="font-medium">{d.payload || "—"}</div></div>
               </div>
               <button onClick={() => removeDrone(i)} className="text-status-error text-[11px] font-semibold mt-3">Remove</button>
             </Card>
           ))}
         </div>
       )}
-      {saving && <div className="text-xs text-ink-caption mt-3">Saving...</div>}
+      {saving && <div className="text-xs text-white/40 mt-3">Saving...</div>}
     </div>
   );
 }

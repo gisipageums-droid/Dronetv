@@ -183,7 +183,7 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
   };
 
   return (
-    <div className="flex fixed inset-0 pt-20 bg-surface-main">
+    <div className="flex fixed inset-0 pt-20 bg-ink">
       {/* Desktop sidebar */}
       <aside
         className={`hidden lg:flex flex-shrink-0 h-full bg-ink flex-col transition-all duration-200 overflow-hidden ${
@@ -222,24 +222,24 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
 
       {/* Main */}
       <div className="flex-1 min-w-0 flex flex-col overflow-y-auto">
-        <header className="h-[58px] bg-white border-b border-ink-light flex items-center px-4 sm:px-6 gap-3 sm:gap-4 sticky top-0 z-30 shadow-sm">
-          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-ink-caption p-1" title="Open menu">
+        <header className="h-[58px] bg-ink border-b border-white/10 flex items-center px-4 sm:px-6 gap-3 sm:gap-4 sticky top-0 z-30">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden text-white/50 p-1" title="Open menu">
             <Menu size={18} />
           </button>
-          <div className="flex-1 text-sm font-bold text-ink truncate">{pageTitle}</div>
+          <div className="flex-1 text-sm font-bold text-white truncate">{pageTitle}</div>
           <a
             href="https://testdev.dronetv.in/listed-companies"
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 border border-ink-light rounded-lg text-xs font-semibold text-ink-paragraph hover:border-ink-dark"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 border border-white/15 rounded-lg text-xs font-semibold text-white/70 hover:border-white/30 hover:text-white"
           >
             <ExternalLink size={13} /> View Profile
           </a>
-          <button className="text-ink-caption p-1.5 relative" title="Notifications">
+          <button className="text-white/50 hover:text-white p-1.5 relative" title="Notifications">
             <Bell size={17} />
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-status-error border-2 border-white" />
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-status-error border-2 border-ink" />
           </button>
-          <div className="w-8 h-8 rounded-full bg-ink flex items-center justify-center text-xs font-extrabold text-brand-yellow flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-brand-yellow/15 flex items-center justify-center text-xs font-extrabold text-brand-yellow flex-shrink-0">
             {initials}
           </div>
         </header>

@@ -6,15 +6,15 @@ import React from "react";
 export function PageHeader({ title, sub }: { title: string; sub?: string }) {
   return (
     <div className="mb-5">
-      <div className="text-xl font-extrabold text-ink">{title}</div>
-      {sub && <div className="text-[12.5px] text-ink-caption mt-0.5">{sub}</div>}
+      <div className="text-xl font-extrabold text-white">{title}</div>
+      {sub && <div className="text-[12.5px] text-white/40 mt-0.5">{sub}</div>}
     </div>
   );
 }
 
 export function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-surface-card rounded-lg border border-ink-light shadow-sm ${className}`}>
+    <div className={`bg-ink rounded-lg border border-white/10 ${className}`}>
       {children}
     </div>
   );
@@ -22,8 +22,8 @@ export function Card({ children, className = "" }: { children: React.ReactNode; 
 
 export function CardHeader({ title, action }: { title: string; action?: React.ReactNode }) {
   return (
-    <div className="px-4 py-3.5 border-b border-ink-light flex items-center justify-between">
-      <div className="text-sm font-bold text-ink">{title}</div>
+    <div className="px-4 py-3.5 border-b border-white/10 flex items-center justify-between">
+      <div className="text-sm font-bold text-white">{title}</div>
       {action}
     </div>
   );
@@ -40,10 +40,10 @@ export function KpiCard({
   label, value, note, accent = "yellow",
 }: { label: string; value: string | number; note?: string; accent?: "yellow" | "red" | "green" | "blue" }) {
   return (
-    <div className={`bg-surface-card rounded-lg border border-ink-light border-t-[3px] ${KPI_BORDER[accent]} p-4 shadow-sm`}>
-      <div className="text-[10px] font-bold text-ink-caption uppercase tracking-wide mb-1.5">{label}</div>
-      <div className="text-[26px] font-extrabold text-ink leading-none">{value}</div>
-      {note && <div className="text-[11px] text-ink-caption mt-1">{note}</div>}
+    <div className={`bg-ink rounded-lg border border-white/10 border-t-[3px] ${KPI_BORDER[accent]} p-4`}>
+      <div className="text-[10px] font-bold text-white/40 uppercase tracking-wide mb-1.5">{label}</div>
+      <div className="text-[26px] font-extrabold text-white leading-none">{value}</div>
+      {note && <div className="text-[11px] text-white/40 mt-1">{note}</div>}
     </div>
   );
 }
@@ -54,8 +54,8 @@ export function KpiRow({ children }: { children: React.ReactNode }) {
 
 const BADGE_STYLE: Record<string, string> = {
   success: "bg-status-success/15 text-status-success",
-  warning: "bg-brand-yellow-soft/40 text-[#7a5800]",
-  neutral: "bg-ink-offwhite text-ink-caption",
+  warning: "bg-brand-yellow/15 text-brand-yellow",
+  neutral: "bg-white/10 text-white/50",
   info: "bg-status-info/15 text-status-info",
   error: "bg-status-error/15 text-status-error",
 };
@@ -83,8 +83,8 @@ export function Btn({
   const sizeCls = size === "sm" ? "px-3 py-1.5 text-xs" : "px-4 py-2.5 text-sm";
   const variantCls = {
     primary: "bg-brand-yellow text-ink hover:bg-brand-gold",
-    outline: "bg-white text-ink border border-ink-light hover:border-ink-dark",
-    dark: "bg-ink text-brand-yellow hover:opacity-85",
+    outline: "bg-transparent text-white/70 border border-white/15 hover:bg-white/5 hover:text-white",
+    dark: "bg-white/10 text-brand-yellow hover:bg-white/15",
     danger: "bg-status-error text-white hover:opacity-90",
   }[variant];
   return (
@@ -99,7 +99,7 @@ export function Field({
 }: { label: string; required?: boolean; children: React.ReactNode; wide?: boolean }) {
   return (
     <div className={`flex flex-col gap-1.5 ${wide ? "sm:col-span-2" : ""}`}>
-      <label className="text-[11.5px] font-bold text-ink uppercase tracking-wide">
+      <label className="text-[11.5px] font-bold text-white/50 uppercase tracking-wide">
         {label} {required && <span className="text-status-error">*</span>}
       </label>
       {children}
@@ -108,7 +108,7 @@ export function Field({
 }
 
 export const inputCls =
-  "w-full px-3 py-2.5 border border-ink-light rounded-md text-[13px] text-ink bg-white focus:outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/20 transition-colors";
+  "w-full px-3 py-2.5 border border-white/15 rounded-md text-[13px] text-white bg-white/5 placeholder-white/30 focus:outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/20 transition-colors";
 
 export function FormGrid({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>;
@@ -122,7 +122,7 @@ export function Chip({
       type="button"
       onClick={onClick}
       className={`px-3.5 py-1.5 rounded-full text-xs border transition-colors select-none ${
-        on ? "bg-brand-yellow text-ink border-brand-yellow font-semibold" : "bg-white text-ink border-ink-light hover:border-ink-dark"
+        on ? "bg-brand-yellow text-ink border-brand-yellow font-semibold" : "bg-transparent text-white/60 border-white/15 hover:border-white/30 hover:text-white"
       }`}
     >
       {children}
@@ -132,7 +132,7 @@ export function Chip({
 
 export function ActionBar({ onSave, onCancel, saveLabel = "Save Changes" }: { onSave?: () => void; onCancel?: () => void; saveLabel?: string }) {
   return (
-    <div className="flex gap-3 mt-6 pt-5 border-t border-ink-light">
+    <div className="flex gap-3 mt-6 pt-5 border-t border-white/10">
       <Btn onClick={onSave}>{saveLabel}</Btn>
       {onCancel && <Btn variant="outline" onClick={onCancel}>Cancel</Btn>}
     </div>
@@ -140,7 +140,7 @@ export function ActionBar({ onSave, onCancel, saveLabel = "Save Changes" }: { on
 }
 
 export function EmptyState({ text }: { text: string }) {
-  return <div className="py-10 text-center text-sm text-ink-caption">{text}</div>;
+  return <div className="py-10 text-center text-sm text-white/40">{text}</div>;
 }
 
 export function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -148,7 +148,7 @@ export function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: 
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`relative w-[42px] h-6 rounded-full transition-colors flex-shrink-0 ${checked ? "bg-brand-yellow" : "bg-ink-light"}`}
+      className={`relative w-[42px] h-6 rounded-full transition-colors flex-shrink-0 ${checked ? "bg-brand-yellow" : "bg-white/15"}`}
     >
       <span
         className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-[19px]" : "translate-x-0.5"}`}
