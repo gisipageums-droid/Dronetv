@@ -48,8 +48,8 @@ export default function Invoices() {
       }
     }).catch(() => setTransactions([])).finally(() => setLoading(false));
 
-    axios.get(`${PROFILE_API}?userId=${userId}`)
-      .then((r) => setTokenBalance(r.data?.profile?.tokenBalance ?? 0))
+    axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
+      .then((r) => setTokenBalance(r.data?.tokenBalance ?? 0))
       .catch(() => {});
   }, [userId]);
 

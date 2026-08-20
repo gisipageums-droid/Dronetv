@@ -102,7 +102,7 @@ export default function Leads() {
       if (Array.isArray(data?.messages)) {
         setChatMessages(data.messages.map((m: any) => ({
           id: m.messageId || m.id || `${m.timestamp}-${Math.random()}`,
-          senderType: m.senderType === "user" ? "user" : "lead",
+          senderType: m.senderType === "company" ? "user" : "lead",
           senderName: m.senderName || m.sender,
           message: m.message,
           timestamp: new Date(m.timestamp),
@@ -125,10 +125,15 @@ export default function Leads() {
       const res = await fetch(`${base}/chat/send`, {
         method: "POST",
         headers: authHeaders(),
-        body: JSON.stringify({ leadId: chatLead.leadId, userId, message: text, leadEmail: chatLead.email }),
+        body: JSON.stringify({ leadId: chatLead.leadId, userId, message: text, senderType: "company", senderName: "Company" }),
       });
+      if (!res.ok) {
+        setChatMessages((prev) => prev.filter((m) => m.id !== temp.id));
+        toast.error("Failed to send message");
+        return;
+      }
       const data = await res.json();
-      if (!data.success && !data.messageId) {
+      if (!data.messageId) {
         setChatMessages((prev) => prev.filter((m) => m.id !== temp.id));
         toast.error("Failed to send message");
       }

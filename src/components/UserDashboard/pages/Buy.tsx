@@ -4,6 +4,7 @@ import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import { useUserAuth } from "../../context/context";
 import axios from 'axios';
 import { PAYMENT_API, LAMBDA, AUTH_API } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -42,8 +43,8 @@ const BuyTokenPage: React.FC = () => {
 
   useEffect(() => {
     if (!userId) return;
-    axios.get(`${PROFILE_API}?userId=${userId}`)
-      .then(r => setCurrentBalance(r.data?.profile?.tokenBalance ?? 0))
+    axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
+      .then(r => setCurrentBalance(r.data?.tokenBalance ?? 0))
       .catch(() => {});
   }, [userId]);
 
@@ -76,18 +77,18 @@ const BuyTokenPage: React.FC = () => {
   const isValid = finalAmount >= 10;
 
   const placeOrder = (orderData: any) =>
-    axios.post(PAYMENT_API ? `${PAYMENT_API}/place-order` : `${LAMBDA.tokenGateway}/place-order`, orderData)
+    axios.post(PAYMENT_API ? `${PAYMENT_API}/place-order` : `${LAMBDA.tokenGateway}/place-order`, orderData, { headers: authHeader() })
       .then(r => r.data)
       .catch(e => { throw new Error(e.response?.data?.message || 'Failed to place order'); });
 
   const failOrder = (transactionId: string, reason: string, errorCode = '', status: 'FAILED' | 'CANCELLED' = 'FAILED') =>
     axios.post(PAYMENT_API ? `${PAYMENT_API}/fail-order` : `${LAMBDA.tokenGateway}/fail-order`,
-      { transactionId, reason, errorCode, status })
+      { transactionId, reason, errorCode, status }, { headers: authHeader() })
       .then(r => r.data)
       .catch(() => null);
 
   const confirmOrder = (paymentData: any) =>
-    axios.post(PAYMENT_API ? `${PAYMENT_API}/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`, paymentData)
+    axios.post(PAYMENT_API ? `${PAYMENT_API}/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`, paymentData, { headers: authHeader() })
       .then(r => r.data)
       .catch(e => { throw new Error(e.response?.data?.message || 'Failed to confirm order'); });
 

@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Check, Zap, TrendingUp, Crown } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
+import { authHeader } from "../../../lib/authService";
 import { PageHeader, Card, CardHeader, Btn, Badge, KpiRow, KpiCard } from "../ui";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
@@ -45,8 +46,8 @@ export default function PackagePage() {
 
   useEffect(() => {
     if (!userId) { setLoading(false); return; }
-    axios.get(`${PROFILE_API}?userId=${userId}`)
-      .then((r) => setProfile(r.data?.profile ?? null))
+    axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
+      .then((r) => setProfile(r.data ?? null))
       .catch(() => setProfile(null))
       .finally(() => setLoading(false));
   }, [userId]);

@@ -31,10 +31,10 @@ export default function Dashboard() {
       }
     }).finally(() => setLoading(false));
 
-    axios.get(`${PROFILE_API}?userId=${userId}`)
+    axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeaders() })
       .then((r) => {
-        setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
-        setPackageType(r.data?.profile?.packageType ?? "");
+        setTokenBalance(r.data?.tokenBalance ?? 0);
+        setPackageType(r.data?.packageType ?? "");
       })
       .catch(() => {});
   }, [userId]);
