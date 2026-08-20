@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { CheckCircle, X } from "lucide-react";
 import { COMPANY_API, PROFESSIONAL_API, EVENTS_API, LAMBDA } from '../../lib/apiConfig';
-import { validateToken, getMe, clearSession } from '../../lib/authService';
+import { validateToken, getMe, clearSession, authHeader } from '../../lib/authService';
 
 function applyAxiosAuthHeader(token: string | null) {
   if (token) {
@@ -573,49 +573,80 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         ''
       ).trim();
 
-      // The publish Lambda requires eventId/userId (and the rest of the draft
-      // metadata) nested INSIDE `content`, with the actual edited template
-      // itself nested a level deeper as `content.content` — not as top-level
-      // sibling fields. See dronetv-events-update-functionality-2 source.
-      // Older drafts saved before an eventId was persisted don't have one —
-      // fall back to draftId, which is always present and equally unique.
-      const data: any = {
-        content: {
-          ...AIGenData,
-          eventId: AIGenData.eventId || AIGenData.draftId,
-          content: finalTemplate,
-          ...(eventName ? { eventName } : {}),
-        },
-      };
+      if (EVENTS_API && AIGenData.eventId) {
+        // Editing an already-published event (admin re-edit): the
+        // self-hosted backend has no /publish endpoint — that path is a
+        // leftover from the old Lambda API which never got ported here.
+        // Save via the real update endpoint instead.
+        const response = await fetch(`${EVENTS_API}/event/${AIGenData.eventId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", ...authHeader() },
+          body: JSON.stringify({
+            templateContent: finalTemplate,
+            ...(eventName ? { eventName } : {}),
+          }),
+        });
 
-      const response = await fetch(
-        EVENTS_API ? `${EVENTS_API}/publish` : `${LAMBDA.eventsPublish}/events-publish/event-publish`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
+        if (!response.ok) {
+          const errBody = await response.json().catch(() => null);
+          throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
         }
-      );
 
-      if (!response.ok) {
-        const errBody = await response.json().catch(() => null);
-        throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
-      }
-
-      // If admin is publishing, auto-approve so event stays visible in public list
-      if (isAdminLogin && AIGenData.eventId) {
-        try {
-          await fetch(
-            EVENTS_API ? `${EVENTS_API}/event/${AIGenData.eventId}` : `${LAMBDA.eventsAdmin}/event/${AIGenData.eventId}`,
-            {
+        // If admin is publishing, auto-approve so event stays visible in public list
+        if (isAdminLogin) {
+          try {
+            await fetch(`${EVENTS_API}/admin/review`, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ eventId: AIGenData.eventId, action: "approve", userId: AIGenData.userId }),
-            }
-          );
-        } catch { /* best effort */ }
+              headers: { "Content-Type": "application/json", ...authHeader() },
+              body: JSON.stringify({ eventId: AIGenData.eventId, action: "approve" }),
+            });
+          } catch { /* best effort */ }
+        }
+      } else {
+        // The publish Lambda requires eventId/userId (and the rest of the draft
+        // metadata) nested INSIDE `content`, with the actual edited template
+        // itself nested a level deeper as `content.content` — not as top-level
+        // sibling fields. See dronetv-events-update-functionality-2 source.
+        // Older drafts saved before an eventId was persisted don't have one —
+        // fall back to draftId, which is always present and equally unique.
+        const data: any = {
+          content: {
+            ...AIGenData,
+            eventId: AIGenData.eventId || AIGenData.draftId,
+            content: finalTemplate,
+            ...(eventName ? { eventName } : {}),
+          },
+        };
+
+        const response = await fetch(
+          EVENTS_API ? `${EVENTS_API}/publish` : `${LAMBDA.eventsPublish}/events-publish/event-publish`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }
+        );
+
+        if (!response.ok) {
+          const errBody = await response.json().catch(() => null);
+          throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
+        }
+
+        // If admin is publishing, auto-approve so event stays visible in public list
+        if (isAdminLogin && AIGenData.eventId) {
+          try {
+            await fetch(
+              `${LAMBDA.eventsAdmin}/event/${AIGenData.eventId}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ eventId: AIGenData.eventId, action: "approve", userId: AIGenData.userId }),
+              }
+            );
+          } catch { /* best effort */ }
+        }
       }
 
       toast.success(

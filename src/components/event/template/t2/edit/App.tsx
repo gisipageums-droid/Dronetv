@@ -14,6 +14,7 @@ import { ContactSection } from './components/ContactSection';
 import Publish from './components/Publish';
 import { Footer } from './components/FooterSection';
 import { EVENTS_API, LAMBDA } from '../../../../../lib/apiConfig';
+import { authHeader } from '../../../../../lib/authService';
 
 // Define types for the component states
 interface ComponentStates {
@@ -132,13 +133,18 @@ export default function Edit_event_t2() {
             }
           );
         } else {
-          // Replace with your actual API for non-AIgen case
+          // Admin editing an already-published event: draftId here is
+          // actually the eventId. The self-hosted backend never implements
+          // /event-content — that path is a leftover from the old Lambda
+          // API. Use the real admin-capable endpoint instead, which
+          // requires a Bearer token.
           response = await fetch(
-            EVENTS_API ? `${EVENTS_API}/event-content/${draftId}/${userId}` : `${LAMBDA.eventTemplateContent}/${draftId}/${userId}`,
+            EVENTS_API ? `${EVENTS_API}/event/${draftId}` : `${LAMBDA.eventTemplateContent}/${draftId}/${userId}`,
             {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
+                ...(EVENTS_API ? authHeader() : {}),
               },
             }
           );
@@ -148,7 +154,13 @@ export default function Edit_event_t2() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
+        const raw = await response.json();
+        // /event/{eventId} returns a flat record with templateContent,
+        // not the {data: {..., content}} shape /events (AIgen) returns —
+        // normalize so the rest of this function can treat them the same.
+        const data = EVENTS_API && isAIgen !== "AIgen"
+          ? { data: { ...raw, content: raw.templateContent } }
+          : raw;
 
         // Set both AIGenData and finalTemplate similar to EventTemplate1.tsx
         setFinalTemplate(data.data);
