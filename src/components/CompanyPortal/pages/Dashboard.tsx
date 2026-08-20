@@ -63,7 +63,7 @@ export default function Dashboard() {
       <PageHeader title="Dashboard" sub={`Welcome back, ${company.companyName}`} />
 
       <KpiRow>
-        <KpiCard label="Profile Completion" value={`${company.completionPercentage ?? 0}%`} accent="yellow" />
+        <KpiCard label="Profile Views" value={(company.profileViews ?? 0).toLocaleString("en-IN")} accent="yellow" />
         <KpiCard label="Total Leads" value={leads.length} note="Recent" accent="green" />
         <KpiCard label="Token Balance" value={tokenBalance.toLocaleString("en-IN")} note={packageType ? packageType.charAt(0).toUpperCase() + packageType.slice(1) + " plan" : undefined} accent="blue" />
         <KpiCard label="Listings" value={(company.productsCount ?? 0) + (company.servicesCount ?? 0)} accent="red" />

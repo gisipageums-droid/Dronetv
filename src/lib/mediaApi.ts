@@ -63,10 +63,21 @@ export async function fetchAdminContent(signal?: AbortSignal, type?: ContentType
 // listing which requires an actual admin token.
 export async function fetchMyContent(signal?: AbortSignal, type?: ContentType): Promise<MediaItem[]> {
   const url = type ? `${BASE}/mine?type=${type}` : `${BASE}/mine`;
-  const res = await fetch(url, { signal, headers: authHeader() });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  return data.items || [];
+  // One silent retry before surfacing an error - a shared, sometimes-loaded
+  // VPS can produce a one-off transient failure that has nothing to do with
+  // the account's actual data, and users shouldn't see a scary error for that.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(url, { signal, headers: authHeader() });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.items || [];
+    } catch (err) {
+      if (attempt === 1) throw err;
+      await new Promise((r) => setTimeout(r, 800));
+    }
+  }
+  return [];
 }
 
 export async function createContent(item: Omit<MediaItem, 'contentId' | 'createdAt' | 'updatedAt'>): Promise<MediaItem> {

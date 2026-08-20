@@ -44,6 +44,11 @@ export default function App() {
 
       setFinaleDataReview(company);
       setIsLoading(false);
+
+      if (company?.publishedId) {
+        const base = COMPANY_API || LAMBDA.companyPreviewLoad;
+        fetch(`${base}/${company.publishedId}/track-view`, { method: "POST" }).catch(() => {});
+      }
     } catch (error) {
       console.error("Error fetching template data:", error);
       setError(error.message);

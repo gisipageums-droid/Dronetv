@@ -57,12 +57,13 @@ export default function Analytics() {
       ) : (
         <>
           <KpiRow>
-            <KpiCard label="Total Leads" value={leads.length} accent="yellow" />
-            <KpiCard label="Leads Viewed" value={viewedLeads} accent="green" />
-            <KpiCard label="Product Listings" value={company?.productsCount ?? 0} accent="blue" />
-            <KpiCard label="Profile Completion" value={`${company?.completionPercentage ?? 0}%`} accent="red" />
+            <KpiCard label="Profile Views" value={(company?.profileViews ?? 0).toLocaleString("en-IN")} note="Public page visits" accent="yellow" />
+            <KpiCard label="Total Leads" value={leads.length} accent="green" />
+            <KpiCard label="Leads Viewed" value={viewedLeads} accent="blue" />
+            <KpiCard label="Product Listings" value={company?.productsCount ?? 0} accent="red" />
           </KpiRow>
           <KpiRow>
+            <KpiCard label="Profile Completion" value={`${company?.completionPercentage ?? 0}%`} accent="red" />
             <KpiCard label="Content Posts" value={contentCount} note={`${publishedCount} published`} accent="blue" />
             <KpiCard label="Service Listings" value={company?.servicesCount ?? 0} accent="green" />
             <KpiCard label="Token Balance" value={tokenBalance.toLocaleString("en-IN")} accent="yellow" />
