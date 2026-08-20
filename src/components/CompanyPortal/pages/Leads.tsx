@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MessageCircle, Send, X } from "lucide-react";
 import { useUserAuth } from "../../context/context";
@@ -86,6 +87,19 @@ export default function Leads() {
     if (chatPollRef.current) clearInterval(chatPollRef.current);
     chatPollRef.current = window.setInterval(() => fetchChatMessages(lead), 8000);
   };
+
+  // Lets the Analytics page's "Recent Lead Messages" cards deep-link
+  // straight into a reply, e.g. /company-portal/leads?openChat=<leadId> -
+  // Analytics itself only ever showed messages read-only, no way to reply.
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const leadId = searchParams.get("openChat");
+    if (!leadId || leads.length === 0) return;
+    const lead = leads.find((l) => l.leadId === leadId);
+    if (lead) openChat(lead);
+    setSearchParams((prev) => { prev.delete("openChat"); return prev; }, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [leads, searchParams]);
 
   const closeChat = () => {
     setChatLead(null);

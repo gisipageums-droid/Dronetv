@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { MessageCircle } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { LEADS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
 import { fetchMyContent } from "../../../lib/mediaApi";
@@ -10,6 +12,7 @@ const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profil
 
 export default function Analytics() {
   const { user } = useUserAuth();
+  const navigate = useNavigate();
   const userId = (user as any)?.userData?.email || (user as any)?.email || "";
   const [company, setCompany] = useState<any>(null);
   const [leads, setLeads] = useState<any[]>([]);
@@ -102,14 +105,21 @@ export default function Analytics() {
                 ) : (
                   <div className="divide-y divide-white/10">
                     {leads.slice(0, 8).map((l: any) => (
-                      <div key={l.leadId} className="p-3.5">
+                      <button
+                        key={l.leadId}
+                        onClick={() => navigate(`/company-portal/leads?openChat=${l.leadId}`)}
+                        className="w-full text-left p-3.5 hover:bg-white/5 transition-colors"
+                      >
                         <div className="flex items-center justify-between gap-2 mb-1">
                           <span className="text-xs font-bold text-white truncate">{l.firstName} {l.lastName}{l.company ? ` · ${l.company}` : ""}</span>
                           <span className="text-[10px] text-white/30 flex-shrink-0">{new Date(l.submittedAt).toLocaleDateString("en-IN")}</span>
                         </div>
                         <div className="text-[11px] text-white/50 mb-1">{l.subject}</div>
-                        <p className="text-xs text-white/70 line-clamp-2">{l.message}</p>
-                      </div>
+                        <p className="text-xs text-white/70 line-clamp-2 mb-1.5">{l.message}</p>
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-brand-gold">
+                          <MessageCircle className="w-3 h-3" /> Reply
+                        </span>
+                      </button>
                     ))}
                   </div>
                 )}
