@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
 import maleAvatar from "/logos/maleAvatar.png"
 import femaleAvatar from "/logos/femaleAvatar.png"
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function Testimonials({
   testimonialsData,
@@ -316,17 +316,19 @@ export default function Testimonials({
         formData.append("templateSelection", templateSelection);
 
 
+        const testiAuthToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
         const uploadPromise = fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+          COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
+            headers: testiAuthToken ? { Authorization: `Bearer ${testiAuthToken}` } : {},
             body: formData,
           }
         ).then(async (uploadResponse) => {
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL
-            updateTestimonial(index, "image", uploadData.imageUrl);
+            updateTestimonial(index, "image", uploadData.url || uploadData.imageUrl);
             return { success: true, index };
           } else {
             const errorData = await uploadResponse.json();

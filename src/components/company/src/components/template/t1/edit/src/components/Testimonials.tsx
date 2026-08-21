@@ -17,7 +17,7 @@ import { motion } from "motion/react";
 import user from "/images/user.png";
 import maleAvatar from "/logos/maleAvatar.png";
 import femaleAvatar from "/logos/femaleAvatar.png";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 interface Testimonial {
   name: string;
@@ -292,19 +292,8 @@ export default function EditableTestimonials({
 
     try {
       setIsUploading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("sectionName", "testimonials");
-      formData.append("imageField", `testimonial-${index}-${Date.now()}`);
-      formData.append("templateSelection", templateSelection);
-
-      const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+            const __presignedUrl = await uploadCompanyImagePresigned(userId, `testimonial-${index}-${Date.now()}`, file);
+      const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();

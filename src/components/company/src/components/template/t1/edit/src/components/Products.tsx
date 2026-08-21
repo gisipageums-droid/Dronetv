@@ -16,7 +16,7 @@ import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 export default function EditableProducts({
   productData,
@@ -173,19 +173,8 @@ export default function EditableProducts({
     }
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("sectionName", "products");
-      formData.append("imageField", `products[${productId}].image-${Date.now()}`);
-      formData.append("templateSelection", templateSelection);
-
-      const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+            const __presignedUrl = await uploadCompanyImagePresigned(userId, `products[${productId}].image-${Date.now()}`, file);
+      const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();

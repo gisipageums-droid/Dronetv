@@ -6,7 +6,7 @@ import { X, CheckCircle, ZoomIn } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function Services({
   serviceData,
@@ -353,17 +353,19 @@ export default function Services({
         formData.append("templateSelection", templateSelection);
 
 
+        const svcAuthToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
         const uploadPromise = fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+          COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
+            headers: svcAuthToken ? { Authorization: `Bearer ${svcAuthToken}` } : {},
             body: formData,
           }
         ).then(async (uploadResponse) => {
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL
-            updateServiceField(index, "image", uploadData.imageUrl);
+            updateServiceField(index, "image", uploadData.url || uploadData.imageUrl);
             return { success: true, index };
           } else {
             const errorData = await uploadResponse.json();

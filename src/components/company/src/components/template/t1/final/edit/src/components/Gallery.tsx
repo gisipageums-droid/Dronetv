@@ -211,7 +211,7 @@
 //         formData.append("templateSelection", templateSelection);
 
 //         const uploadResponse = await fetch(
-//           MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+//           COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //           {
 //             method: "POST",
 //             body: formData,
@@ -1246,7 +1246,7 @@
 //       formData.append("templateSelection", templateSelection);
 
 //       const uploadResponse = await fetch(
-//         MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+//         COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
 //         {
 //           method: "POST",
 //           body: formData,
@@ -2221,7 +2221,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { Badge } from "./ui/badge";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 // Custom Button component
 const Button = ({
@@ -2438,16 +2438,17 @@ export default function EditableGallerySection({
       formData.append("templateSelection", templateSelection);
 
       const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
+          headers: (() => { const t = localStorage.getItem("token") || localStorage.getItem("adminToken"); return t ? { Authorization: `Bearer ${t}` } : {}; })(),
           body: formData,
         }
-      );
+        );
 
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        return uploadData.imageUrl;
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          return uploadData.url || uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
         console.error("Image upload failed:", errorData);

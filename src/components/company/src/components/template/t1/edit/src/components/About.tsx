@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 const img = "/images/about-office.jpg";
 
 // Custom Button component
@@ -386,19 +386,8 @@ const handleAutoSave = async () => {
 
       try {
         setIsUploading(true);
-        const formData = new FormData();
-        formData.append("file", pendingImageFile);
-        formData.append("sectionName", "about");
-        formData.append("imageField", "officeImage" + Date.now());
-        formData.append("templateSelection", templateSelection);
-
-        const uploadResponse = await fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+        const __presignedUrl = await uploadCompanyImagePresigned(userId, "officeImage" + Date.now(), pendingImageFile);
+        const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
@@ -564,19 +553,8 @@ const handleAutoSave = async () => {
         }
 
         try {
-          const formData = new FormData();
-          formData.append("file", pendingImageFile);
-          formData.append("sectionName", "about");
-          formData.append("imageField", "officeImage" + Date.now());
-          formData.append("templateSelection", templateSelection);
-
-          const uploadResponse = await fetch(
-            MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
+          const __presignedUrl = await uploadCompanyImagePresigned(userId, "officeImage" + Date.now(), pendingImageFile);
+          const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();

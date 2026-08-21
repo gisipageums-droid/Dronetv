@@ -1625,7 +1625,7 @@ import Cropper, { Area } from "react-easy-crop";
 import { toast } from "react-toastify";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Button } from "./ui/button";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 interface Client {
   name: string;
@@ -1988,20 +1988,8 @@ export default function Clients({
           continue;
         }
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("sectionName", "clients");
-        formData.append("imageField", `clients[${index}].image`);
-        formData.append("templateSelection", templateSelection);
-
-
-        const uploadPromise = fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        ).then(async (uploadResponse) => {
+        const uploadPromise = uploadCompanyImagePresigned(userId, `clients[${index}].image`, file).then(async (__presignedUrl) => {
+          const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL

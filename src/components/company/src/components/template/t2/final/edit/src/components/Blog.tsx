@@ -6,7 +6,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Button } from "./ui/button";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function Blog({
   blogData,
@@ -153,16 +153,17 @@ export default function Blog({
 
     try {
       const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
+          headers: (() => { const t = localStorage.getItem("token") || localStorage.getItem("adminToken"); return t ? { Authorization: `Bearer ${t}` } : {}; })(),
           body: formData,
         }
-      );
+        );
 
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        return uploadData.imageUrl;
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          return uploadData.url || uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
         console.error(`${imageField} upload failed:`, errorData);

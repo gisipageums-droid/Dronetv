@@ -17,7 +17,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 function withDefaultServices(data: any) {
   if (data?.services?.length > 0) return data;
@@ -279,10 +279,12 @@ export default function Services({
       formData.append("imageField", `service-${index}-${Date.now()}`);
       formData.append("templateSelection", templateSelection);
 
+      const authToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
       const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
+          headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
           body: formData,
         }
       );
@@ -290,7 +292,7 @@ export default function Services({
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
         toast.success("Service image uploaded to AWS!");
-        return uploadData.imageUrl;
+        return uploadData.url || uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
         toast.error(`Image upload failed: ${errorData.message || "Unknown error"}`);

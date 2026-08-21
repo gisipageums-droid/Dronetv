@@ -18,7 +18,7 @@ import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function EditableProducts({
   productData,
@@ -277,10 +277,12 @@ export default function EditableProducts({
       formData.append("imageField", `product-${productId}-${Date.now()}`);
       formData.append("templateSelection", templateSelection);
 
+      const authToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
       const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
+          headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
           body: formData,
         }
       );
@@ -288,7 +290,7 @@ export default function EditableProducts({
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
         toast.success("Product image uploaded to AWS!");
-        return uploadData.imageUrl;
+        return uploadData.url || uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
         console.error("Image upload failed:", errorData);

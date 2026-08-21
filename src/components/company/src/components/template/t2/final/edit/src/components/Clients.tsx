@@ -1625,7 +1625,7 @@ import Cropper, { Area } from "react-easy-crop";
 import { toast } from "react-toastify";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Button } from "./ui/button";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 interface Client {
   name: string;
@@ -1995,17 +1995,19 @@ export default function Clients({
         formData.append("templateSelection", templateSelection);
 
 
+        const clientAuthToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
         const uploadPromise = fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+          COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
+            headers: clientAuthToken ? { Authorization: `Bearer ${clientAuthToken}` } : {},
             body: formData,
           }
         ).then(async (uploadResponse) => {
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL
-            updateClient(index, "image", uploadData.imageUrl);
+            updateClient(index, "image", uploadData.url || uploadData.imageUrl);
             return { success: true, index };
           } else {
             const errorData = await uploadResponse.json();

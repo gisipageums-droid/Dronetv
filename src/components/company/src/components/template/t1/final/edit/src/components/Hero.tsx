@@ -4,7 +4,7 @@ import { Button } from "../components/ui/button";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Edit2, Save, X, Loader2, Upload, RotateCw, ZoomIn } from "lucide-react";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 const HeroBackground = "/images/hero/HeroBackground.jpg";
 
 // Sample images (replace with your actual imports)
@@ -119,30 +119,33 @@ export default function EditableHero({
         formData.append("imageField", `${imageField}-${Date.now()}`);
         formData.append("templateSelection", templateSelection);
 
+        const heroAuthToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
         uploadPromises.push(
           fetch(
-            MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+            COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
             {
               method: "POST",
+              headers: heroAuthToken ? { Authorization: `Bearer ${heroAuthToken}` } : {},
               body: formData,
             }
           ).then(async (response) => {
             if (response.ok) {
               const uploadData = await response.json();
+              const uploadedUrl = uploadData.url || uploadData.imageUrl;
 
               // Update the appropriate field with the new URL
               if (imageField === "hero1Image") {
-                updatedState.hero1Image = uploadData.imageUrl;
+                updatedState.hero1Image = uploadedUrl;
               } else if (imageField === "hero3Image") {
-                updatedState.hero3Image = uploadData.imageUrl;
+                updatedState.hero3Image = uploadedUrl;
               } else if (imageField.startsWith("customerImage")) {
                 const index = parseInt(imageField.split("-")[1]);
                 const updatedCustomerImages = [...updatedState.customerImages];
-                updatedCustomerImages[index] = uploadData.imageUrl;
+                updatedCustomerImages[index] = uploadedUrl;
                 updatedState.customerImages = updatedCustomerImages;
               }
 
-              return uploadData.imageUrl;
+              return uploadedUrl;
             } else {
               const errorData = await response.json();
               console.error(`${imageField} upload failed:`, errorData.message || "Unknown error");

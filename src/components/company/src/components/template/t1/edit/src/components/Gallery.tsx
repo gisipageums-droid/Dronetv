@@ -1050,7 +1050,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { Badge } from "./ui/badge";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 // Custom Button component
 const Button = ({
@@ -1251,19 +1251,8 @@ export default function EditableGallerySection({
     }
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("sectionName", "gallery");
-      formData.append("imageField", `images[${index}].url-${Date.now()}`);
-      formData.append("templateSelection", templateSelection);
-
-      const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+            const __presignedUrl = await uploadCompanyImagePresigned(userId, `images[${index}].url-${Date.now()}`, file);
+      const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();

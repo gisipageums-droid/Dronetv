@@ -13,7 +13,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import logo from "/images/Drone tv .in.jpg";
 import { toast } from "react-toastify";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 export default function Header({
   headerData,
@@ -132,7 +132,9 @@ export default function Header({
     };
   }, [content.ctaText, content.companyName, isEditing]);
 
-  // Function to upload image to AWS
+  // Function to upload image. This editor runs before the company is
+  // published/logged-in (no JWT yet), so it must use company-service's
+  // public presigned-upload route, not the authed /upload-image one.
   const uploadImageToAWS = async (file: File, imageField: string) => {
     if (!userId || !publishedId || !templateSelection) {
       console.error("Missing required props:", {
@@ -144,33 +146,8 @@ export default function Header({
       return null;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("sectionName", "header");
-    formData.append("imageField", `${imageField}_${Date.now()}`);
-    formData.append("templateSelection", templateSelection);
-
-
     try {
-      const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        return uploadData.imageUrl;
-      } else {
-        const errorData = await uploadResponse.json();
-        console.error(`${imageField} upload failed:`, errorData);
-        toast.error(
-          `${imageField} upload failed: ${errorData.message || "Unknown error"}`
-        );
-        return null;
-      }
+      return await uploadCompanyImagePresigned(userId, `${imageField}_${Date.now()}`, file);
     } catch (error) {
       console.error(`Error uploading ${imageField}:`, error);
       toast.error(`Error uploading image. Please try again.`);

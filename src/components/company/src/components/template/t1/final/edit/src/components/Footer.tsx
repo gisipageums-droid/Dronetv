@@ -1090,7 +1090,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import Cropper from "react-easy-crop";
 import logo from"/logos/logo.svg"
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 // Enhanced crop helper function (same as Header)
 const createImage = (url) =>
@@ -1394,10 +1394,12 @@ export default function EditableFooter({
         formData.append("imageField", "logoUrl" + Date.now());
         formData.append("templateSelection", templateSelection);
 
+        const authToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
         const uploadResponse = await fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+          COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
+            headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
             body: formData,
           }
         );
@@ -1405,7 +1407,7 @@ export default function EditableFooter({
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
           // Update the logo URL to the S3 URL
-          updatedLogoUrl = uploadData.imageUrl;
+          updatedLogoUrl = uploadData.url || uploadData.imageUrl;
           setPendingLogoFile(null);
         } else {
           const errorData = await uploadResponse.json();

@@ -197,8 +197,8 @@ export default function CertificationsPage() {
               {withInlineAds(cmsItems, item => (
                 <ContentCard key={item.contentId}>
                   {item.imageUrl && (
-                    <div className="w-full h-32 bg-ink-light rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                      <img src={item.imageUrl} alt={item.title} className="w-full h-full object-contain" />
+                    <div className="w-full h-32 bg-ink-light rounded-lg mb-3 overflow-hidden">
+                      <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className="flex items-start justify-between gap-2 mb-1">

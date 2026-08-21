@@ -4,7 +4,7 @@ import { ArrowRight, Play, CheckCircle, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 export default function Hero({
   heroData,
@@ -155,21 +155,9 @@ export default function Hero({
       return null;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("sectionName", "hero");
-    formData.append("imageField", `${imageField}_${Date.now()}`);
-    formData.append("templateSelection", templateSelection);
-
-
-    try {
-      const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+        try {
+      const __presignedUrl = await uploadCompanyImagePresigned(userId, `${imageField}_${Date.now()}`, file);
+      const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();

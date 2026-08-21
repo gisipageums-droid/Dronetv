@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
 import maleAvatar from "/logos/maleAvatar.png"
 import femaleAvatar from "/logos/femaleAvatar.png"
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 export default function Testimonials({
   testimonialsData,
@@ -309,20 +309,8 @@ export default function Testimonials({
           continue;
         }
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("sectionName", "testimonials");
-        formData.append("imageField", `testimonial-${index}`);
-        formData.append("templateSelection", templateSelection);
-
-
-        const uploadPromise = fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        ).then(async (uploadResponse) => {
+        const uploadPromise = uploadCompanyImagePresigned(userId, `testimonial-${index}`, file).then(async (__presignedUrl) => {
+          const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL

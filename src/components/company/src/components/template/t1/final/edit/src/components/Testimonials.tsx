@@ -17,7 +17,7 @@ import { motion } from "motion/react";
 import user from "/images/user.png";
 import maleAvatar from "/logos/maleAvatar.png";
 import femaleAvatar from "/logos/femaleAvatar.png";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 interface Testimonial {
   name: string;
@@ -313,10 +313,12 @@ export default function EditableTestimonials({
       formData.append("imageField", `testimonial-${index}-${Date.now()}`);
       formData.append("templateSelection", templateSelection);
 
+      const authToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
       const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
+          headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
           body: formData,
         }
       );
@@ -324,7 +326,7 @@ export default function EditableTestimonials({
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
         toast.success("Testimonial image uploaded to AWS!");
-        return uploadData.imageUrl;
+        return uploadData.url || uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
         toast.error(`Image upload failed: ${errorData.message || "Unknown error"}`);

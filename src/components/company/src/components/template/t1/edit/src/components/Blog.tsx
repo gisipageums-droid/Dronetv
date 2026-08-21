@@ -18,7 +18,7 @@ const blog3 = "/images/blog/blog3.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 // Animation variants
 const containerVariants = {
@@ -473,19 +473,8 @@ export default function Blog({
 
         try {
           setIsUploading(true);
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("sectionName", "blog");
-          formData.append("imageField", `posts[${postId}].image` + Date.now());
-          formData.append("templateSelection", templateSelection);
-
-          const uploadResponse = await fetch(
-            MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
+                    const __presignedUrl = await uploadCompanyImagePresigned(userId, `posts[${postId}].image` + Date.now(), file);
+          const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
@@ -672,19 +661,8 @@ export default function Blog({
           return;
         }
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("sectionName", "blog");
-        formData.append("imageField", `posts[${postId}].image` + Date.now());
-        formData.append("templateSelection", templateSelection);
-
-        const uploadResponse = await fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+                const __presignedUrl = await uploadCompanyImagePresigned(userId, `posts[${postId}].image` + Date.now(), file);
+        const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();

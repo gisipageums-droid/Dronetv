@@ -14,7 +14,7 @@ import {
 import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 const Gallery = ({
   galleryData,
@@ -180,21 +180,9 @@ const Gallery = ({
       return null;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("sectionName", "gallery");
-    formData.append("imageField", `${imageField}_${Date.now()}`);
-    formData.append("templateSelection", templateSelection);
-
-
-    try {
-      const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+        try {
+      const __presignedUrl = await uploadCompanyImagePresigned(userId, `${imageField}_${Date.now()}`, file);
+      const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
