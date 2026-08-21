@@ -14,6 +14,7 @@ interface HeroSectionProps {
     startTime: string;
     endTime: string;
     videoUrl: string;
+    heroBannerUrl?: string;
     highlights: string[];
     btn1: string;
     btn2: string;
@@ -45,6 +46,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
     startTime: "",
     endTime: "",
     videoUrl: "",
+    heroBannerUrl: "",
     highlights: ["Highlight 1", "Highlight 2"],
     btn1: "Register to Visit",
     btn2: "Exhibitor Enquiry",
@@ -199,8 +201,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-ink to-ink-premiumend"
     >
-      {/* YouTube Video BG */}
-      {convertToEmbedUrl(heroContent.videoUrl) && (
+      {/* Background: an explicitly-set custom video always wins (unchanged
+      behavior). Otherwise, an uploaded banner image is the real background -
+      previously the uploaded event banner was never rendered anywhere on
+      this published page at all, only a video (or nothing). */}
+      {convertToEmbedUrl(heroContent.videoUrl) ? (
         <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
           <iframe
             id="hero-video"
@@ -222,7 +227,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroData }) => {
           />
           <div className="absolute inset-0 bg-ink/60 z-10"></div>
         </div>
-      )}
+      ) : heroContent.heroBannerUrl ? (
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+          <img
+            src={heroContent.heroBannerUrl}
+            alt="Event banner"
+            className="w-full h-full object-cover"
+            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", minHeight: "100vh" }}
+          />
+          <div className="absolute inset-0 bg-ink/60 z-10"></div>
+        </div>
+      ) : null}
 {/* Mute / Unmute Button */}
 <button
   onClick={toggleMute}

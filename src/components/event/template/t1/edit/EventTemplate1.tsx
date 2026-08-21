@@ -65,6 +65,7 @@ interface HeroContent {
   startTime: string;
   endTime: string;
   videoUrl: string;
+  heroBannerUrl?: string;
   highlights: string[];
   btn1: string;
   btn2: string;

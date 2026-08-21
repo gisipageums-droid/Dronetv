@@ -28,6 +28,7 @@ interface HeroSectionProps {
     startTime: string;
     endTime: string;
     videoUrl: string;
+    heroBannerUrl?: string;
     highlights: string[];
     btn1: string;
     btn2: string;
@@ -105,6 +106,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     startTime: "",
     endTime: "",
     videoUrl: "",
+    heroBannerUrl: "",
     highlights: ["Highlight 1", "Highlight 2"],
     btn1: "Register to Visit",
     btn2: "Exhibitor Enquiry",
@@ -373,6 +375,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       try {
         s3Url = await uploadImageToS3(file, "hero-banner");
         toast.success("Banner image uploaded successfully!");
+
+        // formData.heroBanner (below) only ever fed the small admin-only
+        // preview thumbnail - it was never part of heroContent, the actual
+        // state that onStateChange persists into the published page's real
+        // hero content. That gap is why the upload always "succeeded" but
+        // the visible banner on the live site never changed. heroBannerUrl
+        // on heroContent is what the hero background actually renders from.
+        hasUnsavedChanges.current = true;
+        setHeroContent((prev) => ({ ...prev, heroBannerUrl: s3Url }));
 
         // Update formData with the new image details
         if (onFormDataChange) {
@@ -691,26 +702,40 @@ const toggleMute = () => {
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* YouTube Video BG */}
+      {/* Background: an explicitly-set custom video always wins (unchanged
+      behavior). Otherwise, an uploaded banner image is the real background
+      now - previously the video showed unconditionally regardless of any
+      uploaded banner, which is why "Banner image uploaded successfully"
+      never visibly changed anything. Only when neither is set does this
+      fall back to the original default stock video. */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-       <iframe
-  id="hero-video"
-  key={heroContent.videoUrl}
-  className="w-full h-full object-cover"
-  style={{
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    minHeight: "100vh",
-  }}
-  src={heroContent.videoUrl ? `${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1` : "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0"}
-  title="Event Background Video"
-  frameBorder="0"
-  allow="autoplay; encrypted-media; fullscreen"
-  allowFullScreen
-/>
+        {!heroContent.videoUrl && heroContent.heroBannerUrl ? (
+          <img
+            src={heroContent.heroBannerUrl}
+            alt="Event banner"
+            className="w-full h-full object-cover"
+            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", minHeight: "100vh" }}
+          />
+        ) : (
+          <iframe
+            id="hero-video"
+            key={heroContent.videoUrl}
+            className="w-full h-full object-cover"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              minHeight: "100vh",
+            }}
+            src={heroContent.videoUrl ? `${convertToEmbedUrl(heroContent.videoUrl)}&enablejsapi=1` : "https://www.youtube.com/embed/tZrpJmS_f40?autoplay=1&mute=1&controls=0&loop=1&playlist=tZrpJmS_f40&modestbranding=1&showinfo=0&rel=0"}
+            title="Event Background Video"
+            frameBorder="0"
+            allow="autoplay; encrypted-media; fullscreen"
+            allowFullScreen
+          />
+        )}
 
         <div className="absolute inset-0 bg-ink/60 z-10"></div>
       </div>
