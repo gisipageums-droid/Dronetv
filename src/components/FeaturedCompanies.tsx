@@ -70,7 +70,7 @@ const FeaturedCompanies: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-surface-main relative overflow-hidden min-h-screen">
+    <section className="py-20 bg-brand-yellow-soft relative overflow-hidden min-h-screen">
       {/* Floating Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-20 w-32 h-32 bg-brand-yellow-soft/20 rounded-full animate-pulse blur-2xl"></div>

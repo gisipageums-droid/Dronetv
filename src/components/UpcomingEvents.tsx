@@ -114,7 +114,7 @@ const UpcomingEvents = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-surface-alt relative overflow-hidden min-h-screen">
+    <section className="py-20 bg-brand-yellow-soft relative overflow-hidden min-h-screen">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-32 h-32 bg-brand-yellow-soft/20 rounded-full animate-pulse blur-2xl"></div>
