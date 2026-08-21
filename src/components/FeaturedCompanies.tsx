@@ -140,16 +140,24 @@ const FeaturedCompanies: React.FC = () => {
                     {/* Company Card Header */}
                     <div className="relative h-40 sm:h-48 overflow-hidden bg-surface-alt border-b border-surface-cardborder flex-shrink-0 flex flex-col items-center justify-center px-4">
                       {logoSrc ? (
-                        <img
-                          src={logoSrc}
-                          alt={company.companyName}
-                          className="max-h-24 max-w-[75%] object-contain"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
+                        // Fixed-size wrapper (not just max-h/max-w on the
+                        // <img> itself) so wide, short logos (e.g. a 150x51
+                        // wordmark) get a real bounding box to center within
+                        // instead of relying on the flex parent + the
+                        // image's own intrinsic size, which let part of some
+                        // logos render outside the visible card edge.
+                        <div className="w-[85%] h-24 flex items-center justify-center">
+                          <img
+                            src={logoSrc}
+                            alt={company.companyName}
+                            className="max-h-full max-w-full object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const fallback = e.currentTarget.parentElement?.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'flex';
+                            }}
+                          />
+                        </div>
                       ) : null}
                       <div
                         className="flex-col items-center justify-center gap-2 text-center"

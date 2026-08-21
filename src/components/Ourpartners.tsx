@@ -18,18 +18,31 @@ const OurPartners = () => (
         <div className="w-24 h-1 bg-gradient-to-r from-brand-yellow to-brand-gold mx-auto rounded-full mt-4"></div>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 sm:gap-5">
-        {PARTNER_LOGOS.map((slug) => (
-          <div
-            key={slug}
-            className="bg-[#f1ee8e] rounded-2xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-4 h-24 sm:h-28"
-          >
-            <img
-              src={`/images/partners/${slug}.png`}
-              alt={slug.replace(/-/g, " ")}
-              className="max-h-full max-w-full object-contain"
-            />
-          </div>
-        ))}
+        {PARTNER_LOGOS.map((slug) => {
+          const name = slug
+            .split("-")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+          return (
+            <div
+              key={slug}
+              className="bg-[#f1ee8e] rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center gap-2 p-4 h-32 sm:h-36"
+            >
+              {/* Fixed-size wrapper (not just max-h/max-w on the <img>
+              itself) so a wide, short partner logo gets a real bounding box
+              to center within instead of the card's own flex sizing, which
+              could push part of a logo outside the visible card. */}
+              <div className="w-full h-16 sm:h-20 flex items-center justify-center">
+                <img
+                  src={`/images/partners/${slug}.png`}
+                  alt={name}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+              <p className="text-xs font-semibold text-ink text-center line-clamp-2">{name}</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   </section>
