@@ -83,9 +83,9 @@ export default function Leads() {
   const openChat = (lead: Lead) => {
     setChatLead(lead);
     setChatMessages([]);
-    fetchChatMessages(lead);
+    fetchChatMessages(lead, true);
     if (chatPollRef.current) clearInterval(chatPollRef.current);
-    chatPollRef.current = window.setInterval(() => fetchChatMessages(lead), 8000);
+    chatPollRef.current = window.setInterval(() => fetchChatMessages(lead, false), 8000);
   };
 
   // Lets the Analytics page's "Recent Lead Messages" cards deep-link
@@ -106,13 +106,23 @@ export default function Leads() {
     if (chatPollRef.current) clearInterval(chatPollRef.current);
   };
 
-  const fetchChatMessages = async (lead: Lead) => {
+  const fetchChatMessages = async (lead: Lead, isInitial = false) => {
     try {
       const base = LEADS_API || LAMBDA.leadsChat;
       const res = await fetch(`${base}/chat/messages?leadId=${lead.leadId}&userId=${encodeURIComponent(userId)}&markAsRead=false`, {
         headers: authHeaders(),
       });
       const data = await res.json();
+      // A failed request (e.g. 401 on a stale/missing token) returns
+      // {detail: "..."}, not {messages: [...]} - that silently fell through
+      // this check and left the chat box on its initial empty state with
+      // zero indication anything went wrong, indistinguishable from a lead
+      // that genuinely has no messages yet. Only surface this on the
+      // initial open, not on every 8s background poll retry.
+      if (!res.ok) {
+        if (isInitial) toast.error(data?.detail || "Couldn't load messages. Please try again.");
+        return;
+      }
       if (Array.isArray(data?.messages)) {
         setChatMessages(data.messages.map((m: any) => ({
           id: m.messageId || m.id || `${m.timestamp}-${Math.random()}`,
@@ -122,7 +132,9 @@ export default function Leads() {
           timestamp: new Date(m.timestamp),
         })));
       }
-    } catch {}
+    } catch {
+      if (isInitial) toast.error("Couldn't load messages — check your connection.");
+    }
   };
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chatMessages]);
