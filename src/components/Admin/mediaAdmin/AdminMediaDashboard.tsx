@@ -3,10 +3,29 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle, Upload } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, createContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
-import { ADMIN_API, LAMBDA } from '../../../lib/apiConfig';
+import { ADMIN_API, COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
-import { uploadImageToS3 } from '../../webbuilder/src/pages/create-company/src/utils/s3Upload';
 import AdminJobBoardDashboard from '../jobBoardAdmin/AdminJobBoardDashboard';
+
+// The media service only handles content CRUD, not file uploads - there's no
+// presign route on it. Reuse the company service's public /upload-file
+// presign endpoint instead (same one the Company Portal already uploads
+// through successfully) rather than the broken media-service call this used
+// to make.
+async function uploadContentImage(file: File): Promise<string> {
+  const base = COMPANY_API || LAMBDA.company;
+  const presignRes = await fetch(`${base}/upload-file`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: 'admin', fieldName: 'content', filename: file.name, contentType: file.type || 'application/octet-stream' }),
+  });
+  const presignData = await presignRes.json();
+  if (!presignRes.ok || !presignData.success) throw new Error(presignData.error || 'Failed to get upload URL');
+  const { uploadUrl, imageUrl } = presignData;
+  const putRes = await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type || 'application/octet-stream' }, body: file });
+  if (!putRes.ok) throw new Error('Failed to upload file');
+  return imageUrl as string;
+}
 
 interface AppSubmission {
   id: string;
@@ -952,42 +971,38 @@ export default function AdminMediaDashboard() {
                 return rows;
               })()}
 
-              {/* Image — real upload for ads, plain URL for every other content type */}
-              {form.contentType === 'ad' ? (
-                <div>
-                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Ad Creative Image</label>
-                  {form.imageUrl && (
-                    <img src={form.imageUrl} alt="Ad creative preview" className="w-full max-h-40 object-contain rounded-lg border border-ink-light mb-2 bg-ink-offwhite" />
+              {/* Image — upload (S3) or paste a URL directly, for every content type */}
+              <div>
+                <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">
+                  {form.contentType === 'ad' ? 'Ad Creative Image' : (
+                    <>Image <span className="font-normal normal-case text-ink-caption">(recommended size: 1200×90 or 900×60)</span></>
                   )}
-                  <label className="flex items-center justify-center gap-2 border-2 border-dashed border-ink-light rounded-lg py-3 cursor-pointer hover:border-brand-yellow transition-colors text-sm font-semibold text-ink-caption">
-                    <Upload className="w-4 h-4" />
-                    {uploadingImage ? 'Uploading...' : form.imageUrl ? 'Replace Image' : 'Upload Image'}
-                    <input type="file" accept="image/*" className="hidden" disabled={uploadingImage}
-                      onChange={async e => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        setUploadingImage(true);
-                        try {
-                          const url = await uploadImageToS3(file);
-                          setForm(f => ({ ...f, imageUrl: url }));
-                        } catch {
-                          toast.error('Image upload failed');
-                        } finally {
-                          setUploadingImage(false);
-                        }
-                      }} />
-                  </label>
-                </div>
-              ) : (
-                <div>
-                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">
-                    Image URL <span className="font-normal normal-case text-ink-caption">(recommended size: 1200×90 or 900×60)</span>
-                  </label>
-                  <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-                    className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
-                    placeholder="https://..." />
-                </div>
-              )}
+                </label>
+                {form.imageUrl && (
+                  <img src={form.imageUrl} alt="Image preview" className="w-full max-h-40 object-contain rounded-lg border border-ink-light mb-2 bg-ink-offwhite" />
+                )}
+                <label className="flex items-center justify-center gap-2 border-2 border-dashed border-ink-light rounded-lg py-3 cursor-pointer hover:border-brand-yellow transition-colors text-sm font-semibold text-ink-caption mb-2">
+                  <Upload className="w-4 h-4" />
+                  {uploadingImage ? 'Uploading...' : form.imageUrl ? 'Replace Image' : 'Upload Image'}
+                  <input type="file" accept="image/*" className="hidden" disabled={uploadingImage}
+                    onChange={async e => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setUploadingImage(true);
+                      try {
+                        const url = await uploadContentImage(file);
+                        setForm(f => ({ ...f, imageUrl: url }));
+                      } catch {
+                        toast.error('Image upload failed');
+                      } finally {
+                        setUploadingImage(false);
+                      }
+                    }} />
+                </label>
+                <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
+                  className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow"
+                  placeholder="or paste an image URL directly" />
+              </div>
 
               {/* External Link + Video URL (video URL only for types that need it) */}
               {(FIELD_CONFIG[form.contentType] ?? []).includes('videoUrl') ? (
