@@ -138,12 +138,12 @@ const FeaturedCompanies: React.FC = () => {
                     tabIndex={hasProfile ? 0 : undefined}
                   >
                     {/* Company Card Header */}
-                    <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-brand-yellow-soft to-brand-yellow flex-shrink-0 flex flex-col items-center justify-center px-4">
+                    <div className="relative h-40 sm:h-48 overflow-hidden bg-surface-alt border-b border-surface-cardborder flex-shrink-0 flex flex-col items-center justify-center px-4">
                       {logoSrc ? (
                         <img
                           src={logoSrc}
                           alt={company.companyName}
-                          className="max-h-24 max-w-[75%] object-contain drop-shadow-md"
+                          className="max-h-24 max-w-[75%] object-contain"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                             const fallback = e.currentTarget.nextElementSibling as HTMLElement;
@@ -166,14 +166,14 @@ const FeaturedCompanies: React.FC = () => {
                       </div>
 
                       {/* Rating badge */}
-                      <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/70 backdrop-blur-sm px-2 py-1 rounded-full">
+                      <div className="absolute top-3 right-3 flex items-center gap-1 bg-white shadow-sm px-2 py-1 rounded-full">
                         <Star className="h-3 w-3 text-brand-gold fill-current" />
                         <span className="text-xs font-bold text-ink-charcoal">{rating}</span>
                       </div>
 
                       {/* Industry badge */}
                       <div className="absolute bottom-3 left-3">
-                        <span className="bg-ink/70 text-brand-yellow-soft px-2 py-1 rounded-full text-xs font-semibold">
+                        <span className="bg-ink text-brand-yellow px-2 py-1 rounded-full text-xs font-semibold">
                           {industry}
                         </span>
                       </div>
@@ -205,21 +205,21 @@ const FeaturedCompanies: React.FC = () => {
                       {/* Experience & Courses */}
                       <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
                         {/* Experience */}
-                        <div className="text-center p-2 sm:p-3 bg-brand-yellow-soft rounded-lg sm:rounded-xl group-hover:bg-brand-yellow-soft transition-colors duration-300">
-                          <Award className="h-3 w-3 sm:h-4 sm:w-4 text-brand-gold mx-auto mb-1 transition-colors duration-300" />
-                          <div className="text-xs sm:text-sm font-bold text-brand-gold">
+                        <div className="text-center p-2 sm:p-3 bg-surface-alt border border-surface-cardborder rounded-lg sm:rounded-xl">
+                          <Award className="h-3 w-3 sm:h-4 sm:w-4 text-brand-gold mx-auto mb-1" />
+                          <div className="text-xs sm:text-sm font-bold text-ink">
                             {company.aboutExperienceYears ? `${company.aboutExperienceYears} yrs` : '5+ yrs'}
                           </div>
-                          <div className="text-xs text-brand-gold">Experience</div>
+                          <div className="text-xs text-ink-caption">Experience</div>
                         </div>
 
                         {/* Courses / Services Count */}
-                        <div className="text-center p-2 sm:p-3 bg-brand-yellow-soft rounded-lg sm:rounded-xl group-hover:bg-brand-yellow transition-colors duration-300">
+                        <div className="text-center p-2 sm:p-3 bg-surface-alt border border-surface-cardborder rounded-lg sm:rounded-xl">
                           <Star className="h-3 w-3 sm:h-4 sm:w-4 text-brand-gold mx-auto mb-1" />
-                          <div className="text-xs sm:text-sm font-bold text-brand-gold">
+                          <div className="text-xs sm:text-sm font-bold text-ink">
                             {servicesCount}
                           </div>
-                          <div className="text-xs text-brand-gold">Services</div>
+                          <div className="text-xs text-ink-caption">Services</div>
                         </div>
                       </div>
 
@@ -230,18 +230,18 @@ const FeaturedCompanies: React.FC = () => {
                           {productsList.slice(0, 3).map((prod, idx) => (
                             <span
                               key={prod.title || prod.image || idx}
-                              className="bg-brand-yellow-soft text-brand-gold px-2 py-1 rounded-full text-xs font-medium group-hover:bg-brand-yellow transition-colors duration-300"
+                              className="bg-surface-alt text-ink-charcoal border border-surface-cardborder px-2 py-1 rounded-full text-xs font-medium"
                             >
                               {prod.title || prod.description || 'Product'}
                             </span>
                           ))}
                           {productsCount && productsCount !== 'N/A' && productsCount > 3 && (
-                            <span className="bg-brand-yellow-soft text-ink-paragraph px-2 py-1 rounded-full text-xs font-medium group-hover:bg-brand-yellow transition-colors duration-300">
+                            <span className="bg-surface-alt text-ink-paragraph border border-surface-cardborder px-2 py-1 rounded-full text-xs font-medium">
                               +{productsCount - 3} more
                             </span>
                           )}
                           {!productsList.length && productsCount && productsCount !== 'N/A' && (
-                            <span className="bg-brand-yellow-soft text-ink-paragraph px-2 py-1 rounded-full text-xs font-medium">
+                            <span className="bg-surface-alt text-ink-paragraph border border-surface-cardborder px-2 py-1 rounded-full text-xs font-medium">
                               {productsCount} products
                             </span>
                           )}
