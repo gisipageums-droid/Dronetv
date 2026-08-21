@@ -578,12 +578,20 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         // self-hosted backend has no /publish endpoint — that path is a
         // leftover from the old Lambda API which never got ported here.
         // Save via the real update endpoint instead.
+        // The backend stores formData (hero banner image, etc.) in its own
+        // column, separate from templateContent - it does not extract it
+        // out of templateContent automatically, so it must be sent as its
+        // own top-level field or an image re-upload silently never lands.
         const response = await fetch(`${EVENTS_API}/event/${AIGenData.eventId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", ...authHeader() },
           body: JSON.stringify({
             templateContent: finalTemplate,
+            formData: finalTemplate?.formData || AIGenData.formData,
             ...(eventName ? { eventName } : {}),
+            ...(finalTemplate?.formData?.heroBanner?.mediaUrl
+              ? { heroBannerImage: finalTemplate.formData.heroBanner.mediaUrl }
+              : {}),
           }),
         });
 
