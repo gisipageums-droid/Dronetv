@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Plus, X, Coins } from 'lucide-react';
+import { useRef, useState, useEffect } from 'react';
+import { Plus, X, Coins, Upload } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { createContent, ContentType } from '../../lib/mediaApi';
 import { FIELD_CONFIG, FIELD_LABELS, FIELD_PLACEHOLDER, FIELD_TYPE, FieldKey } from '../../lib/contentFieldConfig';
 import { useUserAuth } from '../context/context';
 import { AUTH_API, LAMBDA } from '../../lib/apiConfig';
+import { uploadCompanyFile } from '../CompanyPortal/api';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -52,6 +53,8 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
   const [submitted, setSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [balance, setBalance] = useState<number | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!open || !userId) return;
@@ -77,6 +80,20 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
   };
 
   const fieldLabel = (key: FieldKey) => FIELD_LABELS[contentType]?.[key] || DEFAULT_LABEL[key];
+
+  const handleImageUpload = async (file: File | null) => {
+    if (!file || !userId) return;
+    setUploadingImage(true);
+    try {
+      const url = await uploadCompanyFile(userId, contentType, file);
+      setForm(f => ({ ...f, imageUrl: url }));
+    } catch {
+      toast.error('Image upload failed');
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -197,9 +214,20 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
 
                   <div>
                     <label className="block text-xs font-semibold text-ink-paragraph mb-1">Image URL <span className="text-ink-caption font-normal">(optional)</span></label>
-                    <input type="url" value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-                      placeholder="https://example.com/image.jpg"
-                      className="w-full px-3 py-2.5 border border-ink-light rounded-lg text-sm text-ink placeholder-ink-caption focus:outline-none focus:border-brand-yellow" />
+                    <div className="flex gap-2">
+                      <input type="url" value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
+                        placeholder="https://example.com/image.jpg"
+                        className="flex-1 min-w-0 px-3 py-2.5 border border-ink-light rounded-lg text-sm text-ink placeholder-ink-caption focus:outline-none focus:border-brand-yellow" />
+                      <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage}
+                        className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2.5 border border-ink-light rounded-lg text-sm font-semibold text-ink-paragraph hover:border-brand-yellow hover:text-ink disabled:opacity-50 transition-colors">
+                        <Upload className="w-4 h-4" /> {uploadingImage ? 'Uploading...' : 'Upload'}
+                      </button>
+                      <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={e => handleImageUpload(e.target.files?.[0] || null)} />
+                    </div>
+                    {form.imageUrl && (
+                      <img src={form.imageUrl} alt="Preview" className="mt-2 h-24 rounded-lg object-cover border border-ink-light" />
+                    )}
+                    <p className="text-[11px] text-ink-caption mt-1">Recommended size: 1200×675px (16:9) · JPG, PNG or WebP · max 5MB</p>
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-ink-paragraph mb-1">External Link <span className="text-ink-caption font-normal">(optional)</span></label>

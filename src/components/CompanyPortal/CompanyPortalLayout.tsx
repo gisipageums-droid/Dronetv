@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Package, Inbox, Film, BookOpen, Megaphone,
   BarChart2, ShieldCheck, Receipt, Settings as SettingsIcon, Menu, X,
-  ExternalLink, LogOut, Coins, Target, LayoutTemplate,
+  ExternalLink, LogOut, Coins, Target, LayoutTemplate, Briefcase,
 } from "lucide-react";
 import { useUserAuth } from "../context/context";
 import NotificationBell from "./NotificationBell";
@@ -33,6 +33,7 @@ const NAV: NavSection[] = [
       { id: "profile", label: "Company Profile", icon: Building2, path: "/company-portal/profile" },
       { id: "listings", label: "Product Listings", icon: Package, path: "/company-portal/listings" },
       { id: "leads", label: "B2B Leads", icon: Inbox, path: "/company-portal/leads" },
+      { id: "jobs", label: "Job Listings", icon: Briefcase, path: "/company-portal/jobs" },
     ],
   },
   {
@@ -72,6 +73,7 @@ const TITLES: Record<string, string> = {
   "/company-portal/profile": "Company Profile",
   "/company-portal/listings": "Product & Service Listings",
   "/company-portal/leads": "B2B Leads",
+  "/company-portal/jobs": "Job Listings",
   "/company-portal/content": "My Content",
   "/company-portal/magazine": "Magazine Coverage",
   "/company-portal/press": "Press Releases",
