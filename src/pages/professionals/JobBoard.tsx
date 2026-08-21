@@ -107,6 +107,11 @@ export default function JobBoardPage() {
         jobId: applyModal.item.contentId,
         jobTitle: applyModal.item.title,
         company: applyModal.item.company || '',
+        // companyId scopes this application to its job's owner - without
+        // it every application lands with company_id=NULL, invisible to
+        // the company-side applications view (which filters by ownership
+        // for isolation - see jobboard service's _authorize/get_applications_for_job).
+        companyId: applyModal.item.author || undefined,
         fullName: applyForm.name,
         email: applyForm.email,
         phone: applyForm.phone,
