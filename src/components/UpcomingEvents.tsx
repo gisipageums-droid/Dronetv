@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, ArrowRight, CalendarDays } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { EVENTS_API, LAMBDA } from '../lib/apiConfig';
@@ -87,10 +87,14 @@ const UpcomingEvents = () => {
             time: card.eventTime,
             location: card.location,
             attendees: "Limited Seats", // API me direct field nahi hai – aap chahe toh hata sakte
+            // Some records store a stale "/assets/default-event-image.png"
+            // path from an older build that never shipped that file (404s
+            // today) - treat it the same as "no image" so the real fallback
+            // below kicks in instead of a broken <img>.
             image:
-              card.heroBannerImage ||
-              card.previewImage ||
-              "/images/droneexpo_cover.jpg", // fallback
+              [card.heroBannerImage, card.previewImage].find(
+                (src) => src && src !== "/assets/default-event-image.png"
+              ) || "/images/droneexpo_cover.jpg",
             price: "Premium",
             type: "Expo & Conference",
             status: card.isApproved ? "upcoming" : "draft",
@@ -110,7 +114,7 @@ const UpcomingEvents = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-brand-yellow-soft relative overflow-hidden min-h-screen">
+    <section className="py-20 bg-surface-alt relative overflow-hidden min-h-screen">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-32 h-32 bg-brand-yellow-soft/20 rounded-full animate-pulse blur-2xl"></div>
@@ -143,6 +147,7 @@ const UpcomingEvents = () => {
               key={event.id}
               image={event.image}
               imageAlt={event.name}
+              imageFallback={<CalendarDays className="h-12 w-12 text-brand-yellow" />}
               className={events.length === 1 ? 'max-w-xl w-full' : 'w-full'}
               onClick={() => navigate(`/event/${eventSlug(event)}`)}
             >

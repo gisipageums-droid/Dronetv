@@ -70,18 +70,7 @@ const FeaturedCompanies: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-gradient-to-b from-brand-yellow-soft via-brand-yellow-soft to-brand-yellow-soft relative overflow-hidden min-h-screen">
-      {/* Enhanced Background Pattern */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `linear-gradient(45deg, #F8C400 25%, transparent 25%), linear-gradient(-45deg, #E8B400 25%, transparent 25%)`,
-            backgroundSize: '60px 60px',
-            backgroundPosition: '0 0, 30px 30px'
-          }}
-        ></div>
-      </div>
+    <section className="py-20 bg-surface-main relative overflow-hidden min-h-screen">
       {/* Floating Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-20 w-32 h-32 bg-brand-yellow-soft/20 rounded-full animate-pulse blur-2xl"></div>
@@ -134,7 +123,7 @@ const FeaturedCompanies: React.FC = () => {
                 return (
                   <div
                     key={company.publishedId || index}
-                    className={`group relative bg-[#f1ee8e] rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 ${hasProfile ? 'cursor-pointer' : 'cursor-default'} transform hover:scale-105 hover:-rotate-1 opacity-100 translate-y-0 flex flex-col h-full`}
+                    className={`group relative bg-surface-card border border-surface-cardborder rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 ${hasProfile ? 'cursor-pointer' : 'cursor-default'} transform hover:scale-105 hover:-rotate-1 opacity-100 translate-y-0 flex flex-col h-full`}
                     style={{
                       transitionDelay: `${index * 150}ms`,
                       animation: `fadeInUp 0.8s ease-out ${index * 150}ms both`
@@ -163,13 +152,15 @@ const FeaturedCompanies: React.FC = () => {
                         />
                       ) : null}
                       <div
-                        className="flex-col items-center justify-center gap-1 text-center"
+                        className="flex-col items-center justify-center gap-2 text-center"
                         style={{ display: logoSrc ? 'none' : 'flex' }}
                       >
-                        <span className="text-5xl font-black text-brand-gold uppercase">
-                          {company.companyName?.[0] ?? '?'}
-                        </span>
-                        <p className="text-xs font-semibold text-ink-paragraph uppercase tracking-widest opacity-80 px-2">
+                        <div className="w-16 h-16 rounded-full bg-ink flex items-center justify-center shadow-md">
+                          <span className="text-2xl font-black text-brand-yellow uppercase">
+                            {company.companyName?.[0] ?? '?'}
+                          </span>
+                        </div>
+                        <p className="text-xs font-semibold text-ink uppercase tracking-widest px-2 line-clamp-1">
                           {company.companyName}
                         </p>
                       </div>
