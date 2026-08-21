@@ -21,7 +21,7 @@ const OurPartners = () => (
         {PARTNER_LOGOS.map((slug) => (
           <div
             key={slug}
-            className="bg-surface-card border border-surface-cardborder rounded-2xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-4 h-24 sm:h-28"
+            className="bg-[#f1ee8e] rounded-2xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-4 h-24 sm:h-28"
           >
             <img
               src={`/images/partners/${slug}.png`}

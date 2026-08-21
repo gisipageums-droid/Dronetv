@@ -123,7 +123,7 @@ const FeaturedCompanies: React.FC = () => {
                 return (
                   <div
                     key={company.publishedId || index}
-                    className={`group relative bg-surface-card border border-surface-cardborder rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 ${hasProfile ? 'cursor-pointer' : 'cursor-default'} transform hover:scale-105 hover:-rotate-1 opacity-100 translate-y-0 flex flex-col h-full`}
+                    className={`group relative bg-[#f1ee8e] rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 ${hasProfile ? 'cursor-pointer' : 'cursor-default'} transform hover:scale-105 hover:-rotate-1 opacity-100 translate-y-0 flex flex-col h-full`}
                     style={{
                       transitionDelay: `${index * 150}ms`,
                       animation: `fadeInUp 0.8s ease-out ${index * 150}ms both`

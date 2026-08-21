@@ -148,10 +148,10 @@ const UpcomingEvents = () => {
               image={event.image}
               imageAlt={event.name}
               imageFallback={<CalendarDays className="h-12 w-12 text-brand-yellow" />}
-              className={events.length === 1 ? 'max-w-xl w-full' : 'w-full'}
+              className={`!bg-[#f1ee8e] !border-0 ${events.length === 1 ? 'max-w-xl w-full' : 'w-full'}`}
               onClick={() => navigate(`/event/${eventSlug(event)}`)}
             >
-              <span className="bg-brand-yellow-soft text-brand-gold text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">
+              <span className="bg-ink text-brand-yellow-soft text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">
                 {event.price || 'Premium'}
               </span>
               <h3 className="text-lg font-bold text-ink leading-snug mb-3 line-clamp-2">
