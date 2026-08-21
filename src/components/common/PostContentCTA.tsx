@@ -55,9 +55,17 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
 
   useEffect(() => {
     if (!open || !userId) return;
-    fetch(`${PROFILE_API}?userId=${userId}`)
+    // /profile requires auth and returns tokenBalance at the top level, not
+    // nested under "profile" - this was sending no Authorization header
+    // (guaranteed 401) and reading the wrong field even when it did respond,
+    // so the balance shown here was always the Number(undefined ?? 0) = 0
+    // fallback regardless of the real wallet balance.
+    const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+    fetch(`${PROFILE_API}?userId=${userId}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    })
       .then(r => r.json())
-      .then(d => setBalance(Number(d?.profile?.tokenBalance ?? 0)))
+      .then(d => setBalance(Number(d?.tokenBalance ?? 0)))
       .catch(() => setBalance(null));
   }, [open, userId]);
 

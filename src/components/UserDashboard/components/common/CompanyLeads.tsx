@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useUserAuth } from "../../../context/context";
 import { useLocation, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { LEADS_API, LAMBDA } from '../../../../lib/apiConfig';
+import { AUTH_API, LEADS_API, LAMBDA } from '../../../../lib/apiConfig';
+import { authHeader } from '../../../../lib/authService';
 import { MessageCircle, Send, X, Check, CheckCheck, Clock, Coins, Search, Eye, AlertTriangle } from "lucide-react";
 interface Lead {
   leadId: string;
@@ -67,12 +68,16 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
   const fetchUserTokens = useCallback(async () => {
     if (!userId) return;
     try {
+      // Was calling LEADS_API + "/profile", which the leads service has no
+      // such route for (confirmed 404 every time) - token balance and
+      // package type live on the auth service, not leads.
       const res = await fetch(
-        LEADS_API ? `${LEADS_API}/profile?userId=${userId}` : `${LAMBDA.profile}/profile?userId=${userId}`
+        AUTH_API ? `${AUTH_API}/profile?userId=${userId}` : `${LAMBDA.profile}/profile?userId=${userId}`,
+        { headers: authHeader() }
       );
       const data = await res.json();
-      setTotalTokens(data.profile?.tokenBalance || 0);
-      setPackageType((data.profile?.packageType || "").toLowerCase());
+      setTotalTokens(data.tokenBalance || 0);
+      setPackageType((data.packageType || "").toLowerCase());
     } catch (error) {
       console.error("Error fetching user tokens:", error);
     }
@@ -85,7 +90,7 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
         ? `${LEADS_API}/leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all`
         : `${LAMBDA.profile}/leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all`;
       if (publishedId) apiUrl += `&publishedId=${publishedId}`;
-      const res = await fetch(apiUrl);
+      const res = await fetch(apiUrl, { headers: authHeader() });
       const data = await res.json();
       if (data.success && Array.isArray(data.leads)) {
         setLeads(data.leads.map((lead: any) => ({
@@ -170,7 +175,11 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
         LEADS_API
           ? `${LEADS_API}/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`
           : `${LAMBDA.leadsChat}/chat/messages?leadId=${lead.leadId}&userId=${userId}&markAsRead=false`,
-        { headers: { "Content-Type": "application/json", "X-User-Email": userId } }
+        // The self-hosted backend requires a real Authorization: Bearer
+        // token (X-User-Email is a Lambda-only convention it ignores
+        // entirely) - every request here 401'd, so the chat box could never
+        // show existing or newly received messages.
+        { headers: { "Content-Type": "application/json", ...authHeader() } }
       );
       const data = await response.json();
       if (data?.messages && Array.isArray(data.messages)) {
@@ -234,21 +243,28 @@ const LeadsPage: React.FC<LeadsPageProps> = ({ overrideCompanyName, overridePubl
         LEADS_API ? `${LEADS_API}/chat/send` : `${LAMBDA.leadsChat}/chat/send`,
         {
           method: "POST",
+          // Backend requires Authorization (not X-User-Email) plus userId
+          // and senderType in the body - both are required fields with no
+          // default, so this always 422'd and the reply never actually sent.
           headers: {
             "Content-Type": "application/json",
-            "X-User-Email": userId,
+            ...authHeader(),
           },
           body: JSON.stringify({
             leadId: selectedLead.leadId,
+            userId,
             message: messageToSend,
-            leadEmail: selectedLead.email,
+            senderType: "user",
+            senderName: user?.userData?.fullName || user?.fullName || "You",
           }),
         }
       );
 
       const data = await response.json();
 
-      if (data.success) {
+      // Response is {messageId, timestamp} - no "success" field at all, so
+      // checking data.success was always falsy and rolled back every send.
+      if (response.ok && data.messageId) {
         setChatMessages((prev) =>
           prev.map((msg) =>
             msg.id === tempMessage.id

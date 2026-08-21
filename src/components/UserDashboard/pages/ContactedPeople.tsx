@@ -315,7 +315,10 @@ const ContactedPeople: React.FC = () => {
 
       const data = await res.json();
 
-      if (data.success) {
+      // Response is {messageId, timestamp} - no "success" field, so this
+      // always rolled back and showed "Failed to send message" even when
+      // the message actually sent.
+      if (res.ok && data.messageId) {
         setChatMessages((prev) =>
           prev.map((m) =>
             m.id === tempMessage.id

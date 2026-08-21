@@ -95,8 +95,8 @@ const TransactionHistory: React.FC = () => {
     useEffect(() => {
         transactionHistory();
         if (userId) {
-            axios.get(`${PROFILE_API}?userId=${userId}`)
-                .then(r => setProfileBalance(r.data?.profile?.tokenBalance ?? 0))
+            axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
+                .then(r => setProfileBalance(r.data?.tokenBalance ?? 0))
                 .catch(() => {});
         }
     }, [userId]); // Add userId as dependency

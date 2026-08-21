@@ -3,6 +3,7 @@ import { Layout, Coins, CheckCircle, AlertCircle, RefreshCw, X, Info, Upload, Im
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
 import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
+import { authHeader } from "../../../lib/authService";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND = LAMBDA.tokenSpend;
@@ -64,12 +65,12 @@ const PagePlacements: React.FC = () => {
     setLoading(true);
     try {
       const [profileR, slotsR, placR] = await Promise.all([
-        axios.get(`${PROFILE_API}?userId=${userId}`),
+        axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() }),
         axios.get(PAYMENT_API ? `${PAYMENT_API}/placements/slots` : `${TOKEN_SPEND}/slots`),
-        axios.get(PAYMENT_API ? `${PAYMENT_API}/placements?userId=${userId}` : `${TOKEN_SPEND}/placements?userId=${userId}`),
+        axios.get(PAYMENT_API ? `${PAYMENT_API}/placements?userId=${userId}` : `${TOKEN_SPEND}/placements?userId=${userId}`, { headers: authHeader() }),
       ]);
-      setTokenBalance(profileR.data?.profile?.tokenBalance ?? 0);
-      setPackageType((profileR.data?.profile?.packageType || "").toLowerCase());
+      setTokenBalance(profileR.data?.tokenBalance ?? 0);
+      setPackageType((profileR.data?.packageType || "").toLowerCase());
       setSlotStatus(slotsR.data?.slots ?? {});
       setMyPlacements(placR.data?.placements ?? []);
     } catch {
@@ -95,7 +96,7 @@ const PagePlacements: React.FC = () => {
     try {
       const r = await axios.post(PAYMENT_API ? `${PAYMENT_API}/placements` : `${TOKEN_SPEND}/placement`, {
         userId, slotId: selectedSlot, slotLabel: slotDef.label, durationDays: durOpt.days,
-      });
+      }, { headers: authHeader() });
       if (r.data.success) {
         setTokenBalance(r.data.newBalance);
         setSuccess(`${slotDef.label} booked for ${durOpt.days} day${durOpt.days > 1 ? "s" : ""}!`);
@@ -118,7 +119,8 @@ const PagePlacements: React.FC = () => {
       const r = await axios.delete(
         PAYMENT_API
           ? `${PAYMENT_API}/placements/${placementId}?userId=${userId}`
-          : `${TOKEN_SPEND}/placement?placementId=${placementId}&userId=${userId}`
+          : `${TOKEN_SPEND}/placement?placementId=${placementId}&userId=${userId}`,
+        { headers: authHeader() }
       );
       if (r.data.success) {
         setTokenBalance(prev => prev + (r.data.refunded || 0));
@@ -151,7 +153,8 @@ const PagePlacements: React.FC = () => {
 
       const saveRes = await axios.put(
         PAYMENT_API ? `${PAYMENT_API}/placements/creative` : `${TOKEN_SPEND}/placement/creative`,
-        { placementId, userId, imageUrl, linkUrl }
+        { placementId, userId, imageUrl, linkUrl },
+        { headers: authHeader() }
       );
       if (!saveRes.data?.success) throw new Error(saveRes.data?.message || "Could not save creative");
 

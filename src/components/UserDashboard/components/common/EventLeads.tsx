@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MessageCircle, Send, X, Check, CheckCheck, Clock, Coins, Search, Eye, AlertTriangle } from "lucide-react";
 import { AUTH_API, LEADS_API, LAMBDA } from '../../../../lib/apiConfig';
+import { authHeader } from '../../../../lib/authService';
 
 interface Lead {
   leadId: string;
@@ -63,11 +64,12 @@ const EventLeads: React.FC = () => {
     if (!userId) return;
     try {
       const res = await fetch(
-        AUTH_API ? `${AUTH_API}/profile?userId=${userId}` : `${LAMBDA.profile}/profile?userId=${userId}`
+        AUTH_API ? `${AUTH_API}/profile?userId=${userId}` : `${LAMBDA.profile}/profile?userId=${userId}`,
+        { headers: authHeader() }
       );
       const data = await res.json();
-      setTotalTokens(data.profile?.tokenBalance || 0);
-      setPackageType((data.profile?.packageType || "").toLowerCase());
+      setTotalTokens(data.tokenBalance || 0);
+      setPackageType((data.packageType || "").toLowerCase());
     } catch (error) {
     }
   }, [userId]);
@@ -77,8 +79,10 @@ const EventLeads: React.FC = () => {
     if (!userId) return;
 
     try {
+      // event-leads lives on the leads service, not auth - confirmed 404 on auth
       const res = await fetch(
-        AUTH_API ? `${AUTH_API}/event-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${eventId}` : `${LAMBDA.profile}/event-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${eventId}`
+        LEADS_API ? `${LEADS_API}/event-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${eventId}` : `${LAMBDA.profile}/event-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${eventId}`,
+        { headers: authHeader() }
       );
       const data = await res.json();
 
@@ -190,7 +194,7 @@ const EventLeads: React.FC = () => {
           {
             headers: {
               "Content-Type": "application/json",
-              "X-User-Email": userId,
+              ...authHeader(),
             },
           }
         );
@@ -253,18 +257,21 @@ const EventLeads: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-User-Email": userId,
+            ...authHeader(),
           },
           body: JSON.stringify({
             leadId: selectedLead.leadId,
+            userId,
             message: messageToSend,
+            senderType: "user",
+            senderName: user?.userData?.fullName || user?.fullName || "You",
           }),
         }
       );
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && data.messageId) {
         // Update message with delivered status
         setChatMessages((prev) =>
           prev.map((msg) =>

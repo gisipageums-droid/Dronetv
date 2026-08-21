@@ -8,10 +8,15 @@ import {
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
+import { authHeader } from "../../../lib/authService";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
-const UPGRADE_API = AUTH_API ? `${AUTH_API}/upgrade-package` : `${LAMBDA.profile}/upgrade-package`;
+// Payment service (not auth) owns this - it deducts real tokens for the
+// upgrade before persisting the new package type, see payment service's
+// /upgrade-package for why this moved off auth's field-mismatched, non-
+// deducting route.
+const UPGRADE_API = PAYMENT_API ? `${PAYMENT_API}/upgrade-package` : `${LAMBDA.tokenGateway}/upgrade-package`;
 const TOKEN_RATE = 10; // ₹10 = 1 token, must match backend
 
 const PACKAGES = [
@@ -113,8 +118,8 @@ const MyPackage: React.FC = () => {
   useEffect(() => {
     if (!userId) return;
     axios
-      .get(`${PROFILE_API}?userId=${userId}`)
-      .then((r) => setProfile(r.data?.profile ?? null))
+      .get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
+      .then((r) => setProfile(r.data ?? null))
       .catch(() => setProfile(null))
       .finally(() => setLoading(false));
   }, [userId]);
@@ -123,7 +128,7 @@ const MyPackage: React.FC = () => {
     if (!confirmPkg || !userId) return;
     setUpgrading(true);
     try {
-      const res = await axios.post(UPGRADE_API, { userId, packageId: confirmPkg.id });
+      const res = await axios.post(UPGRADE_API, { userId, packageId: confirmPkg.id }, { headers: authHeader() });
       if (res.data?.success) {
         setProfile((prev) => ({
           ...prev,
@@ -137,7 +142,7 @@ const MyPackage: React.FC = () => {
         toast.error(res.data?.message || "Upgrade failed");
       }
     } catch (e: any) {
-      toast.error(e.response?.data?.message || "Upgrade failed. Please try again.");
+      toast.error(e.response?.data?.detail || e.response?.data?.message || "Upgrade failed. Please try again.");
     } finally {
       setUpgrading(false);
     }

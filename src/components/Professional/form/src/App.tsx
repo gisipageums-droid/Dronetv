@@ -17,6 +17,7 @@ import { useUserAuth } from "../../../context/context";
 import { AlertTriangle, X } from "lucide-react";
 import { toast } from "sonner";
 import { PROFESSIONAL_API, PAYMENT_API, AUTH_API, LAMBDA } from '../../../../lib/apiConfig';
+import { authHeader } from '../../../../lib/authService';
 
 // ✅ Token Validation API URL — same wallet/profile source the dashboard
 // sidebar uses to display the real balance. This used to POST to the events
@@ -36,8 +37,8 @@ const validateUserTokens = async (
 }> => {
   try {
     const response = PAYMENT_API
-      ? await axios.get(`${PAYMENT_API}/wallet?userId=${email}`, { timeout: 10000 })
-      : await axios.get(`${PROFILE_API}?userId=${email}`, { timeout: 10000 });
+      ? await axios.get(`${PAYMENT_API}/wallet?userId=${email}`, { timeout: 10000, headers: authHeader() })
+      : await axios.get(`${PROFILE_API}?userId=${email}`, { timeout: 10000, headers: authHeader() });
 
     const tokenBalance = PAYMENT_API
       ? (response.data?.tokenBalance ?? 0)

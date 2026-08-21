@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MessageCircle, Send, X, Check, CheckCheck, Clock, Coins, Search, Eye, AlertTriangle } from "lucide-react";
 import { AUTH_API, LEADS_API, LAMBDA } from '../../../../lib/apiConfig';
+import { authHeader } from '../../../../lib/authService';
 
 interface Lead {
   leadId: string;
@@ -58,11 +59,12 @@ const ProfessionalLeads: React.FC = () => {
     if (!userId) return;
     try {
       const res = await fetch(
-        AUTH_API ? `${AUTH_API}/profile?userId=${userId}` : `${LAMBDA.profile}/profile?userId=${userId}`
+        AUTH_API ? `${AUTH_API}/profile?userId=${userId}` : `${LAMBDA.profile}/profile?userId=${userId}`,
+        { headers: authHeader() }
       );
       const data = await res.json();
-      setTotalTokens(data.profile?.tokenBalance || 0);
-      setPackageType((data.profile?.packageType || "").toLowerCase());
+      setTotalTokens(data.tokenBalance || 0);
+      setPackageType((data.packageType || "").toLowerCase());
     } catch (error) {
     }
   }, [userId]);
@@ -71,8 +73,11 @@ const ProfessionalLeads: React.FC = () => {
   const fetchLeads = useCallback(async () => {
     if (!userId) return;
     try {
+      // Backend has no "/get-leads" route (confirmed 404) - professional
+      // leads live at "/professional-leads".
       const res = await fetch(
-        LEADS_API ? `${LEADS_API}/get-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${professionalId}` : `${LAMBDA.profLeadsGet}/get-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${professionalId}`
+        LEADS_API ? `${LEADS_API}/professional-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${professionalId}` : `${LAMBDA.profLeadsGet}/get-leads?userId=${userId}&mode=all&limit=20&offset=0&filter=all&publishedId=${professionalId}`,
+        { headers: authHeader() }
       );
       const data = await res.json();
       if (data.success && Array.isArray(data.leads)) {
@@ -176,7 +181,7 @@ const ProfessionalLeads: React.FC = () => {
           {
             headers: {
               "Content-Type": "application/json",
-              "X-User-Email": userId,
+              ...authHeader(),
             },
           }
         );
@@ -239,18 +244,21 @@ const ProfessionalLeads: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-User-Email": userId,
+            ...authHeader(),
           },
           body: JSON.stringify({
             leadId: selectedLead.leadId,
+            userId,
             message: messageToSend,
+            senderType: "user",
+            senderName: user?.userData?.fullName || user?.fullName || "You",
           }),
         }
       );
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && data.messageId) {
         // Update message with delivered status
         setChatMessages((prev) =>
           prev.map((msg) =>

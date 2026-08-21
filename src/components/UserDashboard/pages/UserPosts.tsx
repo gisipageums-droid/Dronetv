@@ -7,6 +7,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useUserAuth } from "../../context/context";
 import { AUTH_API, PAYMENT_API, MEDIA_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const NOTIFY_API  = PAYMENT_API ? `${PAYMENT_API}/spend-tokens` : `${LAMBDA.tokenGateway}/spend-tokens`;
@@ -152,9 +153,9 @@ const UserPosts: React.FC = () => {
   const fetchProfile = useCallback(async () => {
     if (!userId) { setLoading(false); return; }
     try {
-      const r = await axios.get(`${PROFILE_API}?userId=${userId}`);
-      setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
-      setPackageType(r.data?.profile?.packageType ?? null);
+      const r = await axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() });
+      setTokenBalance(r.data?.tokenBalance ?? 0);
+      setPackageType(r.data?.packageType ?? null);
     } catch { /* silent */ }
     setLoading(false);
   }, [userId]);

@@ -5,6 +5,7 @@ import { useUserAuth } from "../../context/context";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { PAYMENT_API, LAMBDA, AUTH_API } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 import {
   Coins, Zap, TrendingUp, Crown, CheckCircle, ArrowRight,
   Wallet, Target, Layout, FileText, ShoppingBag,
@@ -80,13 +81,13 @@ const RechargePlans: React.FC = () => {
 
   useEffect(() => {
     if (userId) {
-      axios.get(`${PROFILE_API}?userId=${userId}`)
+      axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
         .then(r => {
-          setPackageType((r.data?.profile?.packageType ?? '').toLowerCase());
+          setPackageType((r.data?.packageType ?? '').toLowerCase());
         })
         .catch(() => {});
       if (PAYMENT_API) {
-        axios.get(`${PAYMENT_API}/wallet?userId=${userId}`)
+        axios.get(`${PAYMENT_API}/wallet?userId=${userId}`, { headers: authHeader() })
           .then(r => setTokenBalance(r.data?.tokenBalance ?? 0))
           .catch(() => {});
       } else {

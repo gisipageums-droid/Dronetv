@@ -3,6 +3,7 @@ import { Target, Coins, TrendingUp, Clock, CheckCircle, AlertCircle, Info, Refre
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
 import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
+import { authHeader } from "../../../lib/authService";
 
 const PROFILE_API   = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND   = LAMBDA.tokenSpend;
@@ -51,10 +52,10 @@ const BidKeywordsPage: React.FC = () => {
     if (!userId) return;
     try {
       if (PAYMENT_API) {
-        const r = await axios.get(`${PAYMENT_API}/wallet?userId=${userId}`);
+        const r = await axios.get(`${PAYMENT_API}/wallet?userId=${userId}`, { headers: authHeader() });
         setTokenBalance(r.data?.tokenBalance ?? 0);
       } else {
-        const r = await axios.get(`${PROFILE_API}?userId=${userId}`);
+        const r = await axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() });
         setTokenBalance(r.data?.profile?.tokenBalance ?? 0);
       }
     } catch {}
@@ -64,7 +65,7 @@ const BidKeywordsPage: React.FC = () => {
     if (!userId) return;
     setLoadingBids(true);
     try {
-      const r = await axios.get(PAYMENT_API ? `${PAYMENT_API}/bids?userId=${userId}` : `${TOKEN_SPEND}/bids?userId=${userId}`);
+      const r = await axios.get(PAYMENT_API ? `${PAYMENT_API}/bids?userId=${userId}` : `${TOKEN_SPEND}/bids?userId=${userId}`, { headers: authHeader() });
       setMyBids(r.data?.bids ?? []);
     } catch {
       setMyBids([]);
@@ -96,7 +97,8 @@ const BidKeywordsPage: React.FC = () => {
           bidAmount,
           durationDays: dur.days,
           totalCost,
-        }
+        },
+        { headers: authHeader() }
       );
       if (r.data.success) {
         setTokenBalance(r.data.newBalance);
@@ -118,7 +120,8 @@ const BidKeywordsPage: React.FC = () => {
     setCancelling(bidId);
     try {
       const r = await axios.delete(
-        PAYMENT_API ? `${PAYMENT_API}/bids/${bidId}?userId=${userId}` : `${TOKEN_SPEND}/bid?bidId=${bidId}&userId=${userId}`
+        PAYMENT_API ? `${PAYMENT_API}/bids/${bidId}?userId=${userId}` : `${TOKEN_SPEND}/bid?bidId=${bidId}&userId=${userId}`,
+        { headers: authHeader() }
       );
       if (r.data.success) {
         setTokenBalance(prev => prev + (r.data.refunded || 0));
