@@ -26,7 +26,7 @@ const OurPartners = () => (
           return (
             <div
               key={slug}
-              className="bg-[#f1ee8e] rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col items-center justify-center gap-2 p-4 h-32 sm:h-36"
+              className="bg-surface-card rounded-[20px] border border-surface-cardborder shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col items-center justify-center gap-3 p-5 h-36 sm:h-40"
             >
               {/* Fixed-size wrapper (not just max-h/max-w on the <img>
               itself) so a wide, short partner logo gets a real bounding box
@@ -39,7 +39,7 @@ const OurPartners = () => (
                   className="max-h-full max-w-full object-contain"
                 />
               </div>
-              <p className="text-xs font-semibold text-ink text-center line-clamp-2">{name}</p>
+              <p className="text-xs font-semibold text-ink-charcoal text-center line-clamp-2">{name}</p>
             </div>
           );
         })}
