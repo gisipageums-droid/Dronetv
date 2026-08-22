@@ -53,6 +53,7 @@ export default function Edit_event_t2() {
   const [componentStates, setComponentStates] = useState<ComponentStates>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [contentLoaded, setContentLoaded] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [hasFetched, setHasFetched] = useState(false);
 
@@ -153,9 +154,31 @@ export default function Edit_event_t2() {
         setFinalTemplate(data.data);
         setAIGenData(data.data);
 
-        // Initialize component states with fetched data
-        if (data.data.content) {
-          setComponentStates(data.data.content);
+        // Different event records store section content at different
+        // nesting depths — some have it directly under data.data.content
+        // (header, hero, ...), others wrap it one level deeper under
+        // data.data.content.content alongside record metadata (older
+        // records, seen on events created before some backend change).
+        // Assuming a fixed depth per isAIgen branch previously left
+        // sections empty for records shaped the other way — which still
+        // let Publish silently overwrite real content with blank defaults.
+        // Detect the right level by checking which one actually looks like
+        // section content instead of assuming.
+        const looksLikeSections = (obj: any) =>
+          obj && typeof obj === "object" &&
+          ("header" in obj || "hero" in obj || "speakersData" in obj || "sponsorsData" in obj);
+        const rawContent = data.data?.content;
+        const sectionContent = looksLikeSections(rawContent)
+          ? rawContent
+          : looksLikeSections(rawContent?.content)
+          ? rawContent.content
+          : null;
+
+        if (sectionContent && Object.keys(sectionContent).length > 0) {
+          setComponentStates(sectionContent);
+          setContentLoaded(true);
+        } else {
+          setError("Could not load the event's existing content. Please refresh and try again before publishing.");
         }
 
         setHasFetched(true);
@@ -299,7 +322,13 @@ export default function Edit_event_t2() {
       </main>
 
       {/* Publish Component */}
-      <Publish />
+      {contentLoaded ? (
+        <Publish />
+      ) : (
+        <div className="fixed bottom-20 right-10 z-50 bg-gray-400 text-white font-semibold py-3 px-6 rounded-full shadow-lg cursor-not-allowed" title="Waiting for the event's existing content to load before publishing is enabled">
+          Loading content…
+        </div>
+      )}
 
       {/* Toast Notifications */}
       <ToastContainer

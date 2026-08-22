@@ -43,6 +43,7 @@ const templates: Template[] = [
 ];
 
 const EVENT_TYPES: { id: string; label: string; description: string }[] = [
+    { id: "event", label: "Event", description: "General events that don't fit a specific category" },
     { id: "expo", label: "Expo", description: "Exhibitions, trade shows, product showcases" },
     { id: "conference", label: "Conference", description: "Talks, summits, industry conferences" },
     { id: "workshop", label: "Workshop", description: "Hands-on training and skill-building sessions" },
@@ -106,8 +107,8 @@ const EventSelect: React.FC = () => {
                 transition={{ duration: 0.6, delay: 0.1 }}
             >
                 <h2 className="text-lg font-semibold text-gray-900 mb-1">What are you creating?</h2>
-                <p className="text-sm text-gray-500 mb-4">Choose a category — this decides where your listing shows up (Expos, Conferences or Workshops).</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <p className="text-sm text-gray-500 mb-4">Choose a category — this decides where your listing shows up (Events, Expos, Conferences or Workshops).</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     {EVENT_TYPES.map((t) => (
                         <button
                             key={t.id}

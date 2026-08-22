@@ -1684,7 +1684,7 @@ import { AdminEditor } from "./admin/AdminEditor";
 import axios from "axios";
 import { useUserAuth } from "../../../context/context";
 import { AlertTriangle, X } from "lucide-react";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { EVENTS_API, LAMBDA as LAMBDA_CFG } from '../../../../lib/apiConfig';
 
 // ✅ Token Validation API URL
@@ -2110,6 +2110,7 @@ function EventsForm() {
 
   return (
     <>
+      <Toaster position="top-right" richColors />
       {/* Header */}
       <div className="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-lg border-b border-amber-300">
         <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">

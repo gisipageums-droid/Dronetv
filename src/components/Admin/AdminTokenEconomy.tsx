@@ -208,7 +208,7 @@ const AdminTokenEconomy: React.FC = () => {
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
             <h3 className="text-sm font-bold text-gray-700">Keyword Bid Monitor — All Active Keywords</h3>
-            <span className="text-xs text-gray-400">{stats?.activeBids ?? 0} active bids</span>
+            <span className="text-xs text-gray-400">{activeBids.length} active bids</span>
           </div>
           {loading ? (
             <div className="flex items-center justify-center py-12">

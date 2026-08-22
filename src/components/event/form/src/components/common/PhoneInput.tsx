@@ -199,10 +199,26 @@ export const PhoneInput = ({
     );
   }
 
+  // If the country-list lookup fails, don't block the user from typing a
+  // phone number — fall back to a plain input (no flag/country-code picker)
+  // instead of replacing the whole field with just an error message.
   if (error) {
     return (
-      <div className={`${baseClasses} p-2 border-red-300 ${className}`}>
-        <span className="text-red-500 text-sm">{error}</span>
+      <div>
+        <input
+          type="tel"
+          value={phoneNumber}
+          onChange={(e) => {
+            setPhoneNumber(e.target.value);
+            onChange(e.target.value);
+          }}
+          placeholder="Enter phone number with country code, e.g. +91 98765 43210"
+          required={required}
+          className={`${baseClasses} w-full px-3 py-2 ${className}`}
+        />
+        <span className="text-amber-600 text-xs mt-1 block">
+          Country code list unavailable — please include your country code (e.g. +91) in the number above.
+        </span>
       </div>
     );
   }

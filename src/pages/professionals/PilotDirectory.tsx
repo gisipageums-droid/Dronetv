@@ -26,6 +26,9 @@ interface Professional {
   isApproved: boolean;
   isVisible: boolean;
   cleanUrl: string;
+  urlSlug?: string;
+  userName?: string;
+  templateSelection?: string;
 }
 
 const PROFESSIONALS_API = PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=main` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=main`;
@@ -178,8 +181,13 @@ export default function PilotDirectoryPage() {
                       {item.categories.slice(1).map(cat => <span key={cat} className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full">{cat}</span>)}
                     </div>
                   )}
-                  {item.cleanUrl && (
-                    <a href={item.cleanUrl} target="_blank" rel="noopener noreferrer" className="block text-xs font-bold text-yellow-600 hover:text-yellow-700">
+                  {(item.urlSlug || item.userName) && (
+                    <a
+                      href={`${item.templateSelection === "template-2" ? "/professionals" : "/professional"}/${item.urlSlug || item.userName}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-xs font-bold text-yellow-600 hover:text-yellow-700"
+                    >
                       View Profile →
                     </a>
                   )}

@@ -298,6 +298,11 @@ export default function AdminMediaDashboard() {
   const [appLoading, setAppLoading] = useState(false);
   const [appError, setAppError] = useState(false);
   const [appSearch, setAppSearch] = useState('');
+  // Applications-only sub-filter — the table mixes webinar registrations in
+  // with general partner/contact submissions with no type field to tell them
+  // apart, so this splits on the message text instead.
+  const [appSubType, setAppSubType] = useState<'all' | 'webinar' | 'other'>('all');
+  const isWebinarSubmission = (sub: AppSubmission) => (sub.message || '').toLowerCase().includes('webinar registration');
 
   useEffect(() => {
     setActiveType(urlType ?? 'all');
@@ -319,7 +324,10 @@ export default function AdminMediaDashboard() {
     setLoading(true);
     try {
       const data = await fetchAdminContent(signal);
-      setItems(data);
+      // Exclude legacy "[Application] ..." job entries — leftover junk from
+      // before the real Job Board ATS existed, not real job listings. They
+      // shouldn't count toward the Job Listing tab or the All total.
+      setItems(data.filter(i => !(i.contentType === 'job' && i.title.startsWith('[Application]'))));
     } catch (err: any) {
       if (err?.name === 'AbortError') return;
       toast.error('Failed to load content');
@@ -348,7 +356,32 @@ export default function AdminMediaDashboard() {
     return () => controller.abort();
   }, [activeType]);
 
+  const [appDeleteConfirm, setAppDeleteConfirm] = useState<AppSubmission | null>(null);
+  const [appDeleting, setAppDeleting] = useState(false);
+
+  const confirmDeleteApp = async () => {
+    if (!appDeleteConfirm) return;
+    setAppDeleting(true);
+    try {
+      const url = ADMIN_API ? `${ADMIN_API}/contact/${appDeleteConfirm.id}` : `${LAMBDA.contact}/contact?id=${appDeleteConfirm.id}`;
+      const res = await fetch(url, { method: 'DELETE' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setAppSubmissions(prev => prev.filter(s => s.id !== appDeleteConfirm.id));
+      toast.success('Application deleted');
+      setAppDeleteConfirm(null);
+    } catch {
+      toast.error('Delete failed');
+    } finally {
+      setAppDeleting(false);
+    }
+  };
+
+  const webinarAppCount = appSubmissions.filter(isWebinarSubmission).length;
+  const otherAppCount = appSubmissions.length - webinarAppCount;
+
   const filteredAppSubmissions = appSubmissions.filter(sub => {
+    const matchesSubType = appSubType === 'all' || (appSubType === 'webinar' ? isWebinarSubmission(sub) : !isWebinarSubmission(sub));
+    if (!matchesSubType) return false;
     const q = appSearch.trim().toLowerCase();
     if (!q) return true;
     return (sub.name || '').toLowerCase().includes(q) ||
@@ -540,12 +573,28 @@ export default function AdminMediaDashboard() {
         </div>
 
         {activeType !== 'job' && (
-          <div className="relative w-full max-w-xs mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input type="text" placeholder={activeType === 'applications' ? 'Search applications...' : 'Search content...'}
-              value={activeType === 'applications' ? appSearch : search}
-              onChange={e => activeType === 'applications' ? setAppSearch(e.target.value) : setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <div className="relative w-full max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input type="text" placeholder={activeType === 'applications' ? 'Search applications...' : 'Search content...'}
+                value={activeType === 'applications' ? appSearch : search}
+                onChange={e => activeType === 'applications' ? setAppSearch(e.target.value) : setSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-yellow-400" />
+            </div>
+            {activeType === 'applications' && (
+              <div className="flex gap-1.5">
+                {([
+                  ['all', `All (${appSubmissions.length})`],
+                  ['webinar', `Webinar (${webinarAppCount})`],
+                  ['other', `Applications (${otherAppCount})`],
+                ] as const).map(([value, label]) => (
+                  <button key={value} onClick={() => setAppSubType(value)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${appSubType === value ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -563,15 +612,18 @@ export default function AdminMediaDashboard() {
               <table className="w-full min-w-[600px] text-sm">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
+                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide w-12">#</th>
                     <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Name</th>
                     <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Contact</th>
                     <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Message</th>
                     <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide whitespace-nowrap">Submitted</th>
+                    <th className="text-left px-4 py-3 font-bold text-gray-700 text-xs uppercase tracking-wide">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {filteredAppSubmissions.map(sub => (
+                  {filteredAppSubmissions.map((sub, idx) => (
                     <tr key={sub.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-gray-500 text-xs align-top">{idx + 1}</td>
                       <td className="px-4 py-3 font-medium text-gray-900 align-top whitespace-nowrap">{sub.name}</td>
                       <td className="px-4 py-3 text-gray-500 text-xs align-top whitespace-nowrap">
                         <div>{sub.email}</div>
@@ -580,6 +632,12 @@ export default function AdminMediaDashboard() {
                       <td className="px-4 py-3 text-gray-600 text-xs align-top max-w-md">{sub.message}</td>
                       <td className="px-4 py-3 text-gray-500 text-xs align-top whitespace-nowrap">
                         {sub.submittedAt ? new Date(sub.submittedAt).toLocaleString('en-IN') : '—'}
+                      </td>
+                      <td className="px-4 py-3 align-top">
+                        <button onClick={() => setAppDeleteConfirm(sub)} title="Delete"
+                          className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-red-600 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -1072,6 +1130,29 @@ export default function AdminMediaDashboard() {
               <button onClick={confirmDelete} disabled={deleting}
                 className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700 disabled:opacity-50">
                 {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {appDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/60 z-[10000000] flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0" />
+              <h3 className="text-lg font-bold text-gray-900">Delete Application</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-5">
+              Delete the application from <span className="font-semibold">"{appDeleteConfirm.name}"</span>? This cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setAppDeleteConfirm(null)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Cancel
+              </button>
+              <button onClick={confirmDeleteApp} disabled={appDeleting}
+                className="px-4 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700 disabled:opacity-50">
+                {appDeleting ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>

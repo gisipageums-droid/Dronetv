@@ -186,6 +186,7 @@ interface ComponentStates {
 const EventTemplate1: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [contentLoaded, setContentLoaded] = useState(false);
   const { draftId, userId, isAIgen } = useParams();
   const { finalTemplate, setFinalTemplate, AIGenData, setAIGenData } =
     useTemplate();
@@ -330,7 +331,9 @@ const EventTemplate1: React.FC = () => {
             }
           );
         } else {
-          // Replace with your actual API for non-AIgen case
+          // Admin editing an already-published event: draftId here is
+          // actually the eventId (see EventAdminDashboard's Edit button,
+          // which navigates to /edit/event/t1/admin/:eventId/:userId).
           response = await fetch(
             EVENTS_API ? `${EVENTS_API}/event-content/${draftId}/${userId}` : `${LAMBDA.eventTemplateContent}/${draftId}/${userId}`,
             {
@@ -347,17 +350,41 @@ const EventTemplate1: React.FC = () => {
         }
 
         const data = await response.json();
-                
+
         // Set both AIGenData and finalTemplate similar to App.tsx
         setFinalTemplate(data.data);
         setAIGenData(data.data);
-        
-        // Initialize component states with fetched data or default values
-        if (data.data.content) {
+
+        // Different event records store section content at different
+        // nesting depths — some have it directly under data.data.content
+        // (header, hero, ...), others wrap it one level deeper under
+        // data.data.content.content alongside record metadata (older
+        // records, seen on events created before some backend change).
+        // Assuming a fixed depth per isAIgen branch previously left
+        // sections empty for records shaped the other way — which still
+        // let Publish silently overwrite real content with blank defaults.
+        // Detect the right level by checking which one actually looks like
+        // section content instead of assuming.
+        const looksLikeSections = (obj: any) =>
+          obj && typeof obj === "object" &&
+          ("header" in obj || "hero" in obj || "speakersData" in obj || "sponsorsData" in obj);
+        const rawContent = data.data?.content;
+        const sectionContent = looksLikeSections(rawContent)
+          ? rawContent
+          : looksLikeSections(rawContent?.content)
+          ? rawContent.content
+          : null;
+
+        if (sectionContent && Object.keys(sectionContent).length > 0) {
           setComponentStates({
             ...componentStates, // Keep existing state as fallback
-            ...data.data.content,
+            ...sectionContent,
           });
+          setContentLoaded(true);
+        } else {
+          // Nothing usable came back — do NOT let Publish send blank
+          // defaults over real, already-published content.
+          setError("Could not load the event's existing content. Please refresh and try again before publishing.");
         }
 
         setIsLoading(false);
@@ -459,7 +486,13 @@ const EventTemplate1: React.FC = () => {
         onStateChange={createStateChangeHandler("footer")}
       />
       {isAIgen === "AIgen" ? null : <Back />}
-      <Publish />
+      {contentLoaded ? (
+        <Publish />
+      ) : (
+        <div className="fixed bottom-20 right-10 z-50 bg-gray-400 text-white font-semibold py-3 px-6 rounded-full shadow-lg cursor-not-allowed" title="Waiting for the event's existing content to load before publishing is enabled">
+          Loading content…
+        </div>
+      )}
       <Toaster position="top-right" richColors />
     </div>
   );

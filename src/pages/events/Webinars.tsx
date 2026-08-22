@@ -5,7 +5,7 @@ import { ADMIN_API, LAMBDA } from '../../lib/apiConfig';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail } from '../../components/common/adCreatives';
-import PostContentCTA from '../../components/common/PostContentCTA';
+import DteaWebinarCard from './DteaWebinarCard';
 
 const CONTACT_URL = ADMIN_API ? `${ADMIN_API}/contact` : `${LAMBDA.contact}/contact`;
 
@@ -90,6 +90,8 @@ export default function WebinarsPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-8 pb-12 lg:flex lg:items-start lg:gap-6">
         <div className="flex-1 min-w-0 space-y-8">
+        <DteaWebinarCard />
+
         <div>
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-gray-200 after:content-['']">
             <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded">Upcoming</span>
@@ -192,20 +194,17 @@ export default function WebinarsPage() {
             <p className="text-xs text-white/40 mt-1">✉ bd@dronetv.in &nbsp;|&nbsp; 📞 +91 7520123555</p>
           </div>
           <div className="flex gap-3 flex-shrink-0">
-            <a href="mailto:bd@dronetv.in?subject=Submit Webinar"
+            <a href="/form"
               className="px-4 py-2 bg-yellow-400 text-black text-sm font-bold rounded-lg hover:bg-yellow-300 transition-colors">
               Submit Webinar
             </a>
-            <a href="/packages"
+            <a href="/partnerships/benefits"
               className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">
               View Packages
             </a>
           </div>
         </div>
 
-        <PostContentCTA contentType="webinar" typeLabel="Webinar"
-          ctaTitle="Submit Instantly"
-          ctaDescription="Prefer instant self-listing over manual review? Post your webinar directly." />
         </div>
         <AdSidebarRail />
       </div>
