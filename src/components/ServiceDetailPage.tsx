@@ -5,6 +5,12 @@ import { Star, Plane, Clock, Tag, CheckCircle, Activity, Layers, ShieldCheck } f
 import LoadingScreen from "./loadingscreen";
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 
+// /images/service-placeholder.jpg was never actually added to public/, so
+// nginx's SPA fallback served index.html for it (200 text/html) — the img
+// tag then failed to render, showing a broken-image icon. Inline SVG avoids
+// depending on a static file that has to exist on every deploy target.
+const SERVICE_IMAGE_PLACEHOLDER =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmM2Y0ZjYiLz4KPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgo8cmVjdCB4PSIxNDAiIHk9IjExMCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSI5MCIgcng9IjYiLz4KPGNpcmNsZSBjeD0iMTcwIiBjeT0iMTQwIiByPSIxMCIvPgo8cGF0aCBkPSJtMTQwIDE5MCAzMC0zMCAyNSAyMCAzNS00MCA0MCA1MCIvPgo8L2c+Cjwvc3ZnPg==';
 
 type ServiceFeature = {
   icon?: React.ReactNode;
