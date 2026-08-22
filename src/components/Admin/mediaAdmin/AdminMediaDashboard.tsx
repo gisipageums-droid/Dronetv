@@ -132,6 +132,30 @@ const ZONE_IMAGE_HINT: Record<string, string> = {
   'detail-banner': '1200×90px (wide thin banner)',
 };
 
+// Full screen-by-screen ad size cheat sheet — covers both ad systems on the
+// site: the zone-based ads managed right here (reused across ~30 inner
+// pages via Target Pages) and the separately-sold Page Placement slots
+// (Homepage/Categories/Media Hub, booked via User Dashboard > Page
+// Placements, sizes sourced from PagePlacements.tsx's SLOT_DEFINITIONS).
+// Shown as a quick reference on the Ads tab so admins/sales know the exact
+// creative size needed per screen without checking two places.
+const SCREEN_SIZE_REFERENCE: { screen: string; zone: string; size: string; system: 'Zone Ad' | 'Page Placement' }[] = [
+  { screen: 'Homepage — Hero Banner', zone: 'HP-1 (Brand only)', size: '1600×500', system: 'Page Placement' },
+  { screen: 'Homepage — Featured Strip A', zone: 'HP-2', size: '900×300 (3:1)', system: 'Page Placement' },
+  { screen: 'Homepage — Featured Strip B', zone: 'HP-3', size: '900×300 (3:1)', system: 'Page Placement' },
+  { screen: 'Homepage — Sponsored Article', zone: 'HP-4', size: '1000×250 (4:1)', system: 'Page Placement' },
+  { screen: 'Products — Category Rail (Drones/GIS/Agri/Defence)', zone: 'cat-*', size: '900×300 (3:1)', system: 'Page Placement' },
+  { screen: 'Training — Top Spot', zone: 'cat-training', size: '1000×250 (4:1)', system: 'Page Placement' },
+  { screen: 'Media Hub — News Pulse Spot', zone: 'media-news', size: '1000×250 (4:1)', system: 'Page Placement' },
+  { screen: 'Media Hub — Video Spotlight', zone: 'media-video', size: '1000×250 (4:1)', system: 'Page Placement' },
+  { screen: 'Media Hub — Magazine Feature', zone: 'media-magazine', size: '1000×250 (4:1)', system: 'Page Placement' },
+  { screen: 'Any inner page — Sidebar Rail', zone: 'sidebar', size: '300×250 (or 300×600 tall)', system: 'Zone Ad' },
+  { screen: 'Any inner page — Inline Feed Ad', zone: 'inline', size: '1200×100', system: 'Zone Ad' },
+  { screen: 'Any inner page — Bottom Sticky Strip', zone: 'sticky', size: '1200×64', system: 'Zone Ad' },
+  { screen: 'Job Board — Detail Banner', zone: 'detail-banner', size: '1200×90', system: 'Zone Ad' },
+  { screen: 'Job Board — Sponsor Badge', zone: 'sponsor-badge', size: 'No image (text badge)', system: 'Zone Ad' },
+];
+
 const EVENTS_VALS = new Set(EVENTS_TYPES.map(t => t.value));
 const PROFESSIONALS_VALS = new Set(PROFESSIONALS_TYPES.map(t => t.value));
 const PARTNERSHIPS_VALS = new Set([...PARTNERSHIPS_TYPES.map(t => t.value), 'applications' as ContentType]);
@@ -459,6 +483,38 @@ export default function AdminMediaDashboard() {
           </button>
         )}
       </div>
+
+      {mode === 'ads' && (
+        <div className="mb-5 bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="px-4 py-2.5 bg-gray-900 text-white text-sm font-bold">Ad Sizes — Screen by Screen</div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-left text-gray-500 border-b border-gray-200">
+                  <th className="px-4 py-2 font-semibold">Screen</th>
+                  <th className="px-4 py-2 font-semibold">Slot / Zone</th>
+                  <th className="px-4 py-2 font-semibold">Creative Size</th>
+                  <th className="px-4 py-2 font-semibold">Where it's booked</th>
+                </tr>
+              </thead>
+              <tbody>
+                {SCREEN_SIZE_REFERENCE.map(row => (
+                  <tr key={row.zone} className="border-b border-gray-200 last:border-0">
+                    <td className="px-4 py-2 text-gray-900">{row.screen}</td>
+                    <td className="px-4 py-2 text-gray-500 font-mono">{row.zone}</td>
+                    <td className="px-4 py-2 font-bold text-gray-900">{row.size}</td>
+                    <td className="px-4 py-2">
+                      <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${row.system === 'Zone Ad' ? 'bg-yellow-100 text-black' : 'bg-blue-100 text-blue-800'}`}>
+                        {row.system === 'Zone Ad' ? 'This Ads tab' : 'User Dashboard > Page Placements'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <div className="py-1">
         <div className="flex gap-0 bg-gray-900 rounded-t-lg mb-4 overflow-x-auto">
