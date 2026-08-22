@@ -6,6 +6,12 @@ import LoadingScreen from "./loadingscreen";
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { slugify } from '../lib/slugify';
 
+// /images/service-placeholder.jpg was never actually added to public/, so
+// nginx's SPA fallback served index.html for it (200 text/html) — the img
+// tag then failed to render, showing a broken-image icon. Inline SVG avoids
+// depending on a static file that has to exist on every deploy target.
+const SERVICE_IMAGE_PLACEHOLDER =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNmM2Y0ZjYiLz4KPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgo8cmVjdCB4PSIxNDAiIHk9IjExMCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSI5MCIgcng9IjYiLz4KPGNpcmNsZSBjeD0iMTcwIiBjeT0iMTQwIiByPSIxMCIvPgo8cGF0aCBkPSJtMTQwIDE5MCAzMC0zMCAyNSAyMCAzNS00MCA0MCA1MCIvPgo8L2c+Cjwvc3ZnPg==';
 
 type ServiceFeature = {
   icon?: React.ReactNode;
@@ -66,7 +72,7 @@ export default function ServiceDetailPage() {
         price: navState.price || "Contact for pricing",
         rating: navState.rating || 4.8,
         reviewCount: 85,
-        images: navState.image ? [navState.image] : ["/images/service-placeholder.jpg"],
+        images: navState.image ? [navState.image] : [SERVICE_IMAGE_PLACEHOLDER],
         features: (navState.features || []).map((f: string) => ({ icon: <Activity className="w-4 h-4" />, text: f })),
         benefits: navState.benefits || [],
         process: navState.process || [],
@@ -125,7 +131,7 @@ export default function ServiceDetailPage() {
           price: s.pricing?.trim() ? s.pricing : "Contact for pricing",
           rating: 4.8, // Default rating for services
           reviewCount: 85, // Default review count
-          images: s.image ? [s.image] : ["/images/service-placeholder.jpg"],
+          images: s.image ? [s.image] : [SERVICE_IMAGE_PLACEHOLDER],
           features: (s.features || []).map((f) => ({ icon: <Activity className="w-4 h-4" />, text: f })),
           benefits: s.benefits || [],
           process: s.process || [],
