@@ -29,7 +29,6 @@ import ServicesPage from "./components/ServicesPage";
 import ServiceDetailPage from "./components/ServiceDetailPage";
 import ScrollingFooter from "./components/ScrollingFooter";
 import AdsLoader from "./components/common/AdsLoader";
-import AdStickyStrip from "./components/common/AdStickyStrip";
 import GalleryPage from "./components/GalleryPage";
 import GalleryGlimpse from "./components/GalleryGlimpse";
 import SubApp from "./components/webbuilder/src/App";
@@ -712,7 +711,6 @@ const AppContent = () => {
         {!hideFooter && <Footer />}
         {!hideFooter && <ScrollingFooter />}
         <AdsLoader />
-        {!hideNavigation && <AdStickyStrip />}
       </CombinedProviders>
     </div>
   );
