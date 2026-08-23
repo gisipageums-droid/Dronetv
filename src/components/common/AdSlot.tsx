@@ -35,9 +35,6 @@ export default function AdSlot({ image, href, alt = 'Advertisement', width, heig
       className={`relative rounded-xl overflow-hidden border border-ink-light bg-surface-card flex-shrink-0 ${className}`}
       style={style}
     >
-      <span className="absolute top-1.5 left-1.5 z-10 bg-ink/60 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wide">
-        Ad
-      </span>
       {image ? (
         // object-contain (not cover) — real uploaded creatives can be any aspect
         // ratio and shouldn't get aggressively cropped into an unrecognizable

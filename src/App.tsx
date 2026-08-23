@@ -32,7 +32,6 @@ const ServicesPage = lazy(() => import("./components/ServicesPage"));
 const ServiceDetailPage = lazy(() => import("./components/ServiceDetailPage"));
 import ScrollingFooter from "./components/ScrollingFooter";
 import AdsLoader from "./components/common/AdsLoader";
-import AdStickyStrip from "./components/common/AdStickyStrip";
 const GalleryPage = lazy(() => import("./components/GalleryPage"));
 import GalleryGlimpse from "./components/GalleryGlimpse";
 const SubApp = lazy(() => import("./components/webbuilder/src/App"));
@@ -812,7 +811,6 @@ const AppContent = () => {
         {!hideFooter && <Footer />}
         {!hideFooter && <ScrollingFooter />}
         <AdsLoader />
-        {!hideNavigation && <AdStickyStrip />}
       </CombinedProviders>
     </div>
   );
