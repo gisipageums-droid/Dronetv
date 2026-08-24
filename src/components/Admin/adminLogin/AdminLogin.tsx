@@ -3,14 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
-import { ADMIN_API, LAMBDA } from '../../../lib/apiConfig';
+import { AUTH_API, LAMBDA } from '../../../lib/apiConfig';
 
 interface LoginData {
   email: string;
   password: string;
 }
 
-const ADMIN_LOGIN_API = ADMIN_API ? `${ADMIN_API}/login` : `${LAMBDA.adminLogin}/dev`;
+// Admin login lives in the auth service (issues the same JWT scheme as
+// regular login, just checks a staff role) — not the admin service, which
+// only handles content/form management and has no login route at all.
+const ADMIN_LOGIN_API = AUTH_API ? `${AUTH_API}/admin-login` : `${LAMBDA.adminLogin}/dev`;
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,23 +48,27 @@ export default function AdminLogin() {
       });
       const data = await response.json();
       if (response.ok) {
+        // Auth service returns userData (fullName/isAdmin/...); the old
+        // Lambda fallback returned adminData (userName/...) - accept either.
+        const info = data.userData || data.adminData || {};
         toast.success(data.message || "Admin login successful!");
         adminLogin({
-          email: data.adminData?.email || loginData.email,
-          name: data.adminData?.userName || "Admin User",
+          token: data.token,
+          email: info.email || loginData.email,
+          name: info.fullName || info.userName || "Admin User",
           adminData: {
-            ...data.adminData,
-            city: data.adminData?.city,
-            role: data.adminData?.role,
-            isAdmin: data.adminData?.isAdmin,
-            state: data.adminData?.state,
-            userName: data.adminData?.userName,
+            ...info,
+            city: info.city,
+            role: info.role,
+            isAdmin: info.isAdmin,
+            state: info.state,
+            userName: info.fullName || info.userName,
           },
         });
         setLoginData({ email: "", password: "" });
         navigate("/admin/plans");
       } else {
-        toast.error(data.message || "Login failed. Please check your credentials.");
+        toast.error(data.detail || data.message || "Login failed. Please check your credentials.");
       }
     } catch {
       toast.error("Network error. Please try again later.");
