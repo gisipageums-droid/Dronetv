@@ -1,17 +1,49 @@
 import React from "react";
 
+const PARTNER_LOGOS = [
+  "telangana-govt", "andhra-govt", "odisha-govt", "jharkhand-govt", "telangana-police", "ap-police",
+  "construction-skill-dev", "ncc-urban", "pioneer", "corteva", "apgenco", "siri-sampada",
+  "aparna", "vensa", "ctrls", "vensa-breeze", "dsr-sr", "vpr",
+  "vasavi", "rajapushpa", "vamsiram", "ameya", "my-home-avatar", "sunyuga",
+  "aarvi", "aspire-spaces", "eesha", "pristine-properties", "margana", "botanika",
+];
+
 const OurPartners = () => (
-  <section className="py-20 bg-yellow-300 min-h-[50vh] flex flex-col items-center justify-center">
-    <h2 className="text-4xl md:text-5xl font-black text-black mb-10 tracking-tight">
-      Our Partners
-    </h2>
-    <div className="max-w-3xl w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border-2 border-black/10 bg-[#f1ee8e] flex items-center justify-center">
-      <img
-        src="/images/partners.jpg" // Change path as needed
-        alt="Partner Banner"
-        className="w-full h-72 md:h-96 object-contain"
-        style={{ background: "transparent" }}
-      />
+  <section className="py-20 bg-brand-yellow-soft">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-12">
+        <h2 className="text-4xl md:text-5xl font-black text-ink tracking-tight">
+          Our Partners
+        </h2>
+        <div className="w-24 h-1 bg-gradient-to-r from-brand-yellow to-brand-gold mx-auto rounded-full mt-4"></div>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 sm:gap-5">
+        {PARTNER_LOGOS.map((slug) => {
+          const name = slug
+            .split("-")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+          return (
+            <div
+              key={slug}
+              className="bg-surface-card rounded-[20px] border border-surface-cardborder shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col items-center justify-center gap-3 p-5 h-36 sm:h-40"
+            >
+              {/* Fixed-size wrapper (not just max-h/max-w on the <img>
+              itself) so a wide, short partner logo gets a real bounding box
+              to center within instead of the card's own flex sizing, which
+              could push part of a logo outside the visible card. */}
+              <div className="w-full h-16 sm:h-20 flex items-center justify-center">
+                <img
+                  src={`/images/partners/${slug}.png`}
+                  alt={name}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+              <p className="text-xs font-semibold text-ink-charcoal text-center line-clamp-2">{name}</p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   </section>
 );

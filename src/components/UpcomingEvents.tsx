@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, ArrowRight, CalendarDays } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { EVENTS_API, LAMBDA } from '../lib/apiConfig';
@@ -56,6 +56,14 @@ function isEventEnded(dateStr: string): boolean {
   return endDate.getTime() < Date.now();
 }
 
+function eventSlug(event: EventCard): string {
+  let slug = (event as any).cleanUrl || (event as any).urlSlug || event.name;
+  if (slug && slug.startsWith("http")) {
+    slug = slug.split("/").pop() || event.name;
+  }
+  return slug;
+}
+
 const UpcomingEvents = () => {
   const navigate = useNavigate();
 
@@ -79,15 +87,20 @@ const UpcomingEvents = () => {
             time: card.eventTime,
             location: card.location,
             attendees: "Limited Seats", // API me direct field nahi hai – aap chahe toh hata sakte
+            // Some records store a stale "/assets/default-event-image.png"
+            // path from an older build that never shipped that file (404s
+            // today) - treat it the same as "no image" so the real fallback
+            // below kicks in instead of a broken <img>.
             image:
-              card.heroBannerImage ||
-              card.previewImage ||
-              "/images/droneexpo_cover.jpg", // fallback
+              [card.heroBannerImage, card.previewImage].find(
+                (src) => src && src !== "/assets/default-event-image.png"
+              ) || "/images/droneexpo_cover.jpg",
             price: "Premium",
             type: "Expo & Conference",
             status: card.isApproved ? "upcoming" : "draft",
             featured: true,
             urlSlug: card.urlSlug,
+            cleanUrl: card.cleanUrl,
           }));
 
           // 🟡 Ab state me API se aaya data set kar rahe (ended events hide out)
@@ -101,25 +114,25 @@ const UpcomingEvents = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-yellow-300 relative overflow-hidden min-h-screen">
+    <section className="py-20 bg-brand-yellow-soft relative overflow-hidden min-h-screen">
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-yellow-200/20 rounded-full animate-pulse blur-2xl"></div>
+        <div className="absolute top-20 left-10 w-32 h-32 bg-brand-yellow-soft/20 rounded-full animate-pulse blur-2xl"></div>
         <div
-          className="absolute bottom-20 right-10 w-40 h-40 bg-yellow-400/20 rounded-full animate-pulse blur-2xl"
+          className="absolute bottom-20 right-10 w-40 h-40 bg-brand-yellow/20 rounded-full animate-pulse blur-2xl"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-black text-black mb-4 tracking-tight">
+          <h2 className="text-4xl md:text-6xl font-black text-ink mb-4 tracking-tight">
             <span>Upcoming Events</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-ink-paragraph max-w-2xl mx-auto">
             Connect, learn, and network at industry-leading events
           </p>
-          <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto rounded-full mt-6"></div>
+          <div className="w-24 h-1 bg-gradient-to-r from-brand-yellow to-brand-gold mx-auto rounded-full mt-6"></div>
         </div>
 
         {/* Dynamic Layout: Center if single event, grid if multiple */}
@@ -134,39 +147,40 @@ const UpcomingEvents = () => {
               key={event.id}
               image={event.image}
               imageAlt={event.name}
-              className={events.length === 1 ? 'max-w-xl w-full' : 'w-full'}
-              onClick={() => navigate(`/event/${event.name}`)}
+              imageFallback={<CalendarDays className="h-12 w-12 text-brand-yellow" />}
+              className={`!bg-[#f1ee8e] !border-0 ${events.length === 1 ? 'max-w-xl w-full' : 'w-full'}`}
+              onClick={() => navigate(`/event/${eventSlug(event)}`)}
             >
-              <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">
+              <span className="bg-ink text-brand-yellow-soft text-xs font-bold px-2 py-0.5 rounded mb-2 inline-block self-start">
                 {event.price || 'Premium'}
               </span>
-              <h3 className="text-lg font-bold text-gray-900 leading-snug mb-3 line-clamp-2">
+              <h3 className="text-lg font-bold text-ink leading-snug mb-3 line-clamp-2">
                 {event.name}
               </h3>
 
               <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar className="h-4 w-4 text-yellow-600 flex-shrink-0" />
+                <div className="flex items-center gap-2 text-sm text-ink-paragraph">
+                  <Calendar className="h-4 w-4 text-brand-gold flex-shrink-0" />
                   <span className="line-clamp-1">{event.date}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <MapPin className="h-4 w-4 text-yellow-600 flex-shrink-0" />
+                <div className="flex items-center gap-2 text-sm text-ink-paragraph">
+                  <MapPin className="h-4 w-4 text-brand-gold flex-shrink-0" />
                   <span className="line-clamp-1">{event.location}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Clock className="h-4 w-4 text-yellow-600 flex-shrink-0" />
+                <div className="flex items-center gap-2 text-sm text-ink-paragraph">
+                  <Clock className="h-4 w-4 text-brand-gold flex-shrink-0" />
                   <span className="line-clamp-1">{event.time}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Users className="h-4 w-4 text-yellow-600 flex-shrink-0" />
+                <div className="flex items-center gap-2 text-sm text-ink-paragraph">
+                  <Users className="h-4 w-4 text-brand-gold flex-shrink-0" />
                   <span className="line-clamp-1">{event.attendees ? `${event.attendees} Expected` : 'Attendees Info Soon'}</span>
                 </div>
               </div>
 
               <Link
-                to={`/event/${event.name}`}
+                to={`/event/${eventSlug(event)}`}
                 onClick={(e) => e.stopPropagation()}
-                className="mt-auto inline-flex items-center justify-center gap-2 bg-yellow-400 text-black px-4 py-2.5 rounded-lg font-bold text-sm hover:bg-yellow-300 transition-colors"
+                className="mt-auto inline-flex items-center justify-center gap-2 bg-brand-yellow text-ink px-4 py-2.5 rounded-lg font-bold text-sm hover:bg-brand-yellow-soft transition-colors"
               >
                 Learn More <ArrowRight className="h-4 w-4" />
               </Link>
