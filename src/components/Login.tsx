@@ -335,17 +335,6 @@ export default function Login() {
                   </div>
                 </div> */}
               </form>
-              <div className="mt-4">
-                <p className="text-sm text-gray-600">
-                  Don't have an account?{" "}
-                  <strong
-                    onClick={() => setHaveAccount(false)}
-                    className="text-blue-500 cursor-pointer hover:underline"
-                  >
-                    Sign up
-                  </strong>
-                </p>
-              </div>
             </div>
           </div>
         </>
