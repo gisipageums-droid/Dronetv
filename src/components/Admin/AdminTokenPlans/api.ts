@@ -1,8 +1,20 @@
 import { TokenPlan } from './App';
 import { ADMIN_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
 
-const API_URL = ADMIN_API ? `${ADMIN_API}/dev` : `${LAMBDA.plansAdmin}/dev`;
-const GET_API_URL = PAYMENT_API ? `${PAYMENT_API}/dev` : `${LAMBDA.plans}/dev`;
+// Self-hosted payment service's single POST /plans endpoint mirrors the old
+// Lambda's contract (upsert / deleteId / tokenPriceINR in one call, flat
+// body fields - not nested under a "plan" key) but requires a super-admin
+// bearer token, unlike the old Lambda.
+const API_URL = PAYMENT_API ? `${PAYMENT_API}/plans` : `${LAMBDA.plansAdmin}/dev`;
+const GET_API_URL = PAYMENT_API ? `${PAYMENT_API}/plans` : `${LAMBDA.plans}/dev`;
+
+function authHeaders(): Record<string, string> {
+    const token = localStorage.getItem('adminToken');
+    return {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+}
 
 export const fetchPlans = async () => {
     try {
@@ -20,19 +32,15 @@ export const addUpdatePlan = async (plan: Partial<TokenPlan>) => {
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authHeaders(),
             body: JSON.stringify({
-                plan: {
-                    id: plan.id,
-                    name: plan.name,
-                    tokens: plan.tokens,
-                    price: plan.price,
-                    discount: plan.discount,
-                    type: plan.type,
-                    features: plan.features
-                }
+                id: plan.id,
+                name: plan.name,
+                tokens: plan.tokens,
+                price: plan.price,
+                discount: plan.discount,
+                type: plan.type,
+                features: plan.features,
             }),
         });
 
@@ -50,9 +58,7 @@ export const updateTokenPrice = async (tokenPriceINR: string) => {
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authHeaders(),
             body: JSON.stringify({
                 tokenPriceINR: tokenPriceINR,
             }),
@@ -72,9 +78,7 @@ export const deletePlan = async (deleteId: string) => {
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: authHeaders(),
             body: JSON.stringify({
                 deleteId: deleteId,
             }),

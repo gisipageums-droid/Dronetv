@@ -340,9 +340,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           path: "/admin/professional/dashboard",
         },
       ];
+      const adminToken = localStorage.getItem("adminToken");
       const results = await Promise.allSettled(
         sources.map(s =>
-          fetch(s.url).then(r => r.json()).then(d => ({
+          fetch(s.url, { headers: adminToken ? { Authorization: `Bearer ${adminToken}` } : {} }).then(r => r.json()).then(d => ({
             label: s.label,
             path: s.path,
             count: (d?.cards ?? d?.data ?? []).filter(
