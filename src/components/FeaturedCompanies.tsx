@@ -70,35 +70,24 @@ const FeaturedCompanies: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-gradient-to-b from-yellow-300 via-yellow-300 to-yellow-300 relative overflow-hidden min-h-screen">
-      {/* Enhanced Background Pattern */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `linear-gradient(45deg, #FFEB3B 25%, transparent 25%), linear-gradient(-45deg, #FDD835 25%, transparent 25%)`,
-            backgroundSize: '60px 60px',
-            backgroundPosition: '0 0, 30px 30px'
-          }}
-        ></div>
-      </div>
+    <section className="py-20 bg-brand-yellow-soft relative overflow-hidden min-h-screen">
       {/* Floating Elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-20 w-32 h-32 bg-yellow-200/20 rounded-full animate-pulse blur-2xl"></div>
-        <div className="absolute bottom-20 right-20 w-40 h-40 bg-yellow-400/20 rounded-full animate-pulse blur-2xl" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-10 w-16 h-16 bg-yellow-500/30 rotate-45 animate-bounce" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-20 left-20 w-32 h-32 bg-brand-yellow-soft/20 rounded-full animate-pulse blur-2xl"></div>
+        <div className="absolute bottom-20 right-20 w-40 h-40 bg-brand-yellow/20 rounded-full animate-pulse blur-2xl" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-10 w-16 h-16 bg-brand-gold/30 rotate-45 animate-bounce" style={{ animationDelay: '1s' }}></div>
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-black text-black mb-4 tracking-tight">
+          <h2 className="text-4xl md:text-6xl font-black text-ink mb-4 tracking-tight">
             <span className="">
               Featured Companies
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-ink-paragraph max-w-3xl mx-auto mb-8">
             Industry leaders shaping the future of drone technology, artificial intelligence, and geospatial solutions with innovative products and groundbreaking research
           </p>
-          <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto rounded-full"></div>
+          <div className="w-24 h-1 bg-gradient-to-r from-brand-yellow to-brand-gold mx-auto rounded-full"></div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {
@@ -149,40 +138,50 @@ const FeaturedCompanies: React.FC = () => {
                     tabIndex={hasProfile ? 0 : undefined}
                   >
                     {/* Company Card Header */}
-                    <div className="relative h-40 sm:h-48 overflow-hidden bg-gradient-to-br from-yellow-200 to-yellow-400 flex-shrink-0 flex flex-col items-center justify-center px-4">
+                    <div className="relative h-40 sm:h-48 overflow-hidden bg-surface-alt border-b border-surface-cardborder flex-shrink-0 flex flex-col items-center justify-center px-4">
                       {logoSrc ? (
-                        <img
-                          src={logoSrc}
-                          alt={company.companyName}
-                          className="max-h-24 max-w-[75%] object-contain drop-shadow-md"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
+                        // Fixed-size wrapper (not just max-h/max-w on the
+                        // <img> itself) so wide, short logos (e.g. a 150x51
+                        // wordmark) get a real bounding box to center within
+                        // instead of relying on the flex parent + the
+                        // image's own intrinsic size, which let part of some
+                        // logos render outside the visible card edge.
+                        <div className="w-[85%] h-24 flex items-center justify-center">
+                          <img
+                            src={logoSrc}
+                            alt={company.companyName}
+                            className="max-h-full max-w-full object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const fallback = e.currentTarget.parentElement?.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'flex';
+                            }}
+                          />
+                        </div>
                       ) : null}
                       <div
-                        className="flex-col items-center justify-center gap-1 text-center"
+                        className="flex-col items-center justify-center gap-2 text-center"
                         style={{ display: logoSrc ? 'none' : 'flex' }}
                       >
-                        <span className="text-5xl font-black text-yellow-700 uppercase">
-                          {company.companyName?.[0] ?? '?'}
-                        </span>
-                        <p className="text-xs font-semibold text-gray-700 uppercase tracking-widest opacity-80 px-2">
+                        <div className="w-16 h-16 rounded-full bg-ink flex items-center justify-center shadow-md">
+                          <span className="text-2xl font-black text-brand-yellow uppercase">
+                            {company.companyName?.[0] ?? '?'}
+                          </span>
+                        </div>
+                        <p className="text-xs font-semibold text-ink uppercase tracking-widest px-2 line-clamp-1">
                           {company.companyName}
                         </p>
                       </div>
 
                       {/* Rating badge */}
-                      <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/70 backdrop-blur-sm px-2 py-1 rounded-full">
-                        <Star className="h-3 w-3 text-yellow-500 fill-current" />
-                        <span className="text-xs font-bold text-gray-800">{rating}</span>
+                      <div className="absolute top-3 right-3 flex items-center gap-1 bg-white shadow-sm px-2 py-1 rounded-full">
+                        <Star className="h-3 w-3 text-brand-gold fill-current" />
+                        <span className="text-xs font-bold text-ink-charcoal">{rating}</span>
                       </div>
 
                       {/* Industry badge */}
                       <div className="absolute bottom-3 left-3">
-                        <span className="bg-black/70 text-yellow-300 px-2 py-1 rounded-full text-xs font-semibold">
+                        <span className="bg-ink text-brand-yellow px-2 py-1 rounded-full text-xs font-semibold">
                           {industry}
                         </span>
                       </div>
@@ -191,10 +190,10 @@ const FeaturedCompanies: React.FC = () => {
                     <div className="p-4 sm:p-6 flex flex-col flex-1">
                       {/* Company Header */}
                       <div className="mb-3 sm:mb-4">
-                        <h3 className="text-lg sm:text-xl font-bold text-black mb-2 group-hover:text-gray-800 transition-colors duration-300">
+                        <h3 className="text-lg sm:text-xl font-bold text-ink mb-2 group-hover:text-ink-charcoal transition-colors duration-300">
                           {title}
                         </h3>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-gray-500 mb-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-ink-caption mb-3">
                           <div className="flex items-center gap-1">
                             <MapPin className="h-3 w-3 flex-shrink-0" />
                             {locationText}
@@ -207,50 +206,50 @@ const FeaturedCompanies: React.FC = () => {
                       </div>
 
                       {/* Description */}
-                      <p className="text-gray-600 mb-3 sm:mb-4 leading-relaxed text-xs sm:text-sm line-clamp-3">
+                      <p className="text-ink-paragraph mb-3 sm:mb-4 leading-relaxed text-xs sm:text-sm line-clamp-3">
                         {desc}
                       </p>
 
                       {/* Experience & Courses */}
                       <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
                         {/* Experience */}
-                        <div className="text-center p-2 sm:p-3 bg-yellow-200 rounded-lg sm:rounded-xl group-hover:bg-yellow-300 transition-colors duration-300">
-                          <Award className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-800 mx-auto mb-1 transition-colors duration-300" />
-                          <div className="text-xs sm:text-sm font-bold text-yellow-800">
+                        <div className="text-center p-2 sm:p-3 bg-surface-alt border border-surface-cardborder rounded-lg sm:rounded-xl">
+                          <Award className="h-3 w-3 sm:h-4 sm:w-4 text-brand-gold mx-auto mb-1" />
+                          <div className="text-xs sm:text-sm font-bold text-ink">
                             {company.aboutExperienceYears ? `${company.aboutExperienceYears} yrs` : '5+ yrs'}
                           </div>
-                          <div className="text-xs text-yellow-700">Experience</div>
+                          <div className="text-xs text-ink-caption">Experience</div>
                         </div>
 
                         {/* Courses / Services Count */}
-                        <div className="text-center p-2 sm:p-3 bg-yellow-300 rounded-lg sm:rounded-xl group-hover:bg-yellow-400 transition-colors duration-300">
-                          <Star className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-900 mx-auto mb-1" />
-                          <div className="text-xs sm:text-sm font-bold text-yellow-900">
+                        <div className="text-center p-2 sm:p-3 bg-surface-alt border border-surface-cardborder rounded-lg sm:rounded-xl">
+                          <Star className="h-3 w-3 sm:h-4 sm:w-4 text-brand-gold mx-auto mb-1" />
+                          <div className="text-xs sm:text-sm font-bold text-ink">
                             {servicesCount}
                           </div>
-                          <div className="text-xs text-yellow-800">Services</div>
+                          <div className="text-xs text-ink-caption">Services</div>
                         </div>
                       </div>
 
                       {/* Specialties (use products as badges) */}
                       <div className="mb-3 sm:mb-4">
-                        <h4 className="text-xs sm:text-sm font-semibold text-gray-800 mb-2">Specialties:</h4>
+                        <h4 className="text-xs sm:text-sm font-semibold text-ink-charcoal mb-2">Specialties:</h4>
                         <div className="flex flex-wrap gap-1">
                           {productsList.slice(0, 3).map((prod, idx) => (
                             <span
                               key={prod.title || prod.image || idx}
-                              className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium group-hover:bg-yellow-400 transition-colors duration-300"
+                              className="bg-surface-alt text-ink-charcoal border border-surface-cardborder px-2 py-1 rounded-full text-xs font-medium"
                             >
                               {prod.title || prod.description || 'Product'}
                             </span>
                           ))}
                           {productsCount && productsCount !== 'N/A' && productsCount > 3 && (
-                            <span className="bg-yellow-200 text-gray-600 px-2 py-1 rounded-full text-xs font-medium group-hover:bg-yellow-400 transition-colors duration-300">
+                            <span className="bg-surface-alt text-ink-paragraph border border-surface-cardborder px-2 py-1 rounded-full text-xs font-medium">
                               +{productsCount - 3} more
                             </span>
                           )}
                           {!productsList.length && productsCount && productsCount !== 'N/A' && (
-                            <span className="bg-yellow-200 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
+                            <span className="bg-surface-alt text-ink-paragraph border border-surface-cardborder px-2 py-1 rounded-full text-xs font-medium">
                               {productsCount} products
                             </span>
                           )}
@@ -259,7 +258,7 @@ const FeaturedCompanies: React.FC = () => {
 
                       {/* Achievements (companyValues) */}
                       <div className="mb-3 sm:mb-4">
-                        <h4 className="text-xs sm:text-sm font-semibold text-gray-800 mb-2 flex items-center gap-1">
+                        <h4 className="text-xs sm:text-sm font-semibold text-ink-charcoal mb-2 flex items-center gap-1">
                           <Award className="h-3 w-3 flex-shrink-0" />
                           Achievements:
                         </h4>
@@ -267,9 +266,9 @@ const FeaturedCompanies: React.FC = () => {
                           {company.companyValues?.slice(0, 2).map((value, idx) => (
                             <div
                               key={value.title || value.description || idx}
-                              className="text-xs text-gray-600 flex items-start gap-1"
+                              className="text-xs text-ink-paragraph flex items-start gap-1"
                             >
-                              <div className="w-1 h-1 bg-yellow-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                              <div className="w-1 h-1 bg-brand-gold rounded-full mt-1.5 flex-shrink-0"></div>
                               <b>{value.title}:</b> <span>{value.description}</span>
                             </div>
                           ))}
@@ -283,7 +282,7 @@ const FeaturedCompanies: React.FC = () => {
                             e.stopPropagation();
                             navigate(company.templateSelection === "template-1" ? `/company/${urlSlug}` : `/companies/${urlSlug}`);
                           }}
-                          className="group/btn bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-6 py-3 rounded-xl font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg"
+                          className="group/btn bg-gradient-to-r from-brand-yellow to-brand-gold text-ink px-6 py-3 rounded-xl font-semibold hover:from-brand-gold hover:to-brand-gold transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg"
                         >
                           <span>View Profile</span>
                           <ExternalLink className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
@@ -292,7 +291,7 @@ const FeaturedCompanies: React.FC = () => {
                     </div>
 
                     {/* Yellow Glow Border on Hover */}
-                    <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-yellow-400/30 group-hover:shadow-lg group-hover:shadow-yellow-400/20 transition-all duration-500"></div>
+                    <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-brand-yellow/30 group-hover:shadow-lg group-hover:shadow-brand-yellow/20 transition-all duration-500"></div>
                   </div>
                 );
               })
@@ -303,13 +302,13 @@ const FeaturedCompanies: React.FC = () => {
         </div>
         {/* Call to Action Section */}
         <div className="text-center mt-16">
-          <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-3xl p-8 shadow-2xl">
-            <h3 className="text-2xl font-bold text-black mb-4">Want to be featured?</h3>
-            <p className="text-black/80 mb-6 max-w-2xl mx-auto">
+          <div className="bg-gradient-to-r from-brand-yellow to-brand-gold rounded-3xl p-8 shadow-2xl">
+            <h3 className="text-2xl font-bold text-ink mb-4">Want to be featured?</h3>
+            <p className="text-ink/80 mb-6 max-w-2xl mx-auto">
               Join our network of innovative companies shaping the future of drone technology and reach thousands of industry professionals.
             </p>
             <button
-              className="bg-yellow-400 text-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="bg-brand-yellow text-ink px-8 py-3 rounded-xl font-bold hover:bg-brand-gold transition-all duration-300 transform hover:scale-105 shadow-lg"
               onClick={() => navigate('/partner')}
             >
               Partner With Us
