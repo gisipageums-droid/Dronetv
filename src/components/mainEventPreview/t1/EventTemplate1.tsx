@@ -216,7 +216,7 @@ const EventTemplate1: React.FC = () => {
       }
 
       // Slug-based fallback: look up real event name from dashboard
-      const dashUrl = `${LAMBDA.events}/events-dashboard?viewType=main`;
+      const dashUrl = EVENTS_API ? `${EVENTS_API}/events-dashboard?viewType=main` : `${LAMBDA.events}/events-dashboard?viewType=main`;
       const dashRes = await fetch(dashUrl);
       if (dashRes.ok) {
         const dash = await dashRes.json();

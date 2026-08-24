@@ -44,7 +44,9 @@ export default function MainProTemp2() {
 
       // Step 1: find the professional card by urlSlug from public listing
       const cardsResp = await fetch(
-        `${LAMBDA.professional}/professional-dashboard-cards?viewType=main`,
+        PROFESSIONAL_API
+          ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=main`
+          : `${LAMBDA.professional}/professional-dashboard-cards?viewType=main`,
         { method: 'GET', headers: { 'Content-Type': 'application/json' } }
       );
       if (!cardsResp.ok) throw new Error(`Cards fetch failed: ${cardsResp.status}`);
