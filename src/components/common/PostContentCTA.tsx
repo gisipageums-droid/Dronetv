@@ -55,9 +55,12 @@ export default function PostContentCTA({ contentType, typeLabel, ctaTitle, ctaDe
 
   useEffect(() => {
     if (!open || !userId) return;
-    fetch(`${PROFILE_API}?userId=${userId}`)
+    const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+    fetch(`${PROFILE_API}?userId=${userId}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    })
       .then(r => r.json())
-      .then(d => setBalance(Number(d?.profile?.tokenBalance ?? 0)))
+      .then(d => setBalance(Number(d?.tokenBalance ?? 0)))
       .catch(() => setBalance(null));
   }, [open, userId]);
 

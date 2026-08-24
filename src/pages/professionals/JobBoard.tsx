@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MapPin, Search, X, Briefcase, Plus, Paperclip } from 'lucide-react';
-import { fetchContent, fetchAdminContent, createContent, MediaItem } from '../../lib/mediaApi';
+import { fetchContent, fetchMyContent, createContent, MediaItem } from '../../lib/mediaApi';
 import { submitApplication, uploadResumeFile } from '../../lib/jobApplicationsApi';
 import { useUserAuth } from '../../components/context/context';
 import CompactHero from '../../components/common/CompactHero';
@@ -70,7 +70,7 @@ export default function JobBoardPage() {
 
   const loadMyJobs = useCallback(() => {
     if (!userId) { setMyJobs([]); return; }
-    fetchAdminContent(undefined, 'job')
+    fetchMyContent(undefined, 'job')
       .then(all => setMyJobs(all.filter(j => j.author === userId && !j.title.startsWith('[Application]'))))
       .catch(() => {});
   }, [userId]);

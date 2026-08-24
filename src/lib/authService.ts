@@ -25,7 +25,16 @@ const USER_KEY = 'user';
 // ─── Token helpers ────────────────────────────────────────────────────────────
 
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  // Admin login (context.tsx adminLogin) stores its JWT under a separate
+  // "adminToken" key, not TOKEN_KEY - without this, every admin-panel call
+  // that goes through authHeader()/getToken() silently sent no token at all
+  // (403 on any /admin or viewType=admin endpoint). Checking adminToken
+  // FIRST: an admin token is valid on both admin-gated and self-scoped
+  // endpoints (backend's require_admin/require_self_or_admin both allow
+  // admins through), so it's the strictly more useful one whenever both
+  // happen to be present in the same browser (e.g. a dev session that's
+  // logged into both a regular account and the admin panel).
+  return localStorage.getItem('adminToken') || localStorage.getItem(TOKEN_KEY);
 }
 
 export function getStoredUser(): UserData | null {
@@ -53,7 +62,7 @@ export function clearSession() {
 
 // ─── Auth header helper ───────────────────────────────────────────────────────
 
-function authHeader(): Record<string, string> {
+export function authHeader(): Record<string, string> {
   const token = getToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
