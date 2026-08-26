@@ -8,8 +8,13 @@ import {
 } from "lucide-react";
 import { COMPANY_API, PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
 
-const COMPANIES_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=admin` : `${LAMBDA.company}/dashboard-cards?viewType=admin`;
-const PROFESSIONALS_API = PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`;
+const COMPANIES_API = COMPANY_API ? `${COMPANY_API}/dashboard-cards?viewType=admin&limit=1000` : `${LAMBDA.company}/dashboard-cards?viewType=admin`;
+const PROFESSIONALS_API = PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin&limit=500` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`;
+
+function adminAuthHeaders(): Record<string, string> {
+  const token = localStorage.getItem('adminToken');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 interface UserRecord {
   email: string;
@@ -418,8 +423,8 @@ export default function AdminUsersDashboard() {
     setError(null);
     try {
       const [compRes, proRes] = await Promise.all([
-        fetch(COMPANIES_API, { signal }),
-        fetch(PROFESSIONALS_API, { signal }),
+        fetch(COMPANIES_API, { signal, headers: adminAuthHeaders() }),
+        fetch(PROFESSIONALS_API, { signal, headers: adminAuthHeaders() }),
       ]);
       const compData = compRes.ok ? await compRes.json() : { cards: [] };
       const proData = proRes.ok ? await proRes.json() : { cards: [] };
