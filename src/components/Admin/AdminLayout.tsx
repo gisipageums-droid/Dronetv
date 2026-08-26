@@ -340,7 +340,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           path: "/admin/professional/dashboard",
         },
       ];
-      const adminToken = localStorage.getItem("adminToken");
+      // Right after login, this effect can mount before localStorage has
+      // settled the freshly-written adminToken, sending these requests with
+      // no Authorization header at all (401/403). One short retry covers
+      // that window without waiting for the next 60s interval tick.
+      let adminToken = localStorage.getItem("adminToken");
+      if (!adminToken) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        adminToken = localStorage.getItem("adminToken");
+        if (!adminToken) return;
+      }
       const results = await Promise.allSettled(
         sources.map(s =>
           fetch(s.url, { headers: adminToken ? { Authorization: `Bearer ${adminToken}` } : {} }).then(r => r.json()).then(d => ({
