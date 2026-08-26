@@ -17,6 +17,28 @@ import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 // the whole "list my company" submit fails with a ValidationException.
 const FILE_UPLOAD_API_URL = COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
 
+// Checks whether a company with this (GST-derived) name is already
+// registered before letting the user proceed past GST verification.
+// Reuses the same /drafts/check-name endpoint the final draft-submit call
+// already relies on (isApproved rows, or rows owned by this same user, are
+// the only ones that block) - previously that was the ONLY place this
+// check ran, so a duplicate company could complete GST verification and
+// the entire rest of the multi-step form only to get a generic 409 at
+// final submit. Fails open (returns available) if the check itself can't
+// be reached.
+const checkCompanyNameAvailable = async (name: string, userId: string): Promise<boolean> => {
+  if (!COMPANY_API || !name) return true;
+  try {
+    const res = await axios.get(`${COMPANY_API}/drafts/check-name`, {
+      params: { name, userId },
+      timeout: 10000,
+    });
+    return res.data?.available !== false;
+  } catch {
+    return true;
+  }
+};
+
 const uploadImageFile = async (file: File, fieldName: string, userId: string): Promise<string> => {
   const presignRes = await axios.post(
     FILE_UPLOAD_API_URL,
@@ -1075,6 +1097,7 @@ const GSTVerificationSection: React.FC<{
   updateFormData: (data: any) => void;
   isVerified: boolean;
   isVerifying: boolean;
+  duplicateError?: string | null;
   verifiedData?: {
     companyName: string;
     legalName: string;
@@ -1106,7 +1129,7 @@ const GSTVerificationSection: React.FC<{
   isAutoFilling: boolean;
   autoFillStep: 'idle' | 'scraping' | 'processing' | 'done' | 'error';
   onVerifySuccess: (data: any) => void;
-}> = ({ gstNumber, onGSTChange, onVerifyGST, isVerified, isVerifying, verifiedData, address, onAddressChange, onVerifiedDataChange, formData, updateFormData,
+}> = ({ gstNumber, onGSTChange, onVerifyGST, isVerified, isVerifying, duplicateError, verifiedData, address, onAddressChange, onVerifiedDataChange, formData, updateFormData,
   panNumber, onPanChange, panName, onPanNameChange, panDob, onPanDobChange, onVerifyPAN, isVerifyingPAN, isPANVerified,
   onAutoFill, isAutoFilling, autoFillStep, onVerifySuccess
 }) => {
@@ -1463,6 +1486,16 @@ const GSTVerificationSection: React.FC<{
             onClose={() => setShowConsentDetails(false)}
           />
         </div>
+
+        {duplicateError && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center text-red-600 mb-2">
+              <AlertCircle className="w-4 h-4 mr-2" />
+              <span className="text-sm font-medium">Company Already Registered</span>
+            </div>
+            <p className="text-xs text-red-600">{duplicateError}</p>
+          </div>
+        )}
 
         {isVerified && (
           <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -2220,6 +2253,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     return false;
   });
   const [verifyingGST, setVerifyingGST] = useState(false);
+  const [gstDuplicateError, setGstDuplicateError] = useState<string | null>(null);
   const [verifiedGSTData, setVerifiedGSTData] = useState<{
     companyName: string;
     legalName: string;
@@ -2256,6 +2290,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   // NEW: Handle GST number change
   const handleGSTChange = (value: string) => {
     setGSTNumber(value);
+    setGstDuplicateError(null);
     // Reset verification if GST number changes
     if (gstVerified) {
       setGSTVerified(false);
@@ -2282,6 +2317,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
     if (gstNumber.length >= 15) {
       setVerifyingGST(true);
+      setGstDuplicateError(null);
 
       try {
         // SUREPASS GST ADVANCED API
@@ -2364,6 +2400,18 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           // Map Surepass fields to our verifiedData structure as per user's JSON response
           const notNA = (v: string | undefined | null) => (v && v !== "NA") ? v : "";
           const companyName = notNA(apiData.trade_name) || notNA(apiData.business_name) || apiData.legal_name || "";
+
+          if (companyName) {
+            const nameAvailable = await checkCompanyNameAvailable(companyName, formData.directorEmail || "");
+            if (!nameAvailable) {
+              const msg = `"${companyName}" is already registered with DroneTv. If this is your company, please contact support instead of registering again.`;
+              setGstDuplicateError(msg);
+              toast.error(msg);
+              setVerifyingGST(false);
+              return;
+            }
+          }
+
           const legalName = apiData.legal_name || "";
           const panNumber = apiData.pan_number || "";
           const registrationDate = apiData.date_of_registration || "";
@@ -3477,6 +3525,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
             onVerifyGST={handleVerifyGST}
             isVerified={gstVerified}
             isVerifying={verifyingGST}
+            duplicateError={gstDuplicateError}
             verifiedData={verifiedGSTData || undefined}
             address={gstAddress}
             onAddressChange={handleGstAddressChange}
