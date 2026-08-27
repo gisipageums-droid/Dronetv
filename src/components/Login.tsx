@@ -190,7 +190,7 @@ export default function Login() {
       const data = await authService.googleLogin(credentialResponse.credential);
       login(data);
       toast.success("Google login successful!");
-      navigate("/user-companies");
+      navigate(data?.userData?.role === "company" ? "/company-portal" : "/user-dashboard");
     } catch (error: any) {
       toast.error(error.message || "Google authentication failed");
     }
@@ -205,7 +205,7 @@ export default function Login() {
       const data = await authService.login(loginData);
       login(data);
       setLoginData({ email: "", password: "" });
-      navigate("/user-dashboard");
+      navigate(data?.userData?.role === "company" ? "/company-portal" : "/user-dashboard");
     } catch (error: any) {
       toast.error(error.message || "Login failed. Please check your credentials.");
     } finally {

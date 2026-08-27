@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fetchFormStructure, submitForm } from "./api/formApi";
 import { Step1 } from "./components/steps/Step1";
@@ -6,12 +6,14 @@ import { Step2 } from "./components/steps/Step2";
 import { Step3 } from "./components/steps/Step3";
 import { Step4 } from "./components/steps/Step4";
 import { Step5 } from "./components/steps/Step5";
-import Step6 from "./components/steps/step6";
+// Lazy: pulls in mammoth + pdfjs-dist, only needed once the user reaches step 6.
+const Step6 = lazy(() => import("./components/steps/step6"));
 import { Summary } from "./components/steps/Summary";
 import { FormProvider, useForm } from "./context/FormContext";
 import { useFormSteps } from "./hooks/useFormSteps";
 import { Loader } from "./components/Loader";
-import { AdminEditor } from "./admin/AdminEditor";
+// Lazy: admin-only panel, no need to ship it to every regular visitor.
+const AdminEditor = lazy(() => import("./admin/AdminEditor").then(m => ({ default: m.AdminEditor })));
 import axios from "axios";
 import { useUserAuth } from "../../../context/context";
 import { AlertTriangle, X } from "lucide-react";
@@ -474,11 +476,13 @@ function AppInner() {
           {current === 0 ? (
             <Step1 step={stepData} setStepValid={setStep1Valid} showErrors={showStep1Error} />
           ) : current === 5 ? (
-            <Step6
-              step={stepData}
-              allSteps={steps}
-              onSubmit={(data) => setResumeData(data)}
-            />
+            <Suspense fallback={<div>Loading...</div>}>
+              <Step6
+                step={stepData}
+                allSteps={steps}
+                onSubmit={(data) => setResumeData(data)}
+              />
+            </Suspense>
           ) : (
             <StepComponent step={stepData} allSteps={steps} />
           )}
@@ -515,7 +519,11 @@ function AppInner() {
         </div>
 
         {/* --- Admin Editor Overlay --- */}
-        <AdminEditor isOpen={adminOpen} onClose={() => setAdminOpen(false)} />
+        {isAdminLogin && (
+          <Suspense fallback={null}>
+            <AdminEditor isOpen={adminOpen} onClose={() => setAdminOpen(false)} />
+          </Suspense>
+        )}
 
         {/* Token Validation Modal */}
         <TokenValidationModal
