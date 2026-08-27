@@ -1228,6 +1228,15 @@ const GSTVerificationSection: React.FC<{
             pan: ''
           };
 
+          if (mappedData.companyName) {
+            const nameAvailable = await checkCompanyNameAvailable(mappedData.companyName, formData.directorEmail || "");
+            if (!nameAvailable) {
+              toast.error(`"${mappedData.companyName}" is already registered with DroneTv. If this is your company, please contact support instead of registering again.`);
+              setIsVerifyingCIN(false);
+              return;
+            }
+          }
+
           onVerifySuccess(mappedData);
           if (regAddress) onAddressChange(regAddress);
         } else {
