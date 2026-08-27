@@ -49,11 +49,11 @@ export const FormStep: React.FC<FormStepProps> = ({
   ];
 
   return (
-    <div className={embedded ? "bg-gradient-to-br from-yellow-50 to-amber-100" : "min-h-screen bg-gradient-to-br from-yellow-50 to-amber-100 pt-16"}>
+    <div className={embedded ? "bg-gradient-to-br from-surface-main to-brand-yellow-soft" : "min-h-screen bg-gradient-to-br from-surface-main to-brand-yellow-soft pt-16"}>
 
       {/* Progress Bar (Only shown if more than 1 step) */}
       {totalSteps > 1 && (
-        <div className="bg-yellow-100 shadow-sm border-b border-amber-200">
+        <div className="bg-brand-yellow-soft shadow-sm border-b border-brand-yellow-soft">
           <div className="max-w-4xl mx-auto px-6 py-3">
             <div className="flex items-center justify-between mb-3 overflow-x-auto pb-2">
               {stepTitles.map((stepTitle, index) => {
@@ -67,18 +67,18 @@ export const FormStep: React.FC<FormStepProps> = ({
                       onClick={() => onStepClick && onStepClick(stepNumber)}
                       className={`flex items-center px-2 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                         isActive
-                          ? 'bg-black text-yellow-400 shadow-md'
+                          ? 'bg-ink text-brand-yellow shadow-md'
                           : isCompleted
-                          ? 'bg-amber-200 text-amber-900 hover:bg-amber-300'
-                          : 'bg-yellow-200 text-gray-700 hover:bg-yellow-300'
+                          ? 'bg-brand-yellow-soft text-brand-gold hover:bg-brand-yellow-soft'
+                          : 'bg-brand-yellow-soft text-ink-paragraph hover:bg-brand-yellow-soft'
                       }`}
                     >
                       <span className={`w-4 h-4 rounded-full flex items-center justify-center text-xs ${stepTitle ? 'mr-1' : ''} ${
                         isActive
-                          ? 'bg-yellow-400 text-black'
+                          ? 'bg-brand-yellow text-ink'
                           : isCompleted
-                          ? 'bg-amber-600 text-black'
-                          : 'bg-gray-300 text-gray-600'
+                          ? 'bg-brand-gold text-ink'
+                          : 'bg-ink-light text-ink-paragraph'
                       }`}>
                         {isCompleted ? '✓' : stepNumber}
                       </span>
@@ -86,7 +86,7 @@ export const FormStep: React.FC<FormStepProps> = ({
                     </button>
                     {index < stepTitles.length - 1 && (
                       <div className={`w-4 h-0.5 mx-1 ${
-                        isCompleted ? 'bg-amber-400' : 'bg-yellow-300'
+                        isCompleted ? 'bg-brand-yellow' : 'bg-brand-yellow-soft'
                       }`} />
                     )}
                   </div>
@@ -95,16 +95,16 @@ export const FormStep: React.FC<FormStepProps> = ({
             </div>
             
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-800">
+              <span className="text-sm font-medium text-ink-charcoal">
                 Step {currentStep} of {totalSteps}
               </span>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-ink-paragraph">
                 {Math.round((currentStep / totalSteps) * 100)}% Complete
               </span>
             </div>
-            <div className="w-full bg-yellow-200 rounded-full h-2">
+            <div className="w-full bg-brand-yellow-soft rounded-full h-2">
               <div
-                className="bg-gradient-to-r from-amber-500 to-yellow-500 h-2 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-brand-gold to-brand-gold h-2 rounded-full transition-all duration-500"
                 style={{ width: `${(currentStep / totalSteps) * 100}%` }}
               />
             </div>
@@ -121,27 +121,27 @@ export const FormStep: React.FC<FormStepProps> = ({
       >
         {/* Page Title */}
         <div className="mb-4">
-          <h1 className="text-2xl font-bold text-black mb-1">{title}</h1>
+          <h1 className="text-2xl font-bold text-ink mb-1">{title}</h1>
           {description && (
-            <p className="text-sm text-gray-700">{description}</p>
+            <p className="text-sm text-ink-paragraph">{description}</p>
           )}
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-lg shadow-md border border-amber-200 p-4 mb-4">
+        <div className="bg-surface-card rounded-lg shadow-md border border-brand-yellow-soft p-4 mb-4">
           {children}
         </div>
 
         {/* Navigation - Updated with skip button */}
-        <div className="flex justify-between items-center bg-white rounded-lg shadow-md border border-amber-200 p-3">
+        <div className="flex justify-between items-center bg-surface-card rounded-lg shadow-md border border-brand-yellow-soft p-3">
           <button
             type="button"
             onClick={onPrev}
             disabled={isFirstStep}
             className={`flex items-center px-4 py-2 rounded-md font-medium transition-all ${
               isFirstStep
-                ? 'bg-yellow-100 text-gray-400 cursor-not-allowed'
-                : 'bg-yellow-200 text-gray-700 hover:bg-yellow-300 hover:shadow-md'
+                ? 'bg-brand-yellow-soft text-ink-caption cursor-not-allowed'
+                : 'bg-brand-yellow-soft text-ink-paragraph hover:bg-brand-yellow-soft hover:shadow-md'
             }`}
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
@@ -158,7 +158,7 @@ export const FormStep: React.FC<FormStepProps> = ({
                whileHover={{y:[0,-2]}}
                whileTap={{scale:[1,0.9]}}
                 onClick={onSkip}
-                className="flex items-center px-4 py-2 rounded-md bg-green-500 text-gray-700 font-medium transition-all hover:bg-gray-300 hover:shadow-md"
+                className="flex items-center px-4 py-2 rounded-md bg-status-success text-ink-paragraph font-medium transition-all hover:bg-ink-light hover:shadow-md"
               >
                 <SkipForward className="w-4 h-4 mr-1" />
                 Skip This Step
@@ -175,10 +175,10 @@ export const FormStep: React.FC<FormStepProps> = ({
               disabled={!isValid || isSubmitting}
               className={`flex items-center px-6 py-2 rounded-md font-medium transition-all ${
                 !isValid || isSubmitting
-                  ? 'bg-yellow-100 text-gray-400 cursor-not-allowed'
+                  ? 'bg-brand-yellow-soft text-ink-caption cursor-not-allowed'
                   : isLastStep || totalSteps === 1
-                  ? 'bg-black text-white hover:bg-amber-700  hover:shadow-md'
-                  : 'bg-black text-yellow-400 hover:gt-gray-800  hover:shadow-md'
+                  ? 'bg-ink text-white hover:bg-brand-gold  hover:shadow-md'
+                  : 'bg-ink text-brand-yellow hover:gt-gray-800  hover:shadow-md'
               }`}
             >
               {isSubmitting ? (

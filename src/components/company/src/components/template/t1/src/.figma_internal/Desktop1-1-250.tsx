@@ -44,7 +44,7 @@ export default function Desktop1() {
         </div>
       </div>
       <div className="absolute bg-[#ffffff] h-28 left-0 top-0 w-[1440px]">
-        <div aria-hidden="true" className="absolute border-[5px] border-neutral-100 border-solid inset-[-5px] pointer-events-none" />
+        <div aria-hidden="true" className="absolute border-[5px] border-ink-light border-solid inset-[-5px] pointer-events-none" />
       </div>
       <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[527px] not-italic text-[#000000] text-[0px] text-nowrap top-8">
         <p className="font-['Inter:Semi_Bold',_sans-serif] font-semibold leading-[normal] whitespace-pre">
@@ -58,10 +58,10 @@ export default function Desktop1() {
           <span className="text-[15px]"> </span>
         </p>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[756px] not-italic text-[0px] text-neutral-100 text-nowrap top-[29px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[756px] not-italic text-[0px] text-ink-light text-nowrap top-[29px]">
         <p className="leading-[normal] whitespace-pre">
           <span className="font-['Inter:Semi_Bold',_sans-serif] font-semibold not-italic text-[#1c1c1c] text-[24px]">Product</span>
-          <span className="text-[15px] text-neutral-100"> </span>
+          <span className="text-[15px] text-ink-light"> </span>
         </p>
       </div>
       <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold leading-[0] left-[882px] not-italic text-[#1c1c1c] text-[24px] text-nowrap top-[31px]">
@@ -90,13 +90,13 @@ export default function Desktop1() {
       <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-[38px] leading-[0] left-[695px] not-italic text-[32px] text-[rgba(29,28,28,0.28)] text-center top-[986px] translate-x-[-50%] w-[422px]">
         <p className="leading-[normal]">USED BY</p>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[214px] not-italic text-[40px] text-center text-indigo-600 top-[1219px] translate-x-[-50%] w-[340px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[214px] not-italic text-[40px] text-center text-status-info top-[1219px] translate-x-[-50%] w-[340px]">
         <p className="leading-[normal]">About Company</p>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[51px] not-italic text-[40px] text-indigo-600 top-[1703px] w-[221px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[51px] not-italic text-[40px] text-status-info top-[1703px] w-[221px]">
         <p className="leading-[normal]">Services</p>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[65px] not-italic text-[40px] text-indigo-600 top-[2380px] w-[221px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[65px] not-italic text-[40px] text-status-info top-[2380px] w-[221px]">
         <p className="leading-[normal]">Products</p>
       </div>
       <div className="absolute h-[260px] left-[57px] top-[1319px] w-[1316px]">
@@ -152,13 +152,13 @@ export default function Desktop1() {
       <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold leading-[0] left-[646.5px] not-italic text-[#101010] text-[32px] text-center top-[2966px] translate-x-[-50%] w-[321px]">
         <p className="leading-[normal]">Product1</p>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[38px] leading-[0] left-[657px] not-italic text-[32px] text-center text-indigo-600 top-[3172px] translate-x-[-50%] w-[400px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[38px] leading-[0] left-[657px] not-italic text-[32px] text-center text-status-info top-[3172px] translate-x-[-50%] w-[400px]">
         <p className="leading-[normal]">BrightWave Solutions</p>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[133px] leading-[0] left-[706.5px] not-italic text-[32px] text-center text-indigo-600 top-[3271px] translate-x-[-50%] w-[1171px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[133px] leading-[0] left-[706.5px] not-italic text-[32px] text-center text-status-info top-[3271px] translate-x-[-50%] w-[1171px]">
         <p className="leading-[normal]">{`"Working with [Your Company Name] has been a game-changer for our business. Their team delivered innovative solutions on time and with exceptional quality. We’ve seen real growth since partnering with them."`}</p>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[29px] leading-[0] left-[652.5px] not-italic text-[24px] text-center text-indigo-600 top-[3451px] translate-x-[-50%] w-[479px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[29px] leading-[0] left-[652.5px] not-italic text-[24px] text-center text-status-info top-[3451px] translate-x-[-50%] w-[479px]">
         <p className="leading-[normal]">Aarav Mehta, CEO, BrightWave Solutions</p>
       </div>
       <div className="absolute h-[59px] left-[30px] top-[3294px] w-[60px]">
@@ -176,7 +176,7 @@ export default function Desktop1() {
           <ellipse cx="30" cy="29.5" fill="var(--fill-0, #D9D9D9)" id="Ellipse 2" rx="30" ry="29.5" />
         </svg>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[58px] leading-[0] left-[92px] not-italic text-[48px] text-indigo-600 top-[3753px] w-[508px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[58px] leading-[0] left-[92px] not-italic text-[48px] text-status-info top-[3753px] w-[508px]">
         <p className="leading-[normal]">Contact Us</p>
       </div>
       <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[37px] leading-[0] left-[148px] not-italic text-[#101010] text-[24px] top-[4032px] w-[212px]">

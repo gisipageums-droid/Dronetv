@@ -26,17 +26,17 @@ export const FormInput: React.FC<FormInputProps> = ({
   rows,
   disabled = false,
 }) => {
-  const inputClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm text-gray-900 placeholder-gray-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed ${error
-    ? 'border-red-300 bg-red-50'
-    : 'border-amber-300 bg-white hover:border-amber-400'
+  const inputClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent text-sm text-ink placeholder-ink-caption disabled:bg-ink-light disabled:text-ink-caption disabled:cursor-not-allowed ${error
+    ? 'border-status-error/40 bg-status-error/10'
+    : 'border-brand-yellow-soft bg-surface-card hover:border-brand-yellow'
     } ${className}`;
 
   return (
     <div className="mb-2">
       {(label || required) && (
-        <label className="block text-xs font-semibold text-gray-700 mt-1 mb-1">
+        <label className="block text-xs font-semibold text-ink-paragraph mt-1 mb-1">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-status-error ml-1">*</span>}
         </label>
       )}
 
@@ -63,7 +63,7 @@ export const FormInput: React.FC<FormInputProps> = ({
       )}
 
       {error && (
-        <div className="flex items-center mt-1 text-red-600">
+        <div className="flex items-center mt-1 text-status-error">
           <AlertCircle className="w-4 h-4 mr-2" />
           <span className="text-xs">{error}</span>
         </div>
@@ -95,16 +95,16 @@ export const Select: React.FC<SelectProps> = ({
   className = '',
   disabled = false,
 }) => {
-  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm text-gray-900 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed ${error
-    ? 'border-red-300 bg-red-50'
-    : 'border-amber-300 bg-white hover:border-amber-400'
+  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent text-sm text-ink disabled:bg-ink-light disabled:text-ink-caption disabled:cursor-not-allowed ${error
+    ? 'border-status-error/40 bg-status-error/10'
+    : 'border-brand-yellow-soft bg-surface-card hover:border-brand-yellow'
     } ${className}`;
 
   return (
     <div className="mb-3">
-      <label className="block text-xs font-semibold text-gray-700 mb-1">
+      <label className="block text-xs font-semibold text-ink-paragraph mb-1">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-status-error ml-1">*</span>}
       </label>
 
       <select
@@ -123,7 +123,7 @@ export const Select: React.FC<SelectProps> = ({
       </select>
 
       {error && (
-        <div className="flex items-center mt-1 text-red-600">
+        <div className="flex items-center mt-1 text-status-error">
           <AlertCircle className="w-4 h-4 mr-2" />
           <span className="text-xs">{error}</span>
         </div>
@@ -164,18 +164,18 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
   return (
     <div className="mb-3">
-      <label className="block text-xs font-semibold text-slate-700 mb-2">
+      <label className="block text-xs font-semibold text-ink-paragraph mb-2">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-status-error ml-1">*</span>}
       </label>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {options.map((option) => (
           <label
             key={option}
-            className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-slate-50 ${selected.includes(option)
-              ? 'border-blue-500 bg-blue-50 text-blue-700'
-              : 'border-slate-300 text-gray-800'
+            className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-ink-offwhite ${selected.includes(option)
+              ? 'border-status-info bg-status-info/10 text-status-info'
+              : 'border-ink-light text-ink-charcoal'
               }`}
           >
             <input
@@ -185,8 +185,8 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
               className="sr-only"
             />
             <div className={`w-3 h-3 rounded border-2 mr-2 flex items-center justify-center ${selected.includes(option)
-              ? 'border-blue-500 bg-blue-500'
-              : 'border-slate-300'
+              ? 'border-status-info bg-status-info'
+              : 'border-ink-light'
               }`}>
               {selected.includes(option) && (
                 <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -209,7 +209,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
           />
           {otherValue && otherValue.trim() && (
             <div className="mt-3">
-              <h5 className="text-xs font-semibold text-slate-700 mb-1">Added Items:</h5>
+              <h5 className="text-xs font-semibold text-ink-paragraph mb-1">Added Items:</h5>
               <div className="flex flex-wrap">
                 {otherValue.split(',').map((item, index) => {
                   const trimmedItem = item.trim();
@@ -217,7 +217,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                   return (
                     <span
                       key={index}
-                      className="inline-block px-2 py-0.5 mr-1 mb-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium"
+                      className="inline-block px-2 py-0.5 mr-1 mb-1 bg-status-info/15 text-status-info rounded border border-status-info/25 text-xs font-medium"
                     >
                       {trimmedItem}
                     </span>
@@ -230,7 +230,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       )}
 
       {error && (
-        <div className="flex items-center mt-1 text-red-600">
+        <div className="flex items-center mt-1 text-status-error">
           <AlertCircle className="w-4 h-4 mr-2" />
           <span className="text-xs">{error}</span>
         </div>

@@ -31,25 +31,25 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     onChange('+91' + digits);
   };
 
-  const containerClasses = `flex border rounded-md transition-all focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent ${
-    error ? 'border-red-300 bg-red-50' : 'border-amber-300 bg-white hover:border-amber-400'
+  const containerClasses = `flex border rounded-md transition-all focus-within:ring-2 focus-within:ring-status-info focus-within:border-transparent ${
+    error ? 'border-status-error/40 bg-status-error/10' : 'border-brand-yellow-soft bg-surface-card hover:border-brand-yellow'
   }`;
 
-  const inputClasses = `flex-1 px-3 py-2 border-0 rounded-r-md text-gray-900 bg-white transition-all focus:outline-none text-sm ${
-    error ? 'bg-red-50' : 'bg-white'
+  const inputClasses = `flex-1 px-3 py-2 border-0 rounded-r-md text-ink bg-surface-card transition-all focus:outline-none text-sm ${
+    error ? 'bg-status-error/10' : 'bg-surface-card'
   } ${className}`;
 
   return (
     <div className="mb-2">
-      <label className="block text-xs font-semibold text-gray-700 mt-1 mb-1">
+      <label className="block text-xs font-semibold text-ink-paragraph mt-1 mb-1">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-status-error ml-1">*</span>}
       </label>
 
       <div className={containerClasses}>
         {/* Fixed India +91 prefix */}
-        <div className="flex items-center px-3 py-2 border-r border-amber-300 bg-gray-50 rounded-l-md select-none">
-          <span className="text-sm font-semibold text-gray-700">+91</span>
+        <div className="flex items-center px-3 py-2 border-r border-brand-yellow-soft bg-ink-offwhite rounded-l-md select-none">
+          <span className="text-sm font-semibold text-ink-paragraph">+91</span>
         </div>
 
         <input
@@ -65,7 +65,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
       </div>
 
       {error && (
-        <div className="flex items-center mt-1 text-red-600">
+        <div className="flex items-center mt-1 text-status-error">
           <AlertCircle className="w-4 h-4 mr-2" />
           <span className="text-xs">{error}</span>
         </div>

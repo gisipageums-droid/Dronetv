@@ -187,16 +187,16 @@ const Step5ProductsServices: React.FC<StepProps> = ({
       <div className="space-y-6">
 
         {/* Services Section */}
-        <div className="p-3 rounded-lg bg-blue-50">
-          <h3 className="flex items-center mb-3 text-sm font-bold text-blue-900">
+        <div className="p-3 rounded-lg bg-status-info/10">
+          <h3 className="flex items-center mb-3 text-sm font-bold text-status-info">
             <Wrench className="w-5 h-5 mr-2" />
             Services
           </h3>
 
           {/* Quick-add suggestions */}
           {serviceSuggestions.length > 0 && (
-            <div className="mb-3 p-2 bg-white border border-blue-100 rounded-md">
-              <p className="flex items-center gap-1 text-xs font-semibold text-blue-700 mb-2">
+            <div className="mb-3 p-2 bg-surface-card border border-status-info/15 rounded-md">
+              <p className="flex items-center gap-1 text-xs font-semibold text-status-info mb-2">
                 <Zap className="w-3 h-3" />
                 Quick add — based on your company type ({categories.join(", ")})
               </p>
@@ -211,8 +211,8 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       disabled={added}
                       className={`px-2 py-1 text-xs rounded border transition-all ${
                         added
-                          ? "bg-blue-100 border-blue-300 text-blue-400 cursor-default"
-                          : "bg-white border-blue-300 text-blue-700 hover:bg-blue-600 hover:text-white hover:border-blue-600"
+                          ? "bg-status-info/15 border-status-info/40 text-status-info cursor-default"
+                          : "bg-surface-card border-status-info/40 text-status-info hover:bg-status-info hover:text-white hover:border-status-info"
                       }`}
                     >
                       {added ? "✓ " : "+ "}
@@ -226,11 +226,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold text-blue-800">Your services:</h4>
+              <h4 className="text-sm font-semibold text-status-info">Your services:</h4>
               <button
                 type="button"
                 onClick={addService}
-                className="flex items-center px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                className="flex items-center px-3 py-1 text-sm text-white bg-status-info rounded-md hover:bg-status-info"
               >
                 <Plus className="w-4 h-4 mr-1" />
                 Add Custom
@@ -239,7 +239,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
             <div className="space-y-2">
               {formData.services.map((service, index) => (
-                <div key={index} className="p-2 bg-white border rounded-md">
+                <div key={index} className="p-2 bg-surface-card border rounded-md">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="flex-1">
                       <FormInput
@@ -252,7 +252,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     <button
                       type="button"
                       onClick={() => removeService(index)}
-                      className="p-1 text-red-500 rounded-md hover:bg-red-50"
+                      className="p-1 text-status-error rounded-md hover:bg-status-error/10"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
@@ -269,10 +269,10 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   />
                   <div className={`mt-1 text-xs ${
                     (service.description || "").length === 1000
-                      ? "text-red-500"
+                      ? "text-status-error"
                       : (service.description || "").length >= 900
-                      ? "text-yellow-500"
-                      : "text-slate-400"
+                      ? "text-brand-gold"
+                      : "text-ink-caption"
                   }`}>
                     {(service.description || "").length}/1000
                   </div>
@@ -281,24 +281,24 @@ const Step5ProductsServices: React.FC<StepProps> = ({
             </div>
 
             {formData.services.length === 0 && (
-              <div className="py-3 text-center bg-white border-2 border-blue-200 border-dashed rounded-md">
-                <p className="text-sm text-blue-500">Click a suggestion above or "Add Custom" to add a service</p>
+              <div className="py-3 text-center bg-surface-card border-2 border-status-info/25 border-dashed rounded-md">
+                <p className="text-sm text-status-info">Click a suggestion above or "Add Custom" to add a service</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Products Section */}
-        <div className="p-3 rounded-lg bg-green-50">
-          <h3 className="flex items-center mb-3 text-sm font-bold text-green-900">
+        <div className="p-3 rounded-lg bg-status-success/10">
+          <h3 className="flex items-center mb-3 text-sm font-bold text-status-success">
             <Package className="w-5 h-5 mr-2" />
             Products
           </h3>
 
           {/* Quick-add suggestions */}
           {productSuggestions.length > 0 && (
-            <div className="mb-3 p-2 bg-white border border-green-100 rounded-md">
-              <p className="flex items-center gap-1 text-xs font-semibold text-green-700 mb-2">
+            <div className="mb-3 p-2 bg-surface-card border border-status-success/15 rounded-md">
+              <p className="flex items-center gap-1 text-xs font-semibold text-status-success mb-2">
                 <Zap className="w-3 h-3" />
                 Quick add — based on your company type ({categories.join(", ")})
               </p>
@@ -313,8 +313,8 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       disabled={added}
                       className={`px-2 py-1 text-xs rounded border transition-all ${
                         added
-                          ? "bg-green-100 border-green-300 text-green-400 cursor-default"
-                          : "bg-white border-green-300 text-green-700 hover:bg-green-600 hover:text-white hover:border-green-600"
+                          ? "bg-status-success/15 border-status-success/40 text-status-success cursor-default"
+                          : "bg-surface-card border-status-success/40 text-status-success hover:bg-status-success hover:text-white hover:border-status-success"
                       }`}
                     >
                       {added ? "✓ " : "+ "}
@@ -328,11 +328,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold text-green-800">Your products:</h4>
+              <h4 className="text-sm font-semibold text-status-success">Your products:</h4>
               <button
                 type="button"
                 onClick={addProduct}
-                className="flex items-center px-3 py-1 text-sm text-white bg-green-600 rounded-md hover:bg-green-700"
+                className="flex items-center px-3 py-1 text-sm text-white bg-status-success rounded-md hover:bg-status-success"
               >
                 <Plus className="w-4 h-4 mr-1" />
                 Add Custom
@@ -341,7 +341,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
             <div className="space-y-2">
               {formData.products.map((product, index) => (
-                <div key={index} className="p-2 bg-white border rounded-md">
+                <div key={index} className="p-2 bg-surface-card border rounded-md">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="flex-1">
                       <FormInput
@@ -354,7 +354,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     <button
                       type="button"
                       onClick={() => removeProduct(index)}
-                      className="p-1 text-red-500 rounded-md hover:bg-red-50"
+                      className="p-1 text-status-error rounded-md hover:bg-status-error/10"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
@@ -371,10 +371,10 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   />
                   <div className={`mt-1 text-xs ${
                     (product.description || "").length === 1000
-                      ? "text-red-500"
+                      ? "text-status-error"
                       : (product.description || "").length >= 900
-                      ? "text-yellow-500"
-                      : "text-slate-400"
+                      ? "text-brand-gold"
+                      : "text-ink-caption"
                   }`}>
                     {(product.description || "").length}/1000
                   </div>
@@ -383,8 +383,8 @@ const Step5ProductsServices: React.FC<StepProps> = ({
             </div>
 
             {formData.products.length === 0 && (
-              <div className="py-3 text-center bg-white border-2 border-green-200 border-dashed rounded-md">
-                <p className="text-sm text-green-500">Click a suggestion above or "Add Custom" to add a product</p>
+              <div className="py-3 text-center bg-surface-card border-2 border-status-success/25 border-dashed rounded-md">
+                <p className="text-sm text-status-success">Click a suggestion above or "Add Custom" to add a product</p>
               </div>
             )}
           </div>
@@ -392,16 +392,16 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
         {/* Summary */}
         {(formData.services.length > 0 || formData.products.length > 0) && (
-          <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-            <h4 className="mb-2 text-sm font-semibold text-slate-700">Summary</h4>
+          <div className="p-3 rounded-lg bg-ink-offwhite border border-ink-light">
+            <h4 className="mb-2 text-sm font-semibold text-ink-paragraph">Summary</h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-xl font-bold text-blue-600">{formData.services.length}</div>
-                <div className="text-sm text-slate-500">Services Listed</div>
+                <div className="text-xl font-bold text-status-info">{formData.services.length}</div>
+                <div className="text-sm text-ink-caption">Services Listed</div>
               </div>
               <div>
-                <div className="text-xl font-bold text-green-600">{formData.products.length}</div>
-                <div className="text-sm text-slate-500">Products Listed</div>
+                <div className="text-xl font-bold text-status-success">{formData.products.length}</div>
+                <div className="text-sm text-ink-caption">Products Listed</div>
               </div>
             </div>
           </div>

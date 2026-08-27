@@ -43,8 +43,8 @@ const Profile = () => {
       id="our-team" 
       className={`py-20 theme-transition ${
         theme === "dark" 
-          ? "bg-black text-gray-100" 
-          : "bg-gray-50 text-gray-900"
+          ? "bg-ink text-ink-light" 
+          : "bg-ink-offwhite text-ink"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,7 +60,7 @@ const Profile = () => {
             <motion.div
               key={member.id}
               className={`rounded-lg overflow-hidden shadow-lg ${
-                theme === "dark" ? "bg-gray-900" : "bg-white"
+                theme === "dark" ? "bg-ink" : "bg-surface-card"
               }`}
               whileHover={{ y: -5 }}
               transition={{ duration: 0.2 }}
@@ -76,11 +76,11 @@ const Profile = () => {
                 <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
                 <p 
                   className="font-medium mb-3"
-                  style={{ color: "#facc15" }}
+                  style={{ color: "#F8C400" }}
                 >
                   {member.role}
                 </p>
-                <p className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"} text-justify`}>
+                <p className={`text-sm ${theme === "dark" ? "text-ink-light" : "text-ink-paragraph"} text-justify`}>
                   {member.bio}
                 </p>
                 <div className="flex justify-center mt-4 space-x-3">
@@ -88,8 +88,8 @@ const Profile = () => {
                     href="#"
                     className={`p-2 rounded-full ${
                       theme === "dark" 
-                        ? "bg-gray-800 hover:bg-gray-500" 
-                        : "bg-gray-100 hover:bg-gray-200"
+                        ? "bg-ink-charcoal hover:bg-ink-caption" 
+                        : "bg-ink-light hover:bg-ink-light"
                     }`}
                     aria-label="Twitter"
                   >
@@ -101,8 +101,8 @@ const Profile = () => {
                     href="#"
                     className={`p-2 rounded-full ${
                       theme === "dark" 
-                        ? "bg-gray-800 hover:bg-gray-500" 
-                        : "bg-gray-100 hover:bg-gray-200"
+                        ? "bg-ink-charcoal hover:bg-ink-caption" 
+                        : "bg-ink-light hover:bg-ink-light"
                     }`}
                     aria-label="LinkedIn"
                   >

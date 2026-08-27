@@ -56,14 +56,14 @@ export default function Contact({ content, onStateChange }) {
   return (
     <section
       id="contact"
-      className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-500 scroll-mt-20 relative"
+      className="py-20 bg-ink-offwhite dark:bg-gray-900 transition-colors duration-500 scroll-mt-20 relative"
     >
       {/* Edit Controls */}
       <div className="absolute top-4 right-4 z-10">
         {!isEditing ? (
           <button
             onClick={handleEdit}
-            className="flex items-center gap-1 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 shadow-md px-3 py-1.5 rounded-md text-sm font-medium"
+            className="flex items-center gap-1 bg-surface-card border border-ink-light text-ink-paragraph hover:bg-ink-offwhite shadow-md px-3 py-1.5 rounded-md text-sm font-medium"
           >
             <Edit2 className="w-4 h-4" />
             Edit
@@ -72,14 +72,14 @@ export default function Contact({ content, onStateChange }) {
           <div className="flex gap-2">
             <button
               onClick={handleSave}
-              className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-md"
+              className="flex items-center gap-1 bg-status-success hover:bg-status-success text-white px-3 py-1.5 rounded-md text-sm font-medium shadow-md"
             >
               <Save className="w-4 h-4" />
               Save
             </button>
             <button
               onClick={handleCancel}
-              className="flex items-center gap-1 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-md text-sm font-medium shadow-md"
+              className="flex items-center gap-1 bg-surface-card border border-ink-light text-ink-paragraph hover:bg-ink-offwhite px-3 py-1.5 rounded-md text-sm font-medium shadow-md"
             >
               <X className="w-4 h-4" />
               Cancel
@@ -96,23 +96,23 @@ export default function Contact({ content, onStateChange }) {
               <input
                 value={tempData.title}
                 onChange={(e) => update("title", e.target.value)}
-                className="w-full max-w-md mx-auto block text-4xl font-bold text-gray-900 text-center bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 focus:border-blue-500 focus:outline-none"
+                className="w-full max-w-md mx-auto block text-4xl font-bold text-ink text-center bg-white/80 border-2 border-dashed border-status-info/40 rounded p-1 focus:border-status-info focus:outline-none"
                 maxLength={80}
               />
               <textarea
                 value={tempData.description}
                 onChange={(e) => update("description", e.target.value)}
-                className="w-full max-w-2xl mx-auto block text-gray-600 text-lg text-center bg-white/80 border-2 border-dashed border-blue-300 rounded p-2 focus:border-blue-500 focus:outline-none resize-none"
+                className="w-full max-w-2xl mx-auto block text-ink-paragraph text-lg text-center bg-white/80 border-2 border-dashed border-status-info/40 rounded p-2 focus:border-status-info focus:outline-none resize-none"
                 rows={3}
                 maxLength={300}
               />
             </div>
           ) : (
             <>
-              <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-4xl font-bold text-ink dark:text-white mb-3">
                 {display.title}
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg">
+              <p className="text-ink-paragraph dark:text-gray-300 max-w-2xl mx-auto text-lg">
                 {display.description}
               </p>
             </>
@@ -126,30 +126,30 @@ export default function Contact({ content, onStateChange }) {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8 lg:p-10"
+            className="col-span-2 bg-surface-card dark:bg-gray-800 rounded-2xl shadow-md p-8 lg:p-10"
           >
             {isEditing ? (
               <div className="space-y-3 mb-6">
                 <input
                   value={tempData.formTitle}
                   onChange={(e) => update("formTitle", e.target.value)}
-                  className="w-full text-xl font-semibold text-gray-900 bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 focus:border-blue-500 focus:outline-none"
+                  className="w-full text-xl font-semibold text-ink bg-white/80 border-2 border-dashed border-status-info/40 rounded p-1 focus:border-status-info focus:outline-none"
                   maxLength={80}
                 />
                 <textarea
                   value={tempData.formDescription}
                   onChange={(e) => update("formDescription", e.target.value)}
-                  className="w-full text-gray-500 text-sm bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 focus:border-blue-500 focus:outline-none resize-none"
+                  className="w-full text-ink-caption text-sm bg-white/80 border-2 border-dashed border-status-info/40 rounded p-1 focus:border-status-info focus:outline-none resize-none"
                   rows={2}
                   maxLength={200}
                 />
               </div>
             ) : (
               <>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-xl font-semibold text-ink dark:text-white mb-2">
                   {display.formTitle}
                 </h3>
-                <p className="text-gray-500 dark:text-gray-300 mb-6 text-sm">
+                <p className="text-ink-caption dark:text-gray-300 mb-6 text-sm">
                   {display.formDescription}
                 </p>
               </>
@@ -158,27 +158,27 @@ export default function Contact({ content, onStateChange }) {
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">First Name</label>
-                  <Input placeholder="rahul" className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" />
+                  <label className="block text-sm font-medium mb-2 text-ink-paragraph dark:text-gray-300">First Name</label>
+                  <Input placeholder="rahul" className="bg-ink-light dark:bg-gray-700 text-ink dark:text-white border-ink-light dark:border-gray-600" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Last Name</label>
-                  <Input placeholder="sharma" className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" />
+                  <label className="block text-sm font-medium mb-2 text-ink-paragraph dark:text-gray-300">Last Name</label>
+                  <Input placeholder="sharma" className="bg-ink-light dark:bg-gray-700 text-ink dark:text-white border-ink-light dark:border-gray-600" />
                 </div>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email</label>
-                  <Input type="email" placeholder="rahul@company.com" className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" />
+                  <label className="block text-sm font-medium mb-2 text-ink-paragraph dark:text-gray-300">Email</label>
+                  <Input type="email" placeholder="rahul@company.com" className="bg-ink-light dark:bg-gray-700 text-ink dark:text-white border-ink-light dark:border-gray-600" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Company</label>
-                  <Input placeholder="Your Company" className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" />
+                  <label className="block text-sm font-medium mb-2 text-ink-paragraph dark:text-gray-300">Company</label>
+                  <Input placeholder="Your Company" className="bg-ink-light dark:bg-gray-700 text-ink dark:text-white border-ink-light dark:border-gray-600" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Subject</label>
-                <select className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-400 transition-all duration-200">
+                <label className="block text-sm font-medium mb-2 text-ink-paragraph dark:text-gray-300">Subject</label>
+                <select className="w-full rounded-md border border-ink-light dark:border-gray-600 px-3 py-2 bg-ink-light dark:bg-gray-700 text-ink dark:text-white focus:ring-2 focus:ring-brand-yellow transition-all duration-200">
                   <option>General Inquiry</option>
                   <option>Sales Inquiry</option>
                   <option>Products Inquiry</option>
@@ -187,21 +187,21 @@ export default function Contact({ content, onStateChange }) {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Message</label>
-                <Textarea rows={4} placeholder="Tell us about your project and how we can help..." className="resize-none bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600" />
+                <label className="block text-sm font-medium mb-2 text-ink-paragraph dark:text-gray-300">Message</label>
+                <Textarea rows={4} placeholder="Tell us about your project and how we can help..." className="resize-none bg-ink-light dark:bg-gray-700 text-ink dark:text-white border-ink-light dark:border-gray-600" />
               </div>
               {isEditing ? (
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Button Label</label>
+                  <label className="block text-xs text-ink-caption mb-1">Button Label</label>
                   <input
                     value={tempData.ctaButton}
                     onChange={(e) => update("ctaButton", e.target.value)}
-                    className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded p-2 focus:border-blue-500 focus:outline-none text-sm"
+                    className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded p-2 focus:border-status-info focus:outline-none text-sm"
                     maxLength={50}
                   />
                 </div>
               ) : (
-                <Button className="w-full bg-yellow-400 hover:bg-yellow-500 dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold py-4 transition-colors duration-300 text-lg">
+                <Button className="w-full bg-brand-yellow hover:bg-brand-gold dark:bg-yellow-500 dark:hover:bg-yellow-600 text-white font-semibold py-4 transition-colors duration-300 text-lg">
                   {display.ctaButton}
                 </Button>
               )}

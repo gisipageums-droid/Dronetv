@@ -463,13 +463,13 @@
 //             type="text"
 //             value={value}
 //             onChange={handleChange}
-//             className={`w-full bg-white border-2 border-dashed border-blue-300 rounded p-2 focus:border-blue-500 focus:outline-none text-center ${className}`}
+//             className={`w-full bg-surface-card border-2 border-dashed border-status-info/40 rounded p-2 focus:border-status-info focus:outline-none text-center ${className}`}
 //             placeholder={placeholder}
 //             disabled={isPublished}
 //             maxLength={maxLength}
 //           />
 //           {maxLength && (
-//             <div className="text-right text-xs text-gray-500 mt-1">
+//             <div className="text-right text-xs text-ink-caption mt-1">
 //               {value.length}/{maxLength}
 //             </div>
 //           )}
@@ -507,28 +507,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop Company Logo
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className="flex-1 relative bg-gray-900 min-h-0">
+//             <div className="flex-1 relative bg-ink min-h-0">
 //               <div className="relative w-full h-full">
 //                 <Cropper
 //                   image={imageToCrop}
@@ -557,18 +557,18 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Buttons */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">
 //                   Aspect Ratio:
 //                 </p>
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(1)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-//                       ? "bg-blue-500 text-white border-blue-500"
-//                       : "bg-white text-gray-700 border-gray-300"
+//                       ? "bg-status-info text-white border-status-info"
+//                       : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     1:1 (Square)
@@ -576,8 +576,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-//                       ? "bg-blue-500 text-white border-blue-500"
-//                       : "bg-white text-gray-700 border-gray-300"
+//                       ? "bg-status-info text-white border-status-info"
+//                       : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     4:3 (Standard)
@@ -585,8 +585,8 @@
 //                   <button
 //                     onClick={() => setAspectRatio(16 / 9)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-//                       ? "bg-blue-500 text-white border-blue-500"
-//                       : "bg-white text-gray-700 border-gray-300"
+//                       ? "bg-status-info text-white border-status-info"
+//                       : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     16:9 (Widescreen)
@@ -597,8 +597,8 @@
 //               {/* Zoom Control */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="text-gray-700">Zoom</span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">Zoom</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <input
 //                   type="range"
@@ -607,15 +607,15 @@
 //                   max={3}
 //                   step={0.1}
 //                   onChange={(e) => setZoom(Number(e.target.value))}
-//                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                   className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                 />
 //               </div>
 
 //               {/* Rotation Control */}
 //               {/* <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="text-gray-700">Rotation</span>
-//                   <span className="text-gray-600">{rotation}°</span>
+//                   <span className="text-ink-paragraph">Rotation</span>
+//                   <span className="text-ink-paragraph">{rotation}°</span>
 //                 </div>
 //                 <input
 //                   type="range"
@@ -624,7 +624,7 @@
 //                   max={180}
 //                   step={1}
 //                   onChange={(e) => setRotation(Number(e.target.value))}
-//                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                   className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                 />
 //               </div> */}
 
@@ -632,19 +632,19 @@
 //               <div className="grid grid-cols-3 gap-3">
 //                 <button
 //                   onClick={resetCropSettings}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Reset
 //                 </button>
 //                 <button
 //                   onClick={cancelCrop}
-//                   className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+//                   className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
 //                 >
 //                   Cancel
 //                 </button>
 //                 <button
 //                   onClick={applyCrop}
-//                   className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+//                   className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium"
 //                 >
 //                   Apply Crop
 //                 </button>
@@ -654,13 +654,13 @@
 //         </motion.div>
 //       )}
 
-//       <section ref={sectionRef} className="py-16 bg-white relative">
+//       <section ref={sectionRef} className="py-16 bg-surface-card relative">
 //         {/* Loading Overlay */}
 //         {isLoading && (
 //           <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-30">
-//             <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3 border">
-//               <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-//               <span className="text-gray-700">Loading content...</span>
+//             <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3 border">
+//               <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+//               <span className="text-ink-paragraph">Loading content...</span>
 //             </div>
 //           </div>
 //         )}
@@ -673,7 +673,7 @@
 //                 onClick={handleEdit}
 //                 variant="outline"
 //                 size="sm"
-//                 className="bg-white hover:bg-gray-50 shadow-lg border-2 border-gray-200 hover:border-blue-300"
+//                 className="bg-surface-card hover:bg-ink-offwhite shadow-lg border-2 border-ink-light hover:border-status-info/40"
 //                 disabled={isLoading}
 //               >
 //                 <Edit2 className="w-4 h-4 mr-2" />
@@ -684,7 +684,7 @@
 //                 <Button
 //                   onClick={handleSave}
 //                   size="sm"
-//                   className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
+//                   className="bg-status-success hover:bg-status-success text-white shadow-lg"
 //                   disabled={isSaving || isUploading}
 //                 >
 //                   {isUploading ? (
@@ -704,7 +704,7 @@
 //                   onClick={handleCancel}
 //                   variant="outline"
 //                   size="sm"
-//                   className="bg-white hover:bg-gray-50 shadow-lg border-2"
+//                   className="bg-surface-card hover:bg-ink-offwhite shadow-lg border-2"
 //                   disabled={isSaving || isUploading}
 //                 >
 //                   <X className="w-4 h-4 mr-2" />
@@ -724,21 +724,21 @@
 //           >
 //             {isEditing ? (
 //               <div className="mb-8">
-//                 <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
+//                 <label className="block text-sm font-medium text-ink-paragraph mb-2 text-center">
 //                   Section Title
 //                 </label>
 //                 <div className="max-w-xs mx-auto">
 //                   <EditableText
 //                     value={displayContent.title}
 //                     field="title"
-//                     className="text-gray-400 text-lg font-medium"
+//                     className="text-ink-caption text-lg font-medium"
 //                     placeholder="Section title"
 //                     maxLength={50}
 //                   />
 //                 </div>
 //               </div>
 //             ) : (
-//               <p className="text-center text-gray-400 text-lg mb-8">
+//               <p className="text-center text-ink-caption text-lg mb-8">
 //                 {displayContent.title}
 //               </p>
 //             )}
@@ -757,7 +757,7 @@
 //                   onClick={addCompany}
 //                   variant="outline"
 //                   size="sm"
-//                   className="bg-blue-50 hover:bg-blue-100 border-blue-300 text-blue-700"
+//                   className="bg-status-info/10 hover:bg-status-info/15 border-status-info/40 text-status-info"
 //                   disabled={isPublished}
 //                 >
 //                   <Plus className="w-4 h-4 mr-2" />
@@ -769,7 +769,7 @@
 //                 {displayContent.companies.map((company) => (
 //                   <motion.div
 //                     key={company.id}
-//                     className="bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300"
+//                     className="bg-ink-offwhite p-4 rounded-lg border-2 border-dashed border-ink-light"
 //                     variants={itemVariants}
 //                   >
 //                     <div className="space-y-3">
@@ -785,7 +785,7 @@
 //                             }}
 //                           />
 //                           {isEditing && (
-//                             <label className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded cursor-pointer">
+//                             <label className="absolute inset-0 bg-ink/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded cursor-pointer">
 //                               <Upload className="w-4 h-4 text-white" />
 //                               <input
 //                                 type="file"
@@ -822,7 +822,7 @@
 //                           disabled={isPublished}
 //                         />
 //                         {isEditing && pendingImageFiles[company.id] && (
-//                           <div className="text-xs text-orange-600 mt-1">
+//                           <div className="text-xs text-status-warning mt-1">
 //                             Pending: {pendingImageFiles[company.id].name}
 //                           </div>
 //                         )}
@@ -830,7 +830,7 @@
 
 //                       {/* Company Name */}
 //                       <div>
-//                         <label className="block text-xs font-medium text-gray-600 mb-1">
+//                         <label className="block text-xs font-medium text-ink-paragraph mb-1">
 //                           Company Name
 //                         </label>
 //                         <EditableText
@@ -849,7 +849,7 @@
 //                           onClick={() => removeCompany(company.id)}
 //                           variant="outline"
 //                           size="sm"
-//                           className="w-full bg-red-50 hover:bg-red-100 border-red-300 text-red-700"
+//                           className="w-full bg-status-error/10 hover:bg-status-error/15 border-status-error/40 text-status-error"
 //                           disabled={isPublished}
 //                         >
 //                           <Trash2 className="w-3 h-3 mr-1" />
@@ -937,8 +937,8 @@
 //         {/* Editing Instructions */}
 //         {/* {isEditing && !isPublished && (
 //           <div className="max-w-7xl mx-auto px-4 mt-8">
-//             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-//               <p className="text-sm text-blue-700 text-center">
+//             <div className="bg-status-info/10 border border-status-info/25 rounded-lg p-4">
+//               <p className="text-sm text-status-info text-center">
 //                 <strong>Edit Mode:</strong> Modify the section title, add/remove
 //                 companies, change company names, and upload new logos. Click
 //                 Save to keep your changes.
@@ -950,8 +950,8 @@
 //         {/* Published Mode Notice */}
 //         {isPublished && (
 //           <div className="max-w-7xl mx-auto px-4 mt-8">
-//             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-//               <p className="text-sm text-yellow-700 text-center">
+//             <div className="bg-surface-main border border-brand-yellow-soft rounded-lg p-4">
+//               <p className="text-sm text-brand-gold text-center">
 //                 <strong>Published Template:</strong> This section is view-only
 //                 and cannot be edited.
 //               </p>
@@ -970,7 +970,7 @@ import { Edit2, Save, X, Upload, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 const BusinessInsider = "/logos/BusinessInsider.png";
 const Forbes = "/logos/Forbes.png";
 const TechCrunch = "/logos/TechCrunch.png";
@@ -1203,19 +1203,8 @@ export default function EditableUsedBy({
     }
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("sectionName", "usedBy");
-      formData.append("imageField", `company-${companyId}-${Date.now()}`);
-      formData.append("templateSelection", templateSelection);
-
-      const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+            const __presignedUrl = await uploadCompanyImagePresigned(userId, `company-${companyId}-${Date.now()}`, file);
+      const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
@@ -1558,13 +1547,13 @@ export default function EditableUsedBy({
             type="text"
             value={value}
             onChange={handleChange}
-            className={`w-full bg-white border-2 border-dashed border-blue-300 rounded p-2 focus:border-blue-500 focus:outline-none text-center ${className}`}
+            className={`w-full bg-surface-card border-2 border-dashed border-status-info/40 rounded p-2 focus:border-status-info focus:outline-none text-center ${className}`}
             placeholder={placeholder}
             disabled={isPublished}
             maxLength={maxLength}
           />
           {maxLength && (
-            <div className="text-right text-xs text-gray-500 mt-1">
+            <div className="text-right text-xs text-ink-caption mt-1">
               {value.length}/{maxLength}
             </div>
           )}
@@ -1602,28 +1591,28 @@ export default function EditableUsedBy({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Company Logo
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop}
@@ -1652,18 +1641,18 @@ export default function EditableUsedBy({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     1:1 (Square)
@@ -1671,8 +1660,8 @@ export default function EditableUsedBy({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     4:3 (Standard)
@@ -1680,8 +1669,8 @@ export default function EditableUsedBy({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     16:9 (Widescreen)
@@ -1692,8 +1681,8 @@ export default function EditableUsedBy({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -1702,7 +1691,7 @@ export default function EditableUsedBy({
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -1710,19 +1699,19 @@ export default function EditableUsedBy({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium"
                 >
                   Apply Crop
                 </button>
@@ -1732,11 +1721,11 @@ export default function EditableUsedBy({
         </motion.div>
       )}
 
-      <section ref={sectionRef} className="py-16 bg-white relative">
+      <section ref={sectionRef} className="py-16 bg-surface-card relative">
         {/* Auto-save indicator */}
         {isEditing && (
           <motion.div
-            className="absolute top-4 left-4 flex items-center gap-2 text-xs text-gray-500 z-20"
+            className="absolute top-4 left-4 flex items-center gap-2 text-xs text-ink-caption z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -1749,7 +1738,7 @@ export default function EditableUsedBy({
               <span>Last saved: {lastSaved.toLocaleTimeString()}</span>
             ) : null}
             {hasUnsavedChanges && !isSaving && (
-              <span className="text-amber-500">• Unsaved changes</span>
+              <span className="text-brand-gold">• Unsaved changes</span>
             )}
           </motion.div>
         )}
@@ -1757,9 +1746,9 @@ export default function EditableUsedBy({
         {/* Loading Overlay */}
         {isLoading && (
           <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-30">
-            <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3 border">
-              <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-              <span className="text-gray-700">Loading content...</span>
+            <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3 border">
+              <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+              <span className="text-ink-paragraph">Loading content...</span>
             </div>
           </div>
         )}
@@ -1772,7 +1761,7 @@ export default function EditableUsedBy({
                 onClick={handleEdit}
                 variant="outline"
                 size="sm"
-                className="bg-white hover:bg-gray-50 shadow-lg border-2 border-gray-200 hover:border-blue-300"
+                className="bg-surface-card hover:bg-ink-offwhite shadow-lg border-2 border-ink-light hover:border-status-info/40"
                 disabled={isLoading}
               >
                 <Edit2 className="w-4 h-4 mr-2" />
@@ -1783,7 +1772,7 @@ export default function EditableUsedBy({
                 <Button
                   onClick={handleSave}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
+                  className="bg-status-success hover:bg-status-success text-white shadow-lg"
                   disabled={isSaving || isUploading}
                 >
                   {isUploading ? (
@@ -1803,7 +1792,7 @@ export default function EditableUsedBy({
                   onClick={handleCancel}
                   variant="outline"
                   size="sm"
-                  className="bg-white hover:bg-gray-50 shadow-lg border-2"
+                  className="bg-surface-card hover:bg-ink-offwhite shadow-lg border-2"
                   disabled={isSaving || isUploading}
                 >
                   <X className="w-4 h-4 mr-2" />
@@ -1823,21 +1812,21 @@ export default function EditableUsedBy({
           >
             {isEditing ? (
               <div className="mb-8">
-                <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
+                <label className="block text-sm font-medium text-ink-paragraph mb-2 text-center">
                   Section Title
                 </label>
                 <div className="max-w-xs mx-auto">
                   <EditableText
                     value={displayContent.title}
                     field="title"
-                    className="text-gray-400 text-lg font-medium"
+                    className="text-ink-caption text-lg font-medium"
                     placeholder="Section title"
                     maxLength={50}
                   />
                 </div>
               </div>
             ) : (
-              <p className="text-center text-gray-400 text-lg mb-8">
+              <p className="text-center text-ink-caption text-lg mb-8">
                 {displayContent.title}
               </p>
             )}
@@ -1856,7 +1845,7 @@ export default function EditableUsedBy({
                   onClick={addCompany}
                   variant="outline"
                   size="sm"
-                  className="bg-blue-50 hover:bg-blue-100 border-blue-300 text-blue-700"
+                  className="bg-status-info/10 hover:bg-status-info/15 border-status-info/40 text-status-info"
                   disabled={isPublished}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -1868,7 +1857,7 @@ export default function EditableUsedBy({
                 {displayContent.companies.map((company) => (
                   <motion.div
                     key={company.id}
-                    className="bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300"
+                    className="bg-ink-offwhite p-4 rounded-lg border-2 border-dashed border-ink-light"
                     variants={itemVariants}
                   >
                     <div className="space-y-3">
@@ -1884,7 +1873,7 @@ export default function EditableUsedBy({
                             }}
                           />
                           {isEditing && (
-                            <label className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded cursor-pointer">
+                            <label className="absolute inset-0 bg-ink/70 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded cursor-pointer">
                               <Upload className="w-4 h-4 text-white" />
                               <input
                                 type="file"
@@ -1921,7 +1910,7 @@ export default function EditableUsedBy({
                           disabled={isPublished}
                         />
                         {isEditing && pendingImageFiles[company.id] && (
-                          <div className="text-xs text-orange-600 mt-1">
+                          <div className="text-xs text-status-warning mt-1">
                             Pending: {pendingImageFiles[company.id].name}
                           </div>
                         )}
@@ -1929,7 +1918,7 @@ export default function EditableUsedBy({
 
                       {/* Company Name */}
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                        <label className="block text-xs font-medium text-ink-paragraph mb-1">
                           Company Name
                         </label>
                         <EditableText
@@ -1948,7 +1937,7 @@ export default function EditableUsedBy({
                           onClick={() => removeCompany(company.id)}
                           variant="outline"
                           size="sm"
-                          className="w-full bg-red-50 hover:bg-red-100 border-red-300 text-red-700"
+                          className="w-full bg-status-error/10 hover:bg-status-error/15 border-status-error/40 text-status-error"
                           disabled={isPublished}
                         >
                           <Trash2 className="w-3 h-3 mr-1" />
@@ -2036,8 +2025,8 @@ export default function EditableUsedBy({
         {/* Published Mode Notice */}
         {isPublished && (
           <div className="max-w-7xl mx-auto px-4 mt-8">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-700 text-center">
+            <div className="bg-surface-main border border-brand-yellow-soft rounded-lg p-4">
+              <p className="text-sm text-brand-gold text-center">
                 <strong>Published Template:</strong> This section is view-only
                 and cannot be edited.
               </p>

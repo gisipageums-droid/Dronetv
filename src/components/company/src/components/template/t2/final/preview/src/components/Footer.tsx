@@ -64,7 +64,7 @@ export default function Footer({ footerData }) {
 
   return (
     <motion.footer 
-      className="bg-black text-white theme-transition"
+      className="bg-ink text-white theme-transition"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -107,7 +107,7 @@ export default function Footer({ footerData }) {
                 <span className="text-xl font-bold text-white">{footerContent?.companyInfo?.companyName}</span>
               </motion.div>
               
-              <p className="text-gray-400 max-w-md">{footerContent?.companyInfo?.description}</p>
+              <p className="text-ink-caption max-w-md">{footerContent?.companyInfo?.description}</p>
 
 
             </motion.div>
@@ -134,7 +134,7 @@ export default function Footer({ footerData }) {
                     >
                       <a
                         href={link.href}
-                        className="text-gray-400 hover:text-primary transition-colors"
+                        className="text-ink-caption hover:text-primary transition-colors"
                       >
                         {link.name}
                       </a>

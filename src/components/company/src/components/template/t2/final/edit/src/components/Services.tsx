@@ -6,7 +6,7 @@ import { X, CheckCircle, ZoomIn } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function Services({
   serviceData,
@@ -353,17 +353,19 @@ export default function Services({
         formData.append("templateSelection", templateSelection);
 
 
+        const svcAuthToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
         const uploadPromise = fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+          COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
+            headers: svcAuthToken ? { Authorization: `Bearer ${svcAuthToken}` } : {},
             body: formData,
           }
         ).then(async (uploadResponse) => {
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL
-            updateServiceField(index, "image", uploadData.imageUrl);
+            updateServiceField(index, "image", uploadData.url || uploadData.imageUrl);
             return { success: true, index };
           } else {
             const errorData = await uploadResponse.json();
@@ -499,29 +501,29 @@ export default function Services({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
+            <div className="flex items-center justify-between p-4 border-b border-ink-light bg-ink-offwhite">
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">Crop Service Image</h3>
-                <p className="mt-1 text-sm text-gray-600">Recommended: 1600×900px (16:9 ratio) - WideScreen</p>
+                <h3 className="text-lg font-semibold text-ink-charcoal">Crop Service Image</h3>
+                <p className="mt-1 text-sm text-ink-paragraph">Recommended: 1600×900px (16:9 ratio) - WideScreen</p>
               </div>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -557,22 +559,22 @@ export default function Services({
             </div>
 
             {/* Controls */}
-            <div className="p-4 border-t border-gray-200 bg-gray-50">
+            <div className="p-4 border-t border-ink-light bg-ink-offwhite">
               {/* Zoom Control */}
               <div className="mb-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     <ZoomIn className="w-4 h-4" />
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     aria-label="Zoom out"
                     onClick={() => setZoom((z) => Math.max(minZoomDynamic, parseFloat((z - 0.1).toFixed(2))))}
-                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                    className="px-3 py-1 border rounded text-ink-paragraph hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -583,13 +585,13 @@ export default function Services({
                     max={5}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     aria-label="Zoom in"
                     onClick={() => setZoom((z) => Math.min(5, parseFloat((z + 0.1).toFixed(2))))}
-                    className="px-3 py-1 border rounded text-gray-700 hover:bg-gray-100"
+                    className="px-3 py-1 border rounded text-ink-paragraph hover:bg-ink-light"
                   >
                     +
                   </button>
@@ -600,13 +602,13 @@ export default function Services({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full py-2 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-100"
+                  className="w-full py-2 text-sm text-ink-paragraph border border-ink-light rounded hover:bg-ink-light"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full py-2 text-sm text-gray-700 border border-gray-300 rounded hover:bg-gray-100"
+                  className="w-full py-2 text-sm text-ink-paragraph border border-ink-light rounded hover:bg-ink-light"
                 >
                   Cancel
                 </button>
@@ -615,8 +617,8 @@ export default function Services({
                   disabled={isUploading}
                   className={`w-full py-2 text-sm text-white rounded ${
                     isUploading 
-                      ? "bg-gray-400 cursor-not-allowed" 
-                      : "bg-green-600 hover:bg-green-700"
+                      ? "bg-ink-caption cursor-not-allowed" 
+                      : "bg-status-success hover:bg-status-success"
                   }`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
@@ -642,8 +644,8 @@ export default function Services({
                 onClick={handleSave}
                 disabled={isUploading}
                 className={`${isUploading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:shadow-2xl"
+                  ? "bg-ink-caption cursor-not-allowed"
+                  : "bg-status-success hover:shadow-2xl"
                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
               >
                 {isUploading ? "Uploading..." : "Save & Exit"}
@@ -653,7 +655,7 @@ export default function Services({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
+                className="px-4 py-2 text-ink bg-brand-gold rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
               >
                 Edit
               </motion.button>
@@ -662,7 +664,7 @@ export default function Services({
 
           {/* Auto-update status indicator */}
           {isEditing && (
-            <div className="flex items-center justify-end mb-4 text-sm text-green-600">
+            <div className="flex items-center justify-end mb-4 text-sm text-status-success">
               <CheckCircle className="w-4 h-4 mr-1" />
               Auto-saving changes...
             </div>
@@ -676,7 +678,7 @@ export default function Services({
                   <input
                     type="text"
                     className={`text-3xl font-bold block text-center w-full border-b ${servicesSection.heading.head.length >= 60
-                      ? "border-red-500"
+                      ? "border-status-error"
                       : ""
                       }`}
                     value={servicesSection.heading.head}
@@ -685,10 +687,10 @@ export default function Services({
                   />
                   <div
                     className={`absolute right-0 -bottom-5 text-xs ${servicesSection.heading.head.length >= 60
-                      ? "text-red-500 font-bold animate-pulse"
+                      ? "text-status-error font-bold animate-pulse"
                       : servicesSection.heading.head.length > 50
-                        ? "text-red-500"
-                        : "text-gray-400"
+                        ? "text-status-error"
+                        : "text-ink-caption"
                       }`}
                   >
                     {servicesSection.heading.head.length >= 60
@@ -700,7 +702,7 @@ export default function Services({
                   <input
                     type="text"
                     className={`text-muted-foreground block w-full text-center border-b ${servicesSection.heading.desc.length >= 120
-                      ? "border-red-500"
+                      ? "border-status-error"
                       : ""
                       }`}
                     value={servicesSection.heading.desc}
@@ -709,10 +711,10 @@ export default function Services({
                   />
                   <div
                     className={`absolute right-0 -bottom-5 text-xs ${servicesSection.heading.desc.length >= 120
-                      ? "text-red-500 font-bold animate-pulse"
+                      ? "text-status-error font-bold animate-pulse"
                       : servicesSection.heading.desc.length > 100
-                        ? "text-red-500"
-                        : "text-gray-400"
+                        ? "text-status-error"
+                        : "text-ink-caption"
                       }`}
                   >
                     {servicesSection.heading.desc.length >= 120
@@ -743,15 +745,15 @@ export default function Services({
                       value={cat}
                       onChange={(e) => updateCategory(i, e.target.value)}
                       maxLength={40}
-                      className={`px-2 border-b pr-10 ${cat.length >= 40 ? "border-red-500" : ""
+                      className={`px-2 border-b pr-10 ${cat.length >= 40 ? "border-status-error" : ""
                         }`}
                     />
                     <div
                       className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-[10px] ${cat.length >= 40
-                        ? "text-red-500 font-bold"
+                        ? "text-status-error font-bold"
                         : cat.length > 30
-                          ? "text-red-500"
-                          : "text-gray-400"
+                          ? "text-status-error"
+                          : "text-ink-caption"
                         }`}
                     >
                       {cat.length >= 40 ? "MAX" : `${cat.length}`}
@@ -775,7 +777,7 @@ export default function Services({
                 {isEditing && cat !== "All" && (
                   <button
                     onClick={() => removeCategory(cat)}
-                    className="text-xs text-red-500"
+                    className="text-xs text-status-error"
                   >
                     ✕
                   </button>
@@ -787,7 +789,7 @@ export default function Services({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ scale: 1.1 }}
                 onClick={addCategory}
-                className="text-sm font-medium text-green-600"
+                className="text-sm font-medium text-status-success"
               >
                 + Add Category
               </motion.button>
@@ -799,7 +801,7 @@ export default function Services({
             {visibleServices.map((service, index) => (
               <Card
                 key={index}
-                className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl shadow-gray-500"
+                className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl shadow-ink-caption"
               >
                 <div className="relative flex-shrink-0 h-40 overflow-hidden">
                   <img
@@ -822,7 +824,7 @@ export default function Services({
                         onChange={(e) => handleServiceImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
-                        <p className="mt-1 text-xs text-green-600">
+                        <p className="mt-1 text-xs text-status-success">
                           ✓ Image cropped and ready to upload
                         </p>
                       )}
@@ -840,15 +842,15 @@ export default function Services({
                             updateServiceField(index, "title", e.target.value)
                           }
                           maxLength={50}
-                          className={`border-b w-full font-bold text-lg pr-12 ${service.title.length >= 50 ? "border-red-500" : ""
+                          className={`border-b w-full font-bold text-lg pr-12 ${service.title.length >= 50 ? "border-status-error" : ""
                             }`}
                         />
                         <div
                           className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${service.title.length >= 50
-                            ? "text-red-500 font-bold"
+                            ? "text-status-error font-bold"
                             : service.title.length > 40
-                              ? "text-red-500"
-                              : "text-gray-400"
+                              ? "text-status-error"
+                              : "text-ink-caption"
                             }`}
                         >
                           {service.title.length >= 50
@@ -877,16 +879,16 @@ export default function Services({
                             }
                             maxLength={120}
                             className={`border-b w-full min-h-[4rem] resize-none pr-12 ${service.description.length >= 120
-                              ? "border-red-500"
+                              ? "border-status-error"
                               : ""
                               }`}
                           />
                           <div
                             className={`absolute right-2 bottom-1 text-xs ${service.description.length >= 120
-                              ? "text-red-500 font-bold"
+                              ? "text-status-error font-bold"
                               : service.description.length > 100
-                                ? "text-red-500"
-                                : "text-gray-400"
+                                ? "text-status-error"
+                                : "text-ink-caption"
                               }`}
                           >
                             {service.description.length >= 120
@@ -907,16 +909,16 @@ export default function Services({
                             }
                             maxLength={60}
                             className={`w-full border-b pr-10 ${service.category.length >= 60
-                              ? "border-red-500"
+                              ? "border-status-error"
                               : ""
                               }`}
                           />
                           <div
                             className={`absolute right-1 top-1/2 transform -translate-y-1/2 text-xs ${service.category.length >= 60
-                              ? "text-red-500 font-bold"
+                              ? "text-status-error font-bold"
                               : service.category.length > 50
-                                ? "text-red-500"
-                                : "text-gray-400"
+                                ? "text-status-error"
+                                : "text-ink-caption"
                               }`}
                           >
                             {service.category.length >= 60
@@ -930,7 +932,7 @@ export default function Services({
                         <p className="text-sm text-muted-foreground line-clamp-3 min-h-[4rem]">
                           {service.description}
                         </p>
-                        <p className="mt-1 text-xs italic text-gray-500">
+                        <p className="mt-1 text-xs italic text-ink-caption">
                           Category: {service.category}
                         </p>
                       </>
@@ -964,7 +966,7 @@ export default function Services({
               <Card className="flex items-center justify-center border-dashed min-h-[350px]">
                 <Button
                   onClick={addService}
-                  className="text-green-600 cursor-pointer hover:scale-105"
+                  className="text-status-success cursor-pointer hover:scale-105"
                 >
                   + Add Service
                 </Button>
@@ -996,7 +998,7 @@ export default function Services({
         <AnimatePresence>
           {isModalOpen && selectedServiceIndex !== null && (
             <motion.div
-              className="fixed inset-0 z-[99999999999999] flex items-center justify-center p-4 bg-black/50"
+              className="fixed inset-0 z-[99999999999999] flex items-center justify-center p-4 bg-ink/50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1008,7 +1010,7 @@ export default function Services({
               >
                 <button
                   onClick={closeModal}
-                  className="absolute p-2 bg-gray-500 rounded-full top-3 right-3"
+                  className="absolute p-2 bg-ink-caption rounded-full top-3 right-3"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1029,18 +1031,18 @@ export default function Services({
                       maxLength={60}
                       className={`border-b w-full text-xl font-bold mb-3 pr-16 ${servicesSection.services[selectedServiceIndex].title
                         .length >= 60
-                        ? "border-red-500"
+                        ? "border-status-error"
                         : ""
                         }`}
                     />
                     <div
                       className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${servicesSection.services[selectedServiceIndex].title
                         .length >= 60
-                        ? "text-red-500 font-bold animate-pulse"
+                        ? "text-status-error font-bold animate-pulse"
                         : servicesSection.services[selectedServiceIndex].title
                           .length > 50
-                          ? "text-red-500"
-                          : "text-gray-400"
+                          ? "text-status-error"
+                          : "text-ink-caption"
                         }`}
                     >
                       {servicesSection.services[selectedServiceIndex].title
@@ -1073,18 +1075,18 @@ export default function Services({
                       rows={3}
                       className={`border-b w-full mb-3 resize-none pr-16 ${servicesSection.services[selectedServiceIndex]
                         .detailedDescription.length >= 1000
-                        ? "border-red-500"
+                        ? "border-status-error"
                         : ""
                         }`}
                     />
                     <div
                       className={`absolute right-2 bottom-2 text-xs ${servicesSection.services[selectedServiceIndex]
                         .detailedDescription.length >= 1000
-                        ? "text-red-500 font-bold animate-pulse"
+                        ? "text-status-error font-bold animate-pulse"
                         : servicesSection.services[selectedServiceIndex]
                           .detailedDescription.length > 900
-                          ? "text-red-500"
-                          : "text-gray-400"
+                          ? "text-status-error"
+                          : "text-ink-caption"
                         }`}
                     >
                       {servicesSection.services[selectedServiceIndex]
@@ -1108,7 +1110,7 @@ export default function Services({
                   {servicesSection.services[selectedServiceIndex].benefits.map(
                     (b: string, bi: number) => (
                       <li key={bi} className="flex gap-2">
-                        <CheckCircle className="w-3 h-3 mt-1 text-green-500" />
+                        <CheckCircle className="w-3 h-3 mt-1 text-status-success" />
                         {isEditing ? (
                           <div className="flex flex-col w-full gap-1">
                             <div className="relative">
@@ -1123,15 +1125,15 @@ export default function Services({
                                   )
                                 }
                                 maxLength={80}
-                                className={`border-b w-full pr-10 text-sm ${b.length >= 80 ? "border-red-500" : ""
+                                className={`border-b w-full pr-10 text-sm ${b.length >= 80 ? "border-status-error" : ""
                                   }`}
                               />
                               <div
                                 className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${b.length >= 80
-                                  ? "text-red-500 font-bold"
+                                  ? "text-status-error font-bold"
                                   : b.length > 70
-                                    ? "text-red-500"
-                                    : "text-gray-400"
+                                    ? "text-status-error"
+                                    : "text-ink-caption"
                                   }`}
                               >
                                 {b.length >= 80 ? "MAX" : `${b.length}`}
@@ -1147,7 +1149,7 @@ export default function Services({
                                   bi
                                 )
                               }
-                              className="text-xs text-red-500"
+                              className="text-xs text-status-error"
                             >
                               ✕ Remove
                             </motion.button>
@@ -1162,7 +1164,7 @@ export default function Services({
                 {isEditing && (
                   <button
                     onClick={() => addToList(selectedServiceIndex, "benefits")}
-                    className="mb-3 text-xs text-green-600"
+                    className="mb-3 text-xs text-status-success"
                   >
                     + Add Benefit
                   </button>
@@ -1188,15 +1190,15 @@ export default function Services({
                                   )
                                 }
                                 maxLength={80}
-                                className={`border-b w-full pr-10 text-sm ${p.length >= 80 ? "border-red-500" : ""
+                                className={`border-b w-full pr-10 text-sm ${p.length >= 80 ? "border-status-error" : ""
                                   }`}
                               />
                               <div
                                 className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-[10px] ${p.length >= 80
-                                  ? "text-red-500 font-bold"
+                                  ? "text-status-error font-bold"
                                   : p.length > 70
-                                    ? "text-red-500"
-                                    : "text-gray-400"
+                                    ? "text-status-error"
+                                    : "text-ink-caption"
                                   }`}
                               >
                                 {p.length >= 80 ? "MAX" : `${p.length}`}
@@ -1212,7 +1214,7 @@ export default function Services({
                                   pi
                                 )
                               }
-                              className="text-xs text-red-500"
+                              className="text-xs text-status-error"
                             >
                               ✕ Remove
                             </motion.button>
@@ -1229,7 +1231,7 @@ export default function Services({
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => addToList(selectedServiceIndex, "process")}
-                    className="mb-3 text-xs text-green-600"
+                    className="mb-3 text-xs text-status-success"
                   >
                     + Add Step
                   </motion.button>
@@ -1256,18 +1258,18 @@ export default function Services({
                           maxLength={30}
                           className={`border-b w-full pr-10 text-sm ${servicesSection.services[selectedServiceIndex]
                             .pricing.length >= 30
-                            ? "border-red-500"
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
                         <div
                           className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${servicesSection.services[selectedServiceIndex]
                             .pricing.length >= 30
-                            ? "text-red-500 font-bold"
+                            ? "text-status-error font-bold"
                             : servicesSection.services[selectedServiceIndex]
                               .pricing.length > 25
-                              ? "text-red-500"
-                              : "text-gray-400"
+                              ? "text-status-error"
+                              : "text-ink-caption"
                             }`}
                         >
                           {servicesSection.services[selectedServiceIndex]
@@ -1301,18 +1303,18 @@ export default function Services({
                           maxLength={60}
                           className={`border-b w-full pr-10 text-sm ${servicesSection.services[selectedServiceIndex]
                             .timeline.length >= 60
-                            ? "border-red-500"
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
                         <div
                           className={`absolute right-0 top-1/2 transform -translate-y-1/2 text-xs ${servicesSection.services[selectedServiceIndex]
                             .timeline.length >= 60
-                            ? "text-red-500 font-bold"
+                            ? "text-status-error font-bold"
                             : servicesSection.services[selectedServiceIndex]
                               .timeline.length > 50
-                              ? "text-red-500"
-                              : "text-gray-400"
+                              ? "text-status-error"
+                              : "text-ink-caption"
                             }`}
                         >
                           {servicesSection.services[selectedServiceIndex]

@@ -40,7 +40,7 @@ export default function Product() {
         "Multi-platform Support",
       ],
       isPopular: true,
-      categoryColor: "bg-blue-100 text-blue-800",
+      categoryColor: "bg-status-info/15 text-status-info",
       detailedDescription: "Our business dashboard delivers deep insights...",
       pricing: "From $5,000",
       timeline: "4-6 weeks",
@@ -60,7 +60,7 @@ export default function Product() {
         "GPS Services",
       ],
       isPopular: false,
-      categoryColor: "bg-green-100 text-green-800",
+      categoryColor: "bg-status-success/15 text-status-success",
       detailedDescription: "Manage your workforce remotely with efficiency...",
       pricing: "From $2,500",
       timeline: "2-4 weeks",
@@ -80,7 +80,7 @@ export default function Product() {
         "24/7 Monitoring",
       ],
       isPopular: false,
-      categoryColor: "bg-purple-100 text-purple-800",
+      categoryColor: "bg-brand-gold/15 text-brand-gold",
       detailedDescription: "Cloud-native infrastructure to scale seamlessly...",
       pricing: "Custom Pricing",
       timeline: "8-12 weeks",
@@ -100,7 +100,7 @@ export default function Product() {
         "Custom Algorithms",
       ],
       isPopular: false,
-      categoryColor: "bg-orange-100 text-orange-800",
+      categoryColor: "bg-status-warning/15 text-status-warning",
       detailedDescription:
         "Unlock predictive insights with our analytics engine...",
       pricing: "From $10,000",
@@ -230,7 +230,7 @@ export default function Product() {
         description: "New product description...",
         features: ["New Feature"],
         isPopular: false,
-        categoryColor: "bg-gray-100 text-gray-800",
+        categoryColor: "bg-ink-light text-ink-charcoal",
         detailedDescription: "Detailed description for new product...",
         pricing: "TBD",
         timeline: "TBD",
@@ -335,7 +335,7 @@ export default function Product() {
             return (
               <Card
                 key={index}
-                className='group h-full relative overflow-hidden border-2 shadow-lg hover:shadow-xl shadow-gray-500'
+                className='group h-full relative overflow-hidden border-2 shadow-lg hover:shadow-xl shadow-ink-caption'
               >
                 <div className='relative h-32 overflow-hidden'>
                   <ImageWithFallback
@@ -347,11 +347,11 @@ export default function Product() {
                     <input
                       type='file'
                       accept='image/*'
-                      className='absolute bottom-2 px-2 inline z-10 text-black hover:text-white hover:bg-black bg-gray-200 rounded-xl left-2 text-xs'
+                      className='absolute bottom-2 px-2 inline z-10 text-ink hover:text-white hover:bg-ink-charcoal bg-ink-light rounded-xl left-2 text-xs'
                       onChange={(e) => handleImageUpload(index, e)}
                     />
                   )}
-                  <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent' />
+                  <div className='absolute inset-0 bg-gradient-to-t from-ink/60 via-ink/20 to-transparent' />
                   <div className='absolute top-2 left-2'>
                     <Badge
                       className={`${product.categoryColor} border-0 text-xs`}
@@ -433,7 +433,7 @@ export default function Product() {
                             />
                             <button
                               onClick={() => removeFeature(index, fi)}
-                              className='text-xs text-red-500'
+                              className='text-xs text-status-error'
                             >
                               ✕ Remove
                             </button>
@@ -447,7 +447,7 @@ export default function Product() {
                   {isEditing && (
                     <button
                       onClick={() => addFeature(index)}
-                      className='text-xs text-green-600 mt-2'
+                      className='text-xs text-status-success mt-2'
                     >
                       + Add Feature
                     </button>
@@ -472,7 +472,7 @@ export default function Product() {
           })}
           {isEditing && (
             <Card className='flex items-center justify-center border-dashed'>
-              <Button onClick={addProduct} className='text-green-600'>
+              <Button onClick={addProduct} className='text-status-success'>
                 + Add Product
               </Button>
             </Card>
@@ -502,7 +502,7 @@ export default function Product() {
       <AnimatePresence>
         {isModalOpen && selectedProduct && (
           <motion.div
-            className='fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50'
+            className='fixed inset-0 bg-ink/50 flex items-center justify-center p-6 z-50'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -514,7 +514,7 @@ export default function Product() {
             >
               <button
                 onClick={closeModal}
-                className='absolute top-4 right-4 bg-white text-gray-900 rounded-full p-2'
+                className='absolute top-4 right-4 bg-surface-card text-ink rounded-full p-2'
               >
                 <X className='w-5 h-5' />
               </button>

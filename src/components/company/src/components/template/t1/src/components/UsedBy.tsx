@@ -18,9 +18,9 @@ export default function UsedBy() {
   const duplicatedCompanies = [...companies, ...companies];
   
   return (
-    <section className='py-16 bg-white'>
+    <section className='py-16 bg-surface-card'>
       <div className='max-w-7xl mx-auto px-4'>
-        <p className='text-center text-gray-400 text-lg mb-8'>USED BY</p>
+        <p className='text-center text-ink-caption text-lg mb-8'>USED BY</p>
         
         {/* Marquee Container */}
         <div className="w-full overflow-hidden relative">

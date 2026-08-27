@@ -376,28 +376,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop Client Image (4:3 Ratio)
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+//             <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
 //               <Cropper
 //                 image={imageToCrop}
 //                 crop={crop}
@@ -433,18 +433,18 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Button - Only 4:3 */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">
 //                   Aspect Ratio:
 //                 </p>
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-//                       ? "bg-blue-500 text-white border-blue-500"
-//                       : "bg-white text-gray-700 border-gray-300"
+//                       ? "bg-status-info text-white border-status-info"
+//                       : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     4:3 (Oval)
@@ -455,11 +455,11 @@
 //               {/* Zoom Control - UPDATED WITH DYNAMIC RANGE */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="flex items-center gap-2 text-gray-700">
+//                   <span className="flex items-center gap-2 text-ink-paragraph">
 //                     <ZoomIn className="w-4 h-4" />
 //                     Zoom
 //                   </span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <input
 //                   type="range"
@@ -468,7 +468,7 @@
 //                   max={5}
 //                   step={0.1}
 //                   onChange={(e) => setZoom(Number(e.target.value))}
-//                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                   className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                 />
 //               </div>
 
@@ -478,20 +478,20 @@
 //                 <Button
 //                   variant="outline"
 //                   onClick={resetCropSettings}
-//                   className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+//                   className="w-full border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                 >
 //                   Reset
 //                 </Button>
 //                 <Button
 //                   variant="outline"
 //                   onClick={cancelCrop}
-//                   className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+//                   className="w-full border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                 >
 //                   Cancel
 //                 </Button>
 //                 <Button
 //                   onClick={applyCrop}
-//                   className="w-full bg-green-600 hover:bg-green-700 text-white"
+//                   className="w-full bg-status-success hover:bg-status-success text-white"
 //                 >
 //                   Apply Crop
 //                 </Button>
@@ -520,8 +520,8 @@
 //                 onClick={handleSave}
 //                 disabled={isUploading}
 //                 className={`${isUploading
-//                   ? "bg-gray-400 cursor-not-allowed"
-//                   : "bg-green-600 hover:shadow-2xl"
+//                   ? "bg-ink-caption cursor-not-allowed"
+//                   : "bg-status-success hover:shadow-2xl"
 //                   } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
 //               >
 //                 {isUploading ? "Uploading..." : "Save"}
@@ -531,7 +531,7 @@
 //                 whileTap={{ scale: 0.9 }}
 //                 whileHover={{ y: -1, scaleX: 1.1 }}
 //                 onClick={() => setIsEditing(true)}
-//                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+//                 className="bg-brand-gold text-ink px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
 //               >
 //                 Edit
 //               </motion.button>
@@ -558,14 +558,14 @@
 //                     }
 //                     maxLength={80}
 //                     className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${clientsSection.headline.title.length >= 80
-//                       ? "border-red-500"
+//                       ? "border-status-error"
 //                       : ""
 //                       }`}
 //                   />
-//                   <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
+//                   <div className="text-right text-xs text-ink-caption -mt-2 mb-2">
 //                     {clientsSection.headline.title.length}/80
 //                     {clientsSection.headline.title.length >= 80 && (
-//                       <span className="ml-2 text-red-500 font-bold">
+//                       <span className="ml-2 text-status-error font-bold">
 //                         Character limit reached!
 //                       </span>
 //                     )}
@@ -586,15 +586,15 @@
 //                     }
 //                     maxLength={200}
 //                     className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${clientsSection.headline.description.length >= 200
-//                       ? "border-red-500"
+//                       ? "border-status-error"
 //                       : ""
 //                       }`}
 //                     rows={2}
 //                   />
-//                   <div className="text-right text-xs text-gray-500 mt-1">
+//                   <div className="text-right text-xs text-ink-caption mt-1">
 //                     {clientsSection.headline.description.length}/200
 //                     {clientsSection.headline.description.length >= 200 && (
-//                       <span className="ml-2 text-red-500 font-bold">
+//                       <span className="ml-2 text-status-error font-bold">
 //                         Character limit reached!
 //                       </span>
 //                     )}
@@ -638,7 +638,7 @@
 //               >
 //                 <Button
 //                   onClick={addClient}
-//                   className="cursor-pointer text-green-600"
+//                   className="cursor-pointer text-status-success"
 //                 >
 //                   + Add Client
 //                 </Button>
@@ -670,7 +670,7 @@
 //                     transition={{ duration: 0.3 }}
 //                   >
 //                     {isEditing && (
-//                       <div className="absolute top-0 left-0 bg-black/70 text-white text-xs p-1 rounded z-10">
+//                       <div className="absolute top-0 left-0 bg-ink/70 text-white text-xs p-1 rounded z-10">
 //                         Recommended: 4:3
 //                       </div>
 //                     )}
@@ -680,7 +680,7 @@
 //                       className="w-full h-full object-cover"
 //                     />
 //                     {isEditing && (
-//                       <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
+//                       <label className="absolute inset-0 bg-ink/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
 //                         <svg
 //                           className="w-4 h-4 text-white"
 //                           fill="none"
@@ -732,13 +732,13 @@
 //                               )
 //                             }
 //                             maxLength={50}
-//                             className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-red-500" : ""
+//                             className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-status-error" : ""
 //                               }`}
 //                           />
-//                           <div className="text-right text-xs text-gray-500 mt-1">
+//                           <div className="text-right text-xs text-ink-caption mt-1">
 //                             {client.name.length}/50
 //                             {client.name.length >= 50 && (
-//                               <span className="ml-2 text-red-500 font-bold">
+//                               <span className="ml-2 text-status-error font-bold">
 //                                 Limit reached!
 //                               </span>
 //                             )}
@@ -748,7 +748,7 @@
 //                         {pendingImages[
 //                           index % clientsSection.clients.length
 //                         ] && (
-//                             <p className="text-xs text-green-600 mt-1">
+//                             <p className="text-xs text-status-success mt-1">
 //                               ✓ Image ready to upload
 //                             </p>
 //                           )}
@@ -1201,28 +1201,28 @@
 //         <motion.div
 //           initial={{ opacity: 0 }}
 //           animate={{ opacity: 1 }}
-//           className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+//           className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
 //         >
 //           <motion.div
 //             initial={{ scale: 0.9, opacity: 0 }}
 //             animate={{ scale: 1, opacity: 1 }}
-//             className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+//             className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
 //           >
 //             {/* Header */}
-//             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-//               <h3 className="text-lg font-semibold text-gray-800">
+//             <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+//               <h3 className="text-lg font-semibold text-ink-charcoal">
 //                 Crop Client Image (4:3 Ratio)
 //               </h3>
 //               <button
 //                 onClick={cancelCrop}
-//                 className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+//                 className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
 //               >
-//                 <X className="w-5 h-5 text-gray-600" />
+//                 <X className="w-5 h-5 text-ink-paragraph" />
 //               </button>
 //             </div>
 
 //             {/* Cropper Area */}
-//             <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+//             <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
 //               <Cropper
 //                 image={imageToCrop}
 //                 crop={crop}
@@ -1258,18 +1258,18 @@
 //             </div>
 
 //             {/* Controls */}
-//             <div className="p-4 bg-gray-50 border-t border-gray-200">
+//             <div className="p-4 bg-ink-offwhite border-t border-ink-light">
 //               {/* Aspect Ratio Button - Only 4:3 */}
 //               <div className="mb-4">
-//                 <p className="text-sm font-medium text-gray-700 mb-2">
+//                 <p className="text-sm font-medium text-ink-paragraph mb-2">
 //                   Aspect Ratio:
 //                 </p>
 //                 <div className="flex gap-2">
 //                   <button
 //                     onClick={() => setAspectRatio(4 / 3)}
 //                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-//                       ? "bg-blue-500 text-white border-blue-500"
-//                       : "bg-white text-gray-700 border-gray-300"
+//                       ? "bg-status-info text-white border-status-info"
+//                       : "bg-surface-card text-ink-paragraph border-ink-light"
 //                       }`}
 //                   >
 //                     4:3 (Oval)
@@ -1280,11 +1280,11 @@
 //               {/* Zoom Control - UPDATED WITH DYNAMIC RANGE */}
 //               <div className="space-y-2 mb-4">
 //                 <div className="flex items-center justify-between text-sm">
-//                   <span className="flex items-center gap-2 text-gray-700">
+//                   <span className="flex items-center gap-2 text-ink-paragraph">
 //                     <ZoomIn className="w-4 h-4" />
 //                     Zoom
 //                   </span>
-//                   <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+//                   <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
 //                 </div>
 //                 <input
 //                   type="range"
@@ -1293,7 +1293,7 @@
 //                   max={5}
 //                   step={0.1}
 //                   onChange={(e) => setZoom(Number(e.target.value))}
-//                   className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+//                   className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
 //                 />
 //               </div>
 
@@ -1303,20 +1303,20 @@
 //                 <Button
 //                   variant="outline"
 //                   onClick={resetCropSettings}
-//                   className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+//                   className="w-full border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                 >
 //                   Reset
 //                 </Button>
 //                 <Button
 //                   variant="outline"
 //                   onClick={cancelCrop}
-//                   className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+//                   className="w-full border-ink-light text-ink-paragraph hover:bg-ink-light"
 //                 >
 //                   Cancel
 //                 </Button>
 //                 <Button
 //                   onClick={applyCrop}
-//                   className="w-full bg-green-600 hover:bg-green-700 text-white"
+//                   className="w-full bg-status-success hover:bg-status-success text-white"
 //                 >
 //                   Apply Crop
 //                 </Button>
@@ -1344,7 +1344,7 @@
 //                   whileTap={{ scale: 0.9 }}
 //                   whileHover={{ y: -1, scaleX: 1.05 }}
 //                   onClick={handleCancel}
-//                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
+//                   className="bg-ink-caption hover:bg-ink-paragraph text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
 //                 >
 //                   Cancel
 //                 </motion.button>
@@ -1354,10 +1354,10 @@
 //                   onClick={handleSave}
 //                   disabled={isUploading}
 //                   className={`${isUploading
-//                     ? "bg-gray-400 cursor-not-allowed"
+//                     ? "bg-ink-caption cursor-not-allowed"
 //                     : hasUnsavedChanges || Object.keys(pendingImages).length > 0
-//                       ? "bg-green-600 hover:shadow-2xl"
-//                       : "bg-gray-400 cursor-not-allowed"
+//                       ? "bg-status-success hover:shadow-2xl"
+//                       : "bg-ink-caption cursor-not-allowed"
 //                     } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
 //                 >
 //                   {isUploading ? "Uploading..." : "Save"}
@@ -1368,7 +1368,7 @@
 //                 whileTap={{ scale: 0.9 }}
 //                 whileHover={{ y: -1, scaleX: 1.1 }}
 //                 onClick={() => setIsEditing(true)}
-//                 className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+//                 className="bg-brand-gold text-ink px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
 //               >
 //                 Edit
 //               </motion.button>
@@ -1395,14 +1395,14 @@
 //                     }
 //                     maxLength={80}
 //                     className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${clientsSection.headline.title.length >= 80
-//                       ? "border-red-500"
+//                       ? "border-status-error"
 //                       : ""
 //                       }`}
 //                   />
-//                   <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
+//                   <div className="text-right text-xs text-ink-caption -mt-2 mb-2">
 //                     {clientsSection.headline.title.length}/80
 //                     {clientsSection.headline.title.length >= 80 && (
-//                       <span className="ml-2 text-red-500 font-bold">
+//                       <span className="ml-2 text-status-error font-bold">
 //                         Character limit reached!
 //                       </span>
 //                     )}
@@ -1423,15 +1423,15 @@
 //                     }
 //                     maxLength={200}
 //                     className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${clientsSection.headline.description.length >= 200
-//                       ? "border-red-500"
+//                       ? "border-status-error"
 //                       : ""
 //                       }`}
 //                     rows={2}
 //                   />
-//                   <div className="text-right text-xs text-gray-500 mt-1">
+//                   <div className="text-right text-xs text-ink-caption mt-1">
 //                     {clientsSection.headline.description.length}/200
 //                     {clientsSection.headline.description.length >= 200 && (
-//                       <span className="ml-2 text-red-500 font-bold">
+//                       <span className="ml-2 text-status-error font-bold">
 //                         Character limit reached!
 //                       </span>
 //                     )}
@@ -1475,7 +1475,7 @@
 //               >
 //                 <Button
 //                   onClick={addClient}
-//                   className="cursor-pointer text-green-600"
+//                   className="cursor-pointer text-status-success"
 //                 >
 //                   + Add Client
 //                 </Button>
@@ -1507,7 +1507,7 @@
 //                     transition={{ duration: 0.3 }}
 //                   >
 //                     {isEditing && (
-//                       <div className="absolute top-0 left-0 bg-black/70 text-white text-xs p-1 rounded z-10">
+//                       <div className="absolute top-0 left-0 bg-ink/70 text-white text-xs p-1 rounded z-10">
 //                         Recommended: 4:3
 //                       </div>
 //                     )}
@@ -1517,7 +1517,7 @@
 //                       className="w-full h-full object-cover"
 //                     />
 //                     {isEditing && (
-//                       <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
+//                       <label className="absolute inset-0 bg-ink/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
 //                         <svg
 //                           className="w-4 h-4 text-white"
 //                           fill="none"
@@ -1569,13 +1569,13 @@
 //                               )
 //                             }
 //                             maxLength={50}
-//                             className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-red-500" : ""
+//                             className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-status-error" : ""
 //                               }`}
 //                           />
-//                           <div className="text-right text-xs text-gray-500 mt-1">
+//                           <div className="text-right text-xs text-ink-caption mt-1">
 //                             {client.name.length}/50
 //                             {client.name.length >= 50 && (
-//                               <span className="ml-2 text-red-500 font-bold">
+//                               <span className="ml-2 text-status-error font-bold">
 //                                 Limit reached!
 //                               </span>
 //                             )}
@@ -1585,7 +1585,7 @@
 //                         {pendingImages[
 //                           index % clientsSection.clients.length
 //                         ] && (
-//                             <p className="text-xs text-green-600 mt-1">
+//                             <p className="text-xs text-status-success mt-1">
 //                               ✓ Image ready to upload
 //                             </p>
 //                           )}
@@ -1625,7 +1625,7 @@ import Cropper, { Area } from "react-easy-crop";
 import { toast } from "react-toastify";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Button } from "./ui/button";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 interface Client {
   name: string;
@@ -1995,17 +1995,19 @@ export default function Clients({
         formData.append("templateSelection", templateSelection);
 
 
+        const clientAuthToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
         const uploadPromise = fetch(
-          MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+          COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
           {
             method: "POST",
+            headers: clientAuthToken ? { Authorization: `Bearer ${clientAuthToken}` } : {},
             body: formData,
           }
         ).then(async (uploadResponse) => {
           if (uploadResponse.ok) {
             const uploadData = await uploadResponse.json();
             // Replace local preview with S3 URL
-            updateClient(index, "image", uploadData.imageUrl);
+            updateClient(index, "image", uploadData.url || uploadData.imageUrl);
             return { success: true, index };
           } else {
             const errorData = await uploadResponse.json();
@@ -2102,28 +2104,28 @@ export default function Clients({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Client Image (1:1 Ratio for Circular)
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -2159,18 +2161,18 @@ export default function Clients({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Button - Only 1:1 for circular */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     1:1 (Circular)
@@ -2181,11 +2183,11 @@ export default function Clients({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     <ZoomIn className="w-4 h-4" />
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -2194,7 +2196,7 @@ export default function Clients({
                   max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -2203,14 +2205,14 @@ export default function Clients({
                 <Button
                   variant="outline"
                   onClick={resetCropSettings}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+                  className="w-full border-ink-light text-ink-paragraph hover:bg-ink-light"
                 >
                   Reset
                 </Button>
                 <Button
                   variant="outline"
                   onClick={cancelCrop}
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+                  className="w-full border-ink-light text-ink-paragraph hover:bg-ink-light"
                 >
                   Cancel
                 </Button>
@@ -2218,8 +2220,8 @@ export default function Clients({
                   onClick={applyCrop}
                   disabled={isUploading}
                   className={`w-full ${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700"
+                    ? "bg-ink-caption cursor-not-allowed"
+                    : "bg-status-success hover:bg-status-success"
                     } text-white`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
@@ -2247,7 +2249,7 @@ export default function Clients({
                   whileTap={{ scale: 0.9 }}
                   whileHover={{ y: -1, scaleX: 1.05 }}
                   onClick={handleCancel}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
+                  className="bg-ink-caption hover:bg-ink-paragraph text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
                 >
                   Cancel
                 </motion.button>
@@ -2257,10 +2259,10 @@ export default function Clients({
                   onClick={handleSave}
                   disabled={isUploading}
                   className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
+                    ? "bg-ink-caption cursor-not-allowed"
                     : hasUnsavedChanges || Object.keys(pendingImages).length > 0
-                      ? "bg-green-600 hover:shadow-2xl"
-                      : "bg-gray-400 cursor-not-allowed"
+                      ? "bg-status-success hover:shadow-2xl"
+                      : "bg-ink-caption cursor-not-allowed"
                     } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
                 >
                   {isUploading ? "Uploading..." : "Save & Exit"}
@@ -2271,7 +2273,7 @@ export default function Clients({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+                className="bg-brand-gold text-ink px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit
               </motion.button>
@@ -2280,7 +2282,7 @@ export default function Clients({
 
           {/* Auto-update status indicator */}
           {isEditing && (
-            <div className="flex items-center justify-end mb-4 text-sm text-green-600">
+            <div className="flex items-center justify-end mb-4 text-sm text-status-success">
               <CheckCircle className="w-4 h-4 mr-1" />
               Auto-saving changes...
             </div>
@@ -2301,14 +2303,14 @@ export default function Clients({
                     onChange={(e) => updateHeadline("title", e.target.value)}
                     maxLength={80}
                     className={`text-3xl md:text-4xl font-bold text-foreground mb-4 w-full text-center border-b bg-transparent ${clientsSection.headline.title.length >= 80
-                      ? "border-red-500"
+                      ? "border-status-error"
                       : ""
                       }`}
                   />
-                  <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
+                  <div className="text-right text-xs text-ink-caption -mt-2 mb-2">
                     {clientsSection.headline.title.length}/80
                     {clientsSection.headline.title.length >= 80 && (
-                      <span className="ml-2 text-red-500 font-bold">
+                      <span className="ml-2 text-status-error font-bold">
                         Character limit reached!
                       </span>
                     )}
@@ -2321,15 +2323,15 @@ export default function Clients({
                     onChange={(e) => updateHeadline("description", e.target.value)}
                     maxLength={200}
                     className={`text-lg text-muted-foreground w-full text-center border-b bg-transparent ${clientsSection.headline.description.length >= 200
-                      ? "border-red-500"
+                      ? "border-status-error"
                       : ""
                       }`}
                     rows={2}
                   />
-                  <div className="text-right text-xs text-gray-500 mt-1">
+                  <div className="text-right text-xs text-ink-caption mt-1">
                     {clientsSection.headline.description.length}/200
                     {clientsSection.headline.description.length >= 200 && (
-                      <span className="ml-2 text-red-500 font-bold">
+                      <span className="ml-2 text-status-error font-bold">
                         Character limit reached!
                       </span>
                     )}
@@ -2373,7 +2375,7 @@ export default function Clients({
               >
                 <Button
                   onClick={addClient}
-                  className="cursor-pointer text-green-600"
+                  className="cursor-pointer text-status-success"
                 >
                   + Add Client
                 </Button>
@@ -2405,7 +2407,7 @@ export default function Clients({
                     transition={{ duration: 0.3 }}
                   >
                     {isEditing && (
-                      <div className="absolute top-0 left-0 bg-black/70 text-white text-xs p-1 rounded z-10">
+                      <div className="absolute top-0 left-0 bg-ink/70 text-white text-xs p-1 rounded z-10">
                         Recommended: 1:1
                       </div>
                     )}
@@ -2415,7 +2417,7 @@ export default function Clients({
                       className="w-full h-full object-cover"
                     />
                     {isEditing && (
-                      <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
+                      <label className="absolute inset-0 bg-ink/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer">
                         <svg
                           className="w-4 h-4 text-white"
                           fill="none"
@@ -2449,7 +2451,7 @@ export default function Clients({
                       </label>
                     )}
                     {pendingImages[index % clientsSection.clients.length] && (
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-status-success rounded-full border-2 border-white animate-pulse" />
                     )}
                   </motion.div>
                   <motion.div
@@ -2470,13 +2472,13 @@ export default function Clients({
                               )
                             }
                             maxLength={50}
-                            className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-red-500" : ""
+                            className={`text-sm font-medium text-card-foreground border-b bg-transparent w-full text-center ${client.name.length >= 50 ? "border-status-error" : ""
                               }`}
                           />
-                          <div className="text-right text-xs text-gray-500 mt-1">
+                          <div className="text-right text-xs text-ink-caption mt-1">
                             {client.name.length}/50
                             {client.name.length >= 50 && (
-                              <span className="ml-2 text-red-500 font-bold">
+                              <span className="ml-2 text-status-error font-bold">
                                 Limit reached!
                               </span>
                             )}
@@ -2486,7 +2488,7 @@ export default function Clients({
                         {pendingImages[
                           index % clientsSection.clients.length
                         ] && (
-                            <p className="text-xs text-green-600 mt-1">
+                            <p className="text-xs text-status-success mt-1">
                               ✓ Image uploaded to AWS
                             </p>
                           )}

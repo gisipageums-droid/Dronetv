@@ -70,7 +70,7 @@ export default function Header() {
             {/* Logo + Name */}
             <motion.a
               href="#home"
-              className="flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-red-500 dark:text-yellow-400 transition-colors duration-300"
+              className="flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-status-error dark:text-yellow-400 transition-colors duration-300"
               whileHover={{ scale: 1.05 }}
             >
               <motion.img
@@ -103,50 +103,50 @@ export default function Header() {
             <nav className="hidden md:flex items-center space-x-6">
               <a
                 href="#home"
-                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                className="text-ink hover:text-brand-yellow transition-colors duration-300 font-medium"
               >
                 Home
               </a>
               <a
                 href="#about"
-                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                className="text-ink hover:text-brand-yellow transition-colors duration-300 font-medium"
               >
                 About
               </a>
               <a
                 href="#profile"
-                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                className="text-ink hover:text-brand-yellow transition-colors duration-300 font-medium"
               >
                 Profile
               </a>
               <a
                 href="#services"
-                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                className="text-ink hover:text-brand-yellow transition-colors duration-300 font-medium"
               >
                 Services
               </a>
               <a
                 href="#product"
-                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                className="text-ink hover:text-brand-yellow transition-colors duration-300 font-medium"
               >
                 Product
               </a>
               <a
                 href="#blog"
-                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                className="text-ink hover:text-brand-yellow transition-colors duration-300 font-medium"
               >
                 Blog
               </a>
               {/* 👇 Added Gallery */}
               <a
                 href="#gallery"
-                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                className="text-ink hover:text-brand-yellow transition-colors duration-300 font-medium"
               >
                 Gallery
               </a>
               <a
                 href="#testimonials"
-                className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                className="text-ink hover:text-brand-yellow transition-colors duration-300 font-medium"
               >
                 Testimonials
               </a>
@@ -157,7 +157,7 @@ export default function Header() {
               <button
                 onClick={toggleMobileMenu}
                 style={mobileButtonStyles}
-                className="hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                className="hover:bg-ink-light dark:hover:bg-gray-700 dark:text-gray-300 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-status-info"
                 aria-label="Toggle mobile menu"
                 type="button"
               >
@@ -214,7 +214,7 @@ export default function Header() {
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="block px-3 py-2.5 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300"
+              className="block px-3 py-2.5 text-base font-medium text-ink-paragraph dark:text-gray-300 hover:text-status-info dark:hover:text-indigo-400 hover:bg-ink-offwhite dark:hover:bg-gray-800 rounded-md transition-colors duration-300"
               onClick={closeMobileMenu}
             >
               {item}

@@ -254,7 +254,7 @@ export default function Clients() {
             ))}
             {isEditing && (
               <div className='flex items-center justify-center w-32'>
-                <Button onClick={addClient} className='text-green-600'>
+                <Button onClick={addClient} className='text-status-success'>
                   + Add Client
                 </Button>
               </div>

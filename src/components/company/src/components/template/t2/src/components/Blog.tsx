@@ -214,7 +214,7 @@ export default function Blog() {
           {displayedPosts.map((post, index) => (
             <motion.article
               key={post.id}
-              className='bg-card rounded-xl shadow-xl  shadow-gray-500 hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer border-2'
+              className='bg-card rounded-xl shadow-xl  shadow-ink-caption hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer border-2'
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -393,7 +393,7 @@ export default function Blog() {
                     },
                   ])
                 }
-                className='text-green-600'
+                className='text-status-success'
               >
                 + Add Blog Post
               </Button>
@@ -421,7 +421,7 @@ export default function Blog() {
       <AnimatePresence>
         {isModalOpen && selectedPost && (
           <motion.div
-            className='fixed inset-0 backdrop-blur-sm bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'
+            className='fixed inset-0 backdrop-blur-sm bg-ink bg-opacity-50 flex items-center justify-center p-4 z-50'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -443,7 +443,7 @@ export default function Blog() {
                 />
                 <button
                   onClick={closeModal}
-                  className='absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors'
+                  className='absolute top-4 right-4 w-8 h-8 bg-surface-card rounded-full flex items-center justify-center shadow-md hover:bg-ink-light transition-colors'
                 >
                   <X className='w-4 h-4' />
                 </button>

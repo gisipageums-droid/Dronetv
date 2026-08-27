@@ -98,7 +98,7 @@ export default function Contact({ onStateChange, contactData }) {
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 text-white bg-green-600 rounded shadow-xl cursor-pointer hover:font-semibold hover:shadow-2xl"
+                className="px-4 py-2 text-white bg-status-success rounded shadow-xl cursor-pointer hover:font-semibold hover:shadow-2xl"
               >
                 Save
               </motion.button>
@@ -107,7 +107,7 @@ export default function Contact({ onStateChange, contactData }) {
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
+                className="px-4 py-2 text-ink bg-brand-gold rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
               >
                 Edit
               </motion.button>
@@ -140,14 +140,14 @@ export default function Contact({ onStateChange, contactData }) {
                     }
                     maxLength={80}
                     className={`w-full mb-4 text-3xl font-bold text-center bg-transparent border-b md:text-4xl text-foreground ${contactSection.header.title.length >= 80
-                        ? "border-red-500"
+                        ? "border-status-error"
                         : ""
                       }`}
                   />
-                  <div className="text-right text-xs text-gray-500 -mt-2 mb-2">
+                  <div className="text-right text-xs text-ink-caption -mt-2 mb-2">
                     {contactSection.header.title.length}/80
                     {contactSection.header.title.length >= 80 && (
-                      <span className="ml-2 text-red-500 font-bold">
+                      <span className="ml-2 text-status-error font-bold">
                         Character limit reached!
                       </span>
                     )}
@@ -181,14 +181,14 @@ export default function Contact({ onStateChange, contactData }) {
                       }
                       maxLength={100}
                       className={`w-full text-lg text-center bg-transparent border-b text-muted-foreground ${contactSection.header.descriptionPart1.length >= 100
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : ""
                         }`}
                     />
-                    <div className="text-right text-xs text-gray-500 mt-1">
+                    <div className="text-right text-xs text-ink-caption mt-1">
                       {contactSection.header.descriptionPart1.length}/100
                       {contactSection.header.descriptionPart1.length >= 100 && (
-                        <span className="ml-2 text-red-500 font-bold">
+                        <span className="ml-2 text-status-error font-bold">
                           Limit reached!
                         </span>
                       )}
@@ -211,14 +211,14 @@ export default function Contact({ onStateChange, contactData }) {
                       }
                       maxLength={50}
                       className={`w-full text-lg font-semibold text-center bg-transparent border-b text-red-accent ${contactSection.header.descriptionPart2.length >= 50
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : ""
                         }`}
                     />
-                    <div className="text-right text-xs text-gray-500 mt-1">
+                    <div className="text-right text-xs text-ink-caption mt-1">
                       {contactSection.header.descriptionPart2.length}/50
                       {contactSection.header.descriptionPart2.length >= 50 && (
-                        <span className="ml-2 text-red-500 font-bold">
+                        <span className="ml-2 text-status-error font-bold">
                           Limit reached!
                         </span>
                       )}
@@ -239,14 +239,14 @@ export default function Contact({ onStateChange, contactData }) {
                       }
                       maxLength={80}
                       className={`w-full text-lg text-center bg-transparent border-b text-muted-foreground ${contactSection.header.descriptionPart3.length >= 80
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : ""
                         }`}
                     />
-                    <div className="text-right text-xs text-gray-500 mt-1">
+                    <div className="text-right text-xs text-ink-caption mt-1">
                       {contactSection.header.descriptionPart3.length}/80
                       {contactSection.header.descriptionPart3.length >= 80 && (
-                        <span className="ml-2 text-red-500 font-bold">
+                        <span className="ml-2 text-status-error font-bold">
                           Limit reached!
                         </span>
                       )}

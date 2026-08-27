@@ -40,14 +40,14 @@
 //             animate={aboutVisible ? { opacity: 1, x: 0 } : {}}
 //             transition={{ duration: 0.8 }}
 //           >
-//             <Badge className="bg-[#ffeb3b] text-gray-900 mb-4">
+//             <Badge className="bg-[#F8C400] text-ink mb-4">
 //               About Company
 //             </Badge>
-//             <h2 className="text-3xl font-bold text-gray-900 mb-6">
+//             <h2 className="text-3xl font-bold text-ink mb-6">
 //               About Company
 //             </h2>
 
-//             <div className="space-y-4 text-gray-700">
+//             <div className="space-y-4 text-ink-paragraph">
 //               <div className="grid grid-cols-2 gap-4 text-sm">
 //                 <div>
 //                   <strong>Company:</strong> Innovative Labs
@@ -63,7 +63,7 @@
 //                 </div>
 //               </div>
 
-//               <p className="text-gray-600 leading-relaxed">
+//               <p className="text-ink-paragraph leading-relaxed">
 //                 Our company offers innovative solutions designed to meet your
 //                 unique business needs. With a team of experts, we ensure
 //                 quality, reliability, and on-time delivery in every project.
@@ -83,7 +83,7 @@
 //               </div>
 //             </div>
 
-//             <Button className="bg-[#ffeb3b] text-gray-900 hover:bg-[#ffeb3b]/90 rounded-full mt-6">
+//             <Button className="bg-[#F8C400] text-ink hover:bg-[#F8C400]/90 rounded-full mt-6">
 //               Learn More
 //             </Button>
 //           </motion.div>
@@ -125,7 +125,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="py-20 bg-gradient-to-b from-blue-50 to-white scroll-mt-20"
+      className="py-20 bg-gradient-to-b from-status-info/10 to-white scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-start" ref={ref}>
@@ -136,43 +136,43 @@ export default function About() {
             className="space-y-6"
           >
             <div>
-              <Badge className="bg-yellow-400 text-gray-900 mb-4">
+              <Badge className="bg-brand-yellow text-ink mb-4">
                 About Company
               </Badge>
 
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl font-bold text-ink mb-6">
                 About Innovative Labs
               </h2>
             </div>
 
             {/* Company Info Grid */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="space-y-1">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">
+                  <p className="text-ink-caption text-xs uppercase tracking-wide">
                     Company
                   </p>
-                  <p className="font-semibold text-gray-900">Innovative Labs</p>
+                  <p className="font-semibold text-ink">Innovative Labs</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">
+                  <p className="text-ink-caption text-xs uppercase tracking-wide">
                     Industry
                   </p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-ink">
                     Aerial Survey & Mapping
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">
+                  <p className="text-ink-caption text-xs uppercase tracking-wide">
                     Established
                   </p>
-                  <p className="font-semibold text-gray-900">2022-01-31</p>
+                  <p className="font-semibold text-ink">2022-01-31</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">
+                  <p className="text-ink-caption text-xs uppercase tracking-wide">
                     Headquarters
                   </p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-ink">
                     Hyderabad, TS, IN
                   </p>
                 </div>
@@ -181,14 +181,14 @@ export default function About() {
 
             {/* Description */}
             <div className="space-y-4">
-              <p className="text-gray-600 leading-relaxed text-base">
+              <p className="text-ink-paragraph leading-relaxed text-base">
                 Our company offers innovative solutions designed to meet your
                 unique business needs. With a team of experts, we ensure
                 quality, reliability, and on-time delivery in every project.
                 From planning to execution, we provide end-to-end services that
                 drive sustainable growth.
               </p>
-              <p className="text-gray-600 leading-relaxed text-base">
+              <p className="text-ink-paragraph leading-relaxed text-base">
                 aerial photography solutions, quickly expanding to encompass a
                 wider range of applications. The founding team's combined
                 expertise in aerospace engineering
@@ -197,20 +197,20 @@ export default function About() {
 
             {/* Mission & Vision */}
             <div className="space-y-4">
-              <div className="bg-blue-100 rounded-lg p-5 border-l-4 border-blue-600">
-                <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">🎯</span> Mission
+              <div className="bg-status-info/15 rounded-lg p-5 border-l-4 border-status-info">
+                <h3 className="font-bold text-ink mb-2 flex items-center gap-2">
+                  <span className="text-status-info">🎯</span> Mission
                 </h3>
-                <p className="text-gray-700 text-sm leading-relaxed">
+                <p className="text-ink-paragraph text-sm leading-relaxed">
                   To create cutting-edge solutions that empower businesses
                   through innovation and technology.
                 </p>
               </div>
-              <div className="bg-purple-100 rounded-lg p-5 border-l-4 border-purple-600">
-                <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-purple-600">👁️</span> Vision
+              <div className="bg-brand-gold/15 rounded-lg p-5 border-l-4 border-brand-gold">
+                <h3 className="font-bold text-ink mb-2 flex items-center gap-2">
+                  <span className="text-brand-gold">👁️</span> Vision
                 </h3>
-                <p className="text-gray-700 text-sm leading-relaxed">
+                <p className="text-ink-paragraph text-sm leading-relaxed">
                   To be a global leader in driving innovation that shapes a
                   smarter, sustainable future.
                 </p>
@@ -218,9 +218,9 @@ export default function About() {
             </div>
 
             {/* Certifications */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-green-600">✓</span> Certifications
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
+              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                <span className="text-status-success">✓</span> Certifications
               </h3>
               <ul className="space-y-2">
                 <li>DGCA Remote Pilot License</li>
@@ -230,9 +230,9 @@ export default function About() {
             </div>
 
             {/* Achievements */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-yellow-600">🏆</span> Achievements
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
+              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                <span className="text-brand-gold">🏆</span> Achievements
               </h3>
               <ul className="space-y-2">
                 <li>50+ Successful Drone Operations Completed</li>
@@ -249,7 +249,7 @@ export default function About() {
             className="space-y-4"
           >
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-              <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent mix-blend-multiply"></div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-status-info/20 to-transparent mix-blend-multiply"></div>
               <img
                 src={
                   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7HGjp8gUNekNAW0V5NjQ8ORjGbNeR7f4xpQ&s"
@@ -259,9 +259,9 @@ export default function About() {
               />
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-green-600">✓</span> Certifications
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
+              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                <span className="text-status-success">✓</span> Certifications
               </h3>
               <ul className="space-y-2">
                 <li>DGCA Remote Pilot License</li>
@@ -271,9 +271,9 @@ export default function About() {
             </div>
 
             {/* Achievements */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-yellow-600">🏆</span> Achievements
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
+              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                <span className="text-brand-gold">🏆</span> Achievements
               </h3>
               <ul className="space-y-2">
                 <li>50+ Successful Drone Operations Completed</li>

@@ -10,12 +10,12 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
   const [progress, setProgress] = useState(0);
 
   const steps = [
-    { icon: Brain, text: 'Analyzing your business information...', color: 'text-blue-600' },
-    { icon: Palette, text: 'Generating color palette and design...', color: 'text-purple-600' },
-    { icon: FileText, text: 'Creating website content...', color: 'text-green-600' },
-    { icon: Globe, text: 'Building your website structure...', color: 'text-indigo-600' },
-    { icon: Sparkles, text: 'Adding final touches and optimizations...', color: 'text-pink-600' },
-    { icon: Zap, text: 'Your website is ready!', color: 'text-yellow-600' },
+    { icon: Brain, text: 'Analyzing your business information...', color: 'text-status-info' },
+    { icon: Palette, text: 'Generating color palette and design...', color: 'text-brand-gold' },
+    { icon: FileText, text: 'Creating website content...', color: 'text-status-success' },
+    { icon: Globe, text: 'Building your website structure...', color: 'text-status-info' },
+    { icon: Sparkles, text: 'Adding final touches and optimizations...', color: 'text-status-error' },
+    { icon: Zap, text: 'Your website is ready!', color: 'text-brand-gold' },
   ];
 
   useEffect(() => {
@@ -49,36 +49,36 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
   }, [onComplete, steps.length]);
 
   return (
-    <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50 overflow-y-auto py-8">
+    <div className="fixed inset-0 bg-status-info flex items-center justify-center z-50 overflow-y-auto py-8">
       <div className="max-w-md w-full mx-4">
         {/* Main Content */}
         <div className="text-center mb-8">
           <div className="relative mb-6">
-            <div className="w-24 h-24 mx-auto bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-pulse">
+            <div className="w-24 h-24 mx-auto bg-gradient-to-r from-status-info to-brand-gold rounded-full flex items-center justify-center animate-pulse">
               <Brain className="w-12 h-12 text-white" />
             </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce">
-              <Sparkles className="w-4 h-4 text-yellow-800" />
+            <div className="absolute -top-2 -right-2 w-8 h-8 bg-brand-yellow rounded-full flex items-center justify-center animate-bounce">
+              <Sparkles className="w-4 h-4 text-brand-gold" />
             </div>
           </div>
           
           <h1 className="text-3xl font-bold text-white mb-2">
             AI is Generating Your Website
           </h1>
-          <p className="text-blue-200 text-lg">
+          <p className="text-status-info/25 text-lg">
             Please wait while we create your digital presence
           </p>
         </div>
 
         {/* Progress Bar */}
         <div className="mb-8">
-          <div className="flex justify-between text-sm text-blue-200 mb-2">
+          <div className="flex justify-between text-sm text-status-info/25 mb-2">
             <span>Progress</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-slate-700 rounded-full h-3">
+          <div className="w-full bg-ink-paragraph rounded-full h-3">
             <div
-              className="bg-blue-500 h-3 rounded-full transition-all duration-300 ease-out"
+              className="bg-status-info h-3 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -98,17 +98,17 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
                   isActive
                     ? 'bg-white/10 border border-white/20 scale-105'
                     : isCompleted
-                    ? 'bg-green-500/10 border border-green-500/20'
-                    : 'bg-slate-800/50 border border-slate-700'
+                    ? 'bg-status-success/10 border border-status-success/20'
+                    : 'bg-ink-charcoal/50 border border-ink-paragraph'
                 }`}
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 animate-pulse'
+                      ? 'bg-gradient-to-r from-status-info to-brand-gold animate-pulse'
                       : isCompleted
-                      ? 'bg-green-500'
-                      : 'bg-slate-600'
+                      ? 'bg-status-success'
+                      : 'bg-ink-paragraph'
                   }`}
                 >
                   <Icon className="w-5 h-5 text-white" />
@@ -118,8 +118,8 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
                     isActive
                       ? 'text-white'
                       : isCompleted
-                      ? 'text-green-300'
-                      : 'text-slate-400'
+                      ? 'text-status-success/40'
+                      : 'text-ink-caption'
                   }`}
                 >
                   {step.text}
@@ -127,15 +127,15 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
                 {isActive && (
                   <div className="ml-auto">
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <div className="w-2 h-2 bg-status-info rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 bg-status-info rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 bg-status-info rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                   </div>
                 )}
                 {isCompleted && (
                   <div className="ml-auto">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="w-6 h-6 bg-status-success rounded-full flex items-center justify-center">
                       <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
@@ -149,7 +149,7 @@ export const AIGenerationLoader: React.FC<AIGenerationLoaderProps> = ({ onComple
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <p className="text-slate-400 text-sm">
+          <p className="text-ink-caption text-sm">
             This usually takes about 90 seconds
           </p>
         </div>

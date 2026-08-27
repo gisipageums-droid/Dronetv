@@ -80,10 +80,10 @@ const getSectorsByCategory = (category: string) => {
 
 const getCategoryColor = (category: string) => {
   switch (category) {
-    case 'Drone': return { bg: 'bg-yellow-50', text: 'text-amber-900', border: 'border-amber-300' };
-    case 'AI': return { bg: 'bg-blue-50', text: 'text-blue-900', border: 'border-blue-200' };
-    case 'GIS': return { bg: 'bg-green-50', text: 'text-green-900', border: 'border-green-200' };
-    default: return { bg: 'bg-yellow-50', text: 'text-amber-900', border: 'border-amber-200' };
+    case 'Drone': return { bg: 'bg-surface-main', text: 'text-brand-gold', border: 'border-brand-yellow-soft' };
+    case 'AI': return { bg: 'bg-status-info/10', text: 'text-status-info', border: 'border-status-info/25' };
+    case 'GIS': return { bg: 'bg-status-success/10', text: 'text-status-success', border: 'border-status-success/25' };
+    default: return { bg: 'bg-surface-main', text: 'text-brand-gold', border: 'border-brand-yellow-soft' };
   }
 };
 
@@ -148,10 +148,10 @@ const Step3SectorsServed: React.FC<StepProps> = ({
 
         {/* Category selection */}
         <div>
-          <h3 className="text-sm font-bold text-slate-800 mb-1">
+          <h3 className="text-sm font-bold text-ink-charcoal mb-1">
             Your Company Type
           </h3>
-          <p className="text-xs text-slate-500 mb-3">
+          <p className="text-xs text-ink-caption mb-3">
             Pre-selected from your registration. You can add more if needed.
           </p>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -162,8 +162,8 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                   key={value}
                   className={`relative flex flex-col items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
                     isSelected
-                      ? 'border-amber-500 bg-amber-50 shadow-md ring-2 ring-amber-200'
-                      : 'border-gray-200 bg-white hover:border-amber-300 hover:shadow-sm'
+                      ? 'border-brand-gold bg-surface-main shadow-md ring-2 ring-brand-yellow-soft'
+                      : 'border-ink-light bg-surface-card hover:border-brand-yellow-soft hover:shadow-sm'
                   }`}
                 >
                   <input
@@ -173,7 +173,7 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                     className="sr-only"
                   />
                   <div className={`absolute top-3 right-3 w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
-                    isSelected ? 'border-amber-500 bg-amber-500' : 'border-gray-300 bg-white'
+                    isSelected ? 'border-brand-gold bg-brand-gold' : 'border-ink-light bg-surface-card'
                   }`}>
                     {isSelected && (
                       <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
@@ -181,10 +181,10 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                       </svg>
                     )}
                   </div>
-                  <h4 className={`text-base font-bold mb-1 ${isSelected ? 'text-amber-900' : 'text-gray-700'}`}>
+                  <h4 className={`text-base font-bold mb-1 ${isSelected ? 'text-brand-gold' : 'text-ink-paragraph'}`}>
                     {value}
                   </h4>
-                  <p className={`text-xs text-center ${isSelected ? 'text-amber-700' : 'text-gray-500'}`}>
+                  <p className={`text-xs text-center ${isSelected ? 'text-brand-gold' : 'text-ink-caption'}`}>
                     {description}
                   </p>
                 </label>
@@ -195,8 +195,8 @@ const Step3SectorsServed: React.FC<StepProps> = ({
 
         {/* Sectors for each selected category — accordion panels */}
         {selectedCategories.length === 0 && (
-          <div className="py-6 text-center border-2 border-dashed border-amber-200 rounded-lg bg-amber-50">
-            <p className="text-amber-700 font-medium text-sm">
+          <div className="py-6 text-center border-2 border-dashed border-brand-yellow-soft rounded-lg bg-surface-main">
+            <p className="text-brand-gold font-medium text-sm">
               Select a company type above to see the relevant sectors
             </p>
           </div>
@@ -216,13 +216,13 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                 type="button"
                 onClick={() => toggleExpanded(category)}
                 className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors ${
-                  isOpen ? `${colors.bg}` : 'bg-white hover:bg-gray-50'
+                  isOpen ? `${colors.bg}` : 'bg-surface-card hover:bg-ink-offwhite'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <span className={`text-sm font-bold ${colors.text}`}>{category} — Sectors Served</span>
                   {selectedSectors.length > 0 && (
-                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">
+                    <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-brand-yellow-soft text-brand-gold">
                       {selectedSectors.length} selected
                     </span>
                   )}
@@ -245,10 +245,10 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                     {sectors.map((sector) => (
                       <label
                         key={sector}
-                        className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-white text-xs ${
+                        className={`flex items-center p-2 border rounded-md cursor-pointer transition-all hover:bg-surface-card text-xs ${
                           selectedSectors.includes(sector)
-                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                            : 'border-slate-300 bg-white text-gray-800'
+                            ? 'border-status-info bg-status-info/10 text-status-info'
+                            : 'border-ink-light bg-surface-card text-ink-charcoal'
                         }`}
                       >
                         <input
@@ -266,8 +266,8 @@ const Step3SectorsServed: React.FC<StepProps> = ({
                         />
                         <div className={`w-3 h-3 flex-shrink-0 rounded border-2 mr-2 flex items-center justify-center ${
                           selectedSectors.includes(sector)
-                            ? 'border-blue-500 bg-blue-500'
-                            : 'border-slate-300'
+                            ? 'border-status-info bg-status-info'
+                            : 'border-ink-light'
                         }`}>
                           {selectedSectors.includes(sector) && (
                             <svg className="w-2 h-2 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
@@ -302,17 +302,17 @@ const Step3SectorsServed: React.FC<StepProps> = ({
 
         {/* Summary */}
         {formData.sectorsServed && Object.values(formData.sectorsServed).some((arr) => arr.length > 0) && (
-          <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-            <h4 className="mb-2 text-xs font-semibold text-slate-700">Selected Sectors Summary</h4>
+          <div className="p-3 rounded-lg bg-ink-offwhite border border-ink-light">
+            <h4 className="mb-2 text-xs font-semibold text-ink-paragraph">Selected Sectors Summary</h4>
             {Object.entries(formData.sectorsServed).map(([category, sectors]) =>
               sectors.length > 0 ? (
                 <div key={category} className="mb-2">
-                  <h5 className="text-xs font-bold text-slate-600 mb-1">{category}</h5>
+                  <h5 className="text-xs font-bold text-ink-paragraph mb-1">{category}</h5>
                   <div className="flex flex-wrap gap-1">
                     {sectors.map((sector: string) => (
                       <span
                         key={sector}
-                        className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium"
+                        className="px-2 py-0.5 bg-status-info/15 text-status-info rounded border border-status-info/25 text-xs font-medium"
                       >
                         {sector}
                       </span>

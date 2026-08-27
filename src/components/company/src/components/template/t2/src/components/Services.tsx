@@ -316,7 +316,7 @@ export default function Services() {
               {isEditing && cat !== "All" && (
                 <button
                   onClick={() => removeCategory(cat)}
-                  className='text-red-500 text-xs'
+                  className='text-status-error text-xs'
                 >
                   ✕
                 </button>
@@ -326,7 +326,7 @@ export default function Services() {
           {isEditing && (
             <button
               onClick={addCategory}
-              className='text-green-600 text-sm font-medium'
+              className='text-status-success text-sm font-medium'
             >
               + Add Category
             </button>
@@ -336,8 +336,8 @@ export default function Services() {
         {/* Services Grid */}
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {visibleServices.map((service, index) => (
-            <Card key={index} className='relative border-2 shadow-lg hover:shadow-xl  shadow-gray-500' >
-              <div className='h-40 overflow-hidden relative bg-gradient-to-br from-amber-50 to-amber-100'>
+            <Card key={index} className='relative border-2 shadow-lg hover:shadow-xl  shadow-ink-caption' >
+              <div className='h-40 overflow-hidden relative bg-gradient-to-br from-surface-main to-brand-yellow-soft'>
                 <img
                   src={service.image}
                   alt={service.title}
@@ -389,7 +389,7 @@ export default function Services() {
                     <p className='text-sm text-muted-foreground'>
                       {service.description}
                     </p>
-                    <p className='text-xs mt-1 italic text-gray-500'>
+                    <p className='text-xs mt-1 italic text-ink-caption'>
                       Category: {service.category}
                     </p>
                   </>
@@ -414,7 +414,7 @@ export default function Services() {
           ))}
           {isEditing && (
             <Card className='flex items-center justify-center border-dashed'>
-              <Button onClick={addService} className='text-green-600'>
+              <Button onClick={addService} className='text-status-success'>
                 + Add Service
               </Button>
             </Card>
@@ -445,7 +445,7 @@ export default function Services() {
       <AnimatePresence>
         {isModalOpen && selectedService && (
           <motion.div
-            className='fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50'
+            className='fixed inset-0 bg-ink/50 flex items-center justify-center p-6 z-50'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -457,7 +457,7 @@ export default function Services() {
             >
               <button
                 onClick={closeModal}
-                className='absolute top-4 right-4 bg-white text-gray-900 rounded-full p-2'
+                className='absolute top-4 right-4 bg-surface-card text-ink rounded-full p-2'
               >
                 <X className='w-5 h-5' />
               </button>
@@ -507,7 +507,7 @@ export default function Services() {
               <ul className='space-y-2 mb-4'>
                 {selectedService.benefits.map((b: string, bi: number) => (
                   <li key={bi} className='flex gap-2'>
-                    <CheckCircle className='w-4 h-4 text-green-500 mt-1' />
+                    <CheckCircle className='w-4 h-4 text-status-success mt-1' />
                     {isEditing ? (
                       <div className='flex flex-col gap-1 w-full'>
                         <input
@@ -534,7 +534,7 @@ export default function Services() {
                               bi
                             )
                           }
-                          className='text-xs text-red-500'
+                          className='text-xs text-status-error'
                         >
                           ✕ Remove
                         </button>
@@ -555,7 +555,7 @@ export default function Services() {
                       "benefits"
                     )
                   }
-                  className='text-xs text-green-600 mb-4'
+                  className='text-xs text-status-success mb-4'
                 >
                   + Add Benefit
                 </button>
@@ -592,7 +592,7 @@ export default function Services() {
                               pi
                             )
                           }
-                          className='text-xs text-red-500'
+                          className='text-xs text-status-error'
                         >
                           ✕ Remove
                         </button>
@@ -613,7 +613,7 @@ export default function Services() {
                       "process"
                     )
                   }
-                  className='text-xs text-green-600 mb-4'
+                  className='text-xs text-status-success mb-4'
                 >
                   + Add Step
                 </button>

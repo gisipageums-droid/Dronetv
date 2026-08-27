@@ -4,7 +4,7 @@ import { ArrowRight, Play, CheckCircle, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function Hero({
   heroData,
@@ -158,16 +158,17 @@ export default function Hero({
 
     try {
       const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
+          headers: (() => { const t = localStorage.getItem("token") || localStorage.getItem("adminToken"); return t ? { Authorization: `Bearer ${t}` } : {}; })(),
           body: formData,
         }
-      );
+        );
 
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        return uploadData.imageUrl;
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          return uploadData.url || uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
         console.error(`${imageField} upload failed:`, errorData);
@@ -476,28 +477,28 @@ export default function Hero({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Hero Image (4:3 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -532,14 +533,14 @@ export default function Hero({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -548,7 +549,7 @@ export default function Hero({
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -556,20 +557,20 @@ export default function Hero({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className={`w-full ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm font-medium`}
+                  className={`w-full ${isUploading ? 'bg-ink-caption cursor-not-allowed' : 'bg-status-success hover:bg-status-success'} text-white rounded py-2 text-sm font-medium`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
@@ -614,7 +615,7 @@ export default function Hero({
                 {/* Badge - FIXED: Show badge container when editing OR when there's badge text */}
                 {(isEditing || heroState.badgeText) && (
                   <motion.div
-                    className="inline-flex items-center px-4 py-2 bg-yellow-400 rounded-xl text-primary border border-primary/20 mb-4 min-h-[44px]"
+                    className="inline-flex items-center px-4 py-2 bg-brand-yellow rounded-xl text-primary border border-primary/20 mb-4 min-h-[44px]"
                     variants={itemVariants}
                   >
                     {isEditing ? (
@@ -626,17 +627,17 @@ export default function Hero({
                           }
                           maxLength={75}
                           placeholder="Enter company name/badge..."
-                          className={`bg-transparent border-b border-primary text-lg outline-none text-black font-bold uppercase placeholder:text-gray-600 ${heroState.badgeText.length >= 75
-                            ? "border-red-500"
+                          className={`bg-transparent border-b border-primary text-lg outline-none text-ink font-bold uppercase placeholder:text-ink-paragraph ${heroState.badgeText.length >= 75
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
-                        <div className="absolute -bottom-5 left-0 text-xs text-gray-500 font-bold">
+                        <div className="absolute -bottom-5 left-0 text-xs text-ink-caption font-bold">
                           {heroState.badgeText.length >= 75 && "Limit reached!"}
                         </div>
                       </div>
                     ) : (
-                      <span className="font-bold text-lg text-black uppercase">
+                      <span className="font-bold text-lg text-ink uppercase">
                         {heroState.badgeText}
                       </span>
                     )}
@@ -655,14 +656,14 @@ export default function Hero({
                           }
                           maxLength={80}
                           className={`bg-transparent border-b border-foreground text-4xl md:text-6xl leading-tight outline-none w-full max-w-lg ${heroState.heading.length >= 80
-                            ? "border-red-500"
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {heroState.heading.length}/80
                           {heroState.heading.length >= 80 && (
-                            <span className="ml-2 text-gray-500 font-bold">
+                            <span className="ml-2 text-ink-caption font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -687,14 +688,14 @@ export default function Hero({
                         }
                         maxLength={500}
                         className={`bg-transparent border-b text-xl text-muted-foreground outline-none w-full max-w-lg ${heroState.description.length >= 500
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : "border-muted-foreground"
                           }`}
                       />
                       <div
                         className={`absolute right-0 top-full mt-1 text-xs ${heroState.description.length >= 500
-                          ? "text-gray-500"
-                          : "text-gray-500"
+                          ? "text-ink-caption"
+                          : "text-ink-caption"
                           }`}
                       >
                         {heroState.description.length}/500
@@ -706,7 +707,7 @@ export default function Hero({
                       </div>
                     </div>
                   ) : (
-                    <p className="text-xl text-gray-700 dark:text-gray-300 max-w-lg text-justify">
+                    <p className="text-xl text-ink-paragraph dark:text-gray-300 max-w-lg text-justify">
                       {heroState.description}
                     </p>
                   )}
@@ -728,14 +729,14 @@ export default function Hero({
                         }
                         maxLength={30}
                         className={`bg-transparent border-b border-primary outline-none max-w-[200px] ${heroState.primaryBtn.length >= 30
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : ""
                           }`}
                       />
-                      <div className="text-right text-xs text-gray-500 mt-1">
+                      <div className="text-right text-xs text-ink-caption mt-1">
                         {heroState.primaryBtn.length}/30
                         {heroState.primaryBtn.length >= 30 && (
-                          <span className="ml-2 text-gray-500 font-bold">
+                          <span className="ml-2 text-ink-caption font-bold">
                             Character limit reached!
                           </span>
                         )}
@@ -747,7 +748,7 @@ export default function Hero({
                     {heroState.primaryBtn && (
                       <Button
                         size="lg"
-                        className="bg-yellow-100 text-primary-foreground shadow-xl hover:bg-yellow-200"
+                        className="bg-brand-yellow-soft text-primary-foreground shadow-xl hover:bg-brand-yellow-soft"
                       >
                         <a href="#contact">{heroState.primaryBtn}</a>
                         <ArrowRight className="ml-2 h-5 w-5" />
@@ -778,15 +779,15 @@ export default function Hero({
                           }
                           maxLength={60}
                           placeholder="Enter trust text (e.g., 'Trusted by 1000+ companies')"
-                          className={`bg-transparent border-b border-muted-foreground text-sm outline-none placeholder:text-gray-500 ${heroState.trustText.length >= 60
-                            ? "border-red-500"
+                          className={`bg-transparent border-b border-muted-foreground text-sm outline-none placeholder:text-ink-caption ${heroState.trustText.length >= 60
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {heroState.trustText.length}/60
                           {heroState.trustText.length >= 60 && (
-                            <span className="ml-2 text-gray-500 font-bold">
+                            <span className="ml-2 text-ink-caption font-bold">
                               Character limit reached!
                             </span>
                           )}
@@ -818,13 +819,13 @@ export default function Hero({
                                 updateStat(s.id, "value", e.target.value)
                               }
                               maxLength={15}
-                              className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-red-500" : ""
+                              className={`bg-transparent border-b border-foreground font-bold text-2xl outline-none ${s.value.length >= 15 ? "border-status-error" : ""
                                 }`}
                             />
-                            <div className="text-right text-xs text-gray-500 mt-1">
+                            <div className="text-right text-xs text-ink-caption mt-1">
                               {s.value.length}/15
                               {s.value.length >= 15 && (
-                                <span className="ml-2 text-gray-500 font-bold">
+                                <span className="ml-2 text-ink-caption font-bold">
                                   Limit reached!
                                 </span>
                               )}
@@ -838,13 +839,13 @@ export default function Hero({
                                 updateStat(s.id, "label", e.target.value)
                               }
                               maxLength={25}
-                              className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-red-500" : ""
+                              className={`bg-transparent border-b border-muted-foreground text-sm outline-none ${s.label.length >= 25 ? "border-status-error" : ""
                                 }`}
                             />
-                            <div className="text-right text-xs text-gray-500 mt-1">
+                            <div className="text-right text-xs text-ink-caption mt-1">
                               {s.label.length}/25
                               {s.label.length >= 25 && (
-                                <span className="ml-2 text-gray-500 font-bold">
+                                <span className="ml-2 text-ink-caption font-bold">
                                   Limit reached!
                                 </span>
                               )}
@@ -855,7 +856,7 @@ export default function Hero({
                             whileTap={{ scale: 0.9 }}
                             whileHover={{ scale: 1.2 }}
                             onClick={() => removeStat(s.id)}
-                            className="text-gray-500 cursor-pointer text-xs"
+                            className="text-ink-caption cursor-pointer text-xs"
                           >
                             ✕ Remove
                           </motion.button>
@@ -880,7 +881,7 @@ export default function Hero({
                       whileTap={{ scale: 0.9 }}
                       whileHover={{ scale: 1.2 }}
                       onClick={addStat}
-                      className="text-green-600 cursor-pointer shadow-sm  text-sm font-medium"
+                      className="text-status-success cursor-pointer shadow-sm  text-sm font-medium"
                     >
                       + Add Stat
                     </motion.button>
@@ -905,7 +906,7 @@ export default function Hero({
                     {/* Main Hero Image - FIXED */}
                     <div className="relative w-full max-w-2xl mx-auto">
                       {heroState.heroImage ? (
-                        <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden">
+                        <div className="relative w-full aspect-[4/3] bg-ink-light rounded-3xl shadow-2xl overflow-hidden">
                           <img
                             src={heroState.heroImage}
                             alt="Modern business team collaborating"
@@ -913,12 +914,12 @@ export default function Hero({
                           />
                         </div>
                       ) : (
-                        <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-3xl shadow-2xl overflow-hidden flex items-center justify-center">
-                          <span className="text-gray-400">No hero image</span>
+                        <div className="relative w-full aspect-[4/3] bg-ink-light rounded-3xl shadow-2xl overflow-hidden flex items-center justify-center">
+                          <span className="text-ink-caption">No hero image</span>
                         </div>
                       )}
                       {isEditing && (
-                        <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
+                        <label className="absolute bottom-2 right-2 bg-ink/70 text-white p-2 rounded cursor-pointer hover:bg-ink-charcoal/90 transition-colors">
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -956,7 +957,7 @@ export default function Hero({
                     >
                       <div className="relative">
                         {heroState.hero3Image ? (
-                          <div className="relative w-32 h-24 sm:w-40 sm:h-30 lg:w-48 lg:h-36 bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden">
+                          <div className="relative w-32 h-24 sm:w-40 sm:h-30 lg:w-48 lg:h-36 bg-surface-card rounded-2xl shadow-xl border-4 border-white overflow-hidden">
                             <img
                               src={heroState.hero3Image}
                               alt="Additional business context"
@@ -964,12 +965,12 @@ export default function Hero({
                             />
                           </div>
                         ) : (
-                          <div className="relative w-32 h-24 sm:w-40 sm:h-30 lg:w-48 lg:h-36 bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden flex items-center justify-center">
-                            <span className="text-gray-400 text-xs">No small image</span>
+                          <div className="relative w-32 h-24 sm:w-40 sm:h-30 lg:w-48 lg:h-36 bg-surface-card rounded-2xl shadow-xl border-4 border-white overflow-hidden flex items-center justify-center">
+                            <span className="text-ink-caption text-xs">No small image</span>
                           </div>
                         )}
                         {isEditing && (
-                          <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
+                          <label className="absolute bottom-1 right-1 bg-ink/70 text-white p-1 rounded cursor-pointer hover:bg-ink-charcoal/90 transition-colors">
                             <svg
                               className="w-3 h-3"
                               fill="none"
@@ -1002,7 +1003,7 @@ export default function Hero({
 
                     {/* Decorative circle */}
                     <motion.div
-                      className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80"
+                      className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-brand-yellow rounded-full opacity-80"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
@@ -1021,7 +1022,7 @@ export default function Hero({
                   whileHover={{ y: -1, scaleX: 1.05 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handleCancel}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
+                  className="bg-ink-caption hover:bg-ink-paragraph text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
                 >
                   Cancel
                 </motion.button>
@@ -1031,10 +1032,10 @@ export default function Hero({
                   onClick={handleSave}
                   disabled={isUploading}
                   className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
+                    ? "bg-ink-caption cursor-not-allowed"
                     : hasUnsavedChanges || pendingImageFile || pendingSmallImageFile
-                      ? "bg-green-600 hover:shadow-2xl"
-                      : "bg-gray-400 cursor-not-allowed"
+                      ? "bg-status-success hover:shadow-2xl"
+                      : "bg-ink-caption cursor-not-allowed"
                     } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
                 >
                   {isUploading ? "Uploading..." : "Save"}
@@ -1045,7 +1046,7 @@ export default function Hero({
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsEditing(true)}
-                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
+                className="bg-brand-gold text-ink px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit
               </motion.button>

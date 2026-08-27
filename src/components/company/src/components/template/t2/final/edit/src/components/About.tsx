@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 export default function About({
   aboutData,
@@ -221,16 +221,17 @@ export default function About({
 
     try {
       const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
+          headers: (() => { const t = localStorage.getItem("token") || localStorage.getItem("adminToken"); return t ? { Authorization: `Bearer ${t}` } : {}; })(),
           body: formData,
         }
-      );
+        );
 
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        return uploadData.imageUrl;
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          return uploadData.url || uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
         console.error(`${imageField} upload failed:`, errorData);
@@ -442,28 +443,28 @@ export default function About({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop About Image (4:3 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className={`flex-1 relative bg-gray-900 min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
+            <div className={`flex-1 relative bg-ink min-h-0 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}>
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -498,14 +499,14 @@ export default function About({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -514,7 +515,7 @@ export default function About({
                   max={3}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -522,20 +523,20 @@ export default function About({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className={`w-full ${isUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 text-sm font-medium`}
+                  className={`w-full ${isUploading ? 'bg-ink-caption cursor-not-allowed' : 'bg-status-success hover:bg-status-success'} text-white rounded py-2 text-sm font-medium`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
                 </button>
@@ -556,7 +557,7 @@ export default function About({
                   whileTap={{ scale: 0.9 }}
                   whileHover={{ y: -1, scaleX: 1.05 }}
                   onClick={handleCancel}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
+                  className="bg-ink-caption hover:bg-ink-paragraph text-white px-4 py-2 rounded shadow-xl hover:font-semibold"
                 >
                   Cancel
                 </motion.button>
@@ -566,10 +567,10 @@ export default function About({
                   onClick={handleSave}
                   disabled={isUploading}
                   className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
+                    ? "bg-ink-caption cursor-not-allowed"
                     : hasUnsavedChanges || pendingImageFile
-                      ? "bg-green-600 hover:shadow-2xl"
-                      : "bg-gray-400 cursor-not-allowed"
+                      ? "bg-status-success hover:shadow-2xl"
+                      : "bg-ink-caption cursor-not-allowed"
                     } text-white px-4 py-2 rounded shadow-xl hover:font-semibold`}
                 >
                   {isUploading ? "Uploading..." : "Save"}
@@ -580,7 +581,7 @@ export default function About({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -1, scaleX: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className="bg-yellow-500 text-black px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
+                className="bg-brand-gold text-ink px-4 py-2 rounded cursor-pointer  hover:shadow-2xl shadow-xl hover:font-semibold"
               >
                 Edit
               </motion.button>
@@ -599,7 +600,7 @@ export default function About({
               >
                 {/* Recommended Size Above Image */}
                 {isEditing && (
-                  <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
+                  <div className="absolute top-2 left-2 right-2 bg-ink/70 text-white text-xs p-1 rounded z-10 text-center">
                     Recommended: 600×450px (4:3 ratio)
                   </div>
                 )}
@@ -612,7 +613,7 @@ export default function About({
                     transition={{ duration: 0.6, ease: "easeOut" }}
                   >
                     <div className="relative flex justify-center">
-                      <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-2xl shadow-2xl overflow-hidden">
+                      <div className="relative w-full aspect-[4/3] bg-ink-light rounded-2xl shadow-2xl overflow-hidden">
                         <img
                           src={aboutState.imageUrl}
                           alt="About"
@@ -628,7 +629,7 @@ export default function About({
                             className="text-sm cursor-pointer font-bold w-full text-center border-2 border-dashed border-muted-foreground p-2 rounded"
                           />
                           {pendingImageFile && (
-                            <p className="text-xs text-green-600 mt-1 text-center">
+                            <p className="text-xs text-status-success mt-1 text-center">
                               ✓ Image cropped and ready to upload
                             </p>
                           )}
@@ -654,7 +655,7 @@ export default function About({
                       }
                       maxLength={600}
                       className={`w-full bg-transparent border-b text-muted-foreground outline-none ${aboutState.description2.length >= 600
-                        ? "border-red-500"
+                        ? "border-status-error"
                         : "border-muted-foreground"
                         }`}
                       rows={4}
@@ -662,15 +663,15 @@ export default function About({
                     <div className="flex justify-between items-center mt-1">
                       <div>
                         {aboutState.description2.length >= 600 && (
-                          <span className="text-red-500 text-xs font-bold">
+                          <span className="text-status-error text-xs font-bold">
                             ⚠️ Character limit reached!
                           </span>
                         )}
                       </div>
                       <div
                         className={`text-xs ${aboutState.description2.length >= 600
-                          ? "text-red-500"
-                          : "text-gray-500"
+                          ? "text-status-error"
+                          : "text-ink-caption"
                           }`}
                       >
                         {aboutState.description2.length}/600
@@ -701,14 +702,14 @@ export default function About({
                       onChange={(e) => updateField("aboutTitle", e.target.value)}
                       maxLength={50}
                       className={`bg-transparent border-b text-3xl md:text-4xl text-foreground outline-none w-full text-justify ${aboutState.aboutTitle.length >= 50
-                        ? "border-red-500"
+                        ? "border-status-error"
                         : "border-primary"
                         }`}
                     />
-                    <div className="text-right text-xs text-gray-500 mt-1">
+                    <div className="text-right text-xs text-ink-caption mt-1">
                       {aboutState.aboutTitle.length}/50
                       {aboutState.aboutTitle.length >= 50 && (
-                        <span className="ml-2 text-red-500 font-bold">
+                        <span className="ml-2 text-status-error font-bold">
                           Limit reached!
                         </span>
                       )}
@@ -729,7 +730,7 @@ export default function About({
                       }
                       maxLength={600}
                       className={`w-full bg-transparent border-b text-lg text-muted-foreground outline-none ${aboutState.description1.length >= 600
-                        ? "border-red-500"
+                        ? "border-status-error"
                         : "border-muted-foreground"
                         }`}
                       rows={4}
@@ -737,15 +738,15 @@ export default function About({
                     <div className="flex justify-between items-center mt-1">
                       <div>
                         {aboutState.description1.length >= 600 && (
-                          <span className="text-red-500 text-xs font-bold">
+                          <span className="text-status-error text-xs font-bold">
                             ⚠️ Character limit reached!
                           </span>
                         )}
                       </div>
                       <div
                         className={`text-xs ${aboutState.description1.length >= 600
-                          ? "text-red-500"
-                          : "text-gray-500"
+                          ? "text-status-error"
+                          : "text-ink-caption"
                           }`}
                       >
                         {aboutState.description1.length}/600
@@ -776,14 +777,14 @@ export default function About({
                           onChange={(e) => updateFeature(index, e.target.value)}
                           maxLength={50}
                           className={`bg-transparent border-b text-muted-foreground outline-none w-full ${feature.length >= 50
-                              ? "border-red-500"
+                              ? "border-status-error"
                               : "border-muted-foreground"
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {feature.length}/50
                           {feature.length >= 50 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -799,7 +800,7 @@ export default function About({
                     whileTap={{ scale: 0.9 }}
                     whileHover={{ scale: 1.1 }}
                     onClick={addFeature}
-                    className="text-green-600 cursor-pointer text-sm mt-2"
+                    className="text-status-success cursor-pointer text-sm mt-2"
                   >
                     + Add Feature
                   </motion.button>
@@ -822,14 +823,14 @@ export default function About({
                         }
                         maxLength={15}
                         className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${aboutState.metric1Num.length >= 15
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : ""
                           }`}
                       />
-                      <div className="text-right text-xs text-gray-500 mt-1">
+                      <div className="text-right text-xs text-ink-caption mt-1">
                         {aboutState.metric1Num.length}/15
                         {aboutState.metric1Num.length >= 15 && (
-                          <span className="ml-2 text-red-500 font-bold">
+                          <span className="ml-2 text-status-error font-bold">
                             Limit reached!
                           </span>
                         )}
@@ -853,14 +854,14 @@ export default function About({
                         }
                         maxLength={25}
                         className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${aboutState.metric1Label.length >= 25
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : ""
                           }`}
                       />
-                      <div className="text-right text-xs text-gray-500 mt-1">
+                      <div className="text-right text-xs text-ink-caption mt-1">
                         {aboutState.metric1Label.length}/25
                         {aboutState.metric1Label.length >= 25 && (
-                          <span className="ml-2 text-red-500 font-bold">
+                          <span className="ml-2 text-status-error font-bold">
                             Limit reached!
                           </span>
                         )}
@@ -887,14 +888,14 @@ export default function About({
                         }
                         maxLength={15}
                         className={`bg-transparent border-b border-foreground text-3xl font-bold outline-none w-full text-center ${aboutState.metric2Num.length >= 15
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : ""
                           }`}
                       />
-                      <div className="text-right text-xs text-gray-500 mt-1">
+                      <div className="text-right text-xs text-ink-caption mt-1">
                         {aboutState.metric2Num.length}/15
                         {aboutState.metric2Num.length >= 15 && (
-                          <span className="ml-2 text-red-500 font-bold">
+                          <span className="ml-2 text-status-error font-bold">
                             Limit reached!
                           </span>
                         )}
@@ -918,14 +919,14 @@ export default function About({
                         }
                         maxLength={25}
                         className={`bg-transparent border-b border-muted-foreground text-muted-foreground outline-none w-full text-center ${aboutState.metric2Label.length >= 25
-                          ? "border-red-500"
+                          ? "border-status-error"
                           : ""
                           }`}
                       />
-                      <div className="text-right text-xs text-gray-500 mt-1">
+                      <div className="text-right text-xs text-ink-caption mt-1">
                         {aboutState.metric2Label.length}/25
                         {aboutState.metric2Label.length >= 25 && (
-                          <span className="ml-2 text-red-500 font-bold">
+                          <span className="ml-2 text-status-error font-bold">
                             Limit reached!
                           </span>
                         )}
@@ -953,13 +954,13 @@ export default function About({
                   value={aboutState.visionBadge}
                   onChange={(e) => updateField("visionBadge", e.target.value)}
                   maxLength={25}
-                  className={`bg-transparent border-b border-primary text-primary outline-none text-center ${aboutState.visionBadge.length >= 25 ? "border-red-500" : ""
+                  className={`bg-transparent border-b border-primary text-primary outline-none text-center ${aboutState.visionBadge.length >= 25 ? "border-status-error" : ""
                     }`}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1 absolute -bottom-6 right-0">
+                <div className="text-right text-xs text-ink-caption mt-1 absolute -bottom-6 right-0">
                   {aboutState.visionBadge.length}/25
                   {aboutState.visionBadge.length >= 25 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Limit reached!
                     </span>
                   )}
@@ -969,8 +970,8 @@ export default function About({
               <motion.div
                 className="flex flex-col items-center justify-center w-[150px] mx-auto px-4 py-2 bg-red-accent/10 rounded-full text-primary mb-6"
               >
-                <Eye className="text-lg mb-1 text-red-500" />
-                <span className="font-medium text-red-500 text-lg">
+                <Eye className="text-lg mb-1 text-status-error" />
+                <span className="font-medium text-status-error text-lg">
                   {aboutState.visionBadge}
                 </span>
               </motion.div>
@@ -982,13 +983,13 @@ export default function About({
                   value={aboutState.visionTitle}
                   onChange={(e) => updateField("visionTitle", e.target.value)}
                   maxLength={80}
-                  className={`bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none w-full text-center ${aboutState.visionTitle.length >= 80 ? "border-red-500" : ""
+                  className={`bg-transparent border-b border-foreground text-3xl md:text-4xl outline-none w-full text-center ${aboutState.visionTitle.length >= 80 ? "border-status-error" : ""
                     }`}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1">
+                <div className="text-right text-xs text-ink-caption mt-1">
                   {aboutState.visionTitle.length}/80
                   {aboutState.visionTitle.length >= 80 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Limit reached!
                     </span>
                   )}
@@ -1010,13 +1011,13 @@ export default function About({
                   value={aboutState.visionDesc}
                   onChange={(e) => updateField("visionDesc", e.target.value)}
                   maxLength={600}
-                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.visionDesc.length >= 600 ? "border-red-500" : ""
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.visionDesc.length >= 600 ? "border-status-error" : ""
                     }`}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1">
+                <div className="text-right text-xs text-ink-caption mt-1">
                   {aboutState.visionDesc.length}/600
                   {aboutState.visionDesc.length >= 600 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Limit reached!
                     </span>
                   )}
@@ -1055,13 +1056,13 @@ export default function About({
                             updatePillar(index, "title", e.target.value)
                           }
                           maxLength={40}
-                          className={`bg-transparent border-b border-foreground font-semibold outline-none w-full text-center ${pillar.title.length >= 40 ? "border-red-500" : ""
+                          className={`bg-transparent border-b border-foreground font-semibold outline-none w-full text-center ${pillar.title.length >= 40 ? "border-status-error" : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {pillar.title.length}/40
                           {pillar.title.length >= 40 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -1082,14 +1083,14 @@ export default function About({
                           }
                           maxLength={150}
                           className={`w-full bg-transparent border-b border-muted-foreground text-sm text-muted-foreground outline-none text-center text-justify ${pillar.description.length >= 150
-                            ? "border-red-500"
+                            ? "border-status-error"
                             : ""
                             }`}
                         />
-                        <div className="text-right text-xs text-gray-500 mt-1">
+                        <div className="text-right text-xs text-ink-caption mt-1">
                           {pillar.description.length}/150
                           {pillar.description.length >= 150 && (
-                            <span className="ml-2 text-red-500 font-bold">
+                            <span className="ml-2 text-status-error font-bold">
                               Limit reached!
                             </span>
                           )}
@@ -1116,13 +1117,13 @@ export default function About({
                   value={aboutState.missionTitle}
                   onChange={(e) => updateField("missionTitle", e.target.value)}
                   maxLength={60}
-                  className={`bg-transparent border-b border-foreground text-2xl font-semibold outline-none w-full text-center ${aboutState.missionTitle.length >= 60 ? "border-red-500" : ""
+                  className={`bg-transparent border-b border-foreground text-2xl font-semibold outline-none w-full text-center ${aboutState.missionTitle.length >= 60 ? "border-status-error" : ""
                     }`}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1">
+                <div className="text-right text-xs text-ink-caption mt-1">
                   {aboutState.missionTitle.length}/60
                   {aboutState.missionTitle.length >= 60 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Limit reached!
                     </span>
                   )}
@@ -1144,13 +1145,13 @@ export default function About({
                   value={aboutState.missionDesc}
                   onChange={(e) => updateField("missionDesc", e.target.value)}
                   maxLength={600}
-                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.missionDesc.length >= 600 ? "border-red-500" : ""
+                  className={`w-full bg-transparent border-b border-muted-foreground text-lg text-muted-foreground outline-none text-center text-justify ${aboutState.missionDesc.length >= 600 ? "border-status-error" : ""
                     }`}
                 />
-                <div className="text-right text-xs text-gray-500 mt-1">
+                <div className="text-right text-xs text-ink-caption mt-1">
                   {aboutState.missionDesc.length}/600
                   {aboutState.missionDesc.length >= 600 && (
-                    <span className="ml-2 text-red-500 font-bold">
+                    <span className="ml-2 text-status-error font-bold">
                       Limit reached!
                     </span>
                   )}

@@ -249,7 +249,7 @@ export default function App() {
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          <div className="text-lg text-gray-600">Loading your template...</div>
+          <div className="text-lg text-ink-paragraph">Loading your template...</div>
         </div>
       </div>
     );
@@ -259,7 +259,7 @@ export default function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="text-center">
-          <div className="text-lg text-red-600 mb-4">Error: {error}</div>
+          <div className="text-lg text-status-error mb-4">Error: {error}</div>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"

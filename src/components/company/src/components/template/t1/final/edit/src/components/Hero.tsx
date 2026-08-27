@@ -4,7 +4,7 @@ import { Button } from "../components/ui/button";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Edit2, Save, X, Loader2, Upload, RotateCw, ZoomIn } from "lucide-react";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 const HeroBackground = "/images/hero/HeroBackground.jpg";
 
 // Sample images (replace with your actual imports)
@@ -119,30 +119,33 @@ export default function EditableHero({
         formData.append("imageField", `${imageField}-${Date.now()}`);
         formData.append("templateSelection", templateSelection);
 
+        const heroAuthToken = localStorage.getItem("token") || localStorage.getItem("adminToken");
         uploadPromises.push(
           fetch(
-            MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+            COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
             {
               method: "POST",
+              headers: heroAuthToken ? { Authorization: `Bearer ${heroAuthToken}` } : {},
               body: formData,
             }
           ).then(async (response) => {
             if (response.ok) {
               const uploadData = await response.json();
+              const uploadedUrl = uploadData.url || uploadData.imageUrl;
 
               // Update the appropriate field with the new URL
               if (imageField === "hero1Image") {
-                updatedState.hero1Image = uploadData.imageUrl;
+                updatedState.hero1Image = uploadedUrl;
               } else if (imageField === "hero3Image") {
-                updatedState.hero3Image = uploadData.imageUrl;
+                updatedState.hero3Image = uploadedUrl;
               } else if (imageField.startsWith("customerImage")) {
                 const index = parseInt(imageField.split("-")[1]);
                 const updatedCustomerImages = [...updatedState.customerImages];
-                updatedCustomerImages[index] = uploadData.imageUrl;
+                updatedCustomerImages[index] = uploadedUrl;
                 updatedState.customerImages = updatedCustomerImages;
               }
 
-              return uploadData.imageUrl;
+              return uploadedUrl;
             } else {
               const errorData = await response.json();
               console.error(`${imageField} upload failed:`, errorData.message || "Unknown error");
@@ -467,7 +470,7 @@ export default function EditableHero({
       };
 
       const baseClasses =
-        "w-full bg-white/10 backdrop-blur-sm border-2 border-dashed border-yellow-300 rounded focus:border-yellow-400 focus:outline-none text-white placeholder-gray-300";
+        "w-full bg-white/10 backdrop-blur-sm border-2 border-dashed border-brand-yellow-soft rounded focus:border-brand-yellow focus:outline-none text-white placeholder-ink-light";
 
       return (
         <div className="relative">
@@ -491,7 +494,7 @@ export default function EditableHero({
             />
           )}
           {maxLength && (
-            <div className=" mt-1 text-xs text-gray-300 whitespace-nowrap">
+            <div className=" mt-1 text-xs text-ink-light whitespace-nowrap">
               {(value?.length ?? 0)}/{maxLength}
             </div>
           )}
@@ -507,29 +510,29 @@ export default function EditableHero({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Image {isUploadingImage && "(Uploading...)"}
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
                 disabled={isUploadingImage}
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop}
@@ -561,18 +564,18 @@ export default function EditableHero({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                     disabled={isUploadingImage}
                   >
                     −
@@ -584,13 +587,13 @@ export default function EditableHero({
                     max={4}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                     disabled={isUploadingImage}
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                     disabled={isUploadingImage}
                   >
                     +
@@ -598,7 +601,7 @@ export default function EditableHero({
                   <button
                     type="button"
                     onClick={() => setZoom(1)}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                     disabled={isUploadingImage}
                   >
                     1x
@@ -610,21 +613,21 @@ export default function EditableHero({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                   disabled={isUploadingImage}
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                   disabled={isUploadingImage}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium flex items-center justify-center"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium flex items-center justify-center"
                   disabled={isUploadingImage}
                 >
                   {isUploadingImage ? (
@@ -651,10 +654,10 @@ export default function EditableHero({
         }}
       >
         {isLoading && (
-          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
-            <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
-              <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-              <span className="text-gray-700">Loading content...</span>
+          <div className="absolute inset-0 bg-ink/60 flex items-center justify-center z-30">
+            <div className="bg-surface-card rounded-lg p-6 shadow-lg flex items-center gap-3">
+              <Loader2 className="w-5 h-5 animate-spin text-status-info" />
+              <span className="text-ink-paragraph">Loading content...</span>
             </div>
           </div>
         )}
@@ -665,7 +668,7 @@ export default function EditableHero({
               onClick={handleEdit}
               variant="outline"
               size="sm"
-              className="bg-white/90 backdrop-blur-sm hover:bg-white shadow-md"
+              className="bg-white/90 backdrop-blur-sm hover:bg-surface-card shadow-md"
               disabled={isLoading}
             >
               <Edit2 className="w-4 h-4 mr-2" />
@@ -674,7 +677,7 @@ export default function EditableHero({
           ) : (
             <div className="flex gap-2">
               {/* Auto-save status indicator */}
-              <div className="flex items-center gap-2 mr-2 text-sm text-white bg-black/50 px-3 py-1 rounded">
+              <div className="flex items-center gap-2 mr-2 text-sm text-white bg-ink/50 px-3 py-1 rounded">
                 {autoSaveStatus === "saving" && (
                   <>
                     <Loader2 className="w-3 h-3 animate-spin" />
@@ -682,20 +685,20 @@ export default function EditableHero({
                   </>
                 )}
                 {autoSaveStatus === "saved" && (
-                  <span className="text-green-400">✓ Saved</span>
+                  <span className="text-status-success">✓ Saved</span>
                 )}
                 {autoSaveStatus === "error" && (
-                  <span className="text-red-400">✗ Error</span>
+                  <span className="text-status-error">✗ Error</span>
                 )}
                 {autoSaveStatus === "idle" && (
-                  <span className="text-gray-300">All changes saved</span>
+                  <span className="text-ink-light">All changes saved</span>
                 )}
               </div>
 
               <Button
                 onClick={handleManualSave}
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                className="bg-status-success hover:bg-status-success text-white shadow-md"
                 disabled={isSaving}
               >
                 {isSaving ? (
@@ -709,7 +712,7 @@ export default function EditableHero({
                 onClick={handleCancel}
                 variant="outline"
                 size="sm"
-                className="bg-white/90 backdrop-blur-sm hover:bg-white shadow-md"
+                className="bg-white/90 backdrop-blur-sm hover:bg-surface-card shadow-md"
                 disabled={isSaving}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -726,7 +729,7 @@ export default function EditableHero({
             <EditableText
               value={tempHeroState.badgeText}
               field="badgeText"
-              className="text-lg sm:text-xl md:text-2xl text-left text-[#facc15] relative z-20 mb-12 inline-block max-w-[530px]"
+              className="text-lg sm:text-xl md:text-2xl text-left text-[#F8C400] relative z-20 mb-12 inline-block max-w-[530px]"
               placeholder="Company Name"
               maxLength={50}
             />
@@ -744,7 +747,7 @@ export default function EditableHero({
                   variants={itemVariants}
                 >
                   {heroState.heading}
-                  <span className="block text-yellow-400 mt-2">
+                  <span className="block text-brand-yellow mt-2">
                     {heroState.subheading}
                   </span>
                 </motion.h1>
@@ -760,7 +763,7 @@ export default function EditableHero({
                   <EditableText
                     value={tempHeroState.subheading}
                     field="subheading"
-                    className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold text-yellow-400"
+                    className="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold text-brand-yellow"
                     placeholder="Sub heading"
                     maxLength={100}
                   />
@@ -769,7 +772,7 @@ export default function EditableHero({
 
               {!isEditing ? (
                 <motion.p
-                  className="text-base sm:text-md lg:text-md text-gray-200 max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed "
+                  className="text-base sm:text-md lg:text-md text-ink-light max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed "
                   variants={itemVariants}
                 >
                   {heroState.description}
@@ -779,7 +782,7 @@ export default function EditableHero({
                   value={tempHeroState.description}
                   field="description"
                   multiline
-                  className="text-base sm:text-lg lg:text-xl text-gray-200 leading-relaxed "
+                  className="text-base sm:text-lg lg:text-xl text-ink-light leading-relaxed "
                   placeholder="Hero description"
                   maxLength={500}
                 />
@@ -792,7 +795,7 @@ export default function EditableHero({
                 >
                   <a
                     href="#contact"
-                    className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block text-center"
+                    className="bg-brand-yellow hover:bg-brand-yellow-soft text-ink rounded-full px-8 py-4 font-semibold transition-all duration-300 transform hover:scale-105 inline-block text-center"
                   >
                     {heroState.primaryBtn}
                   </a>
@@ -805,7 +808,7 @@ export default function EditableHero({
                     placeholder="Primary button text"
                     maxLength={50}
                   />
-                  <div className="text-xs text-gray-300">This button redirects to the contact section.</div>
+                  <div className="text-xs text-ink-light">This button redirects to the contact section.</div>
                 </div>
               )}
 
@@ -823,7 +826,7 @@ export default function EditableHero({
                       transition={{ type: "spring", stiffness: 300 }}
                     >
                       {isEditing && (
-                        <label className="absolute inset-0 bg-black/70 opacity-0 hover:opacity-100 flex items-center justify-center rounded-full cursor-pointer transition-opacity">
+                        <label className="absolute inset-0 bg-ink/70 opacity-0 hover:opacity-100 flex items-center justify-center rounded-full cursor-pointer transition-opacity">
                           <Upload className="w-4 h-4 text-white" />
                           <input
                             type="file"
@@ -871,7 +874,7 @@ export default function EditableHero({
                       className="w-full h-auto max-h-[70vh] object-contain rounded-3xl shadow-2xl scale-110"
                     />
                     {isEditing && (
-                      <label className="absolute bottom-2 right-2 bg-black/70 text-white p-2 rounded cursor-pointer hover:bg-black/90 transition-colors">
+                      <label className="absolute bottom-2 right-2 bg-ink/70 text-white p-2 rounded cursor-pointer hover:bg-ink-charcoal/90 transition-colors">
                         <Upload className="w-4 h-4" />
                         <input
                           type="file"
@@ -898,7 +901,7 @@ export default function EditableHero({
                         className="w-auto max-w-[12rem] sm:max-w-[8rem] lg:max-w-[10rem] h-auto object-contain rounded-2xl shadow-xl border-4 border-white scale-110"
                       />
                       {isEditing && (
-                        <label className="absolute bottom-1 right-1 bg-black/70 text-white p-1 rounded cursor-pointer hover:bg-black/90 transition-colors">
+                        <label className="absolute bottom-1 right-1 bg-ink/70 text-white p-1 rounded cursor-pointer hover:bg-ink-charcoal/90 transition-colors">
                           <Upload className="w-3 h-3" />
                           <input
                             type="file"
@@ -911,7 +914,7 @@ export default function EditableHero({
                     </div>
                   </motion.div>
                   <motion.div
-                    className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 rounded-full opacity-80"
+                    className="absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-brand-yellow rounded-full opacity-80"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.6, type: "spring", stiffness: 300 }}

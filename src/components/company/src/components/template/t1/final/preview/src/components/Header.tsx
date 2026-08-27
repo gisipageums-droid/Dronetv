@@ -82,7 +82,7 @@ export default function Header({ headerData }) {
           <div className="flex items-center justify-between h-16">
             {/* Logo + Company Name */}
             <motion.div
-              className="flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-red-500 dark:text-yellow-400 transition-colors duration-300"
+              className="flex flex-row gap-2 items-center text-xl sm:text-2xl font-bold text-status-error dark:text-yellow-400 transition-colors duration-300"
               whileHover={{ scale: 1.05 }}
             >
               <div className="relative">
@@ -131,7 +131,7 @@ export default function Header({ headerData }) {
                   <a
                     key={index}
                     href={`#${item.toLowerCase()}`}
-                    className="text-black hover:text-yellow-600 transition-colors duration-300 font-medium"
+                    className="text-ink hover:text-brand-yellow transition-colors duration-300 font-medium"
                   >
                     {item}
                   </a>
@@ -143,7 +143,7 @@ export default function Header({ headerData }) {
             <div className="md:hidden flex items-center space-x-2">
               <button
                 onClick={toggleMobileMenu}
-                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="p-2 rounded-md hover:bg-ink-light dark:hover:bg-gray-700"
               >
                 <svg
                   className="h-6 w-6 transition-transform duration-200"
@@ -189,7 +189,7 @@ export default function Header({ headerData }) {
             <a
               key={index}
               href={`#${item.toLowerCase()}`}
-              className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md transition-colors duration-300"
+              className="block px-3 py-2 text-base font-medium text-ink-paragraph dark:text-gray-300 hover:text-status-info dark:hover:text-indigo-400 hover:bg-ink-offwhite dark:hover:bg-gray-800 rounded-md transition-colors duration-300"
               onClick={closeMobileMenu}
             >
               {item}

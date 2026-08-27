@@ -58,9 +58,9 @@ function getInitials(name: string): string {
   return name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
 }
 
-const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#1a7a3a', ai: '#6B2FB5', all: '#444' };
+const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#22C55E', ai: '#6B2FB5', all: '#444' };
 const IND_LABELS: Record<string, string> = { all: 'All', drone: '🚁 Drone', gis: '🗺️ GIS', ai: '🤖 AI' };
-const AV_COLORS = ['#0B5CB5','#1a7a3a','#CC1F1F','#6B2FB5','#c05800','#1a5a9a','#3a6a1a','#9a3a1a'];
+const AV_COLORS = ['#0B5CB5','#22C55E','#DC2626','#6B2FB5','#c05800','#1a5a9a','#3a6a1a','#9a3a1a'];
 
 function avColor(name: string): string {
   let h = 0;
@@ -69,15 +69,15 @@ function avColor(name: string): string {
 }
 
 const CSS = `
-.co-page { background: #F8F8F8; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
-.co-hero { background: #0A0A0A; color: #fff; border-bottom: 2px solid #F5C518; }
+.co-page { background: #FFF8D6; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
+.co-hero { background: #111111; color: #fff; border-bottom: 2px solid #F8C400; }
 .co-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .co-hero h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; white-space: nowrap; }
-.co-hero h1 span { color: #F5C518; }
+.co-hero h1 span { color: #F8C400; }
 .co-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; }
-.co-stat-n { font-size: 15px; font-weight: 900; color: #F5C518; line-height: 1; }
+.co-stat-n { font-size: 15px; font-weight: 900; color: #F8C400; line-height: 1; }
 .co-stat-l { font-size: 9.5px; color: rgba(255,255,255,.4); margin-top: 1px; }
-.co-tabs { background: #0A0A0A; border-bottom: 3px solid #F5C518; position: sticky; top: 60px; z-index: 110; }
+.co-tabs { background: #111111; border-bottom: 3px solid #F8C400; position: sticky; top: 60px; z-index: 110; }
 .co-tabs-i { max-width: 1280px; margin: 0 auto; padding: 0 22px; display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
 .co-tabs-i::-webkit-scrollbar { display: none; }
 .co-tab { padding: 10px 18px; font-size: 12.5px; font-weight: 700; background: none; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: all .13s; border: none; border-bottom: 3px solid transparent; margin-bottom: -3px; }
@@ -86,7 +86,7 @@ const CSS = `
 /* Sidebar layout */
 .co-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
 .co-sidebar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); position: sticky; top: 120px; }
-.co-sidebar-title { font-size: 13px; font-weight: 800; color: #0A0A0A; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.co-sidebar-title { font-size: 13px; font-weight: 800; color: #111111; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
 .co-filter-grp { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F0F0F0; }
 .co-filter-grp:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 .co-fl-label { font-size: 10px; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
@@ -94,11 +94,12 @@ const CSS = `
 .co-chip { padding: 4px 10px; border-radius: 14px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: all .12s; white-space: nowrap; font-family: 'Poppins',sans-serif; }
 .co-main { min-width: 0; }
 .co-search-bar { background: #fff; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.co-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #1A1A1A; font-family: 'Poppins',sans-serif; }
+.co-search-bar input { border: none; background: none; font-size: 13px; width: 100%; outline: none; color: #111111; font-family: 'Poppins',sans-serif; }
 .co-note { background: #FFFBE8; border: 1px solid #C9A010; border-radius: 8px; padding: 7px 12px; font-size: 11.5px; color: #7a5800; margin-bottom: 12px; }
 .co-resbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 7px; }
 .co-sort { padding: 6px 10px; border: 1.5px solid #E5E5E5; border-radius: 8px; font-size: 12.5px; color: #444; background: #fff; cursor: pointer; font-family: 'Poppins',sans-serif; }
 .co-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 13px; }
+.co-grid > * { min-width: 0; }
 .co-empty { padding: 64px 0; text-align: center; }
 .co-pages { display: flex; justify-content: center; margin-top: 28px; gap: 6px; flex-wrap: wrap; }
 .co-page-btn { padding: 7px 13px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins',sans-serif; }
@@ -113,20 +114,20 @@ const CSS = `
 .co-card-top { padding: 13px 13px 0; display: flex; gap: 10px; align-items: flex-start; }
 .co-avatar { width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0; overflow: hidden; }
 .co-avatar img { width: 44px; height: 44px; border-radius: 9px; object-fit: cover; }
-.co-card-name { font-size: 13px; font-weight: 700; color: #0A0A0A; line-height: 1.3; }
+.co-card-name { font-size: 13px; font-weight: 700; color: #111111; line-height: 1.3; }
 .co-card-loc { display: flex; align-items: flex-start; gap: 3px; font-size: 11px; color: #777; margin-top: 2px; min-width: 0; }
 .co-card-loc svg { flex-shrink: 0; margin-top: 2px; }
 .co-card-loc-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1; min-width: 0; word-break: break-word; }
 .co-card-desc { font-size: 12px; color: #777; line-height: 1.6; padding: 0 13px; margin-bottom: 9px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .co-card-foot { padding: 9px 13px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; gap: 6px; }
-.co-btn-out { flex: 1; background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; }
-.co-btn-red { flex: 1; background: #CC1F1F; color: #fff; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
+.co-btn-out { flex: 1; background: #fff; color: #111111; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; }
+.co-btn-red { flex: 1; background: #DC2626; color: #fff; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
 
 @media (max-width: 960px) {
   .co-layout { grid-template-columns: 1fr; }
   .co-sidebar { position: static; display: none; }
   .co-sidebar.open { display: block; }
-  .co-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #0A0A0A; color: #F5C518; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
+  .co-filter-toggle { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #111111; color: #F8C400; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: 'Poppins',sans-serif; margin-bottom: 10px; }
 }
 @media (max-width: 600px) {
   .co-hero-i { padding: 8px 14px; gap: 10px; }
@@ -140,6 +141,19 @@ const CSS = `
 `;
 
 const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
+
+// Addresses often end "...City, State, Pincode" — the state is the last
+// non-numeric, non-"India" comma segment, not simply the last segment
+// (which is frequently the pincode itself, e.g. "Nellore, Andhra Pradesh,
+// 524002" was showing "524002" as the state filter chip).
+function extractState(location: string | undefined): string {
+  const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const p = parts[i];
+    if (p && !/^\d+$/.test(p) && p.toLowerCase() !== 'india') return p;
+  }
+  return '';
+}
 
 const CompaniesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -167,8 +181,7 @@ const CompaniesPage: React.FC = () => {
         setAllCompanies(raw);
         const stateSet = new Set<string>();
         raw.forEach(c => {
-          const parts = (c.location || '').split(',');
-          const st = parts[parts.length - 1]?.trim().replace(/\s+India$/i, '').trim();
+          const st = extractState(c.location);
           if (st && st.length > 1 && st.length < 30) stateSet.add(st);
         });
         setStates(Array.from(stateSet).slice(0, 10));
@@ -182,11 +195,7 @@ const CompaniesPage: React.FC = () => {
     if (industry !== 'all') list = list.filter(c => getIndustry(c) === industry);
     if (selSectors.length) list = list.filter(c => selSectors.some(s => getSectors(c).includes(s)));
     if (selStates.length) {
-      list = list.filter(c => {
-        const parts = (c.location || '').split(',');
-        const st = parts[parts.length - 1]?.trim().replace(/\s+India$/i, '').trim();
-        return selStates.includes(st);
-      });
+      list = list.filter(c => selStates.includes(extractState(c.location)));
     }
     if (verifiedOnly) list = list.filter(c => c.reviewStatus === 'approved');
     if (search) {
@@ -225,9 +234,9 @@ const CompaniesPage: React.FC = () => {
   };
 
   const chipStyle = (on: boolean): React.CSSProperties => ({
-    background: on ? '#0A0A0A' : 'transparent',
-    color: on ? '#F5C518' : '#555',
-    border: `1.5px solid ${on ? '#0A0A0A' : '#E0E0E0'}`,
+    background: on ? '#111111' : 'transparent',
+    color: on ? '#F8C400' : '#555',
+    border: `1.5px solid ${on ? '#111111' : '#E0E0E0'}`,
   });
 
   const activeFiltersCount = selSectors.length + selStates.length + (verifiedOnly ? 1 : 0);
@@ -253,7 +262,7 @@ const CompaniesPage: React.FC = () => {
       <div className="co-sidebar-title">
         <SlidersHorizontal size={14} /> Filters
         {activeFiltersCount > 0 && (
-          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#CC1F1F', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
+          <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 700, background: '#DC2626', color: '#fff', padding: '1px 7px', borderRadius: 10 }}>
             {activeFiltersCount}
           </span>
         )}
@@ -263,7 +272,7 @@ const CompaniesPage: React.FC = () => {
       <div className="co-filter-grp">
         <div className="co-fl-label">Package Tier</div>
         <div className="co-chips">
-          {[{ l: '⭐ Brand', v: 'brand' }, { l: '🔵 Scale', v: 'scale' }, { l: '📌 Reach', v: 'reach' }].map(t => (
+          {[{ l: '⭐ Brand', v: 'brand' }, { l: '🔵 Expand', v: 'scale' }, { l: '📌 Reach', v: 'reach' }].map(t => (
             <button key={t.v} className="co-chip" style={chipStyle(false)} disabled>{t.l}</button>
           ))}
         </div>
@@ -305,7 +314,7 @@ const CompaniesPage: React.FC = () => {
       {/* Clear */}
       {activeFiltersCount > 0 && (
         <button onClick={() => { setSelSectors([]); setSelStates([]); setVerifiedOnly(false); setPage(1); }}
-          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#CC1F1F', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          style={{ width: '100%', padding: '7px', borderRadius: 7, border: '1.5px solid #E5E5E5', background: 'none', fontSize: 12, fontWeight: 700, color: '#DC2626', cursor: 'pointer', marginTop: 4, fontFamily: 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
           <X size={12} /> Clear all filters
         </button>
       )}
@@ -321,7 +330,7 @@ const CompaniesPage: React.FC = () => {
         <section className="co-hero">
           <div className="co-hero-i">
             <h1>Find verified <span>Drone, GIS &amp; AI</span> companies</h1>
-            <a href="/form" style={{ flexShrink: 0, padding: '5px 14px', background: '#F5C518', color: '#0A0A0A', borderRadius: 6, fontSize: 12, fontWeight: 800, textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'Poppins,sans-serif' }}>+ List Your Company</a>
+            <a href="/form" style={{ flexShrink: 0, padding: '5px 14px', background: '#F8C400', color: '#111111', borderRadius: 6, fontSize: 12, fontWeight: 800, textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'Poppins,sans-serif' }}>+ List Your Company</a>
             <div className="co-stats">
               {[
                 { n: allCompanies.length, l: 'Listed' },
@@ -346,9 +355,9 @@ const CompaniesPage: React.FC = () => {
               return (
                 <button key={ind} className="co-tab"
                   onClick={() => { setIndustry(ind); setPage(1); }}
-                  style={{ color: active ? '#F5C518' : 'rgba(255,255,255,.48)', borderBottomColor: active ? '#F5C518' : 'transparent' }}>
+                  style={{ color: active ? '#F8C400' : 'rgba(255,255,255,.48)', borderBottomColor: active ? '#F8C400' : 'transparent' }}>
                   {IND_LABELS[ind]}
-                  <span style={{ fontSize: 10, fontWeight: 800, padding: '1px 7px', borderRadius: 10, background: active ? '#F5C518' : 'rgba(255,255,255,.1)', color: active ? '#0A0A0A' : 'rgba(255,255,255,.7)' }}>
+                  <span style={{ fontSize: 10, fontWeight: 800, padding: '1px 7px', borderRadius: 10, background: active ? '#F8C400' : 'rgba(255,255,255,.1)', color: active ? '#111111' : 'rgba(255,255,255,.7)' }}>
                     {indryCounts[ind] ?? 0}
                   </span>
                 </button>
@@ -378,7 +387,7 @@ const CompaniesPage: React.FC = () => {
 
               <div className="co-resbar">
                 <div style={{ fontSize: 12.5, color: '#777' }}>
-                  <b style={{ color: '#0A0A0A' }}>{filtered.length}</b> {filtered.length === 1 ? 'company' : 'companies'}
+                  <b style={{ color: '#111111' }}>{filtered.length}</b> {filtered.length === 1 ? 'company' : 'companies'}
                   {industry !== 'all' && <span style={{ color: IND_COLORS[industry], fontWeight: 600 }}> · {IND_LABELS[industry]}</span>}
                 </div>
                 <select className="co-sort" value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }}>
@@ -391,7 +400,7 @@ const CompaniesPage: React.FC = () => {
               {current.length === 0 ? (
                 <div className="co-empty">
                   <Search size={48} style={{ color: '#ccc', margin: '0 auto 12px' }} />
-                  <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>No companies found</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#111111', marginBottom: 6 }}>No companies found</div>
                   <div style={{ fontSize: 13, color: '#777' }}>Try adjusting your filters or search</div>
                 </div>
               ) : (
@@ -403,19 +412,19 @@ const CompaniesPage: React.FC = () => {
               {totalPages > 1 && (
                 <div className="co-pages">
                   <button className="co-page-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                    style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
+                    style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#111111', opacity: page === 1 ? .4 : 1, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
                     Previous
                   </button>
                   {pages.map((p, i) => p === '...' ? (
                     <span key={`e${i}`} style={{ padding: '7px 4px', color: '#777' }}>…</span>
                   ) : (
                     <button key={p} className="co-page-btn" onClick={() => setPage(p as number)}
-                      style={{ border: `1.5px solid ${page === p ? '#0A0A0A' : '#E5E5E5'}`, background: page === p ? '#0A0A0A' : '#fff', color: page === p ? '#F5C518' : '#1A1A1A', cursor: 'pointer' }}>
+                      style={{ border: `1.5px solid ${page === p ? '#111111' : '#E5E5E5'}`, background: page === p ? '#111111' : '#fff', color: page === p ? '#F8C400' : '#111111', cursor: 'pointer' }}>
                       {p}
                     </button>
                   ))}
                   <button className="co-page-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                    style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#1A1A1A', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
+                    style={{ border: '1.5px solid #E5E5E5', background: '#fff', color: '#111111', opacity: page === totalPages ? .4 : 1, cursor: page === totalPages ? 'not-allowed' : 'pointer' }}>
                     Next
                   </button>
                 </div>
@@ -449,7 +458,7 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void }> = ({ comp
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <span className="co-card-name">{company.companyName}</span>
-            {verified && <BadgeCheck size={14} style={{ color: '#1a7a3a', flexShrink: 0 }} />}
+            {verified && <BadgeCheck size={14} style={{ color: '#22C55E', flexShrink: 0 }} />}
           </div>
           {company.location && (
             <div className="co-card-loc"><MapPin size={10} /><span className="co-card-loc-text">{company.location}</span></div>
@@ -458,7 +467,7 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void }> = ({ comp
       </div>
 
       <div style={{ padding: '7px 13px', display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
-        {verified && <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#e8f5ec', color: '#1a7a3a', textTransform: 'uppercase' as const }}>Verified</span>}
+        {verified && <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#e8f5ec', color: '#22C55E', textTransform: 'uppercase' as const }}>Verified</span>}
         {ind !== 'all' && <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 7, background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor, textTransform: 'uppercase' as const }}>{ind.toUpperCase()}</span>}
         {detectedSectors.slice(0, 1).map(s => (
           <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 7, background: '#F8F8F8', color: '#555', border: '1px solid #E5E5E5' }}>{s}</span>

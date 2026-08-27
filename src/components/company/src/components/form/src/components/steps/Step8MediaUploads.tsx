@@ -306,7 +306,7 @@
 //     title,
 //     icon: Icon,
 //     children,
-//     bgColor = "bg-slate-50",
+//     bgColor = "bg-ink-offwhite",
 //   }: {
 //     title: string;
 //     icon: any;
@@ -314,8 +314,8 @@
 //     bgColor?: string;
 //   }) => (
 //     <div className={`${bgColor} rounded-lg p-6`}>
-//       <h3 className='flex items-center mb-4 text-lg font-bold text-slate-900'>
-//         <Icon className='w-6 h-6 mr-3 text-slate-600' />
+//       <h3 className='flex items-center mb-4 text-lg font-bold text-ink'>
+//         <Icon className='w-6 h-6 mr-3 text-ink-paragraph' />
 //         {title}
 //       </h3>
 //       {children}
@@ -346,11 +346,11 @@
 //     const getStatusIcon = () => {
 //       switch (status) {
 //         case "uploading":
-//           return <Loader2 className='w-4 h-4 text-blue-500 animate-spin' />;
+//           return <Loader2 className='w-4 h-4 text-status-info animate-spin' />;
 //         case "completed":
-//           return <CheckCircle className='w-4 h-4 text-green-500' />;
+//           return <CheckCircle className='w-4 h-4 text-status-success' />;
 //         case "error":
-//           return <AlertCircle className='w-4 h-4 text-red-500' />;
+//           return <AlertCircle className='w-4 h-4 text-status-error' />;
 //         default:
 //           return null;
 //       }
@@ -359,13 +359,13 @@
 //     const getStatusColor = () => {
 //       switch (status) {
 //         case "uploading":
-//           return "border-blue-300 bg-blue-50";
+//           return "border-status-info/40 bg-status-info/10";
 //         case "completed":
-//           return "border-green-300 bg-green-50";
+//           return "border-status-success/40 bg-status-success/10";
 //         case "error":
-//           return "border-red-300 bg-red-50";
+//           return "border-status-error/40 bg-status-error/10";
 //         default:
-//           return "border-slate-300";
+//           return "border-ink-light";
 //       }
 //     };
 
@@ -403,13 +403,13 @@
 
 //     return (
 //       <div className='mb-4'>
-//         <label className='flex items-center block gap-2 mb-2 text-sm font-semibold text-slate-700'>
+//         <label className='flex items-center block gap-2 mb-2 text-sm font-semibold text-ink-paragraph'>
 //           {label}
-//           {required && <span className='ml-1 text-red-500'>*</span>}
+//           {required && <span className='ml-1 text-status-error'>*</span>}
 //           {getStatusIcon()}
 //         </label>
 //         {description && (
-//           <p className='mb-2 text-sm text-slate-600'>{description}</p>
+//           <p className='mb-2 text-sm text-ink-paragraph'>{description}</p>
 //         )}
 
 //         <div
@@ -417,18 +417,18 @@
 //           onDragOver={handleDragOver}
 //           onDragEnter={handleDragOver}
 //           onDragLeave={handleDragLeave}
-//           className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-slate-400 transition-colors ${getStatusColor()} ${isDragging ? 'border-blue-400 bg-blue-50' : ''}`}
+//           className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-ink-caption transition-colors ${getStatusColor()} ${isDragging ? 'border-status-info bg-status-info/10' : ''}`}
 //           aria-label={`${label} upload dropzone`}
 //         >
-//           <Upload className='w-8 h-8 mx-auto mb-2 text-slate-400' />
-//           <p className='mb-2 text-slate-600'>
+//           <Upload className='w-8 h-8 mx-auto mb-2 text-ink-caption' />
+//           <p className='mb-2 text-ink-paragraph'>
 //             {isDragging ? 'Drop file here to upload' : (
 //               isUploaded
 //                 ? `File uploaded: ${uploadedFile.fileName} (${uploadedFile.sizeMB}MB)`
 //                 : 'Click to upload or drag and drop'
 //             )}
 //           </p>
-//           <p className='mb-3 text-xs text-slate-500'>{accept}</p>
+//           <p className='mb-3 text-xs text-ink-caption'>{accept}</p>
 
 //           {/* Show file URL for uploaded files */}
 //           {fileUrl && (
@@ -437,7 +437,7 @@
 //                 href={fileUrl}
 //                 target="_blank"
 //                 rel="noopener noreferrer"
-//                 className='text-sm text-blue-600 underline hover:text-blue-800'
+//                 className='text-sm text-status-info underline hover:text-status-info'
 //               >
 //                 View uploaded file
 //               </a>
@@ -469,10 +469,10 @@
 //             htmlFor={`upload-${label.replace(/\s+/g, "-").toLowerCase()}`}
 //             className={`inline-block px-4 py-2 rounded-lg cursor-pointer transition-colors ${
 //               isUploading || status === "uploading"
-//                 ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+//                 ? "bg-ink-caption text-ink-light cursor-not-allowed"
 //                 : isUploaded
-//                 ? "bg-green-600 text-white hover:bg-green-700"
-//                 : "bg-blue-600 text-white hover:bg-blue-700"
+//                 ? "bg-status-success text-white hover:bg-status-success"
+//                 : "bg-status-info text-white hover:bg-status-info"
 //             }`}
 //           >
 //             {status === "uploading"
@@ -500,21 +500,21 @@
 //       <div className='space-y-8'>
 //         {/* Upload Progress */}
 //         {isUploading && (
-//           <div className='p-4 mb-6 border border-blue-200 rounded-lg bg-blue-50'>
+//           <div className='p-4 mb-6 border border-status-info/25 rounded-lg bg-status-info/10'>
 //             <div className='flex items-center mb-2'>
-//               <Loader2 className='w-5 h-5 mr-2 text-blue-600 animate-spin' />
-//               <h3 className='text-lg font-semibold text-blue-800'>
+//               <Loader2 className='w-5 h-5 mr-2 text-status-info animate-spin' />
+//               <h3 className='text-lg font-semibold text-status-info'>
 //                 Processing Submission...
 //               </h3>
 //             </div>
-//             <p className='mb-3 text-blue-700'>{uploadStatus}</p>
-//             <div className='w-full h-3 bg-blue-200 rounded-full'>
+//             <p className='mb-3 text-status-info'>{uploadStatus}</p>
+//             <div className='w-full h-3 bg-status-info/25 rounded-full'>
 //               <div
-//                 className='h-3 transition-all duration-500 ease-out bg-blue-600 rounded-full'
+//                 className='h-3 transition-all duration-500 ease-out bg-status-info rounded-full'
 //                 style={{ width: `${uploadProgress}%` }}
 //               ></div>
 //             </div>
-//             <p className='mt-2 text-sm text-blue-600'>
+//             <p className='mt-2 text-sm text-status-info'>
 //               {uploadProgress}% complete
 //             </p>
 //           </div>
@@ -524,7 +524,7 @@
 //         <FileUploadSection
 //           title='Brand & Site Images'
 //           icon={Image}
-//           bgColor='bg-blue-50'
+//           bgColor='bg-status-info/10'
 //         >
 //           <div className='space-y-6'>
 //             <FileUploadBox
@@ -536,7 +536,7 @@
 //               fieldName='companyLogoUrl'
 //             />
 //           </div>
-//           <p className='mt-4 text-sm text-blue-700'>
+//           <p className='mt-4 text-sm text-status-info'>
 //             <strong>Note:</strong> Files are uploaded immediately when selected. AI will generate additional images and design elements for your website automatically.
 //           </p>
 //         </FileUploadSection>
@@ -545,7 +545,7 @@
 //         <FileUploadSection
 //           title='Documents & Certificates'
 //           icon={FileText}
-//           bgColor='bg-green-50'
+//           bgColor='bg-status-success/10'
 //         >
 //           <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
 //             <FileUploadBox
@@ -612,7 +612,7 @@
 //         <FileUploadSection
 //           title='Videos & Promotional Content'
 //           icon={Video}
-//           bgColor='bg-purple-50'
+//           bgColor='bg-brand-gold/10'
 //         >
 //           <div className='space-y-4'>
 //             <FormInput
@@ -649,11 +649,11 @@
 //             />
 //           </div>
 
-//           <div className='p-4 mt-6 bg-purple-100 rounded-lg'>
-//             <h4 className='mb-2 font-semibold text-purple-900'>
+//           <div className='p-4 mt-6 bg-brand-gold/15 rounded-lg'>
+//             <h4 className='mb-2 font-semibold text-brand-gold'>
 //               Video Guidelines:
 //             </h4>
-//             <ul className='space-y-1 text-sm text-purple-800'>
+//             <ul className='space-y-1 text-sm text-brand-gold'>
 //               <li>• Videos should be 1080p or higher resolution</li>
 //               <li>• YouTube, Vimeo, or Google Drive links are preferred</li>
 //               <li>
@@ -666,21 +666,21 @@
 //         </FileUploadSection>
 
 //         {/* Upload Summary */}
-//         <div className='p-6 rounded-lg bg-slate-100'>
-//           <h3 className='mb-4 text-lg font-bold text-slate-900'>
+//         <div className='p-6 rounded-lg bg-ink-light'>
+//           <h3 className='mb-4 text-lg font-bold text-ink'>
 //             Upload Summary
 //           </h3>
 //           <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
 //             <div>
-//               <h4 className='mb-2 font-semibold text-slate-800'>
+//               <h4 className='mb-2 font-semibold text-ink-charcoal'>
 //                 Files Status:
 //               </h4>
 //               <ul className='space-y-1 text-sm'>
 //                 {Object.keys(uploadedFiles).length === 0 ? (
-//                   <li className='text-slate-600'>No files uploaded yet</li>
+//                   <li className='text-ink-paragraph'>No files uploaded yet</li>
 //                 ) : (
 //                   Object.keys(uploadedFiles).map((fieldName) => (
-//                     <li key={fieldName} className='flex items-center text-green-600'>
+//                     <li key={fieldName} className='flex items-center text-status-success'>
 //                       <span className='w-2 h-2 mr-2 bg-current rounded-full'></span>
 //                       {fieldName} ✓ Uploaded ({uploadedFiles[fieldName].sizeMB}MB)
 //                     </li>
@@ -690,10 +690,10 @@
 //             </div>
 
 //             <div>
-//               <h4 className='mb-2 font-semibold text-slate-800'>
+//               <h4 className='mb-2 font-semibold text-ink-charcoal'>
 //                 Upload Method:
 //               </h4>
-//               <ul className='space-y-1 text-sm text-slate-600'>
+//               <ul className='space-y-1 text-sm text-ink-paragraph'>
 //                 <li>• Files upload immediately when selected</li>
 //                 <li>• Improved performance and reliability</li>
 //                 <li>• All files are securely stored in AWS S3</li>
@@ -702,11 +702,11 @@
 //             </div>
 //           </div>
 
-//           <div className='p-4 mt-6 border border-green-200 rounded-lg bg-green-50'>
-//             <h4 className='mb-2 font-semibold text-green-800'>
+//           <div className='p-4 mt-6 border border-status-success/25 rounded-lg bg-status-success/10'>
+//             <h4 className='mb-2 font-semibold text-status-success'>
 //               🎉 Ready to Generate Your Website!
 //             </h4>
-//             <p className='text-sm text-green-700'>
+//             <p className='text-sm text-status-success'>
 //               Files are uploaded individually for better performance. Once you click "Submit Form",
 //               our AI will create a professional website with all your information, generate additional
 //               content, optimize for SEO, and create a beautiful design that matches your industry.
@@ -915,28 +915,28 @@ const TokenValidationModal: React.FC<{
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink bg-opacity-50">
+      <div className="bg-surface-card rounded-lg p-6 max-w-md w-full mx-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
-            <AlertTriangle className="w-6 h-6 text-yellow-500 mr-2" />
-            <h3 className="text-lg font-semibold text-slate-900">
+            <AlertTriangle className="w-6 h-6 text-brand-gold mr-2" />
+            <h3 className="text-lg font-semibold text-ink">
               Insufficient Tokens
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-ink-caption hover:text-ink-paragraph transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="mb-6">
-          <p className="text-slate-700 mb-4">{message}</p>
+          <p className="text-ink-paragraph mb-4">{message}</p>
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-sm text-yellow-700">
+          <div className="bg-surface-main border border-brand-yellow-soft rounded-lg p-4">
+            <p className="text-sm text-brand-gold">
               {`Each website generation requires 100 tokens but you have ${totalToken}. You can purchase more
               tokens to continue.`}
             </p>
@@ -946,7 +946,7 @@ const TokenValidationModal: React.FC<{
         <div className="flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+            className="px-4 py-2 text-ink-paragraph border border-ink-light rounded-lg hover:bg-ink-offwhite transition-colors"
           >
             Cancel
           </button>
@@ -954,7 +954,7 @@ const TokenValidationModal: React.FC<{
           {onPurchaseTokens && (
             <button
               onClick={onPurchaseTokens}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="px-4 py-2 bg-status-success text-white rounded-lg hover:bg-status-success transition-colors"
             >
               Purchase Tokens
             </button>
@@ -1243,7 +1243,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     title,
     icon: Icon,
     children,
-    bgColor = "bg-slate-50",
+    bgColor = "bg-ink-offwhite",
   }: {
     title: string;
     icon: any;
@@ -1251,8 +1251,8 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     bgColor?: string;
   }) => (
     <div className={`${bgColor} rounded-lg p-6`}>
-      <h3 className="flex items-center mb-4 text-lg font-bold text-slate-900">
-        <Icon className="w-6 h-6 mr-3 text-slate-600" />
+      <h3 className="flex items-center mb-4 text-lg font-bold text-ink">
+        <Icon className="w-6 h-6 mr-3 text-ink-paragraph" />
         {title}
       </h3>
       {children}
@@ -1283,11 +1283,11 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     const getStatusIcon = () => {
       switch (status) {
         case "uploading":
-          return <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />;
+          return <Loader2 className="w-4 h-4 text-status-info animate-spin" />;
         case "completed":
-          return <CheckCircle className="w-4 h-4 text-green-500" />;
+          return <CheckCircle className="w-4 h-4 text-status-success" />;
         case "error":
-          return <AlertCircle className="w-4 h-4 text-red-500" />;
+          return <AlertCircle className="w-4 h-4 text-status-error" />;
         default:
           return null;
       }
@@ -1296,13 +1296,13 @@ const Step8MediaUploads: React.FC<StepProps> = ({
     const getStatusColor = () => {
       switch (status) {
         case "uploading":
-          return "border-blue-300 bg-blue-50";
+          return "border-status-info/40 bg-status-info/10";
         case "completed":
-          return "border-green-300 bg-green-50";
+          return "border-status-success/40 bg-status-success/10";
         case "error":
-          return "border-red-300 bg-red-50";
+          return "border-status-error/40 bg-status-error/10";
         default:
-          return "border-slate-300";
+          return "border-ink-light";
       }
     };
 
@@ -1344,13 +1344,13 @@ const Step8MediaUploads: React.FC<StepProps> = ({
 
     return (
       <div className="mb-4">
-        <label className="flex items-center block gap-2 mb-2 text-sm font-semibold text-slate-700">
+        <label className="flex items-center block gap-2 mb-2 text-sm font-semibold text-ink-paragraph">
           {label}
-          {required && <span className="ml-1 text-red-500">*</span>}
+          {required && <span className="ml-1 text-status-error">*</span>}
           {getStatusIcon()}
         </label>
         {description && (
-          <p className="mb-2 text-sm text-slate-600">{description}</p>
+          <p className="mb-2 text-sm text-ink-paragraph">{description}</p>
         )}
 
         <div
@@ -1358,19 +1358,19 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           onDragOver={handleDragOver}
           onDragEnter={handleDragOver}
           onDragLeave={handleDragLeave}
-          className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-slate-400 transition-colors ${getStatusColor()} ${isDragging ? "border-blue-400 bg-blue-50" : ""
+          className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-ink-caption transition-colors ${getStatusColor()} ${isDragging ? "border-status-info bg-status-info/10" : ""
             }`}
           aria-label={`${label} upload dropzone`}
         >
-          <Upload className="w-8 h-8 mx-auto mb-2 text-slate-400" />
-          <p className="mb-2 text-slate-600">
+          <Upload className="w-8 h-8 mx-auto mb-2 text-ink-caption" />
+          <p className="mb-2 text-ink-paragraph">
             {isDragging
               ? "Drop file here to upload"
               : isUploaded
                 ? `File uploaded: ${uploadedFile.fileName} (${uploadedFile.sizeMB}MB)`
                 : "Click to upload or drag and drop"}
           </p>
-          <p className="mb-3 text-xs text-slate-500">{accept}</p>
+          <p className="mb-3 text-xs text-ink-caption">{accept}</p>
 
           {/* Show file URL for uploaded files */}
           {fileUrl && (
@@ -1379,7 +1379,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                 href={fileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-blue-600 underline hover:text-blue-800"
+                className="text-sm text-status-info underline hover:text-status-info"
               >
                 View uploaded file
               </a>
@@ -1411,10 +1411,10 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           <label
             htmlFor={`upload-${label.replace(/\s+/g, "-").toLowerCase()}`}
             className={`inline-block px-4 py-2 rounded-lg cursor-pointer transition-colors ${isUploading || status === "uploading"
-              ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+              ? "bg-ink-caption text-ink-light cursor-not-allowed"
               : isUploaded
-                ? "bg-green-600 text-white hover:bg-green-700"
-                : "bg-blue-600 text-white hover:bg-blue-700"
+                ? "bg-status-success text-white hover:bg-status-success"
+                : "bg-status-info text-white hover:bg-status-info"
               }`}
           >
             {status === "uploading"
@@ -1445,21 +1445,21 @@ const Step8MediaUploads: React.FC<StepProps> = ({
         <div className="space-y-8">
           {/* Upload Progress */}
           {isUploading && (
-            <div className="p-4 mb-6 border border-blue-200 rounded-lg bg-blue-50">
+            <div className="p-4 mb-6 border border-status-info/25 rounded-lg bg-status-info/10">
               <div className="flex items-center mb-2">
-                <Loader2 className="w-5 h-5 mr-2 text-blue-600 animate-spin" />
-                <h3 className="text-lg font-semibold text-blue-800">
+                <Loader2 className="w-5 h-5 mr-2 text-status-info animate-spin" />
+                <h3 className="text-lg font-semibold text-status-info">
                   Processing Submission...
                 </h3>
               </div>
-              <p className="mb-3 text-blue-700">{uploadStatus}</p>
-              <div className="w-full h-3 bg-blue-200 rounded-full">
+              <p className="mb-3 text-status-info">{uploadStatus}</p>
+              <div className="w-full h-3 bg-status-info/25 rounded-full">
                 <div
-                  className="h-3 transition-all duration-500 ease-out bg-blue-600 rounded-full"
+                  className="h-3 transition-all duration-500 ease-out bg-status-info rounded-full"
                   style={{ width: `${uploadProgress}%` }}
                 ></div>
               </div>
-              <p className="mt-2 text-sm text-blue-600">
+              <p className="mt-2 text-sm text-status-info">
                 {uploadProgress}% complete
               </p>
             </div>
@@ -1469,7 +1469,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           <FileUploadSection
             title="Brand & Site Images"
             icon={Image}
-            bgColor="bg-blue-50"
+            bgColor="bg-status-info/10"
           >
             <div className="space-y-6">
               <FileUploadBox
@@ -1481,7 +1481,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
                 fieldName="companyLogoUrl"
               />
             </div>
-            <p className="mt-4 text-sm text-blue-700">
+            <p className="mt-4 text-sm text-status-info">
               <strong>Note:</strong> Files are uploaded immediately when
               selected. AI will generate additional images and design elements
               for your website automatically.
@@ -1492,7 +1492,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           <FileUploadSection
             title="Documents & Certificates"
             icon={FileText}
-            bgColor="bg-green-50"
+            bgColor="bg-status-success/10"
           >
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FileUploadBox
@@ -1559,7 +1559,7 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           <FileUploadSection
             title="Videos & Promotional Content"
             icon={Video}
-            bgColor="bg-purple-50"
+            bgColor="bg-brand-gold/10"
           >
             <div className="space-y-4">
               <FormInput
@@ -1596,11 +1596,11 @@ const Step8MediaUploads: React.FC<StepProps> = ({
               />
             </div>
 
-            <div className="p-4 mt-6 bg-purple-100 rounded-lg">
-              <h4 className="mb-2 font-semibold text-purple-900">
+            <div className="p-4 mt-6 bg-brand-gold/15 rounded-lg">
+              <h4 className="mb-2 font-semibold text-brand-gold">
                 Video Guidelines:
               </h4>
-              <ul className="space-y-1 text-sm text-purple-800">
+              <ul className="space-y-1 text-sm text-brand-gold">
                 <li>• Videos should be 1080p or higher resolution</li>
                 <li>• YouTube, Vimeo, or Google Drive links are preferred</li>
                 <li>
@@ -1613,23 +1613,23 @@ const Step8MediaUploads: React.FC<StepProps> = ({
           </FileUploadSection>
 
           {/* Upload Summary */}
-          <div className="p-6 rounded-lg bg-slate-100">
-            <h3 className="mb-4 text-lg font-bold text-slate-900">
+          <div className="p-6 rounded-lg bg-ink-light">
+            <h3 className="mb-4 text-lg font-bold text-ink">
               Upload Summary
             </h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <h4 className="mb-2 font-semibold text-slate-800">
+                <h4 className="mb-2 font-semibold text-ink-charcoal">
                   Files Status:
                 </h4>
                 <ul className="space-y-1 text-sm">
                   {Object.keys(uploadedFiles).length === 0 ? (
-                    <li className="text-slate-600">No files uploaded yet</li>
+                    <li className="text-ink-paragraph">No files uploaded yet</li>
                   ) : (
                     Object.keys(uploadedFiles).map((fieldName) => (
                       <li
                         key={fieldName}
-                        className="flex items-center text-green-600"
+                        className="flex items-center text-status-success"
                       >
                         <span className="w-2 h-2 mr-2 bg-current rounded-full"></span>
                         {fieldName} ✓ Uploaded (
@@ -1641,10 +1641,10 @@ const Step8MediaUploads: React.FC<StepProps> = ({
               </div>
 
               <div>
-                <h4 className="mb-2 font-semibold text-slate-800">
+                <h4 className="mb-2 font-semibold text-ink-charcoal">
                   Upload Method:
                 </h4>
-                <ul className="space-y-1 text-sm text-slate-600">
+                <ul className="space-y-1 text-sm text-ink-paragraph">
                   <li>• Files upload immediately when selected</li>
                   <li>• Improved performance and reliability</li>
                   <li>• All files are securely stored in AWS S3</li>

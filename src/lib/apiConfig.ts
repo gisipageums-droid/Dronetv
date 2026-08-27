@@ -153,3 +153,72 @@ export const LAMBDA = {
 
 // Job Board ATS (applications) service
 export const JOB_APPLICATIONS_API = serviceBase('jobApplications', 'job-applications');
+
+// Pre-publish company template editor (no login yet — identified only by
+// draftId/userId in the URL) has no JWT to send, so image uploads there
+// must go through company-service's public presigned-URL route instead of
+// the authed one. Mirrors Step1CompanyCategory.tsx's working uploadImageFile.
+export async function uploadCompanyImagePresigned(
+  userId: string,
+  fieldName: string,
+  file: File
+): Promise<string | null> {
+  try {
+    const base = COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
+    const presignRes = await fetch(base, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId,
+        fieldName,
+        filename: file.name,
+        contentType: file.type || "application/octet-stream",
+      }),
+    });
+    if (!presignRes.ok) return null;
+    const presignData = await presignRes.json();
+    if (!presignData.success) return null;
+
+    const putRes = await fetch(presignData.uploadUrl, {
+      method: "PUT",
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+      body: file,
+    });
+    if (!putRes.ok) return null;
+
+    return presignData.imageUrl as string;
+  } catch (error) {
+    console.error("uploadCompanyImagePresigned failed:", error);
+    return null;
+  }
+}
+
+// Post-login company template editor (editing an already-published company
+// from the logged-in dashboard) — this route is authed on the backend, so
+// it needs the real Bearer token, unlike the pre-publish flow above.
+export async function uploadCompanyImageAuthed(
+  userId: string,
+  publishedId: string,
+  file: File
+): Promise<string | null> {
+  try {
+    const base = COMPANY_API
+      ? `${COMPANY_API}/upload-image/${userId}/${publishedId}`
+      : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`;
+    const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(base, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (data.url || data.imageUrl || null) as string | null;
+  } catch (error) {
+    console.error("uploadCompanyImageAuthed failed:", error);
+    return null;
+  }
+}

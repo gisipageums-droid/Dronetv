@@ -52,7 +52,7 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
       <motion.div className="fixed bottom-20 right-10 z-50">
         <motion.button
           onClick={() => setModel(true)}
-          className="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
+          className="bg-status-info text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -67,14 +67,14 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
       <AnimatePresence>
         {model && (
           <motion.div
-            className="fixed top-[8rem] right-0 bottom-0 left-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed top-[8rem] right-0 bottom-0 left-0 z-50 flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setModel(false)}
           >
             <motion.div
-              className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+              className="bg-surface-card rounded-xl shadow-2xl max-w-md w-full p-6"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -82,19 +82,19 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="text-indigo-600" size={24} />
-                  <h3 className="text-xl font-semibold text-gray-900">Submit Your Listing</h3>
+                  <CheckCircle className="text-status-info" size={24} />
+                  <h3 className="text-xl font-semibold text-ink">Submit Your Listing</h3>
                 </div>
-                <button onClick={() => setModel(false)} className="p-1 rounded-full hover:bg-gray-100">
-                  <X size={20} className="text-gray-500" />
+                <button onClick={() => setModel(false)} className="p-1 rounded-full hover:bg-ink-light">
+                  <X size={20} className="text-ink-caption" />
                 </button>
               </div>
 
-              <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg mb-5">
-                <AlertCircle size={18} className="text-blue-600 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-blue-800">
+              <div className="flex items-start gap-3 p-3 bg-status-info/10 rounded-lg mb-5">
+                <AlertCircle size={18} className="text-status-info mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-status-info">
                   Your website preview is ready. Submit to save your listing and receive login credentials on your registered email. You can <strong>publish it live</strong> from your dashboard after Aadhaar verification. Review our{" "}
-                  <button onClick={() => setTermsModel(true)} className="text-red-800 underline font-medium hover:text-red-900">
+                  <button onClick={() => setTermsModel(true)} className="text-status-error underline font-medium hover:text-status-error">
                     terms and conditions
                   </button>{" "}
                   before proceeding.
@@ -105,7 +105,7 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setModel(false)}
-                  className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
+                  className="px-4 py-2 text-ink-paragraph font-medium rounded-lg border border-ink-light bg-surface-card hover:bg-ink-light transition-colors"
                 >
                   Cancel
                 </motion.button>
@@ -114,8 +114,8 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
                   disabled={isPublishing}
                   className={`px-4 py-2 font-medium rounded-lg transition-colors shadow-md flex items-center gap-2 ${
                     isPublishing
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-green-600 text-white hover:bg-green-700 cursor-pointer'
+                      ? 'bg-ink-light text-ink-caption cursor-not-allowed'
+                      : 'bg-status-success text-white hover:bg-status-success cursor-pointer'
                   }`}
                 >
                   {isPublishing ? (
@@ -134,27 +134,27 @@ These Terms shall be governed by the laws of India. Disputes resolved through ar
       <AnimatePresence>
         {termsModel && (
           <motion.div
-            className="fixed top-25 right-0 bottom-0 left-0 z-[60] flex items-start justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed top-25 right-0 bottom-0 left-0 z-[60] flex items-start justify-center p-4 bg-ink/60 backdrop-blur-sm"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setTermsModel(false)}
           >
             <motion.div
-              className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[75vh] overflow-hidden flex flex-col mt-4"
+              className="bg-surface-card rounded-xl shadow-2xl max-w-4xl w-full max-h-[75vh] overflow-hidden flex flex-col mt-4"
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
-                <h3 className="text-2xl font-bold text-gray-900">Terms and Conditions</h3>
-                <button onClick={() => setTermsModel(false)} className="p-2 rounded-full hover:bg-gray-100">
-                  <X size={24} className="text-gray-500" />
+              <div className="flex items-center justify-between p-6 border-b border-ink-light sticky top-0 bg-surface-card z-10">
+                <h3 className="text-2xl font-bold text-ink">Terms and Conditions</h3>
+                <button onClick={() => setTermsModel(false)} className="p-2 rounded-full hover:bg-ink-light">
+                  <X size={24} className="text-ink-caption" />
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto p-6">
-                <pre className="whitespace-pre-wrap font-sans text-gray-700 text-sm leading-relaxed">{termsContent}</pre>
+                <pre className="whitespace-pre-wrap font-sans text-ink-paragraph text-sm leading-relaxed">{termsContent}</pre>
               </div>
-              <div className="flex justify-end p-6 border-t border-gray-200 bg-gray-50 sticky bottom-0">
+              <div className="flex justify-end p-6 border-t border-ink-light bg-ink-offwhite sticky bottom-0">
                 <motion.button whileTap={{ scale: 0.95 }} onClick={() => setTermsModel(false)}
-                  className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md">
+                  className="px-6 py-2 bg-status-info text-white font-medium rounded-lg hover:bg-status-info transition-colors shadow-md">
                   I Understand
                 </motion.button>
               </div>

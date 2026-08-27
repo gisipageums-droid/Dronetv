@@ -17,6 +17,7 @@ import { useLocation, useParams } from "react-router-dom";
 import EditableGallerySection from "./components/Gallery";
 import EditableCompanyProfile from "./components/Profile";
 import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
+import { authHeader } from '../../../../../../../../lib/authService';
 
 export default function App() {
   const [componentStates, setComponentStates] = useState({});
@@ -55,11 +56,16 @@ export default function App() {
       for (let i = 0; i < MAX; i++) {
         if (cancelled) return;
         try {
-          const res = await fetch(API_URL);
+          const res = await fetch(API_URL, { headers: authHeader() });
           if (res.ok) {
             const data = await res.json();
-            if (data?.content || data?.publishedId) {
-              if (!cancelled) { setAIGenData(data); setIsLoading(false); }
+            // /draft/{userId}/{draftId} returns the saved content under
+            // "websiteContent", but every consumer here (and finalTemplate
+            // in context.tsx) reads AIGenData.content — normalize the shape
+            // so a hard reload/deep link doesn't hand components undefined.
+            const normalized = data?.content ? data : { ...data, content: data?.websiteContent };
+            if (normalized?.content || normalized?.publishedId) {
+              if (!cancelled) { setAIGenData(normalized); setIsLoading(false); }
               return;
             }
           }
@@ -151,11 +157,11 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-ink flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-14 w-14 border-4 border-indigo-500 border-t-transparent mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-14 w-14 border-4 border-status-info border-t-transparent mx-auto mb-4"></div>
           <p className="text-white text-lg font-semibold">{loadingMessage}</p>
-          <p className="text-gray-400 text-sm mt-1">This may take a few seconds</p>
+          <p className="text-ink-caption text-sm mt-1">This may take a few seconds</p>
         </div>
       </div>
     );

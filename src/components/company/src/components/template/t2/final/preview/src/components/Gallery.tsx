@@ -97,8 +97,8 @@ const Gallery = ({ galleryData }) => {
       id="gallery" 
       className={`py-20 theme-transition ${
         theme === "dark" 
-          ? "bg-[#1f1f1f] text-gray-100" 
-          : "bg-gray-50 text-gray-900"
+          ? "bg-[#1f1f1f] text-ink-light" 
+          : "bg-ink-offwhite text-ink"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -115,7 +115,7 @@ const Gallery = ({ galleryData }) => {
             <motion.div
               key={image.id}
               className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${
-                theme === "dark" ? "bg-gray-800" : "bg-white"
+                theme === "dark" ? "bg-ink-charcoal" : "bg-surface-card"
               }`}
               whileHover={{ y: -5 }}
               onClick={() => openLightbox(index)}
@@ -128,12 +128,12 @@ const Gallery = ({ galleryData }) => {
                     className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
                   />
                 ) : (
-                  <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">No image</span>
+                  <div className="w-full h-64 bg-ink-light flex items-center justify-center">
+                    <span className="text-ink-caption">No image</span>
                   </div>
                 )}
                 
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
+                <div className="absolute inset-0 bg-ink bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-end">
                   <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
                     <h3 className="font-semibold">{image.title}</h3>
                     <p className="text-sm">{image.category}</p>
@@ -147,24 +147,24 @@ const Gallery = ({ galleryData }) => {
 
       {/* Lightbox Modal */}
       {selectedImage !== null && (
-        <div className="fixed top-[8rem] inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+        <div className="fixed top-[8rem] inset-0 bg-ink bg-opacity-90 z-50 flex items-center justify-center p-4">
           <button
             onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70"
+            className="absolute top-4 right-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70"
           >
             <X size={24} />
           </button>
           
           <button
             onClick={goToPrev}
-            className="absolute left-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70"
+            className="absolute left-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70"
           >
             <ChevronLeft size={32} />
           </button>
           
           <button
             onClick={goToNext}
-            className="absolute right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70"
+            className="absolute right-4 text-white p-2 rounded-full bg-ink bg-opacity-50 hover:bg-opacity-70"
           >
             <ChevronRight size={32} />
           </button>
@@ -177,7 +177,7 @@ const Gallery = ({ galleryData }) => {
             />
             <div className="text-white text-center mt-4">
               <h3 className="text-xl font-semibold">{contentState.images[selectedImage].title}</h3>
-              <p className="text-gray-300">{contentState.images[selectedImage].category}</p>
+              <p className="text-ink-light">{contentState.images[selectedImage].category}</p>
             </div>
           </div>
         </div>

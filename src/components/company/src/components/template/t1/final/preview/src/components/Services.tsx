@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useInView } from "motion/react";
 
 // Custom Card Components
 const Card = ({ children, className = "" }) => (
-  <div className={`bg-white rounded-xl shadow-md overflow-hidden ${className}`}>
+  <div className={`bg-surface-card rounded-xl shadow-md overflow-hidden ${className}`}>
     {children}
   </div>
 );
@@ -12,7 +12,7 @@ const Card = ({ children, className = "" }) => (
 const CardHeader = ({ children }) => <div className="p-6 pb-3">{children}</div>;
 
 const CardTitle = ({ children }) => (
-  <h3 className="text-xl font-bold text-gray-900">{children}</h3>
+  <h3 className="text-xl font-bold text-ink">{children}</h3>
 );
 
 const CardContent = ({ children, className = "" }) => (
@@ -35,9 +35,9 @@ const Button = ({
   };
   const variantClasses = {
     primary:
-      "bg-blue-600 text-white hover:bg-blue-700 shadow-sm hover:shadow-md",
-    secondary: "bg-gray-200 text-gray-900 hover:bg-gray-300",
-    outline: "border-2 border-blue-600 text-blue-600 hover:bg-blue-50",
+      "bg-status-info text-white hover:bg-status-info shadow-sm hover:shadow-md",
+    secondary: "bg-ink-light text-ink hover:bg-ink-light",
+    outline: "border-2 border-status-info text-status-info hover:bg-status-info/10",
   };
 
   return (
@@ -83,7 +83,7 @@ export default function Services({ serviceData }) {
     <section
       id="services"
       ref={sectionRef}
-      className="py-20 bg-gradient-to-b from-blue-50 to-white scroll-mt-20"
+      className="py-20 bg-gradient-to-b from-status-info/10 to-white scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
@@ -93,13 +93,13 @@ export default function Services({ serviceData }) {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <span className="inline-block px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1.5 bg-status-info/15 text-status-info rounded-full text-sm font-medium mb-4">
             Our Services
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
             {serviceData.heading.head}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-ink-paragraph max-w-2xl mx-auto">
             {serviceData.heading.desc}
           </p>
         </motion.div>
@@ -120,8 +120,8 @@ export default function Services({ serviceData }) {
               }}
               className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
                 activeCategory === cat
-                  ? "bg-orange-400 text-white shadow-lg scale-105"
-                  : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                  ? "bg-status-warning text-white shadow-lg scale-105"
+                  : "bg-surface-card text-ink-paragraph hover:bg-ink-offwhite shadow-md hover:shadow-lg"
               }`}
             >
               {cat}
@@ -153,7 +153,7 @@ export default function Services({ serviceData }) {
                     />
                   )}
                   <div className="absolute top-3 right-3">
-                    <span className="px-3 py-1 bg-orange-400 text-white text-xs font-medium rounded-full">
+                    <span className="px-3 py-1 bg-status-warning text-white text-xs font-medium rounded-full">
                       {service.category}
                     </span>
                   </div>
@@ -162,14 +162,14 @@ export default function Services({ serviceData }) {
                   <CardTitle>{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
-                  <p className="text-sm text-gray-600 mb-4 flex-1 line-clamp-3">
+                  <p className="text-sm text-ink-paragraph mb-4 flex-1 line-clamp-3">
                     {service.description}
                   </p>
 
                   <Button
                     size="sm"
                     onClick={() => openModal(service)}
-                    className="w-full hover:scale-105 bg-orange-400 hover:bg-orange-600"
+                    className="w-full hover:scale-105 bg-status-warning hover:bg-status-warning"
                   >
                     View Details →
                   </Button>
@@ -200,14 +200,14 @@ export default function Services({ serviceData }) {
       <AnimatePresence>
         {isModalOpen && selectedService && (
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeModal}
           >
             <motion.div
-              className="bg-white rounded-2xl w-full max-w-4xl max-h-[70vh] overflow-hidden shadow-2xl"
+              className="bg-surface-card rounded-2xl w-full max-w-4xl max-h-[70vh] overflow-hidden shadow-2xl"
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -224,16 +224,16 @@ export default function Services({ serviceData }) {
                     onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent"></div>
                 <button
                   onClick={closeModal}
-                  className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors shadow-lg"
+                  className="absolute top-4 right-4 bg-white/90 hover:bg-surface-card rounded-full p-2 transition-colors shadow-lg"
                   aria-label="Close modal"
                 >
-                  <X className="w-5 h-5 text-gray-900" />
+                  <X className="w-5 h-5 text-ink" />
                 </button>
                 <div className="absolute bottom-6 left-6 right-6">
-                  <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded-full mb-3">
+                  <span className="inline-block px-3 py-1 bg-status-info text-white text-xs font-medium rounded-full mb-3">
                     {selectedService.category}
                   </span>
                   <h2 className="text-3xl font-bold text-white">
@@ -246,7 +246,7 @@ export default function Services({ serviceData }) {
               <div className="overflow-y-auto max-h-[calc(90vh-16rem)] p-8">
                 {/* Description */}
                 <div className="mb-8">
-                  <p className="text-gray-700 text-lg leading-relaxed">
+                  <p className="text-ink-paragraph text-lg leading-relaxed">
                     {selectedService.detailedDescription ||
                       selectedService.description}
                   </p>
@@ -256,17 +256,17 @@ export default function Services({ serviceData }) {
                 {selectedService.benefits &&
                   selectedService.benefits.length > 0 && (
                     <div className="mb-8">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <span className="text-green-600">✓</span> Key Benefits
+                      <h3 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+                        <span className="text-status-success">✓</span> Key Benefits
                       </h3>
                       <div className="grid md:grid-cols-2 gap-3">
                         {selectedService.benefits.map((benefit, bi) => (
                           <div
                             key={bi}
-                            className="flex gap-3 items-start bg-green-50 p-4 rounded-lg"
+                            className="flex gap-3 items-start bg-status-success/10 p-4 rounded-lg"
                           >
-                            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                            <span className="text-gray-700">{benefit}</span>
+                            <CheckCircle className="w-5 h-5 text-status-success mt-0.5 flex-shrink-0" />
+                            <span className="text-ink-paragraph">{benefit}</span>
                           </div>
                         ))}
                       </div>
@@ -277,19 +277,19 @@ export default function Services({ serviceData }) {
                 {selectedService.process &&
                   selectedService.process.length > 0 && (
                     <div className="mb-8">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <span className="text-blue-600">⚙️</span> Our Process
+                      <h3 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+                        <span className="text-status-info">⚙️</span> Our Process
                       </h3>
                       <div className="space-y-4">
                         {selectedService.process.map((step, pi) => (
                           <div
                             key={pi}
-                            className="flex gap-4 items-start bg-blue-50 p-4 rounded-lg"
+                            className="flex gap-4 items-start bg-status-info/10 p-4 rounded-lg"
                           >
-                            <span className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            <span className="flex-shrink-0 w-8 h-8 bg-status-info text-white rounded-full flex items-center justify-center font-bold text-sm">
                               {pi + 1}
                             </span>
-                            <span className="text-gray-700 pt-1">{step}</span>
+                            <span className="text-ink-paragraph pt-1">{step}</span>
                           </div>
                         ))}
                       </div>
@@ -299,21 +299,21 @@ export default function Services({ serviceData }) {
                 {/* Pricing & Timeline */}
                 <div className="grid md:grid-cols-2 gap-6">
                   {selectedService.pricing && (
-                    <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-xl border border-orange-200">
-                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <span className="text-yellow-600">💰</span> Pricing
+                    <div className="bg-gradient-to-br from-surface-main to-status-warning/10 p-6 rounded-xl border border-status-warning/25">
+                      <h3 className="font-bold text-ink mb-3 flex items-center gap-2">
+                        <span className="text-brand-gold">💰</span> Pricing
                       </h3>
-                      <p className="text-gray-700 text-lg font-semibold">
+                      <p className="text-ink-paragraph text-lg font-semibold">
                         {selectedService.pricing}
                       </p>
                     </div>
                   )}
                   {selectedService.timeline && (
-                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
-                      <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <span className="text-purple-600">⏱️</span> Timeline
+                    <div className="bg-gradient-to-br from-brand-gold/10 to-status-error/10 p-6 rounded-xl border border-brand-gold/25">
+                      <h3 className="font-bold text-ink mb-3 flex items-center gap-2">
+                        <span className="text-brand-gold">⏱️</span> Timeline
                       </h3>
-                      <p className="text-gray-700 text-lg font-semibold">
+                      <p className="text-ink-paragraph text-lg font-semibold">
                         {selectedService.timeline}
                       </p>
                     </div>

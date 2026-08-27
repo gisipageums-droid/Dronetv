@@ -18,7 +18,7 @@ export default function About({ aboutData }) {
   return (
     <section
       id="about"
-      className="py-20 bg-gradient-to-b from-blue-50 to-white scroll-mt-20"
+      className="py-20 bg-gradient-to-b from-status-info/10 to-white scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-start" ref={ref}>
@@ -29,47 +29,47 @@ export default function About({ aboutData }) {
             className="space-y-6"
           >
             <div>
-              <Badge className="bg-yellow-400 text-gray-900 mb-4">
+              <Badge className="bg-brand-yellow text-ink mb-4">
                 About Company
               </Badge>
 
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl font-bold text-ink mb-6">
                 About {aboutData.companyName}
               </h2>
             </div>
 
             {/* Company Info Grid */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="space-y-1">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">
+                  <p className="text-ink-caption text-xs uppercase tracking-wide">
                     Company
                   </p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-ink">
                     {aboutData.companyName}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">
+                  <p className="text-ink-caption text-xs uppercase tracking-wide">
                     Industry
                   </p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-ink">
                     {aboutData.industry}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">
+                  <p className="text-ink-caption text-xs uppercase tracking-wide">
                     Established
                   </p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-ink">
                     {aboutData.established}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">
+                  <p className="text-ink-caption text-xs uppercase tracking-wide">
                     Headquarters
                   </p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-ink">
                     {aboutData.headquarters}
                   </p>
                 </div>
@@ -78,46 +78,46 @@ export default function About({ aboutData }) {
 
             {/* Description */}
             <div className="space-y-4">
-              <p className="text-gray-600 leading-relaxed text-base">
+              <p className="text-ink-paragraph leading-relaxed text-base">
                 {aboutData.description1}
               </p>
-              <p className="text-gray-600 leading-relaxed text-base">
+              <p className="text-ink-paragraph leading-relaxed text-base">
                 {aboutData.description2}
               </p>
             </div>
 
             {/* Mission & Vision */}
             <div className="space-y-4">
-              <div className="bg-blue-100 rounded-lg p-5 border-l-4 border-blue-600">
-                <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-blue-600">🎯</span> Mission
+              <div className="bg-status-info/15 rounded-lg p-5 border-l-4 border-status-info">
+                <h3 className="font-bold text-ink mb-2 flex items-center gap-2">
+                  <span className="text-status-info">🎯</span> Mission
                 </h3>
-                <p className="text-gray-700 text-sm leading-relaxed">
+                <p className="text-ink-paragraph text-sm leading-relaxed">
                   {aboutData.mission}
                 </p>
               </div>
-              <div className="bg-purple-100 rounded-lg p-5 border-l-4 border-purple-600">
-                <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-purple-600">👁️</span> Vision
+              <div className="bg-brand-gold/15 rounded-lg p-5 border-l-4 border-brand-gold">
+                <h3 className="font-bold text-ink mb-2 flex items-center gap-2">
+                  <span className="text-brand-gold">👁️</span> Vision
                 </h3>
-                <p className="text-gray-700 text-sm leading-relaxed">
+                <p className="text-ink-paragraph text-sm leading-relaxed">
                   {aboutData.vision}
                 </p>
               </div>
             </div>
 
             {/* Certifications */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-green-600">✓</span> Certifications
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
+              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                <span className="text-status-success">✓</span> Certifications
               </h3>
               <ul className="space-y-2">
                 {aboutData.certifications.map((cert, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm"
+                    className="flex items-start gap-3 text-ink-paragraph text-sm"
                   >
-                    <span className="text-green-600 mt-0.5">•</span>
+                    <span className="text-status-success mt-0.5">•</span>
                     <span>{cert}</span>
                   </li>
                 ))}
@@ -125,17 +125,17 @@ export default function About({ aboutData }) {
             </div>
 
             {/* Achievements */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-yellow-600">🏆</span> Achievements
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
+              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                <span className="text-brand-gold">🏆</span> Achievements
               </h3>
               <ul className="space-y-2">
                 {aboutData.achievements.map((achievement, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm"
+                    className="flex items-start gap-3 text-ink-paragraph text-sm"
                   >
-                    <span className="text-yellow-600 mt-0.5">•</span>
+                    <span className="text-brand-gold mt-0.5">•</span>
                     <span>{achievement}</span>
                   </li>
                 ))}
@@ -151,7 +151,7 @@ export default function About({ aboutData }) {
           >
             {aboutData.officeImage && (
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-transparent mix-blend-multiply"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-status-info/20 to-transparent mix-blend-multiply"></div>
                 <img
                   src={aboutData.officeImage.startsWith('/assets/') ? '/images/about-office.jpg' : aboutData.officeImage}
                   alt="Office"
@@ -162,17 +162,17 @@ export default function About({ aboutData }) {
             )}
 
             {/* Certifications */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-green-600">✓</span> Certifications
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
+              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                <span className="text-status-success">✓</span> Certifications
               </h3>
               <ul className="space-y-2">
                 {aboutData.certifications.map((cert, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm"
+                    className="flex items-start gap-3 text-ink-paragraph text-sm"
                   >
-                    <span className="text-green-600 mt-0.5">•</span>
+                    <span className="text-status-success mt-0.5">•</span>
                     <span>{cert}</span>
                   </li>
                 ))}
@@ -180,17 +180,17 @@ export default function About({ aboutData }) {
             </div>
 
             {/* Achievements */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-yellow-600">🏆</span> Achievements
+            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
+              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                <span className="text-brand-gold">🏆</span> Achievements
               </h3>
               <ul className="space-y-2">
                 {aboutData.achievements.map((achievement, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm"
+                    className="flex items-start gap-3 text-ink-paragraph text-sm"
                   >
-                    <span className="text-yellow-600 mt-0.5">•</span>
+                    <span className="text-brand-gold mt-0.5">•</span>
                     <span>{achievement}</span>
                   </li>
                 ))}

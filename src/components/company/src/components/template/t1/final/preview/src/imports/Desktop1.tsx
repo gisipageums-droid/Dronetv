@@ -19,7 +19,7 @@ import imgRectangle40 from "figma:asset/3cf29919403d8513a5e32a017ab335157df81b4b
 export default function Desktop1() {
   return (
     <div className="bg-[#ffffff] relative size-full" data-name="Desktop - 1">
-      <div className="absolute bg-[#ffeb3b] h-[53px] left-[316px] rounded-[20px] top-[4344px] w-[213px]" />
+      <div className="absolute bg-[#F8C400] h-[53px] left-[316px] rounded-[20px] top-[4344px] w-[213px]" />
       <div className="absolute bg-center bg-cover bg-no-repeat h-[756px] left-[780px] rounded-[50px] top-[3742px] w-[577px]" style={{ backgroundImage: `url('${imgRectangle22}')` }} />
       <div className="absolute h-[454px] left-10 top-[4605px] w-[1360px]">
         <div className="absolute bottom-[-1.76%] left-[-0.29%] right-[-0.29%] top-0">
@@ -44,7 +44,7 @@ export default function Desktop1() {
         </div>
       </div>
       <div className="absolute bg-[#ffffff] h-28 left-0 top-0 w-[1440px]">
-        <div aria-hidden="true" className="absolute border-[5px] border-neutral-100 border-solid inset-[-5px] pointer-events-none" />
+        <div aria-hidden="true" className="absolute border-[5px] border-ink-light border-solid inset-[-5px] pointer-events-none" />
       </div>
       <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[527px] not-italic text-[#000000] text-[0px] text-nowrap top-8">
         <p className="font-['Inter:Semi_Bold',_sans-serif] font-semibold leading-[normal] whitespace-pre">
@@ -52,16 +52,16 @@ export default function Desktop1() {
           <span className="text-[15px]"> </span>
         </p>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[651px] not-italic text-[#101010] text-[0px] text-nowrap top-[31px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[651px] not-italic text-[#111111] text-[0px] text-nowrap top-[31px]">
         <p className="leading-[normal] whitespace-pre">
           <span className="font-['Inter:Semi_Bold',_sans-serif] font-semibold not-italic text-[24px]">About</span>
           <span className="text-[15px]"> </span>
         </p>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[756px] not-italic text-[0px] text-neutral-100 text-nowrap top-[29px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal leading-[0] left-[756px] not-italic text-[0px] text-ink-light text-nowrap top-[29px]">
         <p className="leading-[normal] whitespace-pre">
           <span className="font-['Inter:Semi_Bold',_sans-serif] font-semibold not-italic text-[#1c1c1c] text-[24px]">Product</span>
-          <span className="text-[15px] text-neutral-100"> </span>
+          <span className="text-[15px] text-ink-light"> </span>
         </p>
       </div>
       <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold leading-[0] left-[882px] not-italic text-[#1c1c1c] text-[24px] text-nowrap top-[31px]">
@@ -70,8 +70,8 @@ export default function Desktop1() {
       <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold leading-[0] left-[1016px] not-italic text-[#1c1c1c] text-[24px] text-nowrap top-[29px]">
         <p className="leading-[normal] whitespace-pre">Testimonials</p>
       </div>
-      <div className="absolute bg-[#ffeb3b] h-[41px] left-[1209px] rounded-[20px] top-[25px] w-[161px]">
-        <div aria-hidden="true" className="absolute border border-[#ffeb3b] border-solid inset-0 pointer-events-none rounded-[20px]" />
+      <div className="absolute bg-[#F8C400] h-[41px] left-[1209px] rounded-[20px] top-[25px] w-[161px]">
+        <div aria-hidden="true" className="absolute border border-[#F8C400] border-solid inset-0 pointer-events-none rounded-[20px]" />
       </div>
       <div className="absolute bg-center bg-cover bg-no-repeat h-[848px] left-0 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] top-28 w-[1440px]" style={{ backgroundImage: `url('${imgRectangle4}')` }} />
       <div className="absolute bg-[#edf2ff] h-[586px] left-0 top-[3062px] w-[1440px]" />
@@ -80,23 +80,23 @@ export default function Desktop1() {
       </div>
       <div className="absolute h-[659.249px] left-[65px] top-[36.75px] w-[1257.14px]">
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 1258 660">
-          <path d={svgPaths.p2ff29000} fill="var(--fill-0, #FFEB3B)" id="Rectangle 5" />
+          <path d={svgPaths.p2ff29000} fill="var(--fill-0, #F8C400)" id="Rectangle 5" />
         </svg>
       </div>
-      <div className="absolute bg-[#ffeb3b] h-[53px] left-[359px] rounded-[20px] top-[753px] w-[195px]" />
-      <div className="absolute bg-[#ffeb3b] h-[53px] left-[51px] rounded-[20px] top-[753px] w-[218px]">
+      <div className="absolute bg-[#F8C400] h-[53px] left-[359px] rounded-[20px] top-[753px] w-[195px]" />
+      <div className="absolute bg-[#F8C400] h-[53px] left-[51px] rounded-[20px] top-[753px] w-[218px]">
         <div aria-hidden="true" className="absolute border-[#1c1c1c] border-[5px] border-solid inset-0 pointer-events-none rounded-[20px]" />
       </div>
       <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-[38px] leading-[0] left-[695px] not-italic text-[32px] text-[rgba(29,28,28,0.28)] text-center top-[986px] translate-x-[-50%] w-[422px]">
         <p className="leading-[normal]">USED BY</p>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[214px] not-italic text-[40px] text-center text-indigo-600 top-[1219px] translate-x-[-50%] w-[340px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[214px] not-italic text-[40px] text-center text-status-info top-[1219px] translate-x-[-50%] w-[340px]">
         <p className="leading-[normal]">About Company</p>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[51px] not-italic text-[40px] text-indigo-600 top-[1703px] w-[221px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[51px] not-italic text-[40px] text-status-info top-[1703px] w-[221px]">
         <p className="leading-[normal]">Services</p>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[65px] not-italic text-[40px] text-indigo-600 top-[2380px] w-[221px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-11 leading-[0] left-[65px] not-italic text-[40px] text-status-info top-[2380px] w-[221px]">
         <p className="leading-[normal]">Products</p>
       </div>
       <div className="absolute h-[260px] left-[57px] top-[1319px] w-[1316px]">
@@ -104,7 +104,7 @@ export default function Desktop1() {
           <g id="Rectangle 11"></g>
         </svg>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-14 leading-[0] left-[255px] not-italic text-[#101010] text-[16px] top-[1710px] w-[1134px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-14 leading-[0] left-[255px] not-italic text-[#111111] text-[16px] top-[1710px] w-[1134px]">
         <p className="leading-[normal]">Our company offers innovative solutions designed to meet your unique business needs. With a team of experts, we ensure quality, reliability, and on-time delivery in every project. From planning to execution, we provide end-to-end services that drive sustainable growth.</p>
       </div>
       <div className="absolute bg-center bg-cover bg-no-repeat h-[187px] left-[512px] rounded-[20px] top-[1927px] w-[373px]" style={{ backgroundImage: `url('${imgRectangle13}')` }} />
@@ -146,19 +146,19 @@ export default function Desktop1() {
       <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-[38px] leading-[0] left-[219.5px] not-italic text-[#000000] text-[32px] text-center top-[2963px] translate-x-[-50%] w-[321px]">
         <p className="leading-[normal]">Product1</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-[38px] leading-[0] left-[1060.5px] not-italic text-[#101010] text-[32px] text-center top-[2965px] translate-x-[-50%] w-[321px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-[38px] leading-[0] left-[1060.5px] not-italic text-[#111111] text-[32px] text-center top-[2965px] translate-x-[-50%] w-[321px]">
         <p className="leading-[normal]">Product1</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold leading-[0] left-[646.5px] not-italic text-[#101010] text-[32px] text-center top-[2966px] translate-x-[-50%] w-[321px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold leading-[0] left-[646.5px] not-italic text-[#111111] text-[32px] text-center top-[2966px] translate-x-[-50%] w-[321px]">
         <p className="leading-[normal]">Product1</p>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[38px] leading-[0] left-[657px] not-italic text-[32px] text-center text-indigo-600 top-[3172px] translate-x-[-50%] w-[400px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[38px] leading-[0] left-[657px] not-italic text-[32px] text-center text-status-info top-[3172px] translate-x-[-50%] w-[400px]">
         <p className="leading-[normal]">BrightWave Solutions</p>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[133px] leading-[0] left-[706.5px] not-italic text-[32px] text-center text-indigo-600 top-[3271px] translate-x-[-50%] w-[1171px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[133px] leading-[0] left-[706.5px] not-italic text-[32px] text-center text-status-info top-[3271px] translate-x-[-50%] w-[1171px]">
         <p className="leading-[normal]">{`"Working with [Your Company Name] has been a game-changer for our business. Their team delivered innovative solutions on time and with exceptional quality. We’ve seen real growth since partnering with them."`}</p>
       </div>
-      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[29px] leading-[0] left-[652.5px] not-italic text-[24px] text-center text-indigo-600 top-[3451px] translate-x-[-50%] w-[479px]">
+      <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[29px] leading-[0] left-[652.5px] not-italic text-[24px] text-center text-status-info top-[3451px] translate-x-[-50%] w-[479px]">
         <p className="leading-[normal]">Aarav Mehta, CEO, BrightWave Solutions</p>
       </div>
       <div className="absolute h-[59px] left-[30px] top-[3294px] w-[60px]">
@@ -176,20 +176,20 @@ export default function Desktop1() {
           <ellipse cx="30" cy="29.5" fill="var(--fill-0, #D9D9D9)" id="Ellipse 2" rx="30" ry="29.5" />
         </svg>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[58px] leading-[0] left-[92px] not-italic text-[48px] text-indigo-600 top-[3753px] w-[508px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[58px] leading-[0] left-[92px] not-italic text-[48px] text-status-info top-[3753px] w-[508px]">
         <p className="leading-[normal]">Contact Us</p>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[37px] leading-[0] left-[148px] not-italic text-[#101010] text-[24px] top-[4032px] w-[212px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[37px] leading-[0] left-[148px] not-italic text-[#111111] text-[24px] top-[4032px] w-[212px]">
         <p className="leading-[normal]">Email</p>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[37px] leading-[0] left-[142px] not-italic text-[#101010] text-[24px] top-[3876px] w-[212px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[37px] leading-[0] left-[142px] not-italic text-[#111111] text-[24px] top-[3876px] w-[212px]">
         <p className="leading-[normal]">Namel</p>
       </div>
       <div className="absolute bg-[#d9d9d9] h-[50px] left-[133px] rounded-[20px] top-[3913px] w-[432px]" />
       <div className="absolute font-['Inter:Regular',_sans-serif] font-normal h-[37px] leading-[0] left-16 not-italic text-[#f7efef] text-[24px] top-[4412px] w-[212px]">
         <p className="leading-[normal]">Location</p>
       </div>
-      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[37px] leading-[0] left-[148px] not-italic text-[#101010] text-[24px] top-[4180px] w-[212px]">
+      <div className="absolute font-['Inter:Bold',_sans-serif] font-bold h-[37px] leading-[0] left-[148px] not-italic text-[#111111] text-[24px] top-[4180px] w-[212px]">
         <p className="leading-[normal]">{`Phone `}</p>
       </div>
       <div className="absolute bg-[#d9d9d9] h-[39px] left-[102px] top-[4671px] w-[152px]" />
@@ -197,7 +197,7 @@ export default function Desktop1() {
         <p className="leading-[normal]">Details</p>
       </div>
       <div className="absolute bg-[#d9d9d9] h-[63px] left-[103px] rounded-[30px] top-[4841px] w-[361px]" />
-      <div className="absolute bg-[#ffeb3b] h-[63px] left-[498px] rounded-[30px] top-[4841px] w-[162px]" />
+      <div className="absolute bg-[#F8C400] h-[63px] left-[498px] rounded-[30px] top-[4841px] w-[162px]" />
       <a className="absolute block font-['Inter:Regular',_sans-serif] font-normal h-[34px] leading-[0] left-[119px] not-italic text-[#f7efef] text-[16px] top-[4935px] w-[489px]" href="https://r.search.yahoo.com/rdclks/dWU9MW5nMHQxcGthOWl2MyZ1dD0xNzU1NjMwNTYzMDkwJnVvPTgyMDUxNDQ0OTA3Nzc2Jmx0PTImcz0xJmVzPUlNOEU2N21FMll2QzNxRnouSjJvUTNkZ3ZOSTZ2cUlQODN2bzFGN1o3dkMzN296WGRCX1NHTldNbWVaMW5MUWZlYjBkOHhrbjF3Tk0-/RV=2/RE=1758222563/RO=14/RU=https%3a%2f%2fwww.bing.com%2faclick%3fld%3de80HjgKFa-aA2EwP5DwfuPmDVUCUxtSn97YCZG4xYkTKZGUf0VqHGWHNLUmNPCS9RQ-G-Ag_Pyc-gyVQaYIaBx50Ia-JdHKI536Y7N9zEsVIsDSgCBaqcDy1CpR2gmYwSQ_sUIP_mT0j08vTe1_NgUiNUWAXP2M8WF_iD_IrDdL1f6GTuxGILjjk1B70l39MHEfCPrUA%26u%3daHR0cHMlM2ElMmYlMmZ3d3cudWRlbXkuY29tJTJmY291cnNlJTJmbGVhcm4tZmlnbWElMmYlM2Z1dG1fc291cmNlJTNkYmluZyUyNnV0bV9tZWRpdW0lM2R1ZGVteWFkcyUyNnV0bV9jYW1wYWlnbiUzZEJHLVNlYXJjaF9LZXl3b3JkX0JldGFfUHJvZl9sYS5FTl9jYy5JbmRpYSUyNmNhbXBhaWdudHlwZSUzZFNlYXJjaCUyNnBvcnRmb2xpbyUzZEJpbmctSW5kaWElMjZsYW5ndWFnZSUzZEVOJTI2cHJvZHVjdCUzZENvdXJzZSUyNnRlc3QlM2QlMjZhdWRpZW5jZSUzZEtleXdvcmQlMjZ0b3BpYyUzZEZpZ21hJTI2cHJpb3JpdHklM2RCZXRhJTI2dXRtX2NvbnRlbnQlM2RkZWFsNDU4NCUyNnV0bV90ZXJtJTNkXy5fYWdfMTMxMjgxOTI3Mjg1OTA4OF8uX2FkX18uX2t3X0ZpZ21hJTI1MjBUdXRvcmlhbF8uX2RlX2NfLl9kbV9fLl9wbF9fLl90aV9rd2QtODIwNTIzMjUxMTE5NDklM2Fsb2MtOTBfLl9saV8xMTYwNzNfLl9wZF9fLl8lMjZtYXRjaHR5cGUlM2RiJTI2bXNjbGtpZCUzZGQ4YzczMzRiNDBjODEyODY1Mzg3NWJlZjhiMmI0YzI2%26rlid%3dd8c7334b40c8128653875bef8b2b4c26/RK=2/RS=PkXC.jp7hZpGWfuJCFHxQ1s7f80-;_ylt=Awr1QVTjy6RoGwIAVSe7HAx.;_ylu=Y29sbwNzZzMEcG9zAzEEdnRpZAMEc2VjA292LWVhc3QtbW1h;_ylc=X3IDMgRydAMw">
         <p className="[text-underline-position:from-font] cursor-pointer decoration-solid leading-[normal] underline">Join millions of learners from around the world already learning on Udemy.</p>
       </a>
@@ -255,77 +255,77 @@ export default function Desktop1() {
         </svg>
       </div>
       <div className="absolute bg-center bg-cover bg-no-repeat h-[339px] left-[906px] rounded-[34px] top-[141px] w-[487px]" style={{ backgroundImage: `url('${imgRectangle30}')` }} />
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[51px] rounded-[20px] top-[1813px] w-[195px]">
-        <div aria-hidden="true" className="absolute border-[#101010] border-[5px] border-solid inset-0 pointer-events-none rounded-[20px]" />
+      <div className="absolute bg-[#F8C400] h-[54px] left-[51px] rounded-[20px] top-[1813px] w-[195px]">
+        <div aria-hidden="true" className="absolute border-[#111111] border-[5px] border-solid inset-0 pointer-events-none rounded-[20px]" />
       </div>
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[291px] rounded-[20px] top-[2375px] w-[195px]" />
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[741px] rounded-[20px] top-[2370px] w-[195px]" />
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[974px] rounded-[20px] top-[2370px] w-[195px]" />
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[1192px] rounded-[20px] top-[2365px] w-[195px]" />
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[503px] rounded-[20px] top-[2375px] w-[195px]" />
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[665px] rounded-[20px] top-[1806px] w-[195px]">
+      <div className="absolute bg-[#F8C400] h-[54px] left-[291px] rounded-[20px] top-[2375px] w-[195px]" />
+      <div className="absolute bg-[#F8C400] h-[54px] left-[741px] rounded-[20px] top-[2370px] w-[195px]" />
+      <div className="absolute bg-[#F8C400] h-[54px] left-[974px] rounded-[20px] top-[2370px] w-[195px]" />
+      <div className="absolute bg-[#F8C400] h-[54px] left-[1192px] rounded-[20px] top-[2365px] w-[195px]" />
+      <div className="absolute bg-[#F8C400] h-[54px] left-[503px] rounded-[20px] top-[2375px] w-[195px]" />
+      <div className="absolute bg-[#F8C400] h-[54px] left-[665px] rounded-[20px] top-[1806px] w-[195px]">
         <div aria-hidden="true" className="absolute border-[#000000] border-[5px] border-solid inset-0 pointer-events-none rounded-[20px]" />
       </div>
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[920px] rounded-[20px] top-[1801px] w-[195px]">
+      <div className="absolute bg-[#F8C400] h-[54px] left-[920px] rounded-[20px] top-[1801px] w-[195px]">
         <div aria-hidden="true" className="absolute border-[#1c1c1c] border-[5px] border-solid inset-0 pointer-events-none rounded-[20px]" />
       </div>
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[1175px] rounded-[20px] top-[1801px] w-[195px]">
+      <div className="absolute bg-[#F8C400] h-[54px] left-[1175px] rounded-[20px] top-[1801px] w-[195px]">
         <div aria-hidden="true" className="absolute border-[#1c1c1c] border-[5px] border-solid inset-0 pointer-events-none rounded-[20px]" />
       </div>
-      <div className="absolute bg-[#ffeb3b] h-[54px] left-[366px] rounded-[20px] top-[1809px] w-[195px]">
-        <div aria-hidden="true" className="absolute border-[#101010] border-[5px] border-solid inset-0 pointer-events-none rounded-[20px]" />
+      <div className="absolute bg-[#F8C400] h-[54px] left-[366px] rounded-[20px] top-[1809px] w-[195px]">
+        <div aria-hidden="true" className="absolute border-[#111111] border-[5px] border-solid inset-0 pointer-events-none rounded-[20px]" />
       </div>
       <div className="absolute bg-center bg-cover bg-no-repeat h-[293px] left-[658px] rounded-[35px] top-[403px] w-[379px]" style={{ backgroundImage: `url('${imgRectangle36}')` }} />
       <div className="absolute bg-center bg-cover bg-no-repeat h-[280px] left-[984px] rounded-[36px] top-[572px] w-[399px]" style={{ backgroundImage: `url('${imgRectangle37}')` }} />
       <div className="absolute font-['Inter:Extra_Bold',_sans-serif] font-extrabold h-[230px] leading-[0] left-9 not-italic text-[#ffffff] text-[64px] top-[229px] w-[549px]">
         <p className="leading-[normal]">Shaping Tomorrow with Innovation Today</p>
       </div>
-      <div className="absolute font-['Chonburi:Regular',_sans-serif] h-[58px] leading-[0] left-[223.5px] not-italic text-[#ff0000] text-[48px] text-center top-[23px] translate-x-[-50%] w-[427px]">
+      <div className="absolute font-['Chonburi:Regular',_sans-serif] h-[58px] leading-[0] left-[223.5px] not-italic text-[#DC2626] text-[48px] text-center top-[23px] translate-x-[-50%] w-[427px]">
         <p className="leading-[normal]">Inovative Labs</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[1248px] not-italic text-[#ff0000] text-[20px] top-[33px] w-[83px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[1248px] not-italic text-[#DC2626] text-[20px] top-[33px] w-[83px]">
         <p className="leading-[normal]">Sign Up</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-96 not-italic text-[#ff0000] text-[20px] top-[767px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-96 not-italic text-[#DC2626] text-[20px] top-[767px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-20 not-italic text-[#ff0000] text-[20px] top-[1829px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-20 not-italic text-[#DC2626] text-[20px] top-[1829px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[337px] not-italic text-[#ff0000] text-[20px] top-[2389px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[337px] not-italic text-[#DC2626] text-[20px] top-[2389px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[364px] not-italic text-[#ff0000] text-[20px] top-[4359px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[364px] not-italic text-[#DC2626] text-[20px] top-[4359px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[524px] not-italic text-[#ff0000] text-[20px] top-[4859px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[524px] not-italic text-[#DC2626] text-[20px] top-[4859px] w-[148px]">
         <p className="leading-[normal]">Send Mail</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[1234px] not-italic text-[#ff0000] text-[20px] top-[2381px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[1234px] not-italic text-[#DC2626] text-[20px] top-[2381px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[1002px] not-italic text-[#ff0000] text-[20px] top-[2386px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[1002px] not-italic text-[#DC2626] text-[20px] top-[2386px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[766px] not-italic text-[#ff0000] text-[20px] top-[2386px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[766px] not-italic text-[#DC2626] text-[20px] top-[2386px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[542px] not-italic text-[#ff0000] text-[20px] top-[2389px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[542px] not-italic text-[#DC2626] text-[20px] top-[2389px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[1209px] not-italic text-[#ff0000] text-[20px] top-[1817px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[1209px] not-italic text-[#DC2626] text-[20px] top-[1817px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[951px] not-italic text-[#ff0000] text-[20px] top-[1817px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[951px] not-italic text-[#DC2626] text-[20px] top-[1817px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[699px] not-italic text-[#ff0000] text-[20px] top-[1821px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[699px] not-italic text-[#DC2626] text-[20px] top-[1821px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[405px] not-italic text-[#ff0000] text-[20px] top-[1823px] w-[148px]">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[405px] not-italic text-[#DC2626] text-[20px] top-[1823px] w-[148px]">
         <p className="leading-[normal]">Learn More</p>
       </div>
-      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[92px] not-italic text-[#ff0000] text-[20px] top-[764px] w-40">
+      <div className="absolute font-['Inter:Semi_Bold',_sans-serif] font-semibold h-4 leading-[0] left-[92px] not-italic text-[#DC2626] text-[20px] top-[764px] w-40">
         <p className="leading-[normal]">Get Started</p>
       </div>
       <div className="absolute bg-center bg-cover bg-no-repeat h-[51px] left-[51px] opacity-40 top-[1081px] w-[325px]" style={{ backgroundImage: `url('${imgRectangle7}')` }} />

@@ -428,27 +428,35 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     const template = companyData.templateSelection || 'template-1';
     setIsDraftLoading(true);
 
-    const draftUrl = COMPANY_API ? `${COMPANY_API}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}`;
+    const draftUrl = COMPANY_API ? `${COMPANY_API}/draft/${companyData.userId}/${companyData.draftId}?template=${template}` : `${LAMBDA.companyDraft}/api/draft/${companyData.userId}/${companyData.draftId}?template=${template}`;
     const publishedUrl = companyData.publishedId
       ? COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${companyData.publishedId}` : `${LAMBDA.company}/dashboard-cards/published-details/${companyData.publishedId}`
       : null;
 
+    const publishedAuthToken = localStorage.getItem('adminToken') || localStorage.getItem('token');
+
     Promise.all([
       fetch(draftUrl).then(r => r.json()).catch(() => ({})),
       publishedUrl
-        ? fetch(publishedUrl, { headers: { 'X-User-Id': companyData.userId } }).then(r => r.json()).catch(() => ({}))
+        ? fetch(publishedUrl, {
+            headers: {
+              'X-User-Id': companyData.userId,
+              ...(publishedAuthToken ? { Authorization: `Bearer ${publishedAuthToken}` } : {}),
+            },
+          }).then(r => r.json()).catch(() => ({}))
         : Promise.resolve({}),
     ]).then(([draftData, publishedData]) => {
       // Extract services & products from published template content (AI-generated after registration —
       // usually more complete than the raw registration form, which often only has placeholder entries)
-      const publishedServices: any[] = publishedData?.content?.services?.services || [];
-      const publishedProducts: any[] = publishedData?.content?.products?.products || [];
-      const publishedAboutImage: string = publishedData?.content?.about?.officeImage || '';
-      const publishedHeroImage: string = publishedData?.content?.hero?.mainHeroImage || '';
+      const publishedContent = publishedData?.websiteContent || publishedData?.content || {};
+      const publishedServices: any[] = publishedContent?.services?.services || [];
+      const publishedProducts: any[] = publishedContent?.products?.products || [];
+      const publishedAboutImage: string = publishedContent?.about?.officeImage || '';
+      const publishedHeroImage: string = publishedContent?.hero?.mainHeroImage || '';
 
       const formDataFromDraft = draftData?.formData || {};
       // Previously saved Update Details selections (saved on last submit)
-      const cachedFields: any = publishedData?.content?._updateCache || {};
+      const cachedFields: any = publishedContent?._updateCache || {};
       // In-progress edits from this browser that never reached a final submit
       let localDraft: any = {};
       try {
@@ -776,6 +784,10 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       toast.error("Director Email is required.");
       return false;
     }
+    if (!formData.altContactEmail || formData.altContactEmail.trim() === "") {
+      toast.error("Company Email is required.");
+      return false;
+    }
     if (!formData.gstin || formData.gstin.trim() === "") {
       toast.error("GST/CIN/LLPIN verification is required to list your company.");
       return false;
@@ -1038,12 +1050,12 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
 
   if (isApiLoading) {
     return (
-      <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-status-info flex items-center justify-center z-50">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-white mb-2">
             Loading form data...
           </h1>
-          <p className="text-blue-200 text-lg">
+          <p className="text-status-info/25 text-lg">
             Please wait while we prefill your form
           </p>
         </div>
@@ -1054,8 +1066,8 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
   if (isDraftLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <span className="w-10 h-10 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
-        <p className="text-gray-500 text-sm font-medium">Loading your company data…</p>
+        <span className="w-10 h-10 border-4 border-brand-yellow border-t-transparent rounded-full animate-spin" />
+        <p className="text-ink-caption text-sm font-medium">Loading your company data…</p>
       </div>
     );
   }

@@ -88,7 +88,7 @@ export default function CompanyProfile() {
     <section
       id="profile"
       ref={profileRef}
-      className="py-24 bg-gradient-to-b from-white to-yellow-50/30 scroll-mt-20"
+      className="py-24 bg-gradient-to-b from-white to-surface-main/30 scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16">
@@ -97,7 +97,7 @@ export default function CompanyProfile() {
             initial={{ opacity: 0, x: -60 }}
             animate={profileVisible ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100"
+            className="rounded-3xl overflow-hidden shadow-xl border border-brand-yellow-soft"
           >
             <img
               src={companyImageUrl}
@@ -118,13 +118,13 @@ export default function CompanyProfile() {
               animate={profileVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2, duration: 0.7 }}
             >
-              <Badge className="bg-[#ffeb3b] text-gray-900 px-4 py-1.5 mb-4">
+              <Badge className="bg-[#F8C400] text-ink px-4 py-1.5 mb-4">
                 Since {establishedYear}
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-ink leading-tight">
                 {companyName}
               </h2>
-              <p className="text-lg text-gray-700 mt-4 max-w-xl">
+              <p className="text-lg text-ink-paragraph mt-4 max-w-xl">
                 Founded in <strong>{establishedYear}</strong>, we are a global
                 innovation studio crafting digital experiences, scalable
                 platforms, and future-ready strategies for industry leaders.
@@ -164,12 +164,12 @@ export default function CompanyProfile() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={profileVisible ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: stat.delay, duration: 0.6 }}
-                  className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-yellow-100 hover:shadow-md transition-shadow"
+                  className="text-center p-6 bg-white/70 backdrop-blur rounded-2xl border border-brand-yellow-soft hover:shadow-md transition-shadow"
                 >
-                  <div className="text-3xl md:text-4xl font-extrabold text-gray-900">
+                  <div className="text-3xl md:text-4xl font-extrabold text-ink">
                     {stat.value}
                   </div>
-                  <div className="text-xs md:text-sm text-gray-600 mt-2 uppercase tracking-wide">
+                  <div className="text-xs md:text-sm text-ink-paragraph mt-2 uppercase tracking-wide">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -183,7 +183,7 @@ export default function CompanyProfile() {
               transition={{ delay: 1.2, duration: 0.7 }}
               className="mt-8 space-y-4"
             >
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-ink">
                 Our Core Values
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -198,10 +198,10 @@ export default function CompanyProfile() {
                     initial={{ x: -20, opacity: 0 }}
                     animate={profileVisible ? { x: 0, opacity: 1 } : {}}
                     transition={{ delay: 1.3 + i * 0.1, duration: 0.5 }}
-                    className="flex items-center gap-2 p-3 bg-yellow-50 rounded-xl"
+                    className="flex items-center gap-2 p-3 bg-surface-main rounded-xl"
                   >
-                    <div className="w-2 h-2 bg-[#ffeb3b] rounded-full"></div>
-                    <span className="text-gray-800 font-medium">{value}</span>
+                    <div className="w-2 h-2 bg-[#F8C400] rounded-full"></div>
+                    <span className="text-ink-charcoal font-medium">{value}</span>
                   </motion.div>
                 ))}
               </div>

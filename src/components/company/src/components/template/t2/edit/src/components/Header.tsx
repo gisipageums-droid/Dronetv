@@ -13,7 +13,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "./ThemeProvider";
 import logo from "/images/Drone tv .in.jpg";
 import { toast } from "react-toastify";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 export default function Header({
   headerData,
@@ -26,11 +26,11 @@ export default function Header({
   const { theme } = useTheme();
   // classes used when editing: ensure text is white in dark mode, black in light mode
   const editInputClasses =
-    theme === "dark" ? "text-white border-white" : "text-black border-gray-800";
+    theme === "dark" ? "text-white border-white" : "text-ink border-ink-charcoal";
   const ctaButtonThemeClasses =
     theme === "dark"
-      ? "bg-yellow-400 border border-white text-white hover:bg-white/10"
-      : "bg-yellow-400 border border-gray-200 text-black hover:bg-white/10";
+      ? "bg-brand-yellow border border-white text-white hover:bg-white/10"
+      : "bg-brand-yellow border border-ink-light text-ink hover:bg-white/10";
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -132,7 +132,9 @@ export default function Header({
     };
   }, [content.ctaText, content.companyName, isEditing]);
 
-  // Function to upload image to AWS
+  // Function to upload image. This editor runs before the company is
+  // published/logged-in (no JWT yet), so it must use company-service's
+  // public presigned-upload route, not the authed /upload-image one.
   const uploadImageToAWS = async (file: File, imageField: string) => {
     if (!userId || !publishedId || !templateSelection) {
       console.error("Missing required props:", {
@@ -144,33 +146,8 @@ export default function Header({
       return null;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("sectionName", "header");
-    formData.append("imageField", `${imageField}_${Date.now()}`);
-    formData.append("templateSelection", templateSelection);
-
-
     try {
-      const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        return uploadData.imageUrl;
-      } else {
-        const errorData = await uploadResponse.json();
-        console.error(`${imageField} upload failed:`, errorData);
-        toast.error(
-          `${imageField} upload failed: ${errorData.message || "Unknown error"}`
-        );
-        return null;
-      }
+      return await uploadCompanyImagePresigned(userId, `${imageField}_${Date.now()}`, file);
     } catch (error) {
       console.error(`Error uploading ${imageField}:`, error);
       toast.error(`Error uploading image. Please try again.`);
@@ -317,7 +294,7 @@ export default function Header({
       {/* Auto-save indicator */}
       {isSaving && (
         <div className="fixed top-20 right-4 z-[99999999]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg shadow-lg text-sm">
+          <div className="flex items-center gap-2 px-3 py-2 bg-status-info text-white rounded-lg shadow-lg text-sm">
             <Loader2 size={16} className="animate-spin" />
             Auto-saving...
           </div>
@@ -327,8 +304,8 @@ export default function Header({
       {/* === Updated header with proper spacing === */}
       <motion.header
         className={`fixed top-[4rem] left-0 right-0 border-b z-50  ${theme === "dark"
-          ? "bg-gray-800 border-gray-700 text-gray-300"
-          : "bg-white border-gray-200"
+          ? "bg-ink-charcoal border-ink-paragraph text-ink-light"
+          : "bg-surface-card border-ink-light"
           }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
@@ -345,8 +322,8 @@ export default function Header({
                 {isEditing ? (
                   <div
                     className={`relative transition-all duration-300 ${isDragOver
-                      ? "ring-4 ring-green-500 bg-green-50"
-                      : "ring-2 ring-blue-500"
+                      ? "ring-4 ring-status-success bg-status-success/10"
+                      : "ring-2 ring-status-info"
                       }`}
                     onDragEnter={handleDragEnter}
                     onDragLeave={handleDragLeave}
@@ -370,7 +347,7 @@ export default function Header({
                         />
                       ) : (
                         <span
-                          className="text-lg font-bold text-black flex items-center justify-center min-w-[77px] max-w-[200px]"
+                          className="text-lg font-bold text-ink flex items-center justify-center min-w-[77px] max-w-[200px]"
                           style={{
                             height: '65px',
                           }}
@@ -383,13 +360,13 @@ export default function Header({
                     {/* Upload Icon Overlay - Show only in edit mode when not dragging */}
                     {!isDragOver && (
                       <div
-                        className="absolute inset-0 flex items-center justify-center transition-opacity bg-black bg-opacity-50 opacity-0 hover:opacity-100 rounded-xl cursor-pointer"
+                        className="absolute inset-0 flex items-center justify-center transition-opacity bg-ink bg-opacity-50 opacity-0 hover:opacity-100 rounded-xl cursor-pointer"
                         onClick={triggerFileInput}
                       >
-                        <div className="p-2 text-xs text-white bg-blue-500 rounded-full">
+                        <div className="p-2 text-xs text-white bg-status-info rounded-full">
                           <Upload size={16} />
                         </div>
-                        <span className="absolute bottom-1 text-xs text-white bg-black bg-opacity-70 px-2 py-0.5 rounded">
+                        <span className="absolute bottom-1 text-xs text-white bg-ink bg-opacity-70 px-2 py-0.5 rounded">
                           Click to upload
                         </span>
                       </div>
@@ -398,13 +375,13 @@ export default function Header({
                     {/* Drag Over Overlay */}
                     {isDragOver && (
                       <div
-                        className="absolute inset-0 bg-green-500 bg-opacity-20 rounded-xl flex items-center justify-center border-2 border-dashed border-green-500 cursor-pointer"
+                        className="absolute inset-0 bg-status-success bg-opacity-20 rounded-xl flex items-center justify-center border-2 border-dashed border-status-success cursor-pointer"
                         onClick={triggerFileInput}
                       >
-                        <div className="bg-white p-2 rounded-full shadow-lg">
-                          <Upload size={18} className="text-green-600" />
+                        <div className="bg-surface-card p-2 rounded-full shadow-lg">
+                          <Upload size={18} className="text-status-success" />
                         </div>
-                        <span className="absolute bottom-1 text-xs text-green-700 bg-white bg-opacity-90 px-2 py-0.5 rounded font-semibold">
+                        <span className="absolute bottom-1 text-xs text-status-success bg-surface-card bg-opacity-90 px-2 py-0.5 rounded font-semibold">
                           Drop image here
                         </span>
                       </div>
@@ -423,7 +400,7 @@ export default function Header({
                       />
                     ) : (
                       <span
-                        className="text-lg font-bold text-black flex items-center justify-center min-w-[77px] max-w-[200px]"
+                        className="text-lg font-bold text-ink flex items-center justify-center min-w-[77px] max-w-[200px]"
                         style={{
                           height: '65px',
                         }}
@@ -451,8 +428,8 @@ export default function Header({
                     key={item.id}
                     href={item.href}
                     className={`font-medium relative group whitespace-nowrap ${theme === "dark"
-                      ? "text-gray-300 hover:text-gray-200"
-                      : "text-gray-700 hover:text-primary"
+                      ? "text-ink-light hover:text-ink-light"
+                      : "text-ink-paragraph hover:text-primary"
                       }`}
                     whileHover={{ y: -2 }}
                   >
@@ -473,7 +450,7 @@ export default function Header({
                   type="text"
                   value={content.ctaText}
                   onChange={(e) => updateContent("ctaText", e.target.value)}
-                  className={`bg-white border px-3 py-1 rounded font-medium outline-none max-w-[120px] ${editInputClasses}`}
+                  className={`bg-surface-card border px-3 py-1 rounded font-medium outline-none max-w-[120px] ${editInputClasses}`}
                 />
               ) : (
                 <div className="hidden md:flex">
@@ -482,7 +459,7 @@ export default function Header({
                   >
                     <a
                       href="#contact"
-                      className={theme === "dark" ? "text-white" : "text-black"}
+                      className={theme === "dark" ? "text-white" : "text-ink"}
                     >
                       {content.ctaText}
                     </a>
@@ -500,7 +477,7 @@ export default function Header({
                       whileTap={{ scale: 0.9 }}
                       whileHover={{ y: -1, scaleX: 1.05 }}
                       onClick={handleCancel}
-                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow-xl hover:font-semibold whitespace-nowrap"
+                      className="bg-ink-caption hover:bg-ink-paragraph text-white px-4 py-2 rounded shadow-xl hover:font-semibold whitespace-nowrap"
                     >
                       Cancel
                     </motion.button>
@@ -510,8 +487,8 @@ export default function Header({
                       onClick={handleSave}
                       disabled={isUploading || isSaving}
                       className={`${isUploading || isSaving
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-green-600 hover:font-semibold"
+                        ? "bg-ink-caption cursor-not-allowed"
+                        : "bg-status-success hover:font-semibold"
                         } text-white px-4 py-2 rounded cursor-pointer hover:shadow-2xl shadow-xl whitespace-nowrap`}
                     >
                       {isUploading || isSaving ? (
@@ -528,7 +505,7 @@ export default function Header({
                     whileTap={{ scale: 0.9 }}
                     whileHover={{ y: -1, scaleX: 1.1 }}
                     onClick={() => setIsEditing(true)}
-                    className="px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold whitespace-nowrap"
+                    className="px-4 py-2 text-ink bg-brand-gold rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold whitespace-nowrap"
                   >
                     Edit
                   </motion.button>
@@ -541,8 +518,8 @@ export default function Header({
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={`hover:text-primary transition-colors p-2 ${theme === "dark"
-                  ? "text-gray-300 hover:text-gray-200"
-                  : "text-gray-700 hover:text-primary"
+                  ? "text-ink-light hover:text-ink-light"
+                  : "text-ink-paragraph hover:text-primary"
                   }`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -560,7 +537,7 @@ export default function Header({
           <AnimatePresence>
             {isMenuOpen && (
               <motion.div
-                className={`lg:hidden border-t border-gray-200 overflow-hidden ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white"
+                className={`lg:hidden border-t border-ink-light overflow-hidden ${theme === "dark" ? "bg-ink-charcoal text-white" : "bg-surface-card"
                   }`}
                 variants={menuVariants}
                 initial="closed"
@@ -574,7 +551,7 @@ export default function Header({
                       href={item.href}
                       className={`hover:text-${item.color
                         } transition-colors py-2 px-4 rounded-lg hover:bg-${item.color
-                        }/10 cursor-pointer ${theme === "dark" ? "text-white" : "text-black"
+                        }/10 cursor-pointer ${theme === "dark" ? "text-white" : "text-ink"
                         }`}
                       variants={itemVariants}
                       whileHover={{ x: 10, scale: 1.02 }}

@@ -14,7 +14,7 @@ import {
 import { useTheme } from "./ThemeProvider";
 import { toast } from "react-toastify";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
+import { COMPANY_API, LAMBDA } from '../../../../../../../../../../lib/apiConfig';
 
 const Gallery = ({
   galleryData,
@@ -189,16 +189,17 @@ const Gallery = ({
 
     try {
       const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
+        COMPANY_API ? `${COMPANY_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
         {
           method: "POST",
+          headers: (() => { const t = localStorage.getItem("token") || localStorage.getItem("adminToken"); return t ? { Authorization: `Bearer ${t}` } : {}; })(),
           body: formData,
         }
-      );
+        );
 
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        return uploadData.imageUrl;
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          return uploadData.url || uploadData.imageUrl;
       } else {
         const errorData = await uploadResponse.json();
         console.error(`Gallery image upload failed:`, errorData);
@@ -535,28 +536,28 @@ const Gallery = ({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Gallery Image (4:3 Ratio)
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <Cropper
                 image={imageToCrop}
                 crop={crop}
@@ -589,18 +590,18 @@ const Gallery = ({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Button - Only 4:3 */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     4:3 (Standard)
@@ -611,10 +612,10 @@ const Gallery = ({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-700">
+                  <span className="flex items-center gap-2 text-ink-paragraph">
                     Zoom
                   </span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <input
                   type="range"
@@ -623,7 +624,7 @@ const Gallery = ({
                   max={5}
                   step={0.1}
                   onChange={(e) => setZoom(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                  className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                 />
               </div>
 
@@ -631,20 +632,20 @@ const Gallery = ({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className={`w-full ${isUploading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+                  className={`w-full ${isUploading ? "bg-ink-caption" : "bg-status-success hover:bg-status-success"
                     } text-white rounded py-2 text-sm font-medium`}
                 >
                   {isUploading ? "Uploading..." : "Apply Crop"}
@@ -659,8 +660,8 @@ const Gallery = ({
       <section
         id="gallery"
         className={` theme-transition ${theme === "dark"
-          ? "bg-[#1f1f1f] text-gray-100"
-          : "bg-gray-50 text-gray-900"
+          ? "bg-[#1f1f1f] text-ink-light"
+          : "bg-ink-offwhite text-ink"
           }`}
       >
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -670,10 +671,10 @@ const Gallery = ({
             {isEditing && (
               <div className="text-sm bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1 shadow">
                 {autoSaveStatus === "saving" && (
-                  <span className="text-yellow-600 animate-pulse">Saving changes...</span>
+                  <span className="text-brand-gold animate-pulse">Saving changes...</span>
                 )}
                 {autoSaveStatus === "saved" && (
-                  <span className="text-green-600 flex items-center gap-1">
+                  <span className="text-status-success flex items-center gap-1">
                     <CheckCircle className="w-4 h-4" />
                     Changes saved
                   </span>
@@ -690,8 +691,8 @@ const Gallery = ({
                   onClick={handleSave}
                   disabled={isUploading}
                   className={`${isUploading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:shadow-2xl"
+                    ? "bg-ink-caption cursor-not-allowed"
+                    : "bg-status-success hover:shadow-2xl"
                     } text-white px-4 py-2 rounded shadow-xl hover:font-semibold flex items-center gap-2`}
                 >
                   <Save size={16} />
@@ -702,7 +703,7 @@ const Gallery = ({
                   whileTap={{ scale: 0.9 }}
                   whileHover={{ y: -1, scaleX: 1.1 }}
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-4 py-2 text-black bg-yellow-500 rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
+                  className="flex items-center gap-2 px-4 py-2 text-ink bg-brand-gold rounded shadow-xl cursor-pointer hover:shadow-2xl hover:font-semibold"
                 >
                   <Edit size={16} />
                   Edit
@@ -713,8 +714,8 @@ const Gallery = ({
 
           {/* Pending image upload notices */}
           {isEditing && Object.keys(pendingImages).length > 0 && (
-            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-yellow-800 text-sm">
+            <div className="mb-4 p-3 bg-surface-main border border-brand-yellow-soft rounded-lg">
+              <p className="text-brand-gold text-sm">
                 <span className="font-medium">⚠️ Images ready for upload:</span>
                 {' '}Click "Save & Exit" to upload {Object.keys(pendingImages).length} image(s) to S3
               </p>
@@ -732,15 +733,15 @@ const Gallery = ({
                     maxLength={TEXT_LIMITS.headingTitle}
                     className={`mb-4 text-3xl font-bold text-center bg-transparent border-b w-full max-w-2xl mx-auto ${contentState.heading.title.length >=
                       TEXT_LIMITS.headingTitle
-                      ? "border-red-500"
+                      ? "border-status-error"
                       : ""
                       }`}
                   />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <div className="flex justify-between text-xs text-ink-caption mt-1">
                     <div>
                       {contentState.heading.title.length >=
                         TEXT_LIMITS.headingTitle && (
-                          <span className="text-red-500 font-bold">
+                          <span className="text-status-error font-bold">
                             ⚠️ Character limit reached!
                           </span>
                         )}
@@ -760,15 +761,15 @@ const Gallery = ({
                     maxLength={TEXT_LIMITS.headingDescription}
                     className={`w-full max-w-3xl mx-auto text-lg text-center bg-transparent border-b ${contentState.heading.description.length >=
                       TEXT_LIMITS.headingDescription
-                      ? "border-red-500"
+                      ? "border-status-error"
                       : ""
                       }`}
                   />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <div className="flex justify-between text-xs text-ink-caption mt-1">
                     <div>
                       {contentState.heading.description.length >=
                         TEXT_LIMITS.headingDescription && (
-                          <span className="text-red-500 font-bold">
+                          <span className="text-status-error font-bold">
                             ⚠️ Character limit reached!
                           </span>
                         )}
@@ -798,7 +799,7 @@ const Gallery = ({
             {contentState.images.map((image, index) => (
               <motion.div
                 key={image.id}
-                className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${theme === "dark" ? "bg-gray-800" : "bg-white"
+                className={`overflow-hidden rounded-lg shadow-md cursor-pointer group ${theme === "dark" ? "bg-ink-charcoal" : "bg-surface-card"
                   }`}
                 whileHover={{ y: isEditing ? 0 : -5 }}
                 onClick={() => openLightbox(index)}
@@ -806,7 +807,7 @@ const Gallery = ({
                 <div className="relative overflow-hidden">
                   {/* Recommended Size Above Image */}
                   {isEditing && (
-                    <div className="absolute top-2 left-2 right-2 bg-black/70 text-white text-xs p-1 rounded z-10 text-center">
+                    <div className="absolute top-2 left-2 right-2 bg-ink/70 text-white text-xs p-1 rounded z-10 text-center">
                       Recommended: 600×450px (4:3 ratio)
                     </div>
                   )}
@@ -818,8 +819,8 @@ const Gallery = ({
                       className="object-cover w-full h-64 transition-transform duration-300 group-hover:scale-110"
                     />
                   ) : (
-                    <div className="flex items-center justify-center w-full h-64 bg-gray-200">
-                      <span className="text-gray-500">No image</span>
+                    <div className="flex items-center justify-center w-full h-64 bg-ink-light">
+                      <span className="text-ink-caption">No image</span>
                     </div>
                   )}
 
@@ -829,7 +830,7 @@ const Gallery = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute bottom-2 left-2 right-2 bg-black/80 p-2 rounded z-50"
+                      className="absolute bottom-2 left-2 right-2 bg-ink/80 p-2 rounded z-50"
                     >
                       <input
                         type="file"
@@ -838,7 +839,7 @@ const Gallery = ({
                         onChange={(e) => handleGalleryImageSelect(index, e)}
                       />
                       {pendingImages[index] && (
-                        <p className="text-xs text-green-400 mt-1 text-center">
+                        <p className="text-xs text-status-success mt-1 text-center">
                           ✓ Image cropped and ready to upload
                         </p>
                       )}
@@ -859,13 +860,13 @@ const Gallery = ({
                             updateImageField(index, "title", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.imageTitle}
-                          className={`w-full font-semibold bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900"
+                          className={`w-full font-semibold bg-transparent border-b ${theme === "dark" ? "text-white" : "text-ink"
                             } ${image.title.length >= TEXT_LIMITS.imageTitle
-                              ? "border-red-500"
+                              ? "border-status-error"
                               : ""
                             }`}
                         />
-                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500"
+                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-ink-caption" : "text-ink-caption"
                           }`}>
                           {image.title.length}/{TEXT_LIMITS.imageTitle}
                         </div>
@@ -877,13 +878,13 @@ const Gallery = ({
                             updateImageField(index, "category", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.imageCategory}
-                          className={`w-full text-sm bg-transparent border-b ${theme === "dark" ? "text-white" : "text-gray-900"
+                          className={`w-full text-sm bg-transparent border-b ${theme === "dark" ? "text-white" : "text-ink"
                             } ${image.category.length >= TEXT_LIMITS.imageCategory
-                              ? "border-red-500"
+                              ? "border-status-error"
                               : ""
                             }`}
                         />
-                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500"
+                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-ink-caption" : "text-ink-caption"
                           }`}>
                           {image.category.length}/{TEXT_LIMITS.imageCategory}
                         </div>
@@ -895,15 +896,15 @@ const Gallery = ({
                             updateImageField(index, "description", e.target.value)
                           }
                           maxLength={TEXT_LIMITS.imageDescription}
-                          className={`w-full text-sm bg-transparent border-b resize-none ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                          className={`w-full text-sm bg-transparent border-b resize-none ${theme === "dark" ? "text-ink-light" : "text-ink-paragraph"
                             } ${image.description.length >= TEXT_LIMITS.imageDescription
-                              ? "border-red-500"
+                              ? "border-status-error"
                               : ""
                             }`}
                           placeholder="Image description..."
                           rows={2}
                         />
-                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500"
+                        <div className={`text-right text-xs mt-1 ${theme === "dark" ? "text-ink-caption" : "text-ink-caption"
                           }`}>
                           {image.description.length}/{TEXT_LIMITS.imageDescription}
                         </div>
@@ -911,15 +912,15 @@ const Gallery = ({
                     </>
                   ) : (
                     <>
-                      <h3 className={`font-semibold ${theme === "dark" ? "text-white" : "text-gray-900"
+                      <h3 className={`font-semibold ${theme === "dark" ? "text-white" : "text-ink"
                         }`}>
                         {image.title}
                       </h3>
-                      <p className={`text-sm text-justify ${theme === "dark" ? "text-gray-400" : "text-gray-600"
+                      <p className={`text-sm text-justify ${theme === "dark" ? "text-ink-caption" : "text-ink-paragraph"
                         }`}>
                         {image.category}
                       </p>
-                      <p className={`text-sm mt-1 text-justify ${theme === "dark" ? "text-gray-300" : "text-gray-500"
+                      <p className={`text-sm mt-1 text-justify ${theme === "dark" ? "text-ink-light" : "text-ink-caption"
                         }`}>
                         {image.description}
                       </p>
@@ -935,7 +936,7 @@ const Gallery = ({
                       e.stopPropagation();
                       removeImage(index);
                     }}
-                    className="absolute p-1 text-white bg-red-500 rounded-full top-12 right-2"
+                    className="absolute p-1 text-white bg-status-error rounded-full top-12 right-2"
                   >
                     <Trash2 size={16} />
                   </motion.button>
@@ -947,13 +948,13 @@ const Gallery = ({
             {isEditing && contentState.images.length < 6 && (
               <motion.div
                 className={`rounded-lg flex items-center justify-center border-dashed ${theme === "dark"
-                  ? "bg-gray-800 border-gray-700"
-                  : "bg-white border-gray-300"
+                  ? "bg-ink-charcoal border-ink-paragraph"
+                  : "bg-surface-card border-ink-light"
                   } border-2 cursor-pointer`}
                 whileHover={{ scale: 1.02 }}
                 onClick={addImage}
               >
-                <div className="flex flex-col items-center p-6 text-green-600">
+                <div className="flex flex-col items-center p-6 text-status-success">
                   <Plus size={32} />
                   <span className="mt-2">Add Image</span>
                 </div>
@@ -963,8 +964,8 @@ const Gallery = ({
 
           {/* Show message when maximum images reached */}
           {isEditing && contentState.images.length >= 6 && (
-            <div className="p-4 mt-6 text-center border border-yellow-200 rounded-lg bg-yellow-50">
-              <p className="text-yellow-700 text-justify">
+            <div className="p-4 mt-6 text-center border border-brand-yellow-soft rounded-lg bg-surface-main">
+              <p className="text-brand-gold text-justify">
                 Maximum 6 images reached. Remove an image to add a new one.
               </p>
             </div>
@@ -973,24 +974,24 @@ const Gallery = ({
 
         {/* Lightbox Modal */}
         {selectedImage !== null && (
-          <div className="fixed top-[8rem] inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+          <div className="fixed top-[8rem] inset-0 bg-ink bg-opacity-90 z-50 flex items-center justify-center p-4">
             <button
               onClick={closeLightbox}
-              className="absolute p-2 text-white bg-black bg-opacity-50 rounded-full top-4 right-4 hover:bg-opacity-70"
+              className="absolute p-2 text-white bg-ink bg-opacity-50 rounded-full top-4 right-4 hover:bg-opacity-70"
             >
               <X size={24} />
             </button>
 
             <button
               onClick={goToPrev}
-              className="absolute p-2 text-white bg-black bg-opacity-50 rounded-full left-4 hover:bg-opacity-70"
+              className="absolute p-2 text-white bg-ink bg-opacity-50 rounded-full left-4 hover:bg-opacity-70"
             >
               <ChevronLeft size={32} />
             </button>
 
             <button
               onClick={goToNext}
-              className="absolute p-2 text-white bg-black bg-opacity-50 rounded-full right-4 hover:bg-opacity-70"
+              className="absolute p-2 text-white bg-ink bg-opacity-50 rounded-full right-4 hover:bg-opacity-70"
             >
               <ChevronRight size={32} />
             </button>
@@ -1005,7 +1006,7 @@ const Gallery = ({
                 <h3 className="text-xl font-semibold">
                   {contentState.images[selectedImage].title}
                 </h3>
-                <p className="text-gray-300 text-justify">
+                <p className="text-ink-light text-justify">
                   {contentState.images[selectedImage].category}
                 </p>
               </div>

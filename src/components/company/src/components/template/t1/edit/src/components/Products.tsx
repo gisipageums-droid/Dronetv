@@ -16,7 +16,7 @@ import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import Cropper from "react-easy-crop";
-import { MEDIA_API, LAMBDA } from '../../../../../../../../../lib/apiConfig';
+import { uploadCompanyImagePresigned } from '../../../../../../../../../lib/apiConfig';
 
 export default function EditableProducts({
   productData,
@@ -79,7 +79,7 @@ export default function EditableProducts({
           category: product.category,
           features: product.features || [],
           isPopular: product.isPopular || false,
-          categoryColor: product.categoryColor || "bg-gray-100 text-gray-800",
+          categoryColor: product.categoryColor || "bg-ink-light text-ink-charcoal",
           pricing: product.pricing,
           timeline: product.timeline,
         })),
@@ -173,19 +173,8 @@ export default function EditableProducts({
     }
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("sectionName", "products");
-      formData.append("imageField", `products[${productId}].image-${Date.now()}`);
-      formData.append("templateSelection", templateSelection);
-
-      const uploadResponse = await fetch(
-        MEDIA_API ? `${MEDIA_API}/upload-image/${userId}/${publishedId}` : `${LAMBDA.companyImageUpload}/upload-image/${userId}/${publishedId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+            const __presignedUrl = await uploadCompanyImagePresigned(userId, `products[${productId}].image-${Date.now()}`, file);
+      const uploadResponse: any = { ok: !!__presignedUrl, json: async () => ({ imageUrl: __presignedUrl }) };
 
       if (uploadResponse.ok) {
         const uploadData = await uploadResponse.json();
@@ -647,7 +636,7 @@ export default function EditableProducts({
           image: null,
           features: ["Feature 1", "Feature 2"],
           isPopular: false,
-          categoryColor: "bg-gray-100 text-gray-800",
+          categoryColor: "bg-ink-light text-ink-charcoal",
           pricing: "Contact for pricing",
           timeline: "TBD",
         },
@@ -714,7 +703,7 @@ export default function EditableProducts({
         sectionUpdate = false,
       }) => {
         const baseClasses =
-          "w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none transition-colors duration-200";
+          "w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none transition-colors duration-200";
 
         const handleChange = (e) => {
           let newValue = e.target.value;
@@ -731,7 +720,7 @@ export default function EditableProducts({
 
         // Show character count if maxLength is provided
         const charCount = maxLength ? (
-          <div className="text-xs text-gray-500 text-right mt-1">
+          <div className="text-xs text-ink-caption text-right mt-1">
             {value?.length || 0}/{maxLength}
           </div>
         ) : null;
@@ -822,15 +811,15 @@ export default function EditableProducts({
         {benefits.map((benefit, index) => (
           <div
             key={index}
-            className="text-center p-6 bg-white rounded-lg shadow-sm relative"
+            className="text-center p-6 bg-surface-card rounded-lg shadow-sm relative"
           >
             <div
               className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 text-2xl font-bold
               ${benefit.color === "red-accent"
-                  ? "bg-red-100 text-red-600"
+                  ? "bg-status-error/15 text-status-error"
                   : benefit.color === "primary"
-                    ? "bg-yellow-100 text-yellow-400"
-                    : "bg-yellow-100 text-yellow-400"
+                    ? "bg-brand-yellow-soft text-brand-yellow"
+                    : "bg-brand-yellow-soft text-brand-yellow"
                 }`}
             >
               {isEditing ? (
@@ -866,13 +855,13 @@ export default function EditableProducts({
                 onChange={(val) =>
                   updateBenefitField(index, "desc", val)
                 }
-                className="text-gray-600 text-sm w-full bg-transparent border-b"
+                className="text-ink-paragraph text-sm w-full bg-transparent border-b"
                 placeholder="Benefit Description"
                 rows={2}
                 maxLength={100}
               />
             ) : (
-              <p className="text-gray-600 text-sm">{benefit.desc}</p>
+              <p className="text-ink-paragraph text-sm">{benefit.desc}</p>
             )}
             {isEditing && (
               <Button
@@ -902,7 +891,7 @@ export default function EditableProducts({
 
   if (isLoading) {
     return (
-      <section ref={sectionRef} className="max-w-7xl mx-auto py-20 bg-gray-50">
+      <section ref={sectionRef} className="max-w-7xl mx-auto py-20 bg-ink-offwhite">
         <div className="container mx-auto px-4 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
           <p>Loading products...</p>
@@ -916,12 +905,12 @@ export default function EditableProducts({
       id="product"
       ref={sectionRef}
       className={`${tempContent?.products && tempContent?.products.length > 0 && "py-20"
-        } bg-gray-50 relative overflow-hidden`}
+        } bg-ink-offwhite relative overflow-hidden`}
     >
       {/* Auto-save indicator */}
       {isEditing && (
         <motion.div
-          className="absolute top-4 left-4 flex items-center gap-2 text-xs text-gray-500 z-10"
+          className="absolute top-4 left-4 flex items-center gap-2 text-xs text-ink-caption z-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -934,7 +923,7 @@ export default function EditableProducts({
             <span>Last saved: {lastSaved.toLocaleTimeString()}</span>
           ) : null}
           {hasUnsavedChanges && !isSaving && (
-            <span className="text-amber-500">• Unsaved changes</span>
+            <span className="text-brand-gold">• Unsaved changes</span>
           )}
         </motion.div>
       )}
@@ -946,7 +935,7 @@ export default function EditableProducts({
             onClick={handleEdit}
             variant="outline"
             size="sm"
-            className="bg-white hover:bg-gray-50 shadow-md"
+            className="bg-surface-card hover:bg-ink-offwhite shadow-md"
           >
             <Edit2 className="w-4 h-4 mr-2" />
             Edit
@@ -956,7 +945,7 @@ export default function EditableProducts({
             <Button
               onClick={handleSave}
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+              className="bg-status-success hover:bg-status-success text-white shadow-md"
               disabled={isSaving || isUploading}
             >
               {isUploading ? (
@@ -972,7 +961,7 @@ export default function EditableProducts({
               onClick={handleCancel}
               variant="outline"
               size="sm"
-              className="bg-white hover:bg-gray-50 shadow-md"
+              className="bg-surface-card hover:bg-ink-offwhite shadow-md"
               disabled={isSaving || isUploading}
             >
               <X className="w-4 h-4 mr-2" />
@@ -986,7 +975,7 @@ export default function EditableProducts({
         <div className="flex justify-between items-center mb-8">
           <div className="text-center mx-auto">
             {tempContent?.products && tempContent?.products.length > 0 && (
-              <span className="inline-block px-4 py-1.5 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium mb-4">
+              <span className="inline-block px-4 py-1.5 bg-brand-yellow-soft text-brand-gold rounded-full text-sm font-medium mb-4">
                 Our Products
               </span>
             )}
@@ -1000,7 +989,7 @@ export default function EditableProducts({
                 maxLength={100}
               />
             ) : (
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+              <h2 className="text-4xl md:text-5xl font-bold text-ink mb-3">
                 {displayContent.sectionTitle}
               </h2>
             )}
@@ -1014,7 +1003,7 @@ export default function EditableProducts({
                 maxLength={50}
               />
             ) : (
-              <h3 className="text-2xl font-semibold text-gray-700 mb-4">
+              <h3 className="text-2xl font-semibold text-ink-paragraph mb-4">
                 {displayContent.sectionSubtitle}
               </h3>
             )}
@@ -1023,13 +1012,13 @@ export default function EditableProducts({
               <EditableText
                 value={tempContent.sectionDescription}
                 onChange={(val) => updateSectionField("sectionDescription", val)}
-                className="text-gray-600"
+                className="text-ink-paragraph"
                 multiline={true}
                 placeholder="Section Description"
                 maxLength={500}
               />
             ) : (
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              <p className="text-lg text-ink-paragraph max-w-3xl mx-auto">
                 {displayContent.sectionDescription}
               </p>
             )}
@@ -1043,8 +1032,8 @@ export default function EditableProducts({
               key={cat}
               onClick={() => setSelected(cat)}
               className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${selected === cat
-                ? "bg-yellow-400 text-gray-900 shadow-lg scale-105"
-                : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
+                ? "bg-brand-yellow text-ink shadow-lg scale-105"
+                : "bg-surface-card text-ink-paragraph hover:bg-ink-offwhite shadow-md hover:shadow-lg"
                 }`}
             >
               {cat}
@@ -1054,7 +1043,7 @@ export default function EditableProducts({
                     e.stopPropagation();
                     removeCategory(cat);
                   }}
-                  className="ml-2 text-xs text-red-600 hover:text-red-800 cursor-pointer"
+                  className="ml-2 text-xs text-status-error hover:text-status-error cursor-pointer"
                 >
                   ✕
                 </span>
@@ -1075,11 +1064,11 @@ export default function EditableProducts({
           {filtered.map((product) => (
             <Card
               key={product.id}
-              className="shadow-md rounded-xl overflow-hidden relative bg-white hover:shadow-lg transition-shadow duration-300"
+              className="shadow-md rounded-xl overflow-hidden relative bg-surface-card hover:shadow-lg transition-shadow duration-300"
             >
               {product.isPopular && (
                 <div className="absolute top-4 left-4 z-10">
-                  <Badge className="bg-yellow-400 text-black">
+                  <Badge className="bg-brand-yellow text-ink">
                     <Star className="w-3 h-3 mr-1" fill="currentColor" />
                     Popular
                   </Badge>
@@ -1116,7 +1105,7 @@ export default function EditableProducts({
                         <Upload className="w-4 h-4" />
                       </Button>
                       {pendingImages[product.id] && (
-                        <p className="absolute bottom-2 left-2 text-xs text-orange-600 bg-white/80 p-1 rounded">
+                        <p className="absolute bottom-2 left-2 text-xs text-status-warning bg-white/80 p-1 rounded">
                           Image selected: {pendingImages[product.id].name}
                         </p>
                       )}
@@ -1125,7 +1114,7 @@ export default function EditableProducts({
                         <Button
                           size="sm"
                           variant={product.isPopular ? "default" : "outline"}
-                          className={`${product.isPopular ? "bg-yellow-400" : "bg-white/80"}`}
+                          className={`${product.isPopular ? "bg-brand-yellow" : "bg-white/80"}`}
                           onClick={() => updateProductIsPopular(product.id, !product.isPopular)}
                         >
                           <Star className="w-4 h-4" fill={product.isPopular ? "white" : "none"} />
@@ -1139,7 +1128,7 @@ export default function EditableProducts({
                   <div className="flex items-center justify-between mb-3">
                     <Badge
                       className={
-                        product.categoryColor || "bg-gray-100 text-gray-800"
+                        product.categoryColor || "bg-ink-light text-ink-charcoal"
                       }
                     >
                       {isEditing ? (
@@ -1156,7 +1145,7 @@ export default function EditableProducts({
                                 setAddingCategoryFor(null);
                               }
                             }}
-                            className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-xs"
+                            className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded p-1 text-xs"
                           >
                             {displayContent.categories.map((c, i) => (
                               <option key={i} value={c}>{c}</option>
@@ -1171,7 +1160,7 @@ export default function EditableProducts({
                                   if (e.target.value.length <= 50) setNewCategoryName(e.target.value);
                                 }}
                                 placeholder="New category name"
-                                className="flex-1 bg-white/80 border-2 border-dashed border-blue-300 rounded p-1 text-xs"
+                                className="flex-1 bg-white/80 border-2 border-dashed border-status-info/40 rounded p-1 text-xs"
                                 maxLength={50}
                               />
                               <Button
@@ -1206,16 +1195,16 @@ export default function EditableProducts({
                     </Badge>
                     {isEditing && (
                       <select
-                        value={product.categoryColor || "bg-gray-100 text-gray-800"}
+                        value={product.categoryColor || "bg-ink-light text-ink-charcoal"}
                         onChange={(e) => updateProductCategoryColor(product.id, e.target.value)}
-                        className="text-xs bg-white/80 border-2 border-dashed border-blue-300 rounded p-1"
+                        className="text-xs bg-white/80 border-2 border-dashed border-status-info/40 rounded p-1"
                       >
-                        <option value="bg-gray-100 text-gray-800">Gray</option>
-                        <option value="bg-blue-100 text-blue-800">Blue</option>
-                        <option value="bg-green-100 text-green-800">Green</option>
-                        <option value="bg-yellow-100 text-yellow-800">Yellow</option>
-                        <option value="bg-red-100 text-red-800">Red</option>
-                        <option value="bg-purple-100 text-purple-800">Purple</option>
+                        <option value="bg-ink-light text-ink-charcoal">Gray</option>
+                        <option value="bg-status-info/15 text-status-info">Blue</option>
+                        <option value="bg-status-success/15 text-status-success">Green</option>
+                        <option value="bg-brand-yellow-soft text-brand-gold">Yellow</option>
+                        <option value="bg-status-error/15 text-status-error">Red</option>
+                        <option value="bg-brand-gold/15 text-brand-gold">Purple</option>
                       </select>
                     )}
                   </div>
@@ -1242,12 +1231,12 @@ export default function EditableProducts({
                         updateProductField(product.id, "description", val)
                       }
                       multiline
-                      className="text-gray-600 mb-4"
+                      className="text-ink-paragraph mb-4"
                       placeholder="Product Description"
                       maxLength={150}
                     />
                   ) : (
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-ink-paragraph mb-4">
                       {/* {product.description?.slice(0, 20) + "..."} */}
                       {product.description}
                     </p>
@@ -1260,11 +1249,11 @@ export default function EditableProducts({
                           Features:
                         </h4>
                       )}
-                      <ul className="text-sm text-gray-600 space-y-1">
+                      <ul className="text-sm text-ink-paragraph space-y-1">
                         {product.features.map((feature, idx) => (
                           <li key={idx} className={`flex items-center`}>
                             {isEditing && (
-                              <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 flex-shrink-0"></div>
+                              <div className="w-1.5 h-1.5 bg-brand-yellow rounded-full mr-2 flex-shrink-0"></div>
                             )}
                             {isEditing ? (
                               <div className="flex items-center gap-2 w-full">
@@ -1277,7 +1266,7 @@ export default function EditableProducts({
                                       e.target.value
                                     )
                                   }
-                                  className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-xs"
+                                  className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-xs"
                                   placeholder="Feature"
                                   maxLength={35}
                                 />
@@ -1285,7 +1274,7 @@ export default function EditableProducts({
                                   onClick={() => removeFeature(product.id, idx)}
                                   size="sm"
                                   variant="outline"
-                                  className="bg-red-50 hover:bg-red-100 text-red-700"
+                                  className="bg-status-error/10 hover:bg-status-error/15 text-status-error"
                                 >
                                   <Trash2 className="w-3 h-3" />
                                 </Button>
@@ -1301,7 +1290,7 @@ export default function EditableProducts({
                           onClick={() => addFeature(product.id)}
                           size="sm"
                           variant="outline"
-                          className="bg-green-50 hover:bg-green-100 text-green-700 mt-2"
+                          className="bg-status-success/10 hover:bg-status-success/15 text-status-success mt-2"
                         >
                           <Plus className="w-3 h-3 mr-1" />
                           Add Feature
@@ -1313,11 +1302,11 @@ export default function EditableProducts({
   <div className="mb-4">
     {/* Show "Features:" heading for both editing and non-editing views */}
     <h4 className="font-semibold mb-2 text-sm">Features:</h4>
-    <ul className="text-sm text-gray-600 space-y-1">
+    <ul className="text-sm text-ink-paragraph space-y-1">
       {product.features.map((feature, idx) => (
         <li key={idx} className="flex items-center">
           {/* Show bullet for both views */}
-          <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mr-2 flex-shrink-0"></div>
+          <div className="w-1.5 h-1.5 bg-brand-yellow rounded-full mr-2 flex-shrink-0"></div>
           
           {isEditing ? (
             // Editing view
@@ -1327,7 +1316,7 @@ export default function EditableProducts({
                 onChange={(e) =>
                   updateFeature(product.id, idx, e.target.value)
                 }
-                className="w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-xs"
+                className="w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-xs"
                 placeholder="Feature"
                 maxLength={35}
               />
@@ -1335,7 +1324,7 @@ export default function EditableProducts({
                 onClick={() => removeFeature(product.id, idx)}
                 size="sm"
                 variant="outline"
-                className="bg-red-50 hover:bg-red-100 text-red-700"
+                className="bg-status-error/10 hover:bg-status-error/15 text-status-error"
               >
                 <Trash2 className="w-3 h-3" />
               </Button>
@@ -1353,7 +1342,7 @@ export default function EditableProducts({
         onClick={() => addFeature(product.id)}
         size="sm"
         variant="outline"
-        className="bg-green-50 hover:bg-green-100 text-green-700 mt-2"
+        className="bg-status-success/10 hover:bg-status-success/15 text-status-success mt-2"
       >
         <Plus className="w-3 h-3 mr-1" />
         Add Feature
@@ -1399,11 +1388,11 @@ export default function EditableProducts({
 
       {/* Product Details Modal */}
       {isModalOpen && selectedProductIndex !== null && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
-          <div className="bg-white rounded-xl w-full max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">
+        <div className="fixed inset-0 bg-ink/50 flex items-center justify-center p-6 z-50">
+          <div className="bg-surface-card rounded-xl w-full max-w-3xl p-6 relative overflow-y-auto max-h-[90vh]">
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 bg-gray-500 text-white rounded-full p-2"
+              className="absolute top-4 right-4 bg-ink-caption text-white rounded-full p-2"
             >
               <X className="w-5 h-5" />
             </button>
@@ -1446,7 +1435,7 @@ export default function EditableProducts({
                 maxLength={1000}
               />
             ) : (
-              <p className="text-gray-600 mb-4">
+              <p className="text-ink-paragraph mb-4">
                 {tempContent.products[selectedProductIndex].detailedDescription}
               </p>
             )}
@@ -1501,28 +1490,28 @@ export default function EditableProducts({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[99999999] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-ink/90 z-[99999999] flex items-center justify-center p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
+            className="bg-surface-card rounded-xl max-w-4xl w-full h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-semibold text-gray-800">
+            <div className="p-4 border-b border-ink-light flex justify-between items-center bg-ink-offwhite">
+              <h3 className="text-lg font-semibold text-ink-charcoal">
                 Crop Product Image
               </h3>
               <button
                 onClick={cancelCrop}
-                className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
+                className="p-1.5 hover:bg-ink-light rounded-full transition-colors"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="w-5 h-5 text-ink-paragraph" />
               </button>
             </div>
 
             {/* Cropper Area */}
-            <div className="flex-1 relative bg-gray-900 min-h-0">
+            <div className="flex-1 relative bg-ink min-h-0">
               <div className="relative w-full h-full">
                 <Cropper
                   image={imageToCrop}
@@ -1555,18 +1544,18 @@ export default function EditableProducts({
             </div>
 
             {/* Controls */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
+            <div className="p-4 bg-ink-offwhite border-t border-ink-light">
               {/* Aspect Ratio Buttons */}
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+                <p className="text-sm font-medium text-ink-paragraph mb-2">
                   Aspect Ratio:
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setAspectRatio(1)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 1
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     1:1 (Square)
@@ -1574,8 +1563,8 @@ export default function EditableProducts({
                   <button
                     onClick={() => setAspectRatio(4 / 3)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 4 / 3
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     4:3 (Standard)
@@ -1583,8 +1572,8 @@ export default function EditableProducts({
                   <button
                     onClick={() => setAspectRatio(16 / 9)}
                     className={`px-3 py-2 text-sm rounded border ${aspectRatio === 16 / 9
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "bg-white text-gray-700 border-gray-300"
+                      ? "bg-status-info text-white border-status-info"
+                      : "bg-surface-card text-ink-paragraph border-ink-light"
                       }`}
                   >
                     16:9 (Widescreen)
@@ -1595,14 +1584,14 @@ export default function EditableProducts({
               {/* Zoom Control */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-700">Zoom</span>
-                  <span className="text-gray-600">{zoom.toFixed(1)}x</span>
+                  <span className="text-ink-paragraph">Zoom</span>
+                  <span className="text-ink-paragraph">{zoom.toFixed(1)}x</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     −
                   </button>
@@ -1613,19 +1602,19 @@ export default function EditableProducts({
                     max={4}
                     step={0.1}
                     onChange={(e) => setZoom(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-ink-light rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-status-info"
                   />
                   <button
                     type="button"
                     onClick={() => setZoom((z) => Math.min(4, +(z + 0.1).toFixed(2)))}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     +
                   </button>
                   <button
                     type="button"
                     onClick={() => setZoom(1)}
-                    className="px-3 py-1.5 text-sm rounded border bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                    className="px-3 py-1.5 text-sm rounded border bg-surface-card text-ink-paragraph border-ink-light hover:bg-ink-light"
                   >
                     1x
                   </button>
@@ -1636,21 +1625,21 @@ export default function EditableProducts({
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={resetCropSettings}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium flex items-center justify-center gap-2"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium flex items-center justify-center gap-2"
                 >
                   <RotateCw className="w-4 h-4" />
                   Reset
                 </button>
                 <button
                   onClick={cancelCrop}
-                  className="w-full border border-gray-300 text-gray-700 hover:bg-gray-100 rounded py-2 text-sm font-medium"
+                  className="w-full border border-ink-light text-ink-paragraph hover:bg-ink-light rounded py-2 text-sm font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={applyCrop}
                   disabled={isUploading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded py-2 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="w-full bg-status-success hover:bg-status-success text-white rounded py-2 text-sm font-medium disabled:bg-ink-caption disabled:cursor-not-allowed"
                 >
                   {isUploading ? (
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />
