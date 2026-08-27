@@ -2,6 +2,15 @@ import { JOB_APPLICATIONS_API, LAMBDA } from './apiConfig';
 
 const BASE = JOB_APPLICATIONS_API ? `${JOB_APPLICATIONS_API}` : `${LAMBDA.jobApplications}/job-applications`;
 
+// Works for both admin (adminToken) and a company owner viewing their own
+// job's applicants (token) - the backend enforces the actual ownership
+// check either way (require_self_or_admin), this just needs to send
+// whichever real session token the caller actually has.
+function adminAuthHeaders(): Record<string, string> {
+  const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export interface ActivityEntry {
   action: string;
   timestamp: string;
@@ -20,6 +29,7 @@ export interface JobApplication {
   applicationId: string;
   jobTitle?: string;
   company?: string;
+  companyId?: string;
   fullName: string;
   email: string;
   phone?: string;
@@ -44,15 +54,18 @@ export interface JobApplication {
   updatedAt: string;
 }
 
-export async function fetchApplications(jobId: string): Promise<JobApplication[]> {
-  const res = await fetch(`${BASE}?jobId=${encodeURIComponent(jobId)}`);
+export async function fetchApplications(jobId: string, companyId?: string): Promise<JobApplication[]> {
+  const url = companyId
+    ? `${BASE}?jobId=${encodeURIComponent(jobId)}&companyId=${encodeURIComponent(companyId)}`
+    : `${BASE}?jobId=${encodeURIComponent(jobId)}`;
+  const res = await fetch(url, { headers: adminAuthHeaders() });
   if (!res.ok) throw new Error('Failed to fetch applications');
   const data = await res.json();
   return data.items || [];
 }
 
 export async function fetchApplication(jobId: string, applicationId: string): Promise<JobApplication> {
-  const res = await fetch(`${BASE}?jobId=${encodeURIComponent(jobId)}&id=${encodeURIComponent(applicationId)}`);
+  const res = await fetch(`${BASE}?jobId=${encodeURIComponent(jobId)}&id=${encodeURIComponent(applicationId)}`, { headers: adminAuthHeaders() });
   if (!res.ok) throw new Error('Failed to fetch application');
   const data = await res.json();
   return data.item;
@@ -72,12 +85,19 @@ export async function submitApplication(payload: Partial<JobApplication>): Promi
 export async function updateApplication(
   jobId: string,
   applicationId: string,
-  updates: Record<string, unknown>
+  updates: Record<string, unknown>,
+  companyId?: string
 ): Promise<void> {
-  const res = await fetch(BASE, {
+  // Backend takes jobId/applicationId/companyId as query params (only
+  // status/note come from the body) - this was sending all of it in the
+  // JSON body instead, so every status update (from BOTH the admin ATS and
+  // this new company view) 422'd on missing required query params.
+  const params = new URLSearchParams({ jobId, applicationId });
+  if (companyId) params.set('companyId', companyId);
+  const res = await fetch(`${BASE}?${params.toString()}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ jobId, applicationId, ...updates }),
+    headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
+    body: JSON.stringify(updates),
   });
   if (!res.ok) throw new Error('Failed to update application');
 }
@@ -85,6 +105,7 @@ export async function updateApplication(
 export async function deleteApplication(jobId: string, applicationId: string): Promise<void> {
   const res = await fetch(`${BASE}?jobId=${encodeURIComponent(jobId)}&id=${encodeURIComponent(applicationId)}`, {
     method: 'DELETE',
+    headers: adminAuthHeaders(),
   });
   if (!res.ok) throw new Error('Failed to delete application');
 }
@@ -111,7 +132,7 @@ export async function uploadResumeFile(file: File): Promise<string> {
 }
 
 export async function getResumeViewUrl(key: string): Promise<string> {
-  const res = await fetch(`${BASE}/resume-url?key=${encodeURIComponent(key)}`);
+  const res = await fetch(`${BASE}/resume-url?key=${encodeURIComponent(key)}`, { headers: adminAuthHeaders() });
   if (!res.ok) throw new Error('Failed to get resume URL');
   const data = await res.json();
   return data.url;
@@ -120,7 +141,7 @@ export async function getResumeViewUrl(key: string): Promise<string> {
 export async function sendCandidateMessage(jobId: string, applicationId: string, message: string): Promise<void> {
   const res = await fetch(`${BASE}/message`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...adminAuthHeaders() },
     body: JSON.stringify({ jobId, applicationId, message }),
   });
   if (!res.ok) {
