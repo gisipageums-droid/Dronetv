@@ -64,6 +64,8 @@ export default function GallerySection({ galleryData }) {
         }
     };
 
+    if (!galleryData) return null;
+
     return galleryData.images && galleryData.images.length > 0 && (
         <section
             id='gallery'
