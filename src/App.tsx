@@ -99,6 +99,20 @@ import CompanyLeads from "./components/UserDashboard/components/common/CompanyLe
 import CompanyLeadsPage from "./components/UserDashboard/pages/CompanyLeadsPage";
 import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
 import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
+import CompanyRedirectGuard from "./components/CompanyRedirectGuard";
+import CompanyPortalLayout from "./components/CompanyPortal/CompanyPortalLayout";
+import CompanyPortalDashboard from "./components/CompanyPortal/pages/Dashboard";
+import CompanyPortalProfile from "./components/CompanyPortal/pages/profile/CompanyProfilePage";
+import CompanyPortalListings from "./components/CompanyPortal/pages/Listings";
+import CompanyPortalLeads from "./components/CompanyPortal/pages/Leads";
+import CompanyPortalJobListings from "./components/CompanyPortal/pages/JobListings";
+import CompanyPortalContent from "./components/CompanyPortal/pages/Content";
+import CompanyPortalMagazine from "./components/CompanyPortal/pages/Magazine";
+import CompanyPortalPress from "./components/CompanyPortal/pages/Press";
+import CompanyPortalAnalytics from "./components/CompanyPortal/pages/Analytics";
+import CompanyPortalPackage from "./components/CompanyPortal/pages/Package";
+import CompanyPortalInvoices from "./components/CompanyPortal/pages/Invoices";
+import CompanyPortalSettings from "./components/CompanyPortal/pages/Settings";
 import AdminCompanyForm from "./components/AdminCompanyForm";
 import FinalT1 from "./components/mainProfessionalPreview/t1/src/App";
 import Event_T1 from "./components/event/template/t1/src/EventTemplate1"
@@ -201,6 +215,7 @@ const AppContent = () => {
   const location = useLocation();
   const hideFooter =
     location.pathname.startsWith("/company/") ||
+    location.pathname.startsWith("/company-portal") ||
     location.pathname.startsWith("/form") ||
     location.pathname.startsWith("/user") ||
     location.pathname.startsWith("/admin") ||
@@ -486,9 +501,11 @@ const AppContent = () => {
             path="/user-professionals"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <Professinal />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal">
+                  <UserDashboardLayout>
+                    <Professinal />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -496,9 +513,11 @@ const AppContent = () => {
             path="/user-events"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <Event />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal">
+                  <UserDashboardLayout>
+                    <Event />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -506,9 +525,11 @@ const AppContent = () => {
             path="/user-companies"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <UserCompany />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/profile">
+                  <UserDashboardLayout>
+                    <UserCompany />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -516,9 +537,11 @@ const AppContent = () => {
             path="/user-website"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <CompanyWebsite />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/profile">
+                  <UserDashboardLayout>
+                    <CompanyWebsite />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -526,19 +549,43 @@ const AppContent = () => {
             path="/user-dashboard"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <UserDashboard />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal">
+                  <UserDashboardLayout>
+                    <UserDashboard />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
+          <Route path="/company-portal" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalDashboard /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/profile" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalProfile /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/listings" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalListings /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/leads" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalLeads /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/jobs" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalJobListings /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/content" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalContent /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/magazine" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMagazine /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/press" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalPress /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/analytics" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalAnalytics /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/package" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalPackage /></CompanyPortalLayout></ProtectedRoute>} />
+          {/* Buy Tokens / Keyword Bidding / Page Placements existed only as
+              shared /user-* pages - company accounts got redirected away
+              from those into My Package (which has no such features), so
+              they lost access entirely. These reuse the exact same
+              components, just under CompanyPortalLayout instead. */}
+          <Route path="/company-portal/buy-tokens" element={<ProtectedRoute><CompanyPortalLayout><BuyTokenPage /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/keywords" element={<ProtectedRoute><CompanyPortalLayout><BidKeywords /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/placements" element={<ProtectedRoute><CompanyPortalLayout><PagePlacements /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/invoices" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalInvoices /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/settings" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalSettings /></CompanyPortalLayout></ProtectedRoute>} />
           <Route
             path="/user-profile"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <ProfilePage />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/settings">
+                  <UserDashboardLayout>
+                    <ProfilePage />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -547,9 +594,11 @@ const AppContent = () => {
             path="/user-recharge"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <RechargePlans />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/package">
+                  <UserDashboardLayout>
+                    <RechargePlans />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -558,9 +607,11 @@ const AppContent = () => {
             path="/user-buy"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <BuyTokenPage />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/buy-tokens">
+                  <UserDashboardLayout>
+                    <BuyTokenPage />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -569,9 +620,11 @@ const AppContent = () => {
             path="/user-media-hub"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <MediaHub />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/content">
+                  <UserDashboardLayout>
+                    <MediaHub />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -580,9 +633,11 @@ const AppContent = () => {
             path="/user-content/:type"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <MyContentManager />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/content">
+                  <UserDashboardLayout>
+                    <MyContentManager />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -591,9 +646,11 @@ const AppContent = () => {
             path="/user-addons"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <Addons />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/package">
+                  <UserDashboardLayout>
+                    <Addons />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -602,9 +659,11 @@ const AppContent = () => {
             path="/user-posts"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <UserPosts />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/content">
+                  <UserDashboardLayout>
+                    <UserPosts />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -613,9 +672,11 @@ const AppContent = () => {
             path="/user-transactions"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <TransactionHistory />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/invoices">
+                  <UserDashboardLayout>
+                    <TransactionHistory />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -624,9 +685,11 @@ const AppContent = () => {
             path="/user-bid-keywords"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <BidKeywords />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/keywords">
+                  <UserDashboardLayout>
+                    <BidKeywords />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -635,9 +698,11 @@ const AppContent = () => {
             path="/user-page-placements"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <PagePlacements />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/placements">
+                  <UserDashboardLayout>
+                    <PagePlacements />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -646,9 +711,11 @@ const AppContent = () => {
             path="/user-plans"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <MyPackage />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/package">
+                  <UserDashboardLayout>
+                    <MyPackage />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -657,9 +724,11 @@ const AppContent = () => {
             path="/user-active-campaigns"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <ActiveCampaigns />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/analytics">
+                  <UserDashboardLayout>
+                    <ActiveCampaigns />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -667,9 +736,11 @@ const AppContent = () => {
             path="/user-company/leads/:companyName"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <CompanyLeads />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/leads">
+                  <UserDashboardLayout>
+                    <CompanyLeads />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -677,9 +748,11 @@ const AppContent = () => {
             path="/user-leads"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <CompanyLeadsPage />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/leads">
+                  <UserDashboardLayout>
+                    <CompanyLeadsPage />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -687,9 +760,11 @@ const AppContent = () => {
             path="/user-professional/leads/:professionalName/:professionalId"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <ProfessionalLeads />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/leads">
+                  <UserDashboardLayout>
+                    <ProfessionalLeads />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />
@@ -697,9 +772,11 @@ const AppContent = () => {
             path="/user-contacted"
             element={
               <ProtectedRoute>
-                <UserDashboardLayout>
-                  <ContactedPeople />
-                </UserDashboardLayout>
+                <CompanyRedirectGuard to="/company-portal/leads">
+                  <UserDashboardLayout>
+                    <ContactedPeople />
+                  </UserDashboardLayout>
+                </CompanyRedirectGuard>
               </ProtectedRoute>
             }
           />

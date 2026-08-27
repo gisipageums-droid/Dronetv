@@ -14,7 +14,7 @@ createRoot(document.getElementById('root')!).render(
   <ToastContainer
   position="top-right"
   autoClose={3000}
-  style={{ zIndex: 9999999999 }}
+  style={{ zIndex: 9999999999, top: '5rem' }}
 />
     </Provider>
 
