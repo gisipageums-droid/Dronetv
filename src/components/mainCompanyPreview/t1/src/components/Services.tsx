@@ -70,6 +70,8 @@ export default function Services({ serviceData }) {
   const savedScrollY = useRef(0);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
+  if (!serviceData) return null;
+
   // Filter services based on active category
   const filteredServices = (
     activeCategory === "All"

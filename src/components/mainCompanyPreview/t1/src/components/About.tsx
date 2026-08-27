@@ -15,6 +15,8 @@ export default function About({ aboutData }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
+  if (!aboutData) return null;
+
   return (
     <section
       id="about"

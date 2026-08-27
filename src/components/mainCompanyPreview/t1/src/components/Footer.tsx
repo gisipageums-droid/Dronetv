@@ -61,6 +61,8 @@ export default function Footer({ content }) {
     },
   };
 
+  if (!footerData) return null;
+
   return (
     <motion.footer
       className="bg-gray-900 border-t border-gray-800"
@@ -90,17 +92,17 @@ export default function Footer({ content }) {
                   alt="Logo"
                   className="w-[50px] h-[50px] rounded-xl cursor-pointer group-hover:scale-110 transition-all duration-300 object-contain"
                 /> */}
-                {footerData.brand.name}
+                {footerData.brand?.name}
               </span>
             </div>
 
             <p className="text-gray-300 text-sm leading-relaxed mb-6 ">
-              {footerData.brand.description}
+              {footerData.brand?.description}
             </p>
           </motion.div>
 
           {/* Dynamic Sections */}
-          {footerData.sections.map((section) => (
+          {(footerData.sections || []).map((section) => (
             <motion.div
               key={section.id}
               className="col-span-1"
