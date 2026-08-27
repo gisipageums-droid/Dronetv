@@ -114,7 +114,9 @@ const CSS = `
 .co-avatar { width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0; overflow: hidden; }
 .co-avatar img { width: 44px; height: 44px; border-radius: 9px; object-fit: cover; }
 .co-card-name { font-size: 13px; font-weight: 700; color: #0A0A0A; line-height: 1.3; }
-.co-card-loc { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #777; margin-top: 2px; }
+.co-card-loc { display: flex; align-items: flex-start; gap: 3px; font-size: 11px; color: #777; margin-top: 2px; }
+.co-card-loc svg { flex-shrink: 0; margin-top: 2px; }
+.co-card-loc-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .co-card-desc { font-size: 12px; color: #777; line-height: 1.6; padding: 0 13px; margin-bottom: 9px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .co-card-foot { padding: 9px 13px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; gap: 6px; }
 .co-btn-out { flex: 1; background: #fff; color: #0A0A0A; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; }
@@ -450,7 +452,7 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void }> = ({ comp
             {verified && <BadgeCheck size={14} style={{ color: '#1a7a3a', flexShrink: 0 }} />}
           </div>
           {company.location && (
-            <div className="co-card-loc"><MapPin size={10} />{company.location}</div>
+            <div className="co-card-loc"><MapPin size={10} /><span className="co-card-loc-text">{company.location}</span></div>
           )}
         </div>
       </div>
