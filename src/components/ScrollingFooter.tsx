@@ -20,7 +20,7 @@ const advertisements = [
 
 const ScrollingFooter = () => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-yellow-400 text-black h-10 overflow-hidden border-t-2 border-black shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-brand-yellow text-ink h-10 overflow-hidden border-t-2 border-ink shadow-lg">
       <div className="flex items-center h-full">
         <div className="animate-scroll whitespace-nowrap flex items-center">
           {[...advertisements, ...advertisements].map((ad, index) => (
@@ -33,7 +33,7 @@ const ScrollingFooter = () => {
             >
               <ad.icon className="h-4 w-4 mr-2 flex-shrink-0" />
               {ad.text}
-              <span className="mx-4 text-black/60">•</span>
+              <span className="mx-4 text-ink/60">•</span>
             </a>
           ))}
         </div>
