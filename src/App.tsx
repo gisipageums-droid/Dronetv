@@ -4,6 +4,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import Navigation from "./components/Navigation";
 import Hero from "./components/Hero";
 import PagePlacementSlot from "./components/common/PagePlacementSlot";
@@ -13,181 +14,187 @@ import FeaturedCompanies from "./components/FeaturedCompanies";
 import UpcomingEvents from "./components/UpcomingEvents";
 import Newsletter from "./components/Newsletter";
 import Footer from "./components/Footer";
-import VideosPage from "./components/VideosPage";
-import CompaniesPage from "./components/CompaniesPage";
-import ProductsPage from "./components/ProductsPage";
-import EventsPage from "./components/EventsPage";
-import NewsPage from "./components/NewsPage";
-import AboutPage from "./components/AboutPage";
-import PartnerPage from "./components/PartnerPage";
-import ContactPage from "./components/ContactPage";
-import SearchPage from "./components/SearchPage";
-import TermsAndConditionsPage from "./components/TermsAndConditionsPage";
-import PrivacyPolicyPage from "./components/PrivacyPolicyPage";
-import ProductDetailPage from "./components/ProductDetailPage";
-import ProfessionalsPage from "./components/ProfessionalsPage";
-import ServicesPage from "./components/ServicesPage";
-import ServiceDetailPage from "./components/ServiceDetailPage";
+const VideosPage = lazy(() => import("./components/VideosPage"));
+const CompaniesPage = lazy(() => import("./components/CompaniesPage"));
+const ProductsPage = lazy(() => import("./components/ProductsPage"));
+const EventsPage = lazy(() => import("./components/EventsPage"));
+const NewsPage = lazy(() => import("./components/NewsPage"));
+const AboutPage = lazy(() => import("./components/AboutPage"));
+const PartnerPage = lazy(() => import("./components/PartnerPage"));
+const ContactPage = lazy(() => import("./components/ContactPage"));
+const SearchPage = lazy(() => import("./components/SearchPage"));
+const TermsAndConditionsPage = lazy(() => import("./components/TermsAndConditionsPage"));
+const PrivacyPolicyPage = lazy(() => import("./components/PrivacyPolicyPage"));
+const ProductDetailPage = lazy(() => import("./components/ProductDetailPage"));
+const ProfessionalsPage = lazy(() => import("./components/ProfessionalsPage"));
+const ServicesPage = lazy(() => import("./components/ServicesPage"));
+const ServiceDetailPage = lazy(() => import("./components/ServiceDetailPage"));
 import ScrollingFooter from "./components/ScrollingFooter";
 import AdsLoader from "./components/common/AdsLoader";
-import GalleryPage from "./components/GalleryPage";
+const GalleryPage = lazy(() => import("./components/GalleryPage"));
 import GalleryGlimpse from "./components/GalleryGlimpse";
-import SubApp from "./components/webbuilder/src/App";
+const SubApp = lazy(() => import("./components/webbuilder/src/App"));
 import OurPartners from "./components/Ourpartners";
-import Select from "./components/company/src/components/select-template/Select";
-import Template2 from "./components/company/src/components/template/t2/src/main";
-import Form from "./components/company/src/components/form/src/main";
-import EditTemp2 from "./components/company/src/components/template/t2/edit/src/main";
-import EditTemp1 from "./components/company/src/components/template/t1/edit/src/main";
-import Template1 from "./components/company/src/components/template/t1/src/main";
-import DashboardPreview1 from "./components/company/src/components/template/t1/final/preview/src/main";
-import DashboardPreview2 from "./components/company/src/components/template/t2/final/preview/src/main";
-import DashboardEdit1 from "./components/company/src/components/template/t1/final/edit/src/main";
-import DashboardEdit2 from "./components/company/src/components/template/t2/final/edit/src/main";
+const Select = lazy(() => import("./components/company/src/components/select-template/Select"));
+const Template2 = lazy(() => import("./components/company/src/components/template/t2/src/main"));
+const Form = lazy(() => import("./components/company/src/components/form/src/main"));
+const EditTemp2 = lazy(() => import("./components/company/src/components/template/t2/edit/src/main"));
+const EditTemp1 = lazy(() => import("./components/company/src/components/template/t1/edit/src/main"));
+const Template1 = lazy(() => import("./components/company/src/components/template/t1/src/main"));
+const DashboardPreview1 = lazy(() => import("./components/company/src/components/template/t1/final/preview/src/main"));
+const DashboardPreview2 = lazy(() => import("./components/company/src/components/template/t2/final/preview/src/main"));
+const DashboardEdit1 = lazy(() => import("./components/company/src/components/template/t1/final/edit/src/main"));
+const DashboardEdit2 = lazy(() => import("./components/company/src/components/template/t2/final/edit/src/main"));
 import { CombinedProviders } from "./components/context/context";
 // import CompanyDirectory from "./components/CompanyDirectory";
-import Login from "./components/Login";
-import ForgotPassword from "./components/ForgotPassword";
-import Logout from "./components/Logout";
-import ResetPassword from "./components/ResetPassword";
-import ProtectedRoute from "./components/ProtectedRoute";
-import AdminProtectedRoute from "./components/adminProtectedRoute";
+const Login = lazy(() => import("./components/Login"));
+const ForgotPassword = lazy(() => import("./components/ForgotPassword"));
+const Logout = lazy(() => import("./components/Logout"));
+const ResetPassword = lazy(() => import("./components/ResetPassword"));
+const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
+const AdminProtectedRoute = lazy(() => import("./components/adminProtectedRoute"));
 import AiProtectedRoute from "./components/AiProtectedRoute";
-import RoleGuard from "./components/RoleGuard";
-import AdminDashboard from "./components/Admin/CompaniesDashboard/AdminDashboard";
-import MainCompPreviewT1 from "./components/mainCompanyPreview/t1/src/App";
-import MainCompPreviewT2 from "./components/mainCompanyPreview/t2/src/App";
-import ProfessionalForm from "./components/Professional/form/src/App";
-import EventsForm from "./components/event/form/src/App";
-import ProfessionalTemplateSelector from "./components/Professional/Select-Template/select";
-import ProTemp2 from "./components/Professional/Template/T-2/src/App";
-import ProTemp1 from "./components/Professional/Template/T-1/preview/src/App";
+const RoleGuard = lazy(() => import("./components/RoleGuard"));
+const AdminDashboard = lazy(() => import("./components/Admin/CompaniesDashboard/AdminDashboard"));
+const MainCompPreviewT1 = lazy(() => import("./components/mainCompanyPreview/t1/src/App"));
+const MainCompPreviewT2 = lazy(() => import("./components/mainCompanyPreview/t2/src/App"));
+const ProfessionalForm = lazy(() => import("./components/Professional/form/src/App"));
+const EventsForm = lazy(() => import("./components/event/form/src/App"));
+const ProfessionalTemplateSelector = lazy(() => import("./components/Professional/Select-Template/select"));
+const ProTemp2 = lazy(() => import("./components/Professional/Template/T-2/src/App"));
+const ProTemp1 = lazy(() => import("./components/Professional/Template/T-1/preview/src/App"));
 // import SignupConfirmation from "./components/Professional/form/form/greeting/greeting";
-import EditTemp_2 from "./components/Professional/Template/T-2/edit/src/App";
-import EditTemp_1 from "./components/Professional/Template/T-1/edit/src/main";
-import NotFound from "./components/company/src/components/form/src/Notfound";
-import NotFoundPage from "./components/NotFoundPage";
-import EventAdminDashboard from "./components/Admin/eventAdmin/EventAdminDashboard";
-import UserEvent from "./components/UserEvent";
-import AdminProfessional from "./components/Admin/professionalAdmin/AdminProfessionalDashboard";
-import AdminUsersDashboard from "./components/Admin/userAdmin/AdminUsersDashboard";
-import AdminCompanyEdit from "./components/Admin/userAdmin/AdminCompanyEdit";
-import UserProfessional from "./components/profissionalDirectory";
+const EditTemp_2 = lazy(() => import("./components/Professional/Template/T-2/edit/src/App"));
+const EditTemp_1 = lazy(() => import("./components/Professional/Template/T-1/edit/src/main"));
+const NotFound = lazy(() => import("./components/company/src/components/form/src/Notfound"));
+const NotFoundPage = lazy(() => import("./components/NotFoundPage"));
+const EventAdminDashboard = lazy(() => import("./components/Admin/eventAdmin/EventAdminDashboard"));
+const UserEvent = lazy(() => import("./components/UserEvent"));
+const AdminProfessional = lazy(() => import("./components/Admin/professionalAdmin/AdminProfessionalDashboard"));
+const AdminUsersDashboard = lazy(() => import("./components/Admin/userAdmin/AdminUsersDashboard"));
+const AdminCompanyEdit = lazy(() => import("./components/Admin/userAdmin/AdminCompanyEdit"));
+const UserProfessional = lazy(() => import("./components/profissionalDirectory"));
 
-import ExcelDataProcessor from "./components/excelextraction/excel";
-import DocumentTextExtractor from "./components/excelextraction/extracttext";
+const ExcelDataProcessor = lazy(() => import("./components/excelextraction/excel"));
+const DocumentTextExtractor = lazy(() => import("./components/excelextraction/extracttext"));
 // import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/"
-import FinaleProfessionalTemp2 from "./components/Professional/Template/T-2/final/preview/src/App";
-import FinalEditTemp_2 from "./components/Professional/Template/T-2/final/edit/src/App";
-import MainProTemp2 from "./components/mainProfessionalPreview/t2/src/App";
+const FinaleProfessionalTemp2 = lazy(() => import("./components/Professional/Template/T-2/final/preview/src/App"));
+const FinalEditTemp_2 = lazy(() => import("./components/Professional/Template/T-2/final/edit/src/App"));
+const MainProTemp2 = lazy(() => import("./components/mainProfessionalPreview/t2/src/App"));
 
-import FinaleProfessionalTemp1 from "./components/Professional/Template/T-1/final/preview/src/App";
-import FinaleProfessionalTemp1Edit from "./components/Professional/Template/T-1/final/edit/src/App";
+const FinaleProfessionalTemp1 = lazy(() => import("./components/Professional/Template/T-1/final/preview/src/App"));
+const FinaleProfessionalTemp1Edit = lazy(() => import("./components/Professional/Template/T-1/final/edit/src/App"));
 // import MainProTemp1 from "./components/mainProfessinalPreview/T-1/preview/src/App";
 
 
 
-import UserDashboard from "./components/UserDashboard/pages/AdminDashboard";
-import UserCompany from "./components/UserDashboard/pages/Company";
-import CompanyWebsite from "./components/UserDashboard/pages/CompanyWebsite";
-import AiDashboard from "./components/UserDashboard/pages/AiDashboard";
-import Professinal from "./components/UserDashboard/pages/Professinal";
-import Event from "./components/UserDashboard/pages/Event";
-import ProfilePage from "./components/UserDashboard/pages/ProfilePage";
-import ContactedPeople from "./components/UserDashboard/pages/ContactedPeople";
-import CompanyLeads from "./components/UserDashboard/components/common/CompanyLeads";
-import CompanyLeadsPage from "./components/UserDashboard/pages/CompanyLeadsPage";
-import UserDashboardLayout from "./components/UserDashboard/components/layout/Layout";
-import ProfessionalLeads from "./components/UserDashboard/components/common/ProfessionalLeads";
-import CompanyRedirectGuard from "./components/CompanyRedirectGuard";
-import CompanyPortalLayout from "./components/CompanyPortal/CompanyPortalLayout";
-import CompanyPortalDashboard from "./components/CompanyPortal/pages/Dashboard";
-import CompanyPortalProfile from "./components/CompanyPortal/pages/profile/CompanyProfilePage";
-import CompanyPortalListings from "./components/CompanyPortal/pages/Listings";
-import CompanyPortalLeads from "./components/CompanyPortal/pages/Leads";
-import CompanyPortalJobListings from "./components/CompanyPortal/pages/JobListings";
-import CompanyPortalContent from "./components/CompanyPortal/pages/Content";
-import CompanyPortalMagazine from "./components/CompanyPortal/pages/Magazine";
-import CompanyPortalPress from "./components/CompanyPortal/pages/Press";
-import CompanyPortalAnalytics from "./components/CompanyPortal/pages/Analytics";
-import CompanyPortalPackage from "./components/CompanyPortal/pages/Package";
-import CompanyPortalInvoices from "./components/CompanyPortal/pages/Invoices";
-import CompanyPortalSettings from "./components/CompanyPortal/pages/Settings";
-import AdminCompanyForm from "./components/AdminCompanyForm";
-import FinalT1 from "./components/mainProfessionalPreview/t1/src/App";
+const UserDashboard = lazy(() => import("./components/UserDashboard/pages/AdminDashboard"));
+const UserCompany = lazy(() => import("./components/UserDashboard/pages/Company"));
+const CompanyWebsite = lazy(() => import("./components/UserDashboard/pages/CompanyWebsite"));
+const AiDashboard = lazy(() => import("./components/UserDashboard/pages/AiDashboard"));
+const Professinal = lazy(() => import("./components/UserDashboard/pages/Professinal"));
+const Event = lazy(() => import("./components/UserDashboard/pages/Event"));
+const ProfilePage = lazy(() => import("./components/UserDashboard/pages/ProfilePage"));
+const ContactedPeople = lazy(() => import("./components/UserDashboard/pages/ContactedPeople"));
+const CompanyLeads = lazy(() => import("./components/UserDashboard/components/common/CompanyLeads"));
+const CompanyLeadsPage = lazy(() => import("./components/UserDashboard/pages/CompanyLeadsPage"));
+const UserDashboardLayout = lazy(() => import("./components/UserDashboard/components/layout/Layout"));
+const ProfessionalLeads = lazy(() => import("./components/UserDashboard/components/common/ProfessionalLeads"));
+const CompanyRedirectGuard = lazy(() => import("./components/CompanyRedirectGuard"));
+const CompanyPortalLayout = lazy(() => import("./components/CompanyPortal/CompanyPortalLayout"));
+const CompanyPortalDashboard = lazy(() => import("./components/CompanyPortal/pages/Dashboard"));
+const CompanyPortalProfile = lazy(() => import("./components/CompanyPortal/pages/profile/CompanyProfilePage"));
+const CompanyPortalListings = lazy(() => import("./components/CompanyPortal/pages/Listings"));
+const CompanyPortalLeads = lazy(() => import("./components/CompanyPortal/pages/Leads"));
+const CompanyPortalJobListings = lazy(() => import("./components/CompanyPortal/pages/JobListings"));
+const CompanyPortalContent = lazy(() => import("./components/CompanyPortal/pages/Content"));
+const CompanyPortalMagazine = lazy(() => import("./components/CompanyPortal/pages/Magazine"));
+const CompanyPortalPress = lazy(() => import("./components/CompanyPortal/pages/Press"));
+const CompanyPortalAnalytics = lazy(() => import("./components/CompanyPortal/pages/Analytics"));
+const CompanyPortalPackage = lazy(() => import("./components/CompanyPortal/pages/Package"));
+const CompanyPortalInvoices = lazy(() => import("./components/CompanyPortal/pages/Invoices"));
+const CompanyPortalSettings = lazy(() => import("./components/CompanyPortal/pages/Settings"));
+const AdminCompanyForm = lazy(() => import("./components/AdminCompanyForm"));
+const FinalT1 = lazy(() => import("./components/mainProfessionalPreview/t1/src/App"));
 import Event_T1 from "./components/event/template/t1/src/EventTemplate1"
-import Event_T2 from "./components/event/template/t2/src/App";
-import Edit_event_t1 from "./components/event/template/t1/edit/EventTemplate1";
+const Event_T2 = lazy(() => import("./components/event/template/t2/src/App"));
+const Edit_event_t1 = lazy(() => import("./components/event/template/t1/edit/EventTemplate1"));
 
-import Edit_event_t2 from "./components/event/template/t2/edit/App";
-import EventSelect from "./components/event/select-template/Event-select";
-import EventLeads from "./components/UserDashboard/components/common/EventLeads";
+const Edit_event_t2 = lazy(() => import("./components/event/template/t2/edit/App"));
+const EventSelect = lazy(() => import("./components/event/select-template/Event-select"));
+const EventLeads = lazy(() => import("./components/UserDashboard/components/common/EventLeads"));
 import MainEvent1 from "./components/mainEventPreview/t1/EventTemplate1"
 //main App.tsx
-import BuyTokenPage from "./components/UserDashboard/pages/Buy";
-import TransactionHistory from "./components/UserDashboard/pages/transaction";
-import RechargePlans from "./components/UserDashboard/pages/Plans";
-import MediaHub from "./components/UserDashboard/pages/MediaHub";
-import MyContentManager from "./components/UserDashboard/pages/MyContentManager";
-import Addons from "./components/UserDashboard/pages/Addons";
-import UserPosts from "./components/UserDashboard/pages/UserPosts";
-import BidKeywords from "./components/UserDashboard/pages/BidKeywords";
-import PagePlacements from "./components/UserDashboard/pages/PagePlacements";
-import MyPackage from "./components/UserDashboard/pages/MyPackage";
-import ActiveCampaigns from "./components/UserDashboard/pages/ActiveCampaigns";
+const BuyTokenPage = lazy(() => import("./components/UserDashboard/pages/Buy"));
+const TransactionHistory = lazy(() => import("./components/UserDashboard/pages/transaction"));
+const RechargePlans = lazy(() => import("./components/UserDashboard/pages/Plans"));
+const MediaHub = lazy(() => import("./components/UserDashboard/pages/MediaHub"));
+const MyContentManager = lazy(() => import("./components/UserDashboard/pages/MyContentManager"));
+const Addons = lazy(() => import("./components/UserDashboard/pages/Addons"));
+const UserPosts = lazy(() => import("./components/UserDashboard/pages/UserPosts"));
+const BidKeywords = lazy(() => import("./components/UserDashboard/pages/BidKeywords"));
+const PagePlacements = lazy(() => import("./components/UserDashboard/pages/PagePlacements"));
+const MyPackage = lazy(() => import("./components/UserDashboard/pages/MyPackage"));
+const ActiveCampaigns = lazy(() => import("./components/UserDashboard/pages/ActiveCampaigns"));
 import AdminTokenPlan from "./components/Admin/AdminTokenPlans/App"
-import AdminLogin from "./components/Admin/adminLogin/AdminLogin";
-import AdminMediaDashboard from "./components/Admin/mediaAdmin/AdminMediaDashboard";
-import AdminJobBoardDashboard from "./components/Admin/jobBoardAdmin/AdminJobBoardDashboard";
-import AdminLayout from "./components/Admin/AdminLayout";
-import AdminTokenEconomy from "./components/Admin/AdminTokenEconomy";
-import AdminInvoicesPage from "./pages/admin/AdminInvoicesPage";
-import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
-import AdminUserContentPage from "./pages/admin/AdminUserContentPage";
-import EventsExcelDataProcessor from "./components/eventsExcelExtraction/excel";
-import ProfessionalsDocumentTextExtractor from "./components/professionalsExcelExtraction/professionalsExcelExtraction/excel";
+const AdminLogin = lazy(() => import("./components/Admin/adminLogin/AdminLogin"));
+const AdminMediaDashboard = lazy(() => import("./components/Admin/mediaAdmin/AdminMediaDashboard"));
+const AdminJobBoardDashboard = lazy(() => import("./components/Admin/jobBoardAdmin/AdminJobBoardDashboard"));
+const AdminLayout = lazy(() => import("./components/Admin/AdminLayout"));
+const AdminTokenEconomy = lazy(() => import("./components/Admin/AdminTokenEconomy"));
+const AdminInvoicesPage = lazy(() => import("./pages/admin/AdminInvoicesPage"));
+const AdminSettingsPage = lazy(() => import("./pages/admin/AdminSettingsPage"));
+const AdminUserContentPage = lazy(() => import("./pages/admin/AdminUserContentPage"));
+const EventsExcelDataProcessor = lazy(() => import("./components/eventsExcelExtraction/excel"));
+const ProfessionalsDocumentTextExtractor = lazy(() => import("./components/professionalsExcelExtraction/professionalsExcelExtraction/excel"));
 
 // Media Hub pages
-import NewsPulsePage from "./pages/media/NewsPulse";
-import MagazinePage from "./pages/media/Magazine";
-import VideoSpotlightPage from "./pages/media/VideoSpotlight";
-import ImpactStoriesPage from "./pages/media/ImpactStories";
-import MarketIntelligencePage from "./pages/media/MarketIntelligence";
-import TechTrendsPage from "./pages/media/TechTrends";
-import PressReleasesPage from "./pages/media/PressReleases";
-import IndustryReportsPage from "./pages/media/IndustryReports";
-import MediaHubPage from "./pages/media/MediaHub";
-import MediaDetailPage from "./pages/media/MediaDetailPage";
+const NewsPulsePage = lazy(() => import("./pages/media/NewsPulse"));
+const MagazinePage = lazy(() => import("./pages/media/Magazine"));
+const VideoSpotlightPage = lazy(() => import("./pages/media/VideoSpotlight"));
+const ImpactStoriesPage = lazy(() => import("./pages/media/ImpactStories"));
+const MarketIntelligencePage = lazy(() => import("./pages/media/MarketIntelligence"));
+const TechTrendsPage = lazy(() => import("./pages/media/TechTrends"));
+const PressReleasesPage = lazy(() => import("./pages/media/PressReleases"));
+const IndustryReportsPage = lazy(() => import("./pages/media/IndustryReports"));
+const MediaHubPage = lazy(() => import("./pages/media/MediaHub"));
+const MediaDetailPage = lazy(() => import("./pages/media/MediaDetailPage"));
 
 // Events sub-pages
-import EventCalendarPage from "./pages/events/EventCalendar";
-import ExposPage from "./pages/events/Expos";
-import ConferencesPage from "./pages/events/Conferences";
-import WorkshopsPage from "./pages/events/Workshops";
-import CompetitionsPage from "./pages/events/Competitions";
-import WebinarsPage from "./pages/events/Webinars";
-import MeetupsPage from "./pages/events/Meetups";
+const EventCalendarPage = lazy(() => import("./pages/events/EventCalendar"));
+const ExposPage = lazy(() => import("./pages/events/Expos"));
+const ConferencesPage = lazy(() => import("./pages/events/Conferences"));
+const WorkshopsPage = lazy(() => import("./pages/events/Workshops"));
+const CompetitionsPage = lazy(() => import("./pages/events/Competitions"));
+const WebinarsPage = lazy(() => import("./pages/events/Webinars"));
+const MeetupsPage = lazy(() => import("./pages/events/Meetups"));
 
 // Professionals sub-pages
-import JobBoardPage from "./pages/professionals/JobBoard";
-import PilotDirectoryPage from "./pages/professionals/PilotDirectory";
-import CertificationsPage from "./pages/professionals/Certifications";
-import PortfolioPage from "./pages/professionals/Portfolio";
-import TrainingPage from "./pages/professionals/Training";
-import NetworkingPage from "./pages/professionals/Networking";
-import CommunityPage from "./pages/professionals/Community";
-import CareerPathPage from "./pages/professionals/CareerPath";
+const JobBoardPage = lazy(() => import("./pages/professionals/JobBoard"));
+const PilotDirectoryPage = lazy(() => import("./pages/professionals/PilotDirectory"));
+const CertificationsPage = lazy(() => import("./pages/professionals/Certifications"));
+const PortfolioPage = lazy(() => import("./pages/professionals/Portfolio"));
+const TrainingPage = lazy(() => import("./pages/professionals/Training"));
+const NetworkingPage = lazy(() => import("./pages/professionals/Networking"));
+const CommunityPage = lazy(() => import("./pages/professionals/Community"));
+const CareerPathPage = lazy(() => import("./pages/professionals/CareerPath"));
 
 // Partnerships pages
-import DroneManufacturersPage from "./pages/partnerships/DroneManufacturers";
-import AITechCompaniesPage from "./pages/partnerships/AITechCompanies";
-import EventOrganizersPage from "./pages/partnerships/EventOrganizers";
-import EducationPartnersPage from "./pages/partnerships/EducationPartners";
-import IndustryPlayersPage from "./pages/partnerships/IndustryPlayers";
-import PartnerBenefitsPage from "./pages/partnerships/PartnerBenefits";
-import BecomePartnerPage from "./pages/partnerships/BecomePartner";
-import PartnershipsHubPage from "./pages/partnerships/PartnershipsHub";
+const DroneManufacturersPage = lazy(() => import("./pages/partnerships/DroneManufacturers"));
+const AITechCompaniesPage = lazy(() => import("./pages/partnerships/AITechCompanies"));
+const EventOrganizersPage = lazy(() => import("./pages/partnerships/EventOrganizers"));
+const EducationPartnersPage = lazy(() => import("./pages/partnerships/EducationPartners"));
+const IndustryPlayersPage = lazy(() => import("./pages/partnerships/IndustryPlayers"));
+const PartnerBenefitsPage = lazy(() => import("./pages/partnerships/PartnerBenefits"));
+const BecomePartnerPage = lazy(() => import("./pages/partnerships/BecomePartner"));
+const PartnershipsHubPage = lazy(() => import("./pages/partnerships/PartnershipsHub"));
 
+
+const PageLoadingFallback = () => (
+  <div className="min-h-[40vh] w-full flex items-center justify-center">
+    <div className="h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 const HomePage = () => (
   <>
@@ -237,6 +244,7 @@ const AppContent = () => {
     <div className="min-h-screen">
       <CombinedProviders>
         {!hideNavigation && <Navigation />}
+        <Suspense fallback={<PageLoadingFallback />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/videos" element={<VideosPage />} />
@@ -794,6 +802,7 @@ const AppContent = () => {
         <Route path="/professionalsexcel" element={<ProfessionalsDocumentTextExtractor />} />
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </Suspense>
 
         {!hideFooter && <Footer />}
         {!hideFooter && <ScrollingFooter />}
