@@ -763,8 +763,14 @@ const apiService = {
 
   async fetchCompanyCredentials(draftId: string, userId: string): Promise<any> {
     try {
+      // Self-hosted has no /restore-js equivalent - the old Lambda's raw
+      // registration-form fields (gstin, panNumber, directorEmail, etc.)
+      // live in our own backend's "companyInfo" JSON column instead, under
+      // slightly different key names. Fetch the real draft and reshape it
+      // into the {formData:{rawData:{...}}} shape this modal expects,
+      // rather than needing a new backend endpoint for data we already have.
       const response = await fetch(
-        COMPANY_API ? `${COMPANY_API}/restore-js?draftId=${draftId}&userId=${userId}` : `${LAMBDA.companyRestoreJs}/js?draftId=${draftId}&userId=${userId}`,
+        COMPANY_API ? `${COMPANY_API}/draft/${userId}/${draftId}` : `${LAMBDA.companyRestoreJs}/js?draftId=${draftId}&userId=${userId}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
       );
 
@@ -773,7 +779,20 @@ const apiService = {
       }
 
       const data = await response.json();
-      return data;
+      if (!COMPANY_API) return data; // Lambda already returns the expected shape
+
+      const info = data.companyInfo || {};
+      return {
+        formData: {
+          rawData: {
+            ...info,
+            cin: info.cinOrUdyamOrPan || info.cin || "",
+            panNumber: info.panNumber || info.cinOrUdyamOrPan || "",
+            udyamRegistrationNumber: info.udyamRegistrationNumber || info.cinOrUdyamOrPan || "",
+            whatsappNumber: info.whatsappNumber || info.whatsappLink || "",
+          },
+        },
+      };
     } catch (error) {
       throw error;
     }
