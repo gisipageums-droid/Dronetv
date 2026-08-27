@@ -944,6 +944,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       const userId = response.data?.userId;
       if (userId) localStorage.setItem('dronetv_company_userId', userId);
       const aiGenData = mapFormDataToAIGenData(formData, draftId, userId);
+      aiGenData.publishedId = response.data?.publishedId || '';
       const templateSlug = finalTemplateId === "2" || finalTemplateId === "template-2" ? "t2" : "t1";
       navigate(`/edit/template/${templateSlug}/${draftId}/${userId}`, { state: { aiGenData } });
 
