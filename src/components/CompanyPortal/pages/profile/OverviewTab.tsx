@@ -1,9 +1,19 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Card, Field, FormGrid, ActionBar, inputCls } from "../../ui";
 import type { TabProps } from "./CompanyProfilePage";
 
 const CATEGORIES = ["Drone Service Provider", "Drone Manufacturer / OEM", "Component / Parts Supplier", "Software / Platform", "Training / RPTO", "Consulting", "Agriculture Drone Services", "Survey & Mapping", "Inspection Services", "Defence / Security", "GIS / Remote Sensing", "AI / ML Solutions", "Other"];
 const SIZES = ["1-10 employees", "11-50 employees", "51-200 employees", "201-500 employees", "500+ employees"];
+const REQUIRED_FIELDS: [string, string][] = [
+  ["category", "Company Category"],
+  ["email", "Company Email"],
+  ["phone", "Phone (WhatsApp)"],
+  ["address", "Company Address"],
+  ["city", "City"],
+  ["state", "State"],
+  ["description", "Company Description"],
+];
 
 export default function OverviewTab({ profile, save }: TabProps) {
   const [form, setForm] = useState(() => ({
@@ -17,6 +27,11 @@ export default function OverviewTab({ profile, save }: TabProps) {
   const set = (k: string, v: string) => setForm((f: any) => ({ ...f, [k]: v }));
 
   const handleSave = async () => {
+    const missing = REQUIRED_FIELDS.filter(([key]) => !String(form[key] || "").trim());
+    if (missing.length) {
+      toast.error(`Please fill required fields: ${missing.map(([, label]) => label).join(", ")}`);
+      return;
+    }
     setSaving(true);
     await save("overview", form);
     setSaving(false);
