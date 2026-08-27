@@ -17,29 +17,18 @@ import { COMPANY_API, LAMBDA } from '../../../../../../../../lib/apiConfig';
 // the whole "list my company" submit fails with a ValidationException.
 const FILE_UPLOAD_API_URL = COMPANY_API ? `${COMPANY_API}/upload-file` : `${LAMBDA.companyFileUpload}/upload-file`;
 
-// Tries our own backend's Surepass proxy first (company service, /verify/gstin
-// or /verify/cin) and only falls back to the legacy Lambda proxy if our own
-// call fails outright or comes back without real data (e.g. a revoked
-// Surepass token) - keeps GST/CIN verification working uninterrupted while
-// the self-hosted backend's own Surepass token gets sorted out.
+// Calls our own backend's Surepass proxy (company service, /verify/gstin or
+// /verify/cin) — this is the only real verification path now that our
+// self-hosted backend's Surepass IP has been whitelisted and works directly.
+// Any failure (network error, timeout, 4xx/5xx) is left to the caller, which
+// degrades to format-only validation rather than trying a second API.
 const verifySurepass = async (action: 'gstin' | 'cin', idNumber: string) => {
-  if (COMPANY_API) {
-    try {
-      const ownResponse = await axios.post(
-        `${COMPANY_API}/verify/${action}`,
-        { id_number: idNumber },
-        { timeout: 15000 }
-      );
-      if (ownResponse.data?.success && ownResponse.data?.data) {
-        return ownResponse;
-      }
-    } catch {
-      // fall through to the Lambda proxy below
-    }
+  if (!COMPANY_API) {
+    throw new Error('Company API not configured');
   }
   return axios.post(
-    import.meta.env.VITE_SUREPASS_PROXY_URL,
-    { action, id_number: idNumber },
+    `${COMPANY_API}/verify/${action}`,
+    { id_number: idNumber },
     { timeout: 15000 }
   );
 };
@@ -2349,16 +2338,11 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         let apiUnavailable = false;
         try {
           response = await verifySurepass('gstin', gstNumber);
-        } catch (apiErr: any) {
-          if (apiErr?.response?.status === 401 || apiErr?.response?.status === 403) {
-            apiUnavailable = true;
-          } else if (apiErr?.code === 'ECONNABORTED' || apiErr?.message?.includes('timeout')) {
-            toast.error('GST verification timed out. Please check your connection and try again.');
-            setVerifyingGST(false);
-            return;
-          } else {
-            throw apiErr;
-          }
+        } catch {
+          // Our backend is the only real verification path left — any
+          // failure (network error, timeout, 4xx/5xx) degrades to
+          // format-only GSTIN validation below.
+          apiUnavailable = true;
         }
 
         if (apiUnavailable) {
