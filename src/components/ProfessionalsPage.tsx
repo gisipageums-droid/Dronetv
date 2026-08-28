@@ -175,7 +175,10 @@ const ProfessionalsPage: React.FC = () => {
             onClick={() => {
               if (!isLogin) { navigate("/login"); return; }
               try { localStorage.removeItem("professionalFormDraft"); } catch { /* ignore */ }
-              navigate("/professional/select");
+              // Was routing through /professional/select (a template-choice
+              // screen) — user wants "List your Profile" to open the real
+              // registration form directly instead of that extra step.
+              navigate("/professional/form");
             }}
             className="px-3 py-1.5 text-xs font-semibold text-ink bg-brand-yellow rounded-lg hover:bg-brand-yellow-soft transition flex-shrink-0"
           >
