@@ -24,7 +24,7 @@ export const PhoneInput = ({
       const num = value.startsWith("+91") ? value.slice(3) : value;
       setPhoneNumber(num);
     }
-  }, []);
+  }, [value]);
 
   const handleChange = (num: string) => {
     const digits = num.replace(/\D/g, "").slice(0, 10);
