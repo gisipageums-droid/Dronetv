@@ -790,6 +790,52 @@ export const Step1 = ({
   const [aadharError, setAadharError] = useState("");
   const [copyAddress, setCopyAddress] = useState(false);
 
+  // Mobile-to-KYC-prefill verification (Surepass, proxied through our own professional API)
+  const [kycMobile, setKycMobile] = useState(data.basicInfo?.Phonenumber || "");
+  const [kycVerifying, setKycVerifying] = useState(false);
+  const [kycVerified, setKycVerified] = useState(false);
+  const [kycError, setKycError] = useState("");
+  const [kycNoMatch, setKycNoMatch] = useState(false);
+
+  const handleVerifyMobile = async () => {
+    setKycVerifying(true);
+    setKycError("");
+    setKycNoMatch(false);
+    try {
+      const res = await fetch(`${PROFESSIONAL_API}/kyc/mobile-prefill`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile_number: kycMobile }),
+      });
+      const json = await res.json();
+
+      if (!res.ok || json.status !== "success") {
+        setKycNoMatch(true);
+        return;
+      }
+
+      updateField("basicInfo", {
+        ...data.basicInfo,
+        Phonenumber: kycMobile,
+        fullName: json.fullName || data.basicInfo?.fullName || "",
+        date_of_birth: json.dateOfBirth || data.basicInfo?.date_of_birth || "",
+        gender: json.gender || data.basicInfo?.gender || "",
+        address: json.address || data.basicInfo?.address || "",
+        city_district: json.cityDistrict || data.basicInfo?.city_district || "",
+        pincode: json.pincode || data.basicInfo?.pincode || "",
+        state: json.state || data.basicInfo?.state || "",
+        country: json.country || data.basicInfo?.country || "India",
+        aadhar_number: json.maskedAadhaar || data.basicInfo?.aadhar_number || "",
+      });
+      setKycVerified(true);
+    } catch (err) {
+      console.error("Mobile KYC prefill failed", err);
+      setKycError("Something went wrong. Please try again or fill details manually.");
+    } finally {
+      setKycVerifying(false);
+    }
+  };
+
   // DigiLocker State
   const [digiLockerLoading, setDigiLockerLoading] = useState(false);
   const [isPollingDigiLocker, setIsPollingDigiLocker] = useState(false);
@@ -1099,17 +1145,9 @@ export const Step1 = ({
     const addressInfo = data.addressInformation || {};
     const isUserAvailable = usernameAvailable === true || (originalUsername && basicInfo.user_name === originalUsername);
 
-    const isBasicInfoValid =
-      basicInfo.fullName &&
-      basicInfo.date_of_birth &&
-      basicInfo.gender &&
-      basicInfo.relationship_type &&
-      basicInfo.relationship_name &&
-      basicInfo.address &&
-      basicInfo.city_district &&
-      basicInfo.pincode &&
-      basicInfo.country &&
-      basicInfo.state;
+    // Name/DOB/gender/relationship/address/city/pincode/country/state are filled
+    // via mobile KYC prefill (or manually) and are no longer required to advance.
+    const isBasicInfoValid = true;
 
     const isCommAddressValid =
       commAddress.address &&
@@ -1495,6 +1533,50 @@ export const Step1 = ({
           </div>
 
           <div className="space-y-4">
+            {/* Phone Number + Verify (auto-fills the fields below via KYC prefill) */}
+            {!isReadOnly && (
+              <div className="flex flex-col">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
+                  Phone Number
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    placeholder="Enter 10-digit mobile number"
+                    disabled={kycVerified}
+                    className="flex-1 border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card disabled:opacity-60"
+                    value={kycMobile}
+                    onChange={(e) => {
+                      setKycMobile(e.target.value.replace(/\D/g, "").slice(0, 10));
+                      setKycError("");
+                      setKycNoMatch(false);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleVerifyMobile}
+                    disabled={kycMobile.length !== 10 || kycVerifying || kycVerified}
+                    className="px-4 py-2 rounded-lg font-semibold text-white bg-brand-gold hover:bg-brand-gold/90 disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap transition"
+                  >
+                    {kycVerifying ? "Verifying..." : kycVerified ? "✓ Verified" : "Verify"}
+                  </button>
+                </div>
+                {kycError && <p className="text-status-error text-xs mt-1">{kycError}</p>}
+                {kycNoMatch && (
+                  <p className="text-ink-caption text-xs mt-1">
+                    No matching records found for this number — please fill in your details manually below.
+                  </p>
+                )}
+                {kycVerified && (
+                  <p className="text-status-success text-xs mt-1">
+                    Details fetched below — please review and edit if anything needs correcting.
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Full Name */}
             {isReadOnly ? (
               <ReadOnlyField
@@ -1505,11 +1587,9 @@ export const Step1 = ({
               <div className="flex flex-col">
                 <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Full Name
-                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <input
                   type="text"
-                  required={true}
                   placeholder="Enter your full name"
                   className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                   value={data.basicInfo?.fullName || ""}
@@ -1520,7 +1600,6 @@ export const Step1 = ({
                     })
                   }
                 />
-                {showErrors && !data.basicInfo?.fullName && <p className="text-status-error text-xs mt-1">Full name is required</p>}
               </div>
             )}
 
@@ -1538,7 +1617,6 @@ export const Step1 = ({
               <div className="flex flex-col">
                 <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Date of Birth
-                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <ScrollDatePicker
                   value={data.basicInfo?.date_of_birth || ""}
@@ -1549,7 +1627,6 @@ export const Step1 = ({
                     })
                   }
                 />
-                {showErrors && !data.basicInfo?.date_of_birth && <p className="text-status-error text-xs mt-1">Date of birth is required</p>}
               </div>
             )}
 
@@ -1570,7 +1647,6 @@ export const Step1 = ({
               <div className="flex flex-col">
                 <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Gender
-                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <select
                   className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
@@ -1588,7 +1664,6 @@ export const Step1 = ({
                   <option value="non-binary">Non-binary</option>
                   <option value="prefer-not-to-say">Prefer not to say</option>
                 </select>
-                {showErrors && !data.basicInfo?.gender && <p className="text-status-error text-xs mt-1">Gender is required</p>}
               </div>
             )}
 
@@ -1604,7 +1679,6 @@ export const Step1 = ({
                 <div className="flex flex-col">
                   <label className="mb-1 font-medium text-ink-charcoal text-sm">
                     C/o, S/o, D/o
-                    <span className="text-status-error ml-1">*</span>
                   </label>
                   <select
                     className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
@@ -1621,7 +1695,6 @@ export const Step1 = ({
                     <option value="S/o">S/o (Son of)</option>
                     <option value="D/o">D/o (Daughter of)</option>
                   </select>
-                  {showErrors && !data.basicInfo?.relationship_type && <p className="text-status-error text-xs mt-1">This field is required</p>}
                 </div>
               )}
 
@@ -1635,11 +1708,9 @@ export const Step1 = ({
                 <div className="flex flex-col">
                   <label className="mb-1 font-medium text-ink-charcoal text-sm">
                     Relationship Name
-                    <span className="text-status-error ml-1">*</span>
                   </label>
                   <input
                     type="text"
-                    required={true}
                     placeholder="Enter relative's name"
                     className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                     value={data.basicInfo?.relationship_name || ""}
@@ -1650,7 +1721,6 @@ export const Step1 = ({
                       })
                     }
                   />
-                  {showErrors && !data.basicInfo?.relationship_name && <p className="text-status-error text-xs mt-1">This field is required</p>}
                 </div>
               )}
             </div>
@@ -1665,10 +1735,8 @@ export const Step1 = ({
               <div className="flex flex-col">
                 <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Address
-                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <textarea
-                  required={true}
                   placeholder="Complete address with building details"
                   className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm min-h-[80px] text-ink bg-surface-card"
                   value={data.basicInfo?.address || ""}
@@ -1679,7 +1747,6 @@ export const Step1 = ({
                     })
                   }
                 />
-                {showErrors && !data.basicInfo?.address && <p className="text-status-error text-xs mt-1">Address is required</p>}
               </div>
             )}
 
@@ -1695,11 +1762,9 @@ export const Step1 = ({
                 <div className="flex flex-col">
                   <label className="mb-1 font-medium text-ink-charcoal text-sm">
                     City/District
-                    <span className="text-status-error ml-1">*</span>
                   </label>
                   <input
                     type="text"
-                    required={true}
                     placeholder="Enter city or district"
                     className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                     value={data.basicInfo?.city_district || ""}
@@ -1710,7 +1775,6 @@ export const Step1 = ({
                       })
                     }
                   />
-                  {showErrors && !data.basicInfo?.city_district && <p className="text-status-error text-xs mt-1">City/District is required</p>}
                 </div>
               )}
 
@@ -1724,12 +1788,10 @@ export const Step1 = ({
                 <div className="flex flex-col">
                   <label className="mb-1 font-medium text-ink-charcoal text-sm">
                     Pin Code
-                    <span className="text-status-error ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     maxLength={6}
-                    required={true}
                     placeholder="Enter 6-digit pin code"
                     className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                     value={data.basicInfo?.pincode || ""}
@@ -1740,7 +1802,6 @@ export const Step1 = ({
                       })
                     }
                   />
-                  {showErrors && !data.basicInfo?.pincode && <p className="text-status-error text-xs mt-1">Pin code is required</p>}
                 </div>
               )}
             </div>
@@ -1776,15 +1837,9 @@ export const Step1 = ({
                         state: value,
                       });
                     }}
-                    countryRequired={true}
-                    stateRequired={true}
+                    countryRequired={false}
+                    stateRequired={false}
                   />
-                  {showErrors && (!data.basicInfo?.country || !data.basicInfo?.state) && (
-                    <div className="mt-1">
-                      {!data.basicInfo?.country && <p className="text-status-error text-xs">Country is required</p>}
-                      {!data.basicInfo?.state && <p className="text-status-error text-xs">State is required</p>}
-                    </div>
-                  )}
                 </>
               )}
             </div>
