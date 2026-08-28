@@ -229,7 +229,14 @@ const CompaniesPage: React.FC = () => {
   const handleCardClick = (c: Company) => {
     const slug = c.urlSlug || c.publishedId || c.companyId;
     if (!slug) return;
-    if (c.templateSelection === 'template-2') navigate(`/companies/${slug}`);
+    // Real stored values are bare "1"/"2", not "template-1"/"template-2" —
+    // checking only the prefixed form meant every company, regardless of
+    // its real template, was routed to /company/ (template-1) here. Each
+    // preview route has its own redirect-guard as a second safety net, but
+    // that guard doing all the work meant an extra redirect round-trip
+    // every time, or a blank-page crash for real template-2 companies
+    // whose own guard had the identical bug (fixed alongside this).
+    if (c.templateSelection === 'template-2' || c.templateSelection === '2') navigate(`/companies/${slug}`);
     else navigate(`/company/${slug}`);
   };
 

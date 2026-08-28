@@ -35,8 +35,14 @@ export default function App() {
       const data = await response.json();
       const company = data.data;
 
-      // If this is a template-1 company, redirect to the correct route
-      if (company?.templateSelection === 'template-1') {
+      // If this is a template-1 company, redirect to the correct route.
+      // Real stored values are bare "1"/"2", not "template-1"/"template-2"
+      // — checking only the prefixed form meant this redirect never fired
+      // for real data, and a template-1 company opened via /companies/:slug
+      // rendered with the wrong template's components entirely, ending in
+      // a blank page or crash instead of the correct page (confirmed live:
+      // electrobotic-manufacturing-private-limited, templateSelection "1").
+      if (company?.templateSelection === 'template-1' || company?.templateSelection === '1') {
         const correctSlug = company.urlSlug || slug;
         navigate(`/company/${correctSlug}`, { replace: true });
         return;
