@@ -121,8 +121,10 @@ export function Contact({ contactData, professionalId }: ContactProps) {
     try {
       // Send form data as JSON body using POST
       const res = await axios.post(
-        LEADS_API ? `${LEADS_API}/professional-contact` : `${LAMBDA.profLeadContact}/`,
-        { professionalId, ...formData },
+        LEADS_API ? `${LEADS_API}/professional` : `${LAMBDA.profLeadContact}/`,
+        LEADS_API
+          ? { professionalId, firstName: formData.name, email: formData.email, phone: formData.phone, message: formData.message }
+          : { professionalId, ...formData },
         { headers: { 'Content-Type': 'application/json' } }
       );
       if (res.status === 200) {
