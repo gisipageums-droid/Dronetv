@@ -141,7 +141,7 @@ export function Experience() {
 
                   {/* Description */}
                   <ul className="space-y-2 mb-4">
-                    {experience.description.map((item, itemIndex) => (
+                    {(experience.description || []).map((item, itemIndex) => (
                       <motion.li
                         key={itemIndex}
                         initial={{ opacity: 0, x: -20 }}
@@ -158,7 +158,7 @@ export function Experience() {
 
                   {/* Technologies */}
                   <div className="flex flex-wrap gap-2">
-                    {experience.technologies.map((tech, techIndex) => (
+                    {(experience.technologies || []).map((tech, techIndex) => (
                       <motion.span
                         key={tech}
                         initial={{ opacity: 0, scale: 0 }}
