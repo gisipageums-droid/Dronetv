@@ -203,7 +203,7 @@ const EventTemplate1: React.FC = () => {
   const fetchTemplateData = async (nameOrSlug: string) => {
     try {
       setIsLoading(true);
-      const url = EVENTS_API ? `${EVENTS_API}/${nameOrSlug}` : `${LAMBDA.eventPreview}/${nameOrSlug}`;
+      const url = EVENTS_API ? `${EVENTS_API}/public/${nameOrSlug}` : `${LAMBDA.eventPreview}/${nameOrSlug}`;
       const response = await fetch(url, { method: "GET", headers: { "Content-Type": "application/json" } });
 
       if (response.ok) {
@@ -224,7 +224,7 @@ const EventTemplate1: React.FC = () => {
         const match = cards.find((c: { urlSlug?: string }) => c.urlSlug === nameOrSlug);
         if (match?.eventName) {
           const retryUrl = EVENTS_API
-            ? `${EVENTS_API}/${encodeURIComponent(match.eventName)}`
+            ? `${EVENTS_API}/public/${encodeURIComponent(match.eventName)}`
             : `${LAMBDA.eventPreview}/${encodeURIComponent(match.eventName)}`;
           const retryRes = await fetch(retryUrl, { method: "GET", headers: { "Content-Type": "application/json" } });
           if (retryRes.ok) {
