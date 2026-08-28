@@ -96,8 +96,6 @@ export default function Header({
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '0.75rem',
-                        backgroundColor: '#111827',
-                        padding: '6px 10px',
                       }}
                     >
                       <motion.img

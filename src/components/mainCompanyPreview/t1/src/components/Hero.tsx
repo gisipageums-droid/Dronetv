@@ -163,25 +163,6 @@ export default function EditableHero({
               </a>
             </motion.div>
 
-            <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6 pt-8 px-2 sm:px-0"
-              variants={itemVariants}
-            >
-              <div className="flex -space-x-2">
-                {heroState.customerImages.map((img, i) => (
-                  <motion.div
-                    key={i}
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white shadow-lg bg-cover bg-center"
-                    style={{ backgroundImage: `url('${img}')` }}
-                    whileHover={{ scale: 1.2 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  />
-                ))}
-              </div>
-              <span className="text-sm sm:text-base text-white font-normal">
-                {heroState.trustText}
-              </span>
-            </motion.div>
           </motion.div>
 
           <motion.div
