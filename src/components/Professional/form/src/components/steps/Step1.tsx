@@ -818,11 +818,12 @@ export const Step1 = ({
       const resolvedFullName = json.fullName || data.basicInfo?.fullName || "";
       const generatedUsername =
         data.basicInfo?.user_name ||
-        `${(resolvedFullName || "user")
+        (resolvedFullName || "user")
           .toLowerCase()
           .replace(/[^a-z0-9\s]/g, "")
           .trim()
-          .replace(/\s+/g, "-") || "user"}-${kycMobile.slice(-4)}`;
+          .replace(/\s+/g, "-") ||
+        "user";
 
       updateField("basicInfo", {
         ...data.basicInfo,
@@ -2025,8 +2026,7 @@ export const Step1 = ({
                   type="text"
                   required={true}
                   placeholder="Enter your username"
-                  disabled={kycVerified}
-                  className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card disabled:opacity-60 ${usernameAvailable === false
+                  className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card ${usernameAvailable === false
                     ? "border-status-error focus:ring-status-error/40"
                     : ""
                     }`}
