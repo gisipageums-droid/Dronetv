@@ -6,11 +6,11 @@ import {
   Upload, ImageIcon, Link as LinkIcon,
 } from "lucide-react";
 import axios from "axios";
-import { LAMBDA, PAYMENT_API } from "../../lib/apiConfig";
+import { LAMBDA, MEDIA_API, PAYMENT_API } from "../../lib/apiConfig";
 import { SLOT_DEFINITIONS } from "../UserDashboard/pages/PagePlacements";
 
 const TOKEN_SPEND = LAMBDA.tokenSpend;
-const ADS_UPLOAD_API = `${LAMBDA.eventsImageUpload}/upload/ads`;
+const ADS_UPLOAD_API = MEDIA_API ? `${MEDIA_API}/upload-ads` : `${LAMBDA.eventsImageUpload}/upload/ads`;
 const SLOT_LABELS: Record<string, string> = Object.fromEntries(SLOT_DEFINITIONS.map(s => [s.id, s.label]));
 
 // The admin session token is stored under a separate localStorage key from

@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Layout, Coins, CheckCircle, AlertCircle, RefreshCw, X, Info, Upload, ImageIcon, Link as LinkIcon } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import axios from "axios";
-import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
+import { AUTH_API, MEDIA_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
 import { authHeader } from "../../../lib/authService";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const TOKEN_SPEND = LAMBDA.tokenSpend;
-const ADS_UPLOAD_API = `${LAMBDA.eventsImageUpload}/upload/ads`;
+const ADS_UPLOAD_API = MEDIA_API ? `${MEDIA_API}/upload-ads` : `${LAMBDA.eventsImageUpload}/upload/ads`;
 
 export const DURATION_OPTIONS = [
   { days: 1,  label: "1 Day",   discount: "" },

@@ -2565,6 +2565,27 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     setAutoFillStep('scraping');
     setAutoFillTaskId(null);
     setAutoFillCompanyId(null);
+
+    if (COMPANY_API) {
+      setAutoFillStep('processing');
+      try {
+        const res = await axios.post(`${COMPANY_API}/autofill-from-url`, { url });
+        if (res.data?.success) {
+          applyAutoFillData(res.data?.generatedData || {});
+          setAutoFillStep('done');
+          toast.success('Website analysed! Matching fields have been pre-filled.');
+        } else {
+          throw new Error(res.data?.message || 'Autofill failed');
+        }
+      } catch {
+        setAutoFillStep('error');
+        toast.error("Couldn't reach that website — please double-check the URL, or fill the form manually.");
+      } finally {
+        setIsAutoFilling(false);
+      }
+      return;
+    }
+
     try {
       const res = await axios.post(`${AI_GENERATOR_BASE}/generate-company-content`, {
         websiteUrl: url,
@@ -2584,6 +2605,52 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
     }
   };
 
+  // Shared by both the self-hosted (synchronous) and Lambda (polled) autofill
+  // paths so the two only differ in how they fetch `data`, not in how the
+  // result gets applied to the form.
+  const applyAutoFillData = (data: any) => {
+    const updates: Record<string, any> = {};
+    const email = data.contactInfo?.email;
+    const phone = data.contactInfo?.phone;
+    const addr = data.contactInfo?.address;
+    const desc = data.about?.description;
+    const heroTitle = data.hero?.title;
+    const heroSubtitle = data.hero?.subtitle;
+    const logoUrl = data.logoUrl;
+
+    if (email && !formData.directorEmail) updates.directorEmail = email;
+    if (phone && !formData.directorPhone) updates.directorPhone = phone;
+    if (addr) {
+      if (!formData.officeAddress) updates.officeAddress = addr;
+      if (!formData.directorAddress) updates.directorAddress = addr;
+    }
+    if (desc && !formData.natureOfBusiness) updates.natureOfBusiness = desc;
+
+    if (logoUrl && !formData.companyLogoUrl) updates.companyLogoUrl = logoUrl;
+
+    if (email && !formData.contactEmail) updates.contactEmail = email;
+    if (phone && !formData.contactPhone) updates.contactPhone = phone;
+
+    if (email && !formData.footerEmail) updates.footerEmail = email;
+    if (phone && !formData.footerPhone) updates.footerPhone = phone;
+
+    if (heroTitle && !formData.aboutTitle) updates.aboutTitle = heroTitle;
+
+    if (heroTitle && !formData.primaryCtaText) updates.primaryCtaText = 'Get In Touch';
+    if (heroSubtitle && !formData.servicesDescription) updates.servicesDescription = heroSubtitle;
+
+    const scrapedServices: string[] = Array.isArray(data.services) ? data.services : [];
+    if (scrapedServices.length > 0 && (!formData.services || formData.services.length === 0)) {
+      updates.services = scrapedServices.slice(0, 6).map((title: string) => ({
+        icon: 'camera',
+        title,
+        description: ''
+      }));
+    }
+
+    if (Object.keys(updates).length > 0) updateFormData(updates);
+  };
+
   useEffect(() => {
     if (!autoFillTaskId || autoFillStep !== 'processing') return;
 
@@ -2598,54 +2665,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
         if (status === 'COMPLETED' && autoFillCompanyId) {
           const companyRes = await axios.get(`${AI_GENERATOR_BASE}/company/${autoFillCompanyId}`);
           const data = companyRes.data?.company?.generatedData || companyRes.data?.generatedData || companyRes.data || {};
-          const updates: Record<string, any> = {};
-
-          const email = data.contactInfo?.email;
-          const phone = data.contactInfo?.phone;
-          const addr = data.contactInfo?.address;
-          const desc = data.about?.description;
-          const heroTitle = data.hero?.title;
-          const heroSubtitle = data.hero?.subtitle;
-          const logoUrl = data.logoUrl;
-
-          // Registration fields
-          if (email && !formData.directorEmail) updates.directorEmail = email;
-          if (phone && !formData.directorPhone) updates.directorPhone = phone;
-          if (addr) {
-            if (!formData.officeAddress) updates.officeAddress = addr;
-            if (!formData.directorAddress) updates.directorAddress = addr;
-          }
-          if (desc && !formData.natureOfBusiness) updates.natureOfBusiness = desc;
-
-          // Logo — set companyLogoUrl if not already set
-          if (logoUrl && !formData.companyLogoUrl) updates.companyLogoUrl = logoUrl;
-
-          // Template content fields — contact section
-          if (email && !formData.contactEmail) updates.contactEmail = email;
-          if (phone && !formData.contactPhone) updates.contactPhone = phone;
-
-          // Template content fields — footer section
-          if (email && !formData.footerEmail) updates.footerEmail = email;
-          if (phone && !formData.footerPhone) updates.footerPhone = phone;
-
-          // Template content fields — about section
-          if (heroTitle && !formData.aboutTitle) updates.aboutTitle = heroTitle;
-
-          // Template content fields — hero section
-          if (heroTitle && !formData.primaryCtaText) updates.primaryCtaText = 'Get In Touch';
-          if (heroSubtitle && !formData.servicesDescription) updates.servicesDescription = heroSubtitle;
-
-          // Template content fields — services (map scraped string list to service objects)
-          const scrapedServices: string[] = Array.isArray(data.services) ? data.services : [];
-          if (scrapedServices.length > 0 && (!formData.services || formData.services.length === 0)) {
-            updates.services = scrapedServices.slice(0, 6).map((title: string) => ({
-              icon: 'camera',
-              title,
-              description: ''
-            }));
-          }
-
-          if (Object.keys(updates).length > 0) updateFormData(updates);
+          applyAutoFillData(data);
 
           clearInterval(timer);
           setAutoFillStep('done');
