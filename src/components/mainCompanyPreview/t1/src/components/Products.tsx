@@ -66,7 +66,7 @@ export default function Products({ productData }) {
     categories: [
       "All",
       ...(productData?.products
-        ? new Set(productData.products.map((p) => p.category))
+        ? new Set(productData.products.map((p) => p.category).filter(Boolean))
         : []),
     ],
     benefits: productData?.benefits || [],
