@@ -109,40 +109,44 @@ export default function About({ aboutData }) {
             </div>
 
             {/* Certifications */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-green-600">✓</span> Certifications
-              </h3>
-              <ul className="space-y-2">
-                {aboutData.certifications.map((cert, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm text-justify"
-                  >
-                    <span className="text-green-600 mt-0.5">•</span>
-                    <span>{cert}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {aboutData.certifications && aboutData.certifications.length > 0 && (
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
+                <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
+                  <span className="text-green-600">✓</span> Certifications
+                </h3>
+                <ul className="space-y-2">
+                  {aboutData.certifications.map((cert, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-gray-700 text-sm text-justify"
+                    >
+                      <span className="text-green-600 mt-0.5">•</span>
+                      <span>{cert}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Achievements */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-yellow-600">🏆</span> Achievements
-              </h3>
-              <ul className="space-y-2">
-                {aboutData.achievements.map((achievement, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm text-justify"
-                  >
-                    <span className="text-yellow-600 mt-0.5">•</span>
-                    <span>{achievement}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {aboutData.achievements && aboutData.achievements.length > 0 && (
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 block lg:hidden">
+                <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
+                  <span className="text-yellow-600">🏆</span> Achievements
+                </h3>
+                <ul className="space-y-2">
+                  {aboutData.achievements.map((achievement, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-gray-700 text-sm text-justify"
+                    >
+                      <span className="text-yellow-600 mt-0.5">•</span>
+                      <span>{achievement}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </motion.div>
 
           <motion.div
@@ -164,40 +168,44 @@ export default function About({ aboutData }) {
             )}
 
             {/* Certifications */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-green-600">✓</span> Certifications
-              </h3>
-              <ul className="space-y-2">
-                {aboutData.certifications.map((cert, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm text-justify"
-                  >
-                    <span className="text-green-600 mt-0.5">•</span>
-                    <span>{cert}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {aboutData.certifications && aboutData.certifications.length > 0 && (
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
+                <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
+                  <span className="text-green-600">✓</span> Certifications
+                </h3>
+                <ul className="space-y-2">
+                  {aboutData.certifications.map((cert, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-gray-700 text-sm text-justify"
+                    >
+                      <span className="text-green-600 mt-0.5">•</span>
+                      <span>{cert}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Achievements */}
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
-              <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
-                <span className="text-yellow-600">🏆</span> Achievements
-              </h3>
-              <ul className="space-y-2">
-                {aboutData.achievements.map((achievement, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3 text-gray-700 text-sm text-justify"
-                  >
-                    <span className="text-yellow-600 mt-0.5">•</span>
-                    <span>{achievement}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {aboutData.achievements && aboutData.achievements.length > 0 && (
+              <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hidden lg:block">
+                <h3 className="font-bold text-gray-900 mb-4 text-lg flex items-center gap-2">
+                  <span className="text-yellow-600">🏆</span> Achievements
+                </h3>
+                <ul className="space-y-2">
+                  {aboutData.achievements.map((achievement, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-gray-700 text-sm text-justify"
+                    >
+                      <span className="text-yellow-600 mt-0.5">•</span>
+                      <span>{achievement}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </motion.div>
         </div>
       </div>
