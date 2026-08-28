@@ -901,7 +901,7 @@ const apiService = {
     }
   },
 
-  async approveProfessional(publishedId: string, userId: string): Promise<any> {
+  async approveProfessional(professionalId: string, userId: string): Promise<any> {
     try {
       const response = await fetch(
         PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-tem-validation` : `${LAMBDA.profValidate}/professional-tem-validation`,
@@ -911,7 +911,7 @@ const apiService = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
           },
-          body: JSON.stringify({ publishedId, action: "approve", userId }),
+          body: JSON.stringify({ professionalId, action: "approve", userId }),
         }
       );
 
@@ -926,7 +926,7 @@ const apiService = {
     }
   },
 
-  async rejectProfessional(publishedId: string, userId: string): Promise<any> {
+  async rejectProfessional(professionalId: string, userId: string): Promise<any> {
     try {
       const response = await fetch(
         PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-tem-validation` : `${LAMBDA.profValidate}/professional-tem-validation`,
@@ -936,7 +936,7 @@ const apiService = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
           },
-          body: JSON.stringify({ publishedId, action: "reject", userId }),
+          body: JSON.stringify({ professionalId, action: "reject", userId }),
         }
       );
 
@@ -1077,44 +1077,36 @@ const AdminProfessionalDashboard: React.FC = () => {
 
         case "approve":
           if (professional) {
-            const result = await apiService.approveProfessional(
+            // deleteProfessional/approveProfessional/rejectProfessional
+            // already throw on a non-2xx response (caught below), so
+            // reaching this point means the backend accepted it - no need
+            // to also match its exact message/status text, which drifted
+            // from what the backend actually returns and made every
+            // successful approve/reject/delete look like a failure.
+            await apiService.approveProfessional(
               professionalId,
               professional.userId
             );
-
-            if (result.status == "approved") {
-              toast.success("Professional approved successfully");
-              await fetchProfessionals();
-            } else {
-              toast.error("Failed to approve professional");
-            }
+            toast.success("Professional approved successfully");
+            await fetchProfessionals();
           }
           break;
 
         case "reject":
           if (professional) {
-            const result = await apiService.rejectProfessional(
+            await apiService.rejectProfessional(
               professionalId,
               professional.userId
             );
-
-            if (result.status == "rejected") {
-              toast.success("Professional rejected successfully");
-              await fetchProfessionals();
-            } else {
-              toast.error("Failed to reject professional");
-            }
+            toast.success("Professional rejected successfully");
+            await fetchProfessionals();
           }
           break;
 
         case "delete":
-          const result = await apiService.deleteProfessional(professionalId);
-          if (result.message === "Professional template deleted successfully") {
-            toast.success("Professional deleted successfully");
-            await fetchProfessionals();
-          } else {
-            toast.error("Failed to delete professional");
-          }
+          await apiService.deleteProfessional(professionalId);
+          toast.success("Professional deleted successfully");
+          await fetchProfessionals();
           break;
 
         default:
