@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Handshake, Building2, Brain, Calendar, GraduationCap, Users, Eye, Award, TrendingUp, Mail, Phone, MapPin, CheckCircle, Send } from 'lucide-react';
-import { ADMIN_API, LAMBDA } from '../lib/apiConfig';
+import { LAMBDA } from '../lib/apiConfig';
 import CompactHero from './common/CompactHero';
 
 const PartnerPage = () => {
@@ -35,7 +35,14 @@ const PartnerPage = () => {
     };
     setSubmitError('');
     try {
-      const response = await fetch(ADMIN_API ? `${ADMIN_API}/partner` : `${LAMBDA.partner}/postdronetvpartner`, {
+      // ADMIN_API is configured for other admin features, but no /partner
+      // route was ever built on the self-hosted admin service (confirmed:
+      // 404, not present anywhere in that service's router at all) — every
+      // real submission was silently failing since it never reached the
+      // Lambda fallback below, which is the only path that actually works
+      // (verified live). Always use it here until a real self-hosted route
+      // exists.
+      const response = await fetch(`${LAMBDA.partner}/postdronetvpartner`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
