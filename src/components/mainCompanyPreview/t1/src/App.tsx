@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
-import UsedBy from "./components/UsedBy";
 import About from "./components/About";
 import Services from "./components/Services";
 import Products from "./components/Products";
@@ -117,9 +116,6 @@ export default function App() {
         heroData={finaleDataReview.content.hero}
         companyName={finaleDataReview.companyName}
 
-      />
-      <UsedBy
-        usedByData={finaleDataReview.content.UsedBy ?? finaleDataReview.content.usedBy}
       />
       <About
         aboutData={finaleDataReview.content.about}
