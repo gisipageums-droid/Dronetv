@@ -796,6 +796,7 @@ export const Step1 = ({
   const [kycVerified, setKycVerified] = useState(false);
   const [kycError, setKycError] = useState("");
   const [kycNoMatch, setKycNoMatch] = useState(false);
+  const [kycConsent, setKycConsent] = useState(false);
 
   const handleVerifyMobile = async () => {
     setKycVerifying(true);
@@ -814,10 +815,20 @@ export const Step1 = ({
         return;
       }
 
+      const resolvedFullName = json.fullName || data.basicInfo?.fullName || "";
+      const generatedUsername =
+        data.basicInfo?.user_name ||
+        `${(resolvedFullName || "user")
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g, "")
+          .trim()
+          .replace(/\s+/g, "-") || "user"}-${kycMobile.slice(-4)}`;
+
       updateField("basicInfo", {
         ...data.basicInfo,
         Phonenumber: kycMobile,
-        fullName: json.fullName || data.basicInfo?.fullName || "",
+        fullName: resolvedFullName,
+        user_name: generatedUsername,
         date_of_birth: json.dateOfBirth || data.basicInfo?.date_of_birth || "",
         gender: json.gender || data.basicInfo?.gender || "",
         address: json.address || data.basicInfo?.address || "",
@@ -828,6 +839,15 @@ export const Step1 = ({
         // Note: intentionally NOT writing json.maskedAadhaar into aadhar_number here —
         // a masked value (contains "X") flips an unrelated DigiLocker effect that locks
         // this whole section read-only, which isn't wanted for the KYC-prefill flow.
+      });
+      // PAN-based verification implies an Indian identity — default it instead
+      // of leaving the Nationality dropdown on "Select Nationality". Email/phone
+      // here come from the same KYC response, so fill them in alongside it.
+      updateField("addressInformation", {
+        ...data.addressInformation,
+        nationality: data.addressInformation?.nationality || "indian",
+        email: json.email || data.addressInformation?.email || "",
+        phoneNumber: data.addressInformation?.phoneNumber || `+91${kycMobile}`,
       });
       setKycVerified(true);
     } catch (err) {
@@ -1559,12 +1579,26 @@ export const Step1 = ({
                   <button
                     type="button"
                     onClick={handleVerifyMobile}
-                    disabled={kycMobile.length !== 10 || kycVerifying || kycVerified}
+                    disabled={kycMobile.length !== 10 || kycVerifying || kycVerified || !kycConsent}
                     className="px-4 py-2 rounded-lg font-semibold text-white bg-brand-gold hover:bg-brand-gold/90 disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap transition"
                   >
                     {kycVerifying ? "Verifying..." : kycVerified ? "✓ Verified" : "Verify"}
                   </button>
                 </div>
+                {!kycVerified && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <input
+                      id="phone-kyc-consent-checkbox"
+                      type="checkbox"
+                      checked={kycConsent}
+                      onChange={(e) => setKycConsent(e.target.checked)}
+                      className="h-4 w-4 accent-brand-gold rounded cursor-pointer"
+                    />
+                    <label htmlFor="phone-kyc-consent-checkbox" className="text-xs text-ink-charcoal cursor-pointer select-none">
+                      I consent to phone number verification
+                    </label>
+                  </div>
+                )}
                 {kycError && <p className="text-status-error text-xs mt-1">{kycError}</p>}
                 {kycNoMatch && (
                   <p className="text-ink-caption text-xs mt-1">
@@ -1606,7 +1640,7 @@ export const Step1 = ({
             )}
 
             {/* Date of Birth */}
-            {isReadOnly ? (
+            {(isReadOnly || kycVerified) ? (
               <div className="flex flex-col">
                 <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Date of Birth
@@ -1668,64 +1702,6 @@ export const Step1 = ({
                 </select>
               </div>
             )}
-
-            {/* C/o, S/o, D/o and Relationship Name */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Relationship Type */}
-              {isReadOnly ? (
-                <ReadOnlyField
-                  label="C/o, S/o, D/o"
-                  value={data.basicInfo?.relationship_type || ""}
-                />
-              ) : (
-                <div className="flex flex-col">
-                  <label className="mb-1 font-medium text-ink-charcoal text-sm">
-                    C/o, S/o, D/o
-                  </label>
-                  <select
-                    className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
-                    value={data.basicInfo?.relationship_type || ""}
-                    onChange={(e) =>
-                      updateField("basicInfo", {
-                        ...data.basicInfo,
-                        relationship_type: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="">Select Relationship</option>
-                    <option value="C/o">C/o (Care of)</option>
-                    <option value="S/o">S/o (Son of)</option>
-                    <option value="D/o">D/o (Daughter of)</option>
-                  </select>
-                </div>
-              )}
-
-              {/* Relationship Name */}
-              {isReadOnly ? (
-                <ReadOnlyField
-                  label="Relationship Name"
-                  value={data.basicInfo?.relationship_name || ""}
-                />
-              ) : (
-                <div className="flex flex-col">
-                  <label className="mb-1 font-medium text-ink-charcoal text-sm">
-                    Relationship Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter relative's name"
-                    className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
-                    value={data.basicInfo?.relationship_name || ""}
-                    onChange={(e) =>
-                      updateField("basicInfo", {
-                        ...data.basicInfo,
-                        relationship_name: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              )}
-            </div>
 
             {/* Address */}
             {isReadOnly ? (
@@ -2049,7 +2025,8 @@ export const Step1 = ({
                   type="text"
                   required={true}
                   placeholder="Enter your username"
-                  className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card ${usernameAvailable === false
+                  disabled={kycVerified}
+                  className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card disabled:opacity-60 ${usernameAvailable === false
                     ? "border-status-error focus:ring-status-error/40"
                     : ""
                     }`}
@@ -2097,7 +2074,8 @@ export const Step1 = ({
                   type="email"
                   required={true}
                   placeholder="Enter your email address"
-                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
+                  disabled={kycVerified}
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card disabled:opacity-60"
                   value={data.addressInformation?.email || ""}
                   onChange={(e) =>
                     updateField("addressInformation", {
@@ -2125,6 +2103,7 @@ export const Step1 = ({
                   }
                   placeholder="Enter phone number"
                   required={true}
+                  disabled={kycVerified}
                   className=""
                 />
                 {showErrors && !data.addressInformation?.phoneNumber && <p className="text-status-error text-xs mt-1">Phone number is required</p>}

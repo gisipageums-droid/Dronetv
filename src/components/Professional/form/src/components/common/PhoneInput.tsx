@@ -6,6 +6,7 @@ interface PhoneInputProps {
   placeholder?: string;
   required?: boolean;
   className?: string;
+  disabled?: boolean;
 }
 
 export const PhoneInput = ({
@@ -14,6 +15,7 @@ export const PhoneInput = ({
   placeholder = "Enter phone number",
   required = false,
   className = "",
+  disabled = false,
 }: PhoneInputProps) => {
   const [phoneNumber, setPhoneNumber] = useState("");
 
@@ -44,8 +46,9 @@ export const PhoneInput = ({
         onChange={(e) => handleChange(e.target.value)}
         placeholder={placeholder}
         required={required}
+        disabled={disabled}
         maxLength={10}
-        className="flex-1 px-3 py-2 focus:outline-none rounded-r-lg text-ink bg-surface-card"
+        className="flex-1 px-3 py-2 focus:outline-none rounded-r-lg text-ink bg-surface-card disabled:opacity-60"
       />
     </div>
   );

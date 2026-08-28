@@ -14,122 +14,8 @@ import { Loader } from "./components/Loader";
 import { AdminEditor } from "./admin/AdminEditor";
 import axios from "axios";
 import { useUserAuth } from "../../../context/context";
-import { AlertTriangle, X } from "lucide-react";
 import { toast } from "sonner";
-import { PROFESSIONAL_API, PAYMENT_API, AUTH_API, LAMBDA } from '../../../../lib/apiConfig';
-import { authHeader } from '../../../../lib/authService';
-
-// ✅ Token Validation API URL — same wallet/profile source the dashboard
-// sidebar uses to display the real balance. This used to POST to the events
-// service's base URL (a leftover from the Lambda era with no self-hosted
-// equivalent), which returned no real token balance and made every
-// submission look like it had 0 tokens.
-const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
-
-// ================== Token validation function ====================
-const validateUserTokens = async (
-  email: string
-): Promise<{
-  message: string;
-  success: boolean;
-  tokenBalance: number;
-  userExists: boolean;
-}> => {
-  try {
-    const response = PAYMENT_API
-      ? await axios.get(`${PAYMENT_API}/wallet?userId=${email}`, { timeout: 10000, headers: authHeader() })
-      : await axios.get(`${PROFILE_API}?userId=${email}`, { timeout: 10000, headers: authHeader() });
-
-    const tokenBalance = PAYMENT_API
-      ? (response.data?.tokenBalance ?? 0)
-      : (response.data?.profile?.tokenBalance ?? 0);
-
-    if (tokenBalance < 100) {
-      return {
-        success: false,
-        tokenBalance,
-        message: "Insufficient tokens to create a template. Please purchase more tokens.",
-        userExists: true,
-      };
-    }
-
-    return {
-      success: true,
-      tokenBalance,
-      message: "Token validation successful",
-      userExists: true,
-    };
-  } catch (error: unknown) {
-    console.error("Token validation error:", error);
-    return {
-      message: "Token validation error",
-      success: false,
-      tokenBalance: 0,
-      userExists: false,
-    };
-  }
-};
-
-// ================== Token Modal Component ========================
-const TokenValidationModal: React.FC<{
-  isOpen: boolean;
-  onClose: () => void;
-  message: string;
-  onPurchaseTokens?: () => void;
-  totalToken: number;
-}> = ({ isOpen, onClose, message, onPurchaseTokens, totalToken }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink bg-opacity-50">
-      <div className="bg-surface-card rounded-lg p-6 max-w-md w-full mx-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
-            <AlertTriangle className="w-6 h-6 text-brand-gold mr-2" />
-            <h3 className="text-lg font-semibold text-ink">
-              Insufficient Tokens
-            </h3>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-ink-caption hover:text-ink-paragraph transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="mb-6">
-          <p className="text-ink-paragraph mb-4">{message}</p>
-
-          <div className="bg-surface-main border border-brand-yellow-soft rounded-lg p-4">
-            <p className="text-sm text-brand-gold">
-              {`Each website generation requires 100 tokens but you have ${totalToken}. You can purchase more
-              tokens to continue.`}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex justify-end space-x-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-ink-paragraph border border-ink-light rounded-lg hover:bg-ink-offwhite transition-colors"
-          >
-            Cancel
-          </button>
-
-          {onPurchaseTokens && (
-            <button
-              onClick={onPurchaseTokens}
-              className="px-4 py-2 bg-status-success text-white rounded-lg hover:bg-status-success transition-colors"
-            >
-              Purchase Tokens
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+import { PROFESSIONAL_API, LAMBDA } from '../../../../lib/apiConfig';
 
 function AppInner() {
   const { isLogin, user, isAdminLogin } = useUserAuth();
@@ -142,11 +28,6 @@ function AppInner() {
   const [step1Valid, setStep1Valid] = useState(false);
   const [showStep1Error, setShowStep1Error] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null); // ✅ Add state for submissionId
-  const [showTokenModal, setShowTokenModal] = useState(false);
-  const [tokenValidation, setTokenValidation] = useState<{
-    message: string;
-    totalToken: number;
-  }>();
 
   // ---- NEW: get URL params ----
   const { userId, professionalId } = useParams<{
@@ -234,40 +115,6 @@ function AppInner() {
   }, [userId, professionalId, setData]);
 
 
-  // ================== Token validation before submission =================
-  const validateBeforeSubmit = async (): Promise<boolean> => {
-    const userEmail = isLogin ? (user?.email || user?.userData?.email) : (data.addressInformation?.email || data.basicInfo?.email);
-
-    try {
-      if (isAdminLogin) {
-        return true;
-      }
-      const tokenResult = await validateUserTokens(userEmail);
-
-      if (!tokenResult.success || tokenResult.tokenBalance < 100) {
-        setTokenValidation({
-          message: tokenResult.message,
-          totalToken: tokenResult.tokenBalance,
-        });
-        setShowTokenModal(true);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error("Token validation failed:", error);
-      toast.warning(
-        "Token validation service is temporarily unavailable. Proceeding with submission..."
-      );
-      return true;
-    }
-  };
-
-  const handlePurchaseTokens = () => {
-    setShowTokenModal(false);
-    window.open("/user-buy", "_blank");
-  };
-
   const handleNextWithValidation = () => {
     if (current === 0 && !step1Valid) {
       setShowStep1Error(true);
@@ -283,11 +130,6 @@ function AppInner() {
   };
 
   const handleSubmit = async () => {
-    const canProceed = await validateBeforeSubmit();
-    if (!canProceed) {
-      return;
-    }
-
     setLoading(true);
     setSuccess(false);
     const email = isLogin ? user?.userData?.email : (data.addressInformation?.email || data.basicInfo?.email);
@@ -513,14 +355,6 @@ function AppInner() {
         {/* --- Admin Editor Overlay --- */}
         <AdminEditor isOpen={adminOpen} onClose={() => setAdminOpen(false)} />
 
-        {/* Token Validation Modal */}
-        <TokenValidationModal
-          isOpen={showTokenModal}
-          onClose={() => setShowTokenModal(false)}
-          message={tokenValidation?.message || "Token validation error"}
-          onPurchaseTokens={handlePurchaseTokens}
-          totalToken={tokenValidation?.totalToken || 0}
-        />
       </div>
     </>
   );
