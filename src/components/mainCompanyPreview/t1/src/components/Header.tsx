@@ -7,6 +7,12 @@ export default function Header({
 }: any) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [logoNeedsDarkBg, setLogoNeedsDarkBg] = useState(false);
+  // Some third-party servers reject/hang on a crossorigin-mode request
+  // entirely (confirmed live: a logo that loads fine normally came back
+  // as a broken image once `crossOrigin="anonymous"` was added for the
+  // brightness check below). Retry once without it so the logo is never
+  // sacrificed just to attempt the brightness check.
+  const [logoCorsFailed, setLogoCorsFailed] = useState(false);
 
   // This header's own background is fixed white. A real scraped/authored
   // logo is just as likely to be a white/light mark meant for a dark
@@ -136,10 +142,12 @@ export default function Header({
                       }}
                     >
                       <motion.img
+                        key={logoCorsFailed ? "logo-no-cors" : "logo-cors"}
                         src={headerState.logoSrc}
                         alt="Logo"
-                        crossOrigin="anonymous"
+                        {...(logoCorsFailed ? {} : { crossOrigin: "anonymous" })}
                         onLoad={(e) => checkLogoBrightness(e.currentTarget)}
+                        onError={() => setLogoCorsFailed((prev) => prev || true)}
                         style={{
                           height: '65px',
                           width: 'auto',
