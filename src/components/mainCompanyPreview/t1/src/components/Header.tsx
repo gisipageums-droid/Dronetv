@@ -7,6 +7,7 @@ export default function Header({
 }: any) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [logoNeedsDarkBg, setLogoNeedsDarkBg] = useState(false);
+  const [logoCorsFailed, setLogoCorsFailed] = useState(false);
 
   const checkLogoBrightness = (img: HTMLImageElement) => {
     try {
@@ -125,10 +126,12 @@ export default function Header({
                       }}
                     >
                       <motion.img
+                        key={logoCorsFailed ? "logo-no-cors" : "logo-cors"}
                         src={headerState.logoSrc}
                         alt="Logo"
-                        crossOrigin="anonymous"
+                        {...(logoCorsFailed ? {} : { crossOrigin: "anonymous" })}
                         onLoad={(e) => checkLogoBrightness(e.currentTarget)}
+                        onError={() => setLogoCorsFailed((prev) => prev || true)}
                         style={{
                           height: '65px',
                           width: 'auto',
