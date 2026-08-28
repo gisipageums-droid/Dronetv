@@ -825,7 +825,9 @@ export const Step1 = ({
         pincode: json.pincode || data.basicInfo?.pincode || "",
         state: json.state || data.basicInfo?.state || "",
         country: json.country || data.basicInfo?.country || "India",
-        aadhar_number: json.maskedAadhaar || data.basicInfo?.aadhar_number || "",
+        // Note: intentionally NOT writing json.maskedAadhaar into aadhar_number here —
+        // a masked value (contains "X") flips an unrelated DigiLocker effect that locks
+        // this whole section read-only, which isn't wanted for the KYC-prefill flow.
       });
       setKycVerified(true);
     } catch (err) {
