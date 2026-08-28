@@ -92,10 +92,10 @@ const Navbar: React.FC<NavbarProps> = ({ content }) => {
               onClick={() => scrollToSection("#home")}
             >
               <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
-                <span className="uppercase">{content.logoText[0] || "P"}</span>
+                <span className="uppercase">{(content.logoText || (content as any)?.name || "P")[0]}</span>
               </div>
               <span className="text-2xl font-bold truncate capitalize text-yellow-500">
-                {content.logoText || "MyLogo"}
+                {content.logoText || (content as any)?.name || "MyLogo"}
               </span>
             </motion.div>
 

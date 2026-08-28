@@ -54,9 +54,9 @@ const Testimonials: React.FC<TestimonialsProps> = ({ content }) => {
           className="mb-16 text-center"
         >
           <h2 className="mb-4 text-4xl font-bold text-gray-900 lg:text-5xl dark:text-white">
-            {testimonialContent.heading.split(" ").slice(0, -1).join(" ")}{" "}
+            {(testimonialContent.heading || "Client Testimonials").split(" ").slice(0, -1).join(" ")}{" "}
             <span className="text-orange-400">
-              {testimonialContent.heading.split(" ").slice(-1)}
+              {(testimonialContent.heading || "Client Testimonials").split(" ").slice(-1)}
             </span>
           </h2>
           <p className="max-w-3xl mx-auto text-xl text-center text-gray-600 dark:text-gray-400">
