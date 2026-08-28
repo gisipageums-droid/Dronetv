@@ -25,12 +25,12 @@ pipeline {
                         --network-alias dronetv-frontend-testdev \
                         --restart unless-stopped \
                         --label traefik.enable=true \
-                        --label 'traefik.http.routers.dronetv-frontend-testdev-https.rule=Host(`testdev.dronetv.in`)' \
+                        --label 'traefik.http.routers.dronetv-frontend-testdev-https.rule=Host(`dev.dronetv.in`)' \
                         --label traefik.http.routers.dronetv-frontend-testdev-https.entrypoints=https \
                         --label traefik.http.routers.dronetv-frontend-testdev-https.tls=true \
                         --label traefik.http.routers.dronetv-frontend-testdev-https.tls.certresolver=letsencrypt \
                         --label traefik.http.services.dronetv-frontend-testdev.loadbalancer.server.port=80 \
-                        --label 'traefik.http.routers.dronetv-frontend-testdev-http.rule=Host(`testdev.dronetv.in`)' \
+                        --label 'traefik.http.routers.dronetv-frontend-testdev-http.rule=Host(`dev.dronetv.in`)' \
                         --label traefik.http.routers.dronetv-frontend-testdev-http.entrypoints=http \
                         --label traefik.http.routers.dronetv-frontend-testdev-http.middlewares=dronetv-frontend-testdev-https-redirect \
                         --label traefik.http.middlewares.dronetv-frontend-testdev-https-redirect.redirectscheme.scheme=https \
@@ -46,6 +46,6 @@ pipeline {
         }
     }
     post {
-        success { echo 'testdev.dronetv.in deployed' }
+        success { echo 'dev.dronetv.in deployed' }
     }
 }
