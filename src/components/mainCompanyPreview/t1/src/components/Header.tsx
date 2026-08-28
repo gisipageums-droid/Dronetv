@@ -6,46 +6,6 @@ export default function Header({
   headerData,
 }: any) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [logoNeedsDarkBg, setLogoNeedsDarkBg] = useState(false);
-  // Some third-party servers reject/hang on a crossorigin-mode request
-  // entirely (confirmed live: a logo that loads fine normally came back
-  // as a broken image once `crossOrigin="anonymous"` was added for the
-  // brightness check below). Retry once without it so the logo is never
-  // sacrificed just to attempt the brightness check.
-  const [logoCorsFailed, setLogoCorsFailed] = useState(false);
-
-  // This header's own background is fixed white. A real scraped/authored
-  // logo is just as likely to be a white/light mark meant for a dark
-  // navbar as anything else (confirmed live: an all-white SVG logo
-  // rendered fully invisible here) - but always wrapping every logo in a
-  // dark chip looked wrong for the common case of a logo that's already
-  // fine on white. Sample the loaded image's own average brightness and
-  // only add a dark backdrop for genuinely light/near-white logos.
-  // Cross-origin images without CORS headers taint the canvas and throw -
-  // that's the common case for third-party logo URLs, so this silently
-  // does nothing (no background) rather than guessing wrong.
-  const checkLogoBrightness = (img: HTMLImageElement) => {
-    try {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth || 1;
-      canvas.height = img.naturalHeight || 1;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      ctx.drawImage(img, 0, 0);
-      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let total = 0;
-      let count = 0;
-      for (let i = 0; i < data.length; i += 4) {
-        if (data[i + 3] < 10) continue; // skip transparent pixels
-        total += (data[i] + data[i + 1] + data[i + 2]) / 3;
-        count++;
-      }
-      if (count > 0 && total / count > 200) setLogoNeedsDarkBg(true);
-    } catch {
-      // Tainted canvas (cross-origin, no CORS headers) - can't inspect
-      // pixels, so leave the logo exactly as extracted with no background.
-    }
-  };
 
   // Fixed state initialization
   const headerState = headerData || {
@@ -136,18 +96,24 @@ export default function Header({
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '0.75rem',
-                        ...(logoNeedsDarkBg
+                        // Whether this logo is light/white-colored enough to
+                        // need a dark backdrop is decided server-side during
+                        // scraping (template_mapper.py's _is_logo_light) -
+                        // a real browser's client-side canvas brightness
+                        // check is blocked by CORS for most third-party
+                        // logo hosts (confirmed live: bot/hotlink
+                        // protection blocks a real crossorigin fetch even
+                        // when the server nominally sends
+                        // Access-Control-Allow-Origin), so it can't be done
+                        // reliably here.
+                        ...(headerState.logoIsLight
                           ? { backgroundColor: '#111827', padding: '6px 10px' }
                           : {}),
                       }}
                     >
                       <motion.img
-                        key={logoCorsFailed ? "logo-no-cors" : "logo-cors"}
                         src={headerState.logoSrc}
                         alt="Logo"
-                        {...(logoCorsFailed ? {} : { crossOrigin: "anonymous" })}
-                        onLoad={(e) => checkLogoBrightness(e.currentTarget)}
-                        onError={() => setLogoCorsFailed((prev) => prev || true)}
                         style={{
                           height: '65px',
                           width: 'auto',
