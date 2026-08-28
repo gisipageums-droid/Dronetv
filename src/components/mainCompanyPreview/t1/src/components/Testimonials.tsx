@@ -62,7 +62,7 @@ export default function EditableTestimonials({
     return stars;
   };
 
-  return (
+  return testimonialsData.testimonials && testimonialsData.testimonials.length > 0 && (
     <section
       id="testimonials"
       className="bg-ink-offwhite py-16 scroll-mt-20"
