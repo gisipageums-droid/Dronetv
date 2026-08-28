@@ -158,7 +158,7 @@ export function About({ aboutData }: AboutProps) {
               viewport={{ once: true }}
               className="space-y-4"
             >
-              {data.skills.map((skill, index) => (
+              {(data.skills || []).map((skill, index) => (
                 <div key={index} className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
                   <span className="text-ink-paragraph">{skill}</span>

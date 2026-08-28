@@ -103,7 +103,7 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
                   </motion.p>
 
                   <ul className="mb-6 space-y-2">
-                    {service.features.map((feature, idx) => (
+                    {(service.features || []).map((feature, idx) => (
                       <motion.li
                         key={`${service.id}-feat-${idx}`}
                         initial={{ opacity: 0, x: -20 }}

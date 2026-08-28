@@ -165,7 +165,7 @@ export function Footer({ footerData }: FooterProps) {
           >
             <h4 className="text-lg font-semibold text-brand-yellow">More Links</h4>
             <div className="space-y-2">
-              {data.moreLinks.map((link, index) => (
+              {(data.moreLinks || []).map((link, index) => (
                 <motion.a
                   key={index}
                   href={link.href}
