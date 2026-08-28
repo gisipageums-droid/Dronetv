@@ -6,30 +6,6 @@ export default function Header({
   headerData,
 }: any) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [logoNeedsDarkBg, setLogoNeedsDarkBg] = useState(false);
-  const [logoCorsFailed, setLogoCorsFailed] = useState(false);
-
-  const checkLogoBrightness = (img: HTMLImageElement) => {
-    try {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth || 1;
-      canvas.height = img.naturalHeight || 1;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      ctx.drawImage(img, 0, 0);
-      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let total = 0;
-      let count = 0;
-      for (let i = 0; i < data.length; i += 4) {
-        if (data[i + 3] < 10) continue;
-        total += (data[i] + data[i + 1] + data[i + 2]) / 3;
-        count++;
-      }
-      if (count > 0 && total / count > 200) setLogoNeedsDarkBg(true);
-    } catch {
-      // Tainted canvas (cross-origin, no CORS headers) - leave as-is.
-    }
-  };
 
   // Fixed state initialization
   const headerState = headerData || {
@@ -120,18 +96,14 @@ export default function Header({
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '0.75rem',
-                        ...(logoNeedsDarkBg
+                        ...(headerState.logoIsLight
                           ? { backgroundColor: '#111827', padding: '6px 10px' }
                           : {}),
                       }}
                     >
                       <motion.img
-                        key={logoCorsFailed ? "logo-no-cors" : "logo-cors"}
                         src={headerState.logoSrc}
                         alt="Logo"
-                        {...(logoCorsFailed ? {} : { crossOrigin: "anonymous" })}
-                        onLoad={(e) => checkLogoBrightness(e.currentTarget)}
-                        onError={() => setLogoCorsFailed((prev) => prev || true)}
                         style={{
                           height: '65px',
                           width: 'auto',
