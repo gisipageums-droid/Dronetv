@@ -2235,6 +2235,7 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   // already fills the logo/basic fields immediately) and enriches
   // services/about/etc. with real per-section content once it finishes.
   const [crawlJobId, setCrawlJobId] = useState<string | null>(null);
+  const [crawlCompanyName, setCrawlCompanyName] = useState<string>('Company');
 
   const handleVerifyPAN = () => {
     setVerifyingPan(true);
@@ -2579,7 +2580,10 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           applyAutoFillData(res.data?.generatedData || {});
           setAutoFillStep('done');
           toast.success('Website analysed! Matching fields have been pre-filled.');
-          if (res.data?.crawlJobId) setCrawlJobId(res.data.crawlJobId);
+          if (res.data?.crawlJobId) {
+            setCrawlCompanyName(res.data?.generatedData?.companyName || formData.companyName || 'Company');
+            setCrawlJobId(res.data.crawlJobId);
+          }
         } else {
           throw new Error(res.data?.message || 'Autofill failed');
         }
@@ -2699,7 +2703,9 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
     const poll = async () => {
       try {
-        const res = await axios.get(`${COMPANY_API}/autofill-crawl-status/${crawlJobId}`);
+        const res = await axios.get(`${COMPANY_API}/autofill-crawl-status/${crawlJobId}`, {
+          params: { companyName: crawlCompanyName },
+        });
         const status = res.data?.status;
         if (status === 'success') {
           applyRichCrawlData(res.data?.content);
