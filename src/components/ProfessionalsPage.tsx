@@ -6,7 +6,6 @@ import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
 import { fetchContent } from '../lib/mediaApi';
 import CompactHero from './common/CompactHero';
 import { withInlineAds, AdSidebarRail } from './common/adCreatives';
-import { useUserAuth } from './context/context';
 
 interface Professional {
   professionalId: string;
@@ -40,7 +39,6 @@ const ProfessionalsPage: React.FC = () => {
   const [jobCount, setJobCount] = useState<number | null>(null);
   const professionalsPerPage = 12;
   const navigate = useNavigate();
-  const { isLogin } = useUserAuth();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -173,11 +171,13 @@ const ProfessionalsPage: React.FC = () => {
         action={
           <button
             onClick={() => {
-              if (!isLogin) { navigate("/login"); return; }
               try { localStorage.removeItem("professionalFormDraft"); } catch { /* ignore */ }
-              // Was routing through /professional/select (a template-choice
-              // screen) — user wants "List your Profile" to open the real
-              // registration form directly instead of that extra step.
+              // The form itself (Professional/form/src/App.tsx) already
+              // handles both logged-in and logged-out users on its own
+              // (falls back to the email typed into the form when there's
+              // no session) - gating navigation here on isLogin just added
+              // an unwanted extra /login redirect before a page that never
+              // needed one.
               navigate("/professional/form");
             }}
             className="px-3 py-1.5 text-xs font-semibold text-ink bg-brand-yellow rounded-lg hover:bg-brand-yellow-soft transition flex-shrink-0"
