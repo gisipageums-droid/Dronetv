@@ -96,16 +96,6 @@ export default function Header({
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '0.75rem',
-                        // This header's own background is fixed white
-                        // (see headerStyles above) — a real scraped logo is
-                        // just as likely to be a white/light mark meant for
-                        // a dark navbar (confirmed live: an all-white SVG
-                        // logo rendered fully invisible here). A dark chip
-                        // behind the logo guarantees contrast regardless of
-                        // what color a given company's real logo turns out
-                        // to be, without needing to inspect the file itself.
-                        backgroundColor: '#111827',
-                        padding: '6px 10px',
                       }}
                     >
                       <motion.img
