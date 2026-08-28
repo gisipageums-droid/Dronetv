@@ -109,40 +109,44 @@ export default function About({ aboutData }) {
             </div>
 
             {/* Certifications */}
-            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
-              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
-                <span className="text-status-success">✓</span> Certifications
-              </h3>
-              <ul className="space-y-2">
-                {aboutData.certifications.map((cert, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3 text-ink-paragraph text-sm text-justify"
-                  >
-                    <span className="text-status-success mt-0.5">•</span>
-                    <span>{cert}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {aboutData.certifications && aboutData.certifications.length > 0 && (
+              <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
+                <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                  <span className="text-status-success">✓</span> Certifications
+                </h3>
+                <ul className="space-y-2">
+                  {aboutData.certifications.map((cert, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-ink-paragraph text-sm text-justify"
+                    >
+                      <span className="text-status-success mt-0.5">•</span>
+                      <span>{cert}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Achievements */}
-            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
-              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
-                <span className="text-brand-gold">🏆</span> Achievements
-              </h3>
-              <ul className="space-y-2">
-                {aboutData.achievements.map((achievement, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3 text-ink-paragraph text-sm text-justify"
-                  >
-                    <span className="text-brand-gold mt-0.5">•</span>
-                    <span>{achievement}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {aboutData.achievements && aboutData.achievements.length > 0 && (
+              <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light block lg:hidden">
+                <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                  <span className="text-brand-gold">🏆</span> Achievements
+                </h3>
+                <ul className="space-y-2">
+                  {aboutData.achievements.map((achievement, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-ink-paragraph text-sm text-justify"
+                    >
+                      <span className="text-brand-gold mt-0.5">•</span>
+                      <span>{achievement}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </motion.div>
 
           <motion.div
@@ -164,40 +168,44 @@ export default function About({ aboutData }) {
             )}
 
             {/* Certifications */}
-            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
-              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
-                <span className="text-status-success">✓</span> Certifications
-              </h3>
-              <ul className="space-y-2">
-                {aboutData.certifications.map((cert, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3 text-ink-paragraph text-sm text-justify"
-                  >
-                    <span className="text-status-success mt-0.5">•</span>
-                    <span>{cert}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {aboutData.certifications && aboutData.certifications.length > 0 && (
+              <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
+                <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                  <span className="text-status-success">✓</span> Certifications
+                </h3>
+                <ul className="space-y-2">
+                  {aboutData.certifications.map((cert, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-ink-paragraph text-sm text-justify"
+                    >
+                      <span className="text-status-success mt-0.5">•</span>
+                      <span>{cert}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Achievements */}
-            <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
-              <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
-                <span className="text-brand-gold">🏆</span> Achievements
-              </h3>
-              <ul className="space-y-2">
-                {aboutData.achievements.map((achievement, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3 text-ink-paragraph text-sm text-justify"
-                  >
-                    <span className="text-brand-gold mt-0.5">•</span>
-                    <span>{achievement}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {aboutData.achievements && aboutData.achievements.length > 0 && (
+              <div className="bg-surface-card rounded-xl p-6 shadow-md border border-ink-light hidden lg:block">
+                <h3 className="font-bold text-ink mb-4 text-lg flex items-center gap-2">
+                  <span className="text-brand-gold">🏆</span> Achievements
+                </h3>
+                <ul className="space-y-2">
+                  {aboutData.achievements.map((achievement, index) => (
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-ink-paragraph text-sm text-justify"
+                    >
+                      <span className="text-brand-gold mt-0.5">•</span>
+                      <span>{achievement}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </motion.div>
         </div>
       </div>
