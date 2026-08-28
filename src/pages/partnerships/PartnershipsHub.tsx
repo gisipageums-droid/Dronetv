@@ -133,7 +133,7 @@ export default function PartnershipsHubPage() {
                 <p className="text-xl font-extrabold text-yellow-500 mb-2">{p.price}</p>
                 <p className="text-xs text-gray-500 leading-relaxed mb-4">{p.headline}</p>
                 <Link
-                  to="/partnerships/benefits"
+                  to="/advertising-plans"
                   className="text-xs font-bold text-yellow-600 hover:text-yellow-700 transition-colors"
                 >
                   See full features →
