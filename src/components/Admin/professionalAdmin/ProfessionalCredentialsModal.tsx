@@ -89,14 +89,19 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
       setInternalLoading(true);
       try {
         const res = await fetch(
-          PROFESSIONAL_API ? `${PROFESSIONAL_API}/professionals/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('adminToken')}`,
+            },
+          }
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
 
         if (!cancelled) {
           setData(json);
-          setNotes(json?.metadata?.adminNotes || '');
+          setNotes(json?.adminNotes || json?.metadata?.adminNotes || '');
         }
       } catch (err: any) {
         if (!cancelled) setError('Failed to load professional data');

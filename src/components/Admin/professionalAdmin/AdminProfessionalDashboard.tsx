@@ -866,7 +866,12 @@ const apiService = {
   async fetchProfessionalDetails(professionalId: string): Promise<any> {
     try {
       const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
+        }
       );
 
       if (!response.ok) {

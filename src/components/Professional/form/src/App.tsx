@@ -71,7 +71,7 @@ function AppInner() {
           setFormLoader(true);
 
           const res = await fetch(
-            PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}` : `${LAMBDA.profFormLoad}/${userId}/${professionalId}`
+            PROFESSIONAL_API ? `${PROFESSIONAL_API}/draft/${userId}/${professionalId}` : `${LAMBDA.profFormLoad}/${userId}/${professionalId}`
           );
           const userData = await res.json();
           setFormLoader(false);
