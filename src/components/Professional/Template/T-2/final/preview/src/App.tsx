@@ -25,7 +25,7 @@ export default function FinalProTemp2() {
   async function fetchTemplateData(professionalId: string, userId: string) {
     try {
       setIsLoading(true);
-      const response = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}?template=template2` : `${LAMBDA.profTemplateDash}/${userId}/${professionalId}?template=template2`, {
+      const response = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/template-content/${userId}/${professionalId}?template=template2` : `${LAMBDA.profTemplateDash}/${userId}/${professionalId}?template=template2`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -37,7 +37,9 @@ export default function FinalProTemp2() {
       }
       
       const data = await response.json();
-      setFinaleDataReview(data);
+      // self-hosted /template-content returns a bare { content, ... } object;
+      // the old Lambda returned an array — these components read data[0].content
+      setFinaleDataReview(Array.isArray(data) ? data : [data]);
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching template data:", error);
