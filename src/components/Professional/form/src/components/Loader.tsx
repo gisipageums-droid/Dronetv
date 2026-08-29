@@ -58,11 +58,11 @@ export const Loader: React.FC<LoaderProps> = ({
   }, [duration, onComplete, steps.length]);
 
   return (
-    <div className="fixed inset-0 bg-status-info flex items-center justify-center z-50 overflow-y-auto py-8">
+    <div className="fixed inset-0 bg-ink flex items-center justify-center z-50 overflow-y-auto py-8">
       <div className="max-w-md w-full mx-4">
         <div className="text-center mb-8">
           <div className="relative mb-6">
-            <div className="w-24 h-24 mx-auto bg-gradient-to-r from-status-info to-brand-gold rounded-full flex items-center justify-center animate-pulse">
+            <div className="w-24 h-24 mx-auto bg-gradient-to-r from-brand-gold to-brand-yellow rounded-full flex items-center justify-center animate-pulse">
               <Brain className="w-12 h-12 text-white" />
             </div>
             <div className="absolute -top-2 -right-2 w-8 h-8 bg-brand-yellow rounded-full flex items-center justify-center animate-bounce">
@@ -72,20 +72,20 @@ export const Loader: React.FC<LoaderProps> = ({
           <h1 className="text-3xl font-bold text-white mb-2">
             AI is Generating Your Website
           </h1>
-          <p className="text-status-info/25 text-lg">
+          <p className="text-ink-light text-lg">
             Please wait while we create your digital presence
           </p>
         </div>
 
         {/* Progress Bar */}
         <div className="mb-8">
-          <div className="flex justify-between text-sm text-status-info/25 mb-2">
+          <div className="flex justify-between text-sm text-ink-light mb-2">
             <span>Progress</span>
             <span>{Math.round(progress)}%</span>
           </div>
           <div className="w-full bg-ink-paragraph rounded-full h-3">
             <div
-              className="bg-status-info h-3 rounded-full transition-all duration-300 ease-out"
+              className="bg-brand-gold h-3 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -110,7 +110,7 @@ export const Loader: React.FC<LoaderProps> = ({
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 transition-all duration-300 ${isActive
-                    ? "bg-gradient-to-r from-status-info to-brand-gold animate-pulse"
+                    ? "bg-gradient-to-r from-brand-gold to-brand-yellow animate-pulse"
                     : isCompleted
                       ? "bg-status-success"
                       : "bg-ink-paragraph"
@@ -122,7 +122,7 @@ export const Loader: React.FC<LoaderProps> = ({
                   className={`font-medium transition-all duration-300 ${isActive
                     ? "text-white"
                     : isCompleted
-                      ? "text-status-success/40"
+                      ? "text-status-success"
                       : "text-ink-caption"
                     }`}
                 >
@@ -130,9 +130,9 @@ export const Loader: React.FC<LoaderProps> = ({
                 </span>
                 {isActive && (
                   <div className="ml-auto flex space-x-1">
-                    <div className="w-2 h-2 bg-status-info rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-status-info rounded-full animate-bounce delay-150" />
-                    <div className="w-2 h-2 bg-status-info rounded-full animate-bounce delay-300" />
+                    <div className="w-2 h-2 bg-brand-gold rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-brand-gold rounded-full animate-bounce delay-150" />
+                    <div className="w-2 h-2 bg-brand-gold rounded-full animate-bounce delay-300" />
                   </div>
                 )}
                 {isCompleted && (
