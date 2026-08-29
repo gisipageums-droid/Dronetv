@@ -99,8 +99,9 @@ export default function EditTemp_2() {
       try {
         const response = await fetch(PROFESSIONAL_API ? `${PROFESSIONAL_API}/draft/${userId}/${draftId}?template=template-2` : `${LAMBDA.profTemplateLoad}/api/professional/${userId}/${draftId}?template=template-2`);
 
-        if (!response.ok) {
-          if (response.status === 404 && elapsed < POLL_MAX_WAIT) {
+        if (response.status === 202) {
+          // AI content still generating — keep polling if within time limit
+          if (elapsed < POLL_MAX_WAIT) {
             if (!cancelled) {
               elapsed += POLL_INTERVAL;
               setPollElapsed(elapsed);
@@ -108,6 +109,12 @@ export default function EditTemp_2() {
             }
             return;
           }
+          toast.error('Timed out waiting for AI content generation');
+          if (!cancelled) setIsLoading(false);
+          return;
+        }
+
+        if (!response.ok) {
           toast.error('Failed to load template data');
           if (!cancelled) setIsLoading(false);
           return;

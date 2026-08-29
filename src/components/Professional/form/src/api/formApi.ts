@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ADMIN_API, MEDIA_API, PROFESSIONAL_API, LAMBDA } from '../../../../../lib/apiConfig';
+import { compressImage } from '../../../../../lib/compressImage';
 
 export const fetchFormStructure = async () => {
   const res = await axios.get(ADMIN_API ? `${ADMIN_API}/form/structure` : `${LAMBDA.formStructure}`);
@@ -11,7 +12,8 @@ export const fetchFormStructure = async () => {
 // integration timeout, so on a slow connection the upload button just spun
 // on "Uploading..." forever with no error ever surfacing. A presigned PUT
 // straight to S3/MinIO has no such cap.
-export const uploadFile = async (userId: string, fieldName: string, file: File) => {
+export const uploadFile = async (userId: string, fieldName: string, rawFile: File, onProgress?: (pct: number) => void) => {
+  const file = await compressImage(rawFile);
   if (PROFESSIONAL_API) {
     const presignRes = await axios.post(
       `${PROFESSIONAL_API}/upload-file`,
@@ -25,6 +27,9 @@ export const uploadFile = async (userId: string, fieldName: string, file: File) 
     await axios.put(uploadUrl, file, {
       headers: { "Content-Type": file.type || "application/octet-stream" },
       timeout: 300000,
+      onUploadProgress: (e) => {
+        if (onProgress && e.total) onProgress(Math.round((e.loaded / e.total) * 100));
+      },
     });
     return { url: imageUrl, s3Url: imageUrl };
   }

@@ -46,6 +46,7 @@ export default function JobBoardPage() {
   const [applyModal, setApplyModal] = useState<{ open: boolean; item: MediaItem | null }>({ open: false, item: null });
   const [applyForm, setApplyForm] = useState<ApplyForm>({ name: '', email: '', phone: '', message: '', resume: null });
   const [submitting, setSubmitting] = useState(false);
+  const [resumeUploadPct, setResumeUploadPct] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [postJobModal, setPostJobModal] = useState(false);
@@ -98,10 +99,11 @@ export default function JobBoardPage() {
     if (!applyModal.item?.contentId) return;
     setSubmitting(true);
     setSubmitError(false);
+    setResumeUploadPct(0);
     try {
       let resumeKey = '';
       if (applyForm.resume) {
-        resumeKey = await uploadResumeFile(applyForm.resume);
+        resumeKey = await uploadResumeFile(applyForm.resume, setResumeUploadPct);
       }
       await submitApplication({
         jobId: applyModal.item.contentId,
@@ -506,7 +508,9 @@ export default function JobBoardPage() {
                     )}
                     <button type="submit" disabled={submitting}
                       className="w-full bg-brand-yellow hover:bg-brand-gold text-ink font-bold text-sm py-3 rounded-lg transition-colors disabled:opacity-50">
-                      {submitting ? 'Submitting...' : 'Submit Application'}
+                      {submitting
+                        ? (applyForm.resume && resumeUploadPct < 100 ? `Uploading resume... ${resumeUploadPct}%` : 'Submitting...')
+                        : 'Submit Application'}
                     </button>
                   </form>
                 </>

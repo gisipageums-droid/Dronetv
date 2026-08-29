@@ -26,6 +26,7 @@ export default function Portfolio() {
   const [professionalId, setProfessionalId] = useState("");
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadPct, setUploadPct] = useState(0);
   const [pendingFile, setPendingFile] = useState<{ url: string; type: string } | null>(null);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]);
@@ -55,8 +56,9 @@ export default function Portfolio() {
 
   const handleFilePicked = async (file: File) => {
     setUploading(true);
+    setUploadPct(0);
     try {
-      const url = await uploadPortfolioFile(professionalId, file);
+      const url = await uploadPortfolioFile(professionalId, file, setUploadPct);
       setPendingFile({ url, type: file.type });
       toast.success("File uploaded — add a title and description, then save");
     } catch {
@@ -113,7 +115,7 @@ export default function Portfolio() {
         className="border-2 border-dashed border-white/15 rounded-lg p-10 text-center cursor-pointer hover:border-brand-yellow hover:bg-brand-yellow/5 transition-colors mb-5"
       >
         <UploadCloud size={36} className="mx-auto mb-3 text-white/40" />
-        <div className="text-[15px] font-bold text-white mb-1.5">{uploading ? "Uploading..." : "Upload New Portfolio Item"}</div>
+        <div className="text-[15px] font-bold text-white mb-1.5">{uploading ? `Uploading... ${uploadPct}%` : "Upload New Portfolio Item"}</div>
         <div className="text-[12.5px] text-white/40">Aerial maps · NDVI outputs · Survey reports · Inspection photos · Cinematic reels<br />Supported: JPG, PNG, PDF, MP4 · Max 50MB</div>
       </div>
 

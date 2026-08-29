@@ -1,4 +1,5 @@
 import { PROFESSIONAL_API, EVENTS_API, MEDIA_API, JOB_APPLICATIONS_API, LAMBDA } from "../../lib/apiConfig";
+import { compressImage } from "../../lib/compressImage";
 
 export function authHeaders(): Record<string, string> {
   const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
@@ -55,10 +56,22 @@ export async function getPortfolioUploadUrl(professionalId: string, fileName: st
   return res.json();
 }
 
-export async function uploadPortfolioFile(professionalId: string, file: File): Promise<string> {
+export async function uploadPortfolioFile(professionalId: string, rawFile: File, onProgress?: (pct: number) => void): Promise<string> {
+  const file = await compressImage(rawFile);
   const { uploadUrl, fileUrl: url } = await getPortfolioUploadUrl(professionalId, file.name, file.type || "application/octet-stream");
-  const putRes = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type || "application/octet-stream" }, body: file });
-  if (!putRes.ok) throw new Error("Failed to upload file");
+  // XMLHttpRequest, not fetch() — fetch has no upload-progress event, so a
+  // multi-MB file on a slow connection just sits with no feedback at all.
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", uploadUrl);
+    xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+    xhr.upload.onprogress = (e) => {
+      if (onProgress && e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300) ? resolve() : reject(new Error("Failed to upload file"));
+    xhr.onerror = () => reject(new Error("Failed to upload file"));
+    xhr.send(file);
+  });
   return url;
 }
 

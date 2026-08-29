@@ -54,6 +54,7 @@ const Logout = lazy(() => import("./components/Logout"));
 const ResetPassword = lazy(() => import("./components/ResetPassword"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 const CompanyRedirectGuard = lazy(() => import("./components/CompanyRedirectGuard"));
+const ProfessionalRedirectGuard = lazy(() => import("./components/ProfessionalRedirectGuard"));
 const AdminProtectedRoute = lazy(() => import("./components/adminProtectedRoute"));
 import AiProtectedRoute from "./components/AiProtectedRoute";
 const RoleGuard = lazy(() => import("./components/RoleGuard"));
@@ -577,9 +578,11 @@ const AppContent = () => {
             element={
               <ProtectedRoute>
                 <CompanyRedirectGuard to="/company-portal">
-                  <UserDashboardLayout>
-                    <UserDashboard />
-                  </UserDashboardLayout>
+                  <ProfessionalRedirectGuard to="/professional-portal">
+                    <UserDashboardLayout>
+                      <UserDashboard />
+                    </UserDashboardLayout>
+                  </ProfessionalRedirectGuard>
                 </CompanyRedirectGuard>
               </ProtectedRoute>
             }

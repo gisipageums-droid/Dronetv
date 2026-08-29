@@ -11,6 +11,7 @@ interface FileUploaderProps {
 
 export const FileUploader = ({ userId, fieldName, maxSizeMB, onUploadSuccess, showReplaceMessage }: FileUploaderProps) => {
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,9 +24,10 @@ export const FileUploader = ({ userId, fieldName, maxSizeMB, onUploadSuccess, sh
     }
 
     setLoading(true);
+    setProgress(0);
     setError(null);
     try {
-      const res = await uploadFile(userId, fieldName, file);
+      const res = await uploadFile(userId, fieldName, file, setProgress);
       const fileUrl = res.url || res.s3Url;
       if (!fileUrl) throw new Error("Upload succeeded but no file URL was returned");
       onUploadSuccess({ fieldName, fileUrl, fileName: file.name });
@@ -44,7 +46,7 @@ export const FileUploader = ({ userId, fieldName, maxSizeMB, onUploadSuccess, sh
         {showReplaceMessage ? "Click Below To Replace" : "Click Below To Upload"}
       </p>
       <label className="flex items-center justify-center px-4 py-2 bg-brand-gold text-white rounded-md shadow cursor-pointer hover:bg-brand-gold w-fit">
-        {loading ? "Uploading..." : "Choose File"}
+        {loading ? `Uploading... ${progress}%` : "Choose File"}
         <input
           type="file"
           onChange={handleUpload}
