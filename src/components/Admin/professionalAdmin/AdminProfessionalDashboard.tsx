@@ -608,30 +608,6 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                onApprove(professional.professionalId);
-              }}
-              disabled={disabled || professional.reviewStatus === "approved"}
-              className="px-3 py-2 bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
-              Approve
-            </button>
-
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                onReject(professional.professionalId);
-              }}
-              disabled={disabled || professional.reviewStatus === "rejected"}
-              className="px-3 py-2 bg-status-error/15 text-status-error rounded-lg hover:bg-status-error/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <XCircle className="w-3 h-3 md:w-4 md:h-4" />
-              Reject
-            </button>
-
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
                 onDelete(professional.professionalId);
               }}
               disabled={disabled}
