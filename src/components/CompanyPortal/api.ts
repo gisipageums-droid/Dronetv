@@ -38,6 +38,31 @@ export async function savePortalProfileSection(publishedId: string, section: str
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
+// Full website content (the `websiteContent` blob) for the company the portal
+// user manages. This is the store the public company page and the /products &
+// /services listing pages actually read from - the Services & Products tab
+// edits `content.services` / `content.products` in here, not the separate
+// portalProfile blob (which nothing public renders).
+// Self-hosted company service only (company-api.dronetv.in) - no AWS Lambda
+// fallback here, deliberately: this data must go through our own control API.
+export async function getCompanyContent(publishedId: string): Promise<Record<string, any>> {
+  if (!COMPANY_API) throw new Error("Company API not configured");
+  const res = await fetch(`${COMPANY_API}/templates?publishId=${encodeURIComponent(publishedId)}`, { headers: authHeaders() });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  return data.data || {};
+}
+
+export async function saveCompanyContent(userId: string, publishedId: string, websiteContent: any): Promise<void> {
+  if (!COMPANY_API) throw new Error("Company API not configured");
+  const res = await fetch(`${COMPANY_API}/update`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify({ userId, publishedId, websiteContent }),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+}
+
 export async function uploadCompanyFile(userId: string, fieldName: string, file: File): Promise<string> {
   const base = COMPANY_API || LAMBDA.company;
   const presignRes = await fetch(`${base}/upload-file`, {

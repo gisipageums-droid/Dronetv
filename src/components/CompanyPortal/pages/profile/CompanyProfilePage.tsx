@@ -73,7 +73,7 @@ export default function CompanyProfilePage() {
   if (loading) return <div className="py-16 text-center text-sm text-white/40">Loading profile...</div>;
   if (error || !publishedId) return <EmptyState text={error || "No company found"} />;
 
-  const tabProps = { publishedId, profile, save };
+  const tabProps = { publishedId, userId, profile, save };
 
   return (
     <div>
@@ -109,6 +109,7 @@ export default function CompanyProfilePage() {
 
 export interface TabProps {
   publishedId: string;
+  userId: string;
   profile: Record<string, any>;
   save: (section: string, data: any) => Promise<void>;
 }
