@@ -107,7 +107,8 @@ export default function ServicesProductsTab({ publishedId, userId, draftId, temp
           <Loader2 className="w-4 h-4 animate-spin" /> Saving...
         </div>
       )}
-      <div className="-mx-4 sm:-mx-6 rounded-lg overflow-hidden">
+      <style>{WIZARD_DARK_CSS}</style>
+      <div className="sp-wizard-dark -mx-4 sm:-mx-6 rounded-lg overflow-hidden bg-ink border border-white/10">
         <FormApp
           embedded={true}
           initialCompanyCategory={companyCategory}
@@ -118,3 +119,39 @@ export default function ServicesProductsTab({ publishedId, userId, draftId, temp
     </div>
   );
 }
+
+// The embedded wizard (FormApp) is the same component the public registration
+// form and the admin editor use, styled light/yellow. This scoped override maps
+// its design tokens onto the dark Company Portal theme without touching the
+// shared component. Scoped strictly under .sp-wizard-dark so registration and
+// admin edit are unaffected.
+const WIZARD_DARK_CSS = `
+.sp-wizard-dark { color: #fff; }
+.sp-wizard-dark .bg-gradient-to-br { background-image: none !important; background-color: transparent !important; }
+.sp-wizard-dark .bg-brand-yellow-soft { background-color: rgba(255,255,255,0.05) !important; }
+.sp-wizard-dark .bg-surface-main { background-color: rgba(255,255,255,0.04) !important; }
+.sp-wizard-dark .bg-surface-card,
+.sp-wizard-dark .bg-white { background-color: rgba(255,255,255,0.03) !important; }
+.sp-wizard-dark .bg-ink-offwhite { background-color: rgba(255,255,255,0.05) !important; }
+.sp-wizard-dark .bg-ink-light { background-color: rgba(255,255,255,0.1) !important; }
+.sp-wizard-dark .shadow-sm,
+.sp-wizard-dark .shadow-md { box-shadow: none !important; }
+.sp-wizard-dark .text-ink,
+.sp-wizard-dark .text-ink-charcoal { color: #ffffff !important; }
+.sp-wizard-dark .text-ink-paragraph { color: rgba(255,255,255,0.72) !important; }
+.sp-wizard-dark .text-ink-caption,
+.sp-wizard-dark .text-ink-light { color: rgba(255,255,255,0.4) !important; }
+.sp-wizard-dark .text-brand-gold { color: #F8C400 !important; }
+.sp-wizard-dark .border-ink-light,
+.sp-wizard-dark .border-brand-yellow-soft,
+.sp-wizard-dark .border-ink-caption { border-color: rgba(255,255,255,0.12) !important; }
+.sp-wizard-dark input:not([type=checkbox]):not([type=radio]):not([type=file]),
+.sp-wizard-dark textarea,
+.sp-wizard-dark select {
+  background-color: rgba(255,255,255,0.05) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+.sp-wizard-dark select option { background-color: #1b1b1b !important; color: #fff !important; }
+.sp-wizard-dark ::placeholder { color: rgba(255,255,255,0.3) !important; }
+`;

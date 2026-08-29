@@ -83,7 +83,7 @@ export default function CompanyProfilePage() {
     <div>
       <PageHeader title="Company Profile" sub={`Manage ${companyName || "your company"}'s full profile shown to buyers on DroneTv.in`} />
 
-      <div className="flex gap-1 border-b border-white/10 mb-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex flex-wrap gap-x-1 gap-y-0 border-b border-white/10 mb-6">
         {TABS.map(t => (
           <button
             key={t.id}
