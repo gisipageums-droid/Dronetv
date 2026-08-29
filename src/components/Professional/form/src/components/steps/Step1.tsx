@@ -797,6 +797,10 @@ export const Step1 = ({
   const [kycError, setKycError] = useState("");
   const [kycNoMatch, setKycNoMatch] = useState(false);
   const [kycConsent, setKycConsent] = useState(false);
+  // Fields the verify API actually returned a value for — only these get
+  // locked read-only. A field the response left empty (e.g. email) stays
+  // editable so the user can fill it in themselves.
+  const [kycBoundFields, setKycBoundFields] = useState<Set<string>>(new Set());
 
   const handleVerifyMobile = async () => {
     setKycVerifying(true);
@@ -841,6 +845,10 @@ export const Step1 = ({
         // a masked value (contains "X") flips an unrelated DigiLocker effect that locks
         // this whole section read-only, which isn't wanted for the KYC-prefill flow.
       });
+      const bound = new Set<string>();
+      if (json.dateOfBirth) bound.add("dateOfBirth");
+      if (json.email) bound.add("email");
+      setKycBoundFields(bound);
       // PAN-based verification implies an Indian identity — default it instead
       // of leaving the Nationality dropdown on "Select Nationality". Email/phone
       // here come from the same KYC response, so fill them in alongside it.
@@ -1641,7 +1649,7 @@ export const Step1 = ({
             )}
 
             {/* Date of Birth */}
-            {(isReadOnly || kycVerified) ? (
+            {(isReadOnly || (kycVerified && kycBoundFields.has("dateOfBirth"))) ? (
               <div className="flex flex-col">
                 <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Date of Birth
@@ -2074,7 +2082,7 @@ export const Step1 = ({
                   type="email"
                   required={true}
                   placeholder="Enter your email address"
-                  disabled={kycVerified}
+                  disabled={kycVerified && kycBoundFields.has("email")}
                   className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card disabled:opacity-60"
                   value={data.addressInformation?.email || ""}
                   onChange={(e) =>

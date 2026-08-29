@@ -520,13 +520,13 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/publish` : `${LAMBDA.profPublish}/`,
+        `${PROFESSIONAL_API}/${AIGenData.userId}/${AIGenData.professionalId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(finalTemplate),
+          body: JSON.stringify({ templateContent: finalTemplate.content }),
         }
       );
 
@@ -535,20 +535,9 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      toast.success(
-        "Your template is successfully published and now it is under review"
-      );
-
-      if (isAdminLogin) {
-        navigate("/admin/professional/dashboard");
-        setNavModel(false);
-      } else if (isLogin) {
-        navigate("/user-professionals");
-        setNavModel(false);
-      } else {
-        setNavModel(true);
-      }
+      toast.success("Your listing is now live!");
+      navigate("/professionals");
+      setNavModel(false);
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
