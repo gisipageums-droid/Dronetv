@@ -140,9 +140,9 @@ const App: React.FC = () => {
           PROFESSIONAL_API ? `${PROFESSIONAL_API}/draft/${userId}/${draftId}?template=template-1` : `${LAMBDA.profTemplateLoad}/api/professional/${userId}/${draftId}?template=template-1`
         );
 
-        if (!response.ok) {
-          // AI not ready yet — keep polling if within time limit
-          if (response.status === 404 && elapsed < POLL_MAX_WAIT) {
+        if (response.status === 202) {
+          // AI content still generating — keep polling if within time limit
+          if (elapsed < POLL_MAX_WAIT) {
             if (!cancelled) {
               elapsed += POLL_INTERVAL;
               setPollElapsed(elapsed);
@@ -150,6 +150,10 @@ const App: React.FC = () => {
             }
             return;
           }
+          throw new Error("Timed out waiting for AI content generation");
+        }
+
+        if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
