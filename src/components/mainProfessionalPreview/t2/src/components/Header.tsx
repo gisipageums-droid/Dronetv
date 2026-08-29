@@ -79,7 +79,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
 
   // Get first character in uppercase for avatar
   const getAvatarLetter = (text: string) => {
-    return text.charAt(0).toUpperCase();
+    return (text || "P").charAt(0).toUpperCase();
   };
 
   return (
@@ -92,11 +92,11 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
               {/* Display Mode - Only Avatar (No Text) */}
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-yellow-300 flex items-center justify-center text-black font-bold text-lg border-2 border-yellow-300 shadow-lg">
-                  {getAvatarLetter(data.logoText)}
+                  {getAvatarLetter(data.logoText || (data as any)?.name)}
                 </div>
                 {/* Logo Text displayed to the right of avatar */}
                 <span className="text-xl font-semibold text-foreground">
-                  {data.logoText}
+                  {data.logoText || (data as any)?.name || "MyLogo"}
                 </span>
               </div>
             </div>
@@ -105,7 +105,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
           <div className="flex items-center space-x-6">
             {/* Desktop Navigation - Static (Non-editable) */}
             <nav className="hidden space-x-8 md:flex">
-              {data.navLinks.map((link, index) => (
+              {(data.navLinks || []).map((link, index) => (
                 <a
                   key={index}
                   href={link.href}
@@ -135,7 +135,7 @@ export function Header({ headerData, onDarkModeToggle }: HeaderProps) {
         {/* Mobile Navigation - Static (Non-editable) */}
         {isMenuOpen && (
           <nav className="pt-4 pb-4 mt-4 border-t md:hidden border-border">
-            {data.navLinks.map((link, index) => (
+            {(data.navLinks || []).map((link, index) => (
               <a
                 key={index}
                 href={link.href}
