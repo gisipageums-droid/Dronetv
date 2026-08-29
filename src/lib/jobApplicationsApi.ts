@@ -54,6 +54,16 @@ export interface JobApplication {
   updatedAt: string;
 }
 
+// The logged-in applicant's own applications - filtered server-side by the
+// email in their JWT (not a query param), so nobody can read someone else's
+// applications by guessing an email.
+export async function fetchMyApplications(): Promise<JobApplication[]> {
+  const res = await fetch(`${BASE}/mine`, { headers: adminAuthHeaders() });
+  if (!res.ok) throw new Error('Failed to fetch your applications');
+  const data = await res.json();
+  return data.items || [];
+}
+
 export async function fetchApplications(jobId: string, companyId?: string): Promise<JobApplication[]> {
   const url = companyId
     ? `${BASE}?jobId=${encodeURIComponent(jobId)}&companyId=${encodeURIComponent(companyId)}`

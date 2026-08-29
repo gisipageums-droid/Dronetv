@@ -88,6 +88,20 @@ const CompanyPortalAnalytics = lazy(() => import("./components/CompanyPortal/pag
 const CompanyPortalPackage = lazy(() => import("./components/CompanyPortal/pages/Package"));
 const CompanyPortalInvoices = lazy(() => import("./components/CompanyPortal/pages/Invoices"));
 const CompanyPortalSettings = lazy(() => import("./components/CompanyPortal/pages/Settings"));
+const ProfessionalPortalLayout = lazy(() => import("./components/ProfessionalPortal/ProfessionalPortalLayout"));
+const ProfessionalPortalDashboard = lazy(() => import("./components/ProfessionalPortal/pages/Dashboard"));
+const ProfessionalPortalEditProfile = lazy(() => import("./components/ProfessionalPortal/pages/EditProfile"));
+const ProfessionalPortalCertifications = lazy(() => import("./components/ProfessionalPortal/pages/Certifications"));
+const ProfessionalPortalPortfolio = lazy(() => import("./components/ProfessionalPortal/pages/Portfolio"));
+const ProfessionalPortalSkills = lazy(() => import("./components/ProfessionalPortal/pages/Skills"));
+const ProfessionalPortalJobBoard = lazy(() => import("./components/ProfessionalPortal/pages/JobBoard"));
+const ProfessionalPortalApplications = lazy(() => import("./components/ProfessionalPortal/pages/Applications"));
+const ProfessionalPortalTraining = lazy(() => import("./components/ProfessionalPortal/pages/Training"));
+const ProfessionalPortalCareerPath = lazy(() => import("./components/ProfessionalPortal/pages/CareerPath"));
+const ProfessionalPortalNetworking = lazy(() => import("./components/ProfessionalPortal/pages/Networking"));
+const ProfessionalPortalCommunity = lazy(() => import("./components/ProfessionalPortal/pages/Community"));
+const ProfessionalPortalEvents = lazy(() => import("./components/ProfessionalPortal/pages/Events"));
+const ProfessionalPortalSettings = lazy(() => import("./components/ProfessionalPortal/pages/Settings"));
 const AdminCompanyEdit = lazy(() => import("./components/Admin/userAdmin/AdminCompanyEdit"));
 const UserProfessional = lazy(() => import("./components/profissionalDirectory"));
 
@@ -223,6 +237,7 @@ const AppContent = () => {
   const location = useLocation();
   const hideFooter =
     location.pathname.startsWith("/company-portal") ||
+    location.pathname.startsWith("/professional-portal") ||
     location.pathname.startsWith("/form") ||
     location.pathname.startsWith("/user") ||
     location.pathname.startsWith("/admin") ||
@@ -589,6 +604,19 @@ const AppContent = () => {
           <Route path="/company-portal/placements" element={<ProtectedRoute><CompanyPortalLayout><PagePlacements /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/invoices" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalInvoices /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/settings" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalSettings /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalDashboard /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/profile" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalEditProfile /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/certifications" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalCertifications /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/portfolio" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalPortfolio /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/skills" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalSkills /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/jobs" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalJobBoard /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/applications" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalApplications /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/training" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalTraining /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/career" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalCareerPath /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/networking" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalNetworking /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/community" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalCommunity /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/events" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalEvents /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/settings" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalSettings /></ProfessionalPortalLayout></ProtectedRoute>} />
           <Route
             path="/user-profile"
             element={
