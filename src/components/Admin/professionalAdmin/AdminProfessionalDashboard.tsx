@@ -507,7 +507,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   return (
     <div className="w-full h-full rounded-xl border border-ink-light border-l-4 border-l-brand-yellow shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden bg-surface-card">
       <div className="p-4 md:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
+        <div className="flex items-start justify-between gap-2 mb-4">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-ink-light flex items-center justify-center sm:w-12 sm:h-12">
               <img
@@ -520,8 +520,11 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                 }}
               />
             </div>
-            <div className="max-w-[calc(100%-60px)] md:max-w-none">
-              <h3 className="text-lg md:text-xl font-bold text-ink line-clamp-2">
+            <div className="min-w-0 flex-1">
+              <h3
+                className="text-lg md:text-xl font-bold text-ink truncate"
+                title={professional.professionalName || professional.userId || "Unnamed Professional"}
+              >
                 {professional.professionalName || professional.userId || "Unnamed Professional"}
               </h3>
               <div className="flex items-center text-ink-paragraph mt-1">
@@ -532,7 +535,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
               </div>
             </div>
           </div>
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 whitespace-nowrap">
             <div
               className={`inline-flex items-center gap-1 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 rounded-full text-xs font-medium`}
             >

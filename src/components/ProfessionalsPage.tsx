@@ -87,7 +87,6 @@ const ProfessionalsPage: React.FC = () => {
         p.professionalDescription?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    filtered = [...filtered].sort((a, b) => (a.fullName || "").localeCompare(b.fullName || ""));
     setFilteredProfessionals(filtered);
     setCurrentPage(1);
   }, [allProfessionals, selectedCategory, sortBy, searchQuery]);
