@@ -103,6 +103,7 @@ const ProfessionalLeads = lazy(() => import("./components/UserDashboard/componen
 const CompanyRedirectGuard = lazy(() => import("./components/CompanyRedirectGuard"));
 const CompanyPortalLayout = lazy(() => import("./components/CompanyPortal/CompanyPortalLayout"));
 const CompanyPortalDashboard = lazy(() => import("./components/CompanyPortal/pages/Dashboard"));
+const CompanyPortalMyCompanies = lazy(() => import("./components/CompanyPortal/pages/MyCompanies"));
 const CompanyPortalProfile = lazy(() => import("./components/CompanyPortal/pages/profile/CompanyProfilePage"));
 const CompanyPortalListings = lazy(() => import("./components/CompanyPortal/pages/Listings"));
 const CompanyPortalLeads = lazy(() => import("./components/CompanyPortal/pages/Leads"));
@@ -567,6 +568,7 @@ const AppContent = () => {
             }
           />
           <Route path="/company-portal" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalDashboard /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/companies" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMyCompanies /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/profile" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalProfile /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/listings" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalListings /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/leads" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalLeads /></CompanyPortalLayout></ProtectedRoute>} />
