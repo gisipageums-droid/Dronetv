@@ -57,6 +57,9 @@ export default function App() {
         if (cancelled) return;
         try {
           const res = await fetch(API_URL, { headers: authHeader() });
+          // A 401/403 won't fix itself by polling — the draft is owner-scoped
+          // and this session has no valid token. Stop immediately.
+          if (res.status === 401 || res.status === 403) break;
           if (res.ok) {
             const data = await res.json();
             // /draft/{userId}/{draftId} returns the saved content under

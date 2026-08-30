@@ -10,16 +10,18 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useTemplate } from "../../../../../../../context/context";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Publish from "./components/Publish";
 import Gallery from "./components/Gallery";
 import Profile from "./components/Profile";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 export default function App() {
   const [componentStates, setComponentStates] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const { AIGenData, setFinalTemplate, getAIgenData } = useTemplate();
+  const { AIGenData, setFinalTemplate, setAIGenData, getAIgenData } = useTemplate();
   const { userId, draftId } = useParams();
+  const location = useLocation();
+  const loadedRef = useRef(false);
 
   // ✅ Define all hooks at top
   const collectComponentState = useCallback((componentName, state) => {
@@ -30,6 +32,20 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (loadedRef.current) return;
+    loadedRef.current = true;
+
+    // The registration form navigates here with the generated content already
+    // in router state — use it directly instead of round-tripping to /draft
+    // (which needs a JWT the just-submitted anonymous user doesn't have yet,
+    // and was causing a run of failed calls before it eventually resolved).
+    const stateData = location.state?.aiGenData;
+    if (stateData) {
+      setAIGenData(stateData);
+      setIsLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       if (userId && draftId) {
         try {

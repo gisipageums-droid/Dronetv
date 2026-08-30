@@ -359,7 +359,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(
-        `${API}/${userId}/${draftId}?template=${templateSelection}`
+        `${API}/${userId}/${draftId}?template=${templateSelection}`,
+        { headers: { ...authHeader() } }
       );
 
       if (!response.ok) {
