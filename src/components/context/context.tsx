@@ -526,6 +526,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            ...authHeader(),
           },
           body: JSON.stringify({ templateContent: finalTemplate.content }),
         }
@@ -536,8 +537,29 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
       }
 
+      // Admin edited the profile from the admin dashboard - keep it live by
+      // re-approving, otherwise the edit can drop it back to "under review".
+      if (isAdminLogin) {
+        try {
+          await fetch(
+            `${PROFESSIONAL_API}/professional-tem-validation`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json", ...authHeader() },
+              body: JSON.stringify({
+                professionalId: AIGenData.professionalId,
+                userId: AIGenData.userId,
+                action: "approve",
+              }),
+            }
+          );
+        } catch {
+          /* best effort - the content save already succeeded */
+        }
+      }
+
       toast.success("Your listing is now live!");
-      navigate("/professionals");
+      navigate(isAdminLogin ? "/admin/professional/dashboard" : "/professionals");
       setNavModel(false);
       setAIGenData({});
     } catch (error) {

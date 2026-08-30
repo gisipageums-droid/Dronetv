@@ -43,6 +43,14 @@ function AppInner() {
   const templateIdFromState = location.state?.templateId;
   const [formLoader, setFormLoader] = useState(true);
 
+  // Warm the editor chunk while the user is still filling the form so the
+  // post-submit navigation lands straight on the editor's own "AI is
+  // Building" screen with no blank Suspense flash in between.
+  useEffect(() => {
+    import("../../Template/T-1/edit/src/main");
+    import("../../Template/T-2/edit/src/App");
+  }, []);
+
   useEffect(() => {
     if (
       templateIdFromState &&
@@ -136,7 +144,11 @@ function AppInner() {
 
     try {
       const finalSubmissionId = submissionId || `draft-${Date.now()}`;
-      const templateId = data.templateSelection || templateIdFromState || 1;
+      const rawTemplate = data.templateSelection || templateIdFromState || 1;
+      // The /professional/edit route only matches literal `template=1` /
+      // `template=2` — normalize "template-2", "2", 2 etc. down to the digit
+      // so a refresh on the editor doesn't fall through to a blank form.
+      const templateId = String(rawTemplate).includes("2") ? 2 : 1;
 
       const payload = {
         userId: email,
@@ -173,13 +185,14 @@ function AppInner() {
         console.error("Failed to clear local draft after submit", e);
       }
 
-      setTimeout(() => setLoading(false), 71000);
-      setTimeout(
-        () =>
-          navigate(
-            `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
-          ),
-        71000
+      // Go straight to the editor. It has its own "AI is Building Your
+      // Website" screen driven by the real backend status (polls /draft,
+      // which returns 202 until content is ready), and unlike this form
+      // page it survives a browser refresh because draftId + userId live
+      // in the URL. The previous 71s in-form delay left anyone who
+      // reloaded stranded on a freshly-cleared, empty form.
+      navigate(
+        `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
       );
     } catch (err) {
       console.error(err);

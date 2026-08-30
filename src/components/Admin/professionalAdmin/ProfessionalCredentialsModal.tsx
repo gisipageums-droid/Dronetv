@@ -157,6 +157,39 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
 
   const formData = data?.formData || {};
 
+  const hasEntries = (obj: any) =>
+    obj && typeof obj === 'object' && Object.keys(obj).length > 0;
+
+  const prettyLabel = (key: string) =>
+    key
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/[_-]+/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase())
+      .trim();
+
+  const renderValue = (val: any): React.ReactNode => {
+    if (val === null || val === undefined || val === '') return 'Not provided';
+    if (typeof val === 'boolean') return val ? 'Yes' : 'No';
+    if (Array.isArray(val)) return val.length ? val.map((v) => (typeof v === 'object' ? JSON.stringify(v) : String(v))).join(', ') : 'None';
+    if (typeof val === 'object') return JSON.stringify(val);
+    if (typeof val === 'string' && /^https?:\/\//.test(val)) {
+      return (
+        <a href={val} target="_blank" rel="noopener noreferrer" className="text-status-info hover:underline break-all">
+          {val}
+        </a>
+      );
+    }
+    return String(val);
+  };
+
+  const KeyValueGrid: React.FC<{ obj: Record<string, any> }> = ({ obj }) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {Object.entries(obj).map(([key, val]) => (
+        <InfoField key={key} label={prettyLabel(key)} value={renderValue(val)} />
+      ))}
+    </div>
+  );
+
   return (
     <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center z-[999999] p-4">
       <div className="bg-surface-card rounded-lg shadow-xl max-w-6xl w-full max-h-[80vh] overflow-y-auto">
@@ -384,6 +417,96 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                   </InfoSection>
                 )}
 
+                {hasEntries(formData.communicationAddress) && (
+                  <InfoSection
+                    title="Communication Address"
+                    icon={<MapPin className="w-5 h-5 text-status-info" />}
+                    bgColor="bg-status-info/10"
+                  >
+                    <KeyValueGrid obj={formData.communicationAddress} />
+                  </InfoSection>
+                )}
+
+                {hasEntries(formData.alternateContact) && (
+                  <InfoSection
+                    title="Alternate Contact"
+                    icon={<Phone className="w-5 h-5 text-status-success" />}
+                    bgColor="bg-status-success/10"
+                  >
+                    <KeyValueGrid obj={formData.alternateContact} />
+                  </InfoSection>
+                )}
+
+                {hasEntries(formData.socialMediaLinks) && (
+                  <InfoSection
+                    title="Social Media Links"
+                    icon={<Users className="w-5 h-5 text-brand-gold" />}
+                    bgColor="bg-brand-gold/10"
+                  >
+                    <KeyValueGrid obj={formData.socialMediaLinks} />
+                  </InfoSection>
+                )}
+
+                {Array.isArray(formData.freeformSkills) && formData.freeformSkills.length > 0 && (
+                  <InfoSection
+                    title="Additional Skills"
+                    icon={<Star className="w-5 h-5 text-brand-gold" />}
+                    bgColor="bg-brand-gold/10"
+                  >
+                    <div className="flex flex-wrap gap-2">
+                      {formData.freeformSkills.map((skill: string, i: number) => (
+                        <span key={i} className="px-3 py-1 bg-ink-light text-ink-paragraph text-sm font-medium rounded-full">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </InfoSection>
+                )}
+
+                {((Array.isArray(formData.media) && formData.media.length > 0) ||
+                  (Array.isArray(formData.resume) && formData.resume.length > 0)) && (
+                  <InfoSection
+                    title="Media & Documents"
+                    icon={<Image className="w-5 h-5 text-ink-paragraph" />}
+                    bgColor="bg-ink-offwhite"
+                  >
+                    <div className="space-y-4">
+                      {Array.isArray(formData.media) && formData.media.length > 0 && (
+                        <div>
+                          <p className="text-sm font-medium text-ink-paragraph mb-2">Media</p>
+                          <div className="flex flex-wrap gap-3">
+                            {formData.media.map((m: any, i: number) => {
+                              const url = typeof m === 'string' ? m : m?.url || m?.mediaUrl || m?.s3Url;
+                              if (!url) return null;
+                              return (
+                                <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block">
+                                  <img src={url} alt={`media ${i + 1}`} className="w-24 h-24 object-cover rounded-lg border border-ink-light" />
+                                </a>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      {Array.isArray(formData.resume) && formData.resume.length > 0 && (
+                        <div>
+                          <p className="text-sm font-medium text-ink-paragraph mb-2">Documents</p>
+                          <div className="space-y-2">
+                            {formData.resume.map((doc: any, i: number) => {
+                              const url = typeof doc === 'string' ? doc : doc?.url || doc?.fileUrl || doc?.s3Url;
+                              const name = (typeof doc === 'object' && (doc?.name || doc?.fileName)) || `Document ${i + 1}`;
+                              return url ? (
+                                <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-status-info hover:underline">
+                                  <FileText className="w-4 h-4" /> {name}
+                                </a>
+                              ) : null;
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </InfoSection>
+                )}
+
                 <InfoSection
                   title="Submission Metadata"
                   icon={<FileText className="w-5 h-5 text-ink-paragraph" />}
@@ -406,6 +529,16 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                     />
                   </div>
                 </InfoSection>
+
+                <details className="bg-ink-offwhite rounded-xl border border-ink-light">
+                  <summary className="cursor-pointer select-none p-6 font-semibold text-lg text-ink flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-ink-paragraph" />
+                    Complete Submitted Data
+                  </summary>
+                  <pre className="mx-6 mb-6 p-4 bg-ink text-white text-xs rounded-lg overflow-x-auto max-h-96 overflow-y-auto">
+                    {JSON.stringify(data, null, 2)}
+                  </pre>
+                </details>
 
                 <div className="flex justify-end gap-3 pt-6 border-t border-ink-light">
                   <button

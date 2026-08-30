@@ -588,10 +588,20 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                 );
               }}
               disabled={disabled}
-              className="px-3 py-2 bg-ink-light text-ink-paragraph rounded-lg hover:bg-ink-light transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-2 bg-ink text-white rounded-lg hover:bg-ink-charcoal transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Edit className="w-3 h-3 md:w-4 md:h-4" />
-              Edit /
+              Edit Template
+            </button>
+
+            <button
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                onPreview(professional.professionalId);
+              }}
+              disabled={disabled}
+              className="px-3 py-2 bg-ink-light text-ink-paragraph rounded-lg hover:bg-ink-light/70 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <Eye className="w-3 h-3 md:w-4 md:h-4" />
               Preview
             </button>
@@ -602,10 +612,10 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                 onCredentials(professional.professionalId);
               }}
               disabled={disabled}
-              className="px-3 py-2 bg-brand-gold/15 text-brand-gold rounded-lg hover:bg-brand-gold/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              className="col-span-2 px-3 py-2 bg-brand-gold/15 text-brand-gold rounded-lg hover:bg-brand-gold/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FileText className="w-3 h-3 md:w-4 md:h-4" />
-              Details
+              View Full Details
             </button>
 
             <button
@@ -961,6 +971,12 @@ const apiService = {
   },
 };
 
+// templateSelection has been stored inconsistently over time ("template-1",
+// "template1", "1", 1, "template-2"...). Collapse it to the bare 1 / 2 the
+// edit and preview routes expect.
+const templateNum = (templateSelection: string | number | undefined): 1 | 2 =>
+  String(templateSelection ?? "").includes("2") ? 2 : 1;
+
 // Main Professional Dashboard Component
 const PROF_VIEW_TABS = [
   { id: "all", label: "Pilot Directory" },
@@ -1047,15 +1063,9 @@ const AdminProfessionalDashboard: React.FC = () => {
       switch (type) {
         case "edit":
           if (professional) {
-            if (professional.templateSelection === "template-1") {
-              navigate(
-                `/user/professionals/edit/1/${professionalId}/${professional.userId}`
-              );
-            } else if (professional.templateSelection === "template-2") {
-              navigate(
-                `/user/professionals/edit/2/${professionalId}/${professional.userId}`
-              );
-            }
+            navigate(
+              `/user/professionals/edit/${templateNum(professional.templateSelection)}/${professionalId}/${professional.userId}`
+            );
           }
           break;
 
@@ -1134,15 +1144,9 @@ const AdminProfessionalDashboard: React.FC = () => {
       }
 
       // Navigate to preview page based on template
-      if (professional.templateSelection === "template-1") {
-        navigate(
-          `/user/professionals/preview/1/${professionalId}/${professional.userId}`
-        );
-      } else if (professional.templateSelection === "template-2") {
-        navigate(
-          `/user/professionals/preview/2/${professionalId}/${professional.userId}`
-        );
-      }
+      navigate(
+        `/user/professionals/preview/${templateNum(professional.templateSelection)}/${professionalId}/${professional.userId}`
+      );
     } catch (error) {
       toast.error("Failed to load professional for preview");
     }
