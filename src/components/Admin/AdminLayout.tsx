@@ -235,6 +235,7 @@ const NAV: Section[] = [
 // ── Path → group id ────────────────────────────────────────────────
 const PATH_TO_ID: Record<string, string> = {
   "/admin/users": "users",
+  "/admin/hero-images": "hero-images",
   "/admin/professional/dashboard": "professionals",
   "/admin/media/dashboard": "media",
   "/admin/event/dashboard": "events",
