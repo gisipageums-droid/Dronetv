@@ -109,6 +109,13 @@ const NAV: Section[] = [
         ],
       },
       {
+        id: "hero-images",
+        label: "Hero Images",
+        icon: <ImageIcon size={17} />,
+        path: "/admin/hero-images",
+        superAdminOnly: true,
+      },
+      {
         id: "professionals",
         label: "Professionals",
         icon: <Users size={17} />,
@@ -245,6 +252,7 @@ const PATH_TO_ID: Record<string, string> = {
 const BREADCRUMBS: Record<string, string> = {
   "/admin/users": "Users",
   "/admin/company/dashboard": "Company Listings",
+  "/admin/hero-images": "Hero Images",
   "/admin/professional/dashboard": "Professionals",
   "/admin/media/dashboard": "Media Hub",
   "/admin/event/dashboard": "Events",
