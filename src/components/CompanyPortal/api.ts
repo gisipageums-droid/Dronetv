@@ -5,19 +5,40 @@ export function authHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
 }
 
-// The one company record this logged-in user manages in the portal - reads
-// from localStorage the same way the rest of UserDashboard already resolves
-// "my company" (publishedId cached after first load), avoiding a fresh
-// dashboard-cards round trip on every portal page.
-export async function getMyCompany(userId: string): Promise<any | null> {
+// One account can own several companies (token-gated: 1 free, up to 5, or
+// unlimited - see UserDashboard getCompanyLimit). The portal lets the user
+// pick which one is "active"; that choice is stored here and every page
+// resolves against it.
+const ACTIVE_KEY = "companyPortal:activePublishedId";
+
+export function getActivePublishedId(): string | null {
+  try { return localStorage.getItem(ACTIVE_KEY); } catch { return null; }
+}
+
+export function setActivePublishedId(publishedId: string): void {
+  try { localStorage.setItem(ACTIVE_KEY, publishedId); } catch { /* ignore */ }
+}
+
+// Every company this logged-in user owns, newest first (matches the backend's
+// createdAt DESC ordering).
+export async function getMyCompanies(userId: string): Promise<any[]> {
   const url = COMPANY_API
     ? `${COMPANY_API}/dashboard-cards?userId=${encodeURIComponent(userId)}&viewType=user`
     : `${LAMBDA.company}/dashboard-cards?userId=${encodeURIComponent(userId)}&viewType=user`;
   const res = await fetch(url, { headers: authHeaders() });
-  if (!res.ok) return null;
+  if (!res.ok) return [];
   const data = await res.json();
-  const cards = data.cards || [];
-  return cards[0] || null;
+  return data.cards || [];
+}
+
+// The company the portal is currently acting on: the user's stored selection
+// if it still exists, otherwise the newest company. Returns null only when the
+// account owns no companies at all.
+export async function getMyCompany(userId: string): Promise<any | null> {
+  const cards = await getMyCompanies(userId);
+  if (cards.length === 0) return null;
+  const active = getActivePublishedId();
+  return (active && cards.find((c: any) => c.publishedId === active)) || cards[0];
 }
 
 export async function getPortalProfile(publishedId: string): Promise<Record<string, any>> {

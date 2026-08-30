@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Package, Inbox, Film, BookOpen, Megaphone,
   BarChart2, ShieldCheck, Receipt, Settings as SettingsIcon, Menu, X,
-  ExternalLink, LogOut, Coins, Target, LayoutTemplate, Briefcase,
+  ExternalLink, LogOut, Coins, Target, LayoutTemplate, Briefcase, LayoutGrid,
+  ChevronDown,
 } from "lucide-react";
 import { useUserAuth } from "../context/context";
+import { getMyCompanies, getActivePublishedId, setActivePublishedId } from "./api";
 import NotificationBell from "./NotificationBell";
 
 interface NavItem {
@@ -24,6 +26,7 @@ const NAV: NavSection[] = [
   {
     heading: "",
     items: [
+      { id: "companies", label: "My Companies", icon: LayoutGrid, path: "/company-portal/companies" },
       { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/company-portal" },
     ],
   },
@@ -70,6 +73,7 @@ const NAV: NavSection[] = [
 
 const TITLES: Record<string, string> = {
   "/company-portal": "Dashboard",
+  "/company-portal/companies": "My Companies",
   "/company-portal/profile": "Company Profile",
   "/company-portal/listings": "Product & Service Listings",
   "/company-portal/leads": "B2B Leads",
@@ -191,6 +195,34 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
   const initials = displayName.slice(0, 2).toUpperCase();
   const pageTitle = TITLES[location.pathname] || "Dashboard";
 
+  const userId = (user as any)?.userData?.email || (user as any)?.email || "";
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(getActivePublishedId());
+  const [switcherOpen, setSwitcherOpen] = useState(false);
+
+  useEffect(() => {
+    if (!userId) return;
+    getMyCompanies(userId).then((list) => {
+      setCompanies(list);
+      const stored = getActivePublishedId();
+      if ((!stored || !list.some((c: any) => c.publishedId === stored)) && list[0]) {
+        setActivePublishedId(list[0].publishedId);
+        setActiveId(list[0].publishedId);
+      }
+    });
+  }, [userId]);
+
+  const switchCompany = (publishedId: string) => {
+    setSwitcherOpen(false);
+    if (publishedId === activeId) return;
+    setActivePublishedId(publishedId);
+    // Every portal page resolves the active company once on mount, so a reload
+    // is the reliable way to re-point all of them at the newly selected company.
+    window.location.reload();
+  };
+
+  const activeCompany = companies.find((c) => c.publishedId === activeId) || companies[0];
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -240,7 +272,50 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
           <button onClick={() => setMobileOpen(true)} className="lg:hidden text-white/50 p-1" title="Open menu">
             <Menu size={18} />
           </button>
-          <div className="flex-1 text-sm font-bold text-white truncate">{pageTitle}</div>
+          <div className="text-sm font-bold text-white truncate">{pageTitle}</div>
+
+          {companies.length > 1 && (
+            <div className="relative">
+              <button
+                onClick={() => setSwitcherOpen((o) => !o)}
+                className="flex items-center gap-1.5 max-w-[190px] px-2.5 py-1.5 border border-white/15 rounded-lg text-xs font-semibold text-white/80 hover:border-white/30 hover:text-white"
+                title="Switch company"
+              >
+                <Building2 size={13} className="flex-shrink-0 text-brand-yellow" />
+                <span className="truncate">{activeCompany?.companyName || "Select company"}</span>
+                <ChevronDown size={13} className="flex-shrink-0" />
+              </button>
+              {switcherOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setSwitcherOpen(false)} />
+                  <div className="absolute right-0 mt-1.5 w-64 max-h-80 overflow-y-auto bg-ink border border-white/15 rounded-lg shadow-xl z-50 py-1">
+                    {companies.map((c) => (
+                      <button
+                        key={c.publishedId}
+                        onClick={() => switchCompany(c.publishedId)}
+                        className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-white/5 ${
+                          c.publishedId === activeId ? "text-brand-yellow" : "text-white/70"
+                        }`}
+                      >
+                        <Building2 size={13} className="flex-shrink-0" />
+                        <span className="truncate flex-1">{c.companyName || "Untitled company"}</span>
+                        {c.publishedId === activeId && <span className="text-[9px] font-bold uppercase">Active</span>}
+                      </button>
+                    ))}
+                    <NavLink
+                      to="/company-portal/companies"
+                      onClick={() => setSwitcherOpen(false)}
+                      className="block px-3 py-2 text-xs text-white/50 hover:bg-white/5 hover:text-white border-t border-white/10 mt-1"
+                    >
+                      Manage all companies →
+                    </NavLink>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          <div className="flex-1" />
           <a
             href="https://testdev.dronetv.in/listed-companies"
             target="_blank"
