@@ -104,6 +104,7 @@ const CompanyRedirectGuard = lazy(() => import("./components/CompanyRedirectGuar
 const CompanyPortalLayout = lazy(() => import("./components/CompanyPortal/CompanyPortalLayout"));
 const CompanyPortalDashboard = lazy(() => import("./components/CompanyPortal/pages/Dashboard"));
 const CompanyPortalMyCompanies = lazy(() => import("./components/CompanyPortal/pages/MyCompanies"));
+const AdminHeroImages = lazy(() => import("./components/Admin/heroImagesAdmin/AdminHeroImages"));
 const CompanyPortalProfile = lazy(() => import("./components/CompanyPortal/pages/profile/CompanyProfilePage"));
 const CompanyPortalListings = lazy(() => import("./components/CompanyPortal/pages/Listings"));
 const CompanyPortalLeads = lazy(() => import("./components/CompanyPortal/pages/Leads"));
@@ -426,6 +427,7 @@ const AppContent = () => {
           />
           <Route path="/user/professional" element={<UserProfessional />} />
           <Route path="/admin/users" element={<AdminProtectedRoute><AdminLayout><AdminUsersDashboard /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/hero-images" element={<AdminProtectedRoute><AdminLayout><AdminHeroImages /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/companies/details/:publishedId/:userId" element={<AdminProtectedRoute><AdminCompanyEdit /></AdminProtectedRoute>} />
           <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route
