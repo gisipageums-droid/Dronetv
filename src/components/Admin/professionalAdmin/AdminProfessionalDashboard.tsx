@@ -452,7 +452,8 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   }%3C/text%3E%3C/svg%3E`;
 
   // Format date
-  const formatDate = (dateString: string): string => {
+  const formatDate = (dateString?: string): string => {
+    if (!dateString) return "No date";
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString("en-US", {
@@ -461,9 +462,16 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         year: "numeric",
       });
     } catch (error) {
-      return "Date not available";
+      return "No date";
     }
   };
+
+  const displayDateValue =
+    professional.publishedDate ||
+    professional.lastModified ||
+    professional.lastActivity ||
+    professional.createdAt ||
+    "";
 
   // Status badge styling based on status - Updated to match new status values
   const getStatusBadge = (reviewStatus: string) => {
@@ -494,122 +502,121 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   };
 
   const statusStyle = getStatusBadge(professional.reviewStatus || "draft");
+  const name =
+    professional.professionalName ||
+    professional.userId ||
+    "Unnamed Professional";
+  const categories =
+    professional.categories && professional.categories.length > 0
+      ? professional.categories
+      : [];
 
   return (
-    <div className="w-full h-full rounded-xl border border-ink-light border-l-4 border-l-brand-yellow shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden bg-surface-card">
-      <div className="p-4 md:p-5">
-        <div className="flex items-start justify-between gap-2 mb-4">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-ink-light flex items-center justify-center sm:w-12 sm:h-12">
-              <img
-                src={professional.previewImage || placeholderImg}
-                alt={`${professional.professionalName || professional.userId} profile`}
-                className="w-full h-full object-cover"
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = placeholderImg;
-                }}
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h3
-                className="text-lg md:text-xl font-bold text-ink truncate"
-                title={professional.professionalName || professional.userId || "Unnamed Professional"}
-              >
-                {professional.professionalName || professional.userId || "Unnamed Professional"}
-              </h3>
-              <div className="flex items-center text-ink-paragraph mt-1">
-                <MapPin className="w-3 h-3 mr-1" />
-                <span className="text-xs md:text-sm">
-                  {professional.location || "Location not specified"}
-                </span>
-              </div>
-            </div>
+    <div className="group flex flex-col h-full rounded-xl border border-ink-light bg-surface-card shadow-sm transition-shadow hover:shadow-md">
+      <div className="p-4 flex flex-col gap-3">
+        {/* avatar + name + status */}
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-lg bg-ink-light overflow-hidden flex items-center justify-center flex-shrink-0">
+            <img
+              src={professional.previewImage || placeholderImg}
+              alt=""
+              className="object-cover w-full h-full"
+              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                const target = e.target as HTMLImageElement;
+                if (target.src !== placeholderImg) target.src = placeholderImg;
+              }}
+              loading="lazy"
+              draggable={false}
+            />
           </div>
-          <div className="flex-shrink-0 whitespace-nowrap">
-            <div
-              className={`inline-flex items-center gap-1 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 rounded-full text-xs font-medium`}
+          <div className="min-w-0 flex-1">
+            <h3
+              className="text-sm font-semibold text-ink leading-tight truncate"
+              title={name}
             >
-              <User className="w-3 h-3" />
-              <span>{statusStyle.label}</span>
-            </div>
+              {name}
+            </h3>
+            <p className="flex items-center gap-1 mt-0.5 text-[11px] text-ink-caption min-w-0">
+              <MapPin className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">
+                {professional.location || "Location not set"}
+              </span>
+            </p>
           </div>
+          <span
+            className={`flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${statusStyle.bg} ${statusStyle.text}`}
+          >
+            {statusStyle.label}
+          </span>
         </div>
 
-        {/* Categories */}
-        <div className="mb-4 md:mb-6">
-          <div className="flex flex-wrap gap-1 md:gap-2">
-            {(professional.categories && professional.categories.length > 0
-              ? professional.categories
-              : ["General"]
-            ).map((category: string, index: number) => (
-              <span
-                key={index}
-                className="px-2 py-1 md:px-3 md:py-1 bg-ink-light text-ink-paragraph text-xs font-medium rounded-full"
-              >
-                {category}
+        {/* meta chips */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-caption">
+          <span className="inline-flex items-center gap-1">
+            <Calendar className="w-3 h-3" />
+            {formatDate(displayDateValue)}
+          </span>
+          {typeof professional.completionPercentage === "number" && (
+            <span className="inline-flex items-center gap-1">
+              <span className="font-semibold text-ink-paragraph">
+                {professional.completionPercentage}%
               </span>
-            ))}
-          </div>
+              complete
+            </span>
+          )}
+          {professional.skillsCount > 0 && (
+            <span className="inline-flex items-center gap-1">
+              <span className="font-semibold text-ink-paragraph">
+                {professional.skillsCount}
+              </span>
+              skills
+            </span>
+          )}
+          {categories.length > 0 && (
+            <span className="truncate max-w-full">{categories.join(", ")}</span>
+          )}
         </div>
+      </div>
 
-        {/* Stats and Actions Row */}
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3 md:gap-6">
-            <div className="flex items-center gap-2 bg-ink-offwhite rounded-lg px-3 py-1 md:px-4 md:py-2">
-              <span className="font-bold text-ink-paragraph text-xs md:text-sm">
-                {professional.publishedDate
-                  ? formatDate(professional.publishedDate)
-                  : "Not published"}
-              </span>
-              <span className="text-xs text-ink-paragraph hidden md:block">
-                Created
-              </span>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                onEdit(
-                  professional.professionalId,
-                  professional.templateSelection
-                );
-              }}
-              disabled={disabled}
-              className="px-3 py-2 bg-ink text-white rounded-lg hover:bg-ink-charcoal transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Edit className="w-3 h-3 md:w-4 md:h-4" />
-              Edit Template
-            </button>
-
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                onCredentials(professional.professionalId);
-              }}
-              disabled={disabled}
-              className="px-3 py-2 bg-brand-gold/15 text-brand-gold rounded-lg hover:bg-brand-gold/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FileText className="w-3 h-3 md:w-4 md:h-4" />
-              View Details
-            </button>
-
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                onDelete(professional.professionalId);
-              }}
-              disabled={disabled}
-              className="col-span-2 px-3 py-2 bg-status-error text-white rounded-lg hover:bg-status-error transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
-              Delete
-            </button>
-          </div>
-        </div>
+      {/* action bar */}
+      <div className="flex items-stretch mt-auto border-t border-ink-light divide-x divide-ink-light text-xs font-medium">
+        <button
+          type="button"
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            onCredentials(professional.professionalId);
+          }}
+          aria-label={`Details for ${name}`}
+          disabled={disabled}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-brand-gold hover:bg-brand-gold/10 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <FileText className="w-3.5 h-3.5" /> Details
+        </button>
+        <button
+          type="button"
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            onEdit(professional.professionalId, professional.templateSelection);
+          }}
+          aria-label={`Edit ${name}`}
+          disabled={disabled}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-ink-paragraph hover:bg-ink-offwhite transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <Edit className="w-3.5 h-3.5" /> Edit
+        </button>
+        <button
+          type="button"
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            onDelete(professional.professionalId);
+          }}
+          aria-label={`Delete ${name}`}
+          title="Delete"
+          disabled={disabled}
+          className="flex items-center justify-center px-4 py-2.5 text-status-error hover:bg-status-error/10 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );
@@ -668,7 +675,7 @@ const RecentProfessionalsSection: React.FC<{
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {recentProfessionals.map((professional) => (
             <div key={professional.professionalId} className="animate-fadeIn">
               <ProfessionalCard
@@ -753,7 +760,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
       {/* Professionals Grid */}
       {professionals.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {professionals.map((professional: Professional, index: number) => (
             <div
               key={professional.professionalId || index}
