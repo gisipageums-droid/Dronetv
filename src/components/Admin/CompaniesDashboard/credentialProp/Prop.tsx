@@ -864,6 +864,35 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                 </div>
               </div>
 
+              {/* Complete submitted data — every field on file, nothing hidden */}
+              {data?.formData?.rawData && Object.keys(data.formData.rawData).length > 0 && (
+                <details className="bg-ink-offwhite rounded-lg overflow-hidden" open>
+                  <summary className="cursor-pointer select-none px-4 py-3 font-semibold text-ink-charcoal text-sm">
+                    Complete Submitted Data ({Object.keys(data.formData.rawData).length} fields)
+                  </summary>
+                  <div className="px-4 pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+                    {Object.entries(data.formData.rawData)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([k, v]) => {
+                        let text: string;
+                        if (v == null || v === "") text = "—";
+                        else if (Array.isArray(v))
+                          text = v.length
+                            ? v.map((x) => (x && typeof x === "object" ? JSON.stringify(x) : String(x))).join(", ")
+                            : "—";
+                        else if (typeof v === "object") text = JSON.stringify(v);
+                        else text = String(v);
+                        return (
+                          <div key={k} className="flex flex-col border-b border-ink-light/60 py-1 min-w-0">
+                            <span className="text-[11px] text-ink-caption uppercase tracking-wide break-words">{k}</span>
+                            <span className="text-sm text-ink break-words">{text}</span>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </details>
+              )}
+
             </div>
             )}
 
