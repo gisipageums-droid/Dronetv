@@ -187,8 +187,6 @@ interface EventCardProps {
   event: Event;
   onCredentials: (eventId: string) => void;
   onPreview: (eventId: string, userId: string) => void;
-  onApprove: (eventId: string, userId: string) => void;
-  onReject: (eventId: string, userId: string) => void;
   onDelete: (eventId: string) => void;
   disabled?: boolean;
 }
@@ -863,8 +861,6 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
   event,
   onCredentials,
   onPreview,
-  onApprove,
-  onReject,
   onDelete,
   disabled = false,
 }) => {
@@ -908,112 +904,86 @@ const EventCard: React.FC<EventCardProps & { disabled?: boolean }> = ({
   };
 
   const statusStyle = getStatusBadge(event.reviewStatus);
+  const name = event.eventName || "Unnamed Event";
 
   return (
-    <div className="overflow-hidden w-full h-full rounded-xl border border-ink-light border-l-4 border-l-brand-yellow shadow-sm transition-all duration-200 hover:shadow-md bg-surface-card">
-      <div className="p-4 md:p-5">
-        <div className="flex flex-wrap justify-between items-start gap-2 mb-4">
-          <div className="flex gap-3 items-center min-w-0 flex-1">
-            <div className="flex-shrink-0 flex overflow-hidden justify-center items-center p-1 w-10 h-10 bg-ink-light rounded-lg sm:w-12 sm:h-12">
-              {eventImageUrl ? (
-                <img
-                  src={eventImageUrl}
-                  alt={`${event.eventName} logo`}
-                  className="w-full h-full object-cover rounded"
-                  loading="lazy"
-                />
-              ) : (
-                <Calendar className="w-5 h-5 text-ink-caption" />
-              )}
-            </div>
-
-            <div className="max-w-[calc(100%-60px)] md:max-w-none">
-              <h3 className="text-lg font-bold text-ink md:text-xl line-clamp-2">
-                {event.eventName || "Unnamed Event"}
-              </h3>
-              <div className="flex items-center mt-1 text-ink-paragraph">
-                <MapPin className="mr-1 w-3 h-3" />
-                <span className="text-xs md:text-sm">
-                  {event.location ? (event.location.length > 25 ? event.location.slice(0, 25) + "..." : event.location) : "Location not specified"}
-                </span>
-              </div>
-            </div>
+    <div className="group flex flex-col h-full rounded-xl border border-ink-light bg-surface-card shadow-sm transition-shadow hover:shadow-md">
+      <div className="p-4 flex flex-col gap-3">
+        {/* image + name + status */}
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-lg bg-ink-light overflow-hidden flex items-center justify-center flex-shrink-0">
+            {eventImageUrl ? (
+              <img
+                src={eventImageUrl}
+                alt=""
+                className="object-cover w-full h-full"
+                loading="lazy"
+                draggable={false}
+              />
+            ) : (
+              <Calendar className="w-5 h-5 text-ink-caption" />
+            )}
           </div>
-
-          <div className="flex-shrink-0">
-            <div
-              className={`inline-flex items-center gap-1 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 rounded-full text-xs font-medium`}
+          <div className="min-w-0 flex-1">
+            <h3
+              className="text-sm font-semibold text-ink leading-tight truncate"
+              title={name}
             >
-              <Calendar className="w-3 h-3" />
-              <span>{statusStyle.label}</span>
-            </div>
+              {name}
+            </h3>
+            <p className="flex items-center gap-1 mt-0.5 text-[11px] text-ink-caption min-w-0">
+              <MapPin className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">
+                {event.location || "Location not set"}
+              </span>
+            </p>
           </div>
+          <span
+            className={`flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${statusStyle.bg} ${statusStyle.text}`}
+          >
+            {statusStyle.label}
+          </span>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <div className="flex gap-3 items-center md:gap-6">
-            <div className="flex gap-2 items-center px-3 py-1 bg-ink-offwhite rounded-lg md:px-4 md:py-2">
-              <span className="text-xs font-bold text-ink-paragraph md:text-sm">
-                {formatDate(event.createdAt)}
-              </span>
-              <span className="hidden text-xs text-ink-paragraph md:block">
-                Published
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => onPreview(event.eventId, event.userId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-ink-paragraph bg-ink-light rounded-lg transition-colors hover:bg-ink-light md:text-sm disabled:opacity-50 disabled:pointer-events-none"
-              aria-label={`Preview ${event.eventName}`}
-              disabled={disabled}
-            >
-              <Pen className="w-3 h-3 md:w-4 md:h-4" /> Edit /{" "}
-              <Eye className="w-3 h-3 md:w-4 md:h-4" /> Preview
-            </button>
-
-            <button
-              onClick={() => onCredentials(event.draftId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-brand-gold bg-brand-gold/15 rounded-lg transition-colors hover:bg-brand-gold/25 md:text-sm disabled:opacity-50 disabled:pointer-events-none"
-              aria-label={`Credentials ${event.eventName}`}
-              disabled={disabled}
-            >
-              <Key className="w-3 h-3 md:w-4 md:h-4" />
-              Credentials
-            </button>
-
-            <button
-              onClick={() => onApprove(event.eventId, event.userId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-status-success bg-status-success/15 rounded-lg transition-colors hover:bg-status-success/25 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label={`Approve ${event.eventName}`}
-              disabled={disabled || event.reviewStatus === "approved"}
-            >
-              <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
-              Approve
-            </button>
-
-            <button
-              onClick={() => onReject(event.eventId, event.userId)}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-status-error bg-status-error/15 rounded-lg transition-colors hover:bg-status-error/25 md:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label={`Reject ${event.eventName}`}
-              disabled={disabled || event.reviewStatus === "rejected"}
-            >
-              <XCircle className="w-3 h-3 md:w-4 md:h-4" />
-              Reject
-            </button>
-
-            <button
-              onClick={() => onDelete(event.eventId)}
-              className="flex col-span-2 gap-2 justify-center items-center px-3 py-2 text-xs font-medium text-white bg-status-error rounded-lg transition-colors hover:bg-status-error md:text-sm disabled:opacity-50 disabled:pointer-events-none"
-              aria-label={`Delete ${event.eventName}`}
-              disabled={disabled}
-            >
-              <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
-              Delete
-            </button>
-          </div>
+        {/* meta chips */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-caption">
+          <span className="inline-flex items-center gap-1">
+            <Calendar className="w-3 h-3" />
+            {formatDate(event.createdAt)}
+          </span>
         </div>
+      </div>
+
+      {/* action bar */}
+      <div className="flex items-stretch mt-auto border-t border-ink-light divide-x divide-ink-light text-xs font-medium">
+        <button
+          type="button"
+          onClick={() => onCredentials(event.draftId)}
+          aria-label={`Details for ${name}`}
+          disabled={disabled}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-brand-gold hover:bg-brand-gold/10 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <Key className="w-3.5 h-3.5" /> Details
+        </button>
+        <button
+          type="button"
+          onClick={() => onPreview(event.eventId, event.userId)}
+          aria-label={`Edit ${name}`}
+          disabled={disabled}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-ink-paragraph hover:bg-ink-offwhite transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <Pen className="w-3.5 h-3.5" /> Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => onDelete(event.eventId)}
+          aria-label={`Delete ${name}`}
+          title="Delete"
+          disabled={disabled}
+          className="flex items-center justify-center px-4 py-2.5 text-status-error hover:bg-status-error/10 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );
@@ -1033,8 +1003,6 @@ const RecentEventsSection: React.FC<{
   label: string;
   onCredentials: (publishedId: string) => void;
   onPreview: (publishedId: string, userId: string) => void;
-  onApprove: (publishedId: string, userId: string) => void;
-  onReject: (publishedId: string, userId: string) => void;
   onDelete: (publishedId: string) => void;
   disabled?: boolean;
 }> = ({
@@ -1042,8 +1010,6 @@ const RecentEventsSection: React.FC<{
   label,
   onCredentials,
   onPreview,
-  onApprove,
-  onReject,
   onDelete,
   disabled,
 }) => {
@@ -1063,15 +1029,13 @@ const RecentEventsSection: React.FC<{
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {recentEvents.map((event) => (
             <div key={event.eventId} className="animate-fadeIn">
               <EventCard
                 event={event}
                 onCredentials={onCredentials}
                 onPreview={onPreview}
-                onApprove={onApprove}
-                onReject={onReject}
                 onDelete={onDelete}
                 disabled={disabled}
               />
@@ -1153,7 +1117,7 @@ const EventAdminDashboard: React.FC = () => {
   // Confirmation modal state
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
-    type: "approve" | "reject" | "delete" | "edit" | null;
+    type: "delete" | "edit" | null;
     eventId: string | null;
     userId: string | null;
     event: Event | null;
@@ -1161,7 +1125,7 @@ const EventAdminDashboard: React.FC = () => {
 
   // -------------------- Confirmation Modal Handlers --------------------
   const openConfirmationModal = (
-    type: "approve" | "reject" | "delete" | "edit",
+    type: "delete" | "edit",
     eventId: string,
     userId?: string
   ) => {
@@ -1195,14 +1159,6 @@ const EventAdminDashboard: React.FC = () => {
       switch (type) {
         case "edit":
           await handlePreviewAction(eventId, userId || "");
-          break;
-
-        case "approve":
-          await handleApproveAction(eventId, userId || "");
-          break;
-
-        case "reject":
-          await handleRejectAction(eventId, userId || "");
           break;
 
         case "delete":
@@ -1263,38 +1219,6 @@ const EventAdminDashboard: React.FC = () => {
     }
   };
 
-  const handleApproveAction = async (eventId: string, userId: string) => {
-    const response = await fetch(
-      EVENTS_API ? `${EVENTS_API}/admin/review` : `${LAMBDA.eventsAdmin}/event/${eventId}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeader() },
-        body: EVENTS_API
-          ? JSON.stringify({ eventId, action: "approve" })
-          : JSON.stringify({ eventId, action: "approve", userId }),
-      }
-    );
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    toast.success("Event approved successfully");
-    fetchEvents();
-  };
-
-  const handleRejectAction = async (eventId: string, userId: string) => {
-    const response = await fetch(
-      EVENTS_API ? `${EVENTS_API}/admin/review` : `${LAMBDA.eventsAdmin}/event/${eventId}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeader() },
-        body: EVENTS_API
-          ? JSON.stringify({ eventId, action: "reject" })
-          : JSON.stringify({ eventId, action: "reject", userId }),
-      }
-    );
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    toast.success("Event rejected");
-    fetchEvents();
-  };
-
   const handleDeleteAction = async (eventId: string) => {
     const response = await fetch(
       EVENTS_API ? `${EVENTS_API}/delete-event` : `${LAMBDA.eventsDelete}/delete-event`,
@@ -1312,14 +1236,6 @@ const EventAdminDashboard: React.FC = () => {
   // Wrapper functions for button clicks
   const handlePreview = (eventId: string, userId: string) => {
     openConfirmationModal("edit", eventId, userId);
-  };
-
-  const handleApprove = (eventId: string, userId: string) => {
-    openConfirmationModal("approve", eventId, userId);
-  };
-
-  const handleReject = (eventId: string, userId: string) => {
-    openConfirmationModal("reject", eventId, userId);
   };
 
   const handleDelete = (eventId: string) => {
@@ -1416,22 +1332,6 @@ const EventAdminDashboard: React.FC = () => {
           confirmText: "Edit Event",
           confirmColor: "bg-ink-paragraph hover:bg-ink-paragraph",
           icon: <Edit className="text-ink-paragraph" size={24} />,
-        };
-      case "approve":
-        return {
-          title: "Confirm Approval",
-          message: `Are you sure you want to approve "${eventName}"? This will make the event visible to users.`,
-          confirmText: "Approve Event",
-          confirmColor: "bg-status-success hover:bg-status-success",
-          icon: <CheckCircle className="text-status-success" size={24} />,
-        };
-      case "reject":
-        return {
-          title: "Confirm Rejection",
-          message: `Are you sure you want to reject "${eventName}"? This will mark the event as rejected.`,
-          confirmText: "Reject Event",
-          confirmColor: "bg-status-error hover:bg-status-error",
-          icon: <XCircle className="text-status-error" size={24} />,
         };
       case "delete":
         return {
@@ -1573,8 +1473,6 @@ const EventAdminDashboard: React.FC = () => {
                   label={viewFilter === "expos" ? "Recent Expos" : viewFilter === "conferences" ? "Recent Conferences" : viewFilter === "workshops" ? "Recent Workshops" : "Recent Events"}
                   onCredentials={handleCredentials}
                   onPreview={handlePreview}
-                  onApprove={handleApprove}
-                  onReject={handleReject}
                   onDelete={handleDelete}
                   disabled={isMutating}
                 />
@@ -1594,15 +1492,13 @@ const EventAdminDashboard: React.FC = () => {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {paginatedEvents.map((event) => (
                   <div key={event.eventId} className="animate-fadeIn">
                     <EventCard
                       event={event}
                       onCredentials={handleCredentials}
                       onPreview={handlePreview}
-                      onApprove={handleApprove}
-                      onReject={handleReject}
                       onDelete={handleDelete}
                       disabled={isMutating}
                     />
