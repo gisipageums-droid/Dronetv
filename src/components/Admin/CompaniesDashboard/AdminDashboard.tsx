@@ -734,22 +734,39 @@ const apiService = {
     }
   },
 
-  async fetchCompanyCredentials(draftId: string, userId: string): Promise<any> {
-    try {
-      const response = await fetch(
-        COMPANY_API ? `${COMPANY_API}/restore-js?draftId=${draftId}&userId=${userId}` : `${LAMBDA.companyRestoreJs}/js?draftId=${draftId}&userId=${userId}`,
-        { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+  // The old Lambda /restore-js endpoint doesn't exist self-hosted. The full
+  // submitted form now lives in the company row's `companyInfo` blob, served
+  // by published-details - reshape it into the {formData:{rawData}} shape the
+  // modal already reads.
+  async fetchCompanyCredentials(publishedId: string, userId: string, draftId: string): Promise<any> {
+    const response = await fetch(
+      COMPANY_API
+        ? `${COMPANY_API}/dashboard-cards/published-details/${publishedId}`
+        : `${LAMBDA.company}/dashboard-cards/published-details/${publishedId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-User-Id": userId,
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+        },
       }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      throw error;
-    }
+    );
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const d = await response.json();
+    const info = d.companyInfo || {};
+    return {
+      publishedId: d.publishedId || publishedId,
+      draftId,
+      userId,
+      metadata: d.metadata || {},
+      formData: {
+        rawData: {
+          ...info,
+          cin: info.cin || info.cinOrUdyamOrPan || "",
+          panNumber: info.panNumber || info.pan || "",
+        },
+      },
+    };
   },
 
   async approveCompany(publishedId: string, action: string): Promise<any> {
@@ -1335,11 +1352,19 @@ const AdminDashboard: React.FC = () => {
         toast.error("Company not found");
         return;
       }
+      // Open immediately with what the card already has; enrich when the
+      // fetch returns. The modal still shows Login Email + password reset
+      // even if the detailed form data can't be loaded.
+      setCredentialsModal({ isOpen: true, data: null, company });
       setIsMutating(true);
-      const credentials = await apiService.fetchCompanyCredentials(company.draftId, company.userId);
-      setCredentialsModal({ isOpen: true, data: credentials, company });
-    } catch (err) {
-      toast.error("Failed to fetch company credentials");
+      try {
+        const credentials = await apiService.fetchCompanyCredentials(
+          company.publishedId, company.userId, company.draftId
+        );
+        setCredentialsModal({ isOpen: true, data: credentials, company });
+      } catch {
+        toast.info("Detailed form data isn't available for this listing");
+      }
     } finally {
       setIsMutating(false);
     }
