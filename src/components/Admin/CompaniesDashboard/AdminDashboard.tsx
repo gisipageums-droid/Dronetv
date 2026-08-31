@@ -639,35 +639,8 @@ const CompanyCard: React.FC<CompanyCardProps & { disabled?: boolean }> = ({
               <span className="">Preview</span>
             </button>
 
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onApprove(company.publishedId);
-              }}
-              aria-label={`Approve ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-status-success bg-status-success/15 rounded-lg transition-colors hover:bg-status-success/25 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={disabled || company.reviewStatus === "approved"}
-              aria-disabled={disabled}
-            >
-              <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="">Approve</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onReject(company.publishedId);
-              }}
-              aria-label={`Reject ${company.companyName}`}
-              className="flex gap-2 justify-center items-center px-3 py-2 text-xs sm:text-sm font-medium text-status-error bg-status-error/15 rounded-lg transition-colors hover:bg-status-error/25 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={disabled || company.reviewStatus === "rejected"}
-              aria-disabled={disabled}
-            >
-              <XCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="">Reject</span>
-            </button>
+            {/* Approve / Reject removed - publishing a listing auto-approves it
+                (see company service publish_draft); the buttons no longer had a job. */}
 
             {/* Delete spans full row on small/medium -> set col-span accordingly */}
             <button
@@ -1808,8 +1781,6 @@ const AdminDashboard: React.FC = () => {
           data={credentialsModal.data}
           loading={isMutating}
           onPreview={handlePreview}
-          onApprove={handleApprove}
-          onReject={handleReject}
           company={credentialsModal.company}
         />
       )}

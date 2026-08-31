@@ -59,10 +59,10 @@ export function TransactionHistory() {
                 paymentStatus: t.status,
                 currency: 'INR',
                 tokenCount: t.tokenCount,
-                userId: '',
-                userName: '',
-                userEmail: '',
-                userPhone: '',
+                userId: t.userId || '',
+                userName: t.userName || '',
+                userEmail: t.userEmail || t.userId || '',
+                userPhone: t.userPhone || '',
                 planName: t.service || '',
                 planId: '',
                 period: '',
@@ -218,8 +218,15 @@ export function TransactionHistory() {
                       <span className="text-xs font-mono text-ink-paragraph">{transaction.id.substring(0, 8)}...</span>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-sm font-bold text-ink">{transaction.userName || "Unknown User"}</p>
-                      <p className="text-xs text-ink-caption">{transaction.userEmail}</p>
+                      <p className="text-sm font-bold text-ink">
+                        {transaction.userName || transaction.userEmail || "Unknown User"}
+                      </p>
+                      {transaction.userName && (
+                        <p className="text-xs text-ink-caption">{transaction.userEmail}</p>
+                      )}
+                      {transaction.userPhone && (
+                        <p className="text-xs text-ink-caption">{transaction.userPhone}</p>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <p className="text-xs text-ink-paragraph">{new Date(transaction.date).toLocaleDateString()}</p>

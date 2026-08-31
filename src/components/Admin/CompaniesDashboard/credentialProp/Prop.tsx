@@ -1,5 +1,110 @@
 import React, { useEffect, useState } from "react";
-import { X, Eye, Key, CheckCircle, XCircle, Copy, Check } from "lucide-react";
+import { X, Eye, Key, Copy, Check, Lock, RefreshCw } from "lucide-react";
+import { toast } from "react-toastify";
+import { AUTH_API, LAMBDA } from "../../../../lib/apiConfig";
+
+const SET_PASSWORD_API = AUTH_API ? `${AUTH_API}/admin/set-password` : `${LAMBDA.auth}/admin/set-password`;
+
+function genPassword(): string {
+  const sets = ["ABCDEFGHJKLMNPQRSTUVWXYZ", "abcdefghijkmnpqrstuvwxyz", "23456789", "!@#$%*"];
+  return Array.from({ length: 12 }, (_, i) => {
+    const s = sets[i % sets.length];
+    return s[Math.floor(Math.random() * s.length)];
+  }).sort(() => Math.random() - 0.5).join("");
+}
+
+function AccountAccess({ email, gstin, cin }: { email?: string; gstin?: string; cin?: string }) {
+  const [pw, setPw] = useState("");
+  const [notify, setNotify] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const copy = (v: string, k: string) => {
+    navigator.clipboard.writeText(v);
+    setCopied(k);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
+  const save = async () => {
+    if (!email) { toast.error("No login email on this listing"); return; }
+    if (pw.trim().length < 6) { toast.error("Password must be at least 6 characters"); return; }
+    setSaving(true);
+    try {
+      const res = await fetch(SET_PASSWORD_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+        body: JSON.stringify({ email, newPassword: pw.trim(), notify }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.detail || `Failed (${res.status})`);
+      toast.success(notify ? "Password updated — new password emailed to the user" : "Password updated");
+      setPw("");
+    } catch (e: any) {
+      toast.error(e.message || "Could not update password");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const Field = ({ label, value, k }: { label: string; value?: string; k: string }) => (
+    <div>
+      <p className="text-sm text-ink-paragraph">{label}</p>
+      <div className="flex items-center gap-2">
+        <p className="font-medium font-mono text-sm break-all">{value || "Not provided"}</p>
+        {value && (
+          <button onClick={() => copy(value, k)} className="text-ink-caption hover:text-ink-paragraph flex-shrink-0">
+            {copied === k ? <Check className="w-4 h-4 text-status-success" /> : <Copy className="w-3 h-3" />}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="bg-ink-offwhite p-4 rounded-lg">
+      <h4 className="font-semibold text-lg text-ink-charcoal mb-3 flex items-center gap-2">
+        <Lock className="w-4 h-4" /> Account &amp; Access
+      </h4>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <Field label="Login Email" value={email} k="login" />
+        <Field label="GSTIN" value={gstin} k="gstin" />
+        <Field label="CIN" value={cin} k="cin" />
+      </div>
+
+      <div className="p-3 bg-surface-card rounded-lg border border-ink-light">
+        <h5 className="font-medium text-ink-paragraph mb-2 text-sm">Reset this company's password</h5>
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+          <input
+            type="text"
+            value={pw}
+            onChange={(e) => setPw(e.target.value)}
+            placeholder="New password (min 6 chars)"
+            className="flex-1 px-3 py-2 border border-ink-light rounded-lg text-sm font-mono focus:outline-none focus:border-brand-yellow"
+          />
+          <button
+            type="button"
+            onClick={() => setPw(genPassword())}
+            className="px-3 py-2 text-xs font-medium text-ink-paragraph bg-ink-light rounded-lg hover:bg-ink-light flex items-center gap-1.5 justify-center"
+          >
+            <RefreshCw className="w-3 h-3" /> Generate
+          </button>
+          <button
+            type="button"
+            onClick={save}
+            disabled={saving || pw.trim().length < 6}
+            className="px-4 py-2 text-xs font-semibold text-ink bg-brand-yellow rounded-lg hover:bg-brand-gold disabled:opacity-50"
+          >
+            {saving ? "Saving…" : "Update Password"}
+          </button>
+        </div>
+        <label className="flex items-center gap-2 mt-2.5 text-xs text-ink-paragraph cursor-pointer">
+          <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} />
+          Email the new password to <span className="font-medium">{email || "the user"}</span>
+        </label>
+      </div>
+    </div>
+  );
+}
 
 interface Company {
   publishedId: string;
@@ -42,8 +147,6 @@ interface CredentialsModalProps {
   data: any;
   loading: boolean;
   onPreview: (publishedId: string) => void;
-  onApprove: (publishedId: string) => void;
-  onReject: (publishedId: string) => void;
   company: Company | null;
 }
 
@@ -53,8 +156,6 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
   data,
   loading,
   onPreview,
-  onApprove,
-  onReject,
   company,
 }) => {
   const [notes, setNotes] = useState(
@@ -96,26 +197,17 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                 <Eye className="w-3 h-3 md:w-4 md:h-4" />
                 Preview
               </button>
-
-              <button
-                onClick={() => onApprove(company.publishedId)}
-                className="px-3 py-2 w-full bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center"
-              >
-                <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
-                Approve
-              </button>
-              <button
-                onClick={() => onReject(company.publishedId)}
-                className="px-3 py-2 w-full bg-status-error/15 text-status-error rounded-lg hover:bg-status-error/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center"
-              >
-                <XCircle className="w-3 h-3 md:w-4 md:h-4" />
-                Reject
-              </button>
             </div>
           )}
 
           {data ? (
             <div className="space-y-6">
+              <AccountAccess
+                email={company?.userId || data?.userId}
+                gstin={data?.formData?.rawData?.gstin}
+                cin={data?.formData?.rawData?.cin}
+              />
+
               {/* Basic Information */}
               <div className="bg-ink-offwhite p-4 rounded-lg">
                 <h4 className="font-semibold text-lg text-ink-charcoal mb-3">
