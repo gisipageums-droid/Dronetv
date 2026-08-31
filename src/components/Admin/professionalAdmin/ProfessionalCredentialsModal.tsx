@@ -60,9 +60,6 @@ interface ProfessionalCredentialsModalProps {
   professionalId: string | null;
   loading?: boolean;
   professional?: Professional | null;
-  onPreview: (professionalId: string) => void;
-  onApprove: (professionalId: string) => void;
-  onReject: (professionalId: string) => void;
 }
 
 const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> = ({
@@ -71,9 +68,6 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
   professionalId,
   loading: externalLoading,
   professional,
-  onPreview,
-  onApprove,
-  onReject
 }) => {
   const [data, setData] = useState<any | null>(null);
   const [notes, setNotes] = useState('');
@@ -218,27 +212,6 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
             <div className="text-center py-8 text-status-error font-medium">{error}</div>
           ) : data ? (
             <>
-              <div className="flex flex-col sm:flex-row gap-3 mb-6">
-                {/* <button
-                  onClick={() => professionalId && onPreview(professionalId)}
-                  className="flex-1 px-4 py-2 bg-status-info/15 text-status-info rounded-lg hover:bg-status-info/25 transition-colors text-sm font-medium flex items-center gap-2 justify-center"
-                >
-                  <Eye className="w-4 h-4" /> Preview Profile
-                </button> */}
-                <button
-                  onClick={() => professionalId && onApprove(professionalId)}
-                  className="flex-1 px-4 py-2 bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-sm font-medium flex items-center gap-2 justify-center"
-                >
-                  <CheckCircle className="w-4 h-4" /> Approve
-                </button>
-                <button
-                  onClick={() => professionalId && onReject(professionalId)}
-                  className="flex-1 px-4 py-2 bg-status-error/15 text-status-error rounded-lg hover:bg-status-error/25 transition-colors text-sm font-medium flex items-center gap-2 justify-center"
-                >
-                  <XCircle className="w-4 h-4" /> Reject
-                </button>
-              </div>
-
               <div className="space-y-6">
                 {formData.userImage && (
                   <InfoSection

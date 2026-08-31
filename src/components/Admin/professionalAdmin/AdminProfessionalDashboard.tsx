@@ -89,9 +89,6 @@ interface SidebarProps {
 interface ProfessionalCardProps {
   professional: Professional;
   onCredentials: (professionalId: string) => void;
-  onPreview: (professionalId: string) => void;
-  onApprove: (professionalId: string) => void;
-  onReject: (professionalId: string) => void;
   onDelete: (professionalId: string) => void;
   onEdit: (professionalId: string, templateSelection: string) => void;
   disabled?: boolean;
@@ -109,9 +106,6 @@ interface MainContentProps {
   hasMore: boolean;
   onOpenMobileSidebar: () => void;
   onCredentials: (professionalId: string) => void;
-  onPreview: (professionalId: string) => void;
-  onApprove: (professionalId: string) => void;
-  onReject: (professionalId: string) => void;
   searchTerm: string;
   sortBy: string;
   statusFilter: string;
@@ -448,9 +442,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   professional,
   onCredentials,
-  onPreview,
-  onApprove,
-  onReject,
   onDelete,
   onEdit,
   disabled = false,
@@ -597,25 +588,13 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                onPreview(professional.professionalId);
-              }}
-              disabled={disabled}
-              className="px-3 py-2 bg-ink-light text-ink-paragraph rounded-lg hover:bg-ink-light/70 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Eye className="w-3 h-3 md:w-4 md:h-4" />
-              Preview
-            </button>
-
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
                 onCredentials(professional.professionalId);
               }}
               disabled={disabled}
-              className="col-span-2 px-3 py-2 bg-brand-gold/15 text-brand-gold rounded-lg hover:bg-brand-gold/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-2 bg-brand-gold/15 text-brand-gold rounded-lg hover:bg-brand-gold/25 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FileText className="w-3 h-3 md:w-4 md:h-4" />
-              View Full Details
+              View Details
             </button>
 
             <button
@@ -663,18 +642,12 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
 const RecentProfessionalsSection: React.FC<{
   recentProfessionals: Professional[];
   onCredentials: (professionalId: string) => void;
-  onPreview: (professionalId: string) => void;
-  onApprove: (professionalId: string) => void;
-  onReject: (professionalId: string) => void;
   onDelete: (professionalId: string) => void;
   onEdit: (professionalId: string, templateSelection: string) => void;
   disabled?: boolean;
 }> = ({
   recentProfessionals,
   onCredentials,
-  onPreview,
-  onApprove,
-  onReject,
   onDelete,
   onEdit,
   disabled,
@@ -701,9 +674,6 @@ const RecentProfessionalsSection: React.FC<{
               <ProfessionalCard
                 professional={professional}
                 onCredentials={onCredentials}
-                onPreview={onPreview}
-                onApprove={onApprove}
-                onReject={onReject}
                 onDelete={onDelete}
                 onEdit={onEdit}
                 disabled={disabled}
@@ -730,9 +700,6 @@ const MainContent: React.FC<MainContentProps> = ({
   hasMore,
   onOpenMobileSidebar,
   onCredentials,
-  onPreview,
-  onApprove,
-  onReject,
   searchTerm,
   sortBy,
   statusFilter,
@@ -764,9 +731,6 @@ const MainContent: React.FC<MainContentProps> = ({
         <RecentProfessionalsSection
           recentProfessionals={recentProfessionals}
           onCredentials={onCredentials}
-          onPreview={onPreview}
-          onApprove={onApprove}
-          onReject={onReject}
           onDelete={onDelete}
           onEdit={onEdit}
           disabled={isMutating}
@@ -798,9 +762,6 @@ const MainContent: React.FC<MainContentProps> = ({
               <ProfessionalCard
                 professional={professional}
                 onCredentials={onCredentials}
-                onPreview={onPreview}
-                onApprove={onApprove}
-                onReject={onReject}
                 onDelete={onDelete}
                 onEdit={onEdit}
                 disabled={isMutating}
@@ -895,56 +856,6 @@ const apiService = {
     }
   },
 
-  async approveProfessional(professionalId: string, userId: string): Promise<any> {
-    try {
-      const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-tem-validation` : `${LAMBDA.profValidate}/professional-tem-validation`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-          },
-          body: JSON.stringify({ professionalId, action: "approve", userId }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  async rejectProfessional(professionalId: string, userId: string): Promise<any> {
-    try {
-      const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-tem-validation` : `${LAMBDA.profValidate}/professional-tem-validation`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-          },
-          body: JSON.stringify({ professionalId, action: "reject", userId }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
   async deleteProfessional(professionalId: string): Promise<any> {
     try {
       const response = await fetch(
@@ -1014,7 +925,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   // Confirmation modals state
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
-    type: "edit" | "approve" | "reject" | "delete" | null;
+    type: "edit" | "delete" | null;
     professionalId: string | null;
     professional: Professional | null;
   }>({ isOpen: false, type: null, professionalId: null, professional: null });
@@ -1035,7 +946,7 @@ const AdminProfessionalDashboard: React.FC = () => {
 
   // -------------------- Confirmation Modal Handlers --------------------
   const openConfirmationModal = (
-    type: "edit" | "approve" | "reject" | "delete",
+    type: "edit" | "delete",
     professionalId: string
   ) => {
     const professional = professionals.find(
@@ -1066,34 +977,6 @@ const AdminProfessionalDashboard: React.FC = () => {
             navigate(
               `/user/professionals/edit/${templateNum(professional.templateSelection)}/${professionalId}/${professional.userId}`
             );
-          }
-          break;
-
-        case "approve":
-          if (professional) {
-            // deleteProfessional/approveProfessional/rejectProfessional
-            // already throw on a non-2xx response (caught below), so
-            // reaching this point means the backend accepted it - no need
-            // to also match its exact message/status text, which drifted
-            // from what the backend actually returns and made every
-            // successful approve/reject/delete look like a failure.
-            await apiService.approveProfessional(
-              professionalId,
-              professional.userId
-            );
-            toast.success("Professional approved successfully");
-            await fetchProfessionals();
-          }
-          break;
-
-        case "reject":
-          if (professional) {
-            await apiService.rejectProfessional(
-              professionalId,
-              professional.userId
-            );
-            toast.success("Professional rejected successfully");
-            await fetchProfessionals();
           }
           break;
 
@@ -1133,35 +1016,8 @@ const AdminProfessionalDashboard: React.FC = () => {
     }
   };
 
-  const handlePreview = async (professionalId: string): Promise<void> => {
-    try {
-      const professional = professionals.find(
-        (p) => p.professionalId === professionalId
-      );
-      if (!professional) {
-        toast.error("Professional not found");
-        return;
-      }
-
-      // Navigate to preview page based on template
-      navigate(
-        `/user/professionals/preview/${templateNum(professional.templateSelection)}/${professionalId}/${professional.userId}`
-      );
-    } catch (error) {
-      toast.error("Failed to load professional for preview");
-    }
-  };
-
   const handleEdit = (professionalId: string, templateSelection: string) => {
     openConfirmationModal("edit", professionalId);
-  };
-
-  const handleApprove = (professionalId: string) => {
-    openConfirmationModal("approve", professionalId);
-  };
-
-  const handleReject = (professionalId: string) => {
-    openConfirmationModal("reject", professionalId);
   };
 
   const handleDelete = (professionalId: string) => {
@@ -1321,22 +1177,6 @@ const AdminProfessionalDashboard: React.FC = () => {
           confirmColor: "bg-ink-paragraph hover:bg-ink-paragraph",
           icon: <Edit className="text-ink-paragraph" size={24} />,
         };
-      case "approve":
-        return {
-          title: "Confirm Approval",
-          message: `Are you sure you want to approve "${professionalName}"? This will make the professional visible to users.`,
-          confirmText: "Approve Professional",
-          confirmColor: "bg-status-success hover:bg-status-success",
-          icon: <CheckCircle className="text-status-success" size={24} />,
-        };
-      case "reject":
-        return {
-          title: "Confirm Rejection",
-          message: `Are you sure you want to reject "${professionalName}"? This will mark the professional as rejected.`,
-          confirmText: "Reject Professional",
-          confirmColor: "bg-status-error hover:bg-status-error",
-          icon: <XCircle className="text-status-error" size={24} />,
-        };
       case "delete":
         return {
           title: "Confirm Deletion",
@@ -1380,9 +1220,6 @@ const AdminProfessionalDashboard: React.FC = () => {
         onClose={() => setCredentialsModal({ isOpen: false, data: null })}
         professionalId={credentialsModal.data?.professionalId}
         loading={loading}
-        onPreview={handlePreview}
-        onApprove={handleApprove}
-        onReject={handleReject}
         professional={
           professionals.find(
             (p) => p.professionalId === credentialsModal.data?.professionalId
@@ -1491,9 +1328,6 @@ const AdminProfessionalDashboard: React.FC = () => {
         hasMore={hasMore}
         onOpenMobileSidebar={() => {}}
         onCredentials={handleCredentials}
-        onPreview={handlePreview}
-        onApprove={handleApprove}
-        onReject={handleReject}
         searchTerm={searchTerm}
         sortBy={sortBy}
         statusFilter={statusFilter}
