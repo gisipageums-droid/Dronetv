@@ -754,6 +754,10 @@ const apiService = {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const d = await response.json();
     const info = d.companyInfo || {};
+    // Older listings (and any created before the registration form was
+    // persisted) have no companyInfo at all — surface the modal's honest
+    // "not available" state instead of a wall of "Not provided" fields.
+    if (Object.keys(info).length === 0) return null;
     return {
       publishedId: d.publishedId || publishedId,
       draftId,
