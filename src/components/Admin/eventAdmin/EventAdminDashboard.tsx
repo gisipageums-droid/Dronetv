@@ -366,6 +366,20 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
                 <h3 className="text-lg font-bold text-ink border-b border-ink-light pb-2 mb-4">
                   Event Information
                 </h3>
+                {(eventData.heroBannerImage || eventData.previewImage || eventData.thumbnailUrl) && (
+                  <div className="mb-4">
+                    <label className="block text-xs font-semibold text-ink-caption uppercase tracking-wider mb-1">
+                      Hero Banner
+                    </label>
+                    <PrettyValue
+                      value={
+                        eventData.heroBannerImage ||
+                        eventData.previewImage ||
+                        eventData.thumbnailUrl
+                      }
+                    />
+                  </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <Field label="Event Name" value={eventData.eventName} />
                   <Field label="Category" value={eventData.category} />

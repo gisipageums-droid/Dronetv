@@ -22,6 +22,36 @@ const isEmpty = (v: unknown) =>
 
 const Dash = () => <span className="text-ink-caption italic">—</span>;
 
+// An image URL — either an obvious image extension, or a URL from a host we
+// only ever store images on (MinIO/CDN/Unsplash/YouTube thumbs). Rendered as
+// a small preview instead of a long unreadable link.
+const isImageUrl = (s: string): boolean =>
+  /^https?:\/\//i.test(s) &&
+  (/\.(jpe?g|png|webp|gif|svg|avif|bmp)(\?|#|$)/i.test(s) ||
+    /(minio[-.]|\/dronetv-dev\/|\/dronetv-prod\/|res\.cloudinary\.com|images\.unsplash\.com|img\.youtube\.com|ytimg\.com|cdn\.prod\.website-files\.com)/i.test(s));
+
+const ImageThumb: React.FC<{ src: string }> = ({ src }) => {
+  const [broken, setBroken] = React.useState(false);
+  if (broken) {
+    return (
+      <a href={src} target="_blank" rel="noopener noreferrer" className="text-status-info hover:underline break-all text-xs">
+        View image ↗
+      </a>
+    );
+  }
+  return (
+    <a href={src} target="_blank" rel="noopener noreferrer" className="inline-block">
+      <img
+        src={src}
+        alt=""
+        loading="lazy"
+        onError={() => setBroken(true)}
+        className="max-h-24 max-w-[180px] rounded-lg border border-ink-light object-cover bg-ink-offwhite"
+      />
+    </a>
+  );
+};
+
 export const PrettyValue: React.FC<{ value: unknown; depth?: number }> = ({
   value,
   depth = 0,
@@ -34,6 +64,7 @@ export const PrettyValue: React.FC<{ value: unknown; depth?: number }> = ({
   if (typeof value === "number") return <>{String(value)}</>;
 
   if (typeof value === "string") {
+    if (isImageUrl(value)) return <ImageThumb src={value} />;
     if (/^https?:\/\//i.test(value)) {
       return (
         <a
