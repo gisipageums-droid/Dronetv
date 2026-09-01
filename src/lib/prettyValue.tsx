@@ -30,6 +30,46 @@ const isImageUrl = (s: string): boolean =>
   (/\.(jpe?g|png|webp|gif|svg|avif|bmp)(\?|#|$)/i.test(s) ||
     /(minio[-.]|\/dronetv-dev\/|\/dronetv-prod\/|res\.cloudinary\.com|images\.unsplash\.com|img\.youtube\.com|ytimg\.com|cdn\.prod\.website-files\.com)/i.test(s));
 
+// The template forms wrap every media slot in a
+// { mediaUrl, uploaded, uploading, mediaType, fileName } object. When the slot
+// is empty that renders as a meaningless "Uploaded: No / Media Type: image /
+// Uploading: No" blob - detect these and show only the media (or "No media").
+const MEDIA_URL_KEYS = ["mediaUrl", "url", "imageUrl", "s3Url", "fileUrl", "src", "href", "link"];
+const MEDIA_META_KEYS = [
+  "uploaded", "uploading", "isUploading", "mediaType", "type",
+  "fileName", "filename", "originalName", "name", "progress",
+  "caption", "alt", "title", "size", "width", "height", "id",
+];
+
+const isMediaWrapper = (obj: Record<string, unknown>): boolean => {
+  const keys = Object.keys(obj);
+  if (keys.length === 0) return false;
+  const hasMeta = keys.some((k) => MEDIA_META_KEYS.includes(k));
+  const hasUrlKey = keys.some((k) => MEDIA_URL_KEYS.includes(k));
+  if (!hasMeta && !hasUrlKey) return false;
+  return keys.every((k) => MEDIA_URL_KEYS.includes(k) || MEDIA_META_KEYS.includes(k));
+};
+
+const mediaWrapperUrl = (obj: Record<string, unknown>): string | null => {
+  for (const k of MEDIA_URL_KEYS) {
+    const v = obj[k];
+    if (typeof v === "string" && /^https?:\/\//i.test(v)) return v;
+  }
+  return null;
+};
+
+const NoMedia = () => <span className="text-ink-caption italic">No image</span>;
+
+const MediaValue: React.FC<{ url: string | null }> = ({ url }) => {
+  if (!url) return <NoMedia />;
+  if (isImageUrl(url)) return <ImageThumb src={url} />;
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" className="text-status-info hover:underline break-all text-xs">
+      View file ↗
+    </a>
+  );
+};
+
 const ImageThumb: React.FC<{ src: string }> = ({ src }) => {
   const [broken, setBroken] = React.useState(false);
   if (broken) {
@@ -85,6 +125,19 @@ export const PrettyValue: React.FC<{ value: unknown; depth?: number }> = ({
     if (value.every((x) => x === null || typeof x !== "object")) {
       return <>{value.filter((x) => x !== null && x !== "").join(", ") || <Dash />}</>;
     }
+    // Media gallery — array of media-slot wrappers. Show only the ones that
+    // actually have a file, as a strip of thumbnails.
+    if (value.every((x) => x && typeof x === "object" && isMediaWrapper(x as Record<string, unknown>))) {
+      const urls = value
+        .map((x) => mediaWrapperUrl(x as Record<string, unknown>))
+        .filter((u): u is string => !!u);
+      if (urls.length === 0) return <span className="text-ink-caption italic">No media uploaded</span>;
+      return (
+        <div className="flex flex-wrap gap-2">
+          {urls.map((u, i) => <MediaValue key={i} url={u} />)}
+        </div>
+      );
+    }
     // List of objects — stack them.
     return (
       <div className="flex flex-col gap-2">
@@ -101,9 +154,13 @@ export const PrettyValue: React.FC<{ value: unknown; depth?: number }> = ({
   }
 
   if (typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    if (isMediaWrapper(obj)) {
+      return <MediaValue url={mediaWrapperUrl(obj)} />;
+    }
     return (
       <div className={depth > 0 ? "flex flex-col gap-1" : "flex flex-col gap-1.5"}>
-        {Object.entries(value as Record<string, unknown>)
+        {Object.entries(obj)
           .filter(([, v]) => !isEmpty(v))
           .map(([k, v]) => (
             <div key={k} className="text-sm">
