@@ -34,6 +34,7 @@ const Navigation = () => {
   const partnershipsRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -48,12 +49,14 @@ const Navigation = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // While the mobile menu is open: lock the page behind it so scrolling the
-  // menu (or overscrolling past its ends) doesn't drag the page underneath.
-  // index.html forces `body { position: static !important }` for Google
-  // Translate, so the position:fixed lock trick is out — overflow:hidden on
-  // html+body works on Android, and overscroll-contain on the menu's own
-  // scroller stops the scroll from chaining.
+  // While the mobile menu is open, the page behind it must not move — not by
+  // scroll, not by an overscroll/fling that started inside the menu.
+  // `overflow:hidden` on html+body handles wheel/programmatic scroll; a
+  // non-passive `touchmove` guard that only lets gestures through when they
+  // start inside the menu itself is what actually stops the finger-drag from
+  // dragging the page on Android (where the CSS lock alone leaks).
+  // (index.html forces `body{position:static!important}` for Google Translate,
+  // so the position:fixed body-lock trick isn't available here.)
   useEffect(() => {
     if (!isMenuOpen) return;
     const html = document.documentElement;
@@ -61,9 +64,18 @@ const Navigation = () => {
     const prevBodyOverflow = document.body.style.overflow;
     html.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+
+    const allowInsideMenu = (e: TouchEvent) => {
+      const el = mobileMenuRef.current;
+      if (el && e.target instanceof Node && el.contains(e.target)) return;
+      e.preventDefault();
+    };
+    document.addEventListener("touchmove", allowInsideMenu, { passive: false });
+
     return () => {
       html.style.overflow = prevHtmlOverflow;
       document.body.style.overflow = prevBodyOverflow;
+      document.removeEventListener("touchmove", allowInsideMenu);
     };
   }, [isMenuOpen]);
 
@@ -433,7 +445,10 @@ const Navigation = () => {
 
         {/* Mobile menu */}
         <div className={`lg:hidden transition-all duration-500 ease-out overflow-hidden ${isMenuOpen ? "max-h-[calc(100dvh-4rem)] opacity-100" : "max-h-0 opacity-0"}`}>
-          <div className="px-2 pt-2 pb-10 space-y-1 sm:px-3 bg-brand-yellow h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain rounded-b-2xl">
+          <div
+            ref={mobileMenuRef}
+            className="px-2 pt-2 pb-10 space-y-1 sm:px-3 bg-brand-yellow h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain rounded-b-2xl"
+          >
 
             <Link to="/" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Home</Link>
 
