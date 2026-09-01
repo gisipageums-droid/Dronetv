@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { MapPin, ExternalLink, BookOpen } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
@@ -254,14 +255,14 @@ export default function TrainingPage() {
             <p className="text-xs text-white/40 mt-1">Free for verified RPTOs — contact us with your DGCA approval certificate.</p>
           </div>
           <div className="flex gap-3 flex-shrink-0">
-            <a href="mailto:bd@dronetv.in?subject=List RPTO"
+            <Link to="/contact?topic=list-rpto"
               className="px-4 py-2 bg-brand-yellow text-ink text-sm font-bold rounded-lg hover:bg-brand-yellow-soft transition-colors">
               List Your RPTO Free
-            </a>
-            <a href="/professionals/certifications"
+            </Link>
+            <Link to="/professionals/certifications"
               className="px-4 py-2 border border-white/20 text-white text-sm font-semibold rounded-lg hover:bg-white/10 transition-colors">
               Certification Guide
-            </a>
+            </Link>
           </div>
         </div>
 
