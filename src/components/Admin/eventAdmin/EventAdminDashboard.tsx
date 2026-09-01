@@ -5,9 +5,7 @@ import {
   ChevronDown,
   ArrowRight,
   Calendar,
-  Menu,
   X,
-  Eye,
   Key,
   CheckCircle,
   XCircle,
@@ -160,112 +158,6 @@ interface Event {
   needsAdminAction: boolean;
 }
 
-interface EventCredentialsData {
-  success: boolean;
-  submissionId: string;
-  data: {
-    basicEventInformation: {
-      eventDetails: {
-        eventTitle: string;
-        eventTagline: string;
-        eventDescription: string;
-      };
-      dateAndTime: {
-        startDate: string;
-        endDate: string;
-        startTime: string;
-        endTime: string;
-      };
-      venueInformation: {
-        venueName: string;
-        venueAddress: string;
-      };
-      organizer: string;
-      countdownSettings: {
-        countdownEnabled: boolean;
-        countdownTargetDate: string;
-      };
-    };
-    highlightsAndCTAs: {
-      highlights: { highlightText: string }[];
-      ctaButtons: any[];
-    };
-    sectionsAndZones: {
-      sections: { title: string; description: string }[];
-      zones: { description: string; zoneTitle: string }[];
-    };
-    speakersThemesAndPartners: {
-      speakers: {
-        name: string;
-        sequence: number;
-        designation: string;
-        day: string;
-        prefix: string;
-        organization: string;
-      }[];
-      themes: {
-        day: string;
-        details: string;
-        themeTitle: string;
-      }[];
-      partners: {
-        partnerName: string;
-        logo: string;
-        organization: string;
-      }[];
-    };
-    mediaContactsAndPublishing: {
-      media: {
-        heroBanner: {
-          uploaded: boolean;
-          mediaType: string;
-          fileName: string;
-          uploading: boolean;
-          mediaUrl: string;
-          error: string;
-        };
-        backgroundVideoUrl: string;
-        mediaGallery: {
-          uploaded: boolean;
-          mediaType: string;
-          fileName: string;
-          uploading: boolean;
-          mediaUrl: string;
-          error: string;
-        }[];
-        exhibitorInterviews: {
-          videoTitle: string;
-          videoUrl: string;
-        }[];
-      };
-      contacts: {
-        email: string;
-        phone: { phoneNumber: string }[];
-        address: string;
-        internationalContacts: any[];
-      };
-      socialLinks: {
-        facebook: string;
-        linkedin: string;
-        instagram: string;
-      };
-      publishing: {
-        published: boolean;
-        tags: any[];
-      };
-    };
-    metadata: {
-      submissionId: string;
-      draftId: string;
-      userId: string;
-      eventType: string;
-      status: string;
-      createdAt: string;
-      updatedAt: string;
-      version: string;
-    };
-  };
-}
 
 interface DropdownProps {
   value: string;
@@ -384,7 +276,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 interface EventCredentialsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data: EventCredentialsData | null;
+  data: any | null;
 }
 
 const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
@@ -392,58 +284,51 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
   onClose,
   data,
 }) => {
-  if (!isOpen || !data || !data.data) return null;
+  if (!isOpen) return null;
 
-  const {
-    basicEventInformation,
-    highlightsAndCTAs,
-    sectionsAndZones,
-    speakersThemesAndPartners,
-    mediaContactsAndPublishing,
-    metadata,
-  } = data.data;
+  const eventData = data?.eventData || {};
+  const formData = data?.formData || {};
+  const hasForm =
+    formData && typeof formData === "object" && Object.keys(formData).length > 0;
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A";
+  const fmtBool = (v: any): string => {
+    if (v === null || v === undefined || v === "") return "—";
+    if (typeof v === "boolean") return v ? "Yes" : "No";
+    return String(v);
+  };
+  const fmtDate = (s?: string) => {
+    if (!s) return "—";
     try {
-      return new Date(dateString).toLocaleDateString("en-US", {
+      return new Date(s).toLocaleString("en-US", {
         year: "numeric",
-        month: "long",
+        month: "short",
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
       });
     } catch {
-      return dateString;
+      return s;
     }
   };
+  const pretty = (k: string) =>
+    k
+      .replace(/([A-Z])/g, " $1")
+      .replace(/[_-]+/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase())
+      .trim();
 
-  const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-    <h3 className="text-lg font-bold text-ink border-b border-ink-light pb-2 mb-4 mt-2">
-      {children}
-    </h3>
-  );
-
-  const InfoField = ({
-    label,
-    value,
-    isLong = false,
-  }: {
-    label: string;
-    value: string | number | undefined | null | boolean;
-    isLong?: boolean;
-  }) => (
-    <div className={`mb-3 ${isLong ? "col-span-full" : ""}`}>
+  const Field = ({ label, value }: { label: string; value: any }) => (
+    <div className="min-w-0">
       <label className="block text-xs font-semibold text-ink-caption uppercase tracking-wider mb-1">
         {label}
       </label>
       <div className="text-sm text-ink bg-ink-offwhite p-2.5 rounded-lg border border-ink-light break-words">
-        {value?.toString() || (
-          <span className="text-ink-caption italic">Not provided</span>
-        )}
+        {value || <span className="text-ink-caption italic">Not provided</span>}
       </div>
     </div>
   );
+
+  const eventName = eventData.eventName || "Event";
 
   return (
     <AnimatePresence>
@@ -456,25 +341,20 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
           onClick={onClose}
         >
           <motion.div
-            className="bg-surface-card rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            className="bg-surface-card rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light bg-ink-offwhite/50">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-brand-gold/15 rounded-lg">
                   <Key className="w-5 h-5 text-brand-gold" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-ink">
-                    Event Details & Credentials
-                  </h2>
-                  <p className="text-xs text-ink-caption mt-0.5">
-                    Viewing details for {basicEventInformation.eventDetails.eventTitle}
-                  </p>
+                  <h2 className="text-xl font-bold text-ink">Event Details</h2>
+                  <p className="text-xs text-ink-caption mt-0.5">{eventName}</p>
                 </div>
               </div>
               <button
@@ -485,223 +365,82 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
               </button>
             </div>
 
-            {/* Modal Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-              {/* Account & Access */}
-              <EventAccountAccess
-                email={
-                  metadata.userId ||
-                  mediaContactsAndPublishing?.contacts?.email
-                }
-              />
+            <div className="flex-1 overflow-y-auto p-6">
+              <EventAccountAccess email={eventData.userId} />
 
-              {/* 1. Basic Information */}
               <div className="mb-8">
-                <SectionTitle>Basic Information</SectionTitle>
+                <h3 className="text-lg font-bold text-ink border-b border-ink-light pb-2 mb-4">
+                  Event Information
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <InfoField
-                    label="Event Title"
-                    value={basicEventInformation.eventDetails.eventTitle}
+                  <Field label="Event Name" value={eventData.eventName} />
+                  <Field label="Category" value={eventData.category} />
+                  <Field label="Status" value={eventData.reviewStatus} />
+                  <Field label="Date" value={eventData.eventDate} />
+                  <Field label="Time" value={eventData.eventTime} />
+                  <Field label="Location" value={eventData.location} />
+                  <Field label="Description" value={eventData.shortDescription} />
+                  <Field
+                    label="Public URL"
+                    value={eventData.cleanUrl || eventData.urlSlug}
                   />
-                  <InfoField
-                    label="Organizer"
-                    value={basicEventInformation.organizer}
+                  <Field label="Template" value={eventData.templateSelection} />
+                  <Field label="Created" value={fmtDate(eventData.createdAt)} />
+                  <Field label="Published" value={fmtDate(eventData.publishedAt)} />
+                  <Field
+                    label="Last Modified"
+                    value={fmtDate(eventData.lastModified)}
                   />
-                  <InfoField
-                    label="Submission ID"
-                    value={data.submissionId}
-                  />
-                  <InfoField
-                    label="Tagline"
-                    value={basicEventInformation.eventDetails.eventTagline}
-                    isLong
-                  />
-                  <InfoField
-                    label="Description"
-                    value={basicEventInformation.eventDetails.eventDescription}
-                    isLong
-                  />
+                  <Field label="Visible" value={fmtBool(eventData.isVisible)} />
+                  <Field label="Approved" value={fmtBool(eventData.isApproved)} />
+                  {eventData.adminNotes ? (
+                    <Field label="Admin Notes" value={eventData.adminNotes} />
+                  ) : null}
                 </div>
               </div>
 
-              {/* 2. Date, Time & Venue */}
-              <div className="mb-8">
-                <SectionTitle>Date, Time & Venue</SectionTitle>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <InfoField
-                    label="Start Date"
-                    value={basicEventInformation.dateAndTime.startDate}
-                  />
-                  <InfoField
-                    label="End Date"
-                    value={basicEventInformation.dateAndTime.endDate}
-                  />
-                  <InfoField
-                    label="Start Time"
-                    value={basicEventInformation.dateAndTime.startTime}
-                  />
-                  <InfoField
-                    label="End Time"
-                    value={basicEventInformation.dateAndTime.endTime}
-                  />
-                  <InfoField
-                    label="Venue Name"
-                    value={basicEventInformation.venueInformation.venueName}
-                  />
-                  <InfoField
-                    label="Venue Address"
-                    value={basicEventInformation.venueInformation.venueAddress}
-                    isLong
-                  />
-                  <InfoField
-                    label="Countdown Target"
-                    value={basicEventInformation.countdownSettings.countdownTargetDate?.replace("T", " ")}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                {/* 3. Sections */}
-                <div>
-                  <SectionTitle>Sections</SectionTitle>
-                  <div className="space-y-3">
-                    {sectionsAndZones.sections.map((section, idx) => (
-                      <div key={idx} className="bg-ink-offwhite p-3 rounded-lg border border-ink-light">
-                        <h4 className="font-semibold text-ink-charcoal text-sm">{section.title}</h4>
-                        <p className="text-xs text-ink-paragraph mt-1 whitespace-pre-wrap">{section.description}</p>
-                      </div>
-                    ))}
-                    {sectionsAndZones.sections.length === 0 && <p className="text-sm text-ink-caption italic">No sections added.</p>}
-                  </div>
-                </div>
-
-                {/* 4. Zones */}
-                <div>
-                  <SectionTitle>Zones</SectionTitle>
-                  <div className="space-y-3">
-                    {sectionsAndZones.zones.map((zone, idx) => (
-                      <div key={idx} className="bg-ink-offwhite p-3 rounded-lg border border-ink-light">
-                        <h4 className="font-semibold text-ink-charcoal text-sm">{zone.zoneTitle}</h4>
-                        <p className="text-xs text-ink-paragraph mt-1 whitespace-pre-wrap">{zone.description}</p>
-                      </div>
-                    ))}
-                    {sectionsAndZones.zones.length === 0 && <p className="text-sm text-ink-caption italic">No zones added.</p>}
-                  </div>
-                </div>
-              </div>
-
-              {/* 5. Speakers & Themes */}
-              <div className="mb-8">
-                <SectionTitle>Speakers & Partners</SectionTitle>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Speakers */}
-                  <div>
-                    <h4 className="text-sm font-semibold text-ink-paragraph uppercase mb-3">Speakers</h4>
-                    <div className="space-y-3">
-                      {speakersThemesAndPartners.speakers.map((speaker, idx) => (
-                        <div key={idx} className="flex gap-3 bg-ink-offwhite p-3 rounded-lg border border-ink-light">
-                          <div className="w-10 h-10 rounded-full bg-status-info/15 flex items-center justify-center text-status-info font-bold shrink-0">
-                            {speaker.name[0]?.toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-ink">{speaker.prefix} {speaker.name}</p>
-                            <p className="text-xs text-ink-paragraph">{speaker.designation} at {speaker.organization}</p>
-                            <span className="inline-block mt-1 px-2 py-0.5 bg-ink-light text-ink-paragraph text-[10px] rounded-full">Day {speaker.day}</span>
-                          </div>
-                        </div>
-                      ))}
-                      {speakersThemesAndPartners.speakers.length === 0 && <p className="text-sm text-ink-caption italic">No speakers added.</p>}
-                    </div>
-                  </div>
-
-                  {/* Partners */}
-                  <div>
-                    <h4 className="text-sm font-semibold text-ink-paragraph uppercase mb-3">Partners</h4>
-                    <div className="grid grid-cols-2 gap-3">
-                      {speakersThemesAndPartners.partners.map((partner, idx) => (
-                        <div key={idx} className="bg-ink-offwhite p-3 rounded-lg border border-ink-light flex flex-col items-center text-center">
-                          {partner.logo && (
-                            <img src={partner.logo} alt={partner.partnerName} className="w-12 h-12 object-contain mb-2 rounded-md" />
-                          )}
-                          <p className="text-sm font-bold text-ink">{partner.partnerName}</p>
-                          <p className="text-xs text-ink-paragraph truncate w-full">{partner.organization}</p>
-                        </div>
-                      ))}
-                      {speakersThemesAndPartners.partners.length === 0 && <p className="text-sm text-ink-caption italic">No partners added.</p>}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
-              {/* 6. Media & Contact */}
-              <div className="mb-8">
-                <SectionTitle>Media & Contact</SectionTitle>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <InfoField
-                      label="Contact Email"
-                      value={mediaContactsAndPublishing.contacts.email}
-                    />
-                    <InfoField
-                      label="Contact Address"
-                      value={mediaContactsAndPublishing.contacts.address}
-                      isLong
-                    />
-                    {mediaContactsAndPublishing.contacts.phone.map((p, i) => (
-                      <InfoField key={i} label={`Phone ${i + 1}`} value={p.phoneNumber} />
+              {hasForm ? (
+                <div className="mb-8">
+                  <h3 className="text-lg font-bold text-ink border-b border-ink-light pb-2 mb-4">
+                    Submitted Form
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {Object.entries(formData).map(([k, v]) => (
+                      <Field
+                        key={k}
+                        label={pretty(k)}
+                        value={
+                          typeof v === "object" && v !== null
+                            ? JSON.stringify(v)
+                            : fmtBool(v)
+                        }
+                      />
                     ))}
                   </div>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-ink-caption uppercase tracking-wider mb-2">
-                        Hero Banner
-                      </label>
-                      {mediaContactsAndPublishing.media.heroBanner.mediaUrl ? (
-                        <a href={mediaContactsAndPublishing.media.heroBanner.mediaUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-32 rounded-lg bg-ink-light overflow-hidden relative group">
-                          <img src={mediaContactsAndPublishing.media.heroBanner.mediaUrl} alt="Hero Banner" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-ink/0 group-hover:bg-ink-charcoal/10 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
-                            <Eye className="text-white drop-shadow-md" />
-                          </div>
-                        </a>
-                      ) : (
-                        <div className="w-full h-24 bg-ink-offwhite border border-dashed border-ink-light rounded-lg flex items-center justify-center text-ink-caption text-sm">
-                          No Hero Banner
-                        </div>
-                      )}
-                    </div>
-                    {/* Social Links */}
-                    <div className="grid grid-cols-3 gap-2">
-                      <InfoField label="Facebook" value={mediaContactsAndPublishing.socialLinks.facebook || "-"} />
-                      <InfoField label="LinkedIn" value={mediaContactsAndPublishing.socialLinks.linkedin || "-"} />
-                      <InfoField label="Instagram" value={mediaContactsAndPublishing.socialLinks.instagram || "-"} />
-                    </div>
-                  </div>
                 </div>
-              </div>
+              ) : (
+                <p className="mb-8 text-sm text-ink-caption italic">
+                  No separate submitted-form data on file for this event — the
+                  fields above are what's stored.
+                </p>
+              )}
 
-
-              {/* 7. Metadata */}
-              <div className="mb-4">
-                <SectionTitle>System Metadata</SectionTitle>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 bg-ink-offwhite p-4 rounded-xl border border-ink-light">
-                  <InfoField label="Posted By" value={metadata.userId} />
-                  <InfoField label="Created At" value={formatDate(metadata.createdAt)} />
-                  <InfoField label="Updated At" value={formatDate(metadata.updatedAt)} />
-                  <InfoField label="Status" value={metadata.status} />
-                  <InfoField label="Draft ID" value={metadata.draftId} />
-                </div>
-              </div>
-
+              <details className="bg-ink-offwhite rounded-xl border border-ink-light">
+                <summary className="cursor-pointer select-none p-4 font-semibold text-sm text-ink flex items-center gap-2">
+                  <Key className="w-4 h-4 text-ink-paragraph" /> Complete Data (raw)
+                </summary>
+                <pre className="mx-4 mb-4 p-3 bg-ink text-white text-xs rounded-lg overflow-x-auto max-h-80 overflow-y-auto">
+                  {JSON.stringify(data, null, 2)}
+                </pre>
+              </details>
             </div>
 
-            {/* Modal Footer */}
             <div className="p-4 border-t border-ink-light bg-ink-offwhite flex justify-end">
               <button
                 onClick={onClose}
                 className="px-5 py-2.5 text-sm font-medium text-white bg-ink rounded-lg hover:bg-ink-charcoal transition-colors shadow-sm"
               >
-                Close Details
+                Close
               </button>
             </div>
           </motion.div>
@@ -1160,10 +899,13 @@ const RecentEventsSection: React.FC<{
 
 // -------------------- API Service --------------------
 const eventApiService = {
-  async fetchEventCredentials(eventId: string): Promise<EventCredentialsData> {
+  async fetchEventCredentials(eventId: string): Promise<any> {
     try {
+      // This endpoint is auth-gated (get_current_claims + require_self_or_admin)
+      // - without the admin token every "Details" click just 401'd.
       const response = await fetch(
-        EVENTS_API ? `${EVENTS_API}/event-formdetails-verification/${eventId}` : `${LAMBDA.eventsVerify}/event-formdetails-verification/${eventId}`
+        EVENTS_API ? `${EVENTS_API}/event-formdetails-verification/${eventId}` : `${LAMBDA.eventsVerify}/event-formdetails-verification/${eventId}`,
+        { headers: { ...authHeader() } }
       );
 
       if (!response.ok) {
@@ -1216,7 +958,7 @@ const EventAdminDashboard: React.FC = () => {
   const [itemsPerPage] = useState<number>(12);
   const [credentialsModal, setCredentialsModal] = useState<{
     isOpen: boolean;
-    data: EventCredentialsData | null;
+    data: any | null;
   }>({
     isOpen: false,
     data: null,
