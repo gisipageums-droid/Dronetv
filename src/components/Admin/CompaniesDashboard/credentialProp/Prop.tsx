@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { X, Eye, Key, Copy, Check, Lock, RefreshCw } from "lucide-react";
 import { toast } from "react-toastify";
 import { AUTH_API, LAMBDA } from "../../../../lib/apiConfig";
+import { PrettyValue, prettyLabel } from "../../../../lib/prettyValue";
 
 const SET_PASSWORD_API = AUTH_API ? `${AUTH_API}/admin/set-password` : `${LAMBDA.auth}/admin/set-password`;
 
@@ -873,22 +874,14 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   <div className="px-4 pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
                     {Object.entries(data.formData.rawData)
                       .sort(([a], [b]) => a.localeCompare(b))
-                      .map(([k, v]) => {
-                        let text: string;
-                        if (v == null || v === "") text = "—";
-                        else if (Array.isArray(v))
-                          text = v.length
-                            ? v.map((x) => (x && typeof x === "object" ? JSON.stringify(x) : String(x))).join(", ")
-                            : "—";
-                        else if (typeof v === "object") text = JSON.stringify(v);
-                        else text = String(v);
-                        return (
-                          <div key={k} className="flex flex-col border-b border-ink-light/60 py-1 min-w-0">
-                            <span className="text-[11px] text-ink-caption uppercase tracking-wide break-words">{k}</span>
-                            <span className="text-sm text-ink break-words">{text}</span>
-                          </div>
-                        );
-                      })}
+                      .map(([k, v]) => (
+                        <div key={k} className="flex flex-col border-b border-ink-light/60 py-1 min-w-0">
+                          <span className="text-[11px] text-ink-caption uppercase tracking-wide break-words">{prettyLabel(k)}</span>
+                          <span className="text-sm text-ink break-words">
+                            <PrettyValue value={v} />
+                          </span>
+                        </div>
+                      ))}
                   </div>
                 </details>
               )}

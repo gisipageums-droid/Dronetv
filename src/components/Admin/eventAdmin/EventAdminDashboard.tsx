@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "motion/react";
 import { AUTH_API, EVENTS_API, LAMBDA } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
+import { PrettyValue, prettyLabel } from '../../../lib/prettyValue';
 
 const SET_PASSWORD_API = AUTH_API ? `${AUTH_API}/admin/set-password` : `${LAMBDA.auth}/admin/set-password`;
 
@@ -310,13 +311,6 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
       return s;
     }
   };
-  const pretty = (k: string) =>
-    k
-      .replace(/([A-Z])/g, " $1")
-      .replace(/[_-]+/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase())
-      .trim();
-
   const Field = ({ label, value }: { label: string; value: any }) => (
     <div className="min-w-0">
       <label className="block text-xs font-semibold text-ink-caption uppercase tracking-wider mb-1">
@@ -408,31 +402,18 @@ const EventCredentialsModal: React.FC<EventCredentialsModalProps> = ({
                     {Object.entries(formData).map(([k, v]) => (
                       <Field
                         key={k}
-                        label={pretty(k)}
-                        value={
-                          typeof v === "object" && v !== null
-                            ? JSON.stringify(v)
-                            : fmtBool(v)
-                        }
+                        label={prettyLabel(k)}
+                        value={<PrettyValue value={v} />}
                       />
                     ))}
                   </div>
                 </div>
               ) : (
-                <p className="mb-8 text-sm text-ink-caption italic">
+                <p className="text-sm text-ink-caption italic">
                   No separate submitted-form data on file for this event — the
                   fields above are what's stored.
                 </p>
               )}
-
-              <details className="bg-ink-offwhite rounded-xl border border-ink-light">
-                <summary className="cursor-pointer select-none p-4 font-semibold text-sm text-ink flex items-center gap-2">
-                  <Key className="w-4 h-4 text-ink-paragraph" /> Complete Data (raw)
-                </summary>
-                <pre className="mx-4 mb-4 p-3 bg-ink text-white text-xs rounded-lg overflow-x-auto max-h-80 overflow-y-auto">
-                  {JSON.stringify(data, null, 2)}
-                </pre>
-              </details>
             </div>
 
             <div className="p-4 border-t border-ink-light bg-ink-offwhite flex justify-end">

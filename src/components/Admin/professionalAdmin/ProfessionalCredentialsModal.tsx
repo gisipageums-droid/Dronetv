@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
+import { PrettyValue, prettyLabel } from '../../../lib/prettyValue';
 
 interface Professional {
   professionalId: string;
@@ -145,7 +146,7 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
   }> = ({ label, value, span = 1 }) => (
     <div className={span > 1 ? 'col-span-full' : 'col-span-1'}>
       <p className="text-sm font-medium text-ink-paragraph mb-1">{label}</p>
-      <p className="text-ink break-words">{value || 'Not provided'}</p>
+      <div className="text-ink break-words">{value || 'Not provided'}</div>
     </div>
   );
 
@@ -154,32 +155,10 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
   const hasEntries = (obj: any) =>
     obj && typeof obj === 'object' && Object.keys(obj).length > 0;
 
-  const prettyLabel = (key: string) =>
-    key
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/[_-]+/g, ' ')
-      .replace(/\b\w/g, (c) => c.toUpperCase())
-      .trim();
-
-  const renderValue = (val: any): React.ReactNode => {
-    if (val === null || val === undefined || val === '') return 'Not provided';
-    if (typeof val === 'boolean') return val ? 'Yes' : 'No';
-    if (Array.isArray(val)) return val.length ? val.map((v) => (typeof v === 'object' ? JSON.stringify(v) : String(v))).join(', ') : 'None';
-    if (typeof val === 'object') return JSON.stringify(val);
-    if (typeof val === 'string' && /^https?:\/\//.test(val)) {
-      return (
-        <a href={val} target="_blank" rel="noopener noreferrer" className="text-status-info hover:underline break-all">
-          {val}
-        </a>
-      );
-    }
-    return String(val);
-  };
-
   const KeyValueGrid: React.FC<{ obj: Record<string, any> }> = ({ obj }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {Object.entries(obj).map(([key, val]) => (
-        <InfoField key={key} label={prettyLabel(key)} value={renderValue(val)} />
+        <InfoField key={key} label={prettyLabel(key)} value={<PrettyValue value={val} />} />
       ))}
     </div>
   );
@@ -503,15 +482,24 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                   </div>
                 </InfoSection>
 
-                <details className="bg-ink-offwhite rounded-xl border border-ink-light">
-                  <summary className="cursor-pointer select-none p-6 font-semibold text-lg text-ink flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-ink-paragraph" />
-                    Complete Submitted Data
-                  </summary>
-                  <pre className="mx-6 mb-6 p-4 bg-ink text-white text-xs rounded-lg overflow-x-auto max-h-96 overflow-y-auto">
-                    {JSON.stringify(data, null, 2)}
-                  </pre>
-                </details>
+                {hasEntries(formData) && (
+                  <details className="bg-ink-offwhite rounded-xl border border-ink-light">
+                    <summary className="cursor-pointer select-none p-6 font-semibold text-lg text-ink flex items-center gap-3">
+                      <FileText className="w-5 h-5 text-ink-paragraph" />
+                      Complete Submitted Data ({Object.keys(formData).length} fields)
+                    </summary>
+                    <div className="px-6 pb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
+                      {Object.entries(formData)
+                        .sort(([a], [b]) => a.localeCompare(b))
+                        .map(([k, v]) => (
+                          <div key={k} className="flex flex-col border-b border-ink-light/60 py-1 min-w-0">
+                            <span className="text-[11px] text-ink-caption uppercase tracking-wide break-words">{prettyLabel(k)}</span>
+                            <span className="text-sm text-ink break-words"><PrettyValue value={v} /></span>
+                          </div>
+                        ))}
+                    </div>
+                  </details>
+                )}
 
                 <div className="flex justify-end gap-3 pt-6 border-t border-ink-light">
                   <button
