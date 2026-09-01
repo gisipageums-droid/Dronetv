@@ -48,6 +48,25 @@ const Navigation = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // While the mobile menu is open: lock the page behind it so scrolling the
+  // menu (or overscrolling past its ends) doesn't drag the page underneath.
+  // index.html forces `body { position: static !important }` for Google
+  // Translate, so the position:fixed lock trick is out — overflow:hidden on
+  // html+body works on Android, and overscroll-contain on the menu's own
+  // scroller stops the scroll from chaining.
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const html = document.documentElement;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    html.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+    };
+  }, [isMenuOpen]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (languageRef.current && !languageRef.current.contains(e.target as Node)) setIsLanguageOpen(false);
@@ -413,8 +432,8 @@ const Navigation = () => {
         </div>
 
         {/* Mobile menu */}
-        <div className={`lg:hidden transition-all duration-500 ease-out overflow-hidden ${isMenuOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"}`}>
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-brand-yellow max-h-[70vh] overflow-y-auto rounded-b-2xl">
+        <div className={`lg:hidden transition-all duration-500 ease-out overflow-hidden ${isMenuOpen ? "max-h-[calc(100dvh-4rem)] opacity-100" : "max-h-0 opacity-0"}`}>
+          <div className="px-2 pt-2 pb-10 space-y-1 sm:px-3 bg-brand-yellow h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain rounded-b-2xl">
 
             <Link to="/" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Home</Link>
 
