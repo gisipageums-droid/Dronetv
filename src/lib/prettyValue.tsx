@@ -39,6 +39,8 @@ const MEDIA_META_KEYS = [
   "uploaded", "uploading", "isUploading", "mediaType", "type",
   "fileName", "filename", "originalName", "name", "progress",
   "caption", "alt", "title", "size", "width", "height", "id",
+  "error", "errorMessage", "status", "key", "path", "mimeType",
+  "contentType", "extension", "ext", "loaded", "percent",
 ];
 
 const isMediaWrapper = (obj: Record<string, unknown>): boolean => {
@@ -58,7 +60,7 @@ const mediaWrapperUrl = (obj: Record<string, unknown>): string | null => {
   return null;
 };
 
-const NoMedia = () => <span className="text-ink-caption italic">No image</span>;
+const NoMedia = () => <span className="text-ink-caption italic">Not uploaded</span>;
 
 const MediaValue: React.FC<{ url: string | null }> = ({ url }) => {
   if (!url) return <NoMedia />;
@@ -131,7 +133,7 @@ export const PrettyValue: React.FC<{ value: unknown; depth?: number }> = ({
       const urls = value
         .map((x) => mediaWrapperUrl(x as Record<string, unknown>))
         .filter((u): u is string => !!u);
-      if (urls.length === 0) return <span className="text-ink-caption italic">No media uploaded</span>;
+      if (urls.length === 0) return <span className="text-ink-caption italic">Not uploaded</span>;
       return (
         <div className="flex flex-wrap gap-2">
           {urls.map((u, i) => <MediaValue key={i} url={u} />)}
