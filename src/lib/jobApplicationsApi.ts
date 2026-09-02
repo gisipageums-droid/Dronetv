@@ -1,4 +1,5 @@
 import { JOB_APPLICATIONS_API, LAMBDA } from './apiConfig';
+import { compressImage } from './compressImage';
 
 const BASE = JOB_APPLICATIONS_API ? `${JOB_APPLICATIONS_API}` : `${LAMBDA.jobApplications}/job-applications`;
 
@@ -52,6 +53,16 @@ export interface JobApplication {
   activity: ActivityEntry[];
   appliedAt: string;
   updatedAt: string;
+}
+
+// The logged-in applicant's own applications - filtered server-side by the
+// email in their JWT (not a query param), so nobody can read someone else's
+// applications by guessing an email.
+export async function fetchMyApplications(): Promise<JobApplication[]> {
+  const res = await fetch(`${BASE}/mine`, { headers: adminAuthHeaders() });
+  if (!res.ok) throw new Error('Failed to fetch your applications');
+  const data = await res.json();
+  return data.items || [];
 }
 
 export async function fetchApplications(jobId: string, companyId?: string): Promise<JobApplication[]> {
@@ -120,14 +131,22 @@ export async function getResumeUploadUrl(fileName: string, contentType: string):
   return res.json();
 }
 
-export async function uploadResumeFile(file: File): Promise<string> {
+export async function uploadResumeFile(rawFile: File, onProgress?: (pct: number) => void): Promise<string> {
+  const file = await compressImage(rawFile); // no-op for PDFs; shrinks a photo-of-resume
   const { uploadUrl, key } = await getResumeUploadUrl(file.name, file.type || 'application/pdf');
-  const putRes = await fetch(uploadUrl, {
-    method: 'PUT',
-    headers: { 'Content-Type': file.type || 'application/pdf' },
-    body: file,
+  // XMLHttpRequest, not fetch() — fetch has no upload-progress event, so a
+  // multi-MB resume on a slow connection just sits with no feedback at all.
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', uploadUrl);
+    xhr.setRequestHeader('Content-Type', file.type || 'application/pdf');
+    xhr.upload.onprogress = (e) => {
+      if (onProgress && e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300) ? resolve() : reject(new Error('Failed to upload resume'));
+    xhr.onerror = () => reject(new Error('Failed to upload resume'));
+    xhr.send(file);
   });
-  if (!putRes.ok) throw new Error('Failed to upload resume');
   return key;
 }
 

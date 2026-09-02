@@ -1,4 +1,4 @@
-import { AUTH_API, LAMBDA } from './apiConfig';
+import { AUTH_API, LAMBDA, PROFESSIONAL_API, COMPANY_API } from './apiConfig';
 
 export interface UserData {
   id: string;
@@ -106,6 +106,72 @@ async function put<T>(path: string, body: unknown): Promise<T> {
   return data;
 }
 
+// ─── Role reconciliation ─────────────────────────────────────────────────────
+
+// The auth service only knows the `role` column on the account row. When a
+// plain "user" account later submits a company/professional listing through
+// an existing-account path, that column isn't always updated, so /login keeps
+// returning role:"user" and the app drops the person on the generic
+// /user-dashboard instead of their portal. Re-derive the real role from the
+// listing services and patch the stored session. Self-hosted only — the
+// Lambda login path already does its own profile-based equivalent.
+export async function reconcileSelfHostedRole(
+  email: string,
+  token: string
+): Promise<string | null> {
+  if (!email || !token || !AUTH_API) return null;
+  const headers = { Authorization: `Bearer ${token}` };
+  const hasCards = async (url: string): Promise<boolean> => {
+    try {
+      const r = await fetch(url, { headers });
+      if (!r.ok) return false;
+      const d = await r.json();
+      return Array.isArray(d?.cards) && d.cards.length > 0;
+    } catch {
+      return false;
+    }
+  };
+
+  const e = encodeURIComponent(email);
+  let role: string | null = null;
+  if (COMPANY_API && (await hasCards(`${COMPANY_API}/dashboard-cards?userId=${e}`))) {
+    role = 'company';
+  } else if (
+    PROFESSIONAL_API &&
+    (await hasCards(`${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${e}`))
+  ) {
+    role = 'professional';
+  }
+  if (!role) return null;
+
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    if (raw) {
+      const u = JSON.parse(raw);
+      u.role = role;
+      if (u.userData) u.userData.role = role;
+      localStorage.setItem(USER_KEY, JSON.stringify(u));
+      window.dispatchEvent(new Event('user-role-updated'));
+    }
+  } catch {
+    /* ignore */
+  }
+  return role;
+}
+
+async function applyRoleReconciliation(res: LoginResponse): Promise<void> {
+  const currentRole = res.userData?.role || res.role;
+  if (currentRole && currentRole !== 'user') return;
+  const real = await Promise.race([
+    reconcileSelfHostedRole(res.email, res.token),
+    new Promise<null>((r) => setTimeout(() => r(null), 4000)),
+  ]).catch(() => null);
+  if (real) {
+    res.role = real;
+    if (res.userData) res.userData.role = real;
+  }
+}
+
 // ─── Public auth methods ──────────────────────────────────────────────────────
 
 export async function register(payload: {
@@ -134,6 +200,7 @@ export async function login(payload: {
   if (AUTH_API) {
     const res = await post<LoginResponse>('/login', payload);
     saveSession(res);
+    await applyRoleReconciliation(res);
     return res;
   }
   const res = await fetch(LAMBDA.authLogin, {
@@ -184,6 +251,7 @@ export async function googleLogin(token: string): Promise<LoginResponse> {
   if (AUTH_API) {
     const res = await post<LoginResponse>('/google-login', { token });
     saveSession(res);
+    await applyRoleReconciliation(res);
     return res;
   }
   const res = await fetch(LAMBDA.authGoogle, {

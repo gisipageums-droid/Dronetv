@@ -89,9 +89,6 @@ interface SidebarProps {
 interface ProfessionalCardProps {
   professional: Professional;
   onCredentials: (professionalId: string) => void;
-  onPreview: (professionalId: string) => void;
-  onApprove: (professionalId: string) => void;
-  onReject: (professionalId: string) => void;
   onDelete: (professionalId: string) => void;
   onEdit: (professionalId: string, templateSelection: string) => void;
   disabled?: boolean;
@@ -109,9 +106,6 @@ interface MainContentProps {
   hasMore: boolean;
   onOpenMobileSidebar: () => void;
   onCredentials: (professionalId: string) => void;
-  onPreview: (professionalId: string) => void;
-  onApprove: (professionalId: string) => void;
-  onReject: (professionalId: string) => void;
   searchTerm: string;
   sortBy: string;
   statusFilter: string;
@@ -156,14 +150,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
           <motion.div
-            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+            className="bg-surface-card rounded-xl shadow-2xl max-w-md w-full p-6"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -173,20 +167,20 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 {icon}
-                <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+                <h3 className="text-xl font-semibold text-ink">{title}</h3>
               </div>
               <button
                 onClick={onClose}
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-1 rounded-full hover:bg-ink-light transition-colors"
                 disabled={isLoading}
               >
-                <X size={20} className="text-gray-500" />
+                <X size={20} className="text-ink-caption" />
               </button>
             </div>
 
             {/* Modal Body */}
             <div className="mb-6">
-              <p className="text-gray-600">{message}</p>
+              <p className="text-ink-paragraph">{message}</p>
             </div>
 
             {/* Modal Footer */}
@@ -194,7 +188,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={onClose}
-                className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-ink-paragraph font-medium rounded-lg border border-ink-light bg-surface-card hover:bg-ink-offwhite transition-colors"
                 disabled={isLoading}
               >
                 Cancel
@@ -218,11 +212,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 // Header Component - Updated to match EventAdminDashboard
 const Header: React.FC = () => {
   return (
-    <div className="bg-gray-900 px-6 py-5">
+    <div className="bg-ink px-6 py-5">
       <div className="max-w-7xl mx-auto">
-        <p className="text-xs font-bold tracking-widest text-yellow-400 uppercase mb-1">Admin</p>
+        <p className="text-xs font-bold tracking-widest text-brand-yellow uppercase mb-1">Admin</p>
         <h1 className="text-xl font-extrabold text-white mb-0.5">Professional Management</h1>
-        <p className="text-sm text-gray-400">Review and manage all professional profiles, credentials, and approvals</p>
+        <p className="text-sm text-ink-caption">Review and manage all professional profiles, credentials, and approvals</p>
       </div>
     </div>
   );
@@ -241,10 +235,10 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex justify-between items-center px-4 py-3 bg-gray-50 text-gray-700 text-sm rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300"
+        className="w-full flex justify-between items-center px-4 py-3 bg-ink-offwhite text-ink-paragraph text-sm rounded-lg border border-ink-light hover:bg-ink-light transition-colors focus:outline-none focus:ring-1 focus:ring-ink-light"
       >
         <span
-          className={value === options[0] ? "text-gray-500" : "text-gray-900"}
+          className={value === options[0] ? "text-ink-caption" : "text-ink"}
         >
           {value || placeholder}
         </span>
@@ -254,7 +248,7 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
       </button>
 
       {open && (
-        <div className="absolute mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-sm z-10">
+        <div className="absolute mt-1 w-full bg-surface-card border border-ink-light rounded-lg shadow-sm z-10">
           {options.map((option: string, idx: number) => (
             <button
               key={idx}
@@ -264,8 +258,8 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({
               }}
               className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${
                 value === option
-                  ? "bg-gray-50 text-gray-900 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
+                  ? "bg-ink-offwhite text-ink font-medium"
+                  : "text-ink-paragraph hover:bg-ink-offwhite"
               }`}
             >
               {option}
@@ -297,27 +291,27 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   // Status filter options - Updated to match EventAdminDashboard
   const statusOptions = [
-    { value: "all", label: "All Professionals", color: "text-yellow-900" },
-    { value: "under_review", label: "Under Review", color: "text-yellow-600" },
-    { value: "approved", label: "Approved", color: "text-green-600" },
-    { value: "rejected", label: "Rejected", color: "text-red-600" },
+    { value: "all", label: "All Professionals", color: "text-brand-gold" },
+    { value: "under_review", label: "Under Review", color: "text-brand-gold" },
+    { value: "approved", label: "Approved", color: "text-status-success" },
+    { value: "rejected", label: "Rejected", color: "text-status-error" },
   ];
 
   return (
     <div
-      className={`bg-white border-r border-gray-200 p-4 md:p-8 h-fit md:sticky md:top-0
+      className={`bg-surface-card border-r border-ink-light p-4 md:p-8 h-fit md:sticky md:top-0
       ${
         isMobileSidebarOpen
-          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-white"
+          ? "fixed top-16 left-0 right-0 z-50 w-full overflow-y-auto bg-surface-card"
           : "hidden md:block md:w-72"
       }`}
     >
       {isMobileSidebarOpen && (
         <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-base font-bold text-gray-900">Filters</h2>
+          <h2 className="text-base font-bold text-ink">Filters</h2>
           <button
             onClick={onCloseMobileSidebar}
-            className="p-2 text-gray-500"
+            className="p-2 text-ink-caption"
           >
             <X className="w-5 h-5" />
           </button>
@@ -327,7 +321,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="space-y-6 md:space-y-8">
         {/* Status Filter Section - Updated to match EventAdminDashboard */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-xs font-bold text-ink-caption uppercase tracking-wide block">
             Filter by Status
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -339,13 +333,13 @@ const Sidebar: React.FC<SidebarProps> = ({
                 className={`px-3 py-2 text-xs font-medium rounded-lg border transition-colors flex items-center justify-center gap-1 ${
                   statusFilter === option.value
                     ? option.value === "under_review"
-                      ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                      ? "bg-brand-yellow-soft border-brand-yellow-soft text-brand-gold"
                       : option.value === "approved"
-                      ? "bg-green-100 border-green-300 text-green-800"
+                      ? "bg-status-success/15 border-status-success/40 text-status-success"
                       : option.value === "rejected"
-                      ? "bg-red-100 border-red-300 text-red-800"
-                      : "bg-gray-100 border-gray-300 text-gray-800"
-                    : "bg-white border-gray-200 hover:border-yellow-400 text-gray-600"
+                      ? "bg-status-error/15 border-status-error/40 text-status-error"
+                      : "bg-ink-light border-ink-light text-ink-charcoal"
+                    : "bg-surface-card border-ink-light hover:border-brand-yellow text-ink-paragraph"
                 }`}
               >
                 {option.label === "Needs Review" && (
@@ -366,11 +360,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Search Section */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-xs font-bold text-ink-caption uppercase tracking-wide block">
             Search Professionals
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-ink-caption" />
             <input
               type="text"
               placeholder="Search by name, location..."
@@ -378,14 +372,14 @@ const Sidebar: React.FC<SidebarProps> = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onSearchChange(e.target.value)
               }
-              className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 bg-white transition-colors placeholder-gray-400 text-gray-900"
+              className="w-full pl-10 pr-4 py-2.5 text-sm border border-ink-light rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow bg-surface-card transition-colors placeholder-ink-caption text-ink"
             />
           </div>
         </div>
 
         {/* Sort Filter */}
         <div className="space-y-3">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+          <label className="text-xs font-bold text-ink-caption uppercase tracking-wide block">
             Sort by
           </label>
           <MinimalisticDropdown
@@ -403,20 +397,20 @@ const Sidebar: React.FC<SidebarProps> = ({
             onSortChange("Sort by Name");
             onStatusChange("all");
           }}
-          className="text-xs text-gray-400 hover:text-gray-600 transition-colors underline underline-offset-2"
+          className="text-xs text-ink-caption hover:text-ink-paragraph transition-colors underline underline-offset-2"
         >
           Clear all filters
         </button>
 
         {/* Divider */}
-        <div className="border-t border-gray-200"></div>
+        <div className="border-t border-ink-light"></div>
 
         {/* Navigation Links */}
         <div className="flex gap-2 flex-col">
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Other Sections</p>
+          <p className="text-xs font-bold text-ink-caption uppercase tracking-wide">Other Sections</p>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
+            className="text-sm text-ink-paragraph p-3 rounded-xl duration-200 flex items-center gap-3 border border-ink-light bg-surface-card hover:bg-ink-light"
           >
             <Link to={"/admin/company/dashboard"} className="w-full text-left">
               Companies
@@ -424,7 +418,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
+            className="text-sm text-ink-paragraph p-3 rounded-xl duration-200 flex items-center gap-3 border border-ink-light bg-surface-card hover:bg-ink-light"
           >
             <Link to={"/admin/event/dashboard"} className="w-full text-left">
               Events
@@ -432,7 +426,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </motion.button>
           <motion.button
             whileTap={{ scale: [0.9, 1] }}
-            className="text-sm text-gray-600 p-3 rounded-xl duration-200 flex items-center gap-3 border border-gray-200 bg-white hover:bg-gray-100"
+            className="text-sm text-ink-paragraph p-3 rounded-xl duration-200 flex items-center gap-3 border border-ink-light bg-surface-card hover:bg-ink-light"
           >
             <Link to={"/admin/plans"} className="w-full text-left">
               Admin Plans
@@ -448,20 +442,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   professional,
   onCredentials,
-  onPreview,
-  onApprove,
-  onReject,
   onDelete,
   onEdit,
   disabled = false,
 }) => {
   // Create a placeholder image using professional name
   const placeholderImg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f4f6' rx='8'/%3E%3Ctext x='32' y='38' text-anchor='middle' fill='%23374151' font-size='20' font-family='Arial' font-weight='bold'%3E${
-    professional.professionalName?.charAt(0) || "P"
+    professional.professionalName?.charAt(0) || professional.userId?.charAt(0)?.toUpperCase() || "P"
   }%3C/text%3E%3C/svg%3E`;
 
   // Format date
-  const formatDate = (dateString: string): string => {
+  const formatDate = (dateString?: string): string => {
+    if (!dateString) return "No date";
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString("en-US", {
@@ -470,178 +462,161 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         year: "numeric",
       });
     } catch (error) {
-      return "Date not available";
+      return "No date";
     }
   };
+
+  const displayDateValue =
+    professional.publishedDate ||
+    professional.lastModified ||
+    professional.lastActivity ||
+    professional.createdAt ||
+    "";
 
   // Status badge styling based on status - Updated to match new status values
   const getStatusBadge = (reviewStatus: string) => {
     if (reviewStatus === "active" || reviewStatus === "under_review") {
       return {
-        bg: "bg-yellow-100",
-        text: "text-yellow-800",
+        bg: "bg-brand-yellow-soft",
+        text: "text-brand-gold",
         label: "Needs Review",
       };
     } else if (reviewStatus === "rejected") {
       return {
-        bg: "bg-red-100",
-        text: "text-red-800",
+        bg: "bg-status-error/15",
+        text: "text-status-error",
         label: "Rejected",
       };
-    } else if (reviewStatus === "approved") {
+    } else if (reviewStatus === "approved" || reviewStatus === "published") {
       return {
-        bg: "bg-green-100",
-        text: "text-green-800",
+        bg: "bg-status-success/15",
+        text: "text-status-success",
         label: "Approved",
       };
     }
     return {
-      bg: "bg-gray-100",
-      text: "text-gray-800",
+      bg: "bg-ink-light",
+      text: "text-ink-charcoal",
       label: "Draft",
     };
   };
 
   const statusStyle = getStatusBadge(professional.reviewStatus || "draft");
+  const name =
+    professional.professionalName ||
+    professional.userId ||
+    "Unnamed Professional";
+  const categories =
+    professional.categories && professional.categories.length > 0
+      ? professional.categories
+      : [];
 
   return (
-    <div className="w-full h-full rounded-xl border border-gray-200 border-l-4 border-l-yellow-400 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden bg-white">
-      <div className="p-4 md:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center sm:w-12 sm:h-12">
-              <img
-                src={professional.previewImage || placeholderImg}
-                alt={`${professional.professionalName} profile`}
-                className="w-full h-full object-cover"
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = placeholderImg;
-                }}
-              />
-            </div>
-            <div className="max-w-[calc(100%-60px)] md:max-w-none">
-              <h3 className="text-lg md:text-xl font-bold text-gray-900 line-clamp-2">
-                {professional.professionalName || "Unnamed Professional"}
-              </h3>
-              <div className="flex items-center text-gray-600 mt-1">
-                <MapPin className="w-3 h-3 mr-1" />
-                <span className="text-xs md:text-sm">
-                  {professional.location || "Location not specified"}
-                </span>
-              </div>
-            </div>
+    <div className="group flex flex-col h-full rounded-xl border border-ink-light bg-surface-card shadow-sm transition-shadow hover:shadow-md">
+      <div className="p-4 flex flex-col gap-3">
+        {/* avatar + name + status */}
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-lg bg-ink-light overflow-hidden flex items-center justify-center flex-shrink-0">
+            <img
+              src={professional.previewImage || placeholderImg}
+              alt=""
+              className="object-cover w-full h-full"
+              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                const target = e.target as HTMLImageElement;
+                if (target.src !== placeholderImg) target.src = placeholderImg;
+              }}
+              loading="lazy"
+              draggable={false}
+            />
           </div>
-          <div className="flex-shrink-0">
-            <div
-              className={`inline-flex items-center gap-1 ${statusStyle.bg} ${statusStyle.text} px-2 py-1 rounded-full text-xs font-medium`}
+          <div className="min-w-0 flex-1">
+            <h3
+              className="text-sm font-semibold text-ink leading-tight truncate"
+              title={name}
             >
-              <User className="w-3 h-3" />
-              <span>{statusStyle.label}</span>
-            </div>
+              {name}
+            </h3>
+            <p className="flex items-center gap-1 mt-0.5 text-[11px] text-ink-caption min-w-0">
+              <MapPin className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">
+                {professional.location || "Location not set"}
+              </span>
+            </p>
           </div>
+          <span
+            className={`flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${statusStyle.bg} ${statusStyle.text}`}
+          >
+            {statusStyle.label}
+          </span>
         </div>
 
-        {/* Categories */}
-        <div className="mb-4 md:mb-6">
-          <div className="flex flex-wrap gap-1 md:gap-2">
-            {(professional.categories && professional.categories.length > 0
-              ? professional.categories
-              : ["General"]
-            ).map((category: string, index: number) => (
-              <span
-                key={index}
-                className="px-2 py-1 md:px-3 md:py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full"
-              >
-                {category}
+        {/* meta chips */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-caption">
+          <span className="inline-flex items-center gap-1">
+            <Calendar className="w-3 h-3" />
+            {formatDate(displayDateValue)}
+          </span>
+          {typeof professional.completionPercentage === "number" && (
+            <span className="inline-flex items-center gap-1">
+              <span className="font-semibold text-ink-paragraph">
+                {professional.completionPercentage}%
               </span>
-            ))}
-          </div>
+              complete
+            </span>
+          )}
+          {professional.skillsCount > 0 && (
+            <span className="inline-flex items-center gap-1">
+              <span className="font-semibold text-ink-paragraph">
+                {professional.skillsCount}
+              </span>
+              skills
+            </span>
+          )}
+          {categories.length > 0 && (
+            <span className="truncate max-w-full">{categories.join(", ")}</span>
+          )}
         </div>
+      </div>
 
-        {/* Stats and Actions Row */}
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3 md:gap-6">
-            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1 md:px-4 md:py-2">
-              <span className="font-bold text-gray-700 text-xs md:text-sm">
-                {professional.publishedDate
-                  ? formatDate(professional.publishedDate)
-                  : "Not published"}
-              </span>
-              <span className="text-xs text-gray-600 hidden md:block">
-                Created
-              </span>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                onEdit(
-                  professional.professionalId,
-                  professional.templateSelection
-                );
-              }}
-              disabled={disabled}
-              className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Edit className="w-3 h-3 md:w-4 md:h-4" />
-              Edit /
-              <Eye className="w-3 h-3 md:w-4 md:h-4" />
-              Preview
-            </button>
-
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                onCredentials(professional.professionalId);
-              }}
-              disabled={disabled}
-              className="px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FileText className="w-3 h-3 md:w-4 md:h-4" />
-              Details
-            </button>
-
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                onApprove(professional.professionalId);
-              }}
-              disabled={disabled || professional.reviewStatus === "approved"}
-              className="px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
-              Approve
-            </button>
-
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                onReject(professional.professionalId);
-              }}
-              disabled={disabled || professional.reviewStatus === "rejected"}
-              className="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <XCircle className="w-3 h-3 md:w-4 md:h-4" />
-              Reject
-            </button>
-
-            <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                onDelete(professional.professionalId);
-              }}
-              disabled={disabled}
-              className="col-span-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-xs md:text-sm font-medium flex items-center gap-2 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
-              Delete
-            </button>
-          </div>
-        </div>
+      {/* action bar */}
+      <div className="flex items-stretch mt-auto border-t border-ink-light divide-x divide-ink-light text-xs font-medium">
+        <button
+          type="button"
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            onCredentials(professional.professionalId);
+          }}
+          aria-label={`Details for ${name}`}
+          disabled={disabled}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-brand-gold hover:bg-brand-gold/10 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <FileText className="w-3.5 h-3.5" /> Details
+        </button>
+        <button
+          type="button"
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            onEdit(professional.professionalId, professional.templateSelection);
+          }}
+          aria-label={`Edit ${name}`}
+          disabled={disabled}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-ink-paragraph hover:bg-ink-offwhite transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <Edit className="w-3.5 h-3.5" /> Edit
+        </button>
+        <button
+          type="button"
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            onDelete(professional.professionalId);
+          }}
+          aria-label={`Delete ${name}`}
+          title="Delete"
+          disabled={disabled}
+          className="flex items-center justify-center px-4 py-2.5 text-status-error hover:bg-status-error/10 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );
@@ -650,8 +625,8 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
 // Loading Component
 const LoadingSpinner: React.FC = () => (
   <div className="flex items-center justify-center py-16">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-    <span className="ml-4 text-gray-600">Loading professionals...</span>
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-gold"></div>
+    <span className="ml-4 text-ink-paragraph">Loading professionals...</span>
   </div>
 );
 
@@ -659,11 +634,11 @@ const LoadingSpinner: React.FC = () => (
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
   <div className="text-center py-16">
     <div className="text-6xl mb-4">⚠</div>
-    <p className="text-xl text-red-600 mb-2">Error loading professionals</p>
-    <p className="text-gray-500 mb-4">{error}</p>
+    <p className="text-xl text-status-error mb-2">Error loading professionals</p>
+    <p className="text-ink-caption mb-4">{error}</p>
     <button
       onClick={onRetry}
-      className="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+      className="bg-status-error text-white px-6 py-3 rounded-lg font-semibold hover:bg-status-error transition-colors"
     >
       Try Again
     </button>
@@ -674,18 +649,12 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
 const RecentProfessionalsSection: React.FC<{
   recentProfessionals: Professional[];
   onCredentials: (professionalId: string) => void;
-  onPreview: (professionalId: string) => void;
-  onApprove: (professionalId: string) => void;
-  onReject: (professionalId: string) => void;
   onDelete: (professionalId: string) => void;
   onEdit: (professionalId: string, templateSelection: string) => void;
   disabled?: boolean;
 }> = ({
   recentProfessionals,
   onCredentials,
-  onPreview,
-  onApprove,
-  onReject,
   onDelete,
   onEdit,
   disabled,
@@ -696,25 +665,22 @@ const RecentProfessionalsSection: React.FC<{
       <div className="mb-8">
         <div className="flex gap-3 items-center mb-6">
           <div className="flex gap-2 items-center">
-            <Clock className="w-5 h-5 text-yellow-500" />
-            <h2 className="text-base font-bold text-gray-900">
+            <Clock className="w-5 h-5 text-brand-gold" />
+            <h2 className="text-base font-bold text-ink">
               Recent Professionals
             </h2>
           </div>
-          <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+          <span className="px-2.5 py-1 text-xs font-bold text-ink-paragraph bg-ink-light rounded-full">
             Last 7 days
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {recentProfessionals.map((professional) => (
             <div key={professional.professionalId} className="animate-fadeIn">
               <ProfessionalCard
                 professional={professional}
                 onCredentials={onCredentials}
-                onPreview={onPreview}
-                onApprove={onApprove}
-                onReject={onReject}
                 onDelete={onDelete}
                 onEdit={onEdit}
                 disabled={disabled}
@@ -723,7 +689,7 @@ const RecentProfessionalsSection: React.FC<{
           ))}
         </div>
 
-        <div className="mt-6 border-t border-gray-200"></div>
+        <div className="mt-6 border-t border-ink-light"></div>
       </div>
     );
   };
@@ -741,9 +707,6 @@ const MainContent: React.FC<MainContentProps> = ({
   hasMore,
   onOpenMobileSidebar,
   onCredentials,
-  onPreview,
-  onApprove,
-  onReject,
   searchTerm,
   sortBy,
   statusFilter,
@@ -775,9 +738,6 @@ const MainContent: React.FC<MainContentProps> = ({
         <RecentProfessionalsSection
           recentProfessionals={recentProfessionals}
           onCredentials={onCredentials}
-          onPreview={onPreview}
-          onApprove={onApprove}
-          onReject={onReject}
           onDelete={onDelete}
           onEdit={onEdit}
           disabled={isMutating}
@@ -787,12 +747,12 @@ const MainContent: React.FC<MainContentProps> = ({
       {/* All Professionals Section */}
       <div className="flex gap-3 items-center mb-6">
         <div className="flex gap-2 items-center">
-          <User className="w-5 h-5 text-yellow-500" />
-          <h2 className="text-base font-bold text-gray-900">
+          <User className="w-5 h-5 text-brand-gold" />
+          <h2 className="text-base font-bold text-ink">
             {statusFilter === "all" ? "All Professionals" : statusFilter === "under_review" ? "Under Review Professionals" : statusFilter === "approved" ? "Approved Professionals" : "Rejected Professionals"}
           </h2>
         </div>
-        <span className="px-2.5 py-1 text-xs font-bold text-gray-600 bg-gray-100 rounded-full">
+        <span className="px-2.5 py-1 text-xs font-bold text-ink-paragraph bg-ink-light rounded-full">
           {totalCount}{" "}
           {totalCount === 1 ? "professional" : "professionals"}
         </span>
@@ -800,7 +760,7 @@ const MainContent: React.FC<MainContentProps> = ({
 
       {/* Professionals Grid */}
       {professionals.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {professionals.map((professional: Professional, index: number) => (
             <div
               key={professional.professionalId || index}
@@ -809,9 +769,6 @@ const MainContent: React.FC<MainContentProps> = ({
               <ProfessionalCard
                 professional={professional}
                 onCredentials={onCredentials}
-                onPreview={onPreview}
-                onApprove={onApprove}
-                onReject={onReject}
                 onDelete={onDelete}
                 onEdit={onEdit}
                 disabled={isMutating}
@@ -821,8 +778,8 @@ const MainContent: React.FC<MainContentProps> = ({
         </div>
       ) : (
         <div className="flex flex-col gap-3 justify-center items-center mt-20 mb-44">
-          <User className="w-24 h-24 text-gray-400" />
-          <p className="text-sm font-semibold text-gray-400">
+          <User className="w-24 h-24 text-ink-caption" />
+          <p className="text-sm font-semibold text-ink-caption">
             Oops looks like there is no professionals!
           </p>
         </div>
@@ -833,18 +790,18 @@ const MainContent: React.FC<MainContentProps> = ({
         <div className="flex justify-center items-center mt-8">
           <button
             onClick={onPrevPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-ink-paragraph bg-surface-card border border-ink-light rounded-lg transition-colors hover:bg-ink-offwhite disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage <= 1}
           >
             <ArrowRight className="w-4 h-4 rotate-180" />
             Previous
           </button>
-          <span className="mx-4 text-sm text-gray-600">
+          <span className="mx-4 text-sm text-ink-paragraph">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={onNextPage}
-            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-black bg-yellow-400 rounded-lg transition-colors hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-2 items-center px-4 py-2 text-sm font-medium text-ink bg-brand-yellow rounded-lg transition-colors hover:bg-brand-yellow-soft disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentPage >= totalPages}
           >
             Next
@@ -861,7 +818,7 @@ const apiService = {
   async fetchAllProfessionals(signal?: AbortSignal): Promise<ApiResponse> {
     try {
       const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`,
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=admin&limit=500` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=admin`,
         {
           method: "GET",
           headers: {
@@ -887,54 +844,11 @@ const apiService = {
   async fetchProfessionalDetails(professionalId: string): Promise<any> {
     try {
       const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professionals/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  async approveProfessional(publishedId: string, userId: string): Promise<any> {
-    try {
-      const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-tem-validation` : `${LAMBDA.profValidate}/professional-tem-validation`,
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/${professionalId}` : `${LAMBDA.profAdmin}/professionals/${professionalId}`,
         {
-          method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
           },
-          body: JSON.stringify({ publishedId, action: "approve", userId }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  async rejectProfessional(publishedId: string, userId: string): Promise<any> {
-    try {
-      const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-tem-validation` : `${LAMBDA.profValidate}/professional-tem-validation`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ publishedId, action: "reject", userId }),
         }
       );
 
@@ -975,6 +889,12 @@ const apiService = {
   },
 };
 
+// templateSelection has been stored inconsistently over time ("template-1",
+// "template1", "1", 1, "template-2"...). Collapse it to the bare 1 / 2 the
+// edit and preview routes expect.
+const templateNum = (templateSelection: string | number | undefined): 1 | 2 =>
+  String(templateSelection ?? "").includes("2") ? 2 : 1;
+
 // Main Professional Dashboard Component
 const PROF_VIEW_TABS = [
   { id: "all", label: "Pilot Directory" },
@@ -1012,7 +932,7 @@ const AdminProfessionalDashboard: React.FC = () => {
   // Confirmation modals state
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
-    type: "edit" | "approve" | "reject" | "delete" | null;
+    type: "edit" | "delete" | null;
     professionalId: string | null;
     professional: Professional | null;
   }>({ isOpen: false, type: null, professionalId: null, professional: null });
@@ -1033,7 +953,7 @@ const AdminProfessionalDashboard: React.FC = () => {
 
   // -------------------- Confirmation Modal Handlers --------------------
   const openConfirmationModal = (
-    type: "edit" | "approve" | "reject" | "delete",
+    type: "edit" | "delete",
     professionalId: string
   ) => {
     const professional = professionals.find(
@@ -1061,58 +981,16 @@ const AdminProfessionalDashboard: React.FC = () => {
       switch (type) {
         case "edit":
           if (professional) {
-            if (professional.templateSelection === "template-1") {
-              navigate(
-                `/user/professionals/edit/1/${professionalId}/${professional.userId}`
-              );
-            } else if (professional.templateSelection === "template-2") {
-              navigate(
-                `/user/professionals/edit/2/${professionalId}/${professional.userId}`
-              );
-            }
-          }
-          break;
-
-        case "approve":
-          if (professional) {
-            const result = await apiService.approveProfessional(
-              professionalId,
-              professional.userId
+            navigate(
+              `/user/professionals/edit/${templateNum(professional.templateSelection)}/${professionalId}/${professional.userId}`
             );
-
-            if (result.status == "approved") {
-              toast.success("Professional approved successfully");
-              await fetchProfessionals();
-            } else {
-              toast.error("Failed to approve professional");
-            }
-          }
-          break;
-
-        case "reject":
-          if (professional) {
-            const result = await apiService.rejectProfessional(
-              professionalId,
-              professional.userId
-            );
-
-            if (result.status == "rejected") {
-              toast.success("Professional rejected successfully");
-              await fetchProfessionals();
-            } else {
-              toast.error("Failed to reject professional");
-            }
           }
           break;
 
         case "delete":
-          const result = await apiService.deleteProfessional(professionalId);
-          if (result.message === "Professional template deleted successfully") {
-            toast.success("Professional deleted successfully");
-            await fetchProfessionals();
-          } else {
-            toast.error("Failed to delete professional");
-          }
+          await apiService.deleteProfessional(professionalId);
+          toast.success("Professional deleted successfully");
+          await fetchProfessionals();
           break;
 
         default:
@@ -1145,41 +1023,8 @@ const AdminProfessionalDashboard: React.FC = () => {
     }
   };
 
-  const handlePreview = async (professionalId: string): Promise<void> => {
-    try {
-      const professional = professionals.find(
-        (p) => p.professionalId === professionalId
-      );
-      if (!professional) {
-        toast.error("Professional not found");
-        return;
-      }
-
-      // Navigate to preview page based on template
-      if (professional.templateSelection === "template-1") {
-        navigate(
-          `/user/professionals/preview/1/${professionalId}/${professional.userId}`
-        );
-      } else if (professional.templateSelection === "template-2") {
-        navigate(
-          `/user/professionals/preview/2/${professionalId}/${professional.userId}`
-        );
-      }
-    } catch (error) {
-      toast.error("Failed to load professional for preview");
-    }
-  };
-
   const handleEdit = (professionalId: string, templateSelection: string) => {
     openConfirmationModal("edit", professionalId);
-  };
-
-  const handleApprove = (professionalId: string) => {
-    openConfirmationModal("approve", professionalId);
-  };
-
-  const handleReject = (professionalId: string) => {
-    openConfirmationModal("reject", professionalId);
   };
 
   const handleDelete = (professionalId: string) => {
@@ -1244,6 +1089,10 @@ const AdminProfessionalDashboard: React.FC = () => {
           professional.professionalName
             .toLowerCase()
             .includes(searchTerm.toLowerCase())) ||
+        (professional.userId &&
+          professional.userId
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())) ||
         (professional.location &&
           professional.location
             .toLowerCase()
@@ -1256,9 +1105,9 @@ const AdminProfessionalDashboard: React.FC = () => {
       // Status filter logic - Updated to match EventAdminDashboard
       const matchesStatus =
         statusFilter === "all" ||
-        (statusFilter === "under_review" && 
+        (statusFilter === "under_review" &&
          (professional.reviewStatus === "active" || professional.reviewStatus === "under_review")) ||
-        (statusFilter === "approved" && professional.reviewStatus === "approved") ||
+        (statusFilter === "approved" && (professional.reviewStatus === "approved" || professional.reviewStatus === "published")) ||
         (statusFilter === "rejected" && professional.reviewStatus === "rejected");
 
       return matchesSearch && matchesStatus;
@@ -1332,40 +1181,24 @@ const AdminProfessionalDashboard: React.FC = () => {
           title: "Confirm Edit",
           message: `Are you sure you want to edit "${professionalName}"? You will be redirected to the edit page.`,
           confirmText: "Edit Professional",
-          confirmColor: "bg-gray-700 hover:bg-gray-600",
-          icon: <Edit className="text-gray-700" size={24} />,
-        };
-      case "approve":
-        return {
-          title: "Confirm Approval",
-          message: `Are you sure you want to approve "${professionalName}"? This will make the professional visible to users.`,
-          confirmText: "Approve Professional",
-          confirmColor: "bg-green-600 hover:bg-green-700",
-          icon: <CheckCircle className="text-green-600" size={24} />,
-        };
-      case "reject":
-        return {
-          title: "Confirm Rejection",
-          message: `Are you sure you want to reject "${professionalName}"? This will mark the professional as rejected.`,
-          confirmText: "Reject Professional",
-          confirmColor: "bg-red-600 hover:bg-red-700",
-          icon: <XCircle className="text-red-600" size={24} />,
+          confirmColor: "bg-ink-paragraph hover:bg-ink-paragraph",
+          icon: <Edit className="text-ink-paragraph" size={24} />,
         };
       case "delete":
         return {
           title: "Confirm Deletion",
           message: `Are you sure you want to delete "${professionalName}"? This action cannot be undone and all professional data will be permanently removed.`,
           confirmText: "Delete Professional",
-          confirmColor: "bg-red-600 hover:bg-red-700",
-          icon: <Trash2 className="text-red-600" size={24} />,
+          confirmColor: "bg-status-error hover:bg-status-error",
+          icon: <Trash2 className="text-status-error" size={24} />,
         };
       default:
         return {
           title: "Confirm Action",
           message: "Are you sure you want to perform this action?",
           confirmText: "Confirm",
-          confirmColor: "bg-blue-600 hover:bg-blue-700",
-          icon: <AlertCircle className="text-blue-600" size={24} />,
+          confirmColor: "bg-status-info hover:bg-status-info",
+          icon: <AlertCircle className="text-status-info" size={24} />,
         };
     }
   };
@@ -1394,9 +1227,6 @@ const AdminProfessionalDashboard: React.FC = () => {
         onClose={() => setCredentialsModal({ isOpen: false, data: null })}
         professionalId={credentialsModal.data?.professionalId}
         loading={loading}
-        onPreview={handlePreview}
-        onApprove={handleApprove}
-        onReject={handleReject}
         professional={
           professionals.find(
             (p) => p.professionalId === credentialsModal.data?.professionalId
@@ -1406,27 +1236,27 @@ const AdminProfessionalDashboard: React.FC = () => {
 
       {/* Page title */}
       <div className="mb-4">
-        <h1 className="text-xl font-extrabold text-gray-900">Professional Management</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Review and manage all professional listings, credentials, and approvals.</p>
+        <h1 className="text-xl font-extrabold text-ink">Professional Management</h1>
+        <p className="text-sm text-ink-caption mt-0.5">Review and manage all professional listings, credentials, and approvals.</p>
       </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
-          { label: "Total", value: professionals.length, color: "border-t-yellow-400" },
-          { label: "Pending Review", value: professionals.filter((p: any) => p.reviewStatus === "under_review").length, color: "border-t-orange-400" },
-          { label: "Approved", value: professionals.filter((p: any) => p.reviewStatus === "approved").length, color: "border-t-green-500" },
-          { label: "Rejected", value: professionals.filter((p: any) => p.reviewStatus === "rejected").length, color: "border-t-red-500" },
+          { label: "Total", value: professionals.length, color: "border-t-brand-yellow" },
+          { label: "Pending Review", value: professionals.filter((p: any) => p.reviewStatus === "under_review").length, color: "border-t-status-warning" },
+          { label: "Approved", value: professionals.filter((p: any) => p.reviewStatus === "approved" || p.reviewStatus === "published").length, color: "border-t-status-success" },
+          { label: "Rejected", value: professionals.filter((p: any) => p.reviewStatus === "rejected").length, color: "border-t-status-error" },
         ].map(stat => (
-          <div key={stat.label} className={`bg-white rounded-lg border border-gray-200 border-t-4 ${stat.color} p-4 shadow-sm`}>
-            <div className="text-2xl font-black text-gray-900">{loading ? "—" : stat.value}</div>
-            <div className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wide">{stat.label}</div>
+          <div key={stat.label} className={`bg-surface-card rounded-lg border border-ink-light border-t-4 ${stat.color} p-4 shadow-sm`}>
+            <div className="text-2xl font-black text-ink">{loading ? "—" : stat.value}</div>
+            <div className="text-xs font-semibold text-ink-caption mt-1 uppercase tracking-wide">{stat.label}</div>
           </div>
         ))}
       </div>
 
       {/* View tabs */}
-      <div className="flex gap-0 border-b-2 border-gray-200 mb-4 overflow-x-auto">
+      <div className="flex gap-0 border-b-2 border-ink-light mb-4 overflow-x-auto">
         {PROF_VIEW_TABS.map(tab => (
           <button
             key={tab.id}
@@ -1435,7 +1265,7 @@ const AdminProfessionalDashboard: React.FC = () => {
               setSearchParams(prev => { if (tab.id === "all") { prev.delete("view"); } else { prev.set("view", tab.id); } return prev; }, { replace: true });
               setCurrentPage(1);
             }}
-            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-gray-900 border-yellow-400" : "text-gray-500 border-transparent hover:text-gray-700"}`}
+            className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${viewFilter === tab.id ? "text-ink border-brand-yellow" : "text-ink-caption border-transparent hover:text-ink-paragraph"}`}
           >
             {tab.label}
           </button>
@@ -1443,37 +1273,37 @@ const AdminProfessionalDashboard: React.FC = () => {
       </div>
 
       {viewFilter === "portfolio" && (
-        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center mb-4 shadow-sm">
-          <FileText className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-gray-700 mb-1">Portfolio Management</h3>
-          <p className="text-sm text-gray-400">Showing professionals with uploaded portfolio content. Full portfolio module coming soon.</p>
+        <div className="bg-surface-card border border-ink-light rounded-xl p-8 text-center mb-4 shadow-sm">
+          <FileText className="w-10 h-10 text-ink-light mx-auto mb-3" />
+          <h3 className="text-base font-bold text-ink-paragraph mb-1">Portfolio Management</h3>
+          <p className="text-sm text-ink-caption">Showing professionals with uploaded portfolio content. Full portfolio module coming soon.</p>
         </div>
       )}
 
       {viewFilter === "community" && (
-        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center mb-4 shadow-sm">
-          <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-gray-700 mb-1">Community Management</h3>
-          <p className="text-sm text-gray-400">Community posts, forum threads, and member activity will appear here. Coming soon.</p>
+        <div className="bg-surface-card border border-ink-light rounded-xl p-8 text-center mb-4 shadow-sm">
+          <Users className="w-10 h-10 text-ink-light mx-auto mb-3" />
+          <h3 className="text-base font-bold text-ink-paragraph mb-1">Community Management</h3>
+          <p className="text-sm text-ink-caption">Community posts, forum threads, and member activity will appear here. Coming soon.</p>
         </div>
       )}
 
       {/* Horizontal toolbar */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
-          <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        <div className="flex items-center gap-2 bg-surface-card border border-ink-light rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
+          <Search className="w-4 h-4 text-ink-caption flex-shrink-0" />
           <input
             type="text"
             placeholder="Search professionals…"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="border-none outline-none text-sm bg-transparent w-full text-gray-800 placeholder-gray-400"
+            className="border-none outline-none text-sm bg-transparent w-full text-ink-charcoal placeholder-ink-caption"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
+          className="px-3 py-1.5 border border-ink-light rounded-md text-sm bg-surface-card text-ink-charcoal focus:outline-none focus:border-brand-yellow cursor-pointer"
         >
           <option value="all">All Professionals</option>
           <option value="under_review">Under Review</option>
@@ -1483,7 +1313,7 @@ const AdminProfessionalDashboard: React.FC = () => {
         <select
           value={sortBy}
           onChange={e => setSortBy(e.target.value)}
-          className="px-3 py-1.5 border border-gray-200 rounded-md text-sm bg-white text-gray-800 focus:outline-none focus:border-yellow-400 cursor-pointer"
+          className="px-3 py-1.5 border border-ink-light rounded-md text-sm bg-surface-card text-ink-charcoal focus:outline-none focus:border-brand-yellow cursor-pointer"
         >
           <option value="Sort by Name">Sort by Name</option>
           <option value="Sort by Location">Sort by Location</option>
@@ -1505,9 +1335,6 @@ const AdminProfessionalDashboard: React.FC = () => {
         hasMore={hasMore}
         onOpenMobileSidebar={() => {}}
         onCredentials={handleCredentials}
-        onPreview={handlePreview}
-        onApprove={handleApprove}
-        onReject={handleReject}
         searchTerm={searchTerm}
         sortBy={sortBy}
         statusFilter={statusFilter}
