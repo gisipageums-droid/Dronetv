@@ -5,33 +5,33 @@ import { Cloud, ChevronDown } from "lucide-react";
 
 // Redirect Modal Component
 const RedirectModal = ({ onClose }: { onClose: () => void }) => (
-  <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999] backdrop-blur-sm">
-    <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl animate-fade-in-up">
+  <div className="fixed inset-0 bg-ink/80 flex items-center justify-center z-[9999] backdrop-blur-sm">
+    <div className="bg-surface-card rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl animate-fade-in-up">
       <div className="flex justify-center mb-6">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Cloud className="w-12 h-12 text-blue-600 fill-blue-50" />
+            <Cloud className="w-12 h-12 text-status-info fill-status-info/10" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-3 h-4 bg-blue-600 rounded-t-full mt-1"></div>
+              <div className="w-3 h-4 bg-status-info rounded-t-full mt-1"></div>
             </div>
           </div>
           <div className="text-left leading-none">
-            <h3 className="text-2xl font-bold text-blue-700 tracking-tight">DigiLocker</h3>
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider font-medium mt-1">Document Wallet to Empower Citizens</p>
+            <h3 className="text-2xl font-bold text-status-info tracking-tight">DigiLocker</h3>
+            <p className="text-[10px] text-ink-caption uppercase tracking-wider font-medium mt-1">Document Wallet to Empower Citizens</p>
           </div>
         </div>
       </div>
 
-      <h2 className="text-xl text-gray-800 font-medium mb-8">Redirecting back to Requester...</h2>
+      <h2 className="text-xl text-ink-charcoal font-medium mb-8">Redirecting back to Requester...</h2>
 
       <button
         onClick={onClose}
-        className="w-full bg-[#4F9CF9] hover:bg-blue-500 text-white font-semibold py-3.5 rounded-xl mb-4 transition-all shadow-lg shadow-blue-200 transform hover:-translate-y-0.5"
+        className="w-full bg-[#4F9CF9] hover:bg-status-info text-white font-semibold py-3.5 rounded-xl mb-4 transition-all shadow-lg shadow-status-info/25 transform hover:-translate-y-0.5"
       >
         Continue
       </button>
 
-      <p className="text-xs text-gray-500 leading-relaxed">
+      <p className="text-xs text-ink-caption leading-relaxed">
         Please click continue if you are not automatically redirected.
       </p>
     </div>
@@ -59,28 +59,28 @@ const ScrollColumn = React.forwardRef<HTMLDivElement, ScrollColumnProps>(
     return (
       <div
         ref={ref}
-        className="flex-1 h-32 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
+        className="flex-1 h-24 overflow-y-auto scrollbar-hide snap-y snap-mandatory"
         style={{
           scrollBehavior: "smooth",
           WebkitOverflowScrolling: "touch",
         }}
       >
-        <div className="h-12"></div>
+        <div className="h-8"></div>
         {items.map((item) => (
           <div
             key={item.value}
             data-value={item.value}
-            className={`h-12 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
+            className={`h-8 flex items-center justify-center snap-center transition-all duration-200 cursor-pointer
               ${selectedValue === item.value
-                ? "text-amber-600 font-bold text-lg scale-105 rounded-lg mx-1"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-brand-gold font-bold text-base scale-105 rounded-lg mx-1"
+                : "text-ink-caption hover:text-ink-paragraph text-sm"
               }`}
             onClick={() => handleClick(item.value)}
           >
             {item.label}
           </div>
         ))}
-        <div className="h-12"></div>
+        <div className="h-8"></div>
       </div>
     );
   }
@@ -109,10 +109,10 @@ const ReadOnlyDateDisplay: React.FC<{
   };
 
   return (
-    <div className="border border-amber-200 rounded-lg p-3 bg-amber-50">
+    <div className="border border-brand-yellow-soft rounded-lg p-3 bg-surface-main">
       <div className="text-center">
-        <p className="text-sm text-gray-600">Date of Birth</p>
-        <p className="font-semibold text-amber-700 text-lg">
+        <p className="text-sm text-ink-paragraph">Date of Birth</p>
+        <p className="font-semibold text-brand-gold text-lg">
           {formatDate(value)}
         </p>
       </div>
@@ -258,32 +258,32 @@ const OTPVerificationModal = ({
     !success;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm animate-fade-in-up my-auto">
+    <div className="fixed inset-0 bg-ink bg-opacity-50 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
+      <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-sm animate-fade-in-up my-auto">
         {/* Header */}
         <div className="p-4 border-b">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold text-gray-800">Verify Aadhar Number</h3>
+            <h3 className="text-lg font-bold text-ink-charcoal">Verify Aadhar Number</h3>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-xl"
+              className="text-ink-caption hover:text-ink-paragraph text-xl"
             >
               ×
             </button>
           </div>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-ink-paragraph mt-1">
             Enter 6-digit OTP sent to your Aadhar registered mobile
           </p>
         </div>
 
         {/* Aadhar Info */}
-        <div className="p-4 bg-blue-50 mx-4 mt-3 rounded-lg">
+        <div className="p-4 bg-status-info/10 mx-4 mt-3 rounded-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-gray-600">Aadhar Number</p>
-              <p className="text-base font-semibold text-gray-800">{maskedAadhar}</p>
+              <p className="text-xs text-ink-paragraph">Aadhar Number</p>
+              <p className="text-base font-semibold text-ink-charcoal">{maskedAadhar}</p>
             </div>
-            <div className="text-green-600">
+            <div className="text-status-success">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
@@ -294,7 +294,7 @@ const OTPVerificationModal = ({
         {/* OTP Input */}
         <div className="p-4">
           <div className="mb-3">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink-paragraph mb-2">
               6-digit OTP
             </label>
             <div className="flex justify-between space-x-1">
@@ -315,14 +315,14 @@ const OTPVerificationModal = ({
                       setError("Please enter all 6 digits");
                     }
                   }}
-                  className="w-10 h-12 text-center text-xl font-bold border-2 border-amber-300 rounded-lg focus:border-amber-500 focus:ring-1 focus:ring-amber-200 outline-none transition text-gray-900 bg-white"
+                  className="w-10 h-12 text-center text-xl font-bold border-2 border-brand-yellow-soft rounded-lg focus:border-brand-gold focus:ring-1 focus:ring-brand-yellow-soft outline-none transition text-ink bg-surface-card"
                 />
               ))}
             </div>
 
             {/* Success message */}
             {success && (
-              <p className="text-green-600 text-xs mt-2 flex items-center">
+              <p className="text-status-success text-xs mt-2 flex items-center">
                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
@@ -332,7 +332,7 @@ const OTPVerificationModal = ({
 
             {/* Show error message when user has started typing but hasn't completed all digits */}
             {shouldShowAllDigitsError && (
-              <p className="text-red-600 text-xs mt-2 flex items-center">
+              <p className="text-status-error text-xs mt-2 flex items-center">
                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
@@ -342,7 +342,7 @@ const OTPVerificationModal = ({
 
             {/* Show invalid OTP error */}
             {error === "Invalid OTP. Please try again." && (
-              <p className="text-red-600 text-xs mt-2 flex items-center">
+              <p className="text-status-error text-xs mt-2 flex items-center">
                 <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
@@ -353,13 +353,13 @@ const OTPVerificationModal = ({
 
           {/* Timer */}
           <div className="mb-4">
-            <p className="text-xs text-gray-600 text-center">
+            <p className="text-xs text-ink-paragraph text-center">
               {timeLeft > 0 ? (
                 <>
-                  OTP expires in <span className="font-semibold text-red-600">{timeLeft}</span> seconds
+                  OTP expires in <span className="font-semibold text-status-error">{timeLeft}</span> seconds
                 </>
               ) : (
-                <span className="text-red-600">OTP has expired</span>
+                <span className="text-status-error">OTP has expired</span>
               )}
             </p>
           </div>
@@ -371,8 +371,8 @@ const OTPVerificationModal = ({
               disabled={isVerifying || otp.some(d => d === "") || success}
               className={`w-full font-medium py-2.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm
                 ${success
-                  ? "bg-green-600 hover:bg-green-700 text-white"
-                  : "bg-amber-600 hover:bg-amber-700 text-white"
+                  ? "bg-status-success hover:bg-status-success text-white"
+                  : "bg-brand-gold hover:bg-brand-gold text-white"
                 }`}
             >
               {isVerifying ? (
@@ -393,23 +393,23 @@ const OTPVerificationModal = ({
             <button
               onClick={handleResend}
               disabled={timeLeft > 0 || success}
-              className="w-full border border-amber-600 text-amber-600 hover:bg-amber-50 font-medium py-2.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="w-full border border-brand-gold text-brand-gold hover:bg-surface-main font-medium py-2.5 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               Resend OTP {timeLeft > 0 && `(${timeLeft}s)`}
             </button>
 
             <button
               onClick={onClose}
-              className="w-full text-gray-600 hover:text-gray-800 font-medium py-2.5 rounded-lg transition text-sm"
+              className="w-full text-ink-paragraph hover:text-ink-charcoal font-medium py-2.5 rounded-lg transition text-sm"
             >
               Cancel Verification
             </button>
           </div>
 
           {/* Help Text */}
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600">
-              <strong className="text-gray-700">Note:</strong> OTP is sent to the mobile number registered with your Aadhar.
+          <div className="mt-4 p-3 bg-ink-offwhite rounded-lg">
+            <p className="text-xs text-ink-paragraph">
+              <strong className="text-ink-paragraph">Note:</strong> OTP is sent to the mobile number registered with your Aadhar.
               If you haven't received it, check your SMS inbox or try resending.
             </p>
           </div>
@@ -421,14 +421,14 @@ const OTPVerificationModal = ({
 
 // Consent Modal Component
 const ConsentModal = ({ onClose }: { onClose: () => void }) => (
-  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[99999999999] backdrop-blur-sm p-4">
-    <div className="bg-white rounded-2xl w-full max-w-xl shadow-2xl animate-fade-in-up relative overflow-hidden flex flex-col max-h-[90vh]">
+  <div className="fixed inset-0 bg-ink/60 flex items-center justify-center z-[99999999999] backdrop-blur-sm p-4">
+    <div className="bg-surface-card rounded-2xl w-full max-w-xl shadow-2xl animate-fade-in-up relative overflow-hidden flex flex-col max-h-[90vh]">
       {/* Header */}
-      <div className="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10">
-        <h2 className="text-xl font-bold text-slate-800">User Consent for Identity Verification</h2>
+      <div className="p-6 border-b flex justify-between items-center bg-surface-card sticky top-0 z-10">
+        <h2 className="text-xl font-bold text-ink-charcoal">User Consent for Identity Verification</h2>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+          className="text-ink-caption hover:text-ink-paragraph transition-colors p-1"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -439,13 +439,13 @@ const ConsentModal = ({ onClose }: { onClose: () => void }) => (
       {/* Content Area with Yellow Stripe */}
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 p-8 overflow-y-auto custom-scrollbar space-y-6">
-          <p className="text-[15px] text-slate-600 leading-relaxed">
-            By proceeding, I hereby provide my explicit and informed consent to <strong className="text-slate-900">DroneTV (dronetv.in)</strong> to collect, use, and verify my Aadhar/Company information for the limited purpose of identity and profile verification on the platform.
+          <p className="text-[15px] text-ink-paragraph leading-relaxed">
+            By proceeding, I hereby provide my explicit and informed consent to <strong className="text-ink">DroneTV (dronetv.in)</strong> to collect, use, and verify my Aadhar/Company information for the limited purpose of identity and profile verification on the platform.
           </p>
 
           <section>
-            <h3 className="text-lg font-bold text-slate-800 mb-3">Purpose of Collection</h3>
-            <p className="text-sm text-slate-600 mb-3 font-medium">My information will be used solely for:</p>
+            <h3 className="text-lg font-bold text-ink-charcoal mb-3">Purpose of Collection</h3>
+            <p className="text-sm text-ink-paragraph mb-3 font-medium">My information will be used solely for:</p>
             <ul className="space-y-3">
               {[
                 "Verifying my identity and/or company details",
@@ -453,8 +453,8 @@ const ConsentModal = ({ onClose }: { onClose: () => void }) => (
                 "Establishing authenticity and trust for platform users",
                 "Compliance with applicable Indian laws and regulations"
               ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[14px] text-slate-600">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 shrink-0" />
+                <li key={i} className="flex items-start gap-3 text-[14px] text-ink-paragraph">
+                  <span className="w-1.5 h-1.5 rounded-full bg-status-info mt-2 shrink-0" />
                   {item}
                 </li>
               ))}
@@ -462,19 +462,19 @@ const ConsentModal = ({ onClose }: { onClose: () => void }) => (
           </section>
 
           <section>
-            <h3 className="text-lg font-bold text-slate-800 mb-3">Information Collected</h3>
+            <h3 className="text-lg font-bold text-ink-charcoal mb-3">Information Collected</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="text-[15px] font-bold text-slate-800 mb-2">For Individuals (Professionals)</h4>
-                <p className="text-sm text-slate-600 mb-3">With my consent, DroneTV may access and verify the following information:</p>
+                <h4 className="text-[15px] font-bold text-ink-charcoal mb-2">For Individuals (Professionals)</h4>
+                <p className="text-sm text-ink-paragraph mb-3">With my consent, DroneTV may access and verify the following information:</p>
                 <ul className="space-y-3">
                   {[
                     "Name, Date of birth, and Address",
                     "Aadhaar-based identity details through OTP authentication",
                     "Documents shared via DigiLocker (such as Aadhaar, PAN, or professional certificates)"
                   ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-[14px] text-slate-600">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 shrink-0" />
+                    <li key={i} className="flex items-start gap-3 text-[14px] text-ink-paragraph">
+                      <span className="w-1.5 h-1.5 rounded-full bg-status-info mt-2 shrink-0" />
                       {item}
                     </li>
                   ))}
@@ -485,14 +485,14 @@ const ConsentModal = ({ onClose }: { onClose: () => void }) => (
         </div>
 
         {/* Yellow Stripe on the right side of the content */}
-        <div className="w-2 bg-yellow-400 h-full"></div>
+        <div className="w-2 bg-brand-yellow h-full"></div>
       </div>
 
       {/* Footer */}
-      <div className="p-4 bg-white flex justify-end sticky bottom-0 z-10">
+      <div className="p-4 bg-surface-card flex justify-end sticky bottom-0 z-10">
         <button
           onClick={onClose}
-          className="px-10 py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-md active:scale-95"
+          className="px-10 py-2.5 bg-[#2563EB] hover:bg-status-info text-white font-bold rounded-lg transition-all shadow-md active:scale-95"
         >
           Close
         </button>
@@ -685,28 +685,27 @@ const ScrollDatePicker: React.FC<{
   }, []);
 
   return (
-    <div className="bg-white border border-amber-200 rounded-xl p-4 date-picker-card animate-fade-in-up">
-      <div className="text-center mb-4">
-        <h3 className="font-semibold text-gray-800">Date of Birth</h3>
-        <p className="text-xs text-gray-600 mt-1">Select your date of birth</p>
+    <div className="bg-surface-card border border-brand-yellow-soft rounded-xl p-2 date-picker-card animate-fade-in-up">
+      <div className="text-center mb-2">
+        <h3 className="text-sm font-semibold text-ink-charcoal">Date of Birth</h3>
       </div>
 
-      <div className="flex items-center justify-between mb-2 px-4">
+      <div className="flex items-center justify-between mb-1 px-4">
         <div className="flex-1 text-center">
-          <span className="text-xs font-medium text-gray-500">DAY</span>
+          <span className="text-xs font-medium text-ink-caption">DAY</span>
         </div>
         <div className="flex-1 text-center">
-          <span className="text-xs font-medium text-gray-500">MONTH</span>
+          <span className="text-xs font-medium text-ink-caption">MONTH</span>
         </div>
         <div className="flex-1 text-center">
-          <span className="text-xs font-medium text-gray-500">YEAR</span>
+          <span className="text-xs font-medium text-ink-caption">YEAR</span>
         </div>
       </div>
 
       <div className="relative">
-        <div className="absolute left-0 right-0 top-20 transform -translate-y-1/2 h-12 bg-amber-100 border-2 border-amber-300 rounded-lg pointer-events-none date-picker-highlight"></div>
+        <div className="absolute left-0 right-0 top-12 transform -translate-y-1/2 h-8 bg-brand-yellow-soft border-2 border-brand-yellow-soft rounded-lg pointer-events-none date-picker-highlight"></div>
 
-        <div className="flex items-stretch h-32 relative z-10">
+        <div className="flex items-stretch h-24 relative z-10">
           <ScrollColumn
             ref={dayRef}
             items={days.map((day) => ({
@@ -739,9 +738,8 @@ const ScrollDatePicker: React.FC<{
         </div>
       </div>
 
-      <div className="text-center mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
-        <p className="text-sm text-gray-600">Selected Date</p>
-        <p className="font-semibold text-amber-700">
+      <div className="text-center mt-2 p-2 bg-surface-main rounded-lg border border-brand-yellow-soft">
+        <p className="text-xs font-semibold text-brand-gold">
           {parseInt(selectedDate.day)}{" "}
           {months.find((m) => m.value === selectedDate.month)?.name}{" "}
           {selectedDate.year}
@@ -754,18 +752,18 @@ const ScrollDatePicker: React.FC<{
 // Read-only Display Components
 const ReadOnlyField: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="flex flex-col">
-    <label className="mb-1 font-medium text-slate-800 text-sm">{label}</label>
-    <div className="border border-amber-200 rounded-lg p-3 bg-amber-50 text-gray-700">
-      {value || <span className="text-gray-400 italic">Not set</span>}
+    <label className="mb-1 font-medium text-ink-charcoal text-sm">{label}</label>
+    <div className="border border-brand-yellow-soft rounded-lg p-3 bg-surface-main text-ink-paragraph">
+      {value || <span className="text-ink-caption italic">Not set</span>}
     </div>
   </div>
 );
 
 const ReadOnlyTextArea: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="flex flex-col">
-    <label className="mb-1 font-medium text-slate-800 text-sm">{label}</label>
-    <div className="border border-amber-200 rounded-lg p-3 bg-amber-50 text-gray-700 min-h-[80px] whitespace-pre-wrap">
-      {value || <span className="text-gray-400 italic">Not set</span>}
+    <label className="mb-1 font-medium text-ink-charcoal text-sm">{label}</label>
+    <div className="border border-brand-yellow-soft rounded-lg p-3 bg-surface-main text-ink-paragraph min-h-[80px] whitespace-pre-wrap">
+      {value || <span className="text-ink-caption italic">Not set</span>}
     </div>
   </div>
 );
@@ -791,6 +789,83 @@ export const Step1 = ({
   const [aadharVerified, setAadharVerified] = useState(false);
   const [aadharError, setAadharError] = useState("");
   const [copyAddress, setCopyAddress] = useState(false);
+
+  // Mobile-to-KYC-prefill verification (Surepass, proxied through our own professional API)
+  const [kycMobile, setKycMobile] = useState(data.basicInfo?.Phonenumber || "");
+  const [kycVerifying, setKycVerifying] = useState(false);
+  const [kycVerified, setKycVerified] = useState(false);
+  const [kycError, setKycError] = useState("");
+  const [kycNoMatch, setKycNoMatch] = useState(false);
+  const [kycConsent, setKycConsent] = useState(false);
+  // Fields the verify API actually returned a value for — only these get
+  // locked read-only. A field the response left empty (e.g. email) stays
+  // editable so the user can fill it in themselves.
+  const [kycBoundFields, setKycBoundFields] = useState<Set<string>>(new Set());
+
+  const handleVerifyMobile = async () => {
+    setKycVerifying(true);
+    setKycError("");
+    setKycNoMatch(false);
+    try {
+      const res = await fetch(`${PROFESSIONAL_API}/kyc/mobile-prefill`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile_number: kycMobile }),
+      });
+      const json = await res.json();
+
+      if (!res.ok || json.status !== "success") {
+        setKycNoMatch(true);
+        return;
+      }
+
+      const resolvedFullName = json.fullName || data.basicInfo?.fullName || "";
+      const generatedUsername =
+        data.basicInfo?.user_name ||
+        (resolvedFullName || "user")
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g, "")
+          .trim()
+          .replace(/\s+/g, "-") ||
+        "user";
+
+      updateField("basicInfo", {
+        ...data.basicInfo,
+        Phonenumber: kycMobile,
+        fullName: resolvedFullName,
+        user_name: generatedUsername,
+        date_of_birth: json.dateOfBirth || data.basicInfo?.date_of_birth || "",
+        gender: json.gender || data.basicInfo?.gender || "",
+        address: json.address || data.basicInfo?.address || "",
+        city_district: json.cityDistrict || data.basicInfo?.city_district || "",
+        pincode: json.pincode || data.basicInfo?.pincode || "",
+        state: json.state || data.basicInfo?.state || "",
+        country: json.country || data.basicInfo?.country || "India",
+        // Note: intentionally NOT writing json.maskedAadhaar into aadhar_number here —
+        // a masked value (contains "X") flips an unrelated DigiLocker effect that locks
+        // this whole section read-only, which isn't wanted for the KYC-prefill flow.
+      });
+      const bound = new Set<string>();
+      if (json.dateOfBirth) bound.add("dateOfBirth");
+      if (json.email) bound.add("email");
+      setKycBoundFields(bound);
+      // PAN-based verification implies an Indian identity — default it instead
+      // of leaving the Nationality dropdown on "Select Nationality". Email/phone
+      // here come from the same KYC response, so fill them in alongside it.
+      updateField("addressInformation", {
+        ...data.addressInformation,
+        nationality: data.addressInformation?.nationality || "indian",
+        email: json.email || data.addressInformation?.email || "",
+        phoneNumber: data.addressInformation?.phoneNumber || `+91${kycMobile}`,
+      });
+      setKycVerified(true);
+    } catch (err) {
+      console.error("Mobile KYC prefill failed", err);
+      setKycError("Something went wrong. Please try again or fill details manually.");
+    } finally {
+      setKycVerifying(false);
+    }
+  };
 
   // DigiLocker State
   const [digiLockerLoading, setDigiLockerLoading] = useState(false);
@@ -1101,17 +1176,9 @@ export const Step1 = ({
     const addressInfo = data.addressInformation || {};
     const isUserAvailable = usernameAvailable === true || (originalUsername && basicInfo.user_name === originalUsername);
 
-    const isBasicInfoValid =
-      basicInfo.fullName &&
-      basicInfo.date_of_birth &&
-      basicInfo.gender &&
-      basicInfo.relationship_type &&
-      basicInfo.relationship_name &&
-      basicInfo.address &&
-      basicInfo.city_district &&
-      basicInfo.pincode &&
-      basicInfo.country &&
-      basicInfo.state;
+    // Name/DOB/gender/relationship/address/city/pincode/country/state are filled
+    // via mobile KYC prefill (or manually) and are no longer required to advance.
+    const isBasicInfoValid = true;
 
     const isCommAddressValid =
       commAddress.address &&
@@ -1283,7 +1350,7 @@ export const Step1 = ({
   // Render input field based on type
   const renderInputField = (f: any, section: any) => {
     const baseClasses =
-      "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white";
+      "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card";
 
     // Handle country and state fields
     if (
@@ -1362,8 +1429,7 @@ export const Step1 = ({
     const isPhoneField =
       (f.type === "tel" ||
         f.id.toLowerCase().includes("phone") ||
-        f.id.toLowerCase().includes("mobile") ||
-        f.id.toLowerCase().includes("contact")) &&
+        f.id.toLowerCase().includes("mobile")) &&
       !isPhoneFieldWithCode;
 
     if (isPhoneField) {
@@ -1415,7 +1481,7 @@ export const Step1 = ({
           required={f.required}
           placeholder={f.placeholder || ""}
           className={`${baseClasses} ${usernameAvailable === false
-            ? "border-red-500 focus:ring-red-300"
+            ? "border-status-error focus:ring-status-error/40"
             : ""
             }`}
           value={data[section.id]?.[f.id] || ""}
@@ -1481,14 +1547,14 @@ export const Step1 = ({
       return (
         <div
           key={sectionId}
-          className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6"
+          className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md mb-6"
         >
-          <div className="flex justify-between items-center border-b border-amber-200 pb-2">
-            <h3 className="text-lg font-semibold text-slate-900">
+          <div className="flex justify-between items-center border-b border-brand-yellow-soft pb-2">
+            <h3 className="text-lg font-semibold text-ink">
               {section.title}
             </h3>
             {isReadOnly && (
-              <div className="flex items-center text-green-600 text-sm">
+              <div className="flex items-center text-status-success text-sm">
                 <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
@@ -1498,6 +1564,64 @@ export const Step1 = ({
           </div>
 
           <div className="space-y-4">
+            {/* Phone Number + Verify (auto-fills the fields below via KYC prefill) */}
+            {!isReadOnly && (
+              <div className="flex flex-col">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
+                  Phone Number
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    placeholder="Enter 10-digit mobile number"
+                    disabled={kycVerified}
+                    className="flex-1 border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card disabled:opacity-60"
+                    value={kycMobile}
+                    onChange={(e) => {
+                      setKycMobile(e.target.value.replace(/\D/g, "").slice(0, 10));
+                      setKycError("");
+                      setKycNoMatch(false);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleVerifyMobile}
+                    disabled={kycMobile.length !== 10 || kycVerifying || kycVerified || !kycConsent}
+                    className="px-4 py-2 rounded-lg font-semibold text-white bg-brand-gold hover:bg-brand-gold/90 disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap transition"
+                  >
+                    {kycVerifying ? "Verifying..." : kycVerified ? "✓ Verified" : "Verify"}
+                  </button>
+                </div>
+                {!kycVerified && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <input
+                      id="phone-kyc-consent-checkbox"
+                      type="checkbox"
+                      checked={kycConsent}
+                      onChange={(e) => setKycConsent(e.target.checked)}
+                      className="h-4 w-4 accent-brand-gold rounded cursor-pointer"
+                    />
+                    <label htmlFor="phone-kyc-consent-checkbox" className="text-xs text-ink-charcoal cursor-pointer select-none">
+                      I consent to phone number verification
+                    </label>
+                  </div>
+                )}
+                {kycError && <p className="text-status-error text-xs mt-1">{kycError}</p>}
+                {kycNoMatch && (
+                  <p className="text-ink-caption text-xs mt-1">
+                    No matching records found for this number — please fill in your details manually below.
+                  </p>
+                )}
+                {kycVerified && (
+                  <p className="text-status-success text-xs mt-1">
+                    Details fetched below — please review and edit if anything needs correcting.
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Full Name */}
             {isReadOnly ? (
               <ReadOnlyField
@@ -1506,15 +1630,13 @@ export const Step1 = ({
               />
             ) : (
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Full Name
-                  <span className="text-red-500 ml-1">*</span>
                 </label>
                 <input
                   type="text"
-                  required={true}
                   placeholder="Enter your full name"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                   value={data.basicInfo?.fullName || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -1523,14 +1645,13 @@ export const Step1 = ({
                     })
                   }
                 />
-                {showErrors && !data.basicInfo?.fullName && <p className="text-red-500 text-xs mt-1">Full name is required</p>}
               </div>
             )}
 
             {/* Date of Birth */}
-            {isReadOnly ? (
+            {(isReadOnly || (kycVerified && kycBoundFields.has("dateOfBirth"))) ? (
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Date of Birth
                 </label>
                 <ReadOnlyDateDisplay
@@ -1539,9 +1660,8 @@ export const Step1 = ({
               </div>
             ) : (
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Date of Birth
-                  <span className="text-red-500 ml-1">*</span>
                 </label>
                 <ScrollDatePicker
                   value={data.basicInfo?.date_of_birth || ""}
@@ -1552,7 +1672,6 @@ export const Step1 = ({
                     })
                   }
                 />
-                {showErrors && !data.basicInfo?.date_of_birth && <p className="text-red-500 text-xs mt-1">Date of birth is required</p>}
               </div>
             )}
 
@@ -1571,12 +1690,11 @@ export const Step1 = ({
               />
             ) : (
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Gender
-                  <span className="text-red-500 ml-1">*</span>
                 </label>
                 <select
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                   value={data.basicInfo?.gender || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -1591,72 +1709,8 @@ export const Step1 = ({
                   <option value="non-binary">Non-binary</option>
                   <option value="prefer-not-to-say">Prefer not to say</option>
                 </select>
-                {showErrors && !data.basicInfo?.gender && <p className="text-red-500 text-xs mt-1">Gender is required</p>}
               </div>
             )}
-
-            {/* C/o, S/o, D/o and Relationship Name */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Relationship Type */}
-              {isReadOnly ? (
-                <ReadOnlyField
-                  label="C/o, S/o, D/o"
-                  value={data.basicInfo?.relationship_type || ""}
-                />
-              ) : (
-                <div className="flex flex-col">
-                  <label className="mb-1 font-medium text-slate-800 text-sm">
-                    C/o, S/o, D/o
-                    <span className="text-red-500 ml-1">*</span>
-                  </label>
-                  <select
-                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
-                    value={data.basicInfo?.relationship_type || ""}
-                    onChange={(e) =>
-                      updateField("basicInfo", {
-                        ...data.basicInfo,
-                        relationship_type: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="">Select Relationship</option>
-                    <option value="C/o">C/o (Care of)</option>
-                    <option value="S/o">S/o (Son of)</option>
-                    <option value="D/o">D/o (Daughter of)</option>
-                  </select>
-                  {showErrors && !data.basicInfo?.relationship_type && <p className="text-red-500 text-xs mt-1">This field is required</p>}
-                </div>
-              )}
-
-              {/* Relationship Name */}
-              {isReadOnly ? (
-                <ReadOnlyField
-                  label="Relationship Name"
-                  value={data.basicInfo?.relationship_name || ""}
-                />
-              ) : (
-                <div className="flex flex-col">
-                  <label className="mb-1 font-medium text-slate-800 text-sm">
-                    Relationship Name
-                    <span className="text-red-500 ml-1">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required={true}
-                    placeholder="Enter relative's name"
-                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
-                    value={data.basicInfo?.relationship_name || ""}
-                    onChange={(e) =>
-                      updateField("basicInfo", {
-                        ...data.basicInfo,
-                        relationship_name: e.target.value,
-                      })
-                    }
-                  />
-                  {showErrors && !data.basicInfo?.relationship_name && <p className="text-red-500 text-xs mt-1">This field is required</p>}
-                </div>
-              )}
-            </div>
 
             {/* Address */}
             {isReadOnly ? (
@@ -1666,14 +1720,12 @@ export const Step1 = ({
               />
             ) : (
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Address
-                  <span className="text-red-500 ml-1">*</span>
                 </label>
                 <textarea
-                  required={true}
                   placeholder="Complete address with building details"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] text-gray-900 bg-white"
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm min-h-[80px] text-ink bg-surface-card"
                   value={data.basicInfo?.address || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -1682,7 +1734,6 @@ export const Step1 = ({
                     })
                   }
                 />
-                {showErrors && !data.basicInfo?.address && <p className="text-red-500 text-xs mt-1">Address is required</p>}
               </div>
             )}
 
@@ -1696,15 +1747,13 @@ export const Step1 = ({
                 />
               ) : (
                 <div className="flex flex-col">
-                  <label className="mb-1 font-medium text-slate-800 text-sm">
+                  <label className="mb-1 font-medium text-ink-charcoal text-sm">
                     City/District
-                    <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="text"
-                    required={true}
                     placeholder="Enter city or district"
-                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                    className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                     value={data.basicInfo?.city_district || ""}
                     onChange={(e) =>
                       updateField("basicInfo", {
@@ -1713,7 +1762,6 @@ export const Step1 = ({
                       })
                     }
                   />
-                  {showErrors && !data.basicInfo?.city_district && <p className="text-red-500 text-xs mt-1">City/District is required</p>}
                 </div>
               )}
 
@@ -1725,16 +1773,14 @@ export const Step1 = ({
                 />
               ) : (
                 <div className="flex flex-col">
-                  <label className="mb-1 font-medium text-slate-800 text-sm">
+                  <label className="mb-1 font-medium text-ink-charcoal text-sm">
                     Pin Code
-                    <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     maxLength={6}
-                    required={true}
                     placeholder="Enter 6-digit pin code"
-                    className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                    className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                     value={data.basicInfo?.pincode || ""}
                     onChange={(e) =>
                       updateField("basicInfo", {
@@ -1743,7 +1789,6 @@ export const Step1 = ({
                       })
                     }
                   />
-                  {showErrors && !data.basicInfo?.pincode && <p className="text-red-500 text-xs mt-1">Pin code is required</p>}
                 </div>
               )}
             </div>
@@ -1779,15 +1824,9 @@ export const Step1 = ({
                         state: value,
                       });
                     }}
-                    countryRequired={true}
-                    stateRequired={true}
+                    countryRequired={false}
+                    stateRequired={false}
                   />
-                  {showErrors && (!data.basicInfo?.country || !data.basicInfo?.state) && (
-                    <div className="mt-1">
-                      {!data.basicInfo?.country && <p className="text-red-500 text-xs">Country is required</p>}
-                      {!data.basicInfo?.state && <p className="text-red-500 text-xs">State is required</p>}
-                    </div>
-                  )}
                 </>
               )}
             </div>
@@ -1804,11 +1843,11 @@ export const Step1 = ({
       return (
         <div
           key={sectionId}
-          className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6"
+          className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md mb-6"
         >
           {/* Header with checkbox */}
-          <div className="flex flex-col gap-2 border-b border-amber-200 pb-3">
-            <h3 className="text-lg font-semibold text-slate-900">
+          <div className="flex flex-col gap-2 border-b border-brand-yellow-soft pb-3">
+            <h3 className="text-lg font-semibold text-ink">
               Communication Address Information
             </h3>
             <div className="flex items-center">
@@ -1818,11 +1857,11 @@ export const Step1 = ({
                 checked={copyAddress}
                 onChange={(e) => handleCopyAddressChange(e.target.checked)}
                 disabled={!isBasicInfoFilled && !copyAddress}
-                className="w-4 h-4 text-amber-600 border-amber-300 rounded focus:ring-amber-500 cursor-pointer"
+                className="w-4 h-4 text-brand-gold border-brand-yellow-soft rounded focus:ring-brand-gold cursor-pointer"
               />
               <label
                 htmlFor="copyAddress"
-                className="ml-2 text-sm text-slate-700 cursor-pointer"
+                className="ml-2 text-sm text-ink-paragraph cursor-pointer"
               >
                 Same as the above mentioned information
               </label>
@@ -1832,14 +1871,14 @@ export const Step1 = ({
           <div className="space-y-4">
             {/* Address */}
             <div className="flex flex-col">
-              <label className="mb-1 font-medium text-slate-800 text-sm">
+              <label className="mb-1 font-medium text-ink-charcoal text-sm">
                 Address
-                <span className="text-red-500 ml-1">*</span>
+                <span className="text-status-error ml-1">*</span>
               </label>
               <textarea
                 required={true}
                 placeholder="Complete communication address with building details"
-                className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] text-gray-900 bg-white`}
+                className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm min-h-[80px] text-ink bg-surface-card`}
                 value={data.communicationAddress?.address || ""}
                 onChange={(e) =>
                   updateField("communicationAddress", {
@@ -1850,9 +1889,9 @@ export const Step1 = ({
               // disabled={copyAddress}
               // readOnly={copyAddress}
               />
-              {showErrors && !data.communicationAddress?.address && <p className="text-red-500 text-xs mt-1">Address is required</p>}
+              {showErrors && !data.communicationAddress?.address && <p className="text-status-error text-xs mt-1">Address is required</p>}
               {copyAddress && (
-                <div className="text-xs text-green-600 mt-1 flex items-center">
+                <div className="text-xs text-status-success mt-1 flex items-center">
                   <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
@@ -1863,13 +1902,13 @@ export const Step1 = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   City
                 </label>
                 <input
                   type="text"
                   placeholder="Your city"
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white`}
+                  className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card`}
                   value={data.communicationAddress?.city || ""}
                   onChange={(e) =>
                     updateField("communicationAddress", {
@@ -1883,9 +1922,9 @@ export const Step1 = ({
               </div>
 
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Postal Code
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                 </label>
 
                 <input
@@ -1893,7 +1932,7 @@ export const Step1 = ({
                   required={true}
                   maxLength={6}
                   placeholder="Postal code"
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white`}
+                  className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card`}
                   value={data.communicationAddress?.postalCode || ""}
                   onChange={(e) => {
                     // Allow only numbers and max 6 digits
@@ -1921,7 +1960,7 @@ export const Step1 = ({
                 // disabled={copyAddress}
                 // readOnly={copyAddress}
                 />
-                {showErrors && !data.communicationAddress?.postalCode && <p className="text-red-500 text-xs mt-1">Postal code is required</p>}
+                {showErrors && !data.communicationAddress?.postalCode && <p className="text-status-error text-xs mt-1">Postal code is required</p>}
               </div>
             </div>
 
@@ -1949,8 +1988,8 @@ export const Step1 = ({
               />
               {showErrors && (!data.communicationAddress?.country || !data.communicationAddress?.state) && (
                 <div className="mt-1">
-                  {!data.communicationAddress?.country && <p className="text-red-500 text-xs">Country is required</p>}
-                  {!data.communicationAddress?.state && <p className="text-red-500 text-xs">State is required</p>}
+                  {!data.communicationAddress?.country && <p className="text-status-error text-xs">Country is required</p>}
+                  {!data.communicationAddress?.state && <p className="text-status-error text-xs">State is required</p>}
                 </div>
               )}
             </div>
@@ -1960,7 +1999,7 @@ export const Step1 = ({
               data.communicationAddress?.postalCode &&
               data.communicationAddress?.postalCode.length === 6 &&
               getStateFromPincode(data.communicationAddress.postalCode) === data.communicationAddress.state && (
-                <div className="text-xs text-green-600 mt-1 flex items-center">
+                <div className="text-xs text-status-success mt-1 flex items-center">
                   <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
@@ -1978,25 +2017,25 @@ export const Step1 = ({
       return (
         <div key={sectionId} className="space-y-6 mb-6">
           {/* Section 1: Contact Information */}
-          <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
-            <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
+          <div className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md">
+            <h3 className="text-lg font-semibold text-ink border-b border-brand-yellow-soft pb-2">
               Professional Information
             </h3>
 
             <div className="space-y-4">
               {/* User Name */}
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   User Name
-                  <span className="text-red-500 ml-1">*</span>
-                  <span className="ml-2 text-blue-500">https://www.dronetv.in/professional/{data.basicInfo?.user_name}</span>
+                  <span className="text-status-error ml-1">*</span>
+                  <span className="block text-xs text-status-info break-all mt-0.5">https://www.dronetv.in/professional/{data.basicInfo?.user_name}</span>
                 </label>
                 <input
                   type="text"
                   required={true}
                   placeholder="Enter your username"
-                  className={`border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white ${usernameAvailable === false
-                    ? "border-red-500 focus:ring-red-300"
+                  className={`border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card ${usernameAvailable === false
+                    ? "border-status-error focus:ring-status-error/40"
                     : ""
                     }`}
                   value={data.basicInfo?.user_name || ""}
@@ -2008,14 +2047,14 @@ export const Step1 = ({
                     });
                   }}
                 />
-                {showErrors && !data.basicInfo?.user_name && <p className="text-red-500 text-xs mt-1">Username is required</p>}
+                {showErrors && !data.basicInfo?.user_name && <p className="text-status-error text-xs mt-1">Username is required</p>}
                 {data.basicInfo?.user_name && (
                   <span
                     className={`text-xs mt-1 ${usernameAvailable === false
-                      ? "text-red-600"
+                      ? "text-status-error"
                       : usernameAvailable === true
-                        ? "text-green-600"
-                        : "text-gray-600"
+                        ? "text-status-success"
+                        : "text-ink-paragraph"
                       }`}
                   >
                     {checking
@@ -2035,15 +2074,16 @@ export const Step1 = ({
 
               {/* Email */}
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Email
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <input
                   type="email"
                   required={true}
                   placeholder="Enter your email address"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                  disabled={kycVerified && kycBoundFields.has("email")}
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card disabled:opacity-60"
                   value={data.addressInformation?.email || ""}
                   onChange={(e) =>
                     updateField("addressInformation", {
@@ -2052,14 +2092,14 @@ export const Step1 = ({
                     })
                   }
                 />
-                {showErrors && !data.addressInformation?.email && <p className="text-red-500 text-xs mt-1">Email is required</p>}
+                {showErrors && !data.addressInformation?.email && <p className="text-status-error text-xs mt-1">Email is required</p>}
               </div>
 
               {/* Phone Number */}
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Phone Number
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <PhoneInput
                   value={data.addressInformation?.phoneNumber || ""}
@@ -2071,21 +2111,22 @@ export const Step1 = ({
                   }
                   placeholder="Enter phone number"
                   required={true}
+                  disabled={kycVerified}
                   className=""
                 />
-                {showErrors && !data.addressInformation?.phoneNumber && <p className="text-red-500 text-xs mt-1">Phone number is required</p>}
+                {showErrors && !data.addressInformation?.phoneNumber && <p className="text-status-error text-xs mt-1">Phone number is required</p>}
               </div>
             </div>
           </div>
           <div className="space-y-4">
             {/* Nationality/Country of Citizenship */}
             <div className="flex flex-col">
-              <label className="mb-1 font-medium text-slate-800 text-sm">
+              <label className="mb-1 font-medium text-ink-charcoal text-sm">
                 Nationality/Country of Citizenship
-                <span className="text-red-500 ml-1">*</span>
+                <span className="text-status-error ml-1">*</span>
               </label>
               <select
-                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                 value={data.addressInformation?.nationality || ""}
                 onChange={(e) =>
                   updateField("addressInformation", {
@@ -2106,12 +2147,12 @@ export const Step1 = ({
                 <option value="chinese">Chinese</option>
                 <option value="other">Other</option>
               </select>
-              {showErrors && !data.addressInformation?.nationality && <p className="text-red-500 text-xs mt-1">Nationality is required</p>}
+              {showErrors && !data.addressInformation?.nationality && <p className="text-status-error text-xs mt-1">Nationality is required</p>}
             </div>
 
             {/* Section 2: Professional Details */}
-            <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
-              <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
+            <div className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md">
+              <h3 className="text-lg font-semibold text-ink border-b border-brand-yellow-soft pb-2">
                 Professional Details
               </h3>
 
@@ -2119,15 +2160,15 @@ export const Step1 = ({
 
               {/* Profile Title/Designation */}
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Profile Title/Designation
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <input
                   type="text"
                   required={true}
                   placeholder="e.g., Software Engineer, Marketing Manager, Consultant"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                   value={data.addressInformation?.designation || ""}
                   onChange={(e) =>
                     updateField("addressInformation", {
@@ -2136,20 +2177,20 @@ export const Step1 = ({
                     })
                   }
                 />
-                {showErrors && !data.addressInformation?.designation && <p className="text-red-500 text-xs mt-1">Designation is required</p>}
+                {showErrors && !data.addressInformation?.designation && <p className="text-status-error text-xs mt-1">Designation is required</p>}
               </div>
 
               {/* Professional Tagline */}
               <div className="flex flex-col">
-                <label className="mb-1 font-medium text-slate-800 text-sm">
+                <label className="mb-1 font-medium text-ink-charcoal text-sm">
                   Professional Tagline
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <input
                   type="text"
                   required={true}
                   placeholder="A short, catchy phrase that describes your professional expertise"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                   value={data.addressInformation?.tagline || ""}
                   onChange={(e) =>
                     updateField("addressInformation", {
@@ -2158,8 +2199,8 @@ export const Step1 = ({
                     })
                   }
                 />
-                {showErrors && !data.addressInformation?.tagline && <p className="text-red-500 text-xs mt-1">Tagline is required</p>}
-                <p className="text-xs text-gray-500 mt-1">
+                {showErrors && !data.addressInformation?.tagline && <p className="text-status-error text-xs mt-1">Tagline is required</p>}
+                <p className="text-xs text-ink-caption mt-1">
                   Example: "Transforming ideas into digital solutions" or "Building bridges between businesses and customers"
                 </p>
               </div>
@@ -2172,9 +2213,9 @@ export const Step1 = ({
     return (
       <div
         key={sectionId}
-        className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6"
+        className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md mb-6"
       >
-        <h3 className="text-lg font-semibold text-slate-900 border-b border-amber-200 pb-2">
+        <h3 className="text-lg font-semibold text-ink border-b border-brand-yellow-soft pb-2">
           {section.title}
         </h3>
 
@@ -2195,10 +2236,10 @@ export const Step1 = ({
               return (
                 <div key={f.id} className="flex flex-col">
                   {!isDateField && (
-                    <label className="mb-1 font-medium text-slate-800 text-sm">
+                    <label className="mb-1 font-medium text-ink-charcoal text-sm">
                       {f.label}
                       {f.required && (
-                        <span className="text-red-500 ml-1">*</span>
+                        <span className="text-status-error ml-1">*</span>
                       )}
                     </label>
                   )}
@@ -2255,10 +2296,10 @@ export const Step1 = ({
               return (
                 <div key={f.id} className="flex flex-col">
                   {!isDateField && (
-                    <label className="mb-1 font-medium text-slate-800 text-sm">
+                    <label className="mb-1 font-medium text-ink-charcoal text-sm">
                       {f.label}
                       {f.required && (
-                        <span className="text-red-500 ml-1">*</span>
+                        <span className="text-status-error ml-1">*</span>
                       )}
                     </label>
                   )}
@@ -2328,16 +2369,16 @@ export const Step1 = ({
 
   return (
     <>
-      <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+      <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
         {step.title}
       </h2>
 
       {step.categories && (
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-slate-900 mb-3">
+          <h3 className="text-lg font-semibold text-ink mb-3">
             Professional Category
           </h3>
-          <p className="text-sm text-slate-600 mb-4">
+          <p className="text-sm text-ink-paragraph mb-4">
             Select your Professional's main business category (you can select
             multiple)
           </p>
@@ -2353,20 +2394,20 @@ export const Step1 = ({
       )}
 
       {/* Aadhar Verification Section inspired by Image 0 */}
-      {/* <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md mb-6 transition-all duration-300">
-        <h3 className="text-lg font-semibold text-slate-900">
+      {/* <div className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md mb-6 transition-all duration-300">
+        <h3 className="text-lg font-semibold text-ink">
           Aadhar Verification
         </h3>
-        <hr className="border-amber-200" />
+        <hr className="border-brand-yellow-soft" />
 
         {(!aadharVerified && !digiLockerSuccess) ? (
           <div className="pt-2 animate-fade-in">
-            <h4 className="text-md font-bold text-slate-900">Verify Through Aadhar</h4>
-            <p className="text-sm text-slate-600 mt-1">
+            <h4 className="text-md font-bold text-ink">Verify Through Aadhar</h4>
+            <p className="text-sm text-ink-paragraph mt-1">
               Automatically fill your basic information using DigiLocker
             </p>
 
-            <div className="flex flex-col md:flex-row md:items-center justify-between mt-8 gap-6 bg-white/50 p-4 rounded-xl border border-amber-100">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mt-8 gap-6 bg-white/50 p-4 rounded-xl border border-brand-yellow-soft">
               <div className="flex flex-col">
                 <div className="flex items-center space-x-3">
                   <input
@@ -2374,17 +2415,17 @@ export const Step1 = ({
                     id="aadharConsent"
                     checked={aadharConsent}
                     onChange={(e) => setAadharConsent(e.target.checked)}
-                    className="w-5 h-5 text-blue-600 border-amber-300 rounded focus:ring-blue-500 cursor-pointer transition-colors"
+                    className="w-5 h-5 text-status-info border-brand-yellow-soft rounded focus:ring-status-info cursor-pointer transition-colors"
                   />
                   <label
                     htmlFor="aadharConsent"
-                    className="text-slate-700 font-medium cursor-pointer select-none"
+                    className="text-ink-paragraph font-medium cursor-pointer select-none"
                   >
                     I consent to Aadhar verification
                   </label>
                 </div>
                 <button
-                  className="text-blue-600 text-sm font-medium mt-1 flex items-center hover:underline ml-8 group text-left"
+                  className="text-status-info text-sm font-medium mt-1 flex items-center hover:underline ml-8 group text-left"
                   onClick={(e) => {
                     e.preventDefault();
                     setShowConsentModal(true);
@@ -2400,8 +2441,8 @@ export const Step1 = ({
                 disabled={!aadharConsent || digiLockerLoading || isPollingDigiLocker}
                 className={`px-8 py-3.5 rounded-xl font-bold text-white transition-all transform active:scale-[0.98]
                   ${aadharConsent && !digiLockerLoading && !isPollingDigiLocker
-                    ? "bg-[#4F9CF9] hover:bg-blue-500 shadow-lg shadow-blue-200"
-                    : "bg-blue-300 cursor-not-allowed opacity-70"
+                    ? "bg-[#4F9CF9] hover:bg-status-info shadow-lg shadow-status-info/25"
+                    : "bg-status-info/40 cursor-not-allowed opacity-70"
                   } flex items-center justify-center min-w-[220px]`}
               >
                 {digiLockerLoading || isPollingDigiLocker ? (
@@ -2421,28 +2462,28 @@ export const Step1 = ({
         ) : (
           Verified State - Sleek and premium looking 
           <div className="pt-2 animate-fade-in">
-            <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200 shadow-sm gap-6">
+            <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-gradient-to-r from-status-success/10 to-status-success/10 rounded-2xl border border-status-success/25 shadow-sm gap-6">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-100">
+                <div className="w-14 h-14 bg-status-success rounded-full flex items-center justify-center text-white shadow-lg shadow-status-success/15">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-green-900">Aadhar Verified</h4>
-                  <p className="text-sm text-green-700 font-medium">Identity successfully verified via DigiLocker</p>
+                  <h4 className="text-xl font-bold text-status-success">Aadhar Verified</h4>
+                  <p className="text-sm text-status-success font-medium">Identity successfully verified via DigiLocker</p>
                 </div>
               </div>
-              <div className="bg-white/60 backdrop-blur-sm px-6 py-3 rounded-xl border border-green-100 text-center md:text-right min-w-[200px]">
-                <p className="text-[10px] text-green-800 uppercase font-black tracking-[0.2em] mb-1">Aadhar Number</p>
-                <p className="text-2xl font-mono font-bold text-green-900 tracking-widest">{data.basicInfo?.aadhar_number}</p>
+              <div className="bg-white/60 backdrop-blur-sm px-6 py-3 rounded-xl border border-status-success/15 text-center md:text-right min-w-[200px]">
+                <p className="text-[10px] text-status-success uppercase font-black tracking-[0.2em] mb-1">Aadhar Number</p>
+                <p className="text-2xl font-mono font-bold text-status-success tracking-widest">{data.basicInfo?.aadhar_number}</p>
               </div>
             </div>
           </div>
         )}
 
         {digiLockerError && !aadharVerified && (
-          <div className="mt-4 p-4 bg-red-50 text-red-700 text-sm rounded-xl border border-red-200 flex items-start gap-3 animate-shake">
+          <div className="mt-4 p-4 bg-status-error/10 text-status-error text-sm rounded-xl border border-status-error/25 flex items-start gap-3 animate-shake">
             <svg className="w-5 h-5 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
@@ -2458,19 +2499,19 @@ export const Step1 = ({
       {step.sections ? (
         getOrderedSections().map(renderSection)
       ) : (
-        <div className="space-y-4 p-6 bg-yellow-50 rounded-xl shadow-md">
+        <div className="space-y-4 p-6 bg-surface-main rounded-xl shadow-md">
           <div className="space-y-4">
             {/* Basic Info fields as per new structure */}
             <div className="flex flex-col">
-              <label className="mb-1 font-semibold text-slate-900 text-sm">
+              <label className="mb-1 font-semibold text-ink text-sm">
                 Full Name
-                <span className="text-red-500 ml-1">*</span>
+                <span className="text-status-error ml-1">*</span>
               </label>
               <input
                 type="text"
                 required={true}
                 placeholder="Enter your full name"
-                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                 value={data.basicInfo?.fullName || ""}
                 onChange={(e) =>
                   updateField("basicInfo", {
@@ -2482,9 +2523,9 @@ export const Step1 = ({
             </div>
 
             <div className="flex flex-col">
-              <label className="mb-1 font-semibold text-slate-900 text-sm">
+              <label className="mb-1 font-semibold text-ink text-sm">
                 Date of Birth
-                <span className="text-red-500 ml-1">*</span>
+                <span className="text-status-error ml-1">*</span>
               </label>
               <ScrollDatePicker
                 value={data.basicInfo?.date_of_birth || ""}
@@ -2498,12 +2539,12 @@ export const Step1 = ({
             </div>
 
             <div className="flex flex-col">
-              <label className="mb-1 font-semibold text-slate-900 text-sm">
+              <label className="mb-1 font-semibold text-ink text-sm">
                 Gender
-                <span className="text-red-500 ml-1">*</span>
+                <span className="text-status-error ml-1">*</span>
               </label>
               <select
-                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                 value={data.basicInfo?.gender || ""}
                 onChange={(e) =>
                   updateField("basicInfo", {
@@ -2522,12 +2563,12 @@ export const Step1 = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col">
-                <label className="mb-1 font-semibold text-slate-900 text-sm">
+                <label className="mb-1 font-semibold text-ink text-sm">
                   C/o, S/o, D/o
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <select
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                   value={data.basicInfo?.relationship_type || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -2544,15 +2585,15 @@ export const Step1 = ({
               </div>
 
               <div className="flex flex-col">
-                <label className="mb-1 font-semibold text-slate-900 text-sm">
+                <label className="mb-1 font-semibold text-ink text-sm">
                   Relationship Name
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <input
                   type="text"
                   required={true}
                   placeholder="Enter relative's name"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                   value={data.basicInfo?.relationship_name || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -2565,14 +2606,14 @@ export const Step1 = ({
             </div>
 
             <div className="flex flex-col">
-              <label className="mb-1 font-semibold text-slate-900 text-sm">
+              <label className="mb-1 font-semibold text-ink text-sm">
                 Address
-                <span className="text-red-500 ml-1">*</span>
+                <span className="text-status-error ml-1">*</span>
               </label>
               <textarea
                 required={true}
                 placeholder="Complete address with building details"
-                className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm min-h-[80px] text-gray-900 bg-white"
+                className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm min-h-[80px] text-ink bg-surface-card"
                 value={data.basicInfo?.address || ""}
                 onChange={(e) =>
                   updateField("basicInfo", {
@@ -2585,15 +2626,15 @@ export const Step1 = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col">
-                <label className="mb-1 font-semibold text-slate-900 text-sm">
+                <label className="mb-1 font-semibold text-ink text-sm">
                   City/District
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <input
                   type="text"
                   required={true}
                   placeholder="Enter city or district"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                   value={data.basicInfo?.city_district || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {
@@ -2605,16 +2646,16 @@ export const Step1 = ({
               </div>
 
               <div className="flex flex-col">
-                <label className="mb-1 font-semibold text-slate-900 text-sm">
+                <label className="mb-1 font-semibold text-ink text-sm">
                   Pin Code
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="text-status-error ml-1">*</span>
                 </label>
                 <input
                   type="text"
                   maxLength={6}
                   required={true}
                   placeholder="Enter 6-digit pin code"
-                  className="border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm text-gray-900 bg-white"
+                  className="border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm text-ink bg-surface-card"
                   value={data.basicInfo?.pincode || ""}
                   onChange={(e) =>
                     updateField("basicInfo", {

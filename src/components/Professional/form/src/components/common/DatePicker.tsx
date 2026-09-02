@@ -46,15 +46,15 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
-      <label className="text-sm font-medium text-slate-800">
+      <label className="text-sm font-medium text-ink-charcoal">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-status-error ml-1">*</span>}
       </label>
 
       <div className="flex gap-2">
         {/* Day */}
         <select
-          className="border border-amber-300 rounded-lg p-2 flex-1 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+          className="border border-brand-yellow-soft rounded-lg p-2 flex-1 bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm"
           value={day || new Date().getDate().toString().padStart(2, "0")}
           onChange={(e) => handleChange("day", e.target.value)}
         >
@@ -68,7 +68,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
         {/* Month */}
         <select
-          className="border border-amber-300 rounded-lg p-2 flex-1 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+          className="border border-brand-yellow-soft rounded-lg p-2 flex-1 bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm"
           value={month || String(new Date().getMonth() + 1).padStart(2, "0")}
           onChange={(e) => handleChange("month", e.target.value)}
         >
@@ -82,7 +82,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
         {/* Year */}
         <select
-          className="border border-amber-300 rounded-lg p-2 flex-1 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
+          className="border border-brand-yellow-soft rounded-lg p-2 flex-1 bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm"
           value={year || new Date().getFullYear().toString()}
           onChange={(e) => handleChange("year", e.target.value)}
         >
@@ -99,7 +99,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       </div>
 
       {/* ===== Contextual helper text ===== */}
-      <p className="text-xs text-amber-700 mt-1">
+      <p className="text-xs text-brand-gold mt-1">
         {(() => {
           const today = new Date();
           const selectedDate =

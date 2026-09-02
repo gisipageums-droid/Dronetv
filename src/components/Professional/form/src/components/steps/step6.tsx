@@ -220,17 +220,17 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
   };
 
   return (
-    <div className={`bg-yellow-50 p-4 ${className}`}>
+    <div className={`bg-surface-main p-4 ${className}`}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-4">
-          <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-amber-600" />
+          <h1 className="text-xl font-bold text-ink flex items-center gap-2">
+            <FileText className="w-5 h-5 text-brand-gold" />
             Resume / Documents
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-ink-paragraph mt-1">
             Upload PDF, Word, or text documents to extract and include your content.
             {documents.length > 0 && (
-              <span className="ml-2 text-amber-700 font-semibold">
+              <span className="ml-2 text-brand-gold font-semibold">
                 ({documents.length} document{documents.length > 1 ? 's' : ''} loaded)
               </span>
             )}
@@ -240,8 +240,8 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Upload Section */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-amber-200 overflow-hidden">
-              <div className="bg-amber-700 text-white p-3">
+            <div className="bg-surface-card rounded-xl shadow-sm border border-brand-yellow-soft overflow-hidden">
+              <div className="bg-brand-gold text-white p-3">
                 <h2 className="text-base font-semibold flex items-center gap-2">
                   <Upload className="w-4 h-4" /> Upload Documents
                 </h2>
@@ -249,7 +249,7 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
 
               <div
                 className={`p-4 border-2 border-dashed m-3 rounded-lg transition-all duration-200 ${
-                  dragActive ? 'border-amber-500 bg-amber-50' : 'border-gray-300 hover:border-amber-400 hover:bg-amber-50'
+                  dragActive ? 'border-brand-gold bg-surface-main' : 'border-ink-light hover:border-brand-yellow hover:bg-surface-main'
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -257,13 +257,13 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
                 onDrop={handleDrop}
               >
                 <div className="text-center">
-                  <Upload className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-                  <p className="text-gray-700 mb-1 text-sm">Drag & drop files here</p>
-                  <p className="text-xs text-gray-500 mb-3">or</p>
+                  <Upload className="w-10 h-10 text-brand-gold mx-auto mb-3" />
+                  <p className="text-ink-paragraph mb-1 text-sm">Drag & drop files here</p>
+                  <p className="text-xs text-ink-caption mb-3">or</p>
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isLoading}
-                    className="bg-amber-500 hover:bg-amber-600 disabled:bg-gray-400 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                    className="bg-brand-gold hover:bg-brand-gold disabled:bg-ink-caption text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
                   >
                     {isLoading ? 'Processing...' : 'Choose Files'}
                   </button>
@@ -279,15 +279,15 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
               </div>
 
               {documents.length > 0 && (
-                <div className="border-t border-gray-200">
+                <div className="border-t border-ink-light">
                   <div className="p-4">
-                    <h3 className="font-semibold text-gray-800 mb-3">Uploaded Documents</h3>
+                    <h3 className="font-semibold text-ink-charcoal mb-3">Uploaded Documents</h3>
                     <div className="space-y-2 max-h-64 overflow-y-auto">
                       {documents.map((doc) => (
                         <div
                           key={doc.id}
                           className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
-                            selectedDocument?.id === doc.id ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-amber-300 hover:bg-amber-50'
+                            selectedDocument?.id === doc.id ? 'border-brand-gold bg-surface-main' : 'border-ink-light hover:border-brand-yellow-soft hover:bg-surface-main'
                           }`}
                           onClick={() => setSelectedDocument(doc)}
                         >
@@ -295,8 +295,8 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
                             <div className="flex items-center gap-2 flex-1 min-w-0">
                               <span className="text-lg">{getFileTypeIcon(doc.type, doc.name)}</span>
                               <div className="min-w-0 flex-1">
-                                <p className="font-medium text-sm text-gray-800 truncate">{doc.name}</p>
-                                <p className="text-xs text-gray-500">{formatFileSize(doc.size)}</p>
+                                <p className="font-medium text-sm text-ink-charcoal truncate">{doc.name}</p>
+                                <p className="text-xs text-ink-caption">{formatFileSize(doc.size)}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-1">
@@ -305,7 +305,7 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
                                   e.stopPropagation();
                                   downloadText(doc);
                                 }}
-                                className="p-1 text-green-600 hover:bg-green-100 rounded"
+                                className="p-1 text-status-success hover:bg-status-success/15 rounded"
                                 title="Download extracted text"
                               >
                                 <Download className="w-4 h-4" />
@@ -315,7 +315,7 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
                                   e.stopPropagation();
                                   deleteDocument(doc.id);
                                 }}
-                                className="p-1 text-red-600 hover:bg-red-100 rounded"
+                                className="p-1 text-status-error hover:bg-status-error/15 rounded"
                                 title="Delete document"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -333,26 +333,26 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
 
           {/* Text Display Section */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-amber-200 overflow-hidden h-full">
-              <div className="bg-slate-800 text-white p-3 flex items-center justify-between">
+            <div className="bg-surface-card rounded-xl shadow-sm border border-brand-yellow-soft overflow-hidden h-full">
+              <div className="bg-ink-charcoal text-white p-3 flex items-center justify-between">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <FileText className="w-5 h-5" /> Extracted Text
                   {selectedDocument && (
-                    <span className="text-sm font-normal text-gray-300">- {selectedDocument.name}</span>
+                    <span className="text-sm font-normal text-ink-light">- {selectedDocument.name}</span>
                   )}
                 </h2>
                 {selectedDocument && (
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setShowFullText(!showFullText)}
-                      className="flex items-center gap-1 px-3 py-1 bg-yellow-500 text-black rounded text-sm font-medium hover:bg-yellow-400 transition-colors"
+                      className="flex items-center gap-1 px-3 py-1 bg-brand-gold text-ink rounded text-sm font-medium hover:bg-brand-yellow transition-colors"
                     >
                       {showFullText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       {showFullText ? 'Collapse' : 'Expand'}
                     </button>
                     <button
                       onClick={() => downloadText(selectedDocument)}
-                      className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 transition-colors"
+                      className="flex items-center gap-1 px-3 py-1 bg-status-success text-white rounded text-sm font-medium hover:bg-status-success transition-colors"
                     >
                       <Download className="w-4 h-4" /> Download
                     </button>
@@ -363,54 +363,54 @@ const Step6: React.FC<Step6Props> = ({ className = '', onSubmit }) => {
               <div className="p-6">
                 {selectedDocument ? (
                   <div className="space-y-4">
-                    <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-4">
+                    <div className="bg-brand-yellow-soft border border-brand-yellow-soft rounded-lg p-4">
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
-                          <span className="font-semibold text-gray-700">File:</span>
-                          <p className="text-gray-600 truncate">{selectedDocument.name}</p>
+                          <span className="font-semibold text-ink-paragraph">File:</span>
+                          <p className="text-ink-paragraph truncate">{selectedDocument.name}</p>
                         </div>
                         <div>
-                          <span className="font-semibold text-gray-700">Size:</span>
-                          <p className="text-gray-600">{formatFileSize(selectedDocument.size)}</p>
+                          <span className="font-semibold text-ink-paragraph">Size:</span>
+                          <p className="text-ink-paragraph">{formatFileSize(selectedDocument.size)}</p>
                         </div>
                         <div>
-                          <span className="font-semibold text-gray-700">Type:</span>
-                          <p className="text-gray-600">{selectedDocument.type || 'Unknown'}</p>
+                          <span className="font-semibold text-ink-paragraph">Type:</span>
+                          <p className="text-ink-paragraph">{selectedDocument.type || 'Unknown'}</p>
                         </div>
                         <div>
-                          <span className="font-semibold text-gray-700">Uploaded:</span>
-                          <p className="text-gray-600">{selectedDocument.uploadDate.toLocaleDateString()}</p>
+                          <span className="font-semibold text-ink-paragraph">Uploaded:</span>
+                          <p className="text-ink-paragraph">{selectedDocument.uploadDate.toLocaleDateString()}</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="border border-gray-200 rounded-lg">
-                      <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-                        <h3 className="font-semibold text-gray-800">Extracted Content</h3>
-                        <p className="text-sm text-gray-600">{selectedDocument.extractedText.length} characters</p>
+                    <div className="border border-ink-light rounded-lg">
+                      <div className="bg-ink-offwhite px-4 py-2 border-b border-ink-light">
+                        <h3 className="font-semibold text-ink-charcoal">Extracted Content</h3>
+                        <p className="text-sm text-ink-paragraph">{selectedDocument.extractedText.length} characters</p>
                       </div>
 
                       <div
-                        className={`p-4 bg-white ${showFullText ? 'max-h-none' : 'max-h-96 overflow-y-auto'}`}
+                        className={`p-4 bg-surface-card ${showFullText ? 'max-h-none' : 'max-h-96 overflow-y-auto'}`}
                         style={{ fontFamily: 'Georgia, serif' }}
                       >
                         {selectedDocument.extractedText ? (
-                          <pre className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+                          <pre className="whitespace-pre-wrap text-ink-charcoal leading-relaxed">
                             {selectedDocument.extractedText}
                           </pre>
                         ) : (
-                          <p className="text-gray-500 italic">No text content found.</p>
+                          <p className="text-ink-caption italic">No text content found.</p>
                         )}
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                    <FileText className="w-16 h-16 text-ink-light mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-ink-paragraph mb-2">
                       {documents.length > 0 ? 'Select a Document' : 'No Document Selected'}
                     </h3>
-                    <p className="text-gray-500">
+                    <p className="text-ink-caption">
                       {documents.length > 0 
                         ? 'Choose a document from the list to view its extracted text.' 
                         : 'Upload a document to view its extracted text.'}

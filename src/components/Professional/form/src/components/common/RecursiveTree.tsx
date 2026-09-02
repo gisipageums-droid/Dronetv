@@ -9,7 +9,7 @@ interface NodeProps {
 export const RecursiveTree = ({ node, selected, onToggle }: NodeProps) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="pl-4 border-l border-gray-200 my-1">
+    <div className="pl-4 border-l border-ink-light my-1">
       <div className="flex items-center space-x-2">
         {node.subcategories && (
           <button type="button" onClick={() => setOpen(!open)}>

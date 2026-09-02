@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense, lazy } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fetchFormStructure, submitForm } from "./api/formApi";
 import { Step1 } from "./components/steps/Step1";
@@ -6,138 +6,16 @@ import { Step2 } from "./components/steps/Step2";
 import { Step3 } from "./components/steps/Step3";
 import { Step4 } from "./components/steps/Step4";
 import { Step5 } from "./components/steps/Step5";
-// Lazy: pulls in mammoth + pdfjs-dist, only needed once the user reaches step 6.
-const Step6 = lazy(() => import("./components/steps/step6"));
+import Step6 from "./components/steps/step6";
 import { Summary } from "./components/steps/Summary";
 import { FormProvider, useForm } from "./context/FormContext";
 import { useFormSteps } from "./hooks/useFormSteps";
 import { Loader } from "./components/Loader";
-// Lazy: admin-only panel, no need to ship it to every regular visitor.
-const AdminEditor = lazy(() => import("./admin/AdminEditor").then(m => ({ default: m.AdminEditor })));
+import { AdminEditor } from "./admin/AdminEditor";
 import axios from "axios";
 import { useUserAuth } from "../../../context/context";
-import { AlertTriangle, X } from "lucide-react";
 import { toast } from "sonner";
-import { EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../../../lib/apiConfig';
-
-// ✅ Token Validation API URL
-const TOKEN_VALIDATION_API_URL =
-  EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsFormBase}/`;
-
-// ================== Token validation function ====================
-const validateUserTokens = async (
-  email: string
-): Promise<{
-  message: string;
-  success: boolean;
-  tokenBalance: number;
-  userExists: boolean;
-}> => {
-  try {
-    const response = await axios.post(
-      TOKEN_VALIDATION_API_URL,
-      { email },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        timeout: 10000,
-      }
-    );
-
-    // faild case
-    if (
-      response.data?.tokenBalance < 100 ||
-      (response.data?.success === false && response.data?.userExists)
-    ) {
-      return {
-        success: false,
-        tokenBalance: response.data.tokenBalance,
-        message:
-          response.data.message ||
-          "Insufficient tokens to create a template. Please purchase more tokens.",
-        userExists: true,
-      };
-    }
-
-    // success case
-    return {
-      success: true,
-      tokenBalance: response.data.tokenBalance,
-      message: response.data.message || "Token validation successful",
-      userExists: response.data?.userExists,
-    };
-  } catch (error: unknown) {
-    console.error("Token validation error:", error);
-    return {
-      message: "Token validation error",
-      success: false,
-      tokenBalance: 0,
-      userExists: false,
-    };
-  }
-};
-
-// ================== Token Modal Component ========================
-const TokenValidationModal: React.FC<{
-  isOpen: boolean;
-  onClose: () => void;
-  message: string;
-  onPurchaseTokens?: () => void;
-  totalToken: number;
-}> = ({ isOpen, onClose, message, onPurchaseTokens, totalToken }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
-            <AlertTriangle className="w-6 h-6 text-yellow-500 mr-2" />
-            <h3 className="text-lg font-semibold text-slate-900">
-              Insufficient Tokens
-            </h3>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="mb-6">
-          <p className="text-slate-700 mb-4">{message}</p>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-sm text-yellow-700">
-              {`Each website generation requires 100 tokens but you have ${totalToken}. You can purchase more
-              tokens to continue.`}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex justify-end space-x-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
-          >
-            Cancel
-          </button>
-
-          {onPurchaseTokens && (
-            <button
-              onClick={onPurchaseTokens}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Purchase Tokens
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+import { PROFESSIONAL_API, LAMBDA } from '../../../../lib/apiConfig';
 
 function AppInner() {
   const { isLogin, user, isAdminLogin } = useUserAuth();
@@ -150,11 +28,6 @@ function AppInner() {
   const [step1Valid, setStep1Valid] = useState(false);
   const [showStep1Error, setShowStep1Error] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null); // ✅ Add state for submissionId
-  const [showTokenModal, setShowTokenModal] = useState(false);
-  const [tokenValidation, setTokenValidation] = useState<{
-    message: string;
-    totalToken: number;
-  }>();
 
   // ---- NEW: get URL params ----
   const { userId, professionalId } = useParams<{
@@ -169,6 +42,14 @@ function AppInner() {
   const navigate = useNavigate();
   const templateIdFromState = location.state?.templateId;
   const [formLoader, setFormLoader] = useState(true);
+
+  // Warm the editor chunk while the user is still filling the form so the
+  // post-submit navigation lands straight on the editor's own "AI is
+  // Building" screen with no blank Suspense flash in between.
+  useEffect(() => {
+    import("../../Template/T-1/edit/src/main");
+    import("../../Template/T-2/edit/src/App");
+  }, []);
 
   useEffect(() => {
     if (
@@ -198,7 +79,7 @@ function AppInner() {
           setFormLoader(true);
 
           const res = await fetch(
-            PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}` : `${LAMBDA.profFormLoad}/${userId}/${professionalId}`
+            PROFESSIONAL_API ? `${PROFESSIONAL_API}/draft/${userId}/${professionalId}` : `${LAMBDA.profFormLoad}/${userId}/${professionalId}`
           );
           const userData = await res.json();
           setFormLoader(false);
@@ -234,46 +115,13 @@ function AppInner() {
       } catch (err) {
         console.error("Failed to load form data:", err);
         setLoading(false);
+        setFormLoader(false);
       }
     };
 
     loadForm();
   }, [userId, professionalId, setData]);
 
-
-  // ================== Token validation before submission =================
-  const validateBeforeSubmit = async (): Promise<boolean> => {
-    const userEmail = isLogin ? (user?.email || user?.userData?.email) : (data.addressInformation?.email || data.basicInfo?.email);
-
-    try {
-      if (isAdminLogin) {
-        return true;
-      }
-      const tokenResult = await validateUserTokens(userEmail);
-
-      if (!tokenResult.success || tokenResult.tokenBalance < 100) {
-        setTokenValidation({
-          message: tokenResult.message,
-          totalToken: tokenResult.tokenBalance,
-        });
-        setShowTokenModal(true);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error("Token validation failed:", error);
-      toast.warning(
-        "Token validation service is temporarily unavailable. Proceeding with submission..."
-      );
-      return true;
-    }
-  };
-
-  const handlePurchaseTokens = () => {
-    setShowTokenModal(false);
-    window.open("/user-buy", "_blank");
-  };
 
   const handleNextWithValidation = () => {
     if (current === 0 && !step1Valid) {
@@ -290,11 +138,6 @@ function AppInner() {
   };
 
   const handleSubmit = async () => {
-    const canProceed = await validateBeforeSubmit();
-    if (!canProceed) {
-      return;
-    }
-
     setLoading(true);
     setSuccess(false);
     const email = isLogin ? user?.userData?.email : (data.addressInformation?.email || data.basicInfo?.email);
@@ -302,6 +145,9 @@ function AppInner() {
     try {
       const finalSubmissionId = submissionId || `draft-${Date.now()}`;
       const rawTemplate = data.templateSelection || templateIdFromState || 1;
+      // The /professional/edit route only matches literal `template=1` /
+      // `template=2` — normalize "template-2", "2", 2 etc. down to the digit
+      // so a refresh on the editor doesn't fall through to a blank form.
       const templateId = String(rawTemplate).includes("2") ? 2 : 1;
 
       const payload = {
@@ -339,7 +185,12 @@ function AppInner() {
         console.error("Failed to clear local draft after submit", e);
       }
 
-      setLoading(false);
+      // Go straight to the editor. It has its own "AI is Building Your
+      // Website" screen driven by the real backend status (polls /draft,
+      // which returns 202 until content is ready), and unlike this form
+      // page it survives a browser refresh because draftId + userId live
+      // in the URL. The previous 71s in-form delay left anyone who
+      // reloaded stranded on a freshly-cleared, empty form.
       navigate(
         `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
       );
@@ -352,11 +203,11 @@ function AppInner() {
 
   if (formLoader)
     return (
-      <div className="fixed inset-0 bg-indigo-900 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-status-info flex items-center justify-center z-50">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-16 h-16 mx-auto mb-4 border-4 border-status-info border-t-transparent rounded-full animate-spin"></div>
 
-          <p className="text-blue-200 text-lg">
+          <p className="text-white text-lg">
             Please wait while we load your form
           </p>
         </div>
@@ -376,13 +227,13 @@ function AppInner() {
   return (
     <>
       {/* Header */}
-      <div className="bg-gradient-to-r from-yellow-400 to-amber-400 shadow-lg border-b border-amber-300">
+      <div className="bg-gradient-to-r from-brand-yellow to-brand-yellow shadow-lg border-b border-brand-yellow-soft">
         <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="flex items-center justify-center w-9 h-9 rounded-full bg-black/10 hover:bg-black/20 transition-colors"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-ink/10 hover:bg-ink-charcoal/20 transition-colors"
               aria-label="Go back"
               title="Back"
             >
@@ -391,21 +242,21 @@ function AppInner() {
               </svg>
             </button>
             <div>
-              <h1 className="text-xl font-bold text-black">DroneTV</h1>
-              <p className="text-sm text-gray-800">AI-Powered Website Generator</p>
+              <h1 className="text-xl font-bold text-ink">DroneTV</h1>
+              <p className="text-sm text-ink-charcoal">AI-Powered Website Generator</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs text-gray-700">Drone • AI • GIS</p>
-            <p className="text-xs text-gray-600">One form, instant website</p>
+            <p className="text-xs text-ink-paragraph">Drone • AI • GIS</p>
+            <p className="text-xs text-ink-paragraph">One form, instant website</p>
           </div>
         </div>
       </div>
 
       {loading && <Loader />}
 
-      <div className="bg-yellow-100 w-full pt-3 pb-2">
-        <div className="bg-yellow-100 max-w-4xl mx-auto px-4">
+      <div className="bg-brand-yellow-soft w-full pt-3 pb-2">
+        <div className="bg-brand-yellow-soft max-w-4xl mx-auto px-4">
           {/* --- Stepper --- */}
           <div className="flex items-center justify-between mb-3">
             {steps.slice(0, 6).map((s: any, index: number) => (
@@ -413,10 +264,10 @@ function AppInner() {
                 <div className="flex flex-col items-center">
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 flex-shrink-0 ${
                     index < current
-                      ? "bg-amber-400 border-amber-400 text-black"
+                      ? "bg-brand-yellow border-brand-yellow text-ink"
                       : index === current
-                      ? "bg-black border-black text-yellow-300"
-                      : "bg-white border-gray-300 text-gray-400"
+                      ? "bg-ink border-ink text-brand-yellow-soft"
+                      : "bg-surface-card border-ink-light text-ink-caption"
                   }`}>
                     {index < current ? (
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -427,13 +278,13 @@ function AppInner() {
                     )}
                   </div>
                   <span className={`text-[9px] mt-0.5 text-center leading-tight w-12 truncate ${
-                    index === current ? "font-semibold text-black" : "text-gray-400"
+                    index === current ? "font-semibold text-ink" : "text-ink-caption"
                   }`}>
                     {s.title?.split(' ')[0] || `Step ${index + 1}`}
                   </span>
                 </div>
                 {index < 5 && (
-                  <div className={`flex-1 h-0.5 mx-1 mb-4 ${index < current ? "bg-amber-400" : "bg-gray-300"}`} />
+                  <div className={`flex-1 h-0.5 mx-1 mb-4 ${index < current ? "bg-brand-yellow" : "bg-ink-light"}`} />
                 )}
               </React.Fragment>
             ))}
@@ -442,12 +293,12 @@ function AppInner() {
           {/* --- Progress Bar --- */}
           {current < 6 && (
             <div className="w-full mb-2">
-              <div className="flex justify-end mb-0.5 text-xs font-semibold text-gray-600">
+              <div className="flex justify-end mb-0.5 text-xs font-semibold text-ink-paragraph">
                 {progress}% complete
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-ink-light rounded-full h-2">
                 <div
-                  className="bg-amber-400 h-2 rounded-full transition-all duration-300"
+                  className="bg-brand-yellow h-2 rounded-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
@@ -462,7 +313,7 @@ function AppInner() {
           <div className="flex justify-end -mt-2">
             <button
               onClick={() => setAdminOpen(true)}
-              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+              className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
             >
               Open Admin Panel
             </button>
@@ -470,17 +321,15 @@ function AppInner() {
         )}
 
         {/* --- Step Content Container --- */}
-        <div key={current} className="bg-white border-2 border-yellow-300 shadow-md rounded-xl p-6 animate-step-slide-up">
+        <div key={current} className="bg-surface-card border-2 border-brand-yellow-soft shadow-md rounded-xl p-6 animate-step-slide-up">
           {current === 0 ? (
             <Step1 step={stepData} setStepValid={setStep1Valid} showErrors={showStep1Error} />
           ) : current === 5 ? (
-            <Suspense fallback={<div>Loading...</div>}>
-              <Step6
-                step={stepData}
-                allSteps={steps}
-                onSubmit={(data) => setResumeData(data)}
-              />
-            </Suspense>
+            <Step6
+              step={stepData}
+              allSteps={steps}
+              onSubmit={(data) => setResumeData(data)}
+            />
           ) : (
             <StepComponent step={stepData} allSteps={steps} />
           )}
@@ -491,7 +340,7 @@ function AppInner() {
           {current > 0 ? (
             <button
               onClick={prev}
-              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+              className="px-4 py-2 bg-ink-light hover:bg-ink-light rounded"
             >
               Back
             </button>
@@ -502,14 +351,14 @@ function AppInner() {
           {current < 6 ? (
             <button
               onClick={handleNextWithValidation}
-              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded"
+              className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
             >
               Next
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded"
+              className="px-4 py-2 bg-status-success hover:bg-status-success text-white font-medium rounded"
             >
               Submit
             </button>
@@ -517,20 +366,8 @@ function AppInner() {
         </div>
 
         {/* --- Admin Editor Overlay --- */}
-        {isAdminLogin && (
-          <Suspense fallback={null}>
-            <AdminEditor isOpen={adminOpen} onClose={() => setAdminOpen(false)} />
-          </Suspense>
-        )}
+        <AdminEditor isOpen={adminOpen} onClose={() => setAdminOpen(false)} />
 
-        {/* Token Validation Modal */}
-        <TokenValidationModal
-          isOpen={showTokenModal}
-          onClose={() => setShowTokenModal(false)}
-          message={tokenValidation?.message || "Token validation error"}
-          onPurchaseTokens={handlePurchaseTokens}
-          totalToken={tokenValidation?.totalToken || 0}
-        />
       </div>
     </>
   );

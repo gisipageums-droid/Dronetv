@@ -18,7 +18,7 @@
 // //     //       key={opt}
 // //     //       type="button"
 // //     //       onClick={() => toggle(opt)}
-// //     //       className={`px-3 py-1 rounded border ${selected.includes(opt) ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}
+// //     //       className={`px-3 py-1 rounded border ${selected.includes(opt) ? 'bg-status-info text-white' : 'bg-ink-light'}`}
 // //     //     >
 // //     //       {opt}
 // //     //     </button>
@@ -30,11 +30,11 @@
 // //       key={opt}
 // //       type="button"
 // //       onClick={() => toggle(opt)}
-// //       className={`h-24 w-40 rounded-lg border-2 border-gray-200 text-lg font-medium transition-colors
+// //       className={`h-24 w-40 rounded-lg border-2 border-ink-light text-lg font-medium transition-colors
 // //         ${
 // //           selected.includes(opt)
-// //             ? 'bg-blue-400 text-white hover:bg-blue-500'
-// //             : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+// //             ? 'bg-status-info text-white hover:bg-status-info'
+// //             : 'bg-status-info/15 text-status-info hover:bg-status-info/25'
 // //         }`}
 // //     >
 // //       {opt}
@@ -62,9 +62,9 @@
 //   };
 
 //   const baseClass = variant === 'categories'
-//     // ? 'h-24 w-40 rounded-lg border-2 border-gray-200 text-lg font-medium transition-colors'
-//     ? 'h-24 w-40 rounded-lg border-2 border-gray-200 text-lg font-medium transition-colors'
-//     : 'h-16 w-32 rounded-md border border-gray-300 text-base';
+//     // ? 'h-24 w-40 rounded-lg border-2 border-ink-light text-lg font-medium transition-colors'
+//     ? 'h-24 w-40 rounded-lg border-2 border-ink-light text-lg font-medium transition-colors'
+//     : 'h-16 w-32 rounded-md border border-ink-light text-base';
 
 //   return (
 //     <div className="flex flex-wrap gap-4 justify-center">
@@ -75,8 +75,8 @@
 //         //   onClick={() => toggle(opt)}
 //         //   className={`${baseClass} ${
 //         //     selected.includes(opt)
-//         //       ? variant === 'categories' ? 'bg-yellow-100 border-2 border-yellow-300 text-brown-800 hover:bg-yellow-400' : 'h-8 w-64 bg-blue-200 text-blue-800 border-2 border-blue-400 hover:bg-blue-100'
-//         //       : variant === 'categories' ? ' text-black-800 border-2 border-yellow-300 hover:bg-yellow-100 border-2 border-brown-500 ' : ' h-8 w-64 bg-yellow-50 border-2 border-grey-400 text-black-800 hover:bg-blue-200'
+//         //       ? variant === 'categories' ? 'bg-brand-yellow-soft border-2 border-brand-yellow-soft text-brown-800 hover:bg-brand-yellow' : 'h-8 w-64 bg-status-info/25 text-status-info border-2 border-status-info hover:bg-status-info/15'
+//         //       : variant === 'categories' ? ' text-ink-800 border-2 border-brand-yellow-soft hover:bg-brand-yellow-soft border-2 border-brown-500 ' : ' h-8 w-64 bg-surface-main border-2 border-grey-400 text-ink-800 hover:bg-status-info/25'
 //         //   }`}
 //         // >
 //         //   {opt}
@@ -90,21 +90,21 @@
 //   className={`${baseClass} flex items-center justify-center gap-2 ${
 //     selected.includes(opt)
 //       ? variant === "categories"
-//         ? "bg-yellow-100 border-2 border-yellow-300 text-brown-800 hover:bg-yellow-400"
-//         : "h-8 w-40  text-xs bg-blue-200 text-blue-800 border-2 border-blue-400 hover:bg-blue-100"
+//         ? "bg-brand-yellow-soft border-2 border-brand-yellow-soft text-brown-800 hover:bg-brand-yellow"
+//         : "h-8 w-40  text-xs bg-status-info/25 text-status-info border-2 border-status-info hover:bg-status-info/15"
 //       : variant === "categories"
-//         ? "text-black-800 border-2 border-yellow-300 hover:bg-yellow-100 border-2 border-brown-500"
-//         : "h-8 w-40  text-xs bg-yellow-50 border-2 border-gray-200 text-black-800 hover:bg-blue-200"
+//         ? "text-ink-800 border-2 border-brand-yellow-soft hover:bg-brand-yellow-soft border-2 border-brown-500"
+//         : "h-8 w-40  text-xs bg-surface-main border-2 border-ink-light text-ink-800 hover:bg-status-info/25"
 //   }`}
 // >
 //   {/* Show checkbox ONLY if variant !== categories */}
 //   {variant !== "categories" && (
 //     selected.includes(opt) ? (
-//       <span className="w-4 h-4 flex items-center justify-center rounded-sm border border-blue-500 bg-blue-500">
+//       <span className="w-4 h-4 flex items-center justify-center rounded-sm border border-status-info bg-status-info">
 //         <Check className="w-3 h-3 text-white" />
 //       </span>
 //     ) : (
-//       <span className="w-4 h-4 border border-gray-400 rounded-sm"></span>
+//       <span className="w-4 h-4 border border-ink-caption rounded-sm"></span>
 //     )
 //   )}
 
@@ -157,14 +157,14 @@
 //             }}
 //             // className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all min-w-[140px] ${
 //             //   selected.includes(name)
-//             //     ? "bg-amber-700 text-white border-amber-600 shadow-lg scale-105"
-//             //     : "bg-white text-gray-700 border-amber-300 hover:bg-amber-50 hover:border-amber-400"
+//             //     ? "bg-brand-gold text-white border-brand-gold shadow-lg scale-105"
+//             //     : "bg-surface-card text-ink-paragraph border-brand-yellow-soft hover:bg-surface-main hover:border-brand-yellow"
 //             // }`}
 //             className={`flex flex-col items-center p-4 rounded-lg border-2 transition-all 
 //               w-full h-24 justify-between ${
 //               selected.includes(name)
-//                 ? "bg-amber-700 text-white border-amber-600 shadow-lg scale-105"
-//                 : "bg-white text-gray-700 border-amber-300 hover:bg-amber-50 hover:border-amber-400"
+//                 ? "bg-brand-gold text-white border-brand-gold shadow-lg scale-105"
+//                 : "bg-surface-card text-ink-paragraph border-brand-yellow-soft hover:bg-surface-main hover:border-brand-yellow"
 //             }`}
 //           >
 //             <span className="font-semibold text-center">{name}</span>
@@ -221,29 +221,29 @@ export const MultiSelect = ({
             } ${
               selected.includes(name)
                 ? variant === "categories"
-                  ? "bg-amber-100 border-amber-500 shadow-md"
-                  : "bg-amber-100 text-amber-900 border-amber-500"
+                  ? "bg-brand-yellow-soft border-brand-gold shadow-md"
+                  : "bg-brand-yellow-soft text-brand-gold border-brand-gold"
                 : variant === "categories"
-                  ? "bg-white text-gray-700 border-amber-200 hover:bg-amber-50 hover:border-amber-400"
-                  : "bg-white border-amber-200 text-slate-700 hover:bg-amber-50"
+                  ? "bg-surface-card text-ink-paragraph border-brand-yellow-soft hover:bg-surface-main hover:border-brand-yellow"
+                  : "bg-surface-card border-brand-yellow-soft text-ink-paragraph hover:bg-surface-main"
             }`}
           >
             {variant === "subcategories" && (
               selected.includes(name) ? (
-                <span className="w-4 h-4 flex items-center justify-center rounded-sm border border-amber-500 bg-amber-700 text-white text-[10px]">✓</span>
+                <span className="w-4 h-4 flex items-center justify-center rounded-sm border border-brand-gold bg-brand-gold text-white text-[10px]">✓</span>
               ) : (
-                <span className="w-4 h-4 border border-amber-300 rounded-sm bg-white"></span>
+                <span className="w-4 h-4 border border-brand-yellow-soft rounded-sm bg-surface-card"></span>
               )
             )}
 
             <span className={`font-bold text-center leading-tight ${
-              variant === "categories" ? "text-sm text-slate-800" : "text-xs"
+              variant === "categories" ? "text-sm text-ink-charcoal" : "text-xs"
             }`}>
               {name}
             </span>
 
             {variant === "categories" && placeholder && (
-              <span className="text-[10px] text-gray-500 text-center leading-snug">
+              <span className="text-[10px] text-ink-caption text-center leading-snug">
                 {placeholder}
               </span>
             )}

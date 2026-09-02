@@ -50,19 +50,19 @@ export const Step4 = ({ step }: { step: any }) => {
     const colorMap: any = { blue: "blue", green: "green" };
 
     return (
-      <div className="bg-amber-50 rounded-xl border border-amber-200 p-4 mb-4">
+      <div className="bg-surface-main rounded-xl border border-brand-yellow-soft p-4 mb-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-sm font-bold text-slate-900 flex items-center">
-            {key === "services" && <Wrench className="w-4 h-4 mr-2 text-amber-600" />}
-            {key === "projects" && <Briefcase className="w-4 h-4 mr-2 text-amber-600" />}
+          <h3 className="text-sm font-bold text-ink flex items-center">
+            {key === "services" && <Wrench className="w-4 h-4 mr-2 text-brand-gold" />}
+            {key === "projects" && <Briefcase className="w-4 h-4 mr-2 text-brand-gold" />}
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </h3>
 
           <button
             type="button"
             onClick={() => addArrayItem(key, {})}
-            className="flex items-center px-3 py-1 text-white text-sm rounded-lg bg-amber-500 hover:bg-amber-600"
+            className="flex items-center px-3 py-1 text-white text-sm rounded-lg bg-brand-gold hover:bg-brand-gold"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add {key.slice(0, -1)}
@@ -72,7 +72,7 @@ export const Step4 = ({ step }: { step: any }) => {
         {/* Items List */}
         <div className="space-y-2">
           {items.map((item, idx) => (
-            <div key={idx} className="bg-white p-3 rounded-md border shadow-sm">
+            <div key={idx} className="bg-surface-card p-3 rounded-md border shadow-sm">
               {section.fields.map((f: any) => {
                 const errKey = `${key}-${idx}-${f.id}`;
                 const errorMsg = errors[errKey];
@@ -86,8 +86,8 @@ export const Step4 = ({ step }: { step: any }) => {
                         onChange={(e) =>
                           handleChange(key, idx, f.id, e.target.value)
                         }
-                        className={`border p-2 w-full rounded focus:ring-2 focus:ring-yellow-400 text-gray-900 bg-white ${
-                          errorMsg ? "border-red-500" : ""
+                        className={`border p-2 w-full rounded focus:ring-2 focus:ring-brand-yellow text-ink bg-surface-card ${
+                          errorMsg ? "border-status-error" : ""
                         }`}
                         rows={2}
                         maxLength={1000}
@@ -99,16 +99,16 @@ export const Step4 = ({ step }: { step: any }) => {
                         onChange={(e) =>
                           handleChange(key, idx, f.id, e.target.value)
                         }
-                        className="border p-2 w-full rounded focus:ring-2 focus:ring-yellow-400 text-gray-900 bg-white"
+                        className="border p-2 w-full rounded focus:ring-2 focus:ring-brand-yellow text-ink bg-surface-card"
                       />
                     )}
                     {f.type === "textarea" && (
-                      <div className="text-xs text-slate-500 mt-1">
+                      <div className="text-xs text-ink-caption mt-1">
                         {(item[f.id] || "").length}/1000 characters
                       </div>
                     )}
                     {errorMsg && (
-                      <div className="text-xs text-red-600 mt-1">{errorMsg}</div>
+                      <div className="text-xs text-status-error mt-1">{errorMsg}</div>
                     )}
                   </div>
                 );
@@ -117,7 +117,7 @@ export const Step4 = ({ step }: { step: any }) => {
               <button
                 type="button"
                 onClick={() => removeArrayItem(key, idx)}
-                className="p-1 text-red-600 hover:bg-red-50 rounded-md flex items-center gap-1"
+                className="p-1 text-status-error hover:bg-status-error/10 rounded-md flex items-center gap-1"
               >
                 <Minus className="w-4 h-4" /> Remove
               </button>

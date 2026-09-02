@@ -198,21 +198,21 @@
 //     setStateSearchTerm('');
 //   };
 
-//   const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm ${className}`;
+//   const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent text-sm ${className}`;
 
 //   const getSelectClasses = (error?: string) => `${selectClasses} ${
 //     error
-//       ? 'border-red-300 bg-red-50'
-//       : 'border-amber-300 bg-white hover:border-amber-400'
+//       ? 'border-status-error/40 bg-status-error/10'
+//       : 'border-brand-yellow-soft bg-surface-card hover:border-brand-yellow'
 //   }`;
 
 //   return (
 //     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
 //       {/* Country Select */}
 //       <div className="mb-2">
-//         <label className="block text-sm font-medium text-slate-800 mb-1">
+//         <label className="block text-sm font-medium text-ink-charcoal mb-1">
 //           {countryLabel}
-//           {countryRequired && <span className="text-red-500 ml-1">*</span>}
+//           {countryRequired && <span className="text-status-error ml-1">*</span>}
 //         </label>
         
 //         <div className="relative">
@@ -226,11 +226,11 @@
 //           >
 //             {loadingCountries ? (
 //               <div className="flex items-center">
-//                 <div className="w-4 h-4 border-2 border-gray-300 border-t-amber-600 rounded-full animate-spin mr-2"></div>
+//                 <div className="w-4 h-4 border-2 border-ink-light border-t-brand-gold rounded-full animate-spin mr-2"></div>
 //                 <span>Loading countries...</span>
 //               </div>
 //             ) : (
-//               <span className={countryValue ? 'text-gray-900' : 'text-gray-500'}>
+//               <span className={countryValue ? 'text-ink' : 'text-ink-caption'}>
 //                 {countryValue || countryPlaceholder}
 //               </span>
 //             )}
@@ -239,15 +239,15 @@
 
 //           {/* Country Dropdown */}
 //           {countryDropdownOpen && !loadingCountries && (
-//             <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-amber-300 rounded-md shadow-lg max-h-60 overflow-hidden">
+//             <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface-card border border-brand-yellow-soft rounded-md shadow-lg max-h-60 overflow-hidden">
 //               {/* Search Input */}
-//               <div className="p-2 border-b border-gray-200">
+//               <div className="p-2 border-b border-ink-light">
 //                 <input
 //                   type="text"
 //                   placeholder="Search countries..."
 //                   value={countrySearchTerm}
 //                   onChange={(e) => setCountrySearchTerm(e.target.value)}
-//                   className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400 text-gray-900 bg-white"
+//                   className="w-full px-2 py-1 text-sm border border-brand-yellow-soft rounded focus:outline-none focus:ring-1 focus:ring-brand-yellow text-ink bg-surface-card"
 //                 />
 //               </div>
               
@@ -259,20 +259,20 @@
 //                       key={country.iso2}
 //                       type="button"
 //                       onClick={() => handleCountrySelect(country)}
-//                       className="w-full flex items-center px-3 py-2 text-left hover:bg-amber-50 transition-colors"
+//                       className="w-full flex items-center px-3 py-2 text-left hover:bg-surface-main transition-colors"
 //                     >
 //                       <div className="flex-1 min-w-0">
-//                         <div className="text-sm font-medium text-gray-900 truncate">
+//                         <div className="text-sm font-medium text-ink truncate">
 //                           {country.country}
 //                         </div>
 //                       </div>
-//                       <div className="text-sm text-gray-500 ml-2">
+//                       <div className="text-sm text-ink-caption ml-2">
 //                         {country.iso2}
 //                       </div>
 //                     </button>
 //                   ))
 //                 ) : (
-//                   <div className="px-3 py-2 text-sm text-gray-500">
+//                   <div className="px-3 py-2 text-sm text-ink-caption">
 //                     No countries found
 //                   </div>
 //                 )}
@@ -282,7 +282,7 @@
 //         </div>
         
 //         {countryError && (
-//           <div className="flex items-center mt-1 text-red-600">
+//           <div className="flex items-center mt-1 text-status-error">
 //             <AlertCircle className="w-4 h-4 mr-2" />
 //             <span className="text-sm">{countryError}</span>
 //           </div>
@@ -291,9 +291,9 @@
 
 //       {/* State Select */}
 //       <div className="mb-2">
-//         <label className="block text-sm font-medium text-slate-800 mb-1">
+//         <label className="block text-sm font-medium text-ink-charcoal mb-1">
 //           {stateLabel}
-//           {stateRequired && <span className="text-red-500 ml-1">*</span>}
+//           {stateRequired && <span className="text-status-error ml-1">*</span>}
 //         </label>
         
 //         <div className="relative">
@@ -307,13 +307,13 @@
 //           >
 //             {loadingStates ? (
 //               <div className="flex items-center">
-//                 <div className="w-4 h-4 border-2 border-gray-300 border-t-amber-600 rounded-full animate-spin mr-2"></div>
+//                 <div className="w-4 h-4 border-2 border-ink-light border-t-brand-gold rounded-full animate-spin mr-2"></div>
 //                 <span>Loading states...</span>
 //               </div>
 //             ) : !countryValue ? (
-//               <span className="text-gray-400">Select country first</span>
+//               <span className="text-ink-caption">Select country first</span>
 //             ) : (
-//               <span className={stateValue ? 'text-gray-900' : 'text-gray-500'}>
+//               <span className={stateValue ? 'text-ink' : 'text-ink-caption'}>
 //                 {stateValue || statePlaceholder}
 //               </span>
 //             )}
@@ -322,15 +322,15 @@
 
 //           {/* State Dropdown */}
 //           {stateDropdownOpen && !loadingStates && countryValue && (
-//             <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-amber-300 rounded-md shadow-lg max-h-60 overflow-hidden">
+//             <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface-card border border-brand-yellow-soft rounded-md shadow-lg max-h-60 overflow-hidden">
 //               {/* Search Input */}
-//               <div className="p-2 border-b border-gray-200">
+//               <div className="p-2 border-b border-ink-light">
 //                 <input
 //                   type="text"
 //                   placeholder="Search states..."
 //                   value={stateSearchTerm}
 //                   onChange={(e) => setStateSearchTerm(e.target.value)}
-//                   className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400 text-gray-900 bg-white"
+//                   className="w-full px-2 py-1 text-sm border border-brand-yellow-soft rounded focus:outline-none focus:ring-1 focus:ring-brand-yellow text-ink bg-surface-card"
 //                 />
 //               </div>
               
@@ -342,20 +342,20 @@
 //                       key={state.state_code}
 //                       type="button"
 //                       onClick={() => handleStateSelect(state)}
-//                       className="w-full flex items-center px-3 py-2 text-left hover:bg-amber-50 transition-colors"
+//                       className="w-full flex items-center px-3 py-2 text-left hover:bg-surface-main transition-colors"
 //                     >
 //                       <div className="flex-1 min-w-0">
-//                         <div className="text-sm font-medium text-gray-900 truncate">
+//                         <div className="text-sm font-medium text-ink truncate">
 //                           {state.name}
 //                         </div>
 //                       </div>
-//                       <div className="text-sm text-gray-500 ml-2">
+//                       <div className="text-sm text-ink-caption ml-2">
 //                         {state.state_code}
 //                       </div>
 //                     </button>
 //                   ))
 //                 ) : (
-//                   <div className="px-3 py-2 text-sm text-gray-500">
+//                   <div className="px-3 py-2 text-sm text-ink-caption">
 //                     No states found
 //                   </div>
 //                 )}
@@ -365,7 +365,7 @@
 //         </div>
         
 //         {stateError && (
-//           <div className="flex items-center mt-1 text-red-600">
+//           <div className="flex items-center mt-1 text-status-error">
 //             <AlertCircle className="w-4 h-4 mr-2" />
 //             <span className="text-sm">{stateError}</span>
 //           </div>
@@ -519,22 +519,22 @@ const handleStateSelect = (state: any) => {
   //   setStateSearchTerm("");
   // };
 
-  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent text-sm ${className}`;
+  const selectClasses = `w-full px-3 py-2 border rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent text-sm ${className}`;
 
   const getSelectClasses = (error?: string) =>
     `${selectClasses} ${
       error
-        ? "border-red-300 bg-red-50"
-        : "border-amber-300 bg-white hover:border-amber-400"
+        ? "border-status-error/40 bg-status-error/10"
+        : "border-brand-yellow-soft bg-surface-card hover:border-brand-yellow"
     }`;
 
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
       {/* Country Select */}
       <div className="mb-2">
-        <label className="block text-sm font-medium text-slate-800 mb-1">
+        <label className="block text-sm font-medium text-ink-charcoal mb-1">
           {countryLabel}
-          {countryRequired && <span className="text-red-500 ml-1">*</span>}
+          {countryRequired && <span className="text-status-error ml-1">*</span>}
         </label>
 
         <div className="relative" ref={countryDropdownRef}>
@@ -548,7 +548,7 @@ const handleStateSelect = (state: any) => {
               countryError
             )} flex items-center justify-between text-left cursor-pointer w-full`}
           >
-            <span className={countryValue ? "text-gray-900" : "text-gray-500"}>
+            <span className={countryValue ? "text-ink" : "text-ink-caption"}>
               {countryValue || countryPlaceholder}
             </span>
             <ChevronDown 
@@ -560,15 +560,15 @@ const handleStateSelect = (state: any) => {
 
           {/* Country Dropdown */}
           {countryDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-amber-300 rounded-md shadow-lg max-h-60 overflow-hidden">
+            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface-card border border-brand-yellow-soft rounded-md shadow-lg max-h-60 overflow-hidden">
               {/* Search Input */}
-              <div className="p-2 border-b border-gray-200">
+              <div className="p-2 border-b border-ink-light">
                 <input
                   type="text"
                   placeholder="Search countries..."
                   value={countrySearchTerm}
                   onChange={(e) => setCountrySearchTerm(e.target.value)}
-                  className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400 text-gray-900 bg-white"
+                  className="w-full px-2 py-1 text-sm border border-brand-yellow-soft rounded focus:outline-none focus:ring-1 focus:ring-brand-yellow text-ink bg-surface-card"
                   autoFocus
                 />
               </div>
@@ -581,20 +581,20 @@ const handleStateSelect = (state: any) => {
                       key={country.isoCode}
                       type="button"
                       onClick={() => handleCountrySelect(country)}
-                      className="w-full flex items-center px-3 py-2 text-left hover:bg-amber-50 transition-colors border-b border-gray-100 last:border-b-0"
+                      className="w-full flex items-center px-3 py-2 text-left hover:bg-surface-main transition-colors border-b border-ink-light last:border-b-0"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-gray-900 truncate">
+                        <div className="text-sm font-medium text-ink truncate">
                           {country.name}
                         </div>
                       </div>
-                      <div className="text-sm text-gray-500 ml-2">
+                      <div className="text-sm text-ink-caption ml-2">
                         {country.isoCode}
                       </div>
                     </button>
                   ))
                 ) : (
-                  <div className="px-3 py-2 text-sm text-gray-500 text-center">
+                  <div className="px-3 py-2 text-sm text-ink-caption text-center">
                     No countries found
                   </div>
                 )}
@@ -604,7 +604,7 @@ const handleStateSelect = (state: any) => {
         </div>
 
         {countryError && (
-          <div className="flex items-center mt-1 text-red-600">
+          <div className="flex items-center mt-1 text-status-error">
             <AlertCircle className="w-4 h-4 mr-2" />
             <span className="text-sm">{countryError}</span>
           </div>
@@ -613,9 +613,9 @@ const handleStateSelect = (state: any) => {
 
       {/* State Select */}
       <div className="mb-2">
-        <label className="block text-sm font-medium text-slate-800 mb-1">
+        <label className="block text-sm font-medium text-ink-charcoal mb-1">
           {stateLabel}
-          {stateRequired && <span className="text-red-500 ml-1">*</span>}
+          {stateRequired && <span className="text-status-error ml-1">*</span>}
         </label>
 
         <div className="relative" ref={stateDropdownRef}>
@@ -635,9 +635,9 @@ const handleStateSelect = (state: any) => {
             }`}
           >
             {!countryValue ? (
-              <span className="text-gray-400">Select country first</span>
+              <span className="text-ink-caption">Select country first</span>
             ) : (
-              <span className={stateValue ? "text-gray-900" : "text-gray-500"}>
+              <span className={stateValue ? "text-ink" : "text-ink-caption"}>
                 {stateValue || statePlaceholder}
               </span>
             )}
@@ -650,15 +650,15 @@ const handleStateSelect = (state: any) => {
 
           {/* State Dropdown */}
           {stateDropdownOpen && countryValue && (
-            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-amber-300 rounded-md shadow-lg max-h-60 overflow-hidden">
+            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface-card border border-brand-yellow-soft rounded-md shadow-lg max-h-60 overflow-hidden">
               {/* Search Input */}
-              <div className="p-2 border-b border-gray-200">
+              <div className="p-2 border-b border-ink-light">
                 <input
                   type="text"
                   placeholder="Search states..."
                   value={stateSearchTerm}
                   onChange={(e) => setStateSearchTerm(e.target.value)}
-                  className="w-full px-2 py-1 text-sm border border-amber-300 rounded focus:outline-none focus:ring-1 focus:ring-amber-400 text-gray-900 bg-white"
+                  className="w-full px-2 py-1 text-sm border border-brand-yellow-soft rounded focus:outline-none focus:ring-1 focus:ring-brand-yellow text-ink bg-surface-card"
                   autoFocus
                 />
               </div>
@@ -671,20 +671,20 @@ const handleStateSelect = (state: any) => {
                       key={state.isoCode}
                       type="button"
                       onClick={() => handleStateSelect(state)}
-                      className="w-full flex items-center px-3 py-2 text-left hover:bg-amber-50 transition-colors border-b border-gray-100 last:border-b-0"
+                      className="w-full flex items-center px-3 py-2 text-left hover:bg-surface-main transition-colors border-b border-ink-light last:border-b-0"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-gray-900 truncate">
+                        <div className="text-sm font-medium text-ink truncate">
                           {state.name}
                         </div>
                       </div>
-                      <div className="text-sm text-gray-500 ml-2">
+                      <div className="text-sm text-ink-caption ml-2">
                         {state.isoCode}
                       </div>
                     </button>
                   ))
                 ) : (
-                  <div className="px-3 py-2 text-sm text-gray-500 text-center">
+                  <div className="px-3 py-2 text-sm text-ink-caption text-center">
                     {availableStates.length === 0
                       ? "No states available for this country"
                       : "No states found"}
@@ -696,7 +696,7 @@ const handleStateSelect = (state: any) => {
         </div>
 
         {stateError && (
-          <div className="flex items-center mt-1 text-red-600">
+          <div className="flex items-center mt-1 text-status-error">
             <AlertCircle className="w-4 h-4 mr-2" />
             <span className="text-sm">{stateError}</span>
           </div>
