@@ -76,8 +76,7 @@ const App: React.FC = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          // PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}?template=template1` : `${LAMBDA.profTemplateDash}/${userId}/${professionalId}?template=template1`,
-          PROFESSIONAL_API ? `${PROFESSIONAL_API}/get-teme?userId=${userId}&professionalId=${professionalId}` : `${LAMBDA.profTemplateFinalLoad}/get-teme?userId=${userId}&professionalId=${professionalId}`, 
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/template-content/${userId}/${professionalId}?template=template1` : `${LAMBDA.profTemplateFinalLoad}/get-teme?userId=${userId}&professionalId=${professionalId}`,
           {
             method: "GET",
             headers: {
@@ -91,8 +90,11 @@ const App: React.FC = () => {
         }
 
         const data = await response.json();
-        setFinalTemplate(data.data);
-        setAIGenData(data.data);
+        // self-hosted /template-content returns the payload directly; the old
+        // Lambda /get-teme wrapped it as { data: {...} }
+        const payload = data.data || data;
+        setFinalTemplate(payload);
+        setAIGenData(payload);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching template data:", error);
@@ -154,7 +156,7 @@ const App: React.FC = () => {
 
   return (
     <DarkModeProvider>
-      <div className="relative min-h-screen transition-colors duration-300 bg-white dark:bg-gray-900">
+      <div className="relative min-h-screen transition-colors duration-300 bg-surface-main dark:bg-gray-900">
         <Navbar
           content={finalTemplate.content.headerContent}
           onSave={(updatedHeader) =>
