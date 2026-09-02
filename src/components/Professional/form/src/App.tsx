@@ -301,7 +301,8 @@ function AppInner() {
 
     try {
       const finalSubmissionId = submissionId || `draft-${Date.now()}`;
-      const templateId = data.templateSelection || templateIdFromState || 1;
+      const rawTemplate = data.templateSelection || templateIdFromState || 1;
+      const templateId = String(rawTemplate).includes("2") ? 2 : 1;
 
       const payload = {
         userId: email,
@@ -338,13 +339,9 @@ function AppInner() {
         console.error("Failed to clear local draft after submit", e);
       }
 
-      setTimeout(() => setLoading(false), 71000);
-      setTimeout(
-        () =>
-          navigate(
-            `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
-          ),
-        71000
+      setLoading(false);
+      navigate(
+        `/professional/edit/${finalSubmissionId}/${email}/template=${templateId}`
       );
     } catch (err) {
       console.error(err);

@@ -186,7 +186,6 @@ const App: React.FC = () => {
   if (loading) {
     const minutes = Math.floor(pollElapsed / 60000);
     const seconds = Math.floor((pollElapsed % 60000) / 1000);
-    const isPolling = pollElapsed > 0;
     const steps = [
       "Analyzing your business information...",
       "Generating color palette and design...",
@@ -195,7 +194,7 @@ const App: React.FC = () => {
       "Adding final touches and optimizations...",
       "Your website is almost ready!",
     ];
-    const activeStep = isPolling ? Math.min(Math.floor((pollElapsed / 300000) * steps.length), steps.length - 1) : 0;
+    const activeStep = Math.min(Math.floor((pollElapsed / 300000) * steps.length), steps.length - 1);
     return (
       <div className="fixed inset-0 flex items-center justify-center px-4 overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #0a0a14 0%, #12122a 50%, #0a0a14 100%)' }}>
@@ -227,16 +226,14 @@ const App: React.FC = () => {
               </div>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              {isPolling ? "AI is Building Your Website" : "Loading Your Profile..."}
+              AI is Building Your Website
             </h1>
             <p className="text-gray-400 text-sm sm:text-base">
-              {isPolling ? "Please stay on this page while we craft your digital presence" : "Fetching your data, please wait."}
+              Please stay on this page while we craft your digital presence
             </p>
           </div>
 
-          {isPolling && (
-            <>
-              {/* Progress bar */}
+          {/* Progress bar */}
               <div className="mb-6">
                 <div className="flex justify-between text-xs text-gray-500 mb-2">
                   <span className="text-gray-400 font-medium">Progress</span>
@@ -306,15 +303,6 @@ const App: React.FC = () => {
                   );
                 })}
               </div>
-            </>
-          )}
-
-          {!isPolling && (
-            <div className="flex justify-center">
-              <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"
-                style={{ filter: 'drop-shadow(0 0 8px rgba(251,191,36,0.5))' }} />
-            </div>
-          )}
 
           <p className="text-center text-gray-600 text-xs mt-6">This usually takes 1–3 minutes</p>
         </div>
