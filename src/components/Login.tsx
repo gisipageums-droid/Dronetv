@@ -136,14 +136,14 @@ export default function Login() {
   ) => {
     const hasError = (touched[name] || formSubmitted) && !value;
     return `w-full p-2 border rounded ${
-      hasError || isError ? "border-red-500" : "border-gray-300"
+      hasError || isError ? "border-status-error" : "border-ink-light"
     }`;
   };
 
   const renderErrorMessage = (name: string, value: string, label: string) => {
     if ((touched[name] || formSubmitted) && !value) {
       return (
-        <span className="text-red-500 text-xs mt-1 block">
+        <span className="text-status-error text-xs mt-1 block">
           {label} is required
         </span>
       );
@@ -190,7 +190,13 @@ export default function Login() {
       const data = await authService.googleLogin(credentialResponse.credential);
       login(data);
       toast.success("Google login successful!");
-      navigate(data?.userData?.role === "company" ? "/company-portal" : "/user-dashboard");
+      navigate(
+        data?.userData?.role === "company"
+          ? "/company-portal"
+          : data?.userData?.role === "professional"
+            ? "/professional-portal"
+            : "/user-dashboard"
+      );
     } catch (error: any) {
       toast.error(error.message || "Google authentication failed");
     }
@@ -205,7 +211,13 @@ export default function Login() {
       const data = await authService.login(loginData);
       login(data);
       setLoginData({ email: "", password: "" });
-      navigate(data?.userData?.role === "company" ? "/company-portal" : "/user-dashboard");
+      navigate(
+        data?.userData?.role === "company"
+          ? "/company-portal"
+          : data?.userData?.role === "professional"
+            ? "/professional-portal"
+            : "/user-dashboard"
+      );
     } catch (error: any) {
       toast.error(error.message || "Login failed. Please check your credentials.");
     } finally {
@@ -219,7 +231,7 @@ export default function Login() {
         // Sign In Modal
         <>
           <div className="relative">
-            <div className="absolute top-0 left-0 z-10 w-full h-full bg-black opacity-50"></div>
+            <div className="absolute top-0 left-0 z-10 w-full h-full bg-ink opacity-50"></div>
             <img
               src="./images/3.jpg"
               className="w-full cover h-42"
@@ -227,7 +239,7 @@ export default function Login() {
             />
           </div>
           <div className="absolute top-0 left-0 z-20 flex items-center justify-end w-full h-full px-20">
-            <div className="w-full max-w-md px-8 py-5 bg-white rounded-lg shadow-lg">
+            <div className="w-full max-w-md px-8 py-5 bg-surface-card rounded-lg shadow-lg">
               <div className="flex items-center justify-between px-5 mb-6">
                 <h2 className="pt-5 mb-4 text-2xl font-bold">Sign In</h2>
                 <img
@@ -264,7 +276,7 @@ export default function Login() {
                   >
                     Password
                   </label>
-                  <div className="flex items-center border border-gray-300 rounded">
+                  <div className="flex items-center border border-ink-light rounded">
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
@@ -284,9 +296,9 @@ export default function Login() {
                       className="p-2 cursor-pointer"
                     >
                       {showPassword ? (
-                        <FaEye className="mx-1 text-blue-500" />
+                        <FaEye className="mx-1 text-status-info" />
                       ) : (
-                        <FaEyeSlash className="mx-1 text-blue-500" />
+                        <FaEyeSlash className="mx-1 text-status-info" />
                       )}
                     </span>
                   </div>
@@ -296,7 +308,7 @@ export default function Login() {
                     "Password"
                   )}
                 </div>
-                <p className="mx-2 mb-4 text-blue-700 text-end ">
+                <p className="mx-2 mb-4 text-status-info text-end ">
                   <Link
                     className="cursor-pointer hover:font-semibold"
                     to="/forgot-password"
@@ -306,7 +318,7 @@ export default function Login() {
                 </p>
                 <button
                   type="submit"
-                  className="w-full py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                  className="w-full py-2 text-white bg-status-info rounded hover:bg-status-info"
                 >
                   {isLoading ? "Loading..." : "Login"}
                 </button>
@@ -315,9 +327,9 @@ export default function Login() {
                 {/* <div className="flex flex-col items-center mt-4">
                   <div className="relative flex justify-center w-full">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
+                      <div className="w-full border-t border-ink-light"></div>
                     </div>
-                    <div className="relative px-2 text-sm text-gray-500 bg-white">
+                    <div className="relative px-2 text-sm text-ink-caption bg-surface-card">
                       Or continue with
                     </div>
                   </div>
@@ -342,7 +354,7 @@ export default function Login() {
         // Sign Up Modal
         <>
           <div className="relative">
-            <div className="absolute top-0 left-0 z-10 w-full h-full bg-black opacity-50"></div>
+            <div className="absolute top-0 left-0 z-10 w-full h-full bg-ink opacity-50"></div>
             <img
               src="./images/3.jpg"
               className="w-full cover h-42"
@@ -350,7 +362,7 @@ export default function Login() {
             />
           </div>
           <div className="absolute top-0 left-0 z-20 flex items-center justify-end w-full h-full px-20 mt-10">
-            <div className="w-full max-w-md px-8 pb-5 bg-white rounded-lg shadow-lg">
+            <div className="w-full max-w-md px-8 pb-5 bg-surface-card rounded-lg shadow-lg">
               <div className="flex items-center justify-between px-5 mb-3">
                 <h2 className="pt-5 mb-4 text-2xl font-bold">Sign Up</h2>
                 <img src="./images/logo.png" alt="logo" className="h-10 w-25" />
@@ -440,7 +452,7 @@ export default function Login() {
                   >
                     Password
                   </label>
-                  <div className="flex items-center border border-gray-300 rounded">
+                  <div className="flex items-center border border-ink-light rounded">
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
@@ -461,9 +473,9 @@ export default function Login() {
                       className="p-2 cursor-pointer"
                     >
                       {showPassword ? (
-                        <FaEye className="mx-1 text-blue-500" />
+                        <FaEye className="mx-1 text-status-info" />
                       ) : (
-                        <FaEyeSlash className="mx-1 text-blue-500" />
+                        <FaEyeSlash className="mx-1 text-status-info" />
                       )}
                     </span>
                   </div>
@@ -473,7 +485,7 @@ export default function Login() {
                     "Password"
                   )}
                   {formSubmitted && Object.keys(passwordErrors).length > 0 && (
-                    <div className="mt-1 text-xs text-red-500">
+                    <div className="mt-1 text-xs text-status-error">
                       <p>Password must meet the following requirements:</p>
                       <ul className="pl-5 list-disc">
                         {Object.values(passwordErrors).map((error, index) => (
@@ -512,7 +524,7 @@ export default function Login() {
                     "Confirm Password"
                   )}
                   {formSubmitted && !passwordMatch && (
-                    <p className="mt-1 text-xs text-red-500">
+                    <p className="mt-1 text-xs text-status-error">
                       Passwords do not match
                     </p>
                   )}
@@ -565,7 +577,7 @@ export default function Login() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-2 text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-blue-300"
+                  className="w-full py-2 text-white bg-status-info rounded hover:bg-status-info disabled:bg-status-info/40"
                   disabled={
                     isRegistering ||
                     (formSubmitted && (!isPasswordValid || !passwordMatch))
@@ -575,11 +587,11 @@ export default function Login() {
                 </button>
               </form>
               <div className="mt-2">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-ink-paragraph">
                   Already have an account?{" "}
                   <strong
                     onClick={() => setHaveAccount(true)}
-                    className="text-blue-500 cursor-pointer hover:underline"
+                    className="text-status-info cursor-pointer hover:underline"
                   >
                     Sign in
                   </strong>

@@ -18,8 +18,14 @@ const Navigation = () => {
   const [selectedLang, setSelectedLang] = useState("English");
 
   const { isLogin, isAdminLogin, setHaveAccount, user } = useUserAuth();
-  const isCompanyRole = (user as any)?.userData?.role === "company" || (user as any)?.role === "company";
-  const dashboardPath = isAdminLogin ? "/admin/company/dashboard" : isCompanyRole ? "/company-portal" : "/user-dashboard";
+  const role = (user as any)?.userData?.role || (user as any)?.role;
+  const dashboardPath = isAdminLogin
+    ? "/admin/company/dashboard"
+    : role === "company"
+      ? "/company-portal"
+      : role === "professional"
+        ? "/professional-portal"
+        : "/user-dashboard";
   const languageRef = useRef<HTMLDivElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
   const eventsRef = useRef<HTMLDivElement>(null);
