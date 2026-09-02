@@ -13,12 +13,21 @@ import {
 import { ADMIN_API, LAMBDA } from '../lib/apiConfig';
 import CompactHero from './common/CompactHero';
 
+const TOPIC_MESSAGE: Record<string, string> = {
+  "list-rpto":
+    "I run a DGCA-approved RPTO and would like to list it on DroneTv.in's Training section.\n\nRPTO name:\nDGCA approval number:\nLocation:\nWebsite (if any):\n\n(We'll follow up for a copy of your DGCA approval certificate.)",
+};
+
 const ContactPage = () => {
+  const topic =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("topic") || ""
+      : "";
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
-    message: "",
+    message: TOPIC_MESSAGE[topic] || "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
