@@ -501,6 +501,29 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
                   </details>
                 )}
 
+                {!hasEntries(formData) && hasEntries(data?.templateContent) && (
+                  <div className="bg-ink-offwhite rounded-xl border border-ink-light p-6">
+                    <div className="flex items-center gap-3 mb-1 font-semibold text-lg text-ink">
+                      <FileText className="w-5 h-5 text-ink-paragraph" />
+                      Generated Profile Content
+                    </div>
+                    <p className="text-xs text-ink-caption mb-4">
+                      This is a legacy record — the original registration form data isn't stored for it.
+                      Showing the published profile content instead.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                      {Object.entries(data.templateContent)
+                        .sort(([a], [b]) => a.localeCompare(b))
+                        .map(([k, v]) => (
+                          <div key={k} className="flex flex-col border-b border-ink-light/60 py-1 min-w-0">
+                            <span className="text-[11px] text-ink-caption uppercase tracking-wide break-words">{prettyLabel(k)}</span>
+                            <span className="text-sm text-ink break-words"><PrettyValue value={v} /></span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex justify-end gap-3 pt-6 border-t border-ink-light">
                   <button
                     onClick={onClose}
