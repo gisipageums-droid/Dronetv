@@ -109,7 +109,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
   };
 
   return (
-    <footer className="bg-dark-300 border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
+    <footer className="bg-dark-300 border-t border-ink-light dark:border-gray-800 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
         {onSave && (
           <div className="absolute top-6 right-6 z-20 flex gap-3">
@@ -117,14 +117,14 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               <>
                 <button
                   onClick={handleSave}
-                  className="p-3 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md hover:shadow-lg transition-all"
+                  className="p-3 bg-status-success hover:bg-status-success text-white rounded-full shadow-md hover:shadow-lg transition-all"
                   title="Save updates"
                 >
                   <Save className="w-5 h-5" />
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="p-3 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-md hover:shadow-lg transition-all"
+                  className="p-3 bg-status-error hover:bg-status-error text-white rounded-full shadow-md hover:shadow-lg transition-all"
                   title="Cancel updates"
                 >
                   <X className="w-5 h-5" />
@@ -133,7 +133,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
             ) : (
               <button
                 onClick={() => setIsEditing(true)}
-                className="p-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-full shadow-md hover:shadow-lg transition-all"
+                className="p-3 bg-ink-light dark:bg-gray-700 text-ink dark:text-white rounded-full shadow-md hover:shadow-lg transition-all"
                 title="Edit footer section"
               >
                 <Edit className="w-5 h-5" />
@@ -149,7 +149,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               whileHover={{ scale: 1.02 }}
               className="flex items-center space-x-2 mb-4"
             >
-              <Code className="w-8 h-8 text-orange-400" />
+              <Code className="w-8 h-8 text-status-warning" />
               {isEditing ? (
                 <input
                   type="text"
@@ -163,10 +163,10 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                       },
                     })
                   }
-                  className="text-2xl font-bold text-blue-500 dark:text-orange-500 bg-transparent border-b border-orange-400 focus:outline-none"
+                  className="text-2xl font-bold text-status-info dark:text-orange-500 bg-transparent border-b border-status-warning focus:outline-none"
                 />
               ) : (
-                <span className="text-2xl font-bold text-blue-500 dark:text-orange-500">
+                <span className="text-2xl font-bold text-status-info dark:text-orange-500">
                   {content.personalInfo.name}
                 </span>
               )}
@@ -184,11 +184,11 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     },
                   })
                 }
-                className="w-full bg-gray-800 border border-gray-700 text-gray-300 rounded-lg p-3 focus:border-orange-500 focus:outline-none mb-6 resize-none"
+                className="w-full bg-ink-charcoal border border-ink-paragraph text-ink-light rounded-lg p-3 focus:border-status-warning focus:outline-none mb-6 resize-none"
                 rows={3}
               />
             ) : (
-              <p className="text-gray-400 mb-6 leading-relaxed max-w-md">
+              <p className="text-ink-caption mb-6 leading-relaxed max-w-md">
                 {content.personalInfo.description}
               </p>
             )}
@@ -202,7 +202,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                   <motion.div
                     key={index}
                     whileHover={{ y: -2, scale: 1.1 }}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center bg-gray-800 ${colorClass}`}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center bg-ink-charcoal ${colorClass}`}
                   >
                     {isEditing ? (
                       <div className="relative group w-full h-full flex items-center justify-center">
@@ -223,7 +223,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                               socialLinks: newSocialLinks,
                             });
                           }}
-                          className="absolute top-12 left-1/2 -translate-x-1/2 w-32 text-xs bg-gray-900 text-white border border-gray-700 rounded p-1 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+                          className="absolute top-12 left-1/2 -translate-x-1/2 w-32 text-xs bg-ink text-white border border-ink-paragraph rounded p-1 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
                           placeholder="URL"
                         />
                       </div>
@@ -244,7 +244,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-gray-700 dark:text-white font-semibold mb-4">
+            <h3 className="text-ink-paragraph dark:text-white font-semibold mb-4">
               Quick Links
             </h3>
             <ul className="space-y-2">
@@ -263,7 +263,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                             quickLinks: newQuickLinks,
                           });
                         }}
-                        className="px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500"
+                        className="px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning"
                         placeholder="Label"
                       />
                       <input
@@ -277,7 +277,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                             quickLinks: newQuickLinks,
                           });
                         }}
-                        className="px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500"
+                        className="px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning"
                         placeholder="#section"
                       />
                     </div>
@@ -285,7 +285,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     <motion.button
                       whileHover={{ x: 5 }}
                       onClick={() => scrollToSection(link.href)}
-                      className="text-gray-400 hover:text-accent-orange transition"
+                      className="text-ink-caption hover:text-accent-orange transition"
                     >
                       {link.label}
                     </motion.button>
@@ -297,7 +297,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
 
           {/* More + Newsletter */}
           <div>
-            <h3 className="text-gray-700 dark:text-white font-semibold mb-4">
+            <h3 className="text-ink-paragraph dark:text-white font-semibold mb-4">
               More
             </h3>
             <ul className="space-y-2 mb-6">
@@ -316,7 +316,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                             moreLinks: newMoreLinks,
                           });
                         }}
-                        className="px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500"
+                        className="px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning"
                         placeholder="Label"
                       />
                       <input
@@ -330,7 +330,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                             moreLinks: newMoreLinks,
                           });
                         }}
-                        className="px-2 py-1 text-sm bg-gray-800 border border-gray-700 rounded text-gray-300 focus:border-orange-500"
+                        className="px-2 py-1 text-sm bg-ink-charcoal border border-ink-paragraph rounded text-ink-light focus:border-status-warning"
                         placeholder="#section"
                       />
                     </div>
@@ -338,7 +338,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     <motion.button
                       whileHover={{ x: 5 }}
                       onClick={() => scrollToSection(link.href)}
-                      className="text-gray-400 hover:text-accent-orange transition"
+                      className="text-ink-caption hover:text-accent-orange transition"
                     >
                       {link.label}
                     </motion.button>
@@ -348,7 +348,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
             </ul>
 
             {/* Newsletter */}
-            <div className="border-t border-gray-700 pt-4">
+            <div className="border-t border-ink-paragraph pt-4">
               {isEditing ? (
                 <div className="space-y-2">
                   <input
@@ -363,7 +363,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         },
                       })
                     }
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
+                    className="w-full px-3 py-2 bg-ink-charcoal border border-ink-paragraph rounded text-ink-light text-sm focus:border-status-warning"
                     placeholder="Newsletter Title"
                   />
                   <textarea
@@ -377,7 +377,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                         },
                       })
                     }
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
+                    className="w-full px-3 py-2 bg-ink-charcoal border border-ink-paragraph rounded text-ink-light text-sm focus:border-status-warning"
                     placeholder="Description"
                     rows={2}
                   />
@@ -394,7 +394,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                           },
                         })
                       }
-                      className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
+                      className="flex-1 px-3 py-2 bg-ink-charcoal border border-ink-paragraph rounded text-ink-light text-sm focus:border-status-warning"
                       placeholder="Input Placeholder"
                     />
                     <input
@@ -409,29 +409,29 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                           },
                         })
                       }
-                      className="w-28 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
+                      className="w-28 px-3 py-2 bg-ink-charcoal border border-ink-paragraph rounded text-ink-light text-sm focus:border-status-warning"
                       placeholder="Button Text"
                     />
                   </div>
                 </div>
               ) : (
                 <>
-                  <h4 className="text-gray-700 dark:text-white font-medium mb-2">
+                  <h4 className="text-ink-paragraph dark:text-white font-medium mb-2">
                     {content.newsletter.title}
                   </h4>
-                  <p className="text-gray-400 text-sm mb-3">
+                  <p className="text-ink-caption text-sm mb-3">
                     {content.newsletter.description}
                   </p>
                   <div className="flex">
                     <input
                       type="email"
                       placeholder={content.newsletter.placeholder}
-                      className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-l-lg text-gray-300 text-sm focus:border-orange-500"
+                      className="flex-1 px-3 py-2 bg-ink-charcoal border border-ink-paragraph rounded-l-lg text-ink-light text-sm focus:border-status-warning"
                     />
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 bg-orange-400 text-white rounded-r-lg text-sm font-medium hover:shadow-lg"
+                      className="px-4 py-2 bg-status-warning text-white rounded-r-lg text-sm font-medium hover:shadow-lg"
                     >
                       {content.newsletter.buttonText}
                     </motion.button>
@@ -444,8 +444,8 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
       </div>
 
       {/* Bottom Section */}
-      <div className="border-t border-gray-700 py-6">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+      <div className="border-t border-ink-paragraph py-6">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-ink-caption">
           <div className="flex items-center text-center md:text-left">
             © {currentYear}{" "}
             {isEditing ? (
@@ -461,7 +461,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     },
                   })
                 }
-                className="bg-transparent border-b border-gray-500 focus:border-orange-500 ml-1 px-1 text-gray-200 focus:outline-none"
+                className="bg-transparent border-b border-ink-caption focus:border-status-warning ml-1 px-1 text-ink-light focus:outline-none"
               />
             ) : (
               <span className="mx-1">{content.personalInfo.name}</span>
@@ -481,7 +481,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                     },
                   })
                 }
-                className="bg-transparent border-b border-gray-500 focus:border-orange-500 ml-1 px-1 text-gray-200 focus:outline-none"
+                className="bg-transparent border-b border-ink-caption focus:border-status-warning ml-1 px-1 text-ink-light focus:outline-none"
               />
             ) : (
               <span>{content.bottomSection.afterCopyrightText}</span>
@@ -506,7 +506,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                       },
                     })
                   }
-                  className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
+                  className="px-2 py-1 bg-ink-charcoal border border-ink-paragraph rounded text-ink-light text-sm focus:border-status-warning"
                 />
                 <input
                   type="text"
@@ -523,7 +523,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
                       },
                     })
                   }
-                  className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-gray-300 text-sm focus:border-orange-500"
+                  className="px-2 py-1 bg-ink-charcoal border border-ink-paragraph rounded text-ink-light text-sm focus:border-status-warning"
                 />
               </>
             ) : (
@@ -549,7 +549,7 @@ const Footer: React.FC<FooterProps> = ({ content, onSave }) => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={scrollToTop}
-              className="w-10 h-10 bg-orange-400 rounded-full flex items-center justify-center text-black hover:shadow-lg animate-bounce"
+              className="w-10 h-10 bg-status-warning rounded-full flex items-center justify-center text-ink hover:shadow-lg animate-bounce"
             >
               <ArrowUp className="w-5 h-5" />
             </motion.button>

@@ -20,8 +20,8 @@ export function About() {
               transition={{ duration: 0.3 }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-yellow-400 rounded-3xl transform -rotate-6"></div>
-              <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl">
+              <div className="absolute inset-0 bg-brand-yellow rounded-3xl transform -rotate-6"></div>
+              <div className="relative bg-surface-card rounded-3xl overflow-hidden shadow-2xl">
                 <ImageWithFallback
                   src="https://images.unsplash.com/photo-1695634621121-691d54259d37?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBwb3J0Zm9saW8lMjBkZXNpZ258ZW58MXx8fHwxNzU3NDg4OTI1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                   alt="About me"
@@ -46,7 +46,7 @@ export function About() {
               viewport={{ once: true }}
               className="text-3xl sm:text-4xl text-foreground"
             >
-              About <span className="text-yellow-500">Me</span>
+              About <span className="text-brand-gold">Me</span>
             </motion.h2>
 
             <motion.p
@@ -83,16 +83,16 @@ export function About() {
               className="space-y-4"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                <span className="text-gray-700">Frontend: React, Vue.js, TypeScript</span>
+                <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
+                <span className="text-ink-paragraph">Frontend: React, Vue.js, TypeScript</span>
               </div>
               <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                <span className="text-gray-700">Backend: Node.js, Python, PostgreSQL</span>
+                <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
+                <span className="text-ink-paragraph">Backend: Node.js, Python, PostgreSQL</span>
               </div>
               <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                <span className="text-gray-700">Cloud: AWS, Docker, Kubernetes</span>
+                <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
+                <span className="text-ink-paragraph">Cloud: AWS, Docker, Kubernetes</span>
               </div>
             </motion.div>
 

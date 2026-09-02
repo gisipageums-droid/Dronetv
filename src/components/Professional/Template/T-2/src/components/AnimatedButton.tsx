@@ -20,8 +20,8 @@ export function AnimatedButton({
   const baseClasses = "inline-flex items-center justify-center rounded-lg transition-all duration-300 font-medium hover:scale-105 hover:-translate-y-1";
   
   const variants = {
-    primary: "bg-yellow-400 text-gray-900 hover:bg-yellow-500 shadow-lg hover:shadow-xl",
-    secondary: "bg-white text-yellow-500 border-2 border-yellow-400 hover:bg-yellow-50"
+    primary: "bg-brand-yellow text-ink hover:bg-brand-gold shadow-lg hover:shadow-xl",
+    secondary: "bg-surface-card text-brand-gold border-2 border-brand-yellow hover:bg-surface-main"
   };
 
   const sizes = {

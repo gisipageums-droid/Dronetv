@@ -45,7 +45,7 @@ const About: React.FC = () => {
   };
 
   return (
-    <section id="about" className="py-20 bg-white dark:bg-gray-900">
+    <section id="about" className="py-20 bg-surface-card dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={containerVariants}
@@ -59,14 +59,14 @@ const About: React.FC = () => {
             className="text-center mb-16 relative"
           >
             <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-              <span className="text-gray-900 dark:text-white">
+              <span className="text-ink dark:text-white">
                 {aboutContent.title.split(" ")[0]}
               </span>{" "}
-              <span className="text-orange-500">
+              <span className="text-status-warning">
                 {aboutContent.title.split(" ").slice(1).join(" ")}
               </span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <p className="text-xl text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto">
               {aboutContent.subtitle}
             </p>
           </motion.div>
@@ -86,7 +86,7 @@ const About: React.FC = () => {
 
             {/* Right Side - Content */}
             <motion.div variants={itemVariants} className="space-y-6">
-              <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+              <div className="space-y-4 text-ink-paragraph dark:text-gray-300 leading-relaxed">
                 <p>{aboutContent.description1}</p>
                 <p>{aboutContent.description2}</p>
                 <p>{aboutContent.description3}</p>
@@ -94,7 +94,7 @@ const About: React.FC = () => {
 
               {/* Skills Highlight */}
               <div className="space-y-4">
-                <h4 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h4 className="text-xl font-semibold text-ink dark:text-white">
                   Core Expertise
                 </h4>
                 <div className="flex flex-wrap gap-3">
@@ -102,7 +102,7 @@ const About: React.FC = () => {
                     <motion.span
                       key={index}
                       whileHover={{ scale: 1.05 }}
-                      className="px-4 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
+                      className="px-4 py-2 bg-gradient-to-r from-brand-gold/10 to-status-warning/10 border border-status-warning/30 rounded-full text-status-warning font-medium"
                     >
                       {skill}
                     </motion.span>

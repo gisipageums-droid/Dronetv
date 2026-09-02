@@ -20,7 +20,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-dark-300 border-t border-gray-200 dark:border-gray-800">
+    <footer className="bg-dark-300 border-t border-ink-light dark:border-gray-800">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -28,17 +28,17 @@ const Footer: React.FC = () => {
           <div className="col-span-1 lg:col-span-2">
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="flex items-center space-x-2 mb-4 text-blue-500 dark:text-orange-500"
+              className="flex items-center space-x-2 mb-4 text-status-info dark:text-orange-500"
             >
-              <div className="rounded-full bg-yellow-500 text-black h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
+              <div className="rounded-full bg-brand-gold text-ink h-10 w-10 text-2xl font-extrabold flex items-center justify-center p-2">
                 <span className="uppercase">J</span>
               </div>
-              <span className="text-2xl font-bold truncate capitalize text-yellow-500">
+              <span className="text-2xl font-bold truncate capitalize text-brand-gold">
                 John Doe
               </span>
             </motion.div>
 
-            <p className="text-gray-400 mb-6 leading-relaxed max-w-md">
+            <p className="text-ink-caption mb-6 leading-relaxed max-w-md">
               Full-Stack Developer passionate about creating exceptional digital
               experiences. I build modern, scalable applications that make a
               difference.
@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-gray-700 dark:text-white font-semibold mb-4">
+            <h3 className="text-ink-paragraph dark:text-white font-semibold mb-4">
               Quick Links
             </h3>
             <ul className="space-y-2">
@@ -56,7 +56,7 @@ const Footer: React.FC = () => {
                   <motion.button
                     whileHover={{ x: 5 }}
                     onClick={() => scrollToSection(link.href)}
-                    className="text-gray-400 hover:text-accent-orange transition-colors duration-200 text-left"
+                    className="text-ink-caption hover:text-accent-orange transition-colors duration-200 text-left"
                   >
                     {link.label}
                   </motion.button>
@@ -67,7 +67,7 @@ const Footer: React.FC = () => {
 
           {/* More Links */}
           <div>
-            <h3 className="text-gray-700 dark:text-white font-semibold mb-4">
+            <h3 className="text-ink-paragraph dark:text-white font-semibold mb-4">
               More
             </h3>
             <ul className="space-y-2">
@@ -76,7 +76,7 @@ const Footer: React.FC = () => {
                   <motion.button
                     whileHover={{ x: 5 }}
                     onClick={() => scrollToSection(link.href)}
-                    className="text-gray-400 hover:text-accent-orange transition-colors duration-200 text-left"
+                    className="text-ink-caption hover:text-accent-orange transition-colors duration-200 text-left"
                   >
                     {link.label}
                   </motion.button>

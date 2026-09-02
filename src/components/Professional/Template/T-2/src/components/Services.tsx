@@ -73,7 +73,7 @@ export function Services() {
   const CurrentIcon = services[currentIndex].icon;
 
   return (
-    <section id="services" className="py-20 bg-gradient-to-br from-red-50 to-background dark:from-red-900/20 dark:to-background">
+    <section id="services" className="py-20 bg-gradient-to-br from-status-error/10 to-background dark:from-red-900/20 dark:to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div 
@@ -84,9 +84,9 @@ export function Services() {
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center justify-center mb-4">
-            <Briefcase className="w-8 h-8 text-red-500 mr-3" />
+            <Briefcase className="w-8 h-8 text-status-error mr-3" />
             <h2 className="text-3xl sm:text-4xl lg:text-5xl text-foreground">
-              My <span className="text-red-500">Services</span>
+              My <span className="text-status-error">Services</span>
             </h2>
           </div>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -112,7 +112,7 @@ export function Services() {
                 className="absolute inset-0 flex items-center justify-center"
               >
                 {/* Service Card Content */}
-                <div className="w-full h-full p-8 flex flex-col items-center justify-center bg-gradient-to-br from-card to-red-50 dark:from-card dark:to-red-900/20">
+                <div className="w-full h-full p-8 flex flex-col items-center justify-center bg-gradient-to-br from-card to-status-error/10 dark:from-card dark:to-red-900/20">
                   {/* Service Icon */}
                   <motion.div
                     initial={{ scale: 0 }}
@@ -123,7 +123,7 @@ export function Services() {
                       damping: 20,
                       delay: 0.1 
                     }}
-                    className="w-24 h-24 bg-gradient-to-br from-red-500 to-yellow-500 rounded-2xl flex items-center justify-center mb-8 shadow-lg"
+                    className="w-24 h-24 bg-gradient-to-br from-status-error to-brand-gold rounded-2xl flex items-center justify-center mb-8 shadow-lg"
                   >
                     <CurrentIcon className="w-12 h-12 text-white" />
                   </motion.div>
@@ -145,7 +145,7 @@ export function Services() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    <p className="text-lg text-red-600 dark:text-red-400">
+                    <p className="text-lg text-status-error dark:text-red-400">
                       {services[currentIndex].issuer}
                     </p>
                     <p className="text-muted-foreground">
@@ -160,13 +160,13 @@ export function Services() {
           {/* Navigation Arrows */}
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-red-600 transition-all duration-300 hover:scale-110 z-10"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-status-error transition-all duration-300 hover:scale-110 z-10"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center text-gray-700 hover:text-red-600 transition-all duration-300 hover:scale-110 z-10"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-surface-card rounded-full shadow-lg flex items-center justify-center text-ink-paragraph hover:text-status-error transition-all duration-300 hover:scale-110 z-10"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
@@ -179,8 +179,8 @@ export function Services() {
                 onClick={() => goToSlide(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   index === currentIndex 
-                    ? 'bg-red-500 scale-125' 
-                    : 'bg-gray-300 hover:bg-gray-400'
+                    ? 'bg-status-error scale-125' 
+                    : 'bg-ink-light hover:bg-ink-caption'
                 }`}
               />
             ))}
@@ -196,19 +196,19 @@ export function Services() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <div className="text-center">
-            <div className="text-3xl text-red-500 mb-2">50+</div>
+            <div className="text-3xl text-status-error mb-2">50+</div>
             <p className="text-muted-foreground">Projects Delivered</p>
           </div>
           <div className="text-center">
-            <div className="text-3xl text-red-500 mb-2">30+</div>
+            <div className="text-3xl text-status-error mb-2">30+</div>
             <p className="text-muted-foreground">Happy Clients</p>
           </div>
           <div className="text-center">
-            <div className="text-3xl text-red-500 mb-2">5+</div>
+            <div className="text-3xl text-status-error mb-2">5+</div>
             <p className="text-muted-foreground">Years Experience</p>
           </div>
           <div className="text-center">
-            <div className="text-3xl text-red-500 mb-2">100%</div>
+            <div className="text-3xl text-status-error mb-2">100%</div>
             <p className="text-muted-foreground">Satisfaction Rate</p>
           </div>
         </motion.div>

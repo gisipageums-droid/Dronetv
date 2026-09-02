@@ -42,7 +42,7 @@ const skills = [
 
 export function Skills() {
   return (
-    <section id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section id="skills" className="py-20 bg-surface-main dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -52,7 +52,7 @@ export function Skills() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
-            My <span className="text-yellow-500">Skills</span>
+            My <span className="text-brand-gold">Skills</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             A comprehensive set of technical skills and expertise built through 
@@ -74,9 +74,9 @@ export function Skills() {
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 360 }}
                 transition={{ duration: 0.5 }}
-                className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mb-4"
+                className="w-16 h-16 bg-brand-yellow rounded-full flex items-center justify-center mb-4"
               >
-                <skill.icon className="w-8 h-8 text-gray-900" />
+                <skill.icon className="w-8 h-8 text-ink" />
               </motion.div>
 
               <h3 className="text-xl text-foreground mb-2">{skill.title}</h3>
@@ -88,13 +88,13 @@ export function Skills() {
                   <span>Proficiency</span>
                   <span>{skill.level}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-ink-light rounded-full h-2">
                   <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: `${skill.level}%` }}
                     transition={{ duration: 1, delay: index * 0.1 }}
                     viewport={{ once: true }}
-                    className="bg-yellow-400 h-2 rounded-full"
+                    className="bg-brand-yellow h-2 rounded-full"
                   />
                 </div>
               </div>

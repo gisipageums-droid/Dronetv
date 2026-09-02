@@ -148,7 +148,7 @@ export function Contact({ contactData }: ContactProps) {
   return (
     <section
       id="contact"
-      className="py-20 bg-yellow-50 dark:bg-yellow-900/20"
+      className="py-20 bg-surface-main dark:bg-yellow-900/20"
     >
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <motion.div
@@ -193,7 +193,7 @@ export function Contact({ contactData }: ContactProps) {
                     >
                       {field.label}
                       {field.required && (
-                        <span className="ml-1 text-red-500">*</span>
+                        <span className="ml-1 text-status-error">*</span>
                       )}
                     </label>
 
@@ -206,7 +206,7 @@ export function Contact({ contactData }: ContactProps) {
                           handleFormChange(field.name, e.target.value)
                         }
                         rows={field.rows || 4}
-                        className="w-full px-4 py-3 transition-all duration-300 border rounded-lg resize-none border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[120px]"
+                        className="w-full px-4 py-3 transition-all duration-300 border rounded-lg resize-none border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[120px]"
                         placeholder={fieldPlaceholders[field.name] || field.label}
                         required={field.required}
                       />
@@ -218,7 +218,7 @@ export function Contact({ contactData }: ContactProps) {
                         onChange={(e) =>
                           handleFormChange(field.name, e.target.value)
                         }
-                        className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
+                        className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
                         required={field.required}
                       >
                         <option value="">Select a subject</option>
@@ -237,7 +237,7 @@ export function Contact({ contactData }: ContactProps) {
                         onChange={(e) =>
                           handleFormChange(field.name, e.target.value)
                         }
-                        className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
+                        className="w-full px-4 py-3 transition-all duration-300 border rounded-lg border-border focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent bg-background text-foreground text-sm sm:text-base min-h-[44px]"
                         placeholder={fieldPlaceholders[field.name] || field.label}
                         required={field.required}
                       />

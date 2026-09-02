@@ -139,9 +139,9 @@
 //   }, [content]);
 
 //   const getCharCountColor = (current: number, max: number) => {
-//     if (current >= max) return "text-red-500";
-//     if (current >= max * 0.9) return "text-yellow-500";
-//     return "text-gray-500";
+//     if (current >= max) return "text-status-error";
+//     if (current >= max * 0.9) return "text-brand-gold";
+//     return "text-ink-caption";
 //   };
 
 //   // Function to get image for category based on index
@@ -255,12 +255,12 @@
 //     if (!skillContent) return;
 
 //     const colors = [
-//       "from-red-500 to-pink-600",
-//       "from-yellow-500 to-orange-600",
-//       "from-indigo-500 to-purple-600",
-//       "from-cyan-500 to-blue-600",
-//       "from-emerald-500 to-green-600",
-//       "from-violet-500 to-purple-600",
+//       "from-status-error to-status-error",
+//       "from-brand-gold to-status-warning",
+//       "from-status-info to-brand-gold",
+//       "from-status-info to-status-info",
+//       "from-status-success to-status-success",
+//       "from-brand-gold to-brand-gold",
 //     ];
 
 //     const newCategory: SkillCategory = {
@@ -365,14 +365,14 @@
 //     return (
 //       <section
 //         id="skills"
-//         className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
+//         className="py-20 bg-surface-card dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
 //       >
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 //           <div className="text-center">
-//             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-//               My <span className="text-orange-500">Skills</span>
+//             <h2 className="text-4xl lg:text-5xl font-bold text-ink dark:text-white mb-4">
+//               My <span className="text-status-warning">Skills</span>
 //             </h2>
-//             <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+//             <p className="text-xl text-ink-paragraph dark:text-gray-300 max-w-3xl mx-auto">
 //               No skills data provided
 //             </p>
 //           </div>
@@ -384,7 +384,7 @@
 //   return (
 //     <section
 //       id="skills"
-//       className="py-20 text-justify bg-white dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
+//       className="py-20 text-justify bg-surface-card dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
 //     >
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 //         {/* Main Content Wrapper */}
@@ -396,14 +396,14 @@
 //                 <>
 //                   <button
 //                     onClick={handleSave}
-//                     className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors shadow-lg"
+//                     className="p-3 bg-status-success text-white rounded-full hover:bg-status-success transition-colors shadow-lg"
 //                     title="Save Changes"
 //                   >
 //                     <Save className="w-6 h-6" />
 //                   </button>
 //                   <button
 //                     onClick={handleCancel}
-//                     className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg"
+//                     className="p-3 bg-status-error text-white rounded-full hover:bg-status-error transition-colors shadow-lg"
 //                     title="Cancel Editing"
 //                   >
 //                     <X className="w-6 h-6" />
@@ -412,10 +412,10 @@
 //               ) : (
 //                 <button
 //                   onClick={() => setIsEditing(true)}
-//                   className="p-3 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-lg"
+//                   className="p-3 bg-ink-light dark:bg-gray-700 rounded-full hover:bg-ink-light dark:hover:bg-gray-600 transition-colors shadow-lg"
 //                   title="Edit Skills"
 //                 >
-//                   <Edit className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+//                   <Edit className="w-6 h-6 text-ink-paragraph dark:text-gray-300" />
 //                 </button>
 //               )}
 //             </div>
@@ -426,7 +426,7 @@
 //                   type="text"
 //                   value={skillContent.heading}
 //                   maxLength={CHAR_LIMITS.heading}
-//                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner mb-4"
+//                   className="w-full bg-ink-light dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-ink-paragraph dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner mb-4"
 //                   onChange={(e) =>
 //                     setSkillContent((prev) => {
 //                       if (!prev) return prev;
@@ -448,10 +448,10 @@
 //               </div>
 //             ) : (
 //               <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-//                 <span className="text-gray-900 dark:text-white">
+//                 <span className="text-ink dark:text-white">
 //                   {skillContent.heading.split(" ")[0]}
 //                 </span>{" "}
-//                 <span className="text-orange-500">
+//                 <span className="text-status-warning">
 //                   {skillContent.heading.split(" ").slice(1).join(" ")}
 //                 </span>
 //               </h2>
@@ -471,7 +471,7 @@
 //                       };
 //                     })
 //                   }
-//                   className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner"
+//                   className="w-full bg-ink-light dark:bg-gray-800 text-center text-xl text-ink-paragraph dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner"
 //                   rows={2}
 //                   placeholder="Enter subtitle describing your skills"
 //                 />
@@ -485,7 +485,7 @@
 //                 </div>
 //               </div>
 //             ) : (
-//               <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+//               <p className="text-xl text-ink-paragraph dark:text-gray-300 max-w-3xl mx-auto">
 //                 {skillContent.subtitle}
 //               </p>
 //             )}
@@ -496,7 +496,7 @@
 //             <div className="text-center mb-12 w-full flex justify-center">
 //               <button
 //                 onClick={addNewCategory}
-//                 className="px-6 py-3 bg-yellow-500 text-white font-semibold rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2"
+//                 className="px-6 py-3 bg-brand-gold text-white font-semibold rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2"
 //                 title="Add a new skill category"
 //               >
 //                 <Plus className="w-5 h-5" />
@@ -510,14 +510,14 @@
 //             {skillContent.categories.map((category, categoryIndex) => (
 //               <div
 //                 key={categoryIndex}
-//                 className="bg-gray-50 dark:bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 dark:border-gray-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-[1.01] relative group shadow-2xl dark:shadow-none transform translate-y-12 animate-[slideUp_0.8s_ease-out_forwards]"
+//                 className="bg-ink-offwhite dark:bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-ink-light dark:border-gray-700 hover:border-status-warning/50 transition-all duration-300 hover:scale-[1.01] relative group shadow-2xl dark:shadow-none transform translate-y-12 animate-[slideUp_0.8s_ease-out_forwards]"
 //                 style={{ animationDelay: `${0.8 + categoryIndex * 0.1}s` }}
 //               >
 //                 {/* Category Remove Button */}
 //                 {isEditing && skillContent.categories.length > 1 && (
 //                   <button
 //                     onClick={() => removeCategory(categoryIndex)}
-//                     className="absolute -top-2 -right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 shadow-md"
+//                     className="absolute -top-2 -right-2 p-2 bg-status-error text-white rounded-full hover:bg-status-error transition-colors opacity-0 group-hover:opacity-100 shadow-md"
 //                     title="Remove Category"
 //                   >
 //                     <Trash2 className="w-5 h-5" />
@@ -558,7 +558,7 @@
 //                               });
 //                             }
 //                           }}
-//                           className="bg-gray-100 dark:bg-gray-800 text-2xl font-bold text-gray-900 dark:text-white rounded-lg p-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none flex-1"
+//                           className="bg-ink-light dark:bg-gray-800 text-2xl font-bold text-ink dark:text-white rounded-lg p-2 border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none flex-1"
 //                           placeholder="Category Title"
 //                         />
 //                         <div
@@ -572,7 +572,7 @@
 //                         </div>
 //                       </div>
 //                     ) : (
-//                       <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+//                       <h3 className="text-2xl font-bold text-ink dark:text-white">
 //                         {category.title}
 //                       </h3>
 //                     )}
@@ -581,7 +581,7 @@
 //                   {isEditing && (
 //                     <button
 //                       onClick={() => addNewSkill(categoryIndex)}
-//                       className="px-4 py-3.5 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600 transition-colors flex items-center gap-1 shadow-md ml-4"
+//                       className="px-4 py-3.5 bg-brand-gold text-white rounded-lg text-sm hover:bg-brand-gold transition-colors flex items-center gap-1 shadow-md ml-4"
 //                       title="Add Skill"
 //                     >
 //                       <Plus className="w-6 h-6" />
@@ -591,7 +591,7 @@
 
 //                 <div className="space-y-6">
 //                   {!category.skills || category.skills.length === 0 ? (
-//                     <p className="text-gray-500 dark:text-gray-400 italic text-center py-4">
+//                     <p className="text-ink-caption dark:text-gray-400 italic text-center py-4">
 //                       No skills in this category
 //                     </p>
 //                   ) : (
@@ -599,7 +599,7 @@
 //                       <div key={skillIndex} className="space-y-2">
 //                         <div className="flex items-center justify-between">
 //                           <div className="flex items-center flex-1 min-w-0">
-//                             <skill.icon className="w-6 h-6 text-orange-500 mr-4 flex-shrink-0" />
+//                             <skill.icon className="w-6 h-6 text-status-warning mr-4 flex-shrink-0" />
 //                             {isEditing ? (
 //                               <div className="space-y-1 flex-1 min-w-0">
 //                                 <input
@@ -614,7 +614,7 @@
 //                                       e.target.value
 //                                     )
 //                                   }
-//                                   className="flex-1 min-w-0 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-medium rounded-lg p-2 mr-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                                   className="flex-1 min-w-0 bg-ink-light dark:bg-gray-800 text-ink-paragraph dark:text-gray-200 font-medium rounded-lg p-2 mr-2 border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                                   placeholder="Skill name"
 //                                 />
 //                                 <div
@@ -628,7 +628,7 @@
 //                                 </div>
 //                               </div>
 //                             ) : (
-//                               <span className="text-gray-700 dark:text-gray-200 font-medium truncate">
+//                               <span className="text-ink-paragraph dark:text-gray-200 font-medium truncate">
 //                                 {skill.name}
 //                               </span>
 //                             )}
@@ -650,29 +650,29 @@
 //                                       parseInt(e.target.value) || 0
 //                                     )
 //                                   }
-//                                   className="w-16 bg-gray-100 dark:bg-gray-800 text-center text-yellow-500 font-semibold rounded-lg p-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+//                                   className="w-16 bg-ink-light dark:bg-gray-800 text-center text-brand-gold font-semibold rounded-lg p-2 border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
 //                                 />
 //                                 <button
 //                                   onClick={() =>
 //                                     removeSkill(categoryIndex, skillIndex)
 //                                   }
-//                                   className="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-sm"
+//                                   className="p-3 bg-status-error text-white rounded-lg hover:bg-status-error transition-colors shadow-sm"
 //                                   title="Remove Skill"
 //                                 >
 //                                   <Trash2 className="w-4 h-4" />
 //                                 </button>
 //                               </>
 //                             ) : (
-//                               <span className="text-yellow-500 font-semibold text-lg">
+//                               <span className="text-brand-gold font-semibold text-lg">
 //                                 {skill.level}%
 //                               </span>
 //                             )}
 //                           </div>
 //                         </div>
 
-//                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
+//                         <div className="w-full bg-ink-light dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
 //                           <div
-//                             className={`h-full rounded-full bg-orange-500 transition-all duration-1000 ease-out`}
+//                             className={`h-full rounded-full bg-status-warning transition-all duration-1000 ease-out`}
 //                             style={{
 //                               width: `${skill.level || 0}%`,
 //                               transitionDelay: `${0.8 + categoryIndex * 0.1}s`,
@@ -689,7 +689,7 @@
 
 //           {/* Technologies */}
 //           <div className="mt-20 transform translate-y-12 animate-[slideUp_0.8s_ease-out_1.2s_forwards]">
-//             <h3 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8 border-b-2 border-orange-500/50 pb-2 max-w-lg mx-auto">
+//             <h3 className="text-3xl font-bold text-ink dark:text-white text-center mb-8 border-b-2 border-status-warning/50 pb-2 max-w-lg mx-auto">
 //               Technologies
 //             </h3>
 
@@ -700,12 +700,12 @@
 //                   value={technologiesInput}
 //                   maxLength={CHAR_LIMITS.technologies}
 //                   onChange={(e) => handleTechnologiesChange(e.target.value)}
-//                   className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none max-w-4xl mx-auto block"
+//                   className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none max-w-4xl mx-auto block"
 //                   placeholder="Enter technologies separated by commas (e.g., JavaScript, React, Node.js)"
 //                 />
 
 //                 {isEditing && (
-//                   <p className="text-center text-xs rounded-lg text-gray-400">
+//                   <p className="text-center text-xs rounded-lg text-ink-caption">
 //                     Data should be separated by commas (e.g., data1, data2,
 //                     data3)
 //                   </p>
@@ -727,13 +727,13 @@
 //                       <motion.div
 //                         key={index}
 //                         whileHover={{ scale: 1.05 }}
-//                         className="px-5 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
+//                         className="px-5 py-2 bg-gradient-to-r from-brand-gold/10 to-status-warning/10 border border-status-warning/30 rounded-full text-status-warning font-medium"
 //                       >
 //                         {tech}
 //                       </motion.div>
 //                     ))
 //                   ) : (
-//                     <p className="text-gray-500 dark:text-gray-400 italic">
+//                     <p className="text-ink-caption dark:text-gray-400 italic">
 //                       No technologies specified
 //                     </p>
 //                   )}
@@ -747,13 +747,13 @@
 //                     <motion.div
 //                       key={index}
 //                       whileHover={{ scale: 1.05 }}
-//                       className="px-5 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
+//                       className="px-5 py-2 bg-gradient-to-r from-brand-gold/10 to-status-warning/10 border border-status-warning/30 rounded-full text-status-warning font-medium"
 //                     >
 //                       {tech}
 //                     </motion.div>
 //                   ))
 //                 ) : (
-//                   <p className="text-gray-500 dark:text-gray-400 italic">
+//                   <p className="text-ink-caption dark:text-gray-400 italic">
 //                     No technologies specified
 //                     </p>
 //                 )}
@@ -1002,9 +1002,9 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
   }, [skillContent, hasUnsavedChanges, onSave]);
 
   const getCharCountColor = (current: number, max: number) => {
-    if (current >= max) return "text-red-500";
-    if (current >= max * 0.9) return "text-yellow-500";
-    return "text-gray-500";
+    if (current >= max) return "text-status-error";
+    if (current >= max * 0.9) return "text-brand-gold";
+    return "text-ink-caption";
   };
 
   // Function to get image for category based on index
@@ -1124,12 +1124,12 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
     if (!skillContent) return;
 
     const colors = [
-      "from-red-500 to-pink-600",
-      "from-yellow-500 to-orange-600",
-      "from-indigo-500 to-purple-600",
-      "from-cyan-500 to-blue-600",
-      "from-emerald-500 to-green-600",
-      "from-violet-500 to-purple-600",
+      "from-status-error to-status-error",
+      "from-brand-gold to-status-warning",
+      "from-status-info to-brand-gold",
+      "from-status-info to-status-info",
+      "from-status-success to-status-success",
+      "from-brand-gold to-brand-gold",
     ];
 
     const newCategory: SkillCategory = {
@@ -1274,14 +1274,14 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
     return (
       <section
         id="skills"
-        className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
+        className="py-20 bg-surface-card dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              My <span className="text-orange-500">Skills</span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-ink dark:text-white mb-4">
+              My <span className="text-status-warning">Skills</span>
             </h2>
-            <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-ink-paragraph dark:text-gray-300 max-w-3xl mx-auto">
               No skills data provided
             </p>
           </div>
@@ -1293,7 +1293,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
   return (
     <section
       id="skills"
-      className="py-20 text-justify bg-white dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
+      className="py-20 text-justify bg-surface-card dark:bg-gray-900 transition-colors duration-300 min-h-[80vh]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Content Wrapper */}
@@ -1304,7 +1304,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
               {isEditing ? (
                 <>
                   {/* Auto-save indicator */}
-                  <div className="flex items-center gap-2 mr-2 text-sm text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
+                  <div className="flex items-center gap-2 mr-2 text-sm text-ink-caption dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-2 rounded-full backdrop-blur-sm">
                     {isAutoSaving ? (
                       <div className="flex items-center gap-1">
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -1312,12 +1312,12 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                       </div>
                     ) : hasUnsavedChanges ? (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <div className="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
                         <span>Unsaved changes</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div className="w-2 h-2 bg-status-success rounded-full"></div>
                         <span>Saved {formatLastSavedTime()}</span>
                       </div>
                     )}
@@ -1325,14 +1325,14 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
 
                   <button
                     onClick={handleSave}
-                    className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors shadow-lg"
+                    className="p-3 bg-status-success text-white rounded-full hover:bg-status-success transition-colors shadow-lg"
                     title="Save Changes"
                   >
                     <Save className="w-6 h-6" />
                   </button>
                   <button
                     onClick={handleCancel}
-                    className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg"
+                    className="p-3 bg-status-error text-white rounded-full hover:bg-status-error transition-colors shadow-lg"
                     title="Cancel Editing"
                   >
                     <X className="w-6 h-6" />
@@ -1341,10 +1341,10 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
               ) : (
                 <button
                   onClick={handleEditStart}
-                  className="p-3 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-lg"
+                  className="p-3 bg-ink-light dark:bg-gray-700 rounded-full hover:bg-ink-light dark:hover:bg-gray-600 transition-colors shadow-lg"
                   title="Edit Skills"
                 >
-                  <Edit className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+                  <Edit className="w-6 h-6 text-ink-paragraph dark:text-gray-300" />
                 </button>
               )}
             </div>
@@ -1355,7 +1355,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   type="text"
                   value={skillContent.heading}
                   maxLength={CHAR_LIMITS.heading}
-                  className="w-full bg-gray-100 dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner mb-4"
+                  className="w-full bg-ink-light dark:bg-gray-800 text-center text-4xl lg:text-5xl font-bold text-ink-paragraph dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner mb-4"
                   onChange={(e) =>
                     handleContentChange("heading", e.target.value)
                   }
@@ -1371,10 +1371,10 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
               </div>
             ) : (
               <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-                <span className="text-gray-900 dark:text-white">
+                <span className="text-ink dark:text-white">
                   {skillContent.heading.split(" ")[0]}
                 </span>{" "}
-                <span className="text-orange-500">
+                <span className="text-status-warning">
                   {skillContent.heading.split(" ").slice(1).join(" ")}
                 </span>
               </h2>
@@ -1388,7 +1388,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   onChange={(e) =>
                     handleContentChange("subtitle", e.target.value)
                   }
-                  className="w-full bg-gray-100 dark:bg-gray-800 text-center text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner"
+                  className="w-full bg-ink-light dark:bg-gray-800 text-center text-xl text-ink-paragraph dark:text-gray-300 max-w-3xl mx-auto rounded-xl p-3 resize-none border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none transition-all shadow-inner"
                   rows={2}
                   placeholder="Enter subtitle describing your skills"
                 />
@@ -1402,7 +1402,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                 </div>
               </div>
             ) : (
-              <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+              <p className="text-xl text-ink-paragraph dark:text-gray-300 max-w-3xl mx-auto">
                 {skillContent.subtitle}
               </p>
             )}
@@ -1413,7 +1413,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
             <div className="text-center mb-12 w-full flex justify-center">
               <button
                 onClick={addNewCategory}
-                className="px-6 py-3 bg-yellow-500 text-white font-semibold rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                className="px-6 py-3 bg-brand-gold text-white font-semibold rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2"
                 title="Add a new skill category"
               >
                 <Plus className="w-5 h-5" />
@@ -1427,14 +1427,14 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
             {skillContent.categories.map((category, categoryIndex) => (
               <div
                 key={categoryIndex}
-                className="bg-gray-50 dark:bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 dark:border-gray-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-[1.01] relative group shadow-2xl dark:shadow-none transform translate-y-12 animate-[slideUp_0.8s_ease-out_forwards]"
+                className="bg-ink-offwhite dark:bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-ink-light dark:border-gray-700 hover:border-status-warning/50 transition-all duration-300 hover:scale-[1.01] relative group shadow-2xl dark:shadow-none transform translate-y-12 animate-[slideUp_0.8s_ease-out_forwards]"
                 style={{ animationDelay: `${0.8 + categoryIndex * 0.1}s` }}
               >
                 {/* Category Remove Button */}
                 {isEditing && skillContent.categories.length > 1 && (
                   <button
                     onClick={() => removeCategory(categoryIndex)}
-                    className="absolute -top-2 -right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 shadow-md"
+                    className="absolute -top-2 -right-2 p-2 bg-status-error text-white rounded-full hover:bg-status-error transition-colors opacity-0 group-hover:opacity-100 shadow-md"
                     title="Remove Category"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -1477,7 +1477,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                               });
                             }
                           }}
-                          className="bg-gray-100 dark:bg-gray-800 text-2xl font-bold text-gray-900 dark:text-white rounded-lg p-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none flex-1"
+                          className="bg-ink-light dark:bg-gray-800 text-2xl font-bold text-ink dark:text-white rounded-lg p-2 border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none flex-1"
                           placeholder="Category Title"
                         />
                         <div
@@ -1491,7 +1491,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                         </div>
                       </div>
                     ) : (
-                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                      <h3 className="text-2xl font-bold text-ink dark:text-white">
                         {category.title}
                       </h3>
                     )}
@@ -1500,7 +1500,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   {isEditing && (
                     <button
                       onClick={() => addNewSkill(categoryIndex)}
-                      className="px-4 py-3.5 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600 transition-colors flex items-center gap-1 shadow-md ml-4"
+                      className="px-4 py-3.5 bg-brand-gold text-white rounded-lg text-sm hover:bg-brand-gold transition-colors flex items-center gap-1 shadow-md ml-4"
                       title="Add Skill"
                     >
                       <Plus className="w-6 h-6" />
@@ -1510,7 +1510,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
 
                 <div className="space-y-6">
                   {!category.skills || category.skills.length === 0 ? (
-                    <p className="text-gray-500 dark:text-gray-400 italic text-center py-4">
+                    <p className="text-ink-caption dark:text-gray-400 italic text-center py-4">
                       No skills in this category
                     </p>
                   ) : (
@@ -1518,7 +1518,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                       <div key={skillIndex} className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center flex-1 min-w-0">
-                            <skill.icon className="w-6 h-6 text-orange-500 mr-4 flex-shrink-0" />
+                            <skill.icon className="w-6 h-6 text-status-warning mr-4 flex-shrink-0" />
                             {isEditing ? (
                               <div className="space-y-1 flex-1 min-w-0">
                                 <input
@@ -1533,7 +1533,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                                       e.target.value
                                     )
                                   }
-                                  className="flex-1 min-w-0 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-medium rounded-lg p-2 mr-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                                  className="flex-1 min-w-0 bg-ink-light dark:bg-gray-800 text-ink-paragraph dark:text-gray-200 font-medium rounded-lg p-2 mr-2 border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                                   placeholder="Skill name"
                                 />
                                 <div
@@ -1547,7 +1547,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                                 </div>
                               </div>
                             ) : (
-                              <span className="text-gray-700 dark:text-gray-200 font-medium truncate">
+                              <span className="text-ink-paragraph dark:text-gray-200 font-medium truncate">
                                 {skill.name}
                               </span>
                             )}
@@ -1569,29 +1569,29 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                                       parseInt(e.target.value) || 0
                                     )
                                   }
-                                  className="w-16 bg-gray-100 dark:bg-gray-800 text-center text-yellow-500 font-semibold rounded-lg p-2 border-2 border-dashed border-gray-400 dark:border-gray-600 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none"
+                                  className="w-16 bg-ink-light dark:bg-gray-800 text-center text-brand-gold font-semibold rounded-lg p-2 border-2 border-dashed border-ink-caption dark:border-gray-600 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none"
                                 />
                                 <button
                                   onClick={() =>
                                     removeSkill(categoryIndex, skillIndex)
                                   }
-                                  className="p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-sm"
+                                  className="p-3 bg-status-error text-white rounded-lg hover:bg-status-error transition-colors shadow-sm"
                                   title="Remove Skill"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                               </>
                             ) : (
-                              <span className="text-yellow-500 font-semibold text-lg">
+                              <span className="text-brand-gold font-semibold text-lg">
                                 {skill.level}%
                               </span>
                             )}
                           </div>
                         </div>
 
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
+                        <div className="w-full bg-ink-light dark:bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
                           <div
-                            className={`h-full rounded-full bg-orange-500 transition-all duration-1000 ease-out`}
+                            className={`h-full rounded-full bg-status-warning transition-all duration-1000 ease-out`}
                             style={{
                               width: `${skill.level || 0}%`,
                               transitionDelay: `${0.8 + categoryIndex * 0.1}s`,
@@ -1608,7 +1608,7 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
 
           {/* Technologies */}
           <div className="mt-20 transform translate-y-12 animate-[slideUp_0.8s_ease-out_1.2s_forwards]">
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8 border-b-2 border-orange-500/50 pb-2 max-w-lg mx-auto">
+            <h3 className="text-3xl font-bold text-ink dark:text-white text-center mb-8 border-b-2 border-status-warning/50 pb-2 max-w-lg mx-auto">
               Technologies
             </h3>
 
@@ -1619,12 +1619,12 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                   value={technologiesInput}
                   maxLength={CHAR_LIMITS.technologies}
                   onChange={(e) => handleTechnologiesChange(e.target.value)}
-                  className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-2 border-2 focus:border-purple-500 dark:focus:border-yellow-400 focus:outline-none max-w-4xl mx-auto block"
+                  className="w-full bg-ink-light dark:bg-gray-800 text-ink dark:text-white rounded-lg p-2 border-2 focus:border-brand-gold dark:focus:border-yellow-400 focus:outline-none max-w-4xl mx-auto block"
                   placeholder="Enter technologies separated by commas (e.g., JavaScript, React, Node.js)"
                 />
 
                 {isEditing && (
-                  <p className="text-center text-xs rounded-lg text-gray-400">
+                  <p className="text-center text-xs rounded-lg text-ink-caption">
                     Data should be separated by commas (e.g., data1, data2,
                     data3)
                   </p>
@@ -1646,13 +1646,13 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                       <motion.div
                         key={index}
                         whileHover={{ scale: 1.05 }}
-                        className="px-5 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
+                        className="px-5 py-2 bg-gradient-to-r from-brand-gold/10 to-status-warning/10 border border-status-warning/30 rounded-full text-status-warning font-medium"
                       >
                         {tech}
                       </motion.div>
                     ))
                   ) : (
-                    <p className="text-gray-500 dark:text-gray-400 italic">
+                    <p className="text-ink-caption dark:text-gray-400 italic">
                       No technologies specified
                     </p>
                   )}
@@ -1666,13 +1666,13 @@ const Skills: React.FC<SkillsProps> = ({ content, onSave }) => {
                     <motion.div
                       key={index}
                       whileHover={{ scale: 1.05 }}
-                      className="px-5 py-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 font-medium"
+                      className="px-5 py-2 bg-gradient-to-r from-brand-gold/10 to-status-warning/10 border border-status-warning/30 rounded-full text-status-warning font-medium"
                     >
                       {tech}
                     </motion.div>
                   ))
                 ) : (
-                  <p className="text-gray-500 dark:text-gray-400 italic">
+                  <p className="text-ink-caption dark:text-gray-400 italic">
                     No technologies specified
                   </p>
                 )}

@@ -23,7 +23,7 @@ export function Clients() {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl text-foreground mb-4">
-            Trusted by <span className="text-yellow-500">Leading Companies</span>
+            Trusted by <span className="text-brand-gold">Leading Companies</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             I've had the privilege of working with amazing companies across various 
@@ -35,7 +35,7 @@ export function Clients() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center hover:scale-105 transition-transform duration-300">
-              <div className="text-3xl sm:text-4xl text-yellow-500 mb-2">{stat.number}</div>
+              <div className="text-3xl sm:text-4xl text-brand-gold mb-2">{stat.number}</div>
               <p className="text-muted-foreground">{stat.label}</p>
             </div>
           ))}
@@ -46,10 +46,10 @@ export function Clients() {
           {clients.map((client) => (
             <div
               key={client.name}
-              className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+              className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-surface-main dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300"
             >
               <div className="text-center">
-                <div className="text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1">
+                <div className="text-lg text-foreground group-hover:text-brand-yellow transition-colors duration-300 mb-1">
                   {client.name}
                 </div>
                 <div className="text-xs text-muted-foreground">{client.industry}</div>
@@ -59,7 +59,7 @@ export function Clients() {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center bg-gradient-to-r from-yellow-50 to-card dark:from-yellow-900/20 dark:to-card rounded-2xl p-8">
+        <div className="text-center bg-gradient-to-r from-surface-main to-card dark:from-yellow-900/20 dark:to-card rounded-2xl p-8">
           <h3 className="text-2xl text-foreground mb-4">
             Ready to join these successful companies?
           </h3>
@@ -69,7 +69,7 @@ export function Clients() {
           </p>
           <a
             href="#contact"
-            className="inline-flex items-center px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500 hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="inline-flex items-center px-8 py-3 bg-brand-yellow text-ink rounded-lg hover:bg-brand-gold hover:scale-105 hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             Start Your Project
           </a>

@@ -37,8 +37,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes = {
 //     sm: "h-8 px-3 text-sm",
@@ -392,7 +392,7 @@
 //     return (
 //       <section ref={clientsRef} className="py-20 bg-background">
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-//           <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
+//           <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
 //           <p className="text-muted-foreground mt-4">Loading clients data...</p>
 //         </div>
 //       </section>
@@ -409,7 +409,7 @@
 //             <Button
 //               onClick={handleEdit}
 //               size='sm'
-//               className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//               className='bg-status-error hover:bg-status-error shadow-md text-white'
 //             >
 //               <Edit2 className='w-4 h-4 mr-2' />
 //               Add Clients
@@ -426,7 +426,7 @@
 //         {/* Auto-save indicator */}
 //         {isAutoSaving && (
 //           <div className="fixed top-4 right-4 z-50">
-//             <div className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg shadow-lg text-sm">
+//             <div className="flex items-center gap-2 px-3 py-2 bg-status-info text-white rounded-lg shadow-lg text-sm">
 //               <Loader2 className="w-4 h-4 animate-spin" />
 //               Auto-saving...
 //             </div>
@@ -439,7 +439,7 @@
 //             <Button
 //               onClick={handleEdit}
 //               size='sm'
-//               className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//               className='bg-status-error hover:bg-status-error shadow-md text-white'
 //             >
 //               <Edit2 className='w-4 h-4 mr-2' />
 //               Edit
@@ -449,7 +449,7 @@
 //               <Button
 //                 onClick={handleSave}
 //                 size='sm'
-//                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                 className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                 disabled={isSaving || isAutoSaving}
 //               >
 //                 {isSaving ? (
@@ -462,7 +462,7 @@
 //               <Button
 //                 onClick={handleCancel}
 //                 size='sm'
-//                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                 className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                 disabled={isSaving || isAutoSaving}
 //               >
 //                 <X className='w-4 h-4 mr-2' />
@@ -472,7 +472,7 @@
 //                 onClick={addClient}
 //                 variant='outline'
 //                 size='sm'
-//                 className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+//                 className='bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md'
 //                 disabled={isAutoSaving}
 //               >
 //                 <Plus className='w-4 h-4 mr-2' />
@@ -491,11 +491,11 @@
 //                   type="text"
 //                   value={displayData.subtitle}
 //                   onChange={(e) => updateHeading('subtitle', e.target.value)}
-//                   className="text-lg text-muted-foreground mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+//                   className="text-lg text-muted-foreground mb-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
 //                   placeholder="Subtitle (e.g., Trusted by amazing companies)"
 //                   maxLength={TEXT_LIMITS.SUBTITLE}
 //                 />
-//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                   {displayData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
 //                 </div>
 //               </div>
@@ -504,11 +504,11 @@
 //                   type="text"
 //                   value={displayData.heading}
 //                   onChange={(e) => updateHeading('heading', e.target.value)}
-//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
 //                   placeholder="Heading (e.g., Clients & Partners)"
 //                   maxLength={TEXT_LIMITS.HEADING}
 //                 />
-//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                   {displayData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
 //                 </div>
 //               </div>
@@ -516,12 +516,12 @@
 //                 <textarea
 //                   value={displayData.description}
 //                   onChange={(e) => updateHeading('description', e.target.value)}
-//                   className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+//                   className="text-lg text-muted-foreground bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
 //                   rows="2"
 //                   placeholder="Description"
 //                   maxLength={TEXT_LIMITS.DESCRIPTION}
 //                 />
-//                 <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                 <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                   {displayData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
 //                 </div>
 //               </div>
@@ -563,17 +563,17 @@
 //                       type="text"
 //                       value={displayData.stats[stat.key]}
 //                       onChange={(e) => updateStat(stat.key, e.target.value)}
-//                       className="w-20 text-3xl sm:text-4xl text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+//                       className="w-20 text-3xl sm:text-4xl text-brand-gold mb-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-center"
 //                       placeholder="50+"
 //                       maxLength={TEXT_LIMITS.STAT_VALUE}
 //                     />
-//                     <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                     <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                       {displayData.stats[stat.key]?.length || 0}/{TEXT_LIMITS.STAT_VALUE}
 //                     </div>
 //                   </div>
 //                 ) : (
 //                   displayData.stats[stat.key] && (
-//                     <div className="text-3xl sm:text-4xl text-yellow-500 mb-2">{displayData.stats[stat.key]}</div>
+//                     <div className="text-3xl sm:text-4xl text-brand-gold mb-2">{displayData.stats[stat.key]}</div>
 //                   )
 //                 )}
 //                 {isEditing ? (
@@ -582,11 +582,11 @@
 //                       type="text"
 //                       value={displayData.statLabels[stat.key]}
 //                       onChange={(e) => updateStatLabel(stat.key, e.target.value)}
-//                       className="text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
+//                       className="text-muted-foreground bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-center w-full"
 //                       placeholder={stat.defaultLabel}
 //                       maxLength={TEXT_LIMITS.STAT_LABEL}
 //                     />
-//                     <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                     <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                       {displayData.statLabels[stat.key]?.length || 0}/{TEXT_LIMITS.STAT_LABEL}
 //                     </div>
 //                   </div>
@@ -606,14 +606,14 @@
 //             {displayData.clients.map((client, index) => (
 //               <div
 //                 key={client.id}
-//                 className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 relative"
+//                 className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-surface-main dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 relative"
 //               >
 //                 {isEditing && (
 //                   <Button
 //                     onClick={() => removeClient(index)}
 //                     size='sm'
 //                     variant='outline'
-//                     className='absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1'
+//                     className='absolute -top-2 -right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error p-1'
 //                     disabled={isAutoSaving}
 //                   >
 //                     <Trash2 className='w-3 h-3' />
@@ -627,11 +627,11 @@
 //                           type="text"
 //                           value={client.name}
 //                           onChange={(e) => updateClient(index, 'name', e.target.value)}
-//                           className="w-full text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+//                           className="w-full text-lg text-foreground group-hover:text-brand-yellow transition-colors duration-300 mb-1 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-center"
 //                           placeholder="Client Name"
 //                           maxLength={TEXT_LIMITS.CLIENT_NAME}
 //                         />
-//                         <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                         <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                           {client.name.length}/{TEXT_LIMITS.CLIENT_NAME}
 //                         </div>
 //                       </div>
@@ -640,18 +640,18 @@
 //                           type="text"
 //                           value={client.industry}
 //                           onChange={(e) => updateClient(index, 'industry', e.target.value)}
-//                           className="w-full text-xs text-muted-foreground bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+//                           className="w-full text-xs text-muted-foreground bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-center"
 //                           placeholder="Industry"
 //                           maxLength={TEXT_LIMITS.CLIENT_INDUSTRY}
 //                         />
-//                         <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                         <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                           {client.industry.length}/{TEXT_LIMITS.CLIENT_INDUSTRY}
 //                         </div>
 //                       </div>
 //                     </>
 //                   ) : (
 //                     <>
-//                       <div className="text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1">
+//                       <div className="text-lg text-foreground group-hover:text-brand-yellow transition-colors duration-300 mb-1">
 //                         {client.name}
 //                       </div>
 //                       <div className="text-xs text-muted-foreground">{client.industry}</div>
@@ -667,7 +667,7 @@
 //                   onClick={addClient}
 //                   variant='outline'
 //                   size='lg'
-//                   className='bg-blue-50 hover:bg-blue-100 text-blue-700'
+//                   className='bg-status-info/10 hover:bg-status-info/15 text-status-info'
 //                   disabled={isAutoSaving}
 //                 >
 //                   <Plus className='w-5 h-5 mr-2' />
@@ -681,8 +681,8 @@
 //           !isEditing && hasData && data.clients.length === 0 && (
 //             <div className="text-center py-12 mb-12">
 //               <div className="max-w-md mx-auto">
-//                 <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-//                   <Plus className="w-8 h-8 text-gray-400" />
+//                 <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+//                   <Plus className="w-8 h-8 text-ink-caption" />
 //                 </div>
 //                 <h4 className="text-lg font-semibold text-foreground mb-2">
 //                   No Clients Added
@@ -693,7 +693,7 @@
 //                 <Button
 //                   onClick={handleEdit}
 //                   size='md'
-//                   className='bg-yellow-500 hover:bg-yellow-600 text-white'
+//                   className='bg-brand-gold hover:bg-brand-gold text-white'
 //                 >
 //                   <Plus className='w-4 h-4 mr-2' />
 //                   Add Clients
@@ -746,8 +746,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -1164,7 +1164,7 @@ export function Clients({
     return (
       <section ref={clientsRef} className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
           <p className="text-muted-foreground mt-4">Loading clients data...</p>
         </div>
       </section>
@@ -1181,7 +1181,7 @@ export function Clients({
             <Button
               onClick={handleEdit}
               size="sm"
-              className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+              className="bg-status-error hover:bg-status-error shadow-md text-white"
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Add Clients
@@ -1199,16 +1199,16 @@ export function Clients({
         {isEditing && (
           <div className="mb-4 flex items-center gap-2 text-sm">
             {isAutoSaving && (
-              <div className="flex items-center gap-1 text-blue-500">
+              <div className="flex items-center gap-1 text-status-info">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Auto-saving...</span>
               </div>
             )}
             {hasUnsavedChanges && !isAutoSaving && (
-              <div className="text-yellow-500">● Unsaved changes</div>
+              <div className="text-brand-gold">● Unsaved changes</div>
             )}
             {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-              <div className="text-green-500">
+              <div className="text-status-success">
                 ✓ Auto-saved {lastSaved.toLocaleTimeString()}
               </div>
             )}
@@ -1221,7 +1221,7 @@ export function Clients({
             <Button
               onClick={handleEdit}
               size="sm"
-              className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+              className="bg-status-error hover:bg-status-error shadow-md text-white"
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Edit
@@ -1231,7 +1231,7 @@ export function Clients({
               <Button
                 onClick={handleSave}
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                className="bg-status-success hover:bg-status-success text-white shadow-md"
                 disabled={isSaving || isAutoSaving}
               >
                 {isSaving ? (
@@ -1244,7 +1244,7 @@ export function Clients({
               <Button
                 onClick={handleCancel}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                className="bg-status-error hover:bg-status-error shadow-md text-white"
                 disabled={isSaving || isAutoSaving}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -1254,7 +1254,7 @@ export function Clients({
                 onClick={addClient}
                 variant="outline"
                 size="sm"
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                className="bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md"
                 disabled={isAutoSaving}
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -1273,11 +1273,11 @@ export function Clients({
                   type="text"
                   value={displayData.subtitle}
                   onChange={(e) => updateHeading("subtitle", e.target.value)}
-                  className="text-lg text-muted-foreground mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  className="text-lg text-muted-foreground mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
                   placeholder="Subtitle (e.g., Trusted by amazing companies)"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {displayData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
                 </div>
               </div>
@@ -1286,11 +1286,11 @@ export function Clients({
                   type="text"
                   value={displayData.heading}
                   onChange={(e) => updateHeading("heading", e.target.value)}
-                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
                   placeholder="Heading (e.g., Clients & Partners)"
                   maxLength={TEXT_LIMITS.HEADING}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {displayData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
                 </div>
               </div>
@@ -1298,12 +1298,12 @@ export function Clients({
                 <textarea
                   value={displayData.description}
                   onChange={(e) => updateHeading("description", e.target.value)}
-                  className="text-lg text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
+                  className="text-lg text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-2xl mx-auto"
                   rows="2"
                   placeholder="Description"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
                 />
-                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                   {displayData.description?.length || 0}/
                   {TEXT_LIMITS.DESCRIPTION}
                 </div>
@@ -1358,18 +1358,18 @@ export function Clients({
                       type="text"
                       value={displayData.stats[stat.key]}
                       onChange={(e) => updateStat(stat.key, e.target.value)}
-                      className="w-20 text-3xl sm:text-4xl text-yellow-500 mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                      className="w-20 text-3xl sm:text-4xl text-brand-gold mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-center"
                       placeholder="50+"
                       maxLength={TEXT_LIMITS.STAT_VALUE}
                     />
-                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                       {displayData.stats[stat.key]?.length || 0}/
                       {TEXT_LIMITS.STAT_VALUE}
                     </div>
                   </div>
                 ) : (
                   displayData.stats[stat.key] && (
-                    <div className="text-3xl sm:text-4xl text-yellow-500 mb-2">
+                    <div className="text-3xl sm:text-4xl text-brand-gold mb-2">
                       {displayData.stats[stat.key]}
                     </div>
                   )
@@ -1382,11 +1382,11 @@ export function Clients({
                       onChange={(e) =>
                         updateStatLabel(stat.key, e.target.value)
                       }
-                      className="text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center w-full"
+                      className="text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-center w-full"
                       placeholder={stat.defaultLabel}
                       maxLength={TEXT_LIMITS.STAT_LABEL}
                     />
-                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                       {displayData.statLabels[stat.key]?.length || 0}/
                       {TEXT_LIMITS.STAT_LABEL}
                     </div>
@@ -1409,14 +1409,14 @@ export function Clients({
             {displayData.clients.map((client, index) => (
               <div
                 key={client.id}
-                className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 relative"
+                className="group bg-muted rounded-xl p-6 h-24 flex items-center justify-center hover:bg-surface-main dark:hover:bg-yellow-900/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300 relative"
               >
                 {isEditing && (
                   <Button
                     onClick={() => removeClient(index)}
                     size="sm"
                     variant="outline"
-                    className="absolute -top-2 -right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1"
+                    className="absolute -top-2 -right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error p-1"
                     disabled={isAutoSaving}
                   >
                     <Trash2 className="w-3 h-3" />
@@ -1432,11 +1432,11 @@ export function Clients({
                           onChange={(e) =>
                             updateClient(index, "name", e.target.value)
                           }
-                          className="w-full text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                          className="w-full text-lg text-foreground group-hover:text-brand-yellow transition-colors duration-300 mb-1 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-center"
                           placeholder="Client Name"
                           maxLength={TEXT_LIMITS.CLIENT_NAME}
                         />
-                        <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                        <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                           {client.name.length}/{TEXT_LIMITS.CLIENT_NAME}
                         </div>
                       </div>
@@ -1447,18 +1447,18 @@ export function Clients({
                           onChange={(e) =>
                             updateClient(index, "industry", e.target.value)
                           }
-                          className="w-full text-xs text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 text-center"
+                          className="w-full text-xs text-muted-foreground bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 text-center"
                           placeholder="Industry"
                           maxLength={TEXT_LIMITS.CLIENT_INDUSTRY}
                         />
-                        <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                        <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                           {client.industry.length}/{TEXT_LIMITS.CLIENT_INDUSTRY}
                         </div>
                       </div>
                     </>
                   ) : (
                     <>
-                      <div className="text-lg text-foreground group-hover:text-yellow-600 transition-colors duration-300 mb-1">
+                      <div className="text-lg text-foreground group-hover:text-brand-yellow transition-colors duration-300 mb-1">
                         {client.name}
                       </div>
                       <div className="text-xs text-muted-foreground">
@@ -1478,7 +1478,7 @@ export function Clients({
                   onClick={addClient}
                   variant="outline"
                   size="lg"
-                  className="bg-blue-50 hover:bg-blue-100 text-blue-700"
+                  className="bg-status-info/10 hover:bg-status-info/15 text-status-info"
                   disabled={isAutoSaving}
                 >
                   <Plus className="w-5 h-5 mr-2" />
@@ -1494,8 +1494,8 @@ export function Clients({
           data.clients.length === 0 && (
             <div className="text-center py-12 mb-12">
               <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Plus className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                  <Plus className="w-8 h-8 text-ink-caption" />
                 </div>
                 <h4 className="text-lg font-semibold text-foreground mb-2">
                   No Clients Added
@@ -1507,7 +1507,7 @@ export function Clients({
                 <Button
                   onClick={handleEdit}
                   size="md"
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                  className="bg-brand-gold hover:bg-brand-gold text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Clients

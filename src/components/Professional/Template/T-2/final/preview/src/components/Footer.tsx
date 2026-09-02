@@ -52,31 +52,31 @@ const defaultFooterData: FooterData = {
       icon: "Linkedin",
       label: "LinkedIn Profile",
       href: "https://linkedin.com/in/professional",
-      color: "hover:text-blue-600"
+      color: "hover:text-status-info"
     },
     {
       icon: "Github",
       label: "GitHub Profile",
       href: "https://github.com/professional",
-      color: "hover:text-gray-900 dark:hover:text-white"
+      color: "hover:text-ink dark:hover:text-white"
     },
     {
       icon: "Twitter",
       label: "Twitter Profile",
       href: "https://twitter.com/professional",
-      color: "hover:text-blue-400"
+      color: "hover:text-status-info"
     },
     {
       icon: "Mail",
       label: "Email Contact",
       href: "mailto:contact@professional.com",
-      color: "hover:text-green-500"
+      color: "hover:text-status-success"
     },
     {
       icon: "Instagram",
       label: "Instagram",
       href: "#",
-      color: "hover:text-pink-500"
+      color: "hover:text-status-error"
     }
   ],
   copyright: "© 2024 Professional. All rights reserved.",
@@ -113,7 +113,7 @@ export function Footer({ footerData }: FooterProps) {
   }, []);
 
   return (
-    <footer ref={footerRef} className="py-12 text-white bg-gray-900">
+    <footer ref={footerRef} className="py-12 text-white bg-ink">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 md:grid-cols-4">
           {/* Brand Section */}
@@ -125,8 +125,8 @@ export function Footer({ footerData }: FooterProps) {
             className="space-y-4 md:col-span-2"
           >
             <h3 className="text-2xl font-bold text-white">{data.logoText}</h3>
-            <p className="text-lg text-yellow-400">{data.tagline}</p>
-            <p className="leading-relaxed text-gray-400">
+            <p className="text-lg text-brand-yellow">{data.tagline}</p>
+            <p className="leading-relaxed text-ink-caption">
               {data.description}
             </p>
           </motion.div>
@@ -139,7 +139,7 @@ export function Footer({ footerData }: FooterProps) {
             viewport={{ once: true }}
             className="space-y-4"
           >
-            <h4 className="text-lg font-semibold text-yellow-400">Quick Links</h4>
+            <h4 className="text-lg font-semibold text-brand-yellow">Quick Links</h4>
             <div className="space-y-2">
               {data.quickLinks.map((link, index) => (
                 <motion.a
@@ -147,7 +147,7 @@ export function Footer({ footerData }: FooterProps) {
                   href={link.href}
                   whileHover={{ x: 5, color: '#fbbf24' }}
                   transition={{ duration: 0.2 }}
-                  className="block text-gray-400 transition-colors duration-300 hover:text-yellow-400"
+                  className="block text-ink-caption transition-colors duration-300 hover:text-brand-yellow"
                 >
                   {link.label}
                 </motion.a>
@@ -163,7 +163,7 @@ export function Footer({ footerData }: FooterProps) {
             viewport={{ once: true }}
             className="space-y-4"
           >
-            <h4 className="text-lg font-semibold text-yellow-400">More Links</h4>
+            <h4 className="text-lg font-semibold text-brand-yellow">More Links</h4>
             <div className="space-y-2">
               {data.moreLinks.map((link, index) => (
                 <motion.a
@@ -171,7 +171,7 @@ export function Footer({ footerData }: FooterProps) {
                   href={link.href}
                   whileHover={{ x: 5, color: '#fbbf24' }}
                   transition={{ duration: 0.2 }}
-                  className="block text-gray-400 transition-colors duration-300 hover:text-yellow-400"
+                  className="block text-ink-caption transition-colors duration-300 hover:text-brand-yellow"
                 >
                   {link.label}
                 </motion.a>
@@ -186,7 +186,7 @@ export function Footer({ footerData }: FooterProps) {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
-          className="grid gap-8 md:grid-cols-2 mt-8 pt-8 border-t border-gray-800"
+          className="grid gap-8 md:grid-cols-2 mt-8 pt-8 border-t border-ink-charcoal"
         >
           {/* Contact Info */}
          

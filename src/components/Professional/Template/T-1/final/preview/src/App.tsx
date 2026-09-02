@@ -24,7 +24,7 @@ const App: React.FC = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          PROFESSIONAL_API ? `${PROFESSIONAL_API}/${userId}/${professionalId}?template=template1` : `${LAMBDA.profTemplateDash}/${userId}/${professionalId}?template=template1`,
+          PROFESSIONAL_API ? `${PROFESSIONAL_API}/template-content/${userId}/${professionalId}?template=template1` : `${LAMBDA.profTemplateDash}/${userId}/${professionalId}?template=template1`,
           {
             method: "GET",
             headers: {
@@ -38,7 +38,9 @@ const App: React.FC = () => {
         }
 
         const data = await response.json();
-        setFinaleDataReview(data);
+        // self-hosted /template-content returns a bare { content, ... } object;
+        // the old Lambda returned an array — these components read data[0].content
+        setFinaleDataReview(Array.isArray(data) ? data : [data]);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching template data:", error);
@@ -105,7 +107,7 @@ const App: React.FC = () => {
 
   return (
     <DarkModeProvider>
-      <div className="relative min-h-screen transition-colors duration-300 bg-white dark:bg-gray-900">
+      <div className="relative min-h-screen transition-colors duration-300 bg-surface-main dark:bg-gray-900">
         <Navbar content={finaleDataReview[0].content.headerContent} />
         <Hero content={finaleDataReview[0].content.heroContent} />
         <About content={finaleDataReview[0].content.aboutContent} />

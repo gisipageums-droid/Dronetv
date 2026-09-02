@@ -24,38 +24,38 @@ const Hero: React.FC = () => {
       name: "Twitter",
       icon: Twitter,
       url: heroContent.socials.twitter,
-      color: "hover:text-blue-400",
+      color: "hover:text-status-info",
     },
     {
       name: "Instagram",
       icon: Instagram,
       url: heroContent.socials.instagram,
-      color: "hover:text-pink-400",
+      color: "hover:text-status-error",
     },
     {
       name: "LinkedIn",
       icon: Linkedin,
       url: heroContent.socials.linkedin,
-      color: "hover:text-blue-600",
+      color: "hover:text-status-info",
     },
     {
       name: "GitHub",
       icon: Github,
       url: heroContent.socials.github,
-      color: "hover:text-gray-400",
+      color: "hover:text-ink-caption",
     },
     {
       name: "Email",
       icon: Mail,
       url: `mailto:${heroContent.socials.email}`,
-      color: "hover:text-green-400",
+      color: "hover:text-status-success",
     },
   ];
 
   return (
     <section
       id="home"
-      className="bg-white dark:bg-gray-900 transition-colors duration-300 pt-40"
+      className="bg-surface-card dark:bg-gray-900 transition-colors duration-300 pt-40"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-40 relative">
         <motion.div
@@ -67,15 +67,15 @@ const Hero: React.FC = () => {
           {/* Left Side - Content */}
           <div className="space-y-8">
             <div className="space-y-6">
-              <motion.h1 className="text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight text-orange-500">
+              <motion.h1 className="text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight text-status-warning">
                 Hi, I'm {heroContent.name}
               </motion.h1>
 
-              <motion.p className="text-xl lg:text-2xl xl:text-3xl font-semibold text-black dark:text-white">
+              <motion.p className="text-xl lg:text-2xl xl:text-3xl font-semibold text-ink dark:text-white">
                 {heroContent.title}
               </motion.p>
 
-              <motion.p className="text-lg lg:text-xl leading-relaxed max-w-2xl text-gray-700 dark:text-gray-300">
+              <motion.p className="text-lg lg:text-xl leading-relaxed max-w-2xl text-ink-paragraph dark:text-gray-300">
                 {heroContent.description}
               </motion.p>
             </div>
@@ -84,14 +84,14 @@ const Hero: React.FC = () => {
             <motion.div className="grid grid-cols-2 gap-4 pt-4">
               <a
                 href="#projects"
-                className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-yellow-400 hover:bg-yellow-400 text-gray-900 dark:text-white hover:text-white text-center"
+                className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-brand-yellow hover:bg-brand-yellow text-ink dark:text-white hover:text-white text-center"
               >
                 View My Work
               </a>
 
               <a
                 href="#contact"
-                className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-yellow-400 hover:bg-yellow-400 text-gray-900 dark:text-white hover:text-white text-center"
+                className="px-8 py-4 rounded-full font-semibold text-xs md:text-lg border-2 transition-all duration-300 hover:scale-105 border-brand-yellow hover:bg-brand-yellow text-ink dark:text-white hover:text-white text-center"
               >
                 Get In Touch
               </a>
@@ -100,8 +100,8 @@ const Hero: React.FC = () => {
 
           {/* Right Side - Profile Image */}
           <motion.div className="flex justify-center lg:justify-end">
-            <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full p-1 bg-gradient-to-r from-yellow-500 via-orange-500 to-indigo-yellow-700">
-              <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-purple-500/10 to-blue-600/10 dark:from-yellow-400/10 dark:to-red-500/10 flex items-center justify-center relative">
+            <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full p-1 bg-gradient-to-r from-brand-gold via-status-warning to-indigo-yellow-700">
+              <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-brand-gold/10 to-status-info/10 dark:from-yellow-400/10 dark:to-red-500/10 flex items-center justify-center relative">
                 <div className="w-full h-full relative">
                   <img
                     src={heroContent.image}
@@ -116,11 +116,11 @@ const Hero: React.FC = () => {
 
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-10 bg-yellow-400 animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full opacity-10 bg-orange-500 animate-bounce" />
-          <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full opacity-5 bg-red-500 animate-pulse" />
-          <div className="absolute bottom-0 left-1/1 w-10 h-10 rounded-full opacity-5 bg-red-500 animate-bounce-slow" />
-          <div className="absolute top-1 left-1/4 w-8 h-8 rounded-full opacity-5 bg-red-500 animate-bounce-slow" />
+          <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-10 bg-brand-yellow animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full opacity-10 bg-status-warning animate-bounce" />
+          <div className="absolute top-1/2 left-1/4 w-16 h-16 rounded-full opacity-5 bg-status-error animate-pulse" />
+          <div className="absolute bottom-0 left-1/1 w-10 h-10 rounded-full opacity-5 bg-status-error animate-bounce-slow" />
+          <div className="absolute top-1 left-1/4 w-8 h-8 rounded-full opacity-5 bg-status-error animate-bounce-slow" />
         </div>
       </div>
     </section>

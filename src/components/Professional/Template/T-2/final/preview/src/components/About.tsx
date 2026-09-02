@@ -68,7 +68,7 @@ export function About({ aboutData }: AboutProps) {
     return (
       <section ref={aboutRef} id="about" className="relative py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="w-8 h-8 animate-spin mx-auto text-yellow-500 border-2 border-yellow-500 border-t-transparent rounded-full"></div>
+          <div className="w-8 h-8 animate-spin mx-auto text-brand-gold border-2 border-brand-gold border-t-transparent rounded-full"></div>
           <p className="text-muted-foreground mt-4">Loading about data...</p>
         </div>
       </section>
@@ -92,8 +92,8 @@ export function About({ aboutData }: AboutProps) {
               transition={{ duration: 0.3 }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-yellow-400 rounded-3xl transform -rotate-6"></div>
-              <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl">
+              <div className="absolute inset-0 bg-brand-yellow rounded-3xl transform -rotate-6"></div>
+              <div className="relative bg-surface-card rounded-3xl overflow-hidden shadow-2xl">
                 <ImageWithFallback
                   src={data.imageSrc}
                   alt="About me"
@@ -121,7 +121,7 @@ export function About({ aboutData }: AboutProps) {
               <h2 className="text-3xl sm:text-4xl text-foreground font-bold">
                 {data.heading}
               </h2>
-              <p className="text-xl text-yellow-500 font-semibold mt-2">
+              <p className="text-xl text-brand-gold font-semibold mt-2">
                 {data.subtitle}
               </p>
             </motion.div>
@@ -160,8 +160,8 @@ export function About({ aboutData }: AboutProps) {
             >
               {data.skills.map((skill, index) => (
                 <div key={index} className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                  <span className="text-gray-700">{skill}</span>
+                  <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
+                  <span className="text-ink-paragraph">{skill}</span>
                 </div>
               ))}
             </motion.div>

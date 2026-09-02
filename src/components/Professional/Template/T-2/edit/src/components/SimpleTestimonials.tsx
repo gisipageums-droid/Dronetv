@@ -35,8 +35,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants: Record<string, string> = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes: Record<string, string> = {
 //     sm: "h-8 px-3 text-sm",
@@ -215,7 +215,7 @@
 //       return (
 //         <>
 //           {words[0]}{' '}
-//           <span className="text-yellow-500">
+//           <span className="text-brand-gold">
 //             {words.slice(1).join(' ')}
 //           </span>
 //         </>
@@ -233,7 +233,7 @@
 //             <Button
 //               onClick={handleEdit}
 //               size='sm'
-//               className='bg-red-500 hover:bg-red-600 text-white shadow-md'
+//               className='bg-status-error hover:bg-status-error text-white shadow-md'
 //             >
 //               <Edit2 className='w-4 h-4 mr-2' />
 //               Edit
@@ -243,7 +243,7 @@
 //               <Button
 //                 onClick={handleSave}
 //                 size='sm'
-//                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                 className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                 disabled={isSaving}
 //               >
 //                 {isSaving ? (
@@ -256,7 +256,7 @@
 //               <Button
 //                 onClick={handleCancel}
 //                 size='sm'
-//                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                 className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                 disabled={isSaving}
 //               >
 //                 <X className='w-4 h-4 mr-2' />
@@ -266,7 +266,7 @@
 //                 onClick={addTestimonial}
 //                 variant='outline'
 //                 size='sm'
-//                 className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+//                 className='bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md'
 //               >
 //                 <Plus className='w-4 h-4 mr-2' />
 //                 Add Testimonial
@@ -290,11 +290,11 @@
 //                   type="text"
 //                   value={tempData.subtitle || ""}
 //                   onChange={(e) => updateSection('subtitle', e.target.value)}
-//                   className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+//                   className="text-lg text-brand-gold mb-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
 //                   placeholder="Subtitle"
 //                   maxLength={TEXT_LIMITS.SUBTITLE}
 //                 />
-//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                   {tempData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
 //                 </div>
 //               </div>
@@ -303,11 +303,11 @@
 //                   type="text"
 //                   value={tempData.heading || ""}
 //                   onChange={(e) => updateSection('heading', e.target.value)}
-//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
 //                   placeholder="Heading"
 //                   maxLength={TEXT_LIMITS.HEADING}
 //                 />
-//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                   {tempData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
 //                 </div>
 //               </div>
@@ -315,12 +315,12 @@
 //                 <textarea
 //                   value={tempData.description || ""}
 //                   onChange={(e) => updateSection('description', e.target.value)}
-//                   className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+//                   className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
 //                   rows={2}
 //                   placeholder="Description"
 //                   maxLength={TEXT_LIMITS.DESCRIPTION}
 //                 />
-//                 <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                 <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                   {tempData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
 //                 </div>
 //               </div>
@@ -333,7 +333,7 @@
 //                   whileInView={{ opacity: 1, y: 0 }}
 //                   transition={{ duration: 0.6, delay: 0.2 }}
 //                   viewport={{ once: true }}
-//                   className="text-lg text-yellow-500 mb-2"
+//                   className="text-lg text-brand-gold mb-2"
 //                 >
 //                   {data.subtitle}
 //                 </motion.p>
@@ -380,15 +380,15 @@
 //                     onClick={() => removeTestimonial(index)}
 //                     size='sm'
 //                     variant='outline'
-//                     className='absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1 z-10'
+//                     className='absolute top-2 right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error p-1 z-10'
 //                   >
 //                     <Trash2 className='w-3 h-3' />
 //                   </Button>
 //                 )}
 
 //                 {/* Quote Icon */}
-//                 <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mb-4">
-//                   <Quote className="w-6 h-6 text-gray-900" />
+//                 <div className="w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center mb-4">
+//                   <Quote className="w-6 h-6 text-ink" />
 //                 </div>
 
 //                 {/* Stars */}
@@ -400,7 +400,7 @@
 //                       className={isEditing ? "cursor-pointer" : "cursor-default"}
 //                     >
 //                       <Star
-//                         className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+//                         className={`w-5 h-5 ${i < testimonial.rating ? 'text-brand-yellow fill-current' : 'text-ink-light'}`}
 //                       />
 //                     </button>
 //                   ))}
@@ -413,10 +413,10 @@
 //                       <textarea
 //                         value={testimonial.content}
 //                         onChange={(e) => updateTestimonial(index, 'content', e.target.value)}
-//                         className="text-muted-foreground leading-relaxed w-full h-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 resize-none"
+//                         className="text-muted-foreground leading-relaxed w-full h-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 resize-none"
 //                         maxLength={TEXT_LIMITS.TESTIMONIAL_CONTENT}
 //                       />
-//                       <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                       <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                         {testimonial.content.length}/{TEXT_LIMITS.TESTIMONIAL_CONTENT}
 //                       </div>
 //                     </div>
@@ -435,11 +435,11 @@
 //                         type="text"
 //                         value={testimonial.project}
 //                         onChange={(e) => updateTestimonial(index, 'project', e.target.value)}
-//                         className="text-sm text-yellow-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+//                         className="text-sm text-brand-gold w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
 //                         placeholder="Project type"
 //                         maxLength={TEXT_LIMITS.PROJECT}
 //                       />
-//                       <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                       <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                         {testimonial.project.length}/{TEXT_LIMITS.PROJECT}
 //                       </div>
 //                     </div>
@@ -448,26 +448,26 @@
 //                         type="text"
 //                         value={testimonial.date}
 //                         onChange={(e) => updateTestimonial(index, 'date', e.target.value)}
-//                         className="text-sm text-gray-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+//                         className="text-sm text-ink-caption w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
 //                         placeholder="Date"
 //                         maxLength={TEXT_LIMITS.DATE}
 //                       />
-//                       <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                       <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                         {testimonial.date.length}/{TEXT_LIMITS.DATE}
 //                       </div>
 //                     </div>
 //                   </div>
 //                 ) : (
 //                   <div className="mb-4">
-//                     <p className="text-sm text-yellow-500">{testimonial.project}</p>
-//                     <p className="text-sm text-gray-500">{testimonial.date}</p>
+//                     <p className="text-sm text-brand-gold">{testimonial.project}</p>
+//                     <p className="text-sm text-ink-caption">{testimonial.date}</p>
 //                   </div>
 //                 )}
 
 //                 {/* Client Info - Fixed at bottom */}
-//                 <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-gray-200">
-//                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
-//                     <span className="text-gray-900 text-lg">
+//                 <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-ink-light">
+//                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-yellow to-brand-gold flex items-center justify-center flex-shrink-0">
+//                     <span className="text-ink text-lg">
 //                       {testimonial.name.charAt(0)}
 //                     </span>
 //                   </div>
@@ -479,11 +479,11 @@
 //                             type="text"
 //                             value={testimonial.name}
 //                             onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
-//                             className="text-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+//                             className="text-foreground w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 truncate"
 //                             placeholder="Client name"
 //                             maxLength={TEXT_LIMITS.CLIENT_NAME}
 //                           />
-//                           <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                           <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                             {testimonial.name.length}/{TEXT_LIMITS.CLIENT_NAME}
 //                           </div>
 //                         </div>
@@ -492,11 +492,11 @@
 //                             type="text"
 //                             value={testimonial.position}
 //                             onChange={(e) => updateTestimonial(index, 'position', e.target.value)}
-//                             className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+//                             className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 truncate"
 //                             placeholder="Position"
 //                             maxLength={TEXT_LIMITS.CLIENT_POSITION}
 //                           />
-//                           <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                           <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                             {testimonial.position.length}/{TEXT_LIMITS.CLIENT_POSITION}
 //                           </div>
 //                         </div>
@@ -561,8 +561,8 @@
 //   const baseClasses =
 //     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 //   const variants: Record<string, string> = {
-//     outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-//     default: "bg-blue-600 text-white hover:bg-blue-700",
+//     outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+//     default: "bg-status-info text-white hover:bg-status-info",
 //   };
 //   const sizes: Record<string, string> = {
 //     sm: "h-8 px-3 text-sm",
@@ -798,7 +798,7 @@
 //       return (
 //         <>
 //           {words[0]}{' '}
-//           <span className="text-yellow-500">
+//           <span className="text-brand-gold">
 //             {words.slice(1).join(' ')}
 //           </span>
 //         </>
@@ -816,19 +816,19 @@
 //           {isEditing && (
 //             <div className="flex items-center justify-end gap-4 mb-4 text-sm">
 //               {hasUnsavedChanges && (
-//                 <div className="flex items-center gap-2 text-orange-600">
-//                   <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+//                 <div className="flex items-center gap-2 text-status-warning">
+//                   <div className="w-2 h-2 bg-status-warning rounded-full animate-pulse"></div>
 //                   Unsaved changes
 //                 </div>
 //               )}
 //               {isAutoSaving && (
-//                 <div className="flex items-center gap-2 text-blue-600">
+//                 <div className="flex items-center gap-2 text-status-info">
 //                   <Loader2 className="w-3 h-3 animate-spin" />
 //                   Auto-saving...
 //                 </div>
 //               )}
 //               {lastSavedTime && !hasUnsavedChanges && !isAutoSaving && (
-//                 <div className="text-green-600">
+//                 <div className="text-status-success">
 //                   Saved {lastSavedTime.toLocaleTimeString()}
 //                 </div>
 //               )}
@@ -839,7 +839,7 @@
 //             <Button
 //               onClick={handleEdit}
 //               size='sm'
-//               className='bg-red-500 hover:bg-red-600 text-white shadow-md'
+//               className='bg-status-error hover:bg-status-error text-white shadow-md'
 //             >
 //               <Edit2 className='w-4 h-4 mr-2' />
 //               Edit
@@ -849,7 +849,7 @@
 //               <Button
 //                 onClick={handleSave}
 //                 size='sm'
-//                 className='bg-green-600 hover:bg-green-700 text-white shadow-md'
+//                 className='bg-status-success hover:bg-status-success text-white shadow-md'
 //                 disabled={isSaving}
 //               >
 //                 {isSaving ? (
@@ -862,7 +862,7 @@
 //               <Button
 //                 onClick={handleCancel}
 //                 size='sm'
-//                 className='bg-red-500 hover:bg-red-600 shadow-md text-white'
+//                 className='bg-status-error hover:bg-status-error shadow-md text-white'
 //                 disabled={isSaving}
 //               >
 //                 <X className='w-4 h-4 mr-2' />
@@ -872,7 +872,7 @@
 //                 onClick={addTestimonial}
 //                 variant='outline'
 //                 size='sm'
-//                 className='bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md'
+//                 className='bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md'
 //               >
 //                 <Plus className='w-4 h-4 mr-2' />
 //                 Add Testimonial
@@ -896,11 +896,11 @@
 //                   type="text"
 //                   value={tempData.subtitle || ""}
 //                   onChange={(e) => updateSection('subtitle', e.target.value)}
-//                   className="text-lg text-yellow-500 mb-2 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+//                   className="text-lg text-brand-gold mb-2 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
 //                   placeholder="Subtitle"
 //                   maxLength={TEXT_LIMITS.SUBTITLE}
 //                 />
-//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                   {tempData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
 //                 </div>
 //               </div>
@@ -909,11 +909,11 @@
 //                   type="text"
 //                   value={tempData.heading || ""}
 //                   onChange={(e) => updateSection('heading', e.target.value)}
-//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+//                   className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
 //                   placeholder="Heading"
 //                   maxLength={TEXT_LIMITS.HEADING}
 //                 />
-//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                   {tempData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
 //                 </div>
 //               </div>
@@ -921,12 +921,12 @@
 //                 <textarea
 //                   value={tempData.description || ""}
 //                   onChange={(e) => updateSection('description', e.target.value)}
-//                   className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+//                   className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
 //                   rows={2}
 //                   placeholder="Description"
 //                   maxLength={TEXT_LIMITS.DESCRIPTION}
 //                 />
-//                 <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                 <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                   {tempData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
 //                 </div>
 //               </div>
@@ -939,7 +939,7 @@
 //                   whileInView={{ opacity: 1, y: 0 }}
 //                   transition={{ duration: 0.6, delay: 0.2 }}
 //                   viewport={{ once: true }}
-//                   className="text-lg text-yellow-500 mb-2"
+//                   className="text-lg text-brand-gold mb-2"
 //                 >
 //                   {data.subtitle}
 //                 </motion.p>
@@ -986,15 +986,15 @@
 //                     onClick={() => removeTestimonial(index)}
 //                     size='sm'
 //                     variant='outline'
-//                     className='absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1 z-10'
+//                     className='absolute top-2 right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error p-1 z-10'
 //                   >
 //                     <Trash2 className='w-3 h-3' />
 //                   </Button>
 //                 )}
 
 //                 {/* Quote Icon */}
-//                 <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mb-4">
-//                   <Quote className="w-6 h-6 text-gray-900" />
+//                 <div className="w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center mb-4">
+//                   <Quote className="w-6 h-6 text-ink" />
 //                 </div>
 
 //                 {/* Stars */}
@@ -1006,7 +1006,7 @@
 //                       className={isEditing ? "cursor-pointer" : "cursor-default"}
 //                     >
 //                       <Star
-//                         className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+//                         className={`w-5 h-5 ${i < testimonial.rating ? 'text-brand-yellow fill-current' : 'text-ink-light'}`}
 //                       />
 //                     </button>
 //                   ))}
@@ -1019,10 +1019,10 @@
 //                       <textarea
 //                         value={testimonial.content}
 //                         onChange={(e) => updateTestimonial(index, 'content', e.target.value)}
-//                         className="text-muted-foreground leading-relaxed w-full h-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 resize-none"
+//                         className="text-muted-foreground leading-relaxed w-full h-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 resize-none"
 //                         maxLength={TEXT_LIMITS.TESTIMONIAL_CONTENT}
 //                       />
-//                       <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+//                       <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
 //                         {testimonial.content.length}/{TEXT_LIMITS.TESTIMONIAL_CONTENT}
 //                       </div>
 //                     </div>
@@ -1041,11 +1041,11 @@
 //                         type="text"
 //                         value={testimonial.project}
 //                         onChange={(e) => updateTestimonial(index, 'project', e.target.value)}
-//                         className="text-sm text-yellow-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+//                         className="text-sm text-brand-gold w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
 //                         placeholder="Project type"
 //                         maxLength={TEXT_LIMITS.PROJECT}
 //                       />
-//                       <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                       <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                         {testimonial.project.length}/{TEXT_LIMITS.PROJECT}
 //                       </div>
 //                     </div>
@@ -1054,26 +1054,26 @@
 //                         type="text"
 //                         value={testimonial.date}
 //                         onChange={(e) => updateTestimonial(index, 'date', e.target.value)}
-//                         className="text-sm text-gray-500 w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+//                         className="text-sm text-ink-caption w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
 //                         placeholder="Date"
 //                         maxLength={TEXT_LIMITS.DATE}
 //                       />
-//                       <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                       <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                         {testimonial.date.length}/{TEXT_LIMITS.DATE}
 //                       </div>
 //                     </div>
 //                   </div>
 //                 ) : (
 //                   <div className="mb-4">
-//                     <p className="text-sm text-yellow-500">{testimonial.project}</p>
-//                     <p className="text-sm text-gray-500">{testimonial.date}</p>
+//                     <p className="text-sm text-brand-gold">{testimonial.project}</p>
+//                     <p className="text-sm text-ink-caption">{testimonial.date}</p>
 //                   </div>
 //                 )}
 
 //                 {/* Client Info - Fixed at bottom */}
-//                 <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-gray-200">
-//                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
-//                     <span className="text-gray-900 text-lg">
+//                 <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-ink-light">
+//                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-yellow to-brand-gold flex items-center justify-center flex-shrink-0">
+//                     <span className="text-ink text-lg">
 //                       {testimonial.name.charAt(0)}
 //                     </span>
 //                   </div>
@@ -1085,11 +1085,11 @@
 //                             type="text"
 //                             value={testimonial.name}
 //                             onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
-//                             className="text-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+//                             className="text-foreground w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 truncate"
 //                             placeholder="Client name"
 //                             maxLength={TEXT_LIMITS.CLIENT_NAME}
 //                           />
-//                           <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                           <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                             {testimonial.name.length}/{TEXT_LIMITS.CLIENT_NAME}
 //                           </div>
 //                         </div>
@@ -1098,11 +1098,11 @@
 //                             type="text"
 //                             value={testimonial.position}
 //                             onChange={(e) => updateTestimonial(index, 'position', e.target.value)}
-//                             className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+//                             className="text-sm text-muted-foreground w-full bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 truncate"
 //                             placeholder="Position"
 //                             maxLength={TEXT_LIMITS.CLIENT_POSITION}
 //                           />
-//                           <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+//                           <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
 //                             {testimonial.position.length}/{TEXT_LIMITS.CLIENT_POSITION}
 //                           </div>
 //                         </div>
@@ -1178,8 +1178,8 @@ const Button = ({
   const baseClasses =
     "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants: Record<string, string> = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes: Record<string, string> = {
     sm: "h-8 px-3 text-sm",
@@ -1465,7 +1465,7 @@ export function Testimonials({
       return (
         <>
           {words[0]}{" "}
-          <span className="text-yellow-500">{words.slice(1).join(" ")}</span>
+          <span className="text-brand-gold">{words.slice(1).join(" ")}</span>
         </>
       );
     }
@@ -1484,19 +1484,19 @@ export function Testimonials({
           {isEditing && (
             <div className="flex items-center justify-end gap-4 mb-4 text-sm">
               {hasUnsavedChanges && (
-                <div className="flex items-center gap-2 text-orange-600">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+                <div className="flex items-center gap-2 text-status-warning">
+                  <div className="w-2 h-2 bg-status-warning rounded-full animate-pulse"></div>
                   Unsaved changes
                 </div>
               )}
               {isAutoSaving && (
-                <div className="flex items-center gap-2 text-blue-600">
+                <div className="flex items-center gap-2 text-status-info">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   Auto-saving...
                 </div>
               )}
               {lastSaved && !hasUnsavedChanges && !isAutoSaving && (
-                <div className="text-green-600">
+                <div className="text-status-success">
                   ✓ Auto-saved {lastSaved.toLocaleTimeString()}
                 </div>
               )}
@@ -1507,7 +1507,7 @@ export function Testimonials({
             <Button
               onClick={handleEdit}
               size="sm"
-              className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+              className="bg-status-error hover:bg-status-error text-white shadow-md"
             >
               <Edit2 className="w-4 h-4 mr-2" />
               Edit
@@ -1517,7 +1517,7 @@ export function Testimonials({
               <Button
                 onClick={handleSave}
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                className="bg-status-success hover:bg-status-success text-white shadow-md"
                 disabled={isSaving}
               >
                 {isSaving ? (
@@ -1530,7 +1530,7 @@ export function Testimonials({
               <Button
                 onClick={handleCancel}
                 size="sm"
-                className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                className="bg-status-error hover:bg-status-error shadow-md text-white"
                 disabled={isSaving}
               >
                 <X className="w-4 h-4 mr-2" />
@@ -1540,7 +1540,7 @@ export function Testimonials({
                 onClick={addTestimonial}
                 variant="outline"
                 size="sm"
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-md"
+                className="bg-status-info/10 hover:bg-status-info/15 text-status-info shadow-md"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Testimonial
@@ -1564,11 +1564,11 @@ export function Testimonials({
                   type="text"
                   value={tempData.subtitle || ""}
                   onChange={(e) => updateSection("subtitle", e.target.value)}
-                  className="text-lg text-yellow-500 mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-lg text-brand-gold mb-2 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   placeholder="Subtitle"
                   maxLength={TEXT_LIMITS.SUBTITLE}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {tempData.subtitle?.length || 0}/{TEXT_LIMITS.SUBTITLE}
                 </div>
               </div>
@@ -1577,11 +1577,11 @@ export function Testimonials({
                   type="text"
                   value={tempData.heading || ""}
                   onChange={(e) => updateSection("heading", e.target.value)}
-                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 text-center w-full max-w-md mx-auto"
+                  className="text-3xl sm:text-4xl text-foreground mb-4 bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 text-center w-full max-w-md mx-auto"
                   placeholder="Heading"
                   maxLength={TEXT_LIMITS.HEADING}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {tempData.heading?.length || 0}/{TEXT_LIMITS.HEADING}
                 </div>
               </div>
@@ -1589,12 +1589,12 @@ export function Testimonials({
                 <textarea
                   value={tempData.description || ""}
                   onChange={(e) => updateSection("description", e.target.value)}
-                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-lg text-muted-foreground max-w-2xl mx-auto bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
                   rows={2}
                   placeholder="Description"
                   maxLength={TEXT_LIMITS.DESCRIPTION}
                 />
-                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                   {tempData.description?.length || 0}/{TEXT_LIMITS.DESCRIPTION}
                 </div>
               </div>
@@ -1607,7 +1607,7 @@ export function Testimonials({
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                   viewport={{ once: true }}
-                  className="text-lg text-yellow-500 mb-2"
+                  className="text-lg text-brand-gold mb-2"
                 >
                   {data.subtitle}
                 </motion.p>
@@ -1654,15 +1654,15 @@ export function Testimonials({
                     onClick={() => removeTestimonial(index)}
                     size="sm"
                     variant="outline"
-                    className="absolute top-2 right-2 bg-red-50 hover:bg-red-100 text-red-700 p-1 z-10"
+                    className="absolute top-2 right-2 bg-status-error/10 hover:bg-status-error/15 text-status-error p-1 z-10"
                   >
                     <Trash2 className="w-3 h-3" />
                   </Button>
                 )}
 
                 {/* Quote Icon */}
-                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mb-4">
-                  <Quote className="w-6 h-6 text-gray-900" />
+                <div className="w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center mb-4">
+                  <Quote className="w-6 h-6 text-ink" />
                 </div>
 
                 {/* Stars */}
@@ -1678,8 +1678,8 @@ export function Testimonials({
                       <Star
                         className={`w-5 h-5 ${
                           i < testimonial.rating
-                            ? "text-yellow-400 fill-current"
-                            : "text-gray-300"
+                            ? "text-brand-yellow fill-current"
+                            : "text-ink-light"
                         }`}
                       />
                     </button>
@@ -1695,10 +1695,10 @@ export function Testimonials({
                         onChange={(e) =>
                           updateTestimonial(index, "content", e.target.value)
                         }
-                        className="text-muted-foreground leading-relaxed w-full h-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 resize-none"
+                        className="text-muted-foreground leading-relaxed w-full h-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 resize-none"
                         maxLength={TEXT_LIMITS.TESTIMONIAL_CONTENT}
                       />
-                      <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                      <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                         {testimonial.content.length}/
                         {TEXT_LIMITS.TESTIMONIAL_CONTENT}
                       </div>
@@ -1720,11 +1720,11 @@ export function Testimonials({
                         onChange={(e) =>
                           updateTestimonial(index, "project", e.target.value)
                         }
-                        className="text-sm text-yellow-500 w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-sm text-brand-gold w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
                         placeholder="Project type"
                         maxLength={TEXT_LIMITS.PROJECT}
                       />
-                      <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                      <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                         {testimonial.project.length}/{TEXT_LIMITS.PROJECT}
                       </div>
                     </div>
@@ -1735,28 +1735,28 @@ export function Testimonials({
                         onChange={(e) =>
                           updateTestimonial(index, "date", e.target.value)
                         }
-                        className="text-sm text-gray-500 w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1"
+                        className="text-sm text-ink-caption w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1"
                         placeholder="Date"
                         maxLength={TEXT_LIMITS.DATE}
                       />
-                      <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                      <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                         {testimonial.date.length}/{TEXT_LIMITS.DATE}
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div className="mb-4">
-                    <p className="text-sm text-yellow-500">
+                    <p className="text-sm text-brand-gold">
                       {testimonial.project}
                     </p>
-                    <p className="text-sm text-gray-500">{testimonial.date}</p>
+                    <p className="text-sm text-ink-caption">{testimonial.date}</p>
                   </div>
                 )}
 
                 {/* Client Info - Fixed at bottom */}
-                <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-gray-200">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
-                    <div className="text-gray-900 text-lg w-full h-full rounded-full border border-gray-400 overflow-hidden">
+                <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-ink-light">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-yellow to-brand-gold flex items-center justify-center flex-shrink-0">
+                    <div className="text-ink text-lg w-full h-full rounded-full border border-ink-caption overflow-hidden">
                       <img
                         src={
                           testimonial.gender === "male"
@@ -1778,11 +1778,11 @@ export function Testimonials({
                             onChange={(e) =>
                               updateTestimonial(index, "name", e.target.value)
                             }
-                            className="text-foreground w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+                            className="text-foreground w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 truncate"
                             placeholder="Client name"
                             maxLength={TEXT_LIMITS.CLIENT_NAME}
                           />
-                          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                             {testimonial.name.length}/{TEXT_LIMITS.CLIENT_NAME}
                           </div>
                         </div>
@@ -1798,11 +1798,11 @@ export function Testimonials({
                                 e.target.value
                               )
                             }
-                            className="text-sm text-muted-foreground w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+                            className="text-sm text-muted-foreground w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 truncate"
                             placeholder="Position"
                             maxLength={TEXT_LIMITS.CLIENT_POSITION}
                           />
-                          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                          <div className="absolute right-1 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                             {testimonial.position.length}/
                             {TEXT_LIMITS.CLIENT_POSITION}
                           </div>
@@ -1814,7 +1814,7 @@ export function Testimonials({
                             onChange={(e) =>
                               updateTestimonial(index, "gender", e.target.value)
                             }
-                            className="text-sm text-muted-foreground w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 truncate"
+                            className="text-sm text-muted-foreground w-full bg-white/80 dark:bg-black/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 truncate"
                           >
                             <option value="male">Male</option>
                             <option value="female">Female</option>

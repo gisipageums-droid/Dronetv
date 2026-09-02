@@ -72,7 +72,7 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
   );
 
   return (
-    <section id="services" className="py-20 bg-gray-50 dark:bg-gray-800">
+    <section id="services" className="py-20 bg-ink-offwhite dark:bg-gray-800">
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -82,13 +82,13 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
           viewport={{ once: true }}
           className="mb-16 text-center"
         >
-          <h2 className="mb-4 text-4xl font-bold text-gray-900 lg:text-5xl dark:text-white">
+          <h2 className="mb-4 text-4xl font-bold text-ink lg:text-5xl dark:text-white">
             {serviceContent.heading.split(" ")[0]}{" "}
-            <span className="text-orange-400">
+            <span className="text-status-warning">
               {serviceContent.heading.split(" ").slice(1).join(" ")}
             </span>
           </h2>
-          <p className="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400">
+          <p className="max-w-3xl mx-auto text-xl text-ink-paragraph dark:text-gray-400">
             {serviceContent.description}
           </p>
         </motion.div>
@@ -96,7 +96,7 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
         {/* Services Grid or Empty State */}
         {serviceContent.services.length === 0 ? (
           <div className="py-20 text-center">
-            <p className="mb-4 text-lg text-gray-500 dark:text-gray-400">
+            <p className="mb-4 text-lg text-ink-caption dark:text-gray-400">
               No services available yet.
             </p>
           </div>
@@ -116,7 +116,7 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
                   whileHover={{ y: -10, scale: 1.02 }}
                   onHoverStart={() => setHoveredService(service.id)}
                   onHoverEnd={() => setHoveredService(null)}
-                  className="relative p-8 transition-all duration-300 bg-white border border-gray-100 shadow-xl rounded-2xl group dark:bg-gray-900 hover:shadow-2xl dark:border-gray-800"
+                  className="relative p-8 transition-all duration-300 bg-surface-card border border-ink-light shadow-xl rounded-2xl group dark:bg-gray-900 hover:shadow-2xl dark:border-gray-800"
                 >
                   <div
                     className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${service.color} mb-6 group-hover:scale-110 transition-transform duration-300`}
@@ -124,13 +124,13 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
 
-                  <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+                  <h3 className="mb-3 text-2xl font-bold text-ink dark:text-white">
                     {service.title}
                   </h3>
 
                   <motion.p
                     layout
-                    className="mb-6 leading-relaxed text-gray-600 transition-all duration-300 dark:text-gray-400"
+                    className="mb-6 leading-relaxed text-ink-paragraph transition-all duration-300 dark:text-gray-400"
                   >
                     {hoveredService === service.id
                       ? service.fullDescription
@@ -153,17 +153,17 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
                               ? idx * 0.06
                               : 0,
                         }}
-                        className="flex items-center text-sm text-gray-600 dark:text-gray-400"
+                        className="flex items-center text-sm text-ink-paragraph dark:text-gray-400"
                       >
-                        <Check className="flex-shrink-0 w-4 h-4 mr-2 text-green-500" />
+                        <Check className="flex-shrink-0 w-4 h-4 mr-2 text-status-success" />
                         {feature}
                       </motion.li>
                     ))}
                   </ul>
 
-                  <div className="flex items-center justify-between p-4 mb-6 rounded-lg bg-gray-50 dark:bg-gray-800">
+                  <div className="flex items-center justify-between p-4 mb-6 rounded-lg bg-ink-offwhite dark:bg-gray-800">
                     <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-ink-caption dark:text-gray-400">
                         Pricing
                       </p>
                       <p
@@ -173,10 +173,10 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-ink-caption dark:text-gray-400">
                         Delivery
                       </p>
-                      <p className="font-medium text-gray-900 dark:text-white">
+                      <p className="font-medium text-ink dark:text-white">
                         {service.deliveryTime}
                       </p>
                     </div>
@@ -185,7 +185,7 @@ const Service: React.FC<ServiceProps> = ({ content }) => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`w-full bg-orange-400 ${service.color} text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg`}
+                    className={`w-full bg-status-warning ${service.color} text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg`}
                   >
                     <span>Get Started</span>
                     <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

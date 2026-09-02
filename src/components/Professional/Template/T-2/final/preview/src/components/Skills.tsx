@@ -43,7 +43,7 @@ export function Skills({ skillsData }: SkillsProps) {
   const getSkillIcon = (skill: Skill) => {
     const firstLetter = skill.title.charAt(0).toUpperCase();
     const colors = [
-      'bg-yellow-400'
+      'bg-brand-yellow'
      
     ];
     const colorIndex = skill.title.charCodeAt(0) % colors.length;
@@ -99,9 +99,9 @@ export function Skills({ skillsData }: SkillsProps) {
   // Loading state
   if ((isLoading && !dataLoaded) || (!dataLoaded && data.skills.length === 0)) {
     return (
-      <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+      <section ref={skillsRef} id="skills" className="py-20 bg-surface-main dark:bg-yellow-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
           <p className="text-muted-foreground mt-4">Loading skills data...</p>
         </div>
       </section>
@@ -117,7 +117,7 @@ export function Skills({ skillsData }: SkillsProps) {
   }
   if(skillsData){
   return (
-    <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section ref={skillsRef} id="skills" className="py-20 bg-surface-main dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -154,7 +154,7 @@ export function Skills({ skillsData }: SkillsProps) {
                   transition={{ duration: 0.5 }}
                   className={`w-16 h-16 ${bgColor} rounded-full flex items-center justify-center mb-4`}
                 >
-                  <span className="text-2xl font-bold text-gray-900">
+                  <span className="text-2xl font-bold text-ink">
                     {letter}
                   </span>
                 </motion.div>
@@ -168,13 +168,13 @@ export function Skills({ skillsData }: SkillsProps) {
                     <span>Proficiency</span>
                     <span>{skill.level}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-ink-light rounded-full h-2">
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.level}%` }}
                       transition={{ duration: 1, delay: index * 0.1 }}
                       viewport={{ once: true }}
-                      className="bg-yellow-400 h-2 rounded-full"
+                      className="bg-brand-yellow h-2 rounded-full"
                     />
                   </div>
                 </div>

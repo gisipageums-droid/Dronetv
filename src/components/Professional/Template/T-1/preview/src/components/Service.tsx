@@ -23,7 +23,7 @@ const Service: React.FC = () => {
       fullDescription:
         "Custom web applications using React, Next.js, and modern frameworks. Focus on performance, SEO, and user experience.",
       icon: Globe,
-      color: "from-blue-500 to-cyan-500",
+      color: "from-status-info to-status-info",
       features: [
         "Responsive Design",
         "SEO Optimized",
@@ -40,7 +40,7 @@ const Service: React.FC = () => {
       fullDescription:
         "iOS and Android apps built with React Native and Flutter. Native performance with cross-platform efficiency.",
       icon: Smartphone,
-      color: "from-purple-500 to-pink-500",
+      color: "from-brand-gold to-status-error",
       features: [
         "Cross-Platform",
         "Native Performance",
@@ -57,7 +57,7 @@ const Service: React.FC = () => {
       fullDescription:
         "Robust backend systems using Node.js, Python, and cloud services. RESTful APIs and microservices architecture.",
       icon: Database,
-      color: "from-green-500 to-emerald-500",
+      color: "from-status-success to-status-success",
       features: [
         "RESTful APIs",
         "Database Design",
@@ -74,7 +74,7 @@ const Service: React.FC = () => {
       fullDescription:
         "Comprehensive solutions covering frontend, backend, database, and deployment. One-stop development service.",
       icon: Code,
-      color: "from-orange-500 to-red-500",
+      color: "from-status-warning to-status-error",
       features: [
         "End-to-End Solution",
         "Database Integration",
@@ -91,7 +91,7 @@ const Service: React.FC = () => {
       fullDescription:
         "Modern interface design with focus on user experience. Wireframing, prototyping, and design systems.",
       icon: Palette,
-      color: "from-pink-500 to-rose-500",
+      color: "from-status-error to-status-error",
       features: [
         "User Research",
         "Wireframing",
@@ -108,7 +108,7 @@ const Service: React.FC = () => {
       fullDescription:
         "Improve application performance, reduce loading times, and enhance user experience through optimization.",
       icon: Zap,
-      color: "from-yellow-500 to-orange-500",
+      color: "from-brand-gold to-status-warning",
       features: [
         "Speed Optimization",
         "Code Refactoring",
@@ -121,7 +121,7 @@ const Service: React.FC = () => {
   ];
 
   return (
-    <section id="services" className="py-20 bg-gray-50 dark:bg-gray-800">
+    <section id="services" className="py-20 bg-ink-offwhite dark:bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -131,10 +131,10 @@ const Service: React.FC = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            My <span className="text-orange-400">Services</span>
+          <h2 className="text-4xl lg:text-5xl font-bold text-ink dark:text-white mb-4">
+            My <span className="text-status-warning">Services</span>
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          <p className="text-xl text-ink-paragraph dark:text-gray-400 max-w-3xl mx-auto">
             Comprehensive development solutions tailored to bring your ideas to
             life with modern technologies and best practices.
           </p>
@@ -155,11 +155,11 @@ const Service: React.FC = () => {
                 whileHover={{ y: -10, scale: 1.02 }}
                 onHoverStart={() => setHoveredService(service.id)}
                 onHoverEnd={() => setHoveredService(null)}
-                className="group relative bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
+                className="group relative bg-surface-card dark:bg-gray-900 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-ink-light dark:border-gray-800"
               >
                 {/* Service Icon */}
                 <div
-                  className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r  mb-6 transition-transform duration-300 bg-yellow-500 text-xl font-extrabold`}
+                  className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r  mb-6 transition-transform duration-300 bg-brand-gold text-xl font-extrabold`}
                 >
                   <span className="uppercase text-white">
                     {service.title[0]}
@@ -167,14 +167,14 @@ const Service: React.FC = () => {
                 </div>
 
                 {/* Service Title */}
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                <h3 className="text-2xl font-bold text-ink dark:text-white mb-3">
                   {service.title}
                 </h3>
 
                 {/* Service Description */}
                 <motion.p
                   layout
-                  className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed transition-all duration-300"
+                  className="text-ink-paragraph dark:text-gray-400 mb-6 leading-relaxed transition-all duration-300"
                 >
                   {isHovered
                     ? service.fullDescription
@@ -193,9 +193,9 @@ const Service: React.FC = () => {
                           : { opacity: 0.7, x: 0 }
                       }
                       transition={{ delay: isHovered ? idx * 0.1 : 0 }}
-                      className="flex items-center text-sm text-gray-600 dark:text-gray-400"
+                      className="flex items-center text-sm text-ink-paragraph dark:text-gray-400"
                     >
-                      <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                      <Check className="w-4 h-4 text-status-success mr-2 flex-shrink-0" />
                       {feature}
                     </motion.li>
                   ))}
@@ -206,7 +206,7 @@ const Service: React.FC = () => {
                   href="#contact"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`w-full bg-orange-500 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 group-hover:shadow-lg`}
+                  className={`w-full bg-status-warning text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 group-hover:shadow-lg`}
                 >
                   <span>Get Started</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
