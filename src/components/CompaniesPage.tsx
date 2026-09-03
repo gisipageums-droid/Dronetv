@@ -13,6 +13,7 @@ interface Company {
   aboutDescription?: string;
   companyDescription?: string;
   createdAt?: string;
+  lastModified?: string;
   publishedDate?: string;
   templateSelection?: string;
   urlSlug?: string;
@@ -206,9 +207,13 @@ const CompaniesPage: React.FC = () => {
         c.location?.toLowerCase().includes(q)
       );
     }
+    const recency = (c: Company) => new Date(c.lastModified || c.createdAt || 0).getTime();
     return [...list].sort((a, b) => {
       if (sortBy === 'companyName') return (a.companyName || '').localeCompare(b.companyName || '');
-      if (sortBy === 'createdAt') return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      // "Newest first" = most recently listed or updated first, matching the
+      // backend's public-directory ordering, so a freshly published listing
+      // shows at the top instead of behind everything created after it.
+      if (sortBy === 'createdAt') return recency(b) - recency(a);
       if (sortBy === 'featured') return ((b.reviewStatus === 'approved') ? 0 : 1) - ((a.reviewStatus === 'approved') ? 0 : 1);
       return 0;
     });
