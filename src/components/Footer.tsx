@@ -50,7 +50,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-surface-darksection relative overflow-hidden">
+    <footer className="bg-surface-darksection relative overflow-hidden pb-10">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-64 h-64 bg-brand-yellow/10 rounded-full animate-pulse blur-3xl"></div>
