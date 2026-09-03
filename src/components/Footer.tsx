@@ -17,8 +17,13 @@ const socialLinks = [
 ];
 
 const legalLinks = [
-  { name: 'Privacy Policy', href: '/privacy-policy' },
-  { name: 'Terms of Service', href: '/terms-and-conditions' },
+  { name: 'Terms of Use', href: '/legal/terms' },
+  { name: 'Privacy & Cookies', href: '/legal/privacy' },
+  { name: 'Refund Policy', href: '/legal/refund-policy' },
+  { name: 'Verification & Trust', href: '/legal/verification-policy' },
+  { name: 'Grievance & Takedown', href: '/legal/grievance-policy' },
+  { name: 'Drone Disclaimer', href: '/legal/drone-disclaimer' },
+  { name: 'All Policies', href: '/legal' },
   { name: 'Contact', href: '/contact' },
 ];
 
@@ -103,25 +108,29 @@ const Footer = () => {
           <FooterColumn title="Partnerships" indexPath="/partnerships" items={partnershipsItems} />
         </div>
 
-        <div className="mt-6 pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-6 pt-5 border-t border-white/10">
+          <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+            {legalLinks.map((link) => (
+              <li key={link.name}>
+                <Link to={link.href} className="text-xs text-white/70 hover:text-white transition-colors">
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="flex items-center gap-1.5 text-xs text-white/70 text-center sm:text-left">
             &copy; {new Date().getFullYear()} Drone TV. Built with <Heart className="h-3.5 w-3.5 text-brand-yellow fill-brand-yellow" /> for the global drone community.
           </p>
-
-          <div className="flex items-center gap-6">
-            {legalLinks.map((link) => (
-              <Link key={link.name} to={link.href} className="text-xs text-white/70 hover:text-white transition-colors">
-                {link.name}
-              </Link>
-            ))}
-            <button
-              onClick={scrollToTop}
-              aria-label="Back to top"
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-colors"
-            >
-              <ArrowUp className="h-4 w-4" />
-            </button>
-          </div>
+          <button
+            onClick={scrollToTop}
+            aria-label="Back to top"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-colors"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </footer>
