@@ -95,11 +95,6 @@
   animation: scroll 60s linear infinite;
 }
 
-/* Add padding to body to account for fixed footer */
-body {
-  padding-bottom: 40px;
-}
-
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;

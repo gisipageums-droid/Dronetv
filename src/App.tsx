@@ -261,7 +261,7 @@ const AppContent = () => {
     location.pathname.startsWith("/events/form");
 
   return (
-    <div className={`min-h-screen ${!hideFooter ? "pb-10" : ""}`}>
+    <div className="min-h-screen">
       <CombinedProviders>
         {!hideNavigation && <Navigation />}
         <Suspense fallback={<PageLoadingFallback />}>
