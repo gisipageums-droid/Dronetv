@@ -1680,7 +1680,6 @@ import { Summary } from "./components/steps/Summary";
 import { FormProvider, useForm } from "./context/FormContext";
 import { useFormSteps } from "./hooks/useFormSteps";
 import { Loader } from "./components/Loader";
-import { AdminEditor } from "./admin/AdminEditor";
 import axios from "axios";
 import { useUserAuth } from "../../../context/context";
 import { AlertTriangle, X } from "lucide-react";
@@ -1828,10 +1827,6 @@ function EventsForm() {
     userId?: string;
     eventId?: string;
   }>();
-
-  // Admin state
-  const [adminOpen, setAdminOpen] = useState(false);
-  const admin = true;
 
   const location = useLocation();
 
@@ -2185,18 +2180,6 @@ function EventsForm() {
       </div >
 
       <div className="max-w-4xl mx-auto p-6 space-y-6 relative">
-        {/* Admin Button */}
-        {isAdminLogin && current < 6 && (
-          <div className="flex justify-end -mt-2">
-            <button
-              onClick={() => setAdminOpen(true)}
-              className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
-            >
-              Open Admin Panel
-            </button>
-          </div>
-        )}
-
         {/* Step Content Container */}
         <div key={current} className="bg-surface-card border-2 border-brand-yellow-soft shadow-md rounded-xl p-6 animate-step-slide-up">
           <StepComponent step={stepData} allSteps={steps} setStepValid={setStepValid} />
@@ -2231,9 +2214,6 @@ function EventsForm() {
             </button>
           )}
         </div>
-
-        {/* Admin Editor Overlay */}
-        <AdminEditor isOpen={adminOpen} onClose={() => setAdminOpen(false)} />
 
         {/* Token Validation Modal */}
         <TokenValidationModal
