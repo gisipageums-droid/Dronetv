@@ -10,11 +10,8 @@ export default function LegalIndexPage() {
   }, []);
 
   return (
-    <div className="pt-[104px] min-h-screen bg-surface-main">
-      <CompactHero
-        title={<>DroneTV <span>Legal &amp; Policies</span></>}
-        stats={[{ n: `${LEGAL_POLICIES.length}`, l: 'Documents' }]}
-      />
+    <div className="pt-16 min-h-screen bg-surface-main">
+      <CompactHero title={<>DroneTV <span>Legal &amp; Policies</span></>} />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-8 mb-6">

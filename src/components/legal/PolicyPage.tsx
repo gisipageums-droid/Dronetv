@@ -2,12 +2,7 @@ import { useEffect } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { FileText, Mail, ChevronRight } from 'lucide-react';
 import CompactHero from '../common/CompactHero';
-import {
-  LEGAL_POLICIES,
-  LEGAL_CONFIG,
-  LEGAL_CONTACTS,
-  policyBySlug,
-} from '../../data/legalPolicies';
+import { LEGAL_CONFIG, policyBySlug } from '../../data/legalPolicies';
 
 const TOKENS: Record<string, string> = {
   entity: LEGAL_CONFIG.entity || 'the DroneTV operating entity',
@@ -33,11 +28,8 @@ export default function PolicyPage() {
   if (slug !== policy.slug) return <Navigate to={`/legal/${policy.slug}`} replace />;
 
   return (
-    <div className="pt-[104px] min-h-screen bg-surface-main">
-      <CompactHero
-        title={<>DroneTV <span>Legal</span></>}
-        stats={[{ n: LEGAL_CONFIG.effectiveDate || 'Draft', l: 'Effective' }]}
-      />
+    <div className="pt-16 min-h-screen bg-surface-main">
+      <CompactHero title={<>DroneTV <span>Legal</span></>} />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <nav className="flex items-center gap-1.5 text-xs text-ink-caption mb-4">
@@ -50,8 +42,7 @@ export default function PolicyPage() {
           <h1 className="text-2xl font-bold text-ink mb-2">{policy.title}</h1>
           <p className="text-ink-paragraph leading-relaxed text-sm">{policy.summary}</p>
           <p className="text-xs text-ink-caption mt-4">
-            Version 1.0 · Effective {LEGAL_CONFIG.effectiveDate || 'on publication'} · Reviewed at least annually.
-            This policy is being finalised with Indian legal counsel.
+            Version 1.0 · Reviewed at least annually and whenever law or platform functionality materially changes.
           </p>
         </div>
 
@@ -82,19 +73,6 @@ export default function PolicyPage() {
           ))}
         </div>
 
-        <div className="mt-6 bg-surface-card rounded-xl border border-ink-light shadow-sm p-6">
-          <h3 className="text-sm font-bold text-ink mb-3">Contacts</h3>
-          <ul className="text-sm text-ink-paragraph space-y-1.5">
-            <li>General / support: <a className="text-brand-gold hover:underline" href={`mailto:${LEGAL_CONTACTS.support}`}>{LEGAL_CONTACTS.support}</a></li>
-            <li>Privacy &amp; data requests: <a className="text-brand-gold hover:underline" href={`mailto:${LEGAL_CONTACTS.privacy}`}>{LEGAL_CONTACTS.privacy}</a></li>
-            <li>Grievance Officer: <a className="text-brand-gold hover:underline" href={`mailto:${LEGAL_CONTACTS.grievance}`}>{LEGAL_CONTACTS.grievance}</a></li>
-            <li>Billing / payments: <a className="text-brand-gold hover:underline" href={`mailto:${LEGAL_CONTACTS.billing}`}>{LEGAL_CONTACTS.billing}</a></li>
-            <li>IP / legal notices: <a className="text-brand-gold hover:underline" href={`mailto:${LEGAL_CONTACTS.legal}`}>{LEGAL_CONTACTS.legal}</a></li>
-            <li>Security disclosure: <a className="text-brand-gold hover:underline" href={`mailto:${LEGAL_CONTACTS.security}`}>{LEGAL_CONTACTS.security}</a></li>
-            <li className="pt-1 text-ink-caption">Registered office: {LEGAL_CONTACTS.office}</li>
-          </ul>
-        </div>
-
         <div className="mt-6 bg-ink rounded-xl p-6 text-center">
           <Mail className="h-8 w-8 text-brand-yellow mx-auto mb-3" />
           <h3 className="text-base font-bold text-white mb-2">Questions about this policy?</h3>
@@ -104,25 +82,6 @@ export default function PolicyPage() {
           >
             Contact Us
           </a>
-        </div>
-
-        <div className="mt-8">
-          <h3 className="text-xs font-bold uppercase tracking-wide text-ink-caption mb-3">All policies</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {LEGAL_POLICIES.map((p) => (
-              <Link
-                key={p.slug}
-                to={`/legal/${p.slug}`}
-                className={`text-sm rounded-lg border px-3 py-2 transition-colors ${
-                  p.slug === policy.slug
-                    ? 'border-brand-yellow bg-brand-yellow/10 text-ink font-semibold'
-                    : 'border-ink-light text-ink-paragraph hover:border-brand-yellow hover:text-ink'
-                }`}
-              >
-                {p.title}
-              </Link>
-            ))}
-          </div>
         </div>
       </div>
     </div>
