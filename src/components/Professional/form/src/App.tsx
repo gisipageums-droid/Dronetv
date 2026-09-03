@@ -11,14 +11,13 @@ import { Summary } from "./components/steps/Summary";
 import { FormProvider, useForm } from "./context/FormContext";
 import { useFormSteps } from "./hooks/useFormSteps";
 import { Loader } from "./components/Loader";
-import { AdminEditor } from "./admin/AdminEditor";
 import axios from "axios";
 import { useUserAuth } from "../../../context/context";
 import { toast } from "sonner";
 import { PROFESSIONAL_API, LAMBDA } from '../../../../lib/apiConfig';
 
 function AppInner() {
-  const { isLogin, user, isAdminLogin } = useUserAuth();
+  const { isLogin, user } = useUserAuth();
   const { current, next, prev } = useFormSteps(7); // 6 steps + summary
   const [steps, setSteps] = useState<any[]>([]);
   const [resumeData, setResumeData] = useState(null);
@@ -34,9 +33,6 @@ function AppInner() {
     userId?: string;
     professionalId?: string;
   }>();
-
-  // --- admin state ---
-  const [adminOpen, setAdminOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -308,18 +304,6 @@ function AppInner() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-4 space-y-4 relative">
-        {/* --- Admin Button --- */}
-        {isAdminLogin && current < 5 && (
-          <div className="flex justify-end -mt-2">
-            <button
-              onClick={() => setAdminOpen(true)}
-              className="px-4 py-2 bg-brand-yellow hover:bg-brand-gold text-ink font-medium rounded"
-            >
-              Open Admin Panel
-            </button>
-          </div>
-        )}
-
         {/* --- Step Content Container --- */}
         <div key={current} className="bg-surface-card border-2 border-brand-yellow-soft shadow-md rounded-xl p-6 animate-step-slide-up">
           {current === 0 ? (
@@ -364,9 +348,6 @@ function AppInner() {
             </button>
           )}
         </div>
-
-        {/* --- Admin Editor Overlay --- */}
-        <AdminEditor isOpen={adminOpen} onClose={() => setAdminOpen(false)} />
 
       </div>
     </>
