@@ -24,8 +24,8 @@ const AboutPage = lazy(() => import("./components/AboutPage"));
 const PartnerPage = lazy(() => import("./components/PartnerPage"));
 const ContactPage = lazy(() => import("./components/ContactPage"));
 const SearchPage = lazy(() => import("./components/SearchPage"));
-const TermsAndConditionsPage = lazy(() => import("./components/TermsAndConditionsPage"));
-const PrivacyPolicyPage = lazy(() => import("./components/PrivacyPolicyPage"));
+const LegalIndexPage = lazy(() => import("./components/legal/LegalIndexPage"));
+const PolicyPage = lazy(() => import("./components/legal/PolicyPage"));
 const ProductDetailPage = lazy(() => import("./components/ProductDetailPage"));
 const ProfessionalsPage = lazy(() => import("./components/ProfessionalsPage"));
 const ServicesPage = lazy(() => import("./components/ServicesPage"));
@@ -313,8 +313,14 @@ const AppContent = () => {
           <Route path="/partner" element={<PartnerPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/legal" element={<LegalIndexPage />} />
+          <Route path="/legal/:slug" element={<PolicyPage />} />
+          {/* Back-compat: the two old standalone legal pages now live under /legal/* */}
+          <Route path="/terms-and-conditions" element={<Navigate to="/legal/terms" replace />} />
+          <Route path="/privacy-policy" element={<Navigate to="/legal/privacy" replace />} />
+          <Route path="/terms" element={<Navigate to="/legal/terms" replace />} />
+          <Route path="/privacy" element={<Navigate to="/legal/privacy" replace />} />
+          <Route path="/refund-policy" element={<Navigate to="/legal/refund-policy" replace />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/service/:id" element={<ServiceDetailPage />} />

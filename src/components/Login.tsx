@@ -49,6 +49,7 @@ export default function Login() {
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
+  const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const [loginData, setLoginData] = useState<LoginData>({
@@ -157,6 +158,11 @@ export default function Login() {
     setFormSubmitted(true);
 
     if (!isPasswordValid || !passwordMatch) {
+      return;
+    }
+
+    if (!agreedToTerms) {
+      toast.error("Please accept the Terms of Use and Privacy Policy to continue.");
       return;
     }
 
@@ -575,12 +581,31 @@ export default function Login() {
                   />
                   {renderErrorMessage("state", signUpData.state, "State")}
                 </div>
+                <label className="flex items-start gap-2 mb-3 text-xs text-ink-paragraph cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-0.5 flex-shrink-0"
+                  />
+                  <span>
+                    I agree to the{" "}
+                    <a href="/legal/terms" target="_blank" rel="noopener noreferrer" className="text-status-info hover:underline">Terms of Use</a>
+                    {" "}and acknowledge the{" "}
+                    <a href="/legal/privacy" target="_blank" rel="noopener noreferrer" className="text-status-info hover:underline">Privacy &amp; Cookie Policy</a>.
+                  </span>
+                </label>
+                {formSubmitted && !agreedToTerms && (
+                  <p className="mb-2 -mt-1 text-xs text-status-error">
+                    You must accept the Terms of Use and Privacy Policy.
+                  </p>
+                )}
                 <button
                   type="submit"
                   className="w-full py-2 text-white bg-status-info rounded hover:bg-status-info disabled:bg-status-info/40"
                   disabled={
                     isRegistering ||
-                    (formSubmitted && (!isPasswordValid || !passwordMatch))
+                    (formSubmitted && (!isPasswordValid || !passwordMatch || !agreedToTerms))
                   }
                 >
                   {isRegistering ? "Signing Up..." : "Sign Up"}
