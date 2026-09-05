@@ -3,6 +3,8 @@ import { Play, Eye, Clock } from 'lucide-react';
 
 const PopularVideos = () => {
   const [visibleCards, setVisibleCards] = useState(new Set());
+  const [playing, setPlaying] = useState(new Set());
+  const [thumbFailed, setThumbFailed] = useState(new Set());
   const observerRef = useRef(null);
 
  const videos = [
@@ -139,19 +141,53 @@ const PopularVideos = () => {
           className={`group bg-[#f1ee8e] rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:scale-105 hover:-rotate-1`}
           style={{ transitionDelay: `${index * 150}ms` }}
         >
-          <div className="relative aspect-video overflow-hidden">
-            <iframe
-              src={video.videoUrl.replace("watch?v=", "embed/")}
-              title={video.title}
-              className="w-full h-full rounded-2xl"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-
-            {/* Category Badge */}
-            
-            {/* Duration */}
-            
+          <div className="relative aspect-video overflow-hidden bg-ink">
+            {playing.has(video.id) ? (
+              <iframe
+                src={`${video.videoUrl.replace("watch?v=", "embed/")}?autoplay=1`}
+                title={video.title}
+                className="w-full h-full rounded-2xl"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            ) : (
+              // Click-to-play on the real thumbnail instead of auto-loading
+              // every video's iframe up front - a video with embedding
+              // restricted by its own channel used to render YouTube's raw
+              // "can't play this video here" placeholder full-size and
+              // looked like a broken scrolling image; now it degrades to a
+              // still thumbnail + Watch button (or a "Watch on YouTube"
+              // link if even the thumbnail 404s) instead of a dead embed.
+              <button
+                type="button"
+                onClick={() => setPlaying(prev => new Set([...prev, video.id]))}
+                className="group/play absolute inset-0 w-full h-full"
+                aria-label={`Play ${video.title}`}
+              >
+                {thumbFailed.has(video.id) ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-ink-charcoal text-white">
+                    <Play className="w-10 h-10" />
+                    <span className="text-sm font-semibold">Watch on YouTube</span>
+                  </div>
+                ) : (
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={() => setThumbFailed(prev => new Set([...prev, video.id]))}
+                  />
+                )}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover/play:bg-black/35 transition-colors">
+                  <div className="w-14 h-14 rounded-full bg-status-error/90 flex items-center justify-center shadow-lg group-hover/play:scale-110 transition-transform">
+                    <Play className="w-6 h-6 text-white fill-white ml-1" />
+                  </div>
+                </div>
+                <div className="absolute bottom-2 right-2 flex items-center gap-2 text-white text-xs font-semibold bg-black/60 rounded-full px-2.5 py-1">
+                  <Eye className="w-3 h-3" /> {video.views}
+                  <Clock className="w-3 h-3 ml-1" /> {video.duration}
+                </div>
+              </button>
+            )}
           </div>
 
           <div className="p-4 sm:p-6">
