@@ -159,6 +159,7 @@ function extractState(location: string | undefined): string {
 const CompaniesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
+  const [listedTotal, setListedTotal] = useState(0);
   const [industry, setIndustry] = useState<string>('all');
   const [states, setStates] = useState<string[]>([]);
   const [selSectors, setSelSectors] = useState<string[]>([]);
@@ -172,14 +173,18 @@ const CompaniesPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // limit=1000 so every approved company is actually browsable here, not
+    // just the backend's page-size default (that used to silently cap the
+    // directory at 100 while hundreds more sat approved and unreachable).
     const url = COMPANY_API
-      ? `${COMPANY_API}/dashboard-cards?viewType=main`
-      : `${LAMBDA.company}/dashboard-cards?viewType=main`;
+      ? `${COMPANY_API}/dashboard-cards?viewType=main&limit=1000`
+      : `${LAMBDA.company}/dashboard-cards?viewType=main&limit=1000`;
     fetch(url)
       .then(r => r.json())
       .then(d => {
         const raw: Company[] = Array.isArray(d.cards) ? d.cards : [];
         setAllCompanies(raw);
+        setListedTotal(typeof d.totalCount === 'number' ? d.totalCount : raw.length);
         const stateSet = new Set<string>();
         raw.forEach(c => {
           const st = extractState(c.location);
@@ -345,7 +350,7 @@ const CompaniesPage: React.FC = () => {
             <a href="/form" style={{ flexShrink: 0, padding: '5px 14px', background: '#F8C400', color: '#111111', borderRadius: 6, fontSize: 12, fontWeight: 800, textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'Poppins,sans-serif' }}>+ List Your Company</a>
             <div className="co-stats">
               {[
-                { n: allCompanies.length, l: 'Listed' },
+                { n: listedTotal || allCompanies.length, l: 'Listed' },
                 { n: verifiedCount, l: 'Verified' },
                 { n: allCompanies.reduce((s, c) => s + (Number(c.productsCount) || 0), 0), l: 'Products' },
                 { n: allCompanies.reduce((s, c) => s + (Number(c.servicesCount) || 0), 0), l: 'Services' },
