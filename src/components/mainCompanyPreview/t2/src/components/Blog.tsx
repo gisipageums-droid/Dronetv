@@ -77,7 +77,7 @@ export default function Blog({ blogData }) {
                 {displayedPosts.map((post, index) => (
                   <motion.article
                     key={post.id}
-                    className="bg-card rounded-xl border-2 shadow-lg hover:shadow-xl  shadow-gray-500 transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col h-full"
+                    className="bg-card rounded-xl border-2 shadow-lg hover:shadow-xl  shadow-ink-caption transition-all duration-300 overflow-hidden group cursor-pointer flex flex-col h-full"
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -166,7 +166,7 @@ export default function Blog({ blogData }) {
           <AnimatePresence>
             {isModalOpen && selectedPost && (
               <motion.div
-                className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-[999999999999999]"
+                className="fixed inset-0 bg-ink/20 flex items-center justify-center p-4 z-[999999999999999]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -188,7 +188,7 @@ export default function Blog({ blogData }) {
                     />
                     <button
                       onClick={closeModal}
-                      className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors"
+                      className="absolute top-4 right-4 w-8 h-8 bg-surface-card rounded-full flex items-center justify-center shadow-md hover:bg-ink-light transition-colors"
                     >
                       <X className="w-4 h-4" />
                     </button>

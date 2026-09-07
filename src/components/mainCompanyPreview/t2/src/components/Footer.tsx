@@ -97,28 +97,28 @@ export default function Footer({
         name: "Facebook",
         icon: "Facebook",
         href: "#",
-        hoverColor: "hover:bg-blue-600",
+        hoverColor: "hover:bg-status-info",
       },
       {
         id: 2,
         name: "Twitter",
         icon: "Twitter",
         href: "#",
-        hoverColor: "hover:bg-blue-400",
+        hoverColor: "hover:bg-status-info",
       },
       {
         id: 3,
         name: "Instagram",
         icon: "Instagram",
         href: "#",
-        hoverColor: "hover:bg-pink-600",
+        hoverColor: "hover:bg-status-error",
       },
       {
         id: 4,
         name: "LinkedIn",
         icon: "Linkedin",
         href: "#",
-        hoverColor: "hover:bg-blue-700",
+        hoverColor: "hover:bg-status-info",
       },
     ],
     legalLinks: [
@@ -171,7 +171,7 @@ export default function Footer({
 
   return (
     <motion.footer
-      className="bg-gray-900 border-t border-gray-800 relative theme-transition"
+      className="bg-ink border-t border-ink-charcoal relative theme-transition"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -189,12 +189,12 @@ export default function Footer({
             variants={itemVariants}
           >
             <div className="flex items-center justify-start md:justify-start space-x-3 mb-4">
-              <span className="flex flex-row gap-2 text-xl font-bold text-yellow-400 ">
+              <span className="flex flex-row gap-2 text-xl font-bold text-brand-yellow ">
                 {footerContent.brand.name}
               </span>
             </div>
 
-            <p className="text-gray-300 text-sm leading-relaxed mb-6">
+            <p className="text-ink-light text-sm leading-relaxed mb-6">
               {footerContent.brand.description}
             </p>
           </motion.div>
@@ -217,7 +217,7 @@ export default function Footer({
                   <li key={link.id} className="flex items-center gap-2">
                     <a
                       href={link.href}
-                      className="text-gray-300 hover:text-blue-400 transition-colors duration-200 flex-1"
+                      className="text-ink-light hover:text-status-info transition-colors duration-200 flex-1"
                     >
                       {link.text}
                     </a>

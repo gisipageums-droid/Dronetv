@@ -6,10 +6,13 @@ export default function Publish() {
 
   return (
     <>
-      <motion.div className="fixed bottom-20 right-4 sm:right-[7rem] z-50">
+      {/* left on mobile, right on larger screens - fixed at bottom-right on
+      mobile sat directly on top of the contact form's Subject dropdown and
+      Send Message button, blocking taps on them entirely */}
+      <motion.div className="fixed bottom-20 left-4 sm:left-auto sm:right-[7rem] z-50">
         <motion.button
           onClick={() => navigate(-1)}
-          className="bg-gray-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
+          className="bg-ink-paragraph text-white font-semibold py-3 px-6 rounded-full shadow-lg flex items-center gap-2"
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
         >

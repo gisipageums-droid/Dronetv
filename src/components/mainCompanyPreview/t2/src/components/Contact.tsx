@@ -6,7 +6,7 @@ import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { motion } from "motion/react";
 import { toast } from "react-toastify";
-import { LEADS_API, LAMBDA } from '../../../../../lib/apiConfig';
+import { LEADS_API, AUTH_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 export default function Contact({ contactData, publishedId }) {
   const [formData, setFormData] = useState({
@@ -56,8 +56,17 @@ export default function Contact({ contactData, publishedId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.message) {
-      alert("Please fill in required fields: Email and Message.");
+    // Explicit validation instead of relying on the native required-field
+    // popup - that popup can silently fail to render when the field lives
+    // inside a framer-motion animated (transformed) ancestor, which this
+    // form does, making the button look like it does nothing at all on
+    // some mobile browsers.
+    if (!formData.email || !formData.phone || !formData.message) {
+      toast.error("Please fill in required fields: Email, Phone, and Message.");
+      return;
+    }
+    if (!publishedId) {
+      toast.error("This company page isn't fully loaded yet - please refresh and try again.");
       return;
     }
 
@@ -131,11 +140,15 @@ export default function Contact({ contactData, publishedId }) {
         </motion.div>
 
         <div className="max-w-[700px] mx-auto">
-          {/*  Contact Form with API integration */}
+          {/*  Contact Form with API integration - opacity-only fade, no x
+          transform. A transform on this wrapper made tap-to-focus on the
+          inputs unreliable on mobile (first tap could land while the
+          transform was still resolving and fail to register), requiring
+          multiple taps before typing worked. */}
           <motion.div
-            initial={{ x: -100, opacity: 0 }}
-            whileInView={{ x: 0, opacity: 1 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
             <Card className="bg-card border-border relative overflow-hidden hover-lift">
@@ -183,7 +196,6 @@ export default function Contact({ contactData, publishedId }) {
                       placeholder="rahul.sharma@company.com"
                       value={formData.email}
                       onChange={handleChange}
-                      required
                       className="border-border focus:border-primary bg-input-background"
                     />
                   </div>
@@ -197,7 +209,6 @@ export default function Contact({ contactData, publishedId }) {
                       placeholder="Your Number"
                       value={formData.phone}
                       onChange={handleChange}
-                      required
                       className="border-border focus:border-primary bg-input-background"
                     />
                   </div>
@@ -221,7 +232,7 @@ export default function Contact({ contactData, publishedId }) {
                       id="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 text-black text-justify"
+                      className="w-full border-[1px] rounded-[5px] py-1 px-2 focus:border-primary transition-all duration-300 text-ink text-justify"
                     >
                       {subjectOptions.map((option, index) => (
                         <option key={index} value={option} className="text-justify">
@@ -239,16 +250,19 @@ export default function Contact({ contactData, publishedId }) {
                       placeholder="Tell us about your project and how we can help..."
                       value={formData.message}
                       onChange={handleChange}
-                      required
                       className="min-h-[120px] border-border focus:border-primary bg-input-background text-justify"
                     />
                   </div>
 
-                  {/* Submit */}
+                  {/* Submit - mb-16 keeps it clear of the site-wide fixed
+                  ScrollingFooter ticker (h-10, always pinned to the viewport
+                  bottom), which otherwise sits on top of this full-width
+                  button once scrolled near the end of the page, making it
+                  untappable */}
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 text-justify"
+                    className="w-full mb-16 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 text-justify"
                   >
                     {loading ? "Sending..." : "Send Message"}
                   </Button>

@@ -78,10 +78,10 @@ const UsedBy: React.FC<UsedByProps> = ({ usedByData }) => {
   const content = usedByData || defaultContent;
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-surface-card">
       <div className="max-w-7xl mx-auto px-4">
         <motion.div initial="hidden" animate="visible" variants={itemVariants}>
-          <p className="text-center text-gray-400 text-lg mb-8">
+          <p className="text-center text-ink-caption text-lg mb-8">
             {content.title}
           </p>
         </motion.div>
