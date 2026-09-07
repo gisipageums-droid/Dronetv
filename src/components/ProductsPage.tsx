@@ -12,6 +12,8 @@ interface Product {
   publishedId: string;
   userId: string;
   companyName: string;
+  urlSlug?: string;
+  templateSelection?: string;
   title: string;
   description: string;
   detailedDescription: string;
@@ -145,6 +147,8 @@ const ProductsPage: React.FC = () => {
               products.push({
                 id: `${item.publishedId}-${idx}`,
                 publishedId: item.publishedId,
+                urlSlug: item.urlSlug,
+                templateSelection: item.templateSelection,
                 userId: item.userId,
                 companyName: item.companyName,
                 title: p.title,
@@ -337,7 +341,11 @@ const ProductsPage: React.FC = () => {
             </div>
           ) : (
             <div className="pr-grid">
-              {withInlineAds(current, p => <ProductCard key={p.id} product={p} onView={() => navigate(`/product/${p.id}`)} />)}
+              {withInlineAds(current, p => <ProductCard key={p.id} product={p} onView={() => navigate(`/product/${p.id}`)} onEnquire={() => {
+                const slug = p.urlSlug || (p.companyName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'company';
+                const seg = (p.templateSelection === 'template-2' || p.templateSelection === '2') ? 'companies' : 'company';
+                navigate(`/${seg}/${slug}#contact`);
+              }} />)}
             </div>
           )}
 
@@ -377,7 +385,7 @@ const ProductsPage: React.FC = () => {
   );
 };
 
-const ProductCard: React.FC<{ product: Product; onView: () => void }> = ({ product, onView }) => {
+const ProductCard: React.FC<{ product: Product; onView: () => void; onEnquire: () => void }> = ({ product, onView, onEnquire }) => {
   const icon = getIcon(product.category, product.title);
   const specs = product.features.slice(0, 4);
   const [imgErr, setImgErr] = useState(false);
@@ -421,7 +429,7 @@ const ProductCard: React.FC<{ product: Product; onView: () => void }> = ({ produ
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
           <button className="pr-btn-out" onClick={onView}>Details</button>
-          <button className="pr-btn-red" onClick={onView}>Get Quote</button>
+          <button className="pr-btn-red" onClick={onEnquire}>Get Quote</button>
         </div>
       </div>
     </div>

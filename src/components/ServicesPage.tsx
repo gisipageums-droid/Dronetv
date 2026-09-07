@@ -21,8 +21,18 @@ interface Service {
   timeline?: string;
   userId?: string;
   publishedId?: string;
+  urlSlug?: string;
+  templateSelection?: string;
   timestamp?: string;
 }
+
+// Public company page + its contact section, for the "Book / Enquire" CTA -
+// template-1 companies live at /company/<slug>, template-2 at /companies/<slug>.
+const companyContactPath = (s: { urlSlug?: string; company?: string; templateSelection?: string }) => {
+  const slug = s.urlSlug || (s.company || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'company';
+  const seg = (s.templateSelection === 'template-2' || s.templateSelection === '2') ? 'companies' : 'company';
+  return `/${seg}/${slug}#contact`;
+};
 
 const isValidTitle = (t: string): boolean => {
   if (!t) return false;
@@ -165,6 +175,8 @@ const ServicesPage: React.FC = () => {
               services.push({
                 id: `${item.publishedId}-${idx}`,
                 publishedId: item.publishedId,
+                urlSlug: item.urlSlug,
+                templateSelection: item.templateSelection,
                 userId: item.userId,
                 title: decodeHTML(raw),
                 company: item.companyName || (item.userId?.split('@')[0] ?? 'Unknown'),
@@ -323,7 +335,7 @@ const ServicesPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="sv-grid">
-                  {withInlineAds(current, s => <ServiceCard key={s.id} service={s} onView={() => navigate(`/service/${s.id}`)} />)}
+                  {withInlineAds(current, s => <ServiceCard key={s.id} service={s} onView={() => navigate(`/service/${s.id}`)} onEnquire={() => navigate(companyContactPath(s))} />)}
                 </div>
               )}
 
@@ -362,7 +374,7 @@ const ServicesPage: React.FC = () => {
   );
 };
 
-const ServiceCard: React.FC<{ service: Service; onView: () => void }> = ({ service, onView }) => {
+const ServiceCard: React.FC<{ service: Service; onView: () => void; onEnquire: () => void }> = ({ service, onView, onEnquire }) => {
   const color = barColor(service.category);
   const icon = catIcon(service.category);
   const [imgErr, setImgErr] = useState(false);
@@ -415,7 +427,7 @@ const ServiceCard: React.FC<{ service: Service; onView: () => void }> = ({ servi
           </div>
         </div>
         <div className="sv-btns">
-          <button className="sv-btn-red" onClick={onView}>Book / Enquire</button>
+          <button className="sv-btn-red" onClick={onEnquire}>Book / Enquire</button>
           <button className="sv-btn-out" onClick={onView}>Details</button>
         </div>
       </div>
