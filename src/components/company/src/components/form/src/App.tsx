@@ -961,7 +961,20 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       navigate(`/edit/template/${templateSlug}/${draftId}/${userId}`, { state: { aiGenData } });
 
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || error.message || "Unknown error";
+      // FastAPI returns the real reason in `detail` - read that first, else
+      // the user only ever sees axios's generic "Request failed with status
+      // code 409" and never learns it's a name clash.
+      const status = error.response?.status;
+      const serverMsg =
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Unknown error";
+      const errorMsg =
+        status === 409
+          ? `${serverMsg}. A company with this name (or GST/CIN) is already listed on DroneTv. If it's yours, sign in and open it from your dashboard instead of registering again, or contact support.`
+          : serverMsg;
       toast.error(`Failed to list your company: ${errorMsg}`);
     } finally {
       setIsSubmitting(false);
