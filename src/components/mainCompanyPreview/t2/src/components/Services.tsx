@@ -94,7 +94,7 @@ export default function Services({ serviceData }) {
                   <Card key={index} className="relative flex flex-col h-full border-2 shadow-lg hover:shadow-xl shadow-ink-caption">
                     <div className="h-40 overflow-hidden relative flex-shrink-0" style={{ background: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)' }}>
                       {service.image && /^https?:\/\//.test(service.image) ? (
-                        <img
+                        <img referrerPolicy="no-referrer"
                           src={service.image}
                           alt={service.title}
                           className="w-full h-full object-cover"

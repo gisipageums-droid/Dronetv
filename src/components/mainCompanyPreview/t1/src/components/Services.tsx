@@ -155,7 +155,7 @@ export default function Services({ serviceData }) {
               <Card className="h-full flex flex-col hover:shadow-xl transition-shadow duration-300 group">
                 <div className="h-48 overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)' }}>
                   {service.image && /^https?:\/\//.test(service.image) ? (
-                    <img
+                    <img referrerPolicy="no-referrer"
                       src={service.image}
                       alt={service.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -247,7 +247,7 @@ export default function Services({ serviceData }) {
               {/* Modal Header with Image */}
               <div className="relative h-32 sm:h-44 md:h-64 overflow-hidden flex-shrink-0" style={{ background: 'linear-gradient(135deg, #fb923c 0%, #c2410c 100%)' }}>
                 {selectedService.image && /^https?:\/\//.test(selectedService.image) && (
-                  <img
+                  <img referrerPolicy="no-referrer"
                     src={selectedService.image}
                     alt=""
                     className="w-full h-full object-cover"

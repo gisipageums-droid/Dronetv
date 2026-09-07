@@ -91,7 +91,7 @@ export default function EditableTestimonials({
                   <div className="p-8 text-center">
                     <div className="mb-6">
                       <div className="w-16 h-16 bg-status-info rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
-                        <img
+                        <img referrerPolicy="no-referrer"
                           src={testimonial.image || (testimonial.gender === "male" ? maleAvatar : femaleAvatar)}
                           alt={testimonial.name}
                           className="w-full h-full object-cover scale-110"

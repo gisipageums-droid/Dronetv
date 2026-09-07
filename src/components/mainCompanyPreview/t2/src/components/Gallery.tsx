@@ -69,7 +69,7 @@
 //             >
 //               <div className="relative overflow-hidden">
 //                 {image.url ? (
-//                   <img
+//                   <img referrerPolicy="no-referrer"
 //                     src={image.url}
 //                     alt={image.title}
 //                     className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
@@ -117,7 +117,7 @@
 //           </button>
 
 //           <div className="max-w-4xl w-full max-h-full">
-//             <img
+//             <img referrerPolicy="no-referrer"
 //               src={contentState.images[selectedImage].url}
 //               alt={contentState.images[selectedImage].title}
 //               className="w-full h-auto max-h-full object-contain"
@@ -206,7 +206,7 @@ const Gallery = ({ galleryData }) => {
                 >
                   <div className="relative overflow-hidden">
                     {image.url ? (
-                      <img
+                      <img referrerPolicy="no-referrer"
                         src={image.url}
                         alt={image.title}
                         className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
@@ -262,7 +262,7 @@ const Gallery = ({ galleryData }) => {
               </button>
 
               <div className="max-w-4xl w-full max-h-full">
-                <img
+                <img referrerPolicy="no-referrer"
                   src={contentState.images[selectedImage].url}
                   alt={contentState.images[selectedImage].title}
                   className="w-full h-auto max-h-full object-contain"

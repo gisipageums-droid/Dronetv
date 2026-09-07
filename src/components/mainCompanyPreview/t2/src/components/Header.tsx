@@ -94,7 +94,7 @@ export default function Header({
               {content.logoUrl &&
                 (content.logoUrl.startsWith("data:") ||
                   content.logoUrl.startsWith("http")) ? (
-                <img
+                <img referrerPolicy="no-referrer"
                   src={content.logoUrl || logo}
                   alt="Logo"
                   className="cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain h-[65px] min-w-[77px] max-w-[200px]"

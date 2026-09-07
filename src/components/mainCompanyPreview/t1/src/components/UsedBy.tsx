@@ -54,7 +54,7 @@ const CompanyLogo = ({ company }: { company: Company }) => {
 
   if (src) {
     return (
-      <img
+      <img referrerPolicy="no-referrer"
         src={src}
         alt={company.name}
         className="h-12 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-300"
@@ -66,7 +66,7 @@ const CompanyLogo = ({ company }: { company: Company }) => {
   }
 
   return (
-    <img
+    <img referrerPolicy="no-referrer"
       src={FALLBACK_SVG}
       alt={company.name}
       className="h-12 opacity-60"

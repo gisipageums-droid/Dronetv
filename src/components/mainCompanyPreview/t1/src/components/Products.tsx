@@ -168,7 +168,7 @@ export default function Products({ productData }) {
 
                 <CardContent className="p-0 flex flex-col h-full">
                   <div className="relative overflow-hidden">
-                    <img
+                    <img referrerPolicy="no-referrer"
                       src={product.image}
                       alt={product.title}
                       className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -267,7 +267,7 @@ export default function Products({ productData }) {
 
         {/* Modal Header with Image */}
         <div className="relative h-32 sm:h-36 overflow-hidden flex-shrink-0">
-          <img
+          <img referrerPolicy="no-referrer"
             src={selectedProduct.image}
             alt={selectedProduct.title}
             className="w-full h-full object-cover"

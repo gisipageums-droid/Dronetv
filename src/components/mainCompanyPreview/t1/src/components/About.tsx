@@ -158,7 +158,7 @@ export default function About({ aboutData }) {
             {aboutData.officeImage && (
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
                 <div className="absolute inset-0 bg-gradient-to-tr from-status-info/20 to-transparent mix-blend-multiply"></div>
-                <img
+                <img referrerPolicy="no-referrer"
                   src={aboutData.officeImage.startsWith('/assets/') ? '/images/about-office.jpg' : aboutData.officeImage}
                   alt="Office"
                   className="w-full h-auto object-cover"

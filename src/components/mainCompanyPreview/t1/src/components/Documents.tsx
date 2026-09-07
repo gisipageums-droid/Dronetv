@@ -39,7 +39,7 @@ export default function Documents({ documents }: { documents?: Record<string, st
               >
                 {isImage ? (
                   <div className="h-36 overflow-hidden bg-ink-light">
-                    <img src={url} alt={meta.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                    <img referrerPolicy="no-referrer" src={url} alt={meta.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
                   </div>
                 ) : isVideo ? (
                   <div className="h-36 bg-ink flex items-center justify-center">
