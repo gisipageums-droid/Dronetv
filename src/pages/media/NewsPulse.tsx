@@ -4,7 +4,7 @@ import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import CompactHero from '../../components/common/CompactHero';
 import ContentCard from '../../components/common/ContentCard';
 import AdSlot from '../../components/common/AdSlot';
-import { withInlineAds, ExpoAdCreative, DroneAdCreative, getAdsFor } from '../../components/common/adCreatives';
+import { withInlineAds, getAdsFor } from '../../components/common/adCreatives';
 import PostContentCTA from '../../components/common/PostContentCTA';
 
 
@@ -237,22 +237,18 @@ export default function NewsPulsePage() {
             </div>
           </div>
 
-          <div>
-            <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
-            {sidebarAds[0] ? (
+          {sidebarAds[0] && (
+            <div>
+              <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
               <AdSlot image={sidebarAds[0].imageUrl} href={sidebarAds[0].externalLink} alt={sidebarAds[0].title} width={300} height={250} className="mx-auto" />
-            ) : (
-              <AdSlot width={300} height={250} className="mx-auto"><ExpoAdCreative /></AdSlot>
-            )}
-          </div>
-          <div>
-            <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
-            {sidebarAds[1] ? (
+            </div>
+          )}
+          {sidebarAds[1] && (
+            <div>
+              <span className="block text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Advertisement</span>
               <AdSlot image={sidebarAds[1].imageUrl} href={sidebarAds[1].externalLink} alt={sidebarAds[1].title} width={300} height={250} className="mx-auto" />
-            ) : (
-              <AdSlot width={300} height={250} className="mx-auto"><DroneAdCreative /></AdSlot>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div className="lg:col-span-3">

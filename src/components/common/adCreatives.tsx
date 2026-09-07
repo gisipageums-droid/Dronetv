@@ -74,28 +74,20 @@ export const PartnerAdCreative = () => (
   </div>
 );
 
-const INLINE_CREATIVES = [DroneAdCreative, ExpoAdCreative, TrainingAdCreative];
-
 // Inserts a full-width inline ad card after every 3rd item in a listing grid,
-// cycling through the sample creatives so repeated slots don't look identical.
-// Caller's grid must be a CSS grid (col-span-full spans every column).
+// but ONLY when the admin has actually published an ad for this zone - no
+// filler creative otherwise, so drafting/unpublishing every ad genuinely
+// clears the feed. Caller's grid must be a CSS grid.
 export function withInlineAds<T>(arr: T[], render: (item: T, i: number) => ReactNode): ReactNode[] {
   const realAds = getAdsFor('inline', window.location.pathname);
   const out: ReactNode[] = [];
-  let adCount = 0;
   arr.forEach((item, i) => {
     out.push(render(item, i));
-    if ((i + 1) % 3 === 0 && i !== arr.length - 1) {
-      const realAd = realAds.length > 0 ? realAds[adCount % realAds.length] : null;
-      const Creative = INLINE_CREATIVES[adCount % INLINE_CREATIVES.length];
-      adCount++;
+    if (realAds.length > 0 && (i + 1) % 3 === 0 && i !== arr.length - 1) {
+      const realAd = realAds[Math.floor(i / 3) % realAds.length];
       out.push(
         <div key={`ad-${i}`} className="col-span-full">
-          {realAd ? (
-            <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} aspect="1200/100" minHeight={56} className="w-full" />
-          ) : (
-            <AdSlot aspect="1200/100" minHeight={56} className="w-full"><Creative /></AdSlot>
-          )}
+          <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} aspect="1200/100" minHeight={56} className="w-full" />
         </div>
       );
     }
@@ -108,28 +100,17 @@ export function withInlineAds<T>(arr: T[], render: (item: T, i: number) => React
 // sibling of the main content column inside an `lg:flex lg:items-start lg:gap-6` row.
 export function AdSidebarRail() {
   const { pathname } = useLocation();
-  const realAds = getAdsFor('sidebar', pathname);
-  const slots = [
-    { height: 250, dummy: ExpoAdCreative },
-    { height: 600, dummy: PartnerAdCreative },
-    { height: 250, dummy: DroneAdCreative },
-  ];
+  const heights = [250, 600, 250];
+  const realAds = getAdsFor('sidebar', pathname).slice(0, 3);
+  if (realAds.length === 0) return null;
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-[300px] lg:flex-shrink-0 gap-4">
-      {slots.map((slot, i) => {
-        const realAd = realAds[i];
-        const Dummy = slot.dummy;
-        return (
-          <div key={i}>
-            <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest block mb-1">Advertisement</span>
-            {realAd ? (
-              <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} width={300} height={slot.height} />
-            ) : (
-              <AdSlot width={300} height={slot.height}><Dummy /></AdSlot>
-            )}
-          </div>
-        );
-      })}
+      {realAds.map((realAd, i) => (
+        <div key={i}>
+          <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest block mb-1">Advertisement</span>
+          <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} width={300} height={heights[i] ?? 250} />
+        </div>
+      ))}
     </aside>
   );
 }
@@ -139,9 +120,10 @@ export function AdSidebarRail() {
 export function SponsorBadge() {
   const { pathname } = useLocation();
   const realAd = getAdsFor('sponsor-badge', pathname)[0];
+  if (!realAd) return null;
   return (
     <span className="absolute -top-2 -right-1 bg-white text-red-600 border border-red-600 text-[8px] font-bold px-1 rounded leading-tight">
-      {realAd ? `Sponsored by ${realAd.company || realAd.title}` : 'Sponsored'}
+      {`Sponsored by ${realAd.company || realAd.title}`}
     </span>
   );
 }
@@ -150,9 +132,8 @@ export function SponsorBadge() {
 export function AdDetailBanner() {
   const { pathname } = useLocation();
   const realAd = getAdsFor('detail-banner', pathname)[0];
-  return realAd ? (
+  if (!realAd) return null;
+  return (
     <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} aspect="1200/90" minHeight={50} className="w-full" />
-  ) : (
-    <AdSlot aspect="1200/90" minHeight={50} className="w-full"><TrainingAdCreative /></AdSlot>
   );
 }
