@@ -136,7 +136,7 @@ export default function CompanyProfile({ profileData }) {
             className="relative flex justify-center"
           >
             <div className="rounded-3xl overflow-hidden shadow-xl border border-yellow-100 w-full max-w-[900px]">
-              <img
+              <img referrerPolicy="no-referrer"
                 src={
                   profileState.imageUrl ||
                   "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=600&fit=crop"

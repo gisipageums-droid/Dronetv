@@ -126,7 +126,7 @@ export default function GallerySection({ galleryData }) {
                         >
                             <div className="relative overflow-hidden">
                                 {image.url ? (
-                                    <img
+                                    <img referrerPolicy="no-referrer"
                                         src={image.url}
                                         alt={image.title}
                                         className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
@@ -199,7 +199,7 @@ export default function GallerySection({ galleryData }) {
                         className="max-w-4xl w-full flex flex-col items-center"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <img
+                        <img referrerPolicy="no-referrer"
                             src={galleryData.images[selectedImage].url}
                             alt={galleryData.images[selectedImage].title}
                             className="w-full h-auto max-h-[70vh] object-contain rounded-lg"

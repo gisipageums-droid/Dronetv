@@ -179,7 +179,7 @@ export default function Hero({ heroData }) {
                   {/* Main Hero Image */}
                   <div className="relative">
                     {heroState.heroImage ? (
-                      <img
+                      <img referrerPolicy="no-referrer"
                         src={heroState.heroImage}
                         alt="Modern business team collaborating"
                         className="w-full max-w-full h-auto object-contain rounded-3xl shadow-2xl"
@@ -204,7 +204,7 @@ export default function Hero({ heroData }) {
                   >
                     <div className="relative">
                       {heroState.hero3Image ? (
-                        <img
+                        <img referrerPolicy="no-referrer"
                           src={heroState.hero3Image}
                           alt="Additional business context"
                           className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-white"

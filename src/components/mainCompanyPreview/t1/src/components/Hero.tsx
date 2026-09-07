@@ -174,7 +174,7 @@ export default function EditableHero({
             <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl">
               <motion.div className="relative" variants={imageVariants}>
                 <div className="relative">
-                  <img
+                  <img referrerPolicy="no-referrer"
                     src={heroState.hero1Image}
                     alt="Innovation showcase"
                     className="w-full h-auto max-h-[70vh] object-contain rounded-3xl shadow-2xl scale-110"
@@ -186,7 +186,7 @@ export default function EditableHero({
                   transition={{ delay: 0.3 }}
                 >
                   <div className="relative">
-                    <img
+                    <img referrerPolicy="no-referrer"
                       src={heroState.hero3Image}
                       alt="Tech innovation"
                       className="w-auto max-w-[12rem] sm:max-w-[8rem] lg:max-w-[10rem] h-auto object-contain rounded-2xl shadow-xl border-4 border-white scale-110"

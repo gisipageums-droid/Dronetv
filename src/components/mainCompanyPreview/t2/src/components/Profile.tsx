@@ -90,7 +90,7 @@ const Profile = ({ profileData }) => {
                 transition={{ duration: 0.2 }}
               >
                 <div className="relative h-60 overflow-hidden">
-                  <img
+                  <img referrerPolicy="no-referrer"
                     src={getTeamMemberImage(member)}
                     alt={member.name}
                     className="w-full h-full object-cover"

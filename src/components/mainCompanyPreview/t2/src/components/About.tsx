@@ -63,7 +63,7 @@ export default function About({ aboutData }) {
                   transition={{ duration: 0.6, ease: "easeOut" }}
                 >
                   <div className="relative flex justify-center">
-                    <img
+                    <img referrerPolicy="no-referrer"
                       src={aboutState.imageUrl}
                       alt="About"
                       className="w-full max-w-full h-auto object-contain rounded-2xl shadow-2xl"

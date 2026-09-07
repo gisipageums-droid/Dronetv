@@ -83,7 +83,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
 
         {/* Hero Image */}
         <div className="relative">
-          <img
+          <img referrerPolicy="no-referrer"
             src={blog.image}
             className="w-full h-48 object-cover rounded-t-xl"
             alt={blog.title}
