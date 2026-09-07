@@ -250,6 +250,13 @@ const CompaniesPage: React.FC = () => {
     else navigate(`/company/${slug}`);
   };
 
+  const handleEnquireClick = (c: Company) => {
+    const slug = c.urlSlug || c.publishedId || c.companyId;
+    if (!slug) return;
+    const seg = (c.templateSelection === 'template-2' || c.templateSelection === '2') ? 'companies' : 'company';
+    navigate(`/${seg}/${slug}#contact`);
+  };
+
   const chipStyle = (on: boolean): React.CSSProperties => ({
     background: on ? '#111111' : 'transparent',
     color: on ? '#F8C400' : '#555',
@@ -422,7 +429,7 @@ const CompaniesPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="co-grid">
-                  {withInlineAds(current, (c, i) => <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} />)}
+                  {withInlineAds(current, (c, i) => <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} />)}
                 </div>
               )}
 
@@ -454,7 +461,7 @@ const CompaniesPage: React.FC = () => {
   );
 };
 
-const CompanyCard: React.FC<{ company: Company; onClick: () => void }> = ({ company, onClick }) => {
+const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void }> = ({ company, onClick, onEnquire }) => {
   const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
   const verified = company.reviewStatus === 'approved';
@@ -502,7 +509,7 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void }> = ({ comp
 
       <div className="co-card-foot">
         <button className="co-btn-out" onClick={e => { e.stopPropagation(); onClick(); }}>View Profile <ChevronRight size={11} /></button>
-        <button className="co-btn-red" onClick={e => { e.stopPropagation(); onClick(); }}>Enquire</button>
+        <button className="co-btn-red" onClick={e => { e.stopPropagation(); onEnquire(); }}>Enquire</button>
       </div>
     </div>
   );
