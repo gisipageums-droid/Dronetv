@@ -296,7 +296,7 @@ const CompaniesPage: React.FC = () => {
       <div className="co-filter-grp">
         <div className="co-fl-label">Package Tier</div>
         <div className="co-chips">
-          {[{ l: '⭐ Brand', v: 'brand' }, { l: '🔵 Expand', v: 'scale' }, { l: '📌 Reach', v: 'reach' }].map(t => (
+          {[{ l: '📌 Reach', v: 'reach' }, { l: '⭐ Brand', v: 'scale' }, { l: '🔵 Expand', v: 'brand' }].map(t => (
             <button key={t.v} className="co-chip" style={chipStyle(false)} disabled>{t.l}</button>
           ))}
         </div>

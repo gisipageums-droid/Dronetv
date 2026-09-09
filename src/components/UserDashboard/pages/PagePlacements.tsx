@@ -23,7 +23,7 @@ export const DURATION_OPTIONS = [
 // slot with nowhere to display. Keep this in sync whenever a slot is wired
 // or moved — a wrong link here is worse than no link.
 export const SLOT_DEFINITIONS = [
-  { id: "HP-1", label: "Homepage Hero Banner",       category: "Homepage",   costPerDay: 0,   description: "Brand subscribers only — full-width hero", pageUrl: null as string | null, sizeHint: "1600×500", disabled: true, disabledReason: "Brand Only" },
+  { id: "HP-1", label: "Homepage Hero Banner",       category: "Homepage",   costPerDay: 0,   description: "Expand subscribers only — full-width hero", pageUrl: null as string | null, sizeHint: "1600×500", disabled: true, disabledReason: "Expand Only" },
   { id: "HP-2", label: "Featured Strip — Slot A",    category: "Homepage",   costPerDay: 100, description: "Top featured strip, left position", pageUrl: "/" as string | null, sizeHint: "900×300 (3:1)" },
   { id: "HP-3", label: "Featured Strip — Slot B",    category: "Homepage",   costPerDay: 100, description: "Top featured strip, right position", pageUrl: "/" as string | null, sizeHint: "900×300 (3:1)" },
   { id: "HP-4", label: "Sponsored Article",          category: "Homepage",   costPerDay: 50,  description: "Inline sponsored news article", pageUrl: "/" as string | null, sizeHint: "1000×250 (4:1)" },
@@ -438,7 +438,7 @@ const PagePlacements: React.FC = () => {
               <div className="flex items-start gap-2">
                 <Info size={13} className="text-brand-yellow flex-shrink-0 mt-0.5" />
                 <div className="text-xs text-white/50 leading-relaxed space-y-1.5">
-                  <p><strong className="text-white">HP-1</strong> — Brand subscribers only.</p>
+                  <p><strong className="text-white">HP-1</strong> — Expand subscribers only.</p>
                   <p><strong className="text-white">HP-5</strong> — Coming soon, not bookable yet.</p>
                   <p>Cancel early → get tokens back for remaining days.</p>
                 </div>

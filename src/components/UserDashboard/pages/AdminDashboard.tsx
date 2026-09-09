@@ -244,8 +244,8 @@ const AdminDashboard: React.FC = () => {
 
   const PACKAGE_INFO: Record<string, { label: string; price: string }> = {
     reach: { label: "Reach Package", price: "₹25,000/yr" },
-    scale: { label: "Expand Package", price: "₹75,000/yr" },
-    brand: { label: "Brand Package", price: "₹1,50,000/yr" },
+    scale: { label: "Brand Package", price: "₹75,000/yr" },
+    brand: { label: "Expand Package", price: "₹1,50,000/yr" },
   };
   const pkg = PACKAGE_INFO[packageType];
 

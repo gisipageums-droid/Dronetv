@@ -162,7 +162,7 @@ const MediaHub: React.FC = () => {
     return "included";
   }
 
-  const tierLabel: Record<string, string> = { free: "Free", reach: "Reach", scale: "Expand", brand: "Brand" };
+  const tierLabel: Record<string, string> = { free: "Free", reach: "Reach", scale: "Brand", brand: "Expand" };
   const tierColor: Record<string, string> = {
     free: "bg-ink-paragraph text-ink-light",
     reach: "bg-status-info/40 text-status-info/40",

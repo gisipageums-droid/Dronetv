@@ -23,7 +23,7 @@ const packages = [
     ],
   },
   {
-    name: 'Expand',
+    name: 'Brand',
     price: 'Rs.75,000',
     period: '/year + GST',
     popular: true,
@@ -43,7 +43,7 @@ const packages = [
     ],
   },
   {
-    name: 'Brand',
+    name: 'Expand',
     price: 'Rs.1,50,000',
     period: '/year + GST',
     popular: false,
