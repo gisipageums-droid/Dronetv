@@ -162,7 +162,7 @@ const MediaHub: React.FC = () => {
     return "included";
   }
 
-  const tierLabel: Record<string, string> = { free: "Free", reach: "Reach", scale: "Scale", brand: "Brand" };
+  const tierLabel: Record<string, string> = { free: "Free", reach: "Reach", scale: "Brand", brand: "Expand" };
   const tierColor: Record<string, string> = {
     free: "bg-gray-700 text-gray-300",
     reach: "bg-blue-900/40 text-blue-300",
@@ -267,7 +267,7 @@ const MediaHub: React.FC = () => {
                       <span className="font-semibold text-sm text-gray-500">{d.title}</span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide ${categoryColor[d.category]}`}>{d.category}</span>
                     </div>
-                    <p className="text-xs text-gray-400 mt-0.5">Scale: {d.scale} &nbsp;|&nbsp; Brand: {d.brand}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Brand: {d.scale} &nbsp;|&nbsp; Expand: {d.brand}</p>
                   </div>
                   <a href="/user-recharge" className="flex-shrink-0 text-xs font-bold text-yellow-600 hover:underline">Upgrade</a>
                 </div>

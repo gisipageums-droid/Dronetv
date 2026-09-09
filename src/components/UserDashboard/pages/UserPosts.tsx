@@ -120,7 +120,7 @@ const statusBadge: Record<Post["status"], { label: string; cls: string; icon: Re
   rejected:  { label: "Rejected",   cls: "bg-red-100 text-red-700",      icon: XCircle },
 };
 
-const TIER_LABEL: Record<string, string> = { free: "Free", reach: "Reach", scale: "Scale", brand: "Brand" };
+const TIER_LABEL: Record<string, string> = { free: "Free", reach: "Reach", scale: "Brand", brand: "Expand" };
 const TIER_COLOR: Record<string, string> = {
   free:  "bg-gray-100 text-gray-600",
   reach: "bg-blue-100 text-blue-700",

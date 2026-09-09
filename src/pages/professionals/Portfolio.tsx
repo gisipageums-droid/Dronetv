@@ -155,9 +155,9 @@ export default function PortfolioPage() {
             { icon:'📰', title:'Digital Magazine', desc:'Quarterly print and digital magazine covering Drone, GIS, and AI technology in India — directory, ads, and editorial.',
               bullets:['Quarterly print and digital editions','Full-page and half-page advertisements','Editorial articles across all three sectors','Industry directory in every issue'] },
             { icon:'🏆', title:'Event Media Partner', desc:'Official broadcasting partner for Drone Expo 2025 Mumbai and Drone Expo 2026 Bengaluru — covering all three sectors.',
-              bullets:['Live on-ground coverage and broadcasting','Stall interviews for Drone, GIS, and AI exhibitors','Published across all DroneTv platforms','Expo stall branding for Brand tier'] },
-            { icon:'🔍', title:'Lead Generation', desc:'Buyer enquiries from Drone, GIS, and AI searches routed to subscribing companies. Full buyer data for Brand tier.',
-              bullets:['Email notification on new enquiry','Full lead details on platform login','Monthly analytics for Scale and Brand','Full buyer contact data for Brand tier'] },
+              bullets:['Live on-ground coverage and broadcasting','Stall interviews for Drone, GIS, and AI exhibitors','Published across all DroneTv platforms','Expo stall branding for Expand tier'] },
+            { icon:'🔍', title:'Lead Generation', desc:'Buyer enquiries from Drone, GIS, and AI searches routed to subscribing companies. Full buyer data for Expand tier.',
+              bullets:['Email notification on new enquiry','Full lead details on platform login','Monthly analytics for Brand and Expand','Full buyer contact data for Expand tier'] },
             { icon:'🌍', title:'Exclusive Industry Audience', desc:'100% Drone, GIS, and AI industry audience. No generic traffic. Every visitor belongs to one of the three sectors.',
               bullets:['Drone manufacturers and operators','GIS mapping and geospatial professionals','AI and technology companies','Industry buyers and decision-makers'] },
           ].map(c => <FeatCard key={c.title} {...c} />)}
@@ -172,11 +172,11 @@ export default function PortfolioPage() {
             desc="The platform was built for the drone industry first. Every feature — marketplace, media, magazine, events, and lead generation — is tailored to how drone companies grow their business and reach buyers." />
           <FeatGrid>
             {[
-              { badge:<Chip label="Manufacturers" color="bg-zinc-900 text-yellow-400" />, title:'Drone Manufacturer Profiles', desc:'Dedicated profile pages for OEMs to list fixed-wing, multi-rotor, VTOL, and hybrid UAVs with full specifications and buyer enquiry forms.', bullets:['Product listing with full specifications','B2B buyer enquiry routing','Priority search ranking for Brand tier','Video interviews showcasing products'] },
+              { badge:<Chip label="Manufacturers" color="bg-zinc-900 text-yellow-400" />, title:'Drone Manufacturer Profiles', desc:'Dedicated profile pages for OEMs to list fixed-wing, multi-rotor, VTOL, and hybrid UAVs with full specifications and buyer enquiry forms.', bullets:['Product listing with full specifications','B2B buyer enquiry routing','Priority search ranking for Expand tier','Video interviews showcasing products'] },
               { badge:<Chip label="Service Providers" color="bg-zinc-900 text-yellow-400" />, title:'Drone Service Companies', desc:'Agriculture spraying, inspection, survey, logistics, and media service companies list their capabilities and get enquiries from active buyers.', bullets:['Service listing by application sector','Lead notifications from active buyers','Category-wise discovery for buyers','Case study and editorial content'] },
               { badge:<Chip label="Training" color="bg-zinc-900 text-yellow-400" />, title:'DGCA Training Institutes', desc:'DGCA-approved pilot training institutes, simulator labs, and drone academies reach students and career-changers through the platform.', bullets:['Institute profile and course listings','Career and training awareness content','Student enquiry routing','Social media promotion of programs'] },
               { badge:<Chip label="Components" color="bg-zinc-900 text-yellow-400" />, title:'Drone Parts & Technology', desc:'Propulsion systems, frames, batteries, payloads, ground control systems, and ancillary tech suppliers reaching drone manufacturers.', bullets:['Component-level product listings','B2B supplier discovery','Product demo video content','Buyer enquiry management'] },
-              { badge:<Chip label="Events" color="bg-zinc-900 text-yellow-400" />, title:'Drone Expo Coverage', desc:'Official media partner for Drone Expo 2025 Mumbai and Drone Expo 2026 Bengaluru. 50+ interviews already produced.', bullets:['50+ interviews from Drone Expo 2025','Drone Expo 2026 Bengaluru: December 2026','Brand: expo stall branding','All tiers: digital event coverage'] },
+              { badge:<Chip label="Events" color="bg-zinc-900 text-yellow-400" />, title:'Drone Expo Coverage', desc:'Official media partner for Drone Expo 2025 Mumbai and Drone Expo 2026 Bengaluru. 50+ interviews already produced.', bullets:['50+ interviews from Drone Expo 2025','Drone Expo 2026 Bengaluru: December 2026','Expand: expo stall branding','All tiers: digital event coverage'] },
               { badge:<Chip label="Media" color="bg-zinc-900 text-yellow-400" />, title:'Drone Industry Media', desc:'Video interviews, short reels, editorial articles, press releases, and magazine ads — all produced by DroneTv for drone companies.', bullets:['YouTube interviews on @indiadronetv','Social posts across LinkedIn, Instagram, Facebook','Editorial articles on DroneTv.in','Quarterly magazine advertisements'] },
             ].map(c => <FeatCard key={c.title} {...c} />)}
           </FeatGrid>
@@ -202,7 +202,7 @@ export default function PortfolioPage() {
             ].map(c => <FeatCard key={c.title} {...c} />)}
           </FeatGrid>
           <div className="mt-5 bg-white border-l-4 border-[#1A5FA8] px-4 py-3 text-xs text-gray-500 leading-relaxed rounded-r">
-            <strong className="text-gray-900">GIS on DroneTv.in:</strong> GIS is one of the platform's three primary sectors. All three packages — Reach, Scale, and Brand — are fully available to GIS companies at the same pricing. All content production, magazine, lead generation, and event coverage features apply to GIS companies without restriction.
+            <strong className="text-gray-900">GIS on DroneTv.in:</strong> GIS is one of the platform's three primary sectors. All three packages — Reach, Brand, and Expand — are fully available to GIS companies at the same pricing. All content production, magazine, lead generation, and event coverage features apply to GIS companies without restriction.
           </div>
         </div>
       </section>
@@ -244,7 +244,7 @@ export default function PortfolioPage() {
               { icon:'💻', title:'Product & Technology Showcase', desc:'Drone hardware, GIS platforms, AI software, payloads, and services listed with real-world use case content.', bullets:['Drone hardware and payload listings','GIS software and platform listings','AI product and API listings','Use case and specification content'] },
               { icon:'🎤', title:'Event Coverage & Promotion', desc:'Official media partner for Drone Expo events covering Drone, GIS, and AI exhibitors equally.', bullets:['On-ground interview production','Live event broadcasting','GIS and AI exhibitor coverage','Post-event content publishing'] },
               { icon:'🎥', title:'Video-Based Knowledge Platform', desc:'Expert interviews covering Drone innovations, GIS methodology, and AI applications — educational content for all three sectors.', bullets:['Drone CEO and founder interviews','GIS professional and expert talks','AI technology explainer interviews','Cross-sector use case content'] },
-              { icon:'📈', title:'Lead Generation', desc:'Verified buyer enquiries from active searches across all three sectors routed directly to subscribing companies.', bullets:['B2B enquiry form on every profile','Email notification on new lead','Monthly reports for Scale and Brand','Full buyer data for Brand tier'] },
+              { icon:'📈', title:'Lead Generation', desc:'Verified buyer enquiries from active searches across all three sectors routed directly to subscribing companies.', bullets:['B2B enquiry form on every profile','Email notification on new lead','Monthly reports for Brand and Expand','Full buyer data for Expand tier'] },
               { icon:'👤', title:'Platform for Industry Professionals', desc:'Drone pilots, GIS surveyors, AI engineers, and technology specialists connect, showcase work, and find opportunities.', bullets:['Professional profile and service listing','Cross-sector professional networking','Career opportunity discovery','Industry connection facilitation'] },
               { icon:'📢', title:'Marketing Support', desc:'Social media, video, articles, press releases, and magazine ads handled by DroneTv for all three sectors — no separate agency needed.', bullets:['Industry-specific post copywriting','Technical article writing for GIS/AI','Product demo video for AI/GIS platforms','Magazine ads across all three sectors'] },
               { icon:'📚', title:'Learning & Awareness', desc:'Drone applications, GIS methodology, and AI use case content — creating an informed audience that understands the products being sold.', bullets:['Drone application explainer content','GIS technology awareness articles','AI use case demonstrations','Regulatory and industry updates'] },
@@ -263,11 +263,11 @@ export default function PortfolioPage() {
           <FeatGrid>
             {[
               { title:'Company Profile Pages', desc:'Each company is categorised under its correct sector and vertical. All three sectors have equal profile depth and features.', bullets:['Drone: categorised by application type','GIS: categorised by service or software type','AI: categorised by technology area','Verified, Featured, or Premium badge per tier'] },
-              { title:'Product & Service Listings', desc:'Drone hardware, GIS services, AI platforms, and supporting technologies listed and searchable by category across all sectors.', bullets:['Up to 10 listings (Reach)','Up to 25 listings (Scale)','Unlimited listings (Brand)','Searchable across all three sectors'] },
-              { title:'B2B Enquiry System', desc:"Drone buyers, GIS project managers, and AI platform users all submit requirements through the company's dedicated B2B form.", bullets:['Dedicated form per company','Email notification on every submission','Full details on platform login','Full buyer contact data on Brand tier'] },
-              { title:'Search & Category Placement', desc:'Featured placement (Scale) and priority search ranking with quarterly homepage feature (Brand) — applies across all three sectors.', bullets:['Featured category placement 3 months (Scale)','Quarterly homepage feature (Brand)','Priority search ranking within sector (Brand)','Industry vertical promotion (Brand)'] },
-              { title:'Analytics & Lead Reports', desc:'Monthly lead count, profile views, and listing performance data for Scale and Brand subscribers across Drone, GIS, and AI sectors.', bullets:['Monthly lead summary & views (Scale)','Full analytics dashboard (Brand)','Full buyer name, email, phone (Brand)','Listing performance data (Brand)'] },
-              { title:'Industry Vertical Promotion', desc:'Brand subscribers are promoted within their specific vertical in all DroneTv communications — Drone, GIS, or AI.', bullets:['Drone vertical promotion (Brand)','GIS vertical promotion (Brand)','AI vertical promotion (Brand)','Platform Partner designation (Brand)'] },
+              { title:'Product & Service Listings', desc:'Drone hardware, GIS services, AI platforms, and supporting technologies listed and searchable by category across all sectors.', bullets:['Up to 10 listings (Reach)','Up to 25 listings (Brand)','Unlimited listings (Expand)','Searchable across all three sectors'] },
+              { title:'B2B Enquiry System', desc:"Drone buyers, GIS project managers, and AI platform users all submit requirements through the company's dedicated B2B form.", bullets:['Dedicated form per company','Email notification on every submission','Full details on platform login','Full buyer contact data on Expand tier'] },
+              { title:'Search & Category Placement', desc:'Featured placement (Brand) and priority search ranking with quarterly homepage feature (Expand) — applies across all three sectors.', bullets:['Featured category placement 3 months (Brand)','Quarterly homepage feature (Expand)','Priority search ranking within sector (Expand)','Industry vertical promotion (Expand)'] },
+              { title:'Analytics & Lead Reports', desc:'Monthly lead count, profile views, and listing performance data for Brand and Expand subscribers across Drone, GIS, and AI sectors.', bullets:['Monthly lead summary & views (Brand)','Full analytics dashboard (Expand)','Full buyer name, email, phone (Expand)','Listing performance data (Expand)'] },
+              { title:'Industry Vertical Promotion', desc:'Expand subscribers are promoted within their specific vertical in all DroneTv communications — Drone, GIS, or AI.', bullets:['Drone vertical promotion (Expand)','GIS vertical promotion (Expand)','AI vertical promotion (Expand)','Platform Partner designation (Expand)'] },
             ].map(c => <FeatCard key={c.title} {...c} />)}
           </FeatGrid>
         </div>
@@ -283,14 +283,14 @@ export default function PortfolioPage() {
             desc="DroneTv produces and publishes all content as part of each subscription package. GIS and AI companies receive exactly the same content production as drone companies — interviews, reels, articles, and magazine placements." />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-zinc-800 border-2 border-zinc-800 rounded overflow-hidden">
             {[
-              { tag:'Video', tagColor:'bg-red-900/60 text-red-300', title:'Video Interview (5-min)', desc:"CEO, technical lead, or product interviews for Drone, GIS, and AI companies. Published on YouTube and embedded on the company's DroneTv profile.", detail:'Scale: 1 | Brand: 2 | Promoted via social on publish week' },
-              { tag:'Video', tagColor:'bg-red-900/60 text-red-300', title:'Short Reel (1-min)', desc:'Product reels, service showcases, or technology demos for all three sectors. Published on Instagram, Facebook, and cross-posted on LinkedIn.', detail:'Scale: 2 reels | Brand: 4 reels | All handles simultaneously' },
-              { tag:'Social', tagColor:'bg-blue-900/60 text-blue-300', title:'Promotional Posts', desc:'Company posts published across LinkedIn, Instagram, and Facebook for Drone, GIS, and AI companies. Company tagged, website link included.', detail:'Reach: 2 (one-time) | Scale: 6/yr | Brand: 12/yr' },
-              { tag:'Article', tagColor:'bg-green-900/60 text-green-300', title:'Editorial Articles', desc:'600–1000 word articles about the company — Drone technology, GIS methodology, AI solutions — published on DroneTv.in and promoted via social.', detail:'Scale: 1 article | Brand: 3 articles | Promoted on publish day' },
-              { tag:'News', tagColor:'bg-green-900/60 text-green-300', title:'DroneTv News Posts', desc:'Short platform news posts for company announcements, product launches, certifications, and milestones — all three sectors.', detail:'Brand: up to 6/year | Company-specific items' },
-              { tag:'PR', tagColor:'bg-green-900/60 text-green-300', title:'Press Releases', desc:'Press releases written and published on DroneTv.in for Drone, GIS, and AI company announcements and major news.', detail:'Brand: up to 6/yr | Add-on: ₹3,000 each' },
-              { tag:'Social', tagColor:'bg-blue-900/60 text-blue-300', title:'Event Coverage Posts', desc:'Social posts covering product launches, awards, and exhibitions for Brand subscribers across Drone, GIS, and AI sectors.', detail:'Brand package only | Launches, awards, exhibitions' },
-              { tag:'Magazine', tagColor:'bg-yellow-900/60 text-yellow-300', title:'Magazine Placements', desc:"Magazine advertisements, editorial articles, and cover page features in DroneTv's quarterly magazine — open to Drone, GIS, and AI companies equally.", detail:'Scale: Half-page x2 | Brand: Full-page x4 + editorial' },
+              { tag:'Video', tagColor:'bg-red-900/60 text-red-300', title:'Video Interview (5-min)', desc:"CEO, technical lead, or product interviews for Drone, GIS, and AI companies. Published on YouTube and embedded on the company's DroneTv profile.", detail:'Brand: 1 | Expand: 2 | Promoted via social on publish week' },
+              { tag:'Video', tagColor:'bg-red-900/60 text-red-300', title:'Short Reel (1-min)', desc:'Product reels, service showcases, or technology demos for all three sectors. Published on Instagram, Facebook, and cross-posted on LinkedIn.', detail:'Brand: 2 reels | Expand: 4 reels | All handles simultaneously' },
+              { tag:'Social', tagColor:'bg-blue-900/60 text-blue-300', title:'Promotional Posts', desc:'Company posts published across LinkedIn, Instagram, and Facebook for Drone, GIS, and AI companies. Company tagged, website link included.', detail:'Reach: 2 (one-time) | Brand: 6/yr | Expand: 12/yr' },
+              { tag:'Article', tagColor:'bg-green-900/60 text-green-300', title:'Editorial Articles', desc:'600–1000 word articles about the company — Drone technology, GIS methodology, AI solutions — published on DroneTv.in and promoted via social.', detail:'Brand: 1 article | Expand: 3 articles | Promoted on publish day' },
+              { tag:'News', tagColor:'bg-green-900/60 text-green-300', title:'DroneTv News Posts', desc:'Short platform news posts for company announcements, product launches, certifications, and milestones — all three sectors.', detail:'Expand: up to 6/year | Company-specific items' },
+              { tag:'PR', tagColor:'bg-green-900/60 text-green-300', title:'Press Releases', desc:'Press releases written and published on DroneTv.in for Drone, GIS, and AI company announcements and major news.', detail:'Expand: up to 6/yr | Add-on: ₹3,000 each' },
+              { tag:'Social', tagColor:'bg-blue-900/60 text-blue-300', title:'Event Coverage Posts', desc:'Social posts covering product launches, awards, and exhibitions for Expand subscribers across Drone, GIS, and AI sectors.', detail:'Expand package only | Launches, awards, exhibitions' },
+              { tag:'Magazine', tagColor:'bg-yellow-900/60 text-yellow-300', title:'Magazine Placements', desc:"Magazine advertisements, editorial articles, and cover page features in DroneTv's quarterly magazine — open to Drone, GIS, and AI companies equally.", detail:'Brand: Half-page x2 | Expand: Full-page x4 + editorial' },
             ].map(({ tag, tagColor, title, desc, detail }) => (
               <div key={title} className="bg-zinc-800 p-5">
                 <span className={`inline-block text-[9px] font-bold tracking-widest uppercase px-2 py-1 rounded mb-3 ${tagColor}`}>{tag}</span>
@@ -311,10 +311,10 @@ export default function PortfolioPage() {
             desc="Quarterly print and digital magazine covering all three sectors. Drone manufacturers, GIS firms, and AI companies all appear in the directory, advertisements, and editorial content." />
           <FeatGrid>
             {[
-              { title:'Industry Directory', desc:'Every subscriber appears in the magazine directory categorised as Drone, GIS, or AI — with logo, name, and tagline.', bullets:['Reach: 1 issue — logo, name, category','Scale: all issues — logo and tagline','Brand: all 4 issues — logo and tagline','Drone, GIS, and AI companies represented'] },
-              { title:'Magazine Advertisements', desc:'Half-page (Scale) and full-page (Brand) advertisements open to Drone, GIS, and AI companies to reach the full cross-sector readership.', bullets:['Scale: half-page ad in 2 issues','Brand: full-page ad in all 4 issues','Print and digital distribution','Cross-sector Drone, GIS, AI readership'] },
-              { title:'Magazine Editorial Article', desc:'A 2–3 page editorial feature about the company — whether a drone OEM, GIS firm, or AI platform — in one selected issue.', bullets:['Brand package only','2–3 pages in one selected issue','Company story, products, and vision','Open to all three sectors'] },
-              { title:'Cover Page Feature', desc:'Brand subscribers from any of the three sectors are eligible for the cover page feature, subject to the editorial schedule.', bullets:['Brand package only','Subject to editorial schedule','Drone, GIS, and AI companies eligible','Add-on available: ₹25,000'] },
+              { title:'Industry Directory', desc:'Every subscriber appears in the magazine directory categorised as Drone, GIS, or AI — with logo, name, and tagline.', bullets:['Reach: 1 issue — logo, name, category','Brand: all issues — logo and tagline','Expand: all 4 issues — logo and tagline','Drone, GIS, and AI companies represented'] },
+              { title:'Magazine Advertisements', desc:'Half-page (Brand) and full-page (Expand) advertisements open to Drone, GIS, and AI companies to reach the full cross-sector readership.', bullets:['Brand: half-page ad in 2 issues','Expand: full-page ad in all 4 issues','Print and digital distribution','Cross-sector Drone, GIS, AI readership'] },
+              { title:'Magazine Editorial Article', desc:'A 2–3 page editorial feature about the company — whether a drone OEM, GIS firm, or AI platform — in one selected issue.', bullets:['Expand package only','2–3 pages in one selected issue','Company story, products, and vision','Open to all three sectors'] },
+              { title:'Cover Page Feature', desc:'Expand subscribers from any of the three sectors are eligible for the cover page feature, subject to the editorial schedule.', bullets:['Expand package only','Subject to editorial schedule','Drone, GIS, and AI companies eligible','Add-on available: ₹25,000'] },
             ].map(c => <FeatCard key={c.title} {...c} />)}
           </FeatGrid>
         </div>
@@ -329,8 +329,8 @@ export default function PortfolioPage() {
           <FeatGrid>
             {[
               { title:'Drone Expo 2025 Mumbai', desc:'Official media partner. 50+ video interviews produced from Drone, GIS, and AI exhibitor stalls. All content published across DroneTv platforms.', bullets:['50+ stall interviews produced','Drone, GIS, and AI companies covered','Published on YouTube @indiadronetv','Social media coverage across all handles'] },
-              { title:'Drone Expo 2026 Bengaluru', desc:'Official media partner (December 2026). Brand subscribers receive expo-specific benefits. All three sectors are covered.', bullets:['Official media partner status','On-ground coverage and stall interviews','Brand: expo stall branding','Brand: Platform Partner designation'] },
-              { title:'Coverage by Package Tier', desc:'What each package receives at DroneTv-partnered events. Applies to Drone, GIS, and AI exhibiting companies equally.', bullets:['Reach: digital event media coverage','Scale: digital event media coverage','Brand: stall branding + partner status + media credit','All tiers: content published across all platforms'] },
+              { title:'Drone Expo 2026 Bengaluru', desc:'Official media partner (December 2026). Expand subscribers receive expo-specific benefits. All three sectors are covered.', bullets:['Official media partner status','On-ground coverage and stall interviews','Expand: expo stall branding','Expand: Platform Partner designation'] },
+              { title:'Coverage by Package Tier', desc:'What each package receives at DroneTv-partnered events. Applies to Drone, GIS, and AI exhibiting companies equally.', bullets:['Reach: digital event media coverage','Brand: digital event media coverage','Expand: stall branding + partner status + media credit','All tiers: content published across all platforms'] },
               { title:'Expo Coverage Add-On', desc:'Any Drone, GIS, or AI company exhibiting at any event can purchase dedicated on-ground DroneTv coverage as an add-on with any package.', bullets:['₹10,000 per event','On-ground interview at stall','Published on YouTube and social media','Available to all package tiers'] },
             ].map(c => <FeatCard key={c.title} {...c} />)}
           </FeatGrid>
@@ -348,7 +348,7 @@ export default function PortfolioPage() {
               ['1','Buyer Searches','A buyer visits DroneTv.in and searches within the Drone, GIS, or AI sector categories for a product or service.'],
               ['2','Buyer Submits Enquiry',"The buyer finds the company's profile and submits a requirement through the dedicated B2B enquiry form."],
               ['3','Company Gets Notified','The company receives an email notification that a new enquiry has arrived. Applies to all three sectors equally.'],
-              ['4','Company Views Lead','The company logs into DroneTv to view the full enquiry. Brand tier companies see full buyer contact data on the platform.'],
+              ['4','Company Views Lead','The company logs into DroneTv to view the full enquiry. Expand tier companies see full buyer contact data on the platform.'],
             ].map(([num, title, desc]) => (
               <div key={num} className="bg-white p-5 text-center">
                 <div className="w-9 h-9 rounded-full bg-zinc-900 text-yellow-400 flex items-center justify-center text-sm font-extrabold mx-auto mb-3">{num}</div>
@@ -360,8 +360,8 @@ export default function PortfolioPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-gray-200 border-2 border-gray-200 rounded overflow-hidden">
             {[
               { badge:<Chip label="Reach" color="bg-zinc-900 text-yellow-400" />, title:'Notification Only', bullets:['Email notification on new enquiry','Login to platform to view details','Drone, GIS, and AI companies covered'] },
-              { badge:<Chip label="Scale" color="bg-zinc-900 text-yellow-400" />, title:'Notification + Monthly Report', bullets:['Email notification on new enquiry','Login to view full details','Monthly enquiry count and profile views','All three sectors covered'] },
-              { badge:<Chip label="Brand" color="bg-red-700 text-white" />, title:'Full Buyer Data + Analytics', bullets:['Email notification on new enquiry','Full buyer name, company, email, phone on platform','Monthly analytics across all sectors','Listing performance data'] },
+              { badge:<Chip label="Brand" color="bg-zinc-900 text-yellow-400" />, title:'Notification + Monthly Report', bullets:['Email notification on new enquiry','Login to view full details','Monthly enquiry count and profile views','All three sectors covered'] },
+              { badge:<Chip label="Expand" color="bg-red-700 text-white" />, title:'Full Buyer Data + Analytics', bullets:['Email notification on new enquiry','Full buyer name, company, email, phone on platform','Monthly analytics across all sectors','Listing performance data'] },
             ].map(c => <FeatCard key={c.title} {...c} desc="" />)}
           </div>
         </div>
@@ -397,10 +397,10 @@ export default function PortfolioPage() {
               <div className="mt-4 bg-gray-50 rounded p-3 text-[11px] font-semibold text-gray-700">Market value ~₹54,000 | Save ₹29,000+</div>
             </div>
 
-            {/* Scale — featured */}
+            {/* Brand — featured */}
             <div className="bg-zinc-900 text-white p-6">
               <span className="inline-block text-[9px] font-bold tracking-widest uppercase bg-red-600 text-white px-2 py-1 rounded mb-3">Best Value</span>
-              <div className="text-xl font-extrabold text-yellow-400 mb-1">Scale</div>
+              <div className="text-xl font-extrabold text-yellow-400 mb-1">Brand</div>
               <div className="text-2xl font-extrabold text-white mb-0.5">₹75,000</div>
               <div className="text-[10px] text-white/40 mb-3">per year + GST | Drone · GIS · AI</div>
               <p className="text-[11.5px] text-white/55 mb-4 pb-3 border-b border-white/10">Year-round brand presence with video, social, content, and magazine. Best value for established companies in any of the three sectors.</p>
@@ -419,10 +419,10 @@ export default function PortfolioPage() {
               <div className="mt-4 bg-yellow-400/10 rounded p-3 text-[11px] font-semibold text-yellow-400">Market value ~₹1,55,000 | Save ₹80,000+</div>
             </div>
 
-            {/* Brand */}
+            {/* Expand */}
             <div className="bg-white p-6">
               <span className="inline-block text-[9px] font-bold tracking-widest uppercase bg-red-600 text-white px-2 py-1 rounded mb-3">Premium</span>
-              <div className="text-xl font-extrabold text-gray-900 mb-1">Brand</div>
+              <div className="text-xl font-extrabold text-gray-900 mb-1">Expand</div>
               <div className="text-2xl font-extrabold text-gray-900 mb-0.5">₹1,50,000</div>
               <div className="text-[10px] text-gray-400 mb-3">per year + GST | Drone · GIS · AI</div>
               <p className="text-[11.5px] text-gray-500 mb-4 pb-3 border-b border-gray-100">Complete industry authority for category leaders in Drone, GIS, or AI — marketplace, media, magazine, expo, and full buyer data.</p>
@@ -447,7 +447,7 @@ export default function PortfolioPage() {
               <thead>
                 <tr>
                   <th className="bg-zinc-900 text-yellow-400 font-bold py-3 px-3 text-left text-[10.5px] tracking-wider min-w-[180px]">Feature</th>
-                  {['Reach','Scale','Brand'].map(h => <th key={h} className="bg-zinc-900 text-yellow-400 font-bold py-3 px-3 text-center text-[10.5px] tracking-wider">{h}</th>)}
+                  {['Reach','Brand','Expand'].map(h => <th key={h} className="bg-zinc-900 text-yellow-400 font-bold py-3 px-3 text-center text-[10.5px] tracking-wider">{h}</th>)}
                 </tr>
               </thead>
               <tbody>

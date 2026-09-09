@@ -15,7 +15,7 @@ const DURATION_OPTIONS = [
 ];
 
 const SLOT_DEFINITIONS = [
-  { id: "HP-1", label: "Homepage Hero Banner",       category: "Homepage",   costPerDay: 0,   description: "Brand subscribers only — full-width hero" },
+  { id: "HP-1", label: "Homepage Hero Banner",       category: "Homepage",   costPerDay: 0,   description: "Expand subscribers only — full-width hero" },
   { id: "HP-2", label: "Featured Strip — Slot A",    category: "Homepage",   costPerDay: 100, description: "Top featured strip, left position" },
   { id: "HP-3", label: "Featured Strip — Slot B",    category: "Homepage",   costPerDay: 100, description: "Top featured strip, right position" },
   { id: "HP-4", label: "Sponsored Article",          category: "Homepage",   costPerDay: 50,  description: "Inline sponsored news article" },
@@ -212,7 +212,7 @@ const PagePlacements: React.FC = () => {
                                   : isAvail      ? "bg-green-500/15 text-green-400"
                                                  : "bg-red-500/15 text-red-400"
                                 }`}>
-                                  {isMine ? "Yours" : isHP1 ? "Brand Only" : isAvail ? "Available" : "Occupied"}
+                                  {isMine ? "Yours" : isHP1 ? "Expand Only" : isAvail ? "Available" : "Occupied"}
                                 </span>
                               </div>
                               <p className="text-xs text-white/40 mt-0.5">{slot.description}</p>
@@ -311,7 +311,7 @@ const PagePlacements: React.FC = () => {
               <div className="flex items-start gap-2">
                 <Info size={13} className="text-yellow-400 flex-shrink-0 mt-0.5" />
                 <div className="text-xs text-white/50 leading-relaxed space-y-1.5">
-                  <p><strong className="text-white">HP-1</strong> — Brand subscribers only.</p>
+                  <p><strong className="text-white">HP-1</strong> — Expand subscribers only.</p>
                   <p>Cancel early → get tokens back for remaining days.</p>
                 </div>
               </div>
