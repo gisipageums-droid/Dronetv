@@ -100,8 +100,8 @@ export default function Hero({ heroData }) {
               </motion.div>
 
               {/* Description */}
-              <motion.div variants={itemVariants} className="max-w-lg text-justify">
-                <p className="text-xl text-ink-paragraph dark:text-gray-300">
+              <motion.div variants={itemVariants} className="max-w-lg text-left">
+                <p className="text-lg md:text-xl text-ink-dark dark:text-gray-300 leading-relaxed">
                   {heroState.description}
                 </p>
               </motion.div>
@@ -113,12 +113,12 @@ export default function Hero({ heroData }) {
                 className="flex flex-col sm:flex-row gap-4"
                 variants={itemVariants}
               >
-                <button
-                  size="lg"
-                  className="bg-brand-yellow-soft text-primary-foreground shadow-xl px-6 py-3 rounded-lg flex items-center"
+                <a
+                  href="#contact"
+                  className="inline-flex items-center justify-center self-start bg-brand-yellow hover:bg-brand-gold text-ink font-semibold shadow-xl px-8 py-3 rounded-lg transition-colors"
                 >
-                  <a href="#contact">{heroState.primaryBtn}</a>
-                </button>
+                  {heroState.primaryBtn}
+                </a>
               </motion.div>
             )}
 
