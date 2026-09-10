@@ -41,6 +41,8 @@ export default function PagePlacementSlot({ slotId, width, height, aspect, minHe
     return () => controller.abort();
   }, [slotId]);
 
+  if (!image) return null;
+
   return (
     <AdSlot image={image} href={href} width={width} height={height} aspect={aspect} minHeight={minHeight} className={className} alt={`${slotId} sponsored placement`} />
   );

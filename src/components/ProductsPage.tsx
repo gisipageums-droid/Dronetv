@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Search, Star, SlidersHorizontal, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
-import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
+import { COMPANY_API, PAYMENT_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
 import PagePlacementSlot from './common/PagePlacementSlot';
 
@@ -123,8 +123,21 @@ const ProductsPage: React.FC = () => {
   const [sortBy, setSortBy] = useState('timestamp');
   const [page, setPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [hasSponsoredCats, setHasSponsoredCats] = useState(false);
   const perPage = 12;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!PAYMENT_API) return;
+    const controller = new AbortController();
+    Promise.all(["cat-drones", "cat-gis", "cat-agri", "cat-defence"].map(s =>
+      fetch(`${PAYMENT_API}/placements/active?slotId=${s}`, { signal: controller.signal })
+        .then(r => r.ok ? r.json() : null).catch(() => null)
+    )).then(rs => {
+      if (rs.some(d => d?.active && d?.imageUrl)) setHasSponsoredCats(true);
+    });
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const API_URL = COMPANY_API ? `${COMPANY_API}/product/view` : `${LAMBDA.products}/product/view`;
@@ -290,17 +303,19 @@ const ProductsPage: React.FC = () => {
 
         <div className="pr-wrap">
 
-          <div style={{ marginBottom: 24 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
-              Sponsored Categories
+          {hasSponsoredCats && (
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+                Sponsored Categories
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+                <PagePlacementSlot slotId="cat-drones" aspect="3/1" minHeight={72} />
+                <PagePlacementSlot slotId="cat-gis" aspect="3/1" minHeight={72} />
+                <PagePlacementSlot slotId="cat-agri" aspect="3/1" minHeight={72} />
+                <PagePlacementSlot slotId="cat-defence" aspect="3/1" minHeight={72} />
+              </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-              <PagePlacementSlot slotId="cat-drones" aspect="3/1" minHeight={72} />
-              <PagePlacementSlot slotId="cat-gis" aspect="3/1" minHeight={72} />
-              <PagePlacementSlot slotId="cat-agri" aspect="3/1" minHeight={72} />
-              <PagePlacementSlot slotId="cat-defence" aspect="3/1" minHeight={72} />
-            </div>
-          </div>
+          )}
 
           <div className="pr-search-bar">
             <Search size={14} style={{ color: '#777', flexShrink: 0 }} />
