@@ -182,9 +182,23 @@ const CompaniesPage: React.FC = () => {
     fetch(url)
       .then(r => r.json())
       .then(d => {
-        const raw: Company[] = Array.isArray(d.cards) ? d.cards : [];
+        const rawAll: Company[] = Array.isArray(d.cards) ? d.cards : [];
+        // The Aug-2025 migration imported some companies more than once, so
+        // the same listing (identical slug) can come back 2-4 times. Collapse
+        // them by slug/name, keeping the copy with the most content.
+        const score = (c: Company) =>
+          (Number(c.servicesCount) || 0) + (Number(c.productsCount) || 0) +
+          (Number(c.completionPercentage) || 0) / 1000 +
+          new Date(c.lastModified || c.createdAt || 0).getTime() / 1e15;
+        const bySlug = new Map<string, Company>();
+        rawAll.forEach(c => {
+          const key = (c.urlSlug || c.companyName || c.publishedId || '').toLowerCase().trim();
+          const prev = bySlug.get(key);
+          if (!prev || score(c) > score(prev)) bySlug.set(key, c);
+        });
+        const raw = Array.from(bySlug.values());
         setAllCompanies(raw);
-        setListedTotal(typeof d.totalCount === 'number' ? d.totalCount : raw.length);
+        setListedTotal(typeof d.totalCount === 'number' ? Math.min(d.totalCount, raw.length) : raw.length);
         const stateSet = new Set<string>();
         raw.forEach(c => {
           const st = extractState(c.location);
