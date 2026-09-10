@@ -148,6 +148,30 @@ const AdminTokenEconomy: React.FC = () => {
     }
   };
 
+  const handleClearSlot = async (slotId: string, slotLabel: string, holder?: string) => {
+    if (!window.confirm(`Remove the ad from "${slotLabel}"? It will stop showing on the live site immediately.`)) return;
+    setUploadingFor(slotId);
+    setSlotError("");
+    try {
+      const activeRes = await fetch(
+        PAYMENT_API ? `${PAYMENT_API}/placements/active?slotId=${encodeURIComponent(slotId)}` : `${TOKEN_SPEND}/placement/active?slotId=${encodeURIComponent(slotId)}`
+      );
+      const active = await activeRes.json();
+      if (!active?.placementId) { setSlotError("No active placement found for this slot."); return; }
+      const owner = holder || active.holder || active.userId || "admin@dronetv.in";
+      const res = await fetch(
+        `${PAYMENT_API}/placements/${active.placementId}?userId=${encodeURIComponent(owner)}`,
+        { method: "DELETE", headers: adminAuthHeader() }
+      );
+      if (!res.ok) throw new Error((await res.json().catch(() => ({})))?.detail || `HTTP ${res.status}`);
+      await fetchData();
+    } catch (e: any) {
+      setSlotError(e.message || "Failed to remove the placement");
+    } finally {
+      setUploadingFor(null);
+    }
+  };
+
   const toggleControl = (idx: number) =>
     setPhaseControls(prev => prev.map((c, i) => i === idx ? { ...c, active: !c.active } : c));
 
@@ -452,6 +476,15 @@ const AdminTokenEconomy: React.FC = () => {
                           : <Upload size={12} />}
                         {slot.imageUrl ? "Change Banner" : "Upload Banner"}
                       </button>
+                      {slot.imageUrl && (
+                        <button
+                          onClick={() => handleClearSlot(slot.slotId, slot.slotLabel, slot.holder)}
+                          disabled={uploadingFor === slot.slotId}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-status-error border border-status-error/40 bg-surface-main rounded-lg hover:bg-status-error/10 transition-colors disabled:opacity-40 whitespace-nowrap"
+                        >
+                          Remove
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
