@@ -32,6 +32,11 @@ interface Detail {
   mandatoryFailures: string[];
 }
 
+// Matches the taxonomy the public directory already detects/filters by
+// (CompaniesPage.tsx industry + sector keywords), so a category picked here
+// lines up with what visitors filter on.
+const CATEGORY_OPTIONS = ["Drone", "GIS", "AI", "Agriculture", "Survey & Mapping", "Defence", "Infrastructure", "Aerial Media", "Training"];
+
 const STATUS_STYLE: Record<string, string> = {
   PRE_LISTED: "bg-gray-100 text-gray-700",
   IN_REVIEW: "bg-amber-100 text-amber-800",
@@ -60,6 +65,7 @@ export default function PrelistedCompanyReview() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [website, setWebsite] = useState("");
+  const [sectors, setSectors] = useState<string[]>([]);
 
   const load = () => {
     if (!publishedId) return;
@@ -82,6 +88,7 @@ export default function PrelistedCompanyReview() {
         setEmail(contact.email || "");
         setPhone(contact.phone || contact.phoneNumber || "");
         setWebsite(contact.website || "");
+        setSectors(Array.isArray(d.sectors) ? d.sectors.filter((s) => s && s !== "General") : []);
       })
       .catch(() => toast.error("Failed to load this company"))
       .finally(() => setLoading(false));
@@ -94,6 +101,7 @@ export default function PrelistedCompanyReview() {
     const body = {
       companyName,
       location,
+      sectors,
       websiteContent: {
         about: { ...(detail?.websiteContent?.about || {}), description },
         contact: { ...(detail?.websiteContent?.contact || {}), contactName, email, phone, website },
@@ -228,6 +236,26 @@ export default function PrelistedCompanyReview() {
         <Field label="Phone Number" value={phone} onChange={setPhone} />
         <Field label="Email" value={email} onChange={setEmail} />
         <Field label="Website" value={website} onChange={setWebsite} />
+        <div className="sm:col-span-2">
+          <label className="block text-xs font-semibold text-ink-caption mb-1">
+            Primary Category / Industry
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {CATEGORY_OPTIONS.map((opt) => {
+              const active = sectors.includes(opt);
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setSectors((prev) => active ? prev.filter((s) => s !== opt) : [...prev, opt])}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${active ? "bg-brand-yellow border-brand-yellow text-ink" : "border-ink-light text-ink-paragraph hover:bg-surface-alt"}`}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <div className="sm:col-span-2">
           <label className="block text-xs font-semibold text-ink-caption mb-1">Company Description / About</label>
           <textarea
