@@ -203,14 +203,14 @@ export default function PrelistedCompanyReview() {
   const canSubmit = mandatoryOutstanding.length === 0 && confirmed && detail.workflowStatus !== "VERIFIED";
 
   return (
-    <div className="p-6 max-w-4xl mx-auto pb-24">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto pb-36 sm:pb-28">
       <button onClick={() => navigate("/admin/verification/prelisted")} className="flex items-center gap-1 text-sm text-ink-paragraph hover:text-ink mb-4">
         <ArrowLeft size={15} /> Back to Verification queue
       </button>
 
-      <div className="flex items-center justify-between mb-1">
-        <h1 className="text-xl font-bold text-ink">{detail.companyName}</h1>
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLE[detail.workflowStatus]}`}>
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+        <h1 className="text-lg sm:text-xl font-bold text-ink break-words min-w-0">{detail.companyName}</h1>
+        <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLE[detail.workflowStatus]}`}>
           {detail.workflowStatus.replace(/_/g, " ")}
         </span>
       </div>
@@ -244,7 +244,7 @@ export default function PrelistedCompanyReview() {
         <h2 className="text-sm font-bold text-ink mb-3">Verification Checklist</h2>
         <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
           {detail.checklist.map((item) => (
-            <label key={item.key} className="flex items-center gap-2 text-sm py-1">
+            <label key={item.key} className="flex flex-wrap items-center gap-2 text-sm py-1">
               <input
                 type="checkbox"
                 checked={!!checks[item.key]}
@@ -273,34 +273,40 @@ export default function PrelistedCompanyReview() {
       </div>
 
       {/* Actions */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-ink-light p-4 flex items-center justify-center gap-3 z-40">
-        <button
-          onClick={handleSaveDraft}
-          disabled={saving}
-          className="text-sm font-semibold px-4 py-2 rounded-lg border border-ink-light hover:bg-surface-alt disabled:opacity-50"
-        >
-          Save Draft
-        </button>
-        {detail.workflowStatus === "VERIFIED" ? (
-          <>
-            <button onClick={handleReopen} disabled={saving} className="flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-lg border border-ink-light hover:bg-surface-alt disabled:opacity-50">
-              <RotateCcw size={15} /> Reopen for Re-review
-            </button>
-            {isSuperAdmin && (
-              <button onClick={handleRevoke} disabled={saving} className="flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-50">
-                <XCircle size={15} /> Revoke Silver
-              </button>
-            )}
-          </>
-        ) : (
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-ink-light p-3 sm:p-4 z-40">
+        <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           <button
-            onClick={handleSubmit}
-            disabled={!canSubmit || saving}
-            className="flex items-center gap-1.5 text-sm font-semibold px-5 py-2 rounded-lg bg-brand-yellow hover:bg-brand-gold text-ink disabled:opacity-40 disabled:cursor-not-allowed"
+            onClick={handleSaveDraft}
+            disabled={saving}
+            className="text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-lg border border-ink-light hover:bg-surface-alt disabled:opacity-50"
           >
-            <ShieldCheck size={15} /> Submit Verification &amp; Assign Silver
+            Save Draft
           </button>
-        )}
+          {detail.workflowStatus === "VERIFIED" ? (
+            <>
+              <button onClick={handleReopen} disabled={saving} className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-lg border border-ink-light hover:bg-surface-alt disabled:opacity-50">
+                <RotateCcw size={15} className="shrink-0" />
+                <span className="hidden sm:inline">Reopen for Re-review</span>
+                <span className="sm:hidden">Reopen</span>
+              </button>
+              {isSuperAdmin && (
+                <button onClick={handleRevoke} disabled={saving} className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-50">
+                  <XCircle size={15} /> Revoke Silver
+                </button>
+              )}
+            </>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={!canSubmit || saving}
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 rounded-lg bg-brand-yellow hover:bg-brand-gold text-ink disabled:opacity-40 disabled:cursor-not-allowed text-center"
+            >
+              <ShieldCheck size={15} className="shrink-0" />
+              <span className="hidden sm:inline">Submit Verification &amp; Assign Silver</span>
+              <span className="sm:hidden">Submit &amp; Assign Silver</span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

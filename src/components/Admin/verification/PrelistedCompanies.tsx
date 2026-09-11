@@ -114,9 +114,9 @@ export default function PrelistedCompanies() {
   };
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto">
+    <div className="p-4 sm:p-6 max-w-[1400px] mx-auto">
       <div className="flex items-center justify-between mb-1">
-        <h1 className="text-xl font-bold text-ink">Pre-Listed Company Verification</h1>
+        <h1 className="text-lg sm:text-xl font-bold text-ink">Pre-Listed Company Verification</h1>
       </div>
       <p className="text-sm text-ink-paragraph mb-5">
         Review pre-listed companies, complete their checklist, then submit to assign the Silver badge.
