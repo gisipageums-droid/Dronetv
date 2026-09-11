@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X, Award, Crown, Share2, Heart } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X, Award, Crown, Share2, Heart, BarChart2, ImagePlus, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -33,10 +33,10 @@ interface Company {
   [key: string]: any;
 }
 
-const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg: string; ribbonColor: string; bannerBg: string; bannerColor: string }> = {
-  silver: { label: 'Silver', packageLabel: 'Reach Package', ribbonBg: '#E5E5E5', ribbonColor: '#6B6B6B', bannerBg: '#F1F1F1', bannerColor: '#555555' },
-  gold: { label: 'Gold', packageLabel: 'Brand Package', ribbonBg: 'linear-gradient(135deg,#FFE38A,#E8B400)', ribbonColor: '#7A5B00', bannerBg: '#FFF6DC', bannerColor: '#92700A' },
-  platinum: { label: 'Platinum', packageLabel: 'Expand Package', ribbonBg: '#0F172A', ribbonColor: '#F8C400', bannerBg: '#0F172A', bannerColor: '#ffffff' },
+const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg: string; ribbonColor: string; bannerBg: string; bannerColor: string; verifiedListing: boolean; highlightBg: string }> = {
+  silver: { label: 'SILVER', packageLabel: 'Reach Package', ribbonBg: 'linear-gradient(135deg,#E8E8E8,#9A9A9A)', ribbonColor: '#ffffff', bannerBg: 'linear-gradient(135deg,#8a8a8a,#4a4a4a)', bannerColor: '#ffffff', verifiedListing: false, highlightBg: '#F0F0F0' },
+  gold: { label: 'GOLD BRAND', packageLabel: 'Package', ribbonBg: 'linear-gradient(135deg,#FFE38A,#C99400)', ribbonColor: '#7A5B00', bannerBg: 'linear-gradient(135deg,#E8B400,#8a6400)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: '#FFF3C4' },
+  platinum: { label: 'PLATINUM', packageLabel: 'Expand Package', ribbonBg: 'linear-gradient(135deg,#CBD5E1,#64748B)', ribbonColor: '#F8C400', bannerBg: 'linear-gradient(135deg,#1e293b,#0F172A)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: '#FFF3C4' },
 };
 
 // Silver comes from real Silver-badge verification. Gold/Platinum map to the
@@ -182,39 +182,61 @@ const CSS = `
   .co-tab { padding: 8px 12px; font-size: 12px; }
 }
 
-/* Premium (Silver / Gold / Platinum) verified-company card */
-.pc-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; position: relative; }
-.pc-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.16); transform: translateY(-2px); }
-.pc-icons { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 2; }
-.pc-icon-btn { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.9); border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.pc-top { display: flex; gap: 12px; padding: 16px 44px 0 16px; align-items: flex-start; }
-.pc-logo { width: 60px; height: 60px; border-radius: 10px; border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; background: #FAFAFA; font-weight: 900; font-size: 17px; color: #fff; }
-.pc-logo img { width: 100%; height: 100%; object-fit: cover; }
-.pc-id { flex: 1; min-width: 0; }
-.pc-name { font-size: 14.5px; font-weight: 800; color: #111111; line-height: 1.25; }
-.pc-tagline { font-size: 11px; color: #888; margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-.pc-tag { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 7px; text-transform: uppercase; background: #F8F8F8; color: #555; border: 1px solid #E5E5E5; }
-.pc-tag-verified { background: #e8f5ec; color: #22C55E; border-color: transparent; }
-.pc-tag-premium { background: #F8C400; color: #111; border-color: transparent; }
-.pc-banner { margin: 12px 16px 0; padding: 7px 12px; border-radius: 8px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; text-align: center; letter-spacing: .3px; }
-.pc-desc { font-size: 12px; color: #666; line-height: 1.6; padding: 12px 16px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.pc-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 16px 0; }
-.pc-photo { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; background: #F0F0F0; }
+/* Premium (Silver / Gold / Platinum) verified-company spotlight card -
+   full-width, matches the supplied mockups. Spans every column of .co-grid. */
+.pc-card { grid-column: 1 / -1; background: #fff; border: 1px solid #E5E5E5; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 20px; position: relative; cursor: pointer; transition: box-shadow .17s; }
+.pc-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,.14); }
+.pc-top { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+.pc-logo { width: 96px; height: 96px; border: 1px solid #E0E0E0; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; text-align: center; font-size: 10.5px; color: #999; font-weight: 700; overflow: hidden; line-height: 1.3; }
+.pc-logo img { width: 100%; height: 100%; object-fit: contain; }
+.pc-id { flex: 1; min-width: 200px; padding-top: 2px; }
+.pc-name { font-size: 19px; font-weight: 800; color: #111111; line-height: 1.25; }
+.pc-tagline { font-size: 13px; color: #8a8a8a; margin-top: 4px; }
+.pc-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.pc-tag { font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; background: #F0F0F0; color: #444; }
+.pc-tag-verified { background: #DFF5E4; color: #1DA34C; }
+.pc-tag-premium { background: #F8C400; color: #1A1A1A; }
+.pc-badge-wrap { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; margin-left: auto; }
+.pc-badge-row { display: flex; align-items: center; gap: 0; }
+.pc-ribbon { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,.2); z-index: 1; }
+.pc-banner { padding: 8px 16px; border-radius: 0 10px 10px 10px; min-width: 150px; margin-left: -10px; }
+.pc-banner-tier { font-size: 15px; font-weight: 800; letter-spacing: .3px; }
+.pc-banner-pkg { font-size: 10px; font-weight: 700; opacity: .85; text-transform: uppercase; }
+.pc-verified-pill { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 6px; background: rgba(0,0,0,.25); color: #fff; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px; }
+.pc-icons { display: flex; gap: 8px; }
+.pc-icon-btn { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.pc-desc-row { display: flex; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
+.pc-desc { flex: 2; min-width: 220px; font-size: 13.5px; color: #333333; line-height: 1.7; }
+.pc-callout { flex: 1; min-width: 220px; max-width: 320px; background: #FFF3C4; border-radius: 10px; padding: 12px 14px; display: flex; gap: 10px; align-items: center; }
+.pc-callout-icon { width: 34px; height: 34px; border-radius: 8px; background: #F8C400; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pc-callout-text { font-size: 12.5px; font-weight: 700; color: #333333; line-height: 1.4; }
+.pc-photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 18px; }
+.pc-photo-tile { display: flex; flex-direction: column; gap: 6px; }
+.pc-photo { border-radius: 10px; overflow: hidden; aspect-ratio: 4/3; background: #EFEFEF; }
 .pc-photo img { width: 100%; height: 100%; object-fit: cover; }
-.pc-photo-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 8.5px; padding: 3px 4px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pc-stats { display: flex; gap: 8px; padding: 14px 16px; flex-wrap: wrap; border-top: 1px solid #F0F0F0; margin-top: 12px; }
-.pc-stat { text-align: center; flex: 1; min-width: 56px; }
-.pc-stat-n { font-size: 14px; font-weight: 800; color: #111111; }
-.pc-stat-l { font-size: 9px; color: #999; }
-.pc-cta { display: flex; gap: 8px; padding: 0 16px 14px; }
-.pc-btn-outline { flex: 1; padding: 9px; border-radius: 8px; border: 1.5px solid #E5E5E5; background: #fff; font-size: 12px; font-weight: 700; color: #111111; cursor: pointer; }
-.pc-btn-solid { flex: 1; padding: 9px; border-radius: 8px; border: none; background: #DC2626; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
-.pc-quote { padding: 10px 16px 14px; font-size: 11.5px; font-style: italic; color: #8A6D00; background: #FFF8E1; text-align: center; }
-@media (max-width: 480px) {
-  .pc-top { padding: 14px 40px 0 14px; }
-  .pc-photos { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .pc-stats { gap: 6px; }
+.pc-photo-cap { text-align: center; font-size: 11.5px; font-weight: 600; color: #333333; }
+.pc-addmore { border-radius: 10px; background: #EFEFEF; aspect-ratio: 4/3; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999999; font-size: 10.5px; text-align: center; gap: 6px; padding: 6px; }
+.pc-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 18px; }
+.pc-hl-chip { display: flex; gap: 8px; align-items: center; border-radius: 10px; padding: 10px 12px; font-size: 11.5px; font-weight: 700; color: #333333; }
+.pc-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #F0F0F0; }
+.pc-stat { display: flex; gap: 8px; align-items: center; background: #F5F5F5; border-radius: 10px; padding: 10px 12px; }
+.pc-stat-n { font-size: 15px; font-weight: 800; color: #111111; line-height: 1.2; }
+.pc-stat-l { font-size: 10.5px; color: #888888; }
+.pc-cta { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.pc-btn-outline { flex: 1 1 160px; padding: 11px; border-radius: 8px; border: 1.5px solid #E0E0E0; background: #fff; font-size: 13px; font-weight: 700; color: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.pc-btn-solid { flex: 2 1 220px; padding: 11px; border-radius: 8px; border: none; background: #DC2626; color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.pc-quote { margin: 18px -20px -20px; padding: 16px 20px; background: #FFF8DC; text-align: center; font-style: italic; font-size: 13px; color: #6B5900; border-radius: 0 0 16px 16px; }
+@media (max-width: 640px) {
+  .pc-card { padding: 14px; }
+  .pc-top { gap: 12px; }
+  .pc-logo { width: 64px; height: 64px; font-size: 9px; }
+  .pc-name { font-size: 16px; }
+  .pc-badge-wrap { width: 100%; align-items: flex-start; margin-left: 0; order: 3; }
+  .pc-badge-row { width: 100%; }
+  .pc-banner { flex: 1; }
+  .pc-desc-row { margin-top: 14px; }
+  .pc-photos { grid-template-columns: repeat(2, 1fr); }
+  .pc-quote { margin: 14px -14px -14px; }
 }
 `;
 
@@ -642,17 +664,24 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
   const [imgErr, setImgErr] = useState(false);
   const detectedSectors = getSectors(company);
   const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
+  // "Survey | Mapping | GIS | Data Analytics"-style specialty line under the
+  // name - real detected sectors, not fabricated, falls back to location.
+  const specialty = detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : (company.location || '');
 
   const photos = (company.galleryImages && company.galleryImages.length > 0)
     ? company.galleryImages
-    : [company.previewImage, company.heroImage, company.headerLogo].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).map(url => ({ url: url as string, label: null }));
+    : [company.previewImage, company.heroImage].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).map(url => ({ url: url as string, label: null }));
 
-  const stats = (company.heroStats && company.heroStats.length > 0)
-    ? company.heroStats.slice(0, 4).map(s => ({ n: s.value, l: s.label }))
+  // Text-only highlight chips (e.g. "Expert Team", "Global Presence") only
+  // render from a real hero.stats entry that has a label but no numeric
+  // value - never fabricated placeholder highlights.
+  const highlights = (company.heroStats || []).filter(s => s.label && !s.value).slice(0, 6);
+  const numericStats = (company.heroStats && company.heroStats.some(s => s.value))
+    ? company.heroStats.filter(s => s.value).slice(0, 5).map(s => ({ n: s.value as string, l: s.label || '' }))
     : [
         (Number(company.productsCount) || 0) > 0 ? { n: String(company.productsCount), l: 'Products' } : null,
         (Number(company.servicesCount) || 0) > 0 ? { n: String(company.servicesCount), l: 'Services' } : null,
-        company.teamSize ? { n: String(company.teamSize), l: 'Team' } : null,
+        company.teamSize ? { n: String(company.teamSize), l: 'Team Size' } : null,
         company.yearsInBusiness ? { n: (String(company.yearsInBusiness).match(/\d{4}/) || [company.yearsInBusiness])[0], l: 'Since' } : null,
       ].filter(Boolean) as { n: string; l: string }[];
 
@@ -668,64 +697,92 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
 
   return (
     <div className="pc-card" onClick={onClick}>
-      <div className="pc-icons">
-        <button className="pc-icon-btn" onClick={handleShare} title="Share"><Share2 size={13} color="#555" /></button>
-        <button className="pc-icon-btn" onClick={e => { e.stopPropagation(); onToggleSave(); }} title="Save">
-          <Heart size={13} color={saved ? '#DC2626' : '#555'} fill={saved ? '#DC2626' : 'none'} />
-        </button>
-      </div>
-
       <div className="pc-top">
-        <div className="pc-logo" style={{ background: company.headerLogo || company.previewImage ? undefined : bg }}>
+        <div className="pc-logo" style={{ background: company.headerLogo || company.previewImage ? undefined : bg, color: '#fff' }}>
           {(company.headerLogo || company.previewImage) && !imgErr ? (
             <img src={company.headerLogo || company.previewImage} alt="" onError={() => setImgErr(true)} />
           ) : getInitials(company.companyName)}
         </div>
         <div className="pc-id">
           <div className="pc-name">{company.companyName}</div>
-          <div className="pc-tagline">{company.tagline || company.location || ''}</div>
+          {specialty && <div className="pc-tagline">{specialty}</div>}
           <div className="pc-tags">
             {verified && <span className="pc-tag pc-tag-verified">Verified</span>}
-            {ind !== 'all' && <span className="pc-tag" style={{ background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor, borderColor: 'transparent' }}>{ind.toUpperCase()}</span>}
+            {ind !== 'all' && <span className="pc-tag" style={{ background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor }}>{ind.toUpperCase()}</span>}
             {detectedSectors.slice(0, 2).map(s => <span key={s} className="pc-tag">{s}</span>)}
             {tier !== 'silver' && <span className="pc-tag pc-tag-premium">Premium</span>}
           </div>
         </div>
-        <div className="pc-ribbon" style={{ background: style.ribbonBg }} title={`${style.label} - Profile verified by DroneTV team`}>
-          {tier === 'silver' ? <Award size={18} color={style.ribbonColor} /> : <Crown size={18} color={style.ribbonColor} />}
+
+        <div className="pc-badge-wrap">
+          <div className="pc-icons">
+            <button className="pc-icon-btn" onClick={handleShare} title="Share"><Share2 size={13} color="#555" /></button>
+            <button className="pc-icon-btn" onClick={e => { e.stopPropagation(); onToggleSave(); }} title="Save">
+              <Heart size={13} color={saved ? '#DC2626' : '#555'} fill={saved ? '#DC2626' : 'none'} />
+            </button>
+          </div>
+          <div className="pc-badge-row">
+            <div className="pc-ribbon" style={{ background: style.ribbonBg }} title={`${style.label} - Profile verified by DroneTV team`}>
+              {tier === 'silver' ? <Award size={22} color={style.ribbonColor} /> : <Crown size={22} color={style.ribbonColor} />}
+            </div>
+            <div className="pc-banner" style={{ background: style.bannerBg, color: style.bannerColor }}>
+              <div className="pc-banner-tier">{style.label}</div>
+              <div className="pc-banner-pkg">{style.packageLabel}</div>
+              {style.verifiedListing && <div className="pc-verified-pill">Verified Listing</div>}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="pc-banner" style={{ background: style.bannerBg, color: style.bannerColor }}>
-        {style.label} &middot; {style.packageLabel}{tier !== 'silver' ? ' • Verified Listing' : ''}
+      <div className="pc-desc-row">
+        <p className="pc-desc">{description}</p>
+        {company.tagline && (
+          <div className="pc-callout" style={{ background: style.highlightBg }}>
+            <div className="pc-callout-icon" style={{ background: tier === 'silver' ? '#D9D9D9' : '#F8C400' }}>
+              <BarChart2 size={17} color={tier === 'silver' ? '#555' : '#7A5B00'} />
+            </div>
+            <div className="pc-callout-text">{company.tagline}</div>
+          </div>
+        )}
       </div>
-
-      <p className="pc-desc">{description}</p>
 
       {photos.length > 0 && (
         <div className="pc-photos">
           {photos.map((p, i) => (
-            <div key={i} className="pc-photo">
-              <img src={p.url} alt={p.label || ''} />
-              {p.label && <div className="pc-photo-label">{p.label}</div>}
+            <div key={i} className="pc-photo-tile">
+              <div className="pc-photo"><img src={p.url} alt={p.label || ''} /></div>
+              {p.label && <div className="pc-photo-cap">{p.label}</div>}
+            </div>
+          ))}
+          <div className="pc-addmore"><ImagePlus size={20} /><span>More Photos</span></div>
+        </div>
+      )}
+
+      {highlights.length > 0 && (
+        <div className="pc-highlights">
+          {highlights.map((h, i) => (
+            <div key={i} className="pc-hl-chip" style={{ background: style.highlightBg }}>
+              <Star size={14} color={tier === 'silver' ? '#777' : '#92700A'} /> {h.label}
             </div>
           ))}
         </div>
       )}
 
-      {stats.length > 0 && (
+      {numericStats.length > 0 && (
         <div className="pc-stats">
-          {stats.map((s, i) => (
+          {numericStats.map((s, i) => (
             <div key={i} className="pc-stat">
-              <div className="pc-stat-n">{s.n}</div>
-              <div className="pc-stat-l">{s.l}</div>
+              <div>
+                <div className="pc-stat-n">{s.n}</div>
+                <div className="pc-stat-l">{s.l}</div>
+              </div>
             </div>
           ))}
         </div>
       )}
 
       <div className="pc-cta">
-        <button className="pc-btn-outline" onClick={e => { e.stopPropagation(); onClick(); }}>View Profile</button>
+        <button className="pc-btn-outline" onClick={e => { e.stopPropagation(); onClick(); }}>View {tier === 'silver' ? 'Profile' : 'Company Profile'} <ChevronRight size={13} /></button>
         <button className="pc-btn-solid" onClick={e => { e.stopPropagation(); onEnquire(); }}>Enquire Now</button>
       </div>
 
