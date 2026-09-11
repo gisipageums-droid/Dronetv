@@ -2,6 +2,17 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import logo from "/logos/logo.svg";
 
+const DEFAULT_NAV_ITEMS = [
+  "Home",
+  "About",
+  "Profile",
+  "Services",
+  "Product",
+  "Gallery",
+  "Blog",
+  "Testimonials",
+];
+
 export default function Header({
   headerData,
   navFlags,
@@ -12,17 +23,14 @@ export default function Header({
   const headerState = headerData || {
     logoSrc: logo,
     companyName: "Your Company",
-    navItems: [
-      "Home",
-      "About",
-      "Profile",
-      "Services",
-      "Product",
-      "Gallery",
-      "Blog",
-      "Testimonials",
-    ],
+    navItems: DEFAULT_NAV_ITEMS,
   };
+
+  // headerState can come straight from real (possibly very sparse) scraped
+  // data - a record with only {companyName} and no navItems key at all is
+  // real (confirmed live, clarion-innovations-private-limited) - so
+  // navItems itself needs its own fallback even when headerData is present.
+  const navItemsList = headerState.navItems || DEFAULT_NAV_ITEMS;
 
   // The scraped/authored navItems list is a fixed template ("Home", "About",
   // "Services", "Product", ...) baked in regardless of whether the company
@@ -32,7 +40,7 @@ export default function Header({
   // hides only the items whose section won't render; undefined means "no
   // flag data for this item" and it stays visible, so pages without navFlags
   // wired up yet are unaffected.
-  const visibleNavItems = headerState.navItems.filter(
+  const visibleNavItems = navItemsList.filter(
     (item: string) => navFlags?.[item] !== false
   );
 

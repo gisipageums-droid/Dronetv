@@ -114,7 +114,7 @@ export default function MyCompanies() {
                     </Btn>
                     {c.reviewStatus?.toLowerCase() === "approved" && c.urlSlug && (
                       <a
-                        href={`https://dev.dronetv.in/${c.templateSelection === "template-2" || c.templateSelection === "2" ? "t2" : "template"}?companyName=${encodeURIComponent(c.companyName || "")}`}
+                        href={`/${c.templateSelection === "template-2" || c.templateSelection === "2" ? "companies" : "company"}/${c.urlSlug}`}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-1.5 rounded-lg font-semibold px-3 py-1.5 text-xs bg-transparent text-white/70 border border-white/15 hover:bg-white/5 hover:text-white"

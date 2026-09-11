@@ -76,7 +76,7 @@ export default function EditProfile() {
 
   return (
     <div>
-      <PageHeader title="Edit Profile" sub={`Your public pilot profile on dev.dronetv.in/professionals/${slug}`} />
+      <PageHeader title="Edit Profile" sub={`Your public pilot profile on ${window.location.host}/professionals/${slug}`} />
       <Card>
         <CardHeader title="Personal & Professional Information" action={<Badge tone="success">Profile Live</Badge>} />
         <div className="p-4">
@@ -85,7 +85,7 @@ export default function EditProfile() {
               {(displayName || fullName || "P").slice(0, 2).toUpperCase()}
             </div>
             <div className="text-[12px] text-white/40">
-              Profile: dev.dronetv.in/professionals/{slug}
+              Profile: {window.location.host}/professionals/{slug}
             </div>
           </div>
           <FormGrid>
