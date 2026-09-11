@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X, Award, Crown, Share2, Heart, BarChart2, ImagePlus, Star } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, SlidersHorizontal, X, Award, Crown, Share2, Heart, BarChart2, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -184,12 +184,12 @@ const CSS = `
 
 /* Premium (Silver / Gold / Platinum) verified-company spotlight card -
    full-width, matches the supplied mockups. Spans every column of .co-grid. */
-.pc-card { grid-column: span 2; background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; }
+.pc-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; display: flex; flex-direction: column; }
 .pc-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,.12); }
 .pc-top { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
 .pc-logo { width: 64px; height: 64px; border: 1px solid #E0E0E0; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; text-align: center; font-size: 9px; color: #999; font-weight: 700; overflow: hidden; line-height: 1.3; }
 .pc-logo img { width: 100%; height: 100%; object-fit: contain; }
-.pc-id { flex: 1; min-width: 180px; }
+.pc-id { flex: 1; min-width: 120px; }
 .pc-name { font-size: 15.5px; font-weight: 800; color: #111111; line-height: 1.25; }
 .pc-tagline { font-size: 11.5px; color: #8a8a8a; margin-top: 2px; }
 .pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
@@ -206,16 +206,22 @@ const CSS = `
 .pc-icons { display: flex; gap: 6px; }
 .pc-icon-btn { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
 .pc-desc-row { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-.pc-desc { flex: 2; min-width: 220px; font-size: 12.5px; color: #333333; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.pc-callout { flex: 1; min-width: 200px; max-width: 300px; background: #FFF3C4; border-radius: 9px; padding: 9px 12px; display: flex; gap: 8px; align-items: center; }
+.pc-desc { flex: 1 1 100%; font-size: 12.5px; color: #333333; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-callout { flex: 1 1 100%; background: #FFF3C4; border-radius: 9px; padding: 9px 12px; display: flex; gap: 8px; align-items: center; }
 .pc-callout-icon { width: 28px; height: 28px; border-radius: 7px; background: #F8C400; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .pc-callout-text { font-size: 11.5px; font-weight: 700; color: #333333; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.pc-photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-top: 12px; }
-.pc-photo-tile { display: flex; flex-direction: column; gap: 4px; }
-.pc-photo { border-radius: 8px; overflow: hidden; height: 78px; background: #EFEFEF; }
+.pc-photos { position: relative; margin-top: 12px; padding: 0 20px; }
+.pc-photos-track { display: flex; gap: 8px; }
+.pc-photo-tile { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.pc-photo { border-radius: 8px; overflow: hidden; height: 90px; background: #EFEFEF; }
 .pc-photo img { width: 100%; height: 100%; object-fit: cover; }
 .pc-photo-cap { text-align: center; font-size: 10px; font-weight: 600; color: #333333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pc-addmore { border-radius: 8px; background: #EFEFEF; height: 78px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999999; font-size: 9px; text-align: center; gap: 4px; padding: 4px; }
+.pc-carousel-btn { position: absolute; top: 32px; width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.95); border: 1px solid #E0E0E0; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; padding: 0; }
+.pc-carousel-prev { left: -6px; }
+.pc-carousel-next { right: -6px; }
+.pc-carousel-dots { display: flex; justify-content: center; gap: 4px; margin-top: 6px; }
+.pc-dot { width: 5px; height: 5px; border-radius: 50%; background: #DDDDDD; }
+.pc-dot-active { background: #999999; }
 .pc-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 7px; margin-top: 12px; }
 .pc-hl-chip { display: flex; gap: 6px; align-items: center; border-radius: 8px; padding: 7px 10px; font-size: 10.5px; font-weight: 700; color: #333333; }
 .pc-stats { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #F0F0F0; }
@@ -232,8 +238,7 @@ const CSS = `
   .pc-badge-wrap { width: 100%; align-items: flex-start; margin-left: 0; order: 3; }
   .pc-badge-row { width: 100%; }
   .pc-banner { flex: 1; }
-  .pc-photos { grid-template-columns: repeat(3, 1fr); }
-  .pc-photo, .pc-addmore { height: 64px; }
+  .pc-photo { height: 70px; }
 }
 `;
 
@@ -659,15 +664,23 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
   const verified = company.reviewStatus === 'approved';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
+  const [photoIdx, setPhotoIdx] = useState(0);
   const detectedSectors = getSectors(company);
   const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
+  const sinceYear = company.yearsInBusiness ? (String(company.yearsInBusiness).match(/\d{4}/) || [null])[0] : null;
   // "Survey | Mapping | GIS | Data Analytics"-style specialty line under the
   // name - real detected sectors, not fabricated, falls back to location.
-  const specialty = detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : (company.location || '');
+  // "Since <year>" rides on the same line instead of its own row so it
+  // doesn't waste a whole strip of card height for one small fact.
+  const specialty = [
+    detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : company.location,
+    sinceYear ? `Since ${sinceYear}` : null,
+  ].filter(Boolean).join(' • ');
 
   const photos = (company.galleryImages && company.galleryImages.length > 0)
     ? company.galleryImages
     : [company.previewImage, company.heroImage].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).map(url => ({ url: url as string, label: null }));
+  const visiblePhotos = photos.slice(photoIdx, photoIdx + 2);
 
   // Text-only highlight chips (e.g. "Expert Team", "Global Presence") only
   // render from a real hero.stats entry that has a label but no numeric
@@ -679,7 +692,6 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
         (Number(company.productsCount) || 0) > 0 ? { n: String(company.productsCount), l: 'Products' } : null,
         (Number(company.servicesCount) || 0) > 0 ? { n: String(company.servicesCount), l: 'Services' } : null,
         company.teamSize ? { n: String(company.teamSize), l: 'Team Size' } : null,
-        company.yearsInBusiness ? { n: (String(company.yearsInBusiness).match(/\d{4}/) || [company.yearsInBusiness])[0], l: 'Since' } : null,
       ].filter(Boolean) as { n: string; l: string }[];
 
   const handleShare = (e: React.MouseEvent) => {
@@ -745,13 +757,31 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
 
       {photos.length > 0 && (
         <div className="pc-photos">
-          {photos.map((p, i) => (
-            <div key={i} className="pc-photo-tile">
-              <div className="pc-photo"><img src={p.url} alt={p.label || ''} /></div>
-              {p.label && <div className="pc-photo-cap">{p.label}</div>}
-            </div>
-          ))}
-          <div className="pc-addmore"><ImagePlus size={20} /><span>More Photos</span></div>
+          <div className="pc-photos-track">
+            {visiblePhotos.map((p, i) => (
+              <div key={photoIdx + i} className="pc-photo-tile">
+                <div className="pc-photo"><img src={p.url} alt={p.label || ''} /></div>
+                {p.label && <div className="pc-photo-cap">{p.label}</div>}
+              </div>
+            ))}
+          </div>
+          {photos.length > 2 && (
+            <>
+              <button
+                className="pc-carousel-btn pc-carousel-prev"
+                onClick={e => { e.stopPropagation(); setPhotoIdx(i => (i === 0 ? Math.max(0, photos.length - 2) : Math.max(0, i - 2))); }}
+              ><ChevronLeft size={13} /></button>
+              <button
+                className="pc-carousel-btn pc-carousel-next"
+                onClick={e => { e.stopPropagation(); setPhotoIdx(i => (i + 2 >= photos.length ? 0 : i + 2)); }}
+              ><ChevronRight size={13} /></button>
+              <div className="pc-carousel-dots">
+                {Array.from({ length: Math.ceil(photos.length / 2) }).map((_, d) => (
+                  <span key={d} className={`pc-dot${Math.floor(photoIdx / 2) === d ? ' pc-dot-active' : ''}`} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       )}
 
