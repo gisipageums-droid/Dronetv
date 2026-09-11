@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, SlidersHorizontal, X, Award, Crown, Share2, Heart, BarChart2, Star } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, SlidersHorizontal, X, Award, Crown, Share2, Heart, BarChart2, Star, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -235,6 +235,51 @@ const CSS = `
   .pc-badge-wrap { top: 8px; right: 8px; }
   .pc-ribbon { width: 26px; height: 26px; }
   .pc-photo { height: 46px; }
+}
+
+/* Share preview - the full branded card, shown when Share is tapped so
+   what gets shared matches what the company owner was shown as the target
+   design, independent of how compact the browsing grid card is. */
+.spm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+.spm-modal { background: #FFF8D6; border-radius: 18px; max-width: 520px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.spm-close { position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.9); border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; }
+.spm-card { background: #fff; border-radius: 16px; margin: 16px; padding: 20px; position: relative; }
+.spm-top { display: flex; gap: 14px; align-items: flex-start; }
+.spm-logo { width: 76px; height: 76px; border: 1px solid #E0E0E0; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; overflow: hidden; font-weight: 900; font-size: 18px; color: #fff; }
+.spm-logo img { width: 100%; height: 100%; object-fit: contain; }
+.spm-id { flex: 1; min-width: 0; }
+.spm-name { font-size: 19px; font-weight: 800; color: #111111; line-height: 1.25; }
+.spm-tagline { font-size: 12.5px; color: #8a8a8a; margin-top: 3px; }
+.spm-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.spm-badge { flex-shrink: 0; display: flex; align-items: center; }
+.spm-ribbon { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,.25); z-index: 1; }
+.spm-banner { padding: 7px 14px; border-radius: 0 9px 9px 9px; min-width: 110px; margin-left: -8px; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+.spm-banner-tier { font-size: 13px; font-weight: 800; letter-spacing: .2px; }
+.spm-banner-pkg { font-size: 9px; font-weight: 700; opacity: .85; text-transform: uppercase; }
+.spm-verified-pill { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 5px; background: rgba(0,0,0,.25); color: #fff; margin-top: 3px; display: inline-flex; align-items: center; gap: 4px; }
+.spm-desc-row { display: flex; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
+.spm-desc { flex: 2; min-width: 200px; font-size: 13px; color: #333333; line-height: 1.65; }
+.spm-callout { flex: 1; min-width: 180px; background: #FFF3C4; border-radius: 10px; padding: 11px 13px; display: flex; gap: 9px; align-items: center; }
+.spm-callout-icon { width: 32px; height: 32px; border-radius: 8px; background: #F8C400; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.spm-callout-text { font-size: 12px; font-weight: 700; color: #333333; line-height: 1.4; }
+.spm-photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-top: 16px; }
+.spm-photo { border-radius: 10px; overflow: hidden; height: 90px; background: #EFEFEF; }
+.spm-photo img { width: 100%; height: 100%; object-fit: cover; }
+.spm-photo-cap { text-align: center; font-size: 11px; font-weight: 600; color: #333333; margin-top: 5px; }
+.spm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #F0F0F0; }
+.spm-stat { text-align: center; background: #F5F5F5; border-radius: 9px; padding: 9px 8px; }
+.spm-stat-n { font-size: 14px; font-weight: 800; color: #111111; }
+.spm-stat-l { font-size: 9.5px; color: #888888; }
+.spm-cta { display: flex; gap: 8px; margin-top: 16px; }
+.spm-btn-outline { flex: 1; padding: 10px; border-radius: 8px; border: 1.5px solid #E0E0E0; background: #fff; font-size: 12.5px; font-weight: 700; color: #111111; cursor: pointer; }
+.spm-btn-solid { flex: 1; padding: 10px; border-radius: 8px; border: none; background: #DC2626; color: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.spm-quote { margin-top: 16px; padding: 12px 16px; background: #FFF8DC; text-align: center; font-style: italic; font-size: 12.5px; color: #6B5900; border-radius: 10px; }
+.spm-actions { display: flex; gap: 8px; padding: 0 16px 16px; }
+.spm-action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 9px; border: 1px solid rgba(0,0,0,.12); background: #fff; font-size: 12.5px; font-weight: 700; color: #111111; cursor: pointer; }
+@media (max-width: 480px) {
+  .spm-card { margin: 12px; padding: 14px; }
+  .spm-logo { width: 60px; height: 60px; }
+  .spm-name { font-size: 16px; }
 }
 `;
 
@@ -661,6 +706,7 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
   const [photoIdx, setPhotoIdx] = useState(0);
+  const [shareOpen, setShareOpen] = useState(false);
   const detectedSectors = getSectors(company);
   const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
   const sinceYear = company.yearsInBusiness ? (String(company.yearsInBusiness).match(/\d{4}/) || [null])[0] : null;
@@ -692,12 +738,7 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const url = `${window.location.origin}/companies/${company.urlSlug || company.publishedId}`;
-    if (navigator.share) {
-      navigator.share({ title: company.companyName, url }).catch(() => {});
-    } else {
-      navigator.clipboard?.writeText(url).catch(() => {});
-    }
+    setShareOpen(true);
   };
 
   return (
@@ -807,6 +848,155 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
       </div>
 
       {company.quote && <div className="pc-quote">&ldquo;{company.quote}&rdquo;</div>}
+
+      {shareOpen && (
+        <ShareCardModal
+          company={company}
+          tier={tier}
+          onClose={() => setShareOpen(false)}
+          onViewProfile={onClick}
+          onEnquire={onEnquire}
+        />
+      )}
+    </div>
+  );
+};
+
+const ShareCardModal: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE; onClose: () => void; onViewProfile: () => void; onEnquire: () => void }> = ({ company, tier, onClose, onViewProfile, onEnquire }) => {
+  const style = TIER_STYLE[tier];
+  const ind = getIndustry(company);
+  const indColor = IND_COLORS[ind] || '#444';
+  const verified = company.reviewStatus === 'approved';
+  const bg = avColor(company.companyName);
+  const [imgErr, setImgErr] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const detectedSectors = getSectors(company);
+  const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
+  const sinceYear = company.yearsInBusiness ? (String(company.yearsInBusiness).match(/\d{4}/) || [null])[0] : null;
+  const specialty = [
+    detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : company.location,
+    sinceYear ? `Since ${sinceYear}` : null,
+  ].filter(Boolean).join(' • ');
+  const photos = (company.galleryImages && company.galleryImages.length > 0)
+    ? company.galleryImages
+    : [company.previewImage, company.heroImage].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).map(url => ({ url: url as string, label: null }));
+  const highlights = (company.heroStats || []).filter(s => s.label && !s.value).slice(0, 6);
+  const numericStats = (company.heroStats && company.heroStats.some(s => s.value))
+    ? company.heroStats.filter(s => s.value).slice(0, 5).map(s => ({ n: s.value as string, l: s.label || '' }))
+    : [
+        (Number(company.productsCount) || 0) > 0 ? { n: String(company.productsCount), l: 'Products' } : null,
+        (Number(company.servicesCount) || 0) > 0 ? { n: String(company.servicesCount), l: 'Services' } : null,
+        company.teamSize ? { n: String(company.teamSize), l: 'Team Size' } : null,
+      ].filter(Boolean) as { n: string; l: string }[];
+
+  const shareUrl = `${window.location.origin}/${company.templateSelection === 'template-2' || company.templateSelection === '2' ? 'companies' : 'company'}/${company.urlSlug || company.publishedId}`;
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(shareUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {});
+  };
+  const handleNativeShare = () => {
+    if (navigator.share) navigator.share({ title: company.companyName, url: shareUrl }).catch(() => {});
+    else handleCopy();
+  };
+
+  return (
+    <div className="spm-overlay" onClick={onClose}>
+      <div className="spm-modal" onClick={e => e.stopPropagation()}>
+        <button className="spm-close" onClick={onClose} title="Close"><X size={16} /></button>
+
+        <div className="spm-card">
+          <div className="spm-top">
+            <div className="spm-logo" style={{ background: company.headerLogo || company.previewImage ? undefined : bg }}>
+              {(company.headerLogo || company.previewImage) && !imgErr ? (
+                <img src={company.headerLogo || company.previewImage} alt="" onError={() => setImgErr(true)} />
+              ) : getInitials(company.companyName)}
+            </div>
+            <div className="spm-id">
+              <div className="spm-name">{company.companyName}</div>
+              {specialty && <div className="spm-tagline">{specialty}</div>}
+              <div className="spm-tags">
+                {verified && <span className="pc-tag pc-tag-verified">Verified</span>}
+                {ind !== 'all' && <span className="pc-tag" style={{ background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor }}>{ind.toUpperCase()}</span>}
+                {detectedSectors.slice(0, 2).map(s => <span key={s} className="pc-tag">{s}</span>)}
+                {tier !== 'silver' && <span className="pc-tag pc-tag-premium">Premium</span>}
+              </div>
+            </div>
+            <div className="spm-badge">
+              <div className="spm-ribbon" style={{ background: style.ribbonBg }}>
+                {tier === 'silver' ? <Award size={24} color={style.ribbonColor} /> : <Crown size={24} color={style.ribbonColor} />}
+              </div>
+              <div className="spm-banner" style={{ background: style.bannerBg, color: style.bannerColor }}>
+                <div className="spm-banner-tier">{style.label}</div>
+                <div className="spm-banner-pkg">{style.packageLabel}</div>
+                {style.verifiedListing && <div className="spm-verified-pill">Verified Listing</div>}
+              </div>
+            </div>
+          </div>
+
+          <div className="spm-desc-row">
+            <p className="spm-desc">{description}</p>
+            {company.tagline && (
+              <div className="spm-callout" style={{ background: style.highlightBg }}>
+                <div className="spm-callout-icon" style={{ background: tier === 'silver' ? '#D9D9D9' : '#F8C400' }}>
+                  <BarChart2 size={16} color={tier === 'silver' ? '#555' : '#7A5B00'} />
+                </div>
+                <div className="spm-callout-text">{company.tagline}</div>
+              </div>
+            )}
+          </div>
+
+          {photos.length > 0 && (
+            <div className="spm-photos">
+              {photos.slice(0, 4).map((p, i) => (
+                <div key={i}>
+                  <div className="spm-photo"><img src={p.url} alt={p.label || ''} /></div>
+                  {p.label && <div className="spm-photo-cap">{p.label}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {highlights.length > 0 && (
+            <div className="pc-highlights" style={{ marginTop: 16 }}>
+              {highlights.map((h, i) => (
+                <div key={i} className="pc-hl-chip" style={{ background: style.highlightBg }}>
+                  <Star size={14} color={tier === 'silver' ? '#777' : '#92700A'} /> {h.label}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {numericStats.length > 0 && (
+            <div className="spm-stats">
+              {numericStats.map((s, i) => (
+                <div key={i} className="spm-stat">
+                  <div className="spm-stat-n">{s.n}</div>
+                  <div className="spm-stat-l">{s.l}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="spm-cta">
+            <button className="spm-btn-outline" onClick={onViewProfile}>View Profile</button>
+            <button className="spm-btn-solid" onClick={onEnquire}>Enquire Now</button>
+          </div>
+
+          {company.quote && <div className="spm-quote">&ldquo;{company.quote}&rdquo;</div>}
+        </div>
+
+        <div className="spm-actions">
+          <button className="spm-action-btn" onClick={handleCopy}>
+            <Copy size={14} /> {copied ? 'Copied!' : 'Copy Link'}
+          </button>
+          <button className="spm-action-btn" onClick={handleNativeShare}>
+            <Share2 size={14} /> Share
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
