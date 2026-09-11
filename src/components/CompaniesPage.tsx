@@ -166,10 +166,10 @@ const CSS = `
 .co-card-top { padding: 13px 13px 0; display: flex; gap: 10px; align-items: flex-start; }
 .co-avatar { width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0; overflow: hidden; }
 .co-avatar img { width: 44px; height: 44px; border-radius: 9px; object-fit: cover; }
-.co-card-name { font-size: 13px; font-weight: 700; color: #111111; line-height: 1.3; }
-.co-card-loc { display: flex; align-items: flex-start; gap: 3px; font-size: 11px; color: #777; margin-top: 2px; min-width: 0; }
-.co-card-loc svg { flex-shrink: 0; margin-top: 2px; }
-.co-card-loc-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1; min-width: 0; word-break: break-word; }
+.co-card-name { font-size: 12px; font-weight: 700; color: #111111; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.co-card-loc { display: flex; align-items: center; gap: 3px; font-size: 10px; color: #888; margin-top: 2px; min-width: 0; }
+.co-card-loc svg { flex-shrink: 0; }
+.co-card-loc-text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; flex: 1; min-width: 0; }
 .co-card-desc { font-size: 12px; color: #777; line-height: 1.6; padding: 0 13px; margin-bottom: 9px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .co-card-foot { padding: 9px 13px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; gap: 6px; }
 .co-btn-out { flex: 1; background: #fff; color: #111111; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; }
@@ -298,6 +298,16 @@ const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructu
 // non-numeric, non-"India" comma segment, not simply the last segment
 // (which is frequently the pincode itself, e.g. "Nellore, Andhra Pradesh,
 // 524002" was showing "524002" as the state filter chip).
+// Full street addresses ("3rd Floor, A Wing, Aurobindo Galaxy, Plot No. 1,
+// Part of Sy. No. 83/1, TSIIC, Raidurg, NA Rangareddi Hyderabad Telangana
+// 500081 India") blow out the compact card's height - show just city/state
+// instead of the whole thing.
+function shortLocation(location: string | undefined): string {
+  const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
+  const meaningful = parts.filter(p => p && !/^\d+$/.test(p) && p.toLowerCase() !== 'india');
+  return meaningful.slice(-2).join(', ') || location || '';
+}
+
 function extractState(location: string | undefined): string {
   const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
   for (let i = parts.length - 1; i >= 0; i--) {
@@ -676,7 +686,7 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: 
             )}
           </div>
           {company.location && (
-            <div className="co-card-loc"><MapPin size={10} /><span className="co-card-loc-text">{company.location}</span></div>
+            <div className="co-card-loc"><MapPin size={10} /><span className="co-card-loc-text">{shortLocation(company.location)}</span></div>
           )}
         </div>
       </div>

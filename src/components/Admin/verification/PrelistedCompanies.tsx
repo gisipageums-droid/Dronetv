@@ -31,6 +31,7 @@ interface Row {
   badgeStatus: string;
   lastReviewedBy: string | null;
   lastReviewedAt: string | null;
+  createdAt: string | null;
 }
 
 const STATUS_TABS: { key: string; label: string; countKey: keyof Counters }[] = [
@@ -188,7 +189,7 @@ export default function PrelistedCompanies() {
               <th className="p-3">Content</th>
               <th className="p-3">Status</th>
               <th className="p-3">Badge</th>
-              <th className="p-3">Last Updated</th>
+              <th className="p-3">Listed / Updated</th>
               <th className="p-3"></th>
             </tr>
           </thead>
@@ -235,7 +236,13 @@ export default function PrelistedCompanies() {
                   )}
                 </td>
                 <td className="p-3 text-xs text-ink-caption">
-                  {r.lastReviewedAt ? new Date(r.lastReviewedAt).toLocaleDateString() : <Clock size={13} className="inline" />}
+                  {r.lastReviewedAt ? (
+                    <>Reviewed {new Date(r.lastReviewedAt).toLocaleDateString()}</>
+                  ) : r.createdAt ? (
+                    <>Listed {new Date(r.createdAt).toLocaleDateString()}</>
+                  ) : (
+                    <Clock size={13} className="inline" />
+                  )}
                 </td>
                 <td className="p-3">
                   <button
