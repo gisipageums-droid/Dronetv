@@ -186,10 +186,10 @@ const CSS = `
    full-width, matches the supplied mockups. Spans every column of .co-grid. */
 .pc-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; display: flex; flex-direction: column; }
 .pc-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,.12); }
-.pc-top { display: flex; gap: 12px; align-items: flex-start; padding-right: 84px; }
+.pc-top { display: flex; gap: 12px; align-items: flex-start; padding-right: 104px; }
 .pc-logo { width: 64px; height: 64px; border: 1px solid #E0E0E0; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; text-align: center; font-size: 9px; color: #999; font-weight: 700; overflow: hidden; line-height: 1.3; }
 .pc-logo img { width: 100%; height: 100%; object-fit: contain; }
-.pc-id { flex: 1; min-width: 120px; }
+.pc-id { flex: 1; min-width: 50px; }
 .pc-name { font-size: 15.5px; font-weight: 800; color: #111111; line-height: 1.25; }
 .pc-tagline { font-size: 11.5px; color: #8a8a8a; margin-top: 2px; }
 .pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
@@ -234,7 +234,7 @@ const CSS = `
 .pc-btn-solid { flex: 1.3 1 0; padding: 8px; border-radius: 7px; border: none; background: #DC2626; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .pc-quote { margin: 12px -14px -14px; padding: 10px 14px; background: #FFF8DC; text-align: center; font-style: italic; font-size: 12px; color: #6B5900; border-radius: 0 0 14px 14px; }
 @media (max-width: 640px) {
-  .pc-top { padding-right: 68px; }
+  .pc-top { padding-right: 84px; }
   .pc-logo { width: 52px; height: 52px; font-size: 8px; }
   .pc-name { font-size: 14px; }
   .pc-badge-wrap { top: 8px; right: 8px; }
