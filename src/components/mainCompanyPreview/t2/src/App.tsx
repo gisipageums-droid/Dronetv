@@ -137,11 +137,27 @@ export default function App() {
     );
   }
 
+  // Each section already hides itself when its own data is empty (see each
+  // component's own hasXxx guard) - navFlags mirrors those exact conditions
+  // so the nav menu never links to a section that isn't actually on the page.
+  const c = finaleDataReview.content;
+  const navFlags = {
+    About: !!c.about,
+    "Our Team": (c.profile?.teamMembers?.length || 0) > 0,
+    Product: (c.products?.products?.length || 0) > 0,
+    Services: (c.services?.services?.length || 0) > 0,
+    Gallery: (c.gallery?.images?.length || 0) > 0,
+    Blog: (c.blog?.posts?.length || 0) > 0,
+    Testimonial: (c.testimonials?.testimonials?.length || 0) > 0,
+    Clients: (c.clients?.clients?.length || 0) > 0,
+  };
+
   return (
     <ThemeProvider>
       <div className="min-h-screen w-full overflow-x-hidden bg-background text-foreground theme-transition">
         <Header
           headerData={finaleDataReview.content.header}
+          navFlags={navFlags}
         />
         <main>
           <Hero

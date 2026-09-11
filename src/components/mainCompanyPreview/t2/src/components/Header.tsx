@@ -8,6 +8,7 @@ import logo from "/images/Drone tv .in.jpg";
 
 export default function Header({
   headerData,
+  navFlags,
 }: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
@@ -37,6 +38,16 @@ export default function Header({
     { id: 8, label: "Testimonial", href: "#testimonial", color: "primary" },
     { id: 9, label: "Clients", href: "#clients", color: "primary" },
   ];
+
+  // This list is a fixed template, unlike the sections themselves which each
+  // render nothing when their own data is empty (Product/Services/Gallery/
+  // Blog/Testimonials/Clients all have their own hasXxx guard) - navFlags
+  // (built in App.tsx from the real content) hides only the items whose
+  // section won't actually render; a label missing from navFlags stays
+  // visible.
+  const visibleNavItems = staticNavItems.filter(
+    (item) => navFlags?.[item.label] !== false
+  );
 
   // Smooth scroll function
   const scrollToSection = (href: string) => {
@@ -115,7 +126,7 @@ export default function Header({
           {/* Desktop Nav - Centered with proper spacing */}
           <nav className="items-center justify-center flex-1 hidden mx-4 lg:flex min-w-0">
             <div className="flex items-center justify-center space-x-3">
-              {staticNavItems.map((item) => (
+              {visibleNavItems.map((item) => (
                 <motion.a
                   key={item.id}
                   href={item.href}
@@ -185,7 +196,7 @@ export default function Header({
               exit="closed"
             >
               <motion.nav className="flex flex-col py-4 space-y-4">
-                {staticNavItems.map((item, index) => (
+                {visibleNavItems.map((item, index) => (
                   <motion.a
                     key={item.id}
                     href={item.href}
