@@ -184,7 +184,7 @@ const CSS = `
 
 /* Premium (Silver / Gold / Platinum) verified-company spotlight card -
    full-width, matches the supplied mockups. Spans every column of .co-grid. */
-.pc-card { grid-column: 1 / -1; background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; }
+.pc-card { grid-column: span 2; background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; }
 .pc-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,.12); }
 .pc-top { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
 .pc-logo { width: 64px; height: 64px; border: 1px solid #E0E0E0; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; text-align: center; font-size: 9px; color: #999; font-weight: 700; overflow: hidden; line-height: 1.3; }
@@ -218,13 +218,13 @@ const CSS = `
 .pc-addmore { border-radius: 8px; background: #EFEFEF; height: 78px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999999; font-size: 9px; text-align: center; gap: 4px; padding: 4px; }
 .pc-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 7px; margin-top: 12px; }
 .pc-hl-chip { display: flex; gap: 6px; align-items: center; border-radius: 8px; padding: 7px 10px; font-size: 10.5px; font-weight: 700; color: #333333; }
-.pc-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 7px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #F0F0F0; }
-.pc-stat { display: flex; gap: 6px; align-items: center; background: #F5F5F5; border-radius: 8px; padding: 7px 10px; }
+.pc-stats { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #F0F0F0; }
+.pc-stat { display: flex; gap: 6px; align-items: center; background: #F5F5F5; border-radius: 8px; padding: 7px 12px; flex: 0 0 auto; }
 .pc-stat-n { font-size: 13px; font-weight: 800; color: #111111; line-height: 1.2; }
 .pc-stat-l { font-size: 9.5px; color: #888888; }
 .pc-cta { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.pc-btn-outline { flex: 1 1 140px; padding: 8px; border-radius: 7px; border: 1.5px solid #E0E0E0; background: #fff; font-size: 12px; font-weight: 700; color: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.pc-btn-solid { flex: 2 1 200px; padding: 8px; border-radius: 7px; border: none; background: #DC2626; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.pc-btn-outline { flex: 1 1 0; max-width: 45%; padding: 8px; border-radius: 7px; border: 1.5px solid #E0E0E0; background: #fff; font-size: 12px; font-weight: 700; color: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.pc-btn-solid { flex: 1.3 1 0; padding: 8px; border-radius: 7px; border: none; background: #DC2626; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .pc-quote { margin: 12px -14px -14px; padding: 10px 14px; background: #FFF8DC; text-align: center; font-style: italic; font-size: 12px; color: #6B5900; border-radius: 0 0 14px 14px; }
 @media (max-width: 640px) {
   .pc-logo { width: 52px; height: 52px; font-size: 8px; }
