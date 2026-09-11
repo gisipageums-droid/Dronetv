@@ -317,7 +317,7 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
 
           <div className="flex-1" />
           <a
-            href="https://testdev.dronetv.in/listed-companies"
+            href="/listed-companies"
             target="_blank"
             rel="noreferrer"
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 border border-white/15 rounded-lg text-xs font-semibold text-white/70 hover:border-white/30 hover:text-white"
