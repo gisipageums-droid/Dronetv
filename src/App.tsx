@@ -30,6 +30,7 @@ import ServicesPage from "./components/ServicesPage";
 import ServiceDetailPage from "./components/ServiceDetailPage";
 import ScrollingFooter from "./components/ScrollingFooter";
 import AdsLoader from "./components/common/AdsLoader";
+import WhatsAppChatButton from "./components/WhatsAppChatButton";
 import GalleryPage from "./components/GalleryPage";
 import GalleryGlimpse from "./components/GalleryGlimpse";
 import SubApp from "./components/webbuilder/src/App";
@@ -720,6 +721,7 @@ const AppContent = () => {
 
         {!hideFooter && <Footer />}
         {!hideFooter && <ScrollingFooter />}
+        <WhatsAppChatButton liftAboveTicker={!hideFooter} />
         <AdsLoader />
       </CombinedProviders>
     </div>
