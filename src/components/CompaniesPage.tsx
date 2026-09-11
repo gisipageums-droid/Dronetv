@@ -186,7 +186,7 @@ const CSS = `
    full-width, matches the supplied mockups. Spans every column of .co-grid. */
 .pc-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; display: flex; flex-direction: column; }
 .pc-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,.12); }
-.pc-top { display: flex; gap: 12px; align-items: flex-start; padding-right: 104px; }
+.pc-top { display: flex; gap: 12px; align-items: flex-start; padding-right: 122px; }
 .pc-logo { width: 64px; height: 64px; border: 1px solid #E0E0E0; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; text-align: center; font-size: 9px; color: #999; font-weight: 700; overflow: hidden; line-height: 1.3; }
 .pc-logo img { width: 100%; height: 100%; object-fit: contain; }
 .pc-id { flex: 1; min-width: 50px; }
