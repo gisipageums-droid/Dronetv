@@ -64,6 +64,10 @@ const Profile = ({ profileData }) => {
     return member.prefix || member.directorPrefix || "";
   };
 
+  if (!profileData) return null;
+  const teamMembers = profileData.teamMembers || [];
+  if (teamMembers.length === 0) return null;
+
   return (
     <section
       id="our-team"
@@ -77,7 +81,7 @@ const Profile = ({ profileData }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {profileData.teamMembers.map((member) => {
+          {teamMembers.map((member) => {
             const memberPrefix = getMemberPrefix(member);
             const prefixDisplay = getPrefixDisplayName(memberPrefix);
             

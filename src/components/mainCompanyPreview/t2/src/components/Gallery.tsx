@@ -150,8 +150,10 @@ const Gallery = ({ galleryData }) => {
   // Use the provided data structure with default fallback
   const contentState = galleryData;
 
-  const hasHeading = (galleryData.heading.title.length > 0) ||
-    (galleryData.heading.description.length > 0);
+  if (!galleryData) return null;
+
+  const hasHeading = (galleryData.heading?.title?.length > 0) ||
+    (galleryData.heading?.description?.length > 0);
   const hasImages = galleryData.images && galleryData.images.length > 0;
 
   const openLightbox = (index: number) => {

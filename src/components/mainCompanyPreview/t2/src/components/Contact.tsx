@@ -128,14 +128,14 @@ export default function Contact({ contactData, publishedId }) {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-3xl md:text-4xl text-foreground mb-4 text-center">
-            {contactData.header.title}
+            {contactData?.header?.title || "Get In Touch"}
           </h2>
           <p className="text-lg text-muted-foreground text-center">
-            {contactData.header.descriptionPart1}
+            {contactData?.header?.descriptionPart1}
             <span className="text-red-accent font-semibold mx-1">
-              {contactData.header.descriptionPart2}
+              {contactData?.header?.descriptionPart2}
             </span>
-            {contactData.header.descriptionPart3}
+            {contactData?.header?.descriptionPart3}
           </p>
         </motion.div>
 

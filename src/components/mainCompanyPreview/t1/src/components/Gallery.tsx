@@ -92,7 +92,7 @@ export default function GallerySection({ galleryData }) {
                         transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
                         className="text-3xl md:text-4xl font-extrabold text-ink"
                     >
-                        {galleryData.heading.title}
+                        {galleryData.heading?.title || "Our Gallery"}
                     </motion.h2>
 
                     <motion.p
@@ -101,7 +101,7 @@ export default function GallerySection({ galleryData }) {
                         transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
                         className="text-ink-paragraph mt-4 max-w-2xl mx-auto text-lg "
                     >
-                        {galleryData.heading.description}
+                        {galleryData.heading?.description || ""}
                     </motion.p>
                 </div>
 

@@ -12,9 +12,11 @@ export default function Blog({ blogData }) {
   const [slides, setSlides] = useState<string[]>([]);
   const [slideIndex, setSlideIndex] = useState(0);
 
-  const displayedPosts = showAllPosts ? blogData.posts : blogData.posts.slice(0, 4);
+  if (!blogData) return null;
+
+  const displayedPosts = showAllPosts ? (blogData.posts || []) : (blogData.posts || []).slice(0, 4);
   const hasBlog = blogData.posts && blogData.posts.length > 0;
-  const hasHeading = blogData.header.title && blogData.header.title.length > 0;
+  const hasHeading = blogData.header?.title && blogData.header.title.length > 0;
   
   const openModal = (post: any) => {
     setSelectedPost(post);
@@ -55,7 +57,7 @@ export default function Blog({ blogData }) {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              {blogData.header.badge && blogData.header.badge.length > 0 && (
+              {blogData.header?.badge && blogData.header.badge.length > 0 && (
                 <motion.div
                   className="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full text-primary mb-6"
                   whileHover={{ scale: 1.05 }}
@@ -63,10 +65,10 @@ export default function Blog({ blogData }) {
                   <span className="font-semibold text-lg">{blogData.header.badge}</span>
                 </motion.div>
               )}
-              {blogData.header.title && blogData.header.title.length > 0 && (
+              {blogData.header?.title && blogData.header.title.length > 0 && (
                 <h2 className="text-3xl md:text-4xl text-foreground mb-6">{blogData.header.title}</h2>
               )}
-              {blogData.header.desc && blogData.header.desc.length > 0 && (
+              {blogData.header?.desc && blogData.header.desc.length > 0 && (
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-center">{blogData.header.desc}</p>
               )}
             </motion.div>

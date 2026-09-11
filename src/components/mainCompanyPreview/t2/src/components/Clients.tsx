@@ -2,8 +2,11 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { motion } from "motion/react";
 
 export default function Clients({ clientData }) {
+  if (!clientData) return null;
+  const clientsList = clientData.clients || [];
+
   // Duplicate clients for marquee loop
-  const duplicatedClients = [...clientData.clients, ...clientData.clients];
+  const duplicatedClients = [...clientsList, ...clientsList];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -13,8 +16,8 @@ export default function Clients({ clientData }) {
     },
   };
 
-  const hasHeading = clientData.headline.title.length > 0 || clientData.headline.description.length > 0;
-  const hasClients = clientData.clients.length > 0;
+  const hasHeading = (clientData.headline?.title?.length > 0) || (clientData.headline?.description?.length > 0);
+  const hasClients = clientsList.length > 0;
 
   const logoVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -46,10 +49,10 @@ export default function Clients({ clientData }) {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                {clientData.headline.title}
+                {clientData.headline?.title}
               </h2>
               <p className="text-muted-foreground text-lg text-center">
-                {clientData.headline.description}
+                {clientData.headline?.description}
               </p>
             </motion.div>
 
