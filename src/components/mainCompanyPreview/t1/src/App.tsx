@@ -135,11 +135,25 @@ export default function App() {
     );
   }
 
+  // Services/Product/Gallery/Blog/Testimonials each render nothing at all
+  // when their own array is empty (see the components' own hasXxx checks) -
+  // navFlags mirrors those exact conditions so the nav menu never links to
+  // a section that isn't actually on the page.
+  const c = finaleDataReview.content;
+  const navFlags = {
+    About: !!c.about,
+    Services: (c.services?.services?.length || 0) > 0,
+    Product: (c.products?.products?.length || 0) > 0,
+    Gallery: (c.gallery?.images?.length || 0) > 0,
+    Blog: (c.blog?.posts?.length || 0) > 0,
+    Testimonials: (c.testimonials?.testimonials?.length || 0) > 0,
+  };
+
   return (
     <div className="w-full overflow-x-hidden">
       <Header
         headerData={finaleDataReview.content.header}
-
+        navFlags={navFlags}
       />
       <Hero
         heroData={finaleDataReview.content.hero}

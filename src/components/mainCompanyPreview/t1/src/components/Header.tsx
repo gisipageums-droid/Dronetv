@@ -4,6 +4,7 @@ import logo from "/logos/logo.svg";
 
 export default function Header({
   headerData,
+  navFlags,
 }: any) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -22,6 +23,18 @@ export default function Header({
       "Testimonials",
     ],
   };
+
+  // The scraped/authored navItems list is a fixed template ("Home", "About",
+  // "Services", "Product", ...) baked in regardless of whether the company
+  // actually has anything in that section - Services/Products/Gallery/Blog/
+  // Testimonials all render nothing at all when empty, so their nav links
+  // silently went nowhere. navFlags (built in App.tsx from the real content)
+  // hides only the items whose section won't render; undefined means "no
+  // flag data for this item" and it stays visible, so pages without navFlags
+  // wired up yet are unaffected.
+  const visibleNavItems = headerState.navItems.filter(
+    (item: string) => navFlags?.[item] !== false
+  );
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -140,7 +153,7 @@ export default function Header({
 
             {/* Desktop Navigation - Static */}
             <nav className="items-center hidden mr-16 space-x-4 md:flex lg:space-x-6 lg:mr-20">
-              {headerState.navItems.map((item, index) => (
+              {visibleNavItems.map((item, index) => (
                 <a
                   key={index}
                   href={`#${item.toLowerCase()}`}
@@ -197,7 +210,7 @@ export default function Header({
         className="md:hidden dark:bg-gray-900 dark:border-gray-700"
       >
         <div className="flex gap-1 w-[100%] flex-col ">
-          {headerState.navItems.map((item, index) => (
+          {visibleNavItems.map((item, index) => (
             <a
               key={index}
               href={`#${item.toLowerCase()}`}
