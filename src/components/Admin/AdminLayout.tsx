@@ -116,6 +116,14 @@ const NAV: Section[] = [
         superAdminOnly: true,
       },
       {
+        id: "verification",
+        label: "Verification",
+        icon: <ShieldCheck size={17} />,
+        sub: [
+          { label: "Pre-Listed Companies", path: "/admin/verification/prelisted", icon: <ListChecks size={14} /> },
+        ],
+      },
+      {
         id: "professionals",
         label: "Professionals",
         icon: <Users size={17} />,

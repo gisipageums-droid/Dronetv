@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -20,6 +20,7 @@ interface Company {
   servicesCount?: number;
   productsCount?: number;
   reviewStatus?: string;
+  badgeStatus?: string;
   publishedId?: string;
   companyId?: string;
   [key: string]: any;
@@ -479,6 +480,7 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: 
   const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
   const verified = company.reviewStatus === 'approved';
+  const silver = company.badgeStatus === 'SILVER';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
   const detectedSectors = getSectors(company);
@@ -497,6 +499,14 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: 
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <span className="co-card-name">{company.companyName}</span>
             {verified && <BadgeCheck size={14} style={{ color: '#22C55E', flexShrink: 0 }} />}
+            {silver && (
+              <Award
+                size={14}
+                style={{ color: '#8A8A8A', flexShrink: 0 }}
+                aria-label="Silver - Profile verified by DroneTV team"
+                title="Silver - Profile verified by DroneTV team"
+              />
+            )}
           </div>
           {company.location && (
             <div className="co-card-loc"><MapPin size={10} /><span className="co-card-loc-text">{company.location}</span></div>
@@ -506,6 +516,7 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: 
 
       <div style={{ padding: '7px 13px', display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
         {verified && <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#e8f5ec', color: '#22C55E', textTransform: 'uppercase' as const }}>Verified</span>}
+        {silver && <span title="Silver - Profile verified by DroneTV team" style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#EFEFEF', color: '#6B6B6B', textTransform: 'uppercase' as const }}>Silver</span>}
         {ind !== 'all' && <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 7, background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor, textTransform: 'uppercase' as const }}>{ind.toUpperCase()}</span>}
         {detectedSectors.slice(0, 1).map(s => (
           <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 7, background: '#F8F8F8', color: '#555', border: '1px solid #E5E5E5' }}>{s}</span>

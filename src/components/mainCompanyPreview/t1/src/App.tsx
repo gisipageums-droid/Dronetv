@@ -144,7 +144,7 @@ export default function App() {
       <Hero
         heroData={finaleDataReview.content.hero}
         companyName={finaleDataReview.companyName}
-
+        badgeStatus={finaleDataReview.badgeStatus}
       />
       <About
         aboutData={finaleDataReview.content.about}
