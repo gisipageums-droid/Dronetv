@@ -101,6 +101,15 @@ function getInitials(name: string): string {
   return name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
 }
 
+// Some scraped records have about.tagline == companyName, which just
+// repeats the name a second time in the callout box - only show a tagline
+// when it actually says something different from the name itself.
+function realTagline(company: Company): string | null {
+  const t = (company.tagline || '').trim();
+  if (!t) return null;
+  return t.toLowerCase() === (company.companyName || '').trim().toLowerCase() ? null : t;
+}
+
 const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#22C55E', ai: '#6B2FB5', all: '#444' };
 const IND_LABELS: Record<string, string> = { all: 'All', drone: '🚁 Drone', gis: '🗺️ GIS', ai: '🤖 AI' };
 const AV_COLORS = ['#0B5CB5','#22C55E','#DC2626','#6B2FB5','#c05800','#1a5a9a','#3a6a1a','#9a3a1a'];
@@ -779,12 +788,12 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
 
       <div className="pc-desc-row">
         <p className="pc-desc">{description}</p>
-        {company.tagline && (
+        {realTagline(company) && (
           <div className="pc-callout" style={{ background: style.highlightBg }}>
             <div className="pc-callout-icon" style={{ background: tier === 'silver' ? '#D9D9D9' : '#F8C400' }}>
               <BarChart2 size={17} color={tier === 'silver' ? '#555' : '#7A5B00'} />
             </div>
-            <div className="pc-callout-text">{company.tagline}</div>
+            <div className="pc-callout-text">{realTagline(company)}</div>
           </div>
         )}
       </div>
@@ -938,12 +947,12 @@ const ShareCardModal: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE
 
           <div className="spm-desc-row">
             <p className="spm-desc">{description}</p>
-            {company.tagline && (
+            {realTagline(company) && (
               <div className="spm-callout" style={{ background: style.highlightBg }}>
                 <div className="spm-callout-icon" style={{ background: tier === 'silver' ? '#D9D9D9' : '#F8C400' }}>
                   <BarChart2 size={16} color={tier === 'silver' ? '#555' : '#7A5B00'} />
                 </div>
-                <div className="spm-callout-text">{company.tagline}</div>
+                <div className="spm-callout-text">{realTagline(company)}</div>
               </div>
             )}
           </div>
