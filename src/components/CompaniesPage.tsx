@@ -186,7 +186,7 @@ const CSS = `
    full-width, matches the supplied mockups. Spans every column of .co-grid. */
 .pc-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; display: flex; flex-direction: column; }
 .pc-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,.12); }
-.pc-top { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.pc-top { display: flex; gap: 12px; align-items: flex-start; padding-right: 84px; }
 .pc-logo { width: 64px; height: 64px; border: 1px solid #E0E0E0; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; text-align: center; font-size: 9px; color: #999; font-weight: 700; overflow: hidden; line-height: 1.3; }
 .pc-logo img { width: 100%; height: 100%; object-fit: contain; }
 .pc-id { flex: 1; min-width: 120px; }
@@ -196,15 +196,16 @@ const CSS = `
 .pc-tag { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; background: #F0F0F0; color: #444; }
 .pc-tag-verified { background: #DFF5E4; color: #1DA34C; }
 .pc-tag-premium { background: #F8C400; color: #1A1A1A; }
-.pc-badge-wrap { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; margin-left: auto; }
+.pc-badge-wrap { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; z-index: 3; }
 .pc-badge-row { display: flex; align-items: center; gap: 0; }
-.pc-ribbon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,.2); z-index: 1; }
-.pc-banner { padding: 5px 12px; border-radius: 0 8px 8px 8px; min-width: 120px; margin-left: -8px; }
-.pc-banner-tier { font-size: 12px; font-weight: 800; letter-spacing: .3px; }
-.pc-banner-pkg { font-size: 8.5px; font-weight: 700; opacity: .85; text-transform: uppercase; }
-.pc-verified-pill { font-size: 8.5px; font-weight: 700; padding: 2px 8px; border-radius: 5px; background: rgba(0,0,0,.25); color: #fff; margin-top: 3px; display: inline-flex; align-items: center; gap: 4px; }
-.pc-icons { display: flex; gap: 6px; }
-.pc-icon-btn { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.pc-ribbon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,.25); z-index: 1; }
+.pc-banner { padding: 4px 10px; border-radius: 0 7px 7px 7px; min-width: 90px; margin-left: -8px; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+.pc-banner-tier { font-size: 10.5px; font-weight: 800; letter-spacing: .2px; }
+.pc-banner-pkg { font-size: 7.5px; font-weight: 700; opacity: .85; text-transform: uppercase; }
+.pc-verified-pill { font-size: 7.5px; font-weight: 700; padding: 1px 7px; border-radius: 4px; background: rgba(0,0,0,.25); color: #fff; margin-top: 2px; display: inline-flex; align-items: center; gap: 4px; }
+.pc-icons { display: flex; gap: 4px; }
+.pc-icon-btn { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.pc-icon-btn svg { width: 11px; height: 11px; }
 .pc-desc-row { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
 .pc-desc { flex: 1 1 100%; font-size: 12.5px; color: #333333; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .pc-callout { flex: 1 1 100%; background: #FFF3C4; border-radius: 9px; padding: 9px 12px; display: flex; gap: 8px; align-items: center; }
@@ -213,10 +214,10 @@ const CSS = `
 .pc-photos { position: relative; margin-top: 12px; padding: 0 20px; }
 .pc-photos-track { display: flex; gap: 8px; }
 .pc-photo-tile { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-.pc-photo { border-radius: 8px; overflow: hidden; height: 90px; background: #EFEFEF; }
+.pc-photo { border-radius: 8px; overflow: hidden; height: 60px; background: #EFEFEF; }
 .pc-photo img { width: 100%; height: 100%; object-fit: cover; }
 .pc-photo-cap { text-align: center; font-size: 10px; font-weight: 600; color: #333333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pc-carousel-btn { position: absolute; top: 32px; width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.95); border: 1px solid #E0E0E0; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; padding: 0; }
+.pc-carousel-btn { position: absolute; top: 19px; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,.95); border: 1px solid #E0E0E0; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; padding: 0; }
 .pc-carousel-prev { left: -6px; }
 .pc-carousel-next { right: -6px; }
 .pc-carousel-dots { display: flex; justify-content: center; gap: 4px; margin-top: 6px; }
@@ -233,12 +234,15 @@ const CSS = `
 .pc-btn-solid { flex: 1.3 1 0; padding: 8px; border-radius: 7px; border: none; background: #DC2626; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .pc-quote { margin: 12px -14px -14px; padding: 10px 14px; background: #FFF8DC; text-align: center; font-style: italic; font-size: 12px; color: #6B5900; border-radius: 0 0 14px 14px; }
 @media (max-width: 640px) {
+  .pc-top { padding-right: 68px; }
   .pc-logo { width: 52px; height: 52px; font-size: 8px; }
   .pc-name { font-size: 14px; }
-  .pc-badge-wrap { width: 100%; align-items: flex-start; margin-left: 0; order: 3; }
-  .pc-badge-row { width: 100%; }
-  .pc-banner { flex: 1; }
-  .pc-photo { height: 70px; }
+  .pc-badge-wrap { top: 8px; right: 8px; }
+  .pc-ribbon { width: 24px; height: 24px; }
+  .pc-banner { padding: 3px 8px; min-width: 68px; }
+  .pc-banner-tier { font-size: 9px; }
+  .pc-banner-pkg { font-size: 6.5px; }
+  .pc-photo { height: 46px; }
 }
 `;
 
@@ -725,9 +729,9 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
 
         <div className="pc-badge-wrap">
           <div className="pc-icons">
-            <button className="pc-icon-btn" onClick={handleShare} title="Share"><Share2 size={13} color="#555" /></button>
+            <button className="pc-icon-btn" onClick={handleShare} title="Share"><Share2 size={11} color="#555" /></button>
             <button className="pc-icon-btn" onClick={e => { e.stopPropagation(); onToggleSave(); }} title="Save">
-              <Heart size={13} color={saved ? '#DC2626' : '#555'} fill={saved ? '#DC2626' : 'none'} />
+              <Heart size={11} color={saved ? '#DC2626' : '#555'} fill={saved ? '#DC2626' : 'none'} />
             </button>
           </div>
           <div className="pc-badge-row">
