@@ -23,11 +23,13 @@ export default function Product({ productData }) {
     setSelectedProductIndex(null);
   };
 
+  if (!productData) return null;
+
   // Check if all productData values are empty
-  const hasHeading = (productData.heading.title.length > 0) ||
-    (productData.heading.heading.length > 0) ||
-    (productData.heading.description.length > 0) ||
-    (productData.heading.trust.length > 0);
+  const hasHeading = (productData.heading?.title?.length > 0) ||
+    (productData.heading?.heading?.length > 0) ||
+    (productData.heading?.description?.length > 0) ||
+    (productData.heading?.trust?.length > 0);
   const hasBenefits = productData.benefits && productData.benefits.length > 0;
   const hasProducts = productData.products && productData.products.length > 0;
   // console.log(hasProducts);
@@ -47,23 +49,23 @@ export default function Product({ productData }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-16">
-              {productData.heading.title && productData.heading.title.length > 0 && (
+              {productData.heading?.title && productData.heading.title.length > 0 && (
                 <div className="inline-flex items-center px-4 py-2 bg-red-accent/10 rounded-full text-red-accent mb-4">
                   <Zap className="w-4 h-4 mr-2" />
                   <span className="font-medium">{productData.heading.title}</span>
                 </div>
               )}
-              {productData.heading.heading && productData.heading.heading.length > 0 && (
+              {productData.heading?.heading && productData.heading.heading.length > 0 && (
                 <h2 className="text-3xl md:text-4xl text-foreground mb-4">
                   {productData.heading.heading}
                 </h2>
               )}
-              {productData.heading.description && productData.heading.description.length > 0 && (
+              {productData.heading?.description && productData.heading.description.length > 0 && (
                 <p className="text-lg text-muted-foreground inline text-justify">
                   {productData.heading.description}
                 </p>
               )}
-              {productData.heading.trust && productData.heading.trust.length > 0 && (
+              {productData.heading?.trust && productData.heading.trust.length > 0 && (
                 <p className="text-lg text-muted-foreground inline font-bold text-foreground">
                   {" "}
                   {productData.heading.trust}

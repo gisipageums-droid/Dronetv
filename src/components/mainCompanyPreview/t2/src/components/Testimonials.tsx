@@ -4,10 +4,13 @@ import maleAvatar from "/logos/maleAvatar.png"
 import femaleAvatar from "/logos/femaleAvatar.png"
 
 export default function Testimonials({ testimonialsData }) {
+  if (!testimonialsData) return null;
+  const testimonials = testimonialsData.testimonials || [];
+
   // Duplicate testimonials for marquee loop (showing 3 at a time)
-  const duplicatedTestimonials = [...testimonialsData.testimonials, ...testimonialsData.testimonials];
-  const hasHeading = testimonialsData.headline.title.length > 0 || testimonialsData.headline.description.length > 0;
-  const hasTestimonials = testimonialsData.testimonials.length > 0;
+  const duplicatedTestimonials = [...testimonials, ...testimonials];
+  const hasHeading = (testimonialsData.headline?.title?.length > 0) || (testimonialsData.headline?.description?.length > 0);
+  const hasTestimonials = testimonials.length > 0;
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -40,10 +43,10 @@ export default function Testimonials({ testimonialsData }) {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-3xl md:text-4xl text-foreground mb-4">
-                {testimonialsData.headline.title}
+                {testimonialsData.headline?.title}
               </h2>
               <p className="text-lg text-muted-foreground text-justify">
-                {testimonialsData.headline.description}
+                {testimonialsData.headline?.description}
               </p>
             </motion.div>
 
@@ -76,7 +79,7 @@ export default function Testimonials({ testimonialsData }) {
                   <div key={index} className="flex-shrink-0 w-80 lg:w-96">
                     <TestimonialCard
                       testimonial={testimonial}
-                      index={index % testimonialsData.testimonials.length}
+                      index={index % (testimonials.length || 1)}
                     />
                   </div>
                 ))}

@@ -20,6 +20,8 @@ export default function Services({ serviceData }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(3);
 
+  if (!serviceData) return null;
+
   const filteredServices = (
     activeCategory === "All"
       ? serviceData.services
@@ -57,10 +59,10 @@ export default function Services({ serviceData }) {
           <div className="max-w-7xl mx-auto px-4">
             {/* Header */}
             <div className="text-center mb-8">
-              {serviceData.heading.head && serviceData.heading.head.length > 0 && (
+              {serviceData.heading?.head && serviceData.heading.head.length > 0 && (
                 <h2 className="text-3xl font-bold">{serviceData.heading.head}</h2>
               )}
-              {serviceData.heading.desc && serviceData.heading.desc.length > 0 && (
+              {serviceData.heading?.desc && serviceData.heading.desc.length > 0 && (
                 <p className="text-muted-foreground text-center">{serviceData.heading.desc}</p>
               )}
             </div>

@@ -112,10 +112,10 @@ export default function Services({ serviceData }) {
             Our Services
           </span>
           <h2 className="text-4xl md:text-5xl font-bold text-ink mb-4">
-            {serviceData.heading.head}
+            {serviceData.heading?.head || "Our Services"}
           </h2>
           <p className="text-lg text-ink-paragraph max-w-2xl mx-auto ">
-            {serviceData.heading.desc}
+            {serviceData.heading?.desc || "Professional services tailored to your needs"}
           </p>
         </motion.div>
 
@@ -126,7 +126,7 @@ export default function Services({ serviceData }) {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex flex-wrap justify-center gap-3 mb-12"
         >
-          {serviceData.categories.map((cat, i) => (
+          {(serviceData.categories || ["All"]).map((cat, i) => (
             <button
               key={i}
               onClick={() => {
