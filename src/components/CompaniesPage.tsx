@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X, Award } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X, Award, Crown, Share2, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -23,7 +23,48 @@ interface Company {
   badgeStatus?: string;
   publishedId?: string;
   companyId?: string;
+  realDescription?: string | null;
+  tagline?: string | null;
+  galleryImages?: { url: string; label?: string | null }[];
+  heroStats?: { id?: string; value?: string; label?: string }[];
+  quote?: string | null;
+  yearsInBusiness?: string | null;
+  teamSize?: string | null;
   [key: string]: any;
+}
+
+const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg: string; ribbonColor: string; bannerBg: string; bannerColor: string }> = {
+  silver: { label: 'Silver', packageLabel: 'Reach Package', ribbonBg: '#E5E5E5', ribbonColor: '#6B6B6B', bannerBg: '#F1F1F1', bannerColor: '#555555' },
+  gold: { label: 'Gold', packageLabel: 'Brand Package', ribbonBg: 'linear-gradient(135deg,#FFE38A,#E8B400)', ribbonColor: '#7A5B00', bannerBg: '#FFF6DC', bannerColor: '#92700A' },
+  platinum: { label: 'Platinum', packageLabel: 'Expand Package', ribbonBg: '#0F172A', ribbonColor: '#F8C400', bannerBg: '#0F172A', bannerColor: '#ffffff' },
+};
+
+// Silver comes from real Silver-badge verification. Gold/Platinum map to the
+// paid Brand/Expand packages, but a company's paid package isn't linked to
+// its company record yet (lives in a separate service) - so those two tiers
+// render correctly whenever that data exists, they just don't fire on any
+// company today. Not fabricated: no company currently gets Gold/Platinum.
+function getTier(c: Company): keyof typeof TIER_STYLE | null {
+  if (c.badgeStatus === 'SILVER') return 'silver';
+  if (c.badgeStatus === 'GOLD') return 'gold';
+  if (c.badgeStatus === 'PLATINUM') return 'platinum';
+  return null;
+}
+
+function useSavedCompanies() {
+  const [saved, setSaved] = useState<Set<string>>(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('dronetv_saved_companies') || '[]')); }
+    catch { return new Set(); }
+  });
+  const toggle = (id: string) => {
+    setSaved(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      try { localStorage.setItem('dronetv_saved_companies', JSON.stringify(Array.from(next))); } catch {}
+      return next;
+    });
+  };
+  return { saved, toggle };
 }
 
 // Industry detection from company name (sectors API field is always "General")
@@ -140,6 +181,41 @@ const CSS = `
   .co-tabs-i { padding: 0 14px; }
   .co-tab { padding: 8px 12px; font-size: 12px; }
 }
+
+/* Premium (Silver / Gold / Platinum) verified-company card */
+.pc-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; position: relative; }
+.pc-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.16); transform: translateY(-2px); }
+.pc-icons { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 2; }
+.pc-icon-btn { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.9); border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.pc-top { display: flex; gap: 12px; padding: 16px 44px 0 16px; align-items: flex-start; }
+.pc-logo { width: 60px; height: 60px; border-radius: 10px; border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; background: #FAFAFA; font-weight: 900; font-size: 17px; color: #fff; }
+.pc-logo img { width: 100%; height: 100%; object-fit: cover; }
+.pc-id { flex: 1; min-width: 0; }
+.pc-name { font-size: 14.5px; font-weight: 800; color: #111111; line-height: 1.25; }
+.pc-tagline { font-size: 11px; color: #888; margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.pc-tag { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 7px; text-transform: uppercase; background: #F8F8F8; color: #555; border: 1px solid #E5E5E5; }
+.pc-tag-verified { background: #e8f5ec; color: #22C55E; border-color: transparent; }
+.pc-tag-premium { background: #F8C400; color: #111; border-color: transparent; }
+.pc-banner { margin: 12px 16px 0; padding: 7px 12px; border-radius: 8px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; text-align: center; letter-spacing: .3px; }
+.pc-desc { font-size: 12px; color: #666; line-height: 1.6; padding: 12px 16px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 16px 0; }
+.pc-photo { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; background: #F0F0F0; }
+.pc-photo img { width: 100%; height: 100%; object-fit: cover; }
+.pc-photo-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 8.5px; padding: 3px 4px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pc-stats { display: flex; gap: 8px; padding: 14px 16px; flex-wrap: wrap; border-top: 1px solid #F0F0F0; margin-top: 12px; }
+.pc-stat { text-align: center; flex: 1; min-width: 56px; }
+.pc-stat-n { font-size: 14px; font-weight: 800; color: #111111; }
+.pc-stat-l { font-size: 9px; color: #999; }
+.pc-cta { display: flex; gap: 8px; padding: 0 16px 14px; }
+.pc-btn-outline { flex: 1; padding: 9px; border-radius: 8px; border: 1.5px solid #E5E5E5; background: #fff; font-size: 12px; font-weight: 700; color: #111111; cursor: pointer; }
+.pc-btn-solid { flex: 1; padding: 9px; border-radius: 8px; border: none; background: #DC2626; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
+.pc-quote { padding: 10px 16px 14px; font-size: 11.5px; font-style: italic; color: #8A6D00; background: #FFF8E1; text-align: center; }
+@media (max-width: 480px) {
+  .pc-top { padding: 14px 40px 0 14px; }
+  .pc-photos { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .pc-stats { gap: 6px; }
+}
 `;
 
 const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
@@ -170,6 +246,7 @@ const CompaniesPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { saved: savedCompanies, toggle: toggleSaved } = useSavedCompanies();
   const perPage = 12;
   const navigate = useNavigate();
 
@@ -444,7 +521,23 @@ const CompaniesPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="co-grid">
-                  {withInlineAds(current, (c, i) => <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} />)}
+                  {withInlineAds(current, (c, i) => {
+                    const tier = getTier(c);
+                    const id = c.publishedId || c.companyId || c.companyName;
+                    return tier ? (
+                      <PremiumCompanyCard
+                        key={`${c.companyName}-${i}`}
+                        company={c}
+                        tier={tier}
+                        onClick={() => handleCardClick(c)}
+                        onEnquire={() => handleEnquireClick(c)}
+                        saved={savedCompanies.has(id)}
+                        onToggleSave={() => toggleSaved(id)}
+                      />
+                    ) : (
+                      <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} />
+                    );
+                  })}
                 </div>
               )}
 
@@ -536,6 +629,107 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: 
         <button className="co-btn-out" onClick={e => { e.stopPropagation(); onClick(); }}>View Profile <ChevronRight size={11} /></button>
         <button className="co-btn-red" onClick={e => { e.stopPropagation(); onEnquire(); }}>Enquire</button>
       </div>
+    </div>
+  );
+};
+
+const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE; onClick: () => void; onEnquire: () => void; saved: boolean; onToggleSave: () => void }> = ({ company, tier, onClick, onEnquire, saved, onToggleSave }) => {
+  const style = TIER_STYLE[tier];
+  const ind = getIndustry(company);
+  const indColor = IND_COLORS[ind] || '#444';
+  const verified = company.reviewStatus === 'approved';
+  const bg = avColor(company.companyName);
+  const [imgErr, setImgErr] = useState(false);
+  const detectedSectors = getSectors(company);
+  const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
+
+  const photos = (company.galleryImages && company.galleryImages.length > 0)
+    ? company.galleryImages
+    : [company.previewImage, company.heroImage, company.headerLogo].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).map(url => ({ url: url as string, label: null }));
+
+  const stats = (company.heroStats && company.heroStats.length > 0)
+    ? company.heroStats.slice(0, 4).map(s => ({ n: s.value, l: s.label }))
+    : [
+        (Number(company.productsCount) || 0) > 0 ? { n: String(company.productsCount), l: 'Products' } : null,
+        (Number(company.servicesCount) || 0) > 0 ? { n: String(company.servicesCount), l: 'Services' } : null,
+        company.teamSize ? { n: String(company.teamSize), l: 'Team' } : null,
+        company.yearsInBusiness ? { n: (String(company.yearsInBusiness).match(/\d{4}/) || [company.yearsInBusiness])[0], l: 'Since' } : null,
+      ].filter(Boolean) as { n: string; l: string }[];
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/companies/${company.urlSlug || company.publishedId}`;
+    if (navigator.share) {
+      navigator.share({ title: company.companyName, url }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(url).catch(() => {});
+    }
+  };
+
+  return (
+    <div className="pc-card" onClick={onClick}>
+      <div className="pc-icons">
+        <button className="pc-icon-btn" onClick={handleShare} title="Share"><Share2 size={13} color="#555" /></button>
+        <button className="pc-icon-btn" onClick={e => { e.stopPropagation(); onToggleSave(); }} title="Save">
+          <Heart size={13} color={saved ? '#DC2626' : '#555'} fill={saved ? '#DC2626' : 'none'} />
+        </button>
+      </div>
+
+      <div className="pc-top">
+        <div className="pc-logo" style={{ background: company.headerLogo || company.previewImage ? undefined : bg }}>
+          {(company.headerLogo || company.previewImage) && !imgErr ? (
+            <img src={company.headerLogo || company.previewImage} alt="" onError={() => setImgErr(true)} />
+          ) : getInitials(company.companyName)}
+        </div>
+        <div className="pc-id">
+          <div className="pc-name">{company.companyName}</div>
+          <div className="pc-tagline">{company.tagline || company.location || ''}</div>
+          <div className="pc-tags">
+            {verified && <span className="pc-tag pc-tag-verified">Verified</span>}
+            {ind !== 'all' && <span className="pc-tag" style={{ background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor, borderColor: 'transparent' }}>{ind.toUpperCase()}</span>}
+            {detectedSectors.slice(0, 2).map(s => <span key={s} className="pc-tag">{s}</span>)}
+            {tier !== 'silver' && <span className="pc-tag pc-tag-premium">Premium</span>}
+          </div>
+        </div>
+        <div className="pc-ribbon" style={{ background: style.ribbonBg }} title={`${style.label} - Profile verified by DroneTV team`}>
+          {tier === 'silver' ? <Award size={18} color={style.ribbonColor} /> : <Crown size={18} color={style.ribbonColor} />}
+        </div>
+      </div>
+
+      <div className="pc-banner" style={{ background: style.bannerBg, color: style.bannerColor }}>
+        {style.label} &middot; {style.packageLabel}{tier !== 'silver' ? ' • Verified Listing' : ''}
+      </div>
+
+      <p className="pc-desc">{description}</p>
+
+      {photos.length > 0 && (
+        <div className="pc-photos">
+          {photos.map((p, i) => (
+            <div key={i} className="pc-photo">
+              <img src={p.url} alt={p.label || ''} />
+              {p.label && <div className="pc-photo-label">{p.label}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {stats.length > 0 && (
+        <div className="pc-stats">
+          {stats.map((s, i) => (
+            <div key={i} className="pc-stat">
+              <div className="pc-stat-n">{s.n}</div>
+              <div className="pc-stat-l">{s.l}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="pc-cta">
+        <button className="pc-btn-outline" onClick={e => { e.stopPropagation(); onClick(); }}>View Profile</button>
+        <button className="pc-btn-solid" onClick={e => { e.stopPropagation(); onEnquire(); }}>Enquire Now</button>
+      </div>
+
+      {company.quote && <div className="pc-quote">&ldquo;{company.quote}&rdquo;</div>}
     </div>
   );
 };
