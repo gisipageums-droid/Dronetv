@@ -33,10 +33,13 @@ export interface Company {
   [key: string]: any;
 }
 
-const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg: string; ribbonColor: string; bannerBg: string; bannerColor: string; verifiedListing: boolean; highlightBg: string }> = {
+const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg: string; ribbonColor: string; bannerBg: string; bannerColor: string; verifiedListing: boolean; highlightBg: string; dark?: boolean }> = {
   silver: { label: 'SILVER', packageLabel: 'Reach Package', ribbonBg: 'linear-gradient(135deg,#E8E8E8,#9A9A9A)', ribbonColor: '#ffffff', bannerBg: 'linear-gradient(135deg,#8a8a8a,#4a4a4a)', bannerColor: '#ffffff', verifiedListing: false, highlightBg: '#F0F0F0' },
   gold: { label: 'GOLD BRAND', packageLabel: 'Package', ribbonBg: 'linear-gradient(135deg,#FFE38A,#C99400)', ribbonColor: '#7A5B00', bannerBg: 'linear-gradient(135deg,#E8B400,#8a6400)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: '#FFF3C4' },
-  platinum: { label: 'PLATINUM', packageLabel: 'Expand Package', ribbonBg: 'linear-gradient(135deg,#CBD5E1,#64748B)', ribbonColor: '#F8C400', bannerBg: 'linear-gradient(135deg,#1e293b,#0F172A)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: '#FFF3C4' },
+  // Platinum renders on a dark card (see .pc-card-dark) per the approved
+  // design - highlightBg switches to a translucent white overlay so the
+  // callout/highlight chips still read on that dark background.
+  platinum: { label: 'PLATINUM', packageLabel: 'Expand Package', ribbonBg: 'linear-gradient(135deg,#CBD5E1,#64748B)', ribbonColor: '#F8C400', bannerBg: 'linear-gradient(135deg,#1e293b,#0F172A)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: 'rgba(255,255,255,.08)', dark: true },
 };
 
 // Silver comes from real Silver-badge verification. Gold/Platinum map to the
@@ -161,7 +164,8 @@ export const CSS = `
 .co-mobile-overlay { display: none; }
 
 /* Card */
-.co-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; }
+.co-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; position: relative; }
+.co-card-save { position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.9); border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
 .co-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.14); transform: translateY(-2px); }
 .co-card-top { padding: 13px 13px 0; display: flex; gap: 10px; align-items: flex-start; }
 .co-avatar { width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0; overflow: hidden; }
@@ -237,6 +241,26 @@ export const CSS = `
 .pc-btn-outline { flex: 1 1 0; max-width: 45%; padding: 8px; border-radius: 7px; border: 1.5px solid #E0E0E0; background: #fff; font-size: 12px; font-weight: 700; color: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .pc-btn-solid { flex: 1.3 1 0; padding: 8px; border-radius: 7px; border: none; background: #DC2626; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .pc-quote { margin: 12px -14px -14px; padding: 10px 14px; background: #FFF8DC; text-align: center; font-style: italic; font-size: 12px; color: #6B5900; border-radius: 0 0 14px 14px; }
+
+/* Platinum's dark card, per the approved design (the other 3 tiers stay
+   on the light card - only Platinum switches the whole surface). */
+.pc-card-dark { background: #0F172A; border-color: #1e293b; }
+.pc-card-dark .pc-name, .pc-card-dark .pc-desc, .pc-card-dark .pc-callout-text, .pc-card-dark .pc-hl-chip, .pc-card-dark .pc-stat-n { color: #ffffff; }
+.pc-card-dark .pc-tagline { color: #94a3b8; }
+.pc-card-dark .pc-stat-l { color: #94a3b8; }
+.pc-card-dark .pc-logo { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.15); }
+.pc-card-dark .pc-tag:not(.pc-tag-verified):not(.pc-tag-premium) { background: rgba(255,255,255,.08); color: #cbd5e1; }
+.pc-card-dark .pc-stat { background: rgba(255,255,255,.07); }
+.pc-card-dark .pc-photo, .pc-card-dark .pc-carousel-btn { background: rgba(255,255,255,.08); }
+.pc-card-dark .pc-carousel-btn { border-color: rgba(255,255,255,.2); }
+.pc-card-dark .pc-carousel-btn svg { color: #fff; }
+.pc-card-dark .pc-photo-cap { color: #cbd5e1; }
+.pc-card-dark .pc-btn-outline { background: transparent; border-color: rgba(255,255,255,.25); color: #ffffff; }
+.pc-card-dark .pc-icon-btn { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.2); }
+.pc-card-dark .pc-icon-btn svg { color: #fff; }
+.pc-card-dark .pc-quote { background: rgba(255,255,255,.06); color: #fbbf24; }
+.pc-card-dark .pc-dot { background: rgba(255,255,255,.25); }
+.pc-card-dark .pc-dot-active { background: #ffffff; }
 @media (max-width: 640px) {
   .pc-top { padding-right: 44px; }
   .pc-logo { width: 52px; height: 52px; font-size: 8px; }
@@ -619,7 +643,14 @@ const CompaniesPage: React.FC = () => {
                         onToggleSave={() => toggleSaved(id)}
                       />
                     ) : (
-                      <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} />
+                      <CompanyCard
+                        key={`${c.companyName}-${i}`}
+                        company={c}
+                        onClick={() => handleCardClick(c)}
+                        onEnquire={() => handleEnquireClick(c)}
+                        saved={savedCompanies.has(c.publishedId || c.companyId || c.companyName)}
+                        onToggleSave={() => toggleSaved(c.publishedId || c.companyId || c.companyName)}
+                      />
                     );
                   })}
                 </div>
@@ -653,7 +684,7 @@ const CompaniesPage: React.FC = () => {
   );
 };
 
-export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void }> = ({ company, onClick, onEnquire }) => {
+export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
   const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
   const verified = company.reviewStatus === 'approved';
@@ -666,7 +697,13 @@ export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEn
     <div className="co-card" onClick={onClick}>
       <div style={{ height: 4, background: indColor }} />
 
-      <div className="co-card-top">
+      {onToggleSave && (
+        <button className="co-card-save" onClick={e => { e.stopPropagation(); onToggleSave(); }} title="Save">
+          <Heart size={12} color={saved ? '#DC2626' : '#999'} fill={saved ? '#DC2626' : 'none'} />
+        </button>
+      )}
+
+      <div className="co-card-top" style={{ paddingRight: 34 }}>
         <div className="co-avatar" style={{ background: bg }}>
           {company.previewImage && !imgErr ? (
             <img src={company.previewImage} alt="" onError={() => setImgErr(true)} />
@@ -761,7 +798,7 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
   };
 
   return (
-    <div className="pc-card" onClick={onClick}>
+    <div className={`pc-card${style.dark ? ' pc-card-dark' : ''}`} onClick={onClick}>
       <div className="pc-top">
         <div className="pc-logo" style={{ background: company.headerLogo || company.previewImage ? undefined : bg, color: '#fff' }}>
           {(company.headerLogo || company.previewImage) && !imgErr ? (
