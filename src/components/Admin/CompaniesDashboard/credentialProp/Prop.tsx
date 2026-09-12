@@ -6,6 +6,17 @@ import { PrettyValue, prettyLabel } from "../../../../lib/prettyValue";
 
 const SET_PASSWORD_API = AUTH_API ? `${AUTH_API}/admin/set-password` : `${LAMBDA.auth}/admin/set-password`;
 
+// The signup form only ever collects one free-text address line, not
+// separate city/state inputs - those raw fields are empty for every
+// company, not just this one. Derive them from the address instead of
+// showing "Not provided" for data the company actually did give.
+function deriveFromAddress(address: string | undefined, which: "city" | "state"): string {
+  const parts = (address || "").split(",").map((p) => p.trim()).filter(Boolean);
+  const meaningful = parts.filter((p) => p && !/^\d+$/.test(p) && p.toLowerCase() !== "india");
+  if (meaningful.length === 0) return "";
+  return which === "state" ? meaningful[meaningful.length - 1] : meaningful[meaningful.length - 2] || "";
+}
+
 function genPassword(): string {
   const sets = ["ABCDEFGHJKLMNPQRSTUVWXYZ", "abcdefghijkmnpqrstuvwxyz", "23456789", "!@#$%*"];
   return Array.from({ length: 12 }, (_, i) => {
@@ -483,13 +494,17 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     <div>
                       <p className="text-sm text-ink-paragraph">City</p>
                       <p className="font-medium">
-                        {data.formData.rawData.city || "Not provided"}
+                        {data.formData.rawData.city ||
+                          deriveFromAddress(data.formData.rawData.officeAddress || data.formData.rawData.communicationAddress, "city") ||
+                          "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">State</p>
                       <p className="font-medium">
-                        {data.formData.rawData.state || "Not provided"}
+                        {data.formData.rawData.state ||
+                          deriveFromAddress(data.formData.rawData.officeAddress || data.formData.rawData.communicationAddress, "state") ||
+                          "Not provided"}
                       </p>
                     </div>
                     <div>

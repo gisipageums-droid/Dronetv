@@ -734,7 +734,7 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
   // "Since <year>" rides on the same line instead of its own row so it
   // doesn't waste a whole strip of card height for one small fact.
   const specialty = [
-    detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : company.location,
+    detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : shortLocation(company.location),
     sinceYear ? `Since ${sinceYear}` : null,
   ].filter(Boolean).join(' • ');
 
@@ -893,7 +893,7 @@ const ShareCardModal: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE
   const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
   const sinceYear = company.yearsInBusiness ? (String(company.yearsInBusiness).match(/\d{4}/) || [null])[0] : null;
   const specialty = [
-    detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : company.location,
+    detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : shortLocation(company.location),
     sinceYear ? `Since ${sinceYear}` : null,
   ].filter(Boolean).join(' • ');
   const photos = (company.galleryImages && company.galleryImages.length > 0)
