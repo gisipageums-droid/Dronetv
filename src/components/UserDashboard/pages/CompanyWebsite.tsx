@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from "motion/react";
 import FormApp from "../../company/src/components/form/src/App";
 import { COMPANY_API, MEDIA_API, LAMBDA } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
+import { CompanyCard, CSS as COMPANIES_CSS } from "../../CompaniesPage";
 
 interface Company {
   publishedId: string;
@@ -331,6 +332,13 @@ const CompanyWebsite: React.FC = () => {
     ? `/user/companies/preview/1/${company.publishedId}/${company.userId}`
     : "";
 
+  // Same slug + template routing CompaniesPage.tsx uses for its own cards,
+  // so "View" from the card preview lands on the exact live public page.
+  const cardSlug = (company as any)?.urlSlug || company?.publishedId || "";
+  const cardPreviewUrl = company
+    ? `/${(company as any).templateSelection === "template-2" || (company as any).templateSelection === "2" ? "companies" : "company"}/${cardSlug}`
+    : "#";
+
   const handleConfirmEdit = () => {
     if (!company) return;
     setShowEditModal(false);
@@ -550,6 +558,29 @@ const CompanyWebsite: React.FC = () => {
               }}
             />
           </div>
+
+          {/* Listing Card Preview - the real CompanyCard component from the
+              public directory, not a redrawn mockup, so this always matches
+              exactly what visitors see on /listed-companies. Reflects the
+              latest saved state (refreshes after every save/publish), not
+              live keystrokes - the edit wizard's fields aren't lifted up
+              to this parent as the company types. */}
+          {company && (
+            <div className="rounded-xl overflow-hidden border border-brand-yellow-soft shadow-lg bg-surface-card p-4">
+              <style>{COMPANIES_CSS}</style>
+              <p className="text-sm font-semibold text-ink-charcoal mb-1">Your Listing Card</p>
+              <p className="text-xs text-ink-caption mb-3">
+                This is exactly how your card looks on the Companies directory. It updates after every save.
+              </p>
+              <div style={{ maxWidth: 300 }}>
+                <CompanyCard
+                  company={company as any}
+                  onClick={() => window.open(cardPreviewUrl, "_blank")}
+                  onEnquire={() => toast("Enquire opens your Contact section for real visitors.")}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Website Preview */}
           <div className="rounded-xl overflow-hidden border border-brand-yellow-soft shadow-lg bg-surface-card">

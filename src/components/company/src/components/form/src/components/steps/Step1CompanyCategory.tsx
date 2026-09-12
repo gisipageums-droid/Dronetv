@@ -1543,15 +1543,17 @@ const GSTVerificationSection: React.FC<{
           <div className="p-4 space-y-3">
             {/* Company Name */}
             <div className="space-y-1">
-              <div className="flex items-center text-xs text-ink-caption font-medium">
-                Company Name (Trade Name)
+              <div className="flex items-center justify-between text-xs text-ink-caption font-medium">
+                <span>Company Name (Trade Name)</span>
+                <span>{(verifiedData?.companyName || "").length}/60</span>
               </div>
               <input
                 type="text"
                 value={verifiedData?.companyName || ""}
-                onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), companyName: e.target.value })}
+                onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), companyName: e.target.value.slice(0, 60) })}
                 placeholder="Enter company name"
                 disabled={isVerified}
+                maxLength={60}
                 className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold disabled:bg-ink-offwhite disabled:text-ink-caption"
               />
             </div>

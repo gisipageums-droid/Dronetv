@@ -5,7 +5,7 @@ import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
 
-interface Company {
+export interface Company {
   companyName: string;
   location?: string;
   sectors?: string[];
@@ -120,7 +120,7 @@ function avColor(name: string): string {
   return AV_COLORS[h % AV_COLORS.length];
 }
 
-const CSS = `
+export const CSS = `
 .co-page { background: #FFF8D6; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
 .co-hero { background: #111111; color: #fff; border-bottom: 2px solid #F8C400; }
 .co-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
@@ -653,7 +653,7 @@ const CompaniesPage: React.FC = () => {
   );
 };
 
-const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void }> = ({ company, onClick, onEnquire }) => {
+export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void }> = ({ company, onClick, onEnquire }) => {
   const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
   const verified = company.reviewStatus === 'approved';
