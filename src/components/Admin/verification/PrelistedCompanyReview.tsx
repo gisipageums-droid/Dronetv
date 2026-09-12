@@ -22,6 +22,7 @@ interface Detail {
   location: string | null;
   sectors: string[];
   websiteContent: any;
+  companyInfo: any;
   workflowStatus: string;
   badgeStatus: string;
   verificationConfirmed: boolean;
@@ -83,12 +84,19 @@ export default function PrelistedCompanyReview() {
         const content = d.websiteContent || {};
         const about = content.about || {};
         const contact = content.contact || {};
-        setDescription(about.description || content.hero?.description || "");
-        setContactName(contact.contactName || contact.name || "");
-        setEmail(contact.email || "");
-        setPhone(contact.phone || contact.phoneNumber || "");
-        setWebsite(contact.website || "");
-        setSectors(Array.isArray(d.sectors) ? d.sectors.filter((s) => s && s !== "General") : []);
+        // companyInfo is what the company actually typed at signup/GST
+        // verification - the AI-generated public "Contact Us" section
+        // (websiteContent.contact) is usually still empty on a fresh
+        // signup, which made every new company look like it was missing
+        // contact details it had genuinely already given.
+        const info = d.companyInfo || {};
+        setDescription(about.description || content.hero?.description || info.description || "");
+        setContactName(contact.contactName || contact.name || info.directorName || info.altContactName || "");
+        setEmail(contact.email || info.directorEmail || info.altContactEmail || "");
+        setPhone(contact.phone || contact.phoneNumber || info.directorPhone || info.altContactPhone || "");
+        setWebsite(contact.website || info.websiteUrl || "");
+        const realSectors = (d.sectors || []).filter((s) => s && s !== "General");
+        setSectors(realSectors.length > 0 ? realSectors : (Array.isArray(info.companyCategory) ? info.companyCategory.filter(Boolean) : []));
       })
       .catch(() => toast.error("Failed to load this company"))
       .finally(() => setLoading(false));
