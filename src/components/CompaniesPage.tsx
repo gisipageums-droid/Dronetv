@@ -327,13 +327,52 @@ const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructu
 // 500081 India") blow out the compact card's height - show just city/state
 // instead of the whole thing.
 function shortLocation(location: string | undefined): string {
+  const state = extractState(location);
   const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
   const meaningful = parts.filter(p => p && !/^\d+$/.test(p) && p.toLowerCase() !== 'india');
+  if (state) {
+    // Best-effort city: skip whichever segment the state name was actually
+    // found inside (usually the garbled tail with no internal commas) and
+    // pick the nearest segment that still looks like a real locality name,
+    // not another multi-word run-on chunk.
+    let city = '';
+    for (let i = meaningful.length - 1; i >= 0; i--) {
+      if (meaningful[i].toLowerCase().includes(state.toLowerCase())) continue;
+      if (meaningful[i].split(/\s+/).length <= 4 && meaningful[i].length < 30) { city = meaningful[i]; break; }
+    }
+    return city ? `${city}, ${state}` : state;
+  }
   return meaningful.slice(-2).join(', ') || location || '';
 }
 
+// The comma-split heuristic below assumed a clean "City, State, Pincode,
+// Country" address - real typed-in addresses are often one unpunctuated
+// run ("...Hyderabad Hyderabad Telangana 500032 India"), which made the
+// "last segment" come out as that whole messy chunk instead of the real
+// state, so the company never matched the clean state filter chips.
+// Matching a known Indian state/UT name directly out of the raw text is
+// far more reliable than trusting comma placement. Longest names first so
+// "Uttar Pradesh" matches before the "Uttar" in "Uttarakhand" would.
+const INDIAN_STATES = [
+  'Andaman and Nicobar Islands', 'Dadra and Nagar Haveli and Daman and Diu',
+  'Jammu and Kashmir', 'Arunachal Pradesh', 'Himachal Pradesh', 'Madhya Pradesh',
+  'Andhra Pradesh', 'Uttar Pradesh', 'Uttarakhand', 'Chhattisgarh',
+  'West Bengal', 'Maharashtra', 'Puducherry', 'Tamil Nadu', 'Telangana',
+  'Meghalaya', 'Rajasthan', 'Karnataka', 'Jharkhand', 'Nagaland', 'Chandigarh',
+  'Lakshadweep', 'Mizoram', 'Manipur', 'Haryana', 'Gujarat', 'Tripura',
+  'Sikkim', 'Punjab', 'Odisha', 'Kerala', 'Ladakh', 'Assam', 'Bihar',
+  'Delhi', 'Goa',
+].sort((a, b) => b.length - a.length);
+
 function extractState(location: string | undefined): string {
-  const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
+  const text = location || '';
+  for (const state of INDIAN_STATES) {
+    if (new RegExp(`\\b${state.replace(/ /g, '\\s+')}\\b`, 'i').test(text)) return state;
+  }
+  // Fall back to the old last-comma-segment guess for anything that isn't
+  // a recognizable Indian state (e.g. a foreign address, if that ever
+  // shows up), so this never regresses to blank for those.
+  const parts = text.split(',').map(p => p.trim()).filter(Boolean);
   for (let i = parts.length - 1; i >= 0; i--) {
     const p = parts[i];
     if (p && !/^\d+$/.test(p) && p.toLowerCase() !== 'india') return p;
