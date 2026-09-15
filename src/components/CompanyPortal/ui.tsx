@@ -107,8 +107,16 @@ export function Field({
   );
 }
 
+// Shared by <input>/<textarea>/<select> - the [&>option] rule only matters
+// for <select> (option is a direct DOM child there) and is a no-op on the
+// others. Needed because a <select>'s native option popup ignores the
+// translucent bg-white/5 and renders its own opaque (usually white)
+// background regardless of browser - text-white on that unstyled popup
+// made every dropdown's options invisible except the one currently
+// highlighted blue (confirmed live: Company Category, Company Size, Team &
+// Staff Department all affected).
 export const inputCls =
-  "w-full px-3 py-2.5 border border-white/15 rounded-md text-[13px] text-white bg-white/5 placeholder-white/30 focus:outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/20 transition-colors";
+  "w-full px-3 py-2.5 border border-white/15 rounded-md text-[13px] text-white bg-white/5 placeholder-white/30 focus:outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/20 transition-colors [&>option]:bg-ink [&>option]:text-white";
 
 export function FormGrid({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>;
@@ -144,14 +152,22 @@ export function EmptyState({ text }: { text: string }) {
 }
 
 export function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  // Knob position is set via an inline style transform rather than a
+  // Tailwind arbitrary-value class (translate-x-[19px]) - both rendered
+  // with the wrong knob position live (off looked on, on overflowed past
+  // the track) despite the class compiling correctly, so this pins the
+  // position with the highest-specificity mechanism available instead of
+  // chasing whatever in the cascade was overriding the Tailwind class.
   return (
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`relative w-[42px] h-6 rounded-full transition-colors flex-shrink-0 ${checked ? "bg-brand-yellow" : "bg-white/15"}`}
+      className={`relative h-6 rounded-full transition-colors flex-shrink-0 ${checked ? "bg-brand-yellow" : "bg-white/15"}`}
+      style={{ width: 42 }}
     >
       <span
-        className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-[19px]" : "translate-x-0.5"}`}
+        className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+        style={{ transform: `translateX(${checked ? 19 : 2}px)` }}
       />
     </button>
   );
