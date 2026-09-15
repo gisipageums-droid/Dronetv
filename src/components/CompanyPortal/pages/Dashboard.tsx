@@ -6,6 +6,7 @@ import { useUserAuth } from "../../context/context";
 import { LEADS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
 import { getMyCompany, authHeaders } from "../api";
 import { PageHeader, Card, CardHeader, KpiRow, KpiCard, Badge, Btn, EmptyState } from "../ui";
+import VerifyBadgeCard from "../VerifyBadgeCard";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -62,6 +63,8 @@ export default function Dashboard() {
     <div>
       <PageHeader title="Dashboard" sub={`Welcome back, ${company.companyName}`} />
 
+      <VerifyBadgeCard publishedId={company.publishedId} onVerified={() => setCompany({ ...company, badgeStatus: "SILVER" })} />
+
       <KpiRow>
         <KpiCard label="Profile Views" value={(company.profileViews ?? 0).toLocaleString("en-IN")} accent="yellow" />
         <KpiCard label="Total Leads" value={leads.length} note="Recent" accent="green" />
@@ -110,10 +113,14 @@ export default function Dashboard() {
 
       <Card>
         <CardHeader title="Company Snapshot" />
-        <div className="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="p-4 grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div>
             <div className="text-[11px] font-bold text-white/40 uppercase tracking-wide mb-1">Status</div>
             <Badge tone={company.reviewStatus === "approved" ? "success" : "warning"}>{company.reviewStatus || "pending"}</Badge>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-white/40 uppercase tracking-wide mb-1">Verification</div>
+            <Badge tone={company.badgeStatus === "SILVER" ? "success" : "neutral"}>{company.badgeStatus === "SILVER" ? "Verified" : "Not verified"}</Badge>
           </div>
           <div>
             <div className="text-[11px] font-bold text-white/40 uppercase tracking-wide mb-1">Location</div>
