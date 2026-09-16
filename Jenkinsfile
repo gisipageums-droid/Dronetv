@@ -13,6 +13,7 @@ pipeline {
                         --build-arg VITE_BACKEND_URL_EVENTS=https://events-api-dev.dronetv.in \
                         --build-arg VITE_BACKEND_URL_MEDIA=https://media-api-dev.dronetv.in \
                         --build-arg VITE_BACKEND_URL_LEADS=https://leads-api-dev.dronetv.in \
+                        --build-arg VITE_BACKEND_URL_RFQ=https://rfq-api-dev.dronetv.in \
                         --build-arg VITE_BACKEND_URL_PAYMENT=https://payment-api-dev.dronetv.in \
                         --build-arg VITE_BACKEND_URL_ADMIN=https://admin-api-dev.dronetv.in \
                         --build-arg VITE_BACKEND_URL_JOB_APPLICATIONS=https://jobboard-api-dev.dronetv.in \

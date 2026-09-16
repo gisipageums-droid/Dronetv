@@ -5,7 +5,7 @@ import {
   ShoppingBag, Coins, ChevronDown, Share2, Briefcase, Award,
   GraduationCap, Users2, Newspaper, BookOpen, ImageIcon, Star,
   BarChart2, Cpu, ClipboardList, Factory, Bot, Handshake,
-  Zap, Target, Layout, Receipt, Package,
+  Zap, Target, Layout, Receipt, Package, Plus,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/context";
@@ -108,6 +108,14 @@ function getNavGroups(role: string, isAdmin: boolean): NavGroup[] {
       items: [
         { icon: Share2,      label: "My Posts", href: "/user-posts" },
         { icon: ShoppingBag, label: "Addons",   href: "/user-addons" },
+      ],
+    },
+    {
+      id: "rfq", icon: ClipboardList, label: "Requirements",
+      paths: ["/user-rfq", "/user-rfq/new"],
+      items: [
+        { icon: Plus,           label: "Post Requirement", href: "/user-rfq/new" },
+        { icon: ClipboardList,  label: "My Requirements",  href: "/user-rfq" },
       ],
     },
     {

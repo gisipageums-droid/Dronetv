@@ -13,6 +13,7 @@ const SERVICE_OVERRIDES: Record<string, string> = {
   events: import.meta.env.VITE_BACKEND_URL_EVENTS || '',
   media: import.meta.env.VITE_BACKEND_URL_MEDIA || '',
   leads: import.meta.env.VITE_BACKEND_URL_LEADS || '',
+  rfq: import.meta.env.VITE_BACKEND_URL_RFQ || '',
   payment: import.meta.env.VITE_BACKEND_URL_PAYMENT || '',
   admin: import.meta.env.VITE_BACKEND_URL_ADMIN || '',
   jobApplications: import.meta.env.VITE_BACKEND_URL_JOB_APPLICATIONS || '',
@@ -40,6 +41,9 @@ export const MEDIA_API = serviceBase('media', 'media');
 
 // Leads service
 export const LEADS_API = serviceBase('leads', 'leads');
+
+// RFQ service
+export const RFQ_API = serviceBase('rfq', 'rfq');
 
 // Payment service
 export const PAYMENT_API = serviceBase('payment', 'payment');

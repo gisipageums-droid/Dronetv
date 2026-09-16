@@ -87,6 +87,9 @@ const CompanyPortalListings = lazy(() => import("./components/CompanyPortal/page
 const CompanyPortalLeads = lazy(() => import("./components/CompanyPortal/pages/Leads"));
 const CompanyPortalJobListings = lazy(() => import("./components/CompanyPortal/pages/JobListings"));
 const CompanyPortalContent = lazy(() => import("./components/CompanyPortal/pages/Content"));
+const CompanyPortalRfqInbox = lazy(() => import("./components/CompanyPortal/pages/RfqInbox"));
+const CompanyPortalRfqRespond = lazy(() => import("./components/CompanyPortal/pages/RfqRespond"));
+const CompanyPortalMyQuotes = lazy(() => import("./components/CompanyPortal/pages/MyQuotes"));
 const CompanyPortalMagazine = lazy(() => import("./components/CompanyPortal/pages/Magazine"));
 const CompanyPortalPress = lazy(() => import("./components/CompanyPortal/pages/Press"));
 const CompanyPortalAnalytics = lazy(() => import("./components/CompanyPortal/pages/Analytics"));
@@ -153,6 +156,9 @@ const MediaHub = lazy(() => import("./components/UserDashboard/pages/MediaHub"))
 const MyContentManager = lazy(() => import("./components/UserDashboard/pages/MyContentManager"));
 const Addons = lazy(() => import("./components/UserDashboard/pages/Addons"));
 const UserPosts = lazy(() => import("./components/UserDashboard/pages/UserPosts"));
+const RfqList = lazy(() => import("./components/UserDashboard/pages/RfqList"));
+const RfqNew = lazy(() => import("./components/UserDashboard/pages/RfqNew"));
+const RfqDetail = lazy(() => import("./components/UserDashboard/pages/RfqDetail"));
 const BidKeywords = lazy(() => import("./components/UserDashboard/pages/BidKeywords"));
 const PagePlacements = lazy(() => import("./components/UserDashboard/pages/PagePlacements"));
 const MyPackage = lazy(() => import("./components/UserDashboard/pages/MyPackage"));
@@ -607,6 +613,9 @@ const AppContent = () => {
           <Route path="/company-portal/leads" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalLeads /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/jobs" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalJobListings /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/content" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalContent /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/rfq" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalRfqInbox /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/rfq/:rfqId" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalRfqRespond /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/quotes" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMyQuotes /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/magazine" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMagazine /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/press" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalPress /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/analytics" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalAnalytics /></CompanyPortalLayout></ProtectedRoute>} />
@@ -723,6 +732,23 @@ const AppContent = () => {
                 </CompanyRedirectGuard>
               </ProtectedRoute>
             }
+          />
+
+          {/* RFQ - post/compare/award is a shared buyer action, not gated
+              behind CompanyRedirectGuard like the rest of this dashboard,
+              since a company account can post a requirement too (e.g. hiring
+              another vendor) per the "one account, every role" design. */}
+          <Route
+            path="/user-rfq"
+            element={<ProtectedRoute><UserDashboardLayout><RfqList /></UserDashboardLayout></ProtectedRoute>}
+          />
+          <Route
+            path="/user-rfq/new"
+            element={<ProtectedRoute><UserDashboardLayout><RfqNew /></UserDashboardLayout></ProtectedRoute>}
+          />
+          <Route
+            path="/user-rfq/:rfqId"
+            element={<ProtectedRoute><UserDashboardLayout><RfqDetail /></UserDashboardLayout></ProtectedRoute>}
           />
 
           <Route

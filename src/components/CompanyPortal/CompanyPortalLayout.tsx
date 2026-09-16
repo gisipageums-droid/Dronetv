@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Building2, Package, Inbox, Film, BookOpen, Megaphone,
   BarChart2, ShieldCheck, Receipt, Settings as SettingsIcon, Menu, X,
   ExternalLink, LogOut, Coins, Target, LayoutTemplate, Briefcase, LayoutGrid,
-  ChevronDown,
+  ChevronDown, ClipboardList, FileCheck, Plus,
 } from "lucide-react";
 import { useUserAuth } from "../context/context";
 import { getMyCompanies, getActivePublishedId, setActivePublishedId } from "./api";
@@ -37,6 +37,14 @@ const NAV: NavSection[] = [
       { id: "listings", label: "Product Listings", icon: Package, path: "/company-portal/listings" },
       { id: "leads", label: "B2B Leads", icon: Inbox, path: "/company-portal/leads" },
       { id: "jobs", label: "Job Listings", icon: Briefcase, path: "/company-portal/jobs" },
+    ],
+  },
+  {
+    heading: "Requirements",
+    items: [
+      { id: "rfq-inbox", label: "RFQ Inbox", icon: ClipboardList, path: "/company-portal/rfq" },
+      { id: "rfq-quotes", label: "My Quotes", icon: FileCheck, path: "/company-portal/quotes" },
+      { id: "rfq-post", label: "Post Requirement", icon: Plus, path: "/user-rfq/new" },
     ],
   },
   {
@@ -78,6 +86,8 @@ const TITLES: Record<string, string> = {
   "/company-portal/listings": "Product & Service Listings",
   "/company-portal/leads": "B2B Leads",
   "/company-portal/jobs": "Job Listings",
+  "/company-portal/rfq": "RFQ Inbox",
+  "/company-portal/quotes": "My Quotes",
   "/company-portal/content": "My Content",
   "/company-portal/magazine": "Magazine Coverage",
   "/company-portal/press": "Press Releases",

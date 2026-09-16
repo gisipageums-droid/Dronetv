@@ -1,0 +1,148 @@
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, Award, Ban, Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
+import { getRfq, rfqQuotes, awardQuote, cancelRfq, Rfq, Quote } from "../../../lib/rfqApi";
+
+const STATUS_STYLE: Record<string, string> = {
+  OPEN: "bg-status-info/15 text-status-info",
+  AWARDED: "bg-status-success/15 text-status-success",
+  CANCELLED: "bg-white/10 text-white/40",
+  CLOSED: "bg-white/10 text-white/40",
+};
+
+const RfqDetail: React.FC = () => {
+  const { rfqId } = useParams<{ rfqId: string }>();
+  const navigate = useNavigate();
+  const [rfq, setRfq] = useState<Rfq | null>(null);
+  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busyQuoteId, setBusyQuoteId] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+
+  const load = () => {
+    if (!rfqId) return;
+    Promise.all([getRfq(rfqId), rfqQuotes(rfqId)])
+      .then(([r, q]) => { setRfq(r); setQuotes(q); })
+      .catch(() => toast.error("Could not load this requirement"))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(load, [rfqId]);
+
+  const handleAward = async (quoteId: string) => {
+    if (!rfqId) return;
+    if (!confirm("Award this quote? All other quotes on this requirement will be rejected.")) return;
+    setBusyQuoteId(quoteId);
+    try {
+      const updated = await awardQuote(rfqId, quoteId);
+      setRfq(updated);
+      toast.success("Quote awarded");
+      load();
+    } catch (e: any) {
+      toast.error(e.response?.data?.detail || "Failed to award quote");
+    } finally {
+      setBusyQuoteId(null);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (!rfqId) return;
+    if (!confirm("Cancel this requirement? Vendors won't be able to quote on it anymore.")) return;
+    setCancelling(true);
+    try {
+      const updated = await cancelRfq(rfqId);
+      setRfq(updated);
+      toast.success("Requirement cancelled");
+    } catch (e: any) {
+      toast.error(e.response?.data?.detail || "Failed to cancel");
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  if (loading) return <div className="flex items-center justify-center h-64 text-ink-caption">Loading...</div>;
+  if (!rfq) return <div className="p-6 text-ink-caption">Requirement not found.</div>;
+
+  const sortedQuotes = [...quotes].sort((a, b) => a.priceAmount - b.priceAmount);
+  const lowestPrice = sortedQuotes[0]?.priceAmount;
+
+  return (
+    <div className="p-4 sm:p-6 max-w-3xl">
+      <button onClick={() => navigate("/user-rfq")} className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white mb-4">
+        <ArrowLeft size={14} /> Back to My Requirements
+      </button>
+
+      <div className="flex items-start justify-between gap-3 mb-1">
+        <h1 className="text-xl font-black text-white">{rfq.title}</h1>
+        <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap ${STATUS_STYLE[rfq.status]}`}>{rfq.status}</span>
+      </div>
+      <div className="text-xs text-white/40 mb-4">{rfq.category}{rfq.location ? ` · ${rfq.location}` : ""} · Posted {new Date(rfq.createdAt).toLocaleDateString("en-IN")}</div>
+
+      <div className="bg-surface-card border border-ink-light rounded-xl p-4 mb-6">
+        <p className="text-sm text-white/70 whitespace-pre-wrap">{rfq.description}</p>
+        {(rfq.budgetMin || rfq.budgetMax) && (
+          <div className="text-xs text-white/50 mt-3">
+            Budget: {rfq.budgetMin ? `₹${rfq.budgetMin.toLocaleString("en-IN")}` : ""}{rfq.budgetMin && rfq.budgetMax ? " – " : ""}{rfq.budgetMax ? `₹${rfq.budgetMax.toLocaleString("en-IN")}` : ""}
+          </div>
+        )}
+        {rfq.status === "OPEN" && (
+          <button onClick={handleCancel} disabled={cancelling}
+            className="mt-4 inline-flex items-center gap-1.5 text-xs text-status-error hover:underline disabled:opacity-50">
+            <Ban size={13} /> {cancelling ? "Cancelling..." : "Cancel this requirement"}
+          </button>
+        )}
+      </div>
+
+      <h2 className="text-sm font-bold text-white mb-3">
+        Quotes ({quotes.length})
+        {rfq.status === "OPEN" && quotes.length > 0 && <span className="text-white/30 font-normal ml-2">- pick one to award</span>}
+      </h2>
+
+      {quotes.length === 0 ? (
+        <div className="text-sm text-ink-caption border border-dashed border-white/10 rounded-xl py-10 text-center">
+          No quotes yet - matched vendors will see this in their RFQ inbox.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {sortedQuotes.map((q) => (
+            <div key={q.quoteId}
+              className={`bg-surface-card border rounded-xl p-4 ${q.status === "AWARDED" ? "border-status-success/50" : "border-ink-light"}`}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-white truncate">{q.vendorCompanyName || "Vendor"}</div>
+                  <div className="text-xs text-white/40 mt-0.5">
+                    ₹{q.priceAmount.toLocaleString("en-IN")}
+                    {q.priceAmount === lowestPrice && quotes.length > 1 && <span className="text-status-success ml-1.5">· lowest</span>}
+                    {q.deliveryDays ? ` · ${q.deliveryDays} day delivery` : ""}
+                  </div>
+                </div>
+                {q.status === "AWARDED" && (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-status-success/15 text-status-success flex items-center gap-1 whitespace-nowrap">
+                    <Award size={11} /> Awarded
+                  </span>
+                )}
+                {q.status === "REJECTED" && (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-white/10 text-white/30 whitespace-nowrap">Not selected</span>
+                )}
+              </div>
+              {q.notes && <p className="text-xs text-white/60 mt-2 whitespace-pre-wrap">{q.notes}</p>}
+              {rfq.status === "OPEN" && q.status === "SUBMITTED" && (
+                <button
+                  onClick={() => handleAward(q.quoteId)}
+                  disabled={busyQuoteId === q.quoteId}
+                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-yellow text-ink rounded-lg font-semibold text-xs hover:bg-brand-gold transition disabled:opacity-50"
+                >
+                  {busyQuoteId === q.quoteId ? <Loader2 size={13} className="animate-spin" /> : <Award size={13} />}
+                  Award this quote
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default RfqDetail;
