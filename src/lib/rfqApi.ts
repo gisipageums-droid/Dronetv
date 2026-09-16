@@ -17,6 +17,9 @@ export interface Rfq {
   quoteCount: number;
   awardedQuoteId?: string | null;
   awardedAt?: string | null;
+  deliveryStatus?: "IN_PROGRESS" | "DELIVERED" | "COMPLETED" | null;
+  deliveredAt?: string | null;
+  completedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -34,6 +37,28 @@ export interface Quote {
   status: "SUBMITTED" | "AWARDED" | "REJECTED" | "WITHDRAWN";
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Review {
+  rfqId: string;
+  reviewerUserId: string;
+  revieweeUserId: string;
+  revieweeCompanyName?: string | null;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+}
+
+export interface Dispute {
+  disputeId: string;
+  rfqId: string;
+  raisedByUserId: string;
+  reason: string;
+  status: "OPEN" | "RESOLVED";
+  adminNotes?: string | null;
+  resolvedBy?: string | null;
+  createdAt: string;
+  resolvedAt?: string | null;
 }
 
 const base = RFQ_API || "";
@@ -81,4 +106,57 @@ export async function myQuotes(userId: string): Promise<Quote[]> {
 export async function awardQuote(rfqId: string, quoteId: string): Promise<Rfq> {
   const res = await axios.post(`${base}/${rfqId}/award/${quoteId}`, {}, { headers: authHeader() });
   return res.data.rfq;
+}
+
+// Post-award project lifecycle - status only, no payment involved
+export async function vendorAwardedProjects(userId: string): Promise<Rfq[]> {
+  const res = await axios.get(`${base}/vendor/awarded`, { params: { userId }, headers: authHeader() });
+  return res.data.rfqs || [];
+}
+
+export async function markDelivered(rfqId: string): Promise<Rfq> {
+  const res = await axios.post(`${base}/${rfqId}/mark-delivered`, {}, { headers: authHeader() });
+  return res.data.rfq;
+}
+
+export async function confirmCompleted(rfqId: string): Promise<Rfq> {
+  const res = await axios.post(`${base}/${rfqId}/confirm-completed`, {}, { headers: authHeader() });
+  return res.data.rfq;
+}
+
+// Reviews
+export async function submitReview(rfqId: string, userId: string, rating: number, comment?: string): Promise<Review> {
+  const res = await axios.post(`${base}/${rfqId}/review`, { userId, rating, comment }, { headers: authHeader() });
+  return res.data.review;
+}
+
+export async function getReview(rfqId: string): Promise<Review | null> {
+  const res = await axios.get(`${base}/${rfqId}/review`, { headers: authHeader() });
+  return res.data.review;
+}
+
+export async function vendorRating(userId: string): Promise<{ count: number; average: number | null }> {
+  const res = await axios.get(`${base}/vendor-rating`, { params: { userId } });
+  return res.data;
+}
+
+// Disputes
+export async function raiseDispute(rfqId: string, userId: string, reason: string): Promise<Dispute> {
+  const res = await axios.post(`${base}/${rfqId}/disputes`, { userId, reason }, { headers: authHeader() });
+  return res.data.dispute;
+}
+
+export async function listDisputes(rfqId: string): Promise<Dispute[]> {
+  const res = await axios.get(`${base}/${rfqId}/disputes`, { headers: authHeader() });
+  return res.data.disputes || [];
+}
+
+export async function adminListDisputes(status?: string): Promise<Dispute[]> {
+  const res = await axios.get(`${base}/admin/disputes`, { params: { status }, headers: authHeader() });
+  return res.data.disputes || [];
+}
+
+export async function adminResolveDispute(disputeId: string, notes: string): Promise<Dispute> {
+  const res = await axios.post(`${base}/admin/disputes/${disputeId}/resolve`, { notes }, { headers: authHeader() });
+  return res.data.dispute;
 }

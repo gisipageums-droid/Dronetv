@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Building2, Package, Inbox, Film, BookOpen, Megaphone,
   BarChart2, ShieldCheck, Receipt, Settings as SettingsIcon, Menu, X,
   ExternalLink, LogOut, Coins, Target, LayoutTemplate, Briefcase, LayoutGrid,
-  ChevronDown, ClipboardList, FileCheck, Plus,
+  ChevronDown, ClipboardList, FileCheck, Plus, Truck,
 } from "lucide-react";
 import { useUserAuth } from "../context/context";
 import { getMyCompanies, getActivePublishedId, setActivePublishedId } from "./api";
@@ -44,6 +44,7 @@ const NAV: NavSection[] = [
     items: [
       { id: "rfq-inbox", label: "RFQ Inbox", icon: ClipboardList, path: "/company-portal/rfq" },
       { id: "rfq-quotes", label: "My Quotes", icon: FileCheck, path: "/company-portal/quotes" },
+      { id: "rfq-projects", label: "My Projects", icon: Truck, path: "/company-portal/projects" },
       { id: "rfq-post", label: "Post Requirement", icon: Plus, path: "/user-rfq/new" },
     ],
   },
@@ -88,6 +89,7 @@ const TITLES: Record<string, string> = {
   "/company-portal/jobs": "Job Listings",
   "/company-portal/rfq": "RFQ Inbox",
   "/company-portal/quotes": "My Quotes",
+  "/company-portal/projects": "My Projects",
   "/company-portal/content": "My Content",
   "/company-portal/magazine": "Magazine Coverage",
   "/company-portal/press": "Press Releases",

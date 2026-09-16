@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Award, Ban, Loader2 } from "lucide-react";
+import { ArrowLeft, Award, Ban, Loader2, CheckCircle2, Truck, Star, AlertTriangle } from "lucide-react";
 import { toast } from "react-toastify";
-import { getRfq, rfqQuotes, awardQuote, cancelRfq, Rfq, Quote } from "../../../lib/rfqApi";
+import {
+  getRfq, rfqQuotes, awardQuote, cancelRfq, confirmCompleted, getReview, submitReview,
+  raiseDispute, listDisputes, Rfq, Quote, Review, Dispute,
+} from "../../../lib/rfqApi";
 
 const STATUS_STYLE: Record<string, string> = {
   OPEN: "bg-status-info/15 text-status-info",
@@ -11,19 +14,41 @@ const STATUS_STYLE: Record<string, string> = {
   CLOSED: "bg-white/10 text-white/40",
 };
 
+const DELIVERY_LABEL: Record<string, string> = {
+  IN_PROGRESS: "In progress",
+  DELIVERED: "Delivered - awaiting your confirmation",
+  COMPLETED: "Completed",
+};
+
 const RfqDetail: React.FC = () => {
   const { rfqId } = useParams<{ rfqId: string }>();
   const navigate = useNavigate();
   const [rfq, setRfq] = useState<Rfq | null>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [review, setReview] = useState<Review | null>(null);
+  const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyQuoteId, setBusyQuoteId] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [disputeReason, setDisputeReason] = useState("");
+  const [showDisputeForm, setShowDisputeForm] = useState(false);
+  const [submittingDispute, setSubmittingDispute] = useState(false);
 
   const load = () => {
     if (!rfqId) return;
     Promise.all([getRfq(rfqId), rfqQuotes(rfqId)])
-      .then(([r, q]) => { setRfq(r); setQuotes(q); })
+      .then(([r, q]) => {
+        setRfq(r);
+        setQuotes(q);
+        if (r.status === "AWARDED") {
+          listDisputes(rfqId).then(setDisputes).catch(() => {});
+          if (r.deliveryStatus === "COMPLETED") getReview(rfqId).then(setReview).catch(() => {});
+        }
+      })
       .catch(() => toast.error("Could not load this requirement"))
       .finally(() => setLoading(false));
   };
@@ -61,6 +86,52 @@ const RfqDetail: React.FC = () => {
     }
   };
 
+  const handleConfirmCompleted = async () => {
+    if (!rfqId) return;
+    setConfirming(true);
+    try {
+      const updated = await confirmCompleted(rfqId);
+      setRfq(updated);
+      toast.success("Marked as completed");
+    } catch (e: any) {
+      toast.error(e.response?.data?.detail || "Failed to confirm");
+    } finally {
+      setConfirming(false);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!rfqId) return;
+    if (rating < 1) { toast.error("Pick a star rating"); return; }
+    setSubmittingReview(true);
+    try {
+      const r = await submitReview(rfqId, rfq!.buyerUserId, rating, comment.trim() || undefined);
+      setReview(r);
+      toast.success("Review submitted");
+    } catch (e: any) {
+      toast.error(e.response?.data?.detail || "Failed to submit review");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const handleRaiseDispute = async () => {
+    if (!rfqId || !rfq) return;
+    if (!disputeReason.trim()) { toast.error("Describe the issue"); return; }
+    setSubmittingDispute(true);
+    try {
+      const d = await raiseDispute(rfqId, rfq.buyerUserId, disputeReason.trim());
+      setDisputes((prev) => [d, ...prev]);
+      setDisputeReason("");
+      setShowDisputeForm(false);
+      toast.success("Dispute raised - our team will review it");
+    } catch (e: any) {
+      toast.error(e.response?.data?.detail || "Failed to raise dispute");
+    } finally {
+      setSubmittingDispute(false);
+    }
+  };
+
   if (loading) return <div className="flex items-center justify-center h-64 text-ink-caption">Loading...</div>;
   if (!rfq) return <div className="p-6 text-ink-caption">Requirement not found.</div>;
 
@@ -93,6 +164,97 @@ const RfqDetail: React.FC = () => {
           </button>
         )}
       </div>
+
+      {/* Post-award project status - no money involved, just tracking */}
+      {rfq.status === "AWARDED" && rfq.deliveryStatus && (
+        <div className="bg-surface-card border border-ink-light rounded-xl p-4 mb-6">
+          <div className="flex items-center justify-between gap-3 mb-1">
+            <div className="flex items-center gap-2 text-sm font-bold text-white">
+              <Truck size={15} className="text-brand-yellow" /> Project Status
+            </div>
+            <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap ${
+              rfq.deliveryStatus === "COMPLETED" ? "bg-status-success/15 text-status-success" : "bg-status-info/15 text-status-info"
+            }`}>{DELIVERY_LABEL[rfq.deliveryStatus]}</span>
+          </div>
+
+          {rfq.deliveryStatus === "DELIVERED" && (
+            <button onClick={handleConfirmCompleted} disabled={confirming}
+              className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-yellow text-ink rounded-lg font-semibold text-xs hover:bg-brand-gold transition disabled:opacity-50">
+              {confirming ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
+              Confirm delivery received
+            </button>
+          )}
+
+          {rfq.deliveryStatus === "COMPLETED" && (
+            <div className="mt-3">
+              {review ? (
+                <div className="text-xs text-white/50">
+                  <div className="flex items-center gap-1 mb-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} size={13} className={i < review.rating ? "fill-brand-yellow text-brand-yellow" : "text-white/15"} />
+                    ))}
+                  </div>
+                  {review.comment && <p>{review.comment}</p>}
+                </div>
+              ) : (
+                <div className="mt-1">
+                  <div className="text-xs font-bold text-white/50 uppercase tracking-wide mb-1.5">Rate this vendor</div>
+                  <div className="flex items-center gap-1 mb-2">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <button key={i} onClick={() => setRating(i + 1)}>
+                        <Star size={20} className={i < rating ? "fill-brand-yellow text-brand-yellow" : "text-white/20"} />
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    className="w-full bg-ink border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-brand-yellow transition"
+                    rows={2} value={comment} onChange={(e) => setComment(e.target.value)}
+                    placeholder="How was your experience? (optional)" />
+                  <button onClick={handleSubmitReview} disabled={submittingReview}
+                    className="mt-2 px-3 py-1.5 bg-brand-yellow text-ink rounded-lg font-semibold text-xs hover:bg-brand-gold transition disabled:opacity-50">
+                    {submittingReview ? "Submitting..." : "Submit Review"}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="mt-4 pt-3 border-t border-white/10">
+            {disputes.length > 0 && (
+              <div className="mb-2 space-y-1.5">
+                {disputes.map((d) => (
+                  <div key={d.disputeId} className="text-xs flex items-start gap-1.5">
+                    <AlertTriangle size={12} className={d.status === "OPEN" ? "text-status-warning mt-0.5" : "text-white/30 mt-0.5"} />
+                    <div>
+                      <span className="text-white/60">{d.reason}</span>
+                      <span className={`ml-1.5 font-bold ${d.status === "OPEN" ? "text-status-warning" : "text-status-success"}`}>· {d.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {showDisputeForm ? (
+              <div>
+                <textarea
+                  className="w-full bg-ink border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-brand-yellow transition"
+                  rows={2} value={disputeReason} onChange={(e) => setDisputeReason(e.target.value)}
+                  placeholder="Describe the issue..." />
+                <div className="flex gap-2 mt-2">
+                  <button onClick={handleRaiseDispute} disabled={submittingDispute}
+                    className="px-3 py-1.5 bg-status-error/15 text-status-error rounded-lg font-semibold text-xs hover:bg-status-error/25 transition disabled:opacity-50">
+                    {submittingDispute ? "Submitting..." : "Submit Dispute"}
+                  </button>
+                  <button onClick={() => setShowDisputeForm(false)} className="px-3 py-1.5 text-xs text-white/40 hover:text-white">Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => setShowDisputeForm(true)} className="flex items-center gap-1.5 text-xs text-white/40 hover:text-status-error transition">
+                <AlertTriangle size={12} /> Report an issue with this project
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <h2 className="text-sm font-bold text-white mb-3">
         Quotes ({quotes.length})

@@ -78,6 +78,7 @@ const AdminUsersDashboard = lazy(() => import("./components/Admin/userAdmin/Admi
 const StaffManagement = lazy(() => import("./components/Admin/staffAdmin/StaffManagement"));
 const AdminHeroImages = lazy(() => import("./components/Admin/heroImagesAdmin/AdminHeroImages"));
 const PrelistedCompanies = lazy(() => import("./components/Admin/verification/PrelistedCompanies"));
+const RfqDisputes = lazy(() => import("./components/Admin/RfqDisputes"));
 const PrelistedCompanyReview = lazy(() => import("./components/Admin/verification/PrelistedCompanyReview"));
 const CompanyPortalLayout = lazy(() => import("./components/CompanyPortal/CompanyPortalLayout"));
 const CompanyPortalDashboard = lazy(() => import("./components/CompanyPortal/pages/Dashboard"));
@@ -90,6 +91,7 @@ const CompanyPortalContent = lazy(() => import("./components/CompanyPortal/pages
 const CompanyPortalRfqInbox = lazy(() => import("./components/CompanyPortal/pages/RfqInbox"));
 const CompanyPortalRfqRespond = lazy(() => import("./components/CompanyPortal/pages/RfqRespond"));
 const CompanyPortalMyQuotes = lazy(() => import("./components/CompanyPortal/pages/MyQuotes"));
+const CompanyPortalMyProjects = lazy(() => import("./components/CompanyPortal/pages/MyProjects"));
 const CompanyPortalMagazine = lazy(() => import("./components/CompanyPortal/pages/Magazine"));
 const CompanyPortalPress = lazy(() => import("./components/CompanyPortal/pages/Press"));
 const CompanyPortalAnalytics = lazy(() => import("./components/CompanyPortal/pages/Analytics"));
@@ -463,6 +465,7 @@ const AppContent = () => {
           <Route path="/admin/hero-images" element={<AdminProtectedRoute><AdminLayout><AdminHeroImages /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/verification/prelisted" element={<AdminProtectedRoute><AdminLayout><PrelistedCompanies /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/verification/prelisted/:publishedId" element={<AdminProtectedRoute><AdminLayout><PrelistedCompanyReview /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/rfq/disputes" element={<AdminProtectedRoute><AdminLayout><RfqDisputes /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/companies/details/:publishedId/:userId" element={<AdminProtectedRoute><AdminCompanyEdit /></AdminProtectedRoute>} />
           <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route
@@ -616,6 +619,7 @@ const AppContent = () => {
           <Route path="/company-portal/rfq" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalRfqInbox /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/rfq/:rfqId" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalRfqRespond /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/quotes" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMyQuotes /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/projects" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMyProjects /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/magazine" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMagazine /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/press" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalPress /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/analytics" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalAnalytics /></CompanyPortalLayout></ProtectedRoute>} />
