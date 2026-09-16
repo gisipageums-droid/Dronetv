@@ -132,8 +132,8 @@ const RfqDetail: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-ink-caption">Loading...</div>;
-  if (!rfq) return <div className="p-6 text-ink-caption">Requirement not found.</div>;
+  if (loading) return <div className="flex items-center justify-center h-64 text-white/40">Loading...</div>;
+  if (!rfq) return <div className="p-6 text-white/40">Requirement not found.</div>;
 
   const sortedQuotes = [...quotes].sort((a, b) => a.priceAmount - b.priceAmount);
   const lowestPrice = sortedQuotes[0]?.priceAmount;
@@ -150,7 +150,7 @@ const RfqDetail: React.FC = () => {
       </div>
       <div className="text-xs text-white/40 mb-4">{rfq.category}{rfq.location ? ` · ${rfq.location}` : ""} · Posted {new Date(rfq.createdAt).toLocaleDateString("en-IN")}</div>
 
-      <div className="bg-surface-card border border-ink-light rounded-xl p-4 mb-6">
+      <div className="bg-ink border border-white/8 rounded-xl p-4 mb-6">
         <p className="text-sm text-white/70 whitespace-pre-wrap">{rfq.description}</p>
         {(rfq.budgetMin || rfq.budgetMax) && (
           <div className="text-xs text-white/50 mt-3">
@@ -167,7 +167,7 @@ const RfqDetail: React.FC = () => {
 
       {/* Post-award project status - no money involved, just tracking */}
       {rfq.status === "AWARDED" && rfq.deliveryStatus && (
-        <div className="bg-surface-card border border-ink-light rounded-xl p-4 mb-6">
+        <div className="bg-ink border border-white/8 rounded-xl p-4 mb-6">
           <div className="flex items-center justify-between gap-3 mb-1">
             <div className="flex items-center gap-2 text-sm font-bold text-white">
               <Truck size={15} className="text-brand-yellow" /> Project Status
@@ -262,14 +262,14 @@ const RfqDetail: React.FC = () => {
       </h2>
 
       {quotes.length === 0 ? (
-        <div className="text-sm text-ink-caption border border-dashed border-white/10 rounded-xl py-10 text-center">
+        <div className="text-sm text-white/40 border border-dashed border-white/10 rounded-xl py-10 text-center">
           No quotes yet - matched vendors will see this in their RFQ inbox.
         </div>
       ) : (
         <div className="space-y-3">
           {sortedQuotes.map((q) => (
             <div key={q.quoteId}
-              className={`bg-surface-card border rounded-xl p-4 ${q.status === "AWARDED" ? "border-status-success/50" : "border-ink-light"}`}>
+              className={`bg-ink border rounded-xl p-4 ${q.status === "AWARDED" ? "border-status-success/50" : "border-white/8"}`}>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="text-sm font-bold text-white truncate">{q.vendorCompanyName || "Vendor"}</div>

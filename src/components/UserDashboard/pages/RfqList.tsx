@@ -23,7 +23,7 @@ const RfqList: React.FC = () => {
     myRfqs(userId).then(setRfqs).catch(() => {}).finally(() => setLoading(false));
   }, [userId]);
 
-  if (loading) return <div className="flex items-center justify-center h-64 text-ink-caption">Loading...</div>;
+  if (loading) return <div className="flex items-center justify-center h-64 text-white/40">Loading...</div>;
 
   return (
     <div className="p-4 sm:p-6">
@@ -43,7 +43,7 @@ const RfqList: React.FC = () => {
       </div>
 
       {rfqs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 gap-3 text-ink-caption border border-dashed border-white/10 rounded-xl">
+        <div className="flex flex-col items-center justify-center py-24 gap-3 text-white/40 border border-dashed border-white/10 rounded-xl">
           <ClipboardList size={32} className="text-white/20" />
           <p className="text-sm">You haven't posted any requirements yet.</p>
           <button
@@ -59,7 +59,7 @@ const RfqList: React.FC = () => {
             <button
               key={r.rfqId}
               onClick={() => navigate(`/user-rfq/${r.rfqId}`)}
-              className="text-left bg-surface-card border border-ink-light rounded-xl p-4 hover:border-brand-yellow/40 transition"
+              className="text-left bg-ink border border-white/8 rounded-xl p-4 hover:border-brand-yellow/40 transition"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">

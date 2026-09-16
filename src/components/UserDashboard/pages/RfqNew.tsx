@@ -7,7 +7,7 @@ import { createRfq } from "../../../lib/rfqApi";
 
 const CATEGORIES = ["Drone", "AI", "GIS", "Robotics", "Business Support"];
 
-const inputCls = "w-full bg-ink border border-ink-light rounded-lg px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-brand-yellow transition";
+const inputCls = "w-full bg-ink border border-white/15 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-brand-yellow transition";
 const labelCls = "block text-xs font-bold text-white/50 uppercase tracking-wide mb-1.5";
 
 const RfqNew: React.FC = () => {
