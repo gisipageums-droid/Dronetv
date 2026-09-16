@@ -77,7 +77,7 @@ const RfqNew: React.FC = () => {
             placeholder="Location and scope, equipment needed (e.g. RGB / thermal), deliverables you expect, and anything else a vendor needs to quote accurately." />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelCls}>Budget min (₹)</label>
             <input className={inputCls} type="number" min={0} value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="Optional" />
@@ -88,7 +88,7 @@ const RfqNew: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelCls}>Location</label>
             <input className={inputCls} value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Telangana" />
