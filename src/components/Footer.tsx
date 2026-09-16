@@ -63,11 +63,10 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-2">
             <Link to="/">
-              {/* Logo's "Drone" text/icon is solid black on transparent — invisible
-                  on this dark footer. No separate light-logo asset exists, so
-                  render it as a white monochrome mark (brightness-0 + invert)
-                  instead of leaving it unreadable. */}
-              <img src="/images/logo.png" alt="Drone TV" className="h-9 w-auto brightness-0 invert" />
+              {/* Dedicated light-background-ready logo (with tagline baked in) —
+                  replaces the old brightness-0/invert workaround now that a
+                  real light variant exists. */}
+              <img src="/images/logo-footer.png" alt="Drone TV" className="h-14 sm:h-16 w-auto" />
             </Link>
             <p className="mt-3 text-sm text-white/70 leading-relaxed max-w-sm">
               India's drone industry platform — connecting manufacturers, pilots, GIS &amp; AI companies, buyers, and policymakers across the ecosystem.
