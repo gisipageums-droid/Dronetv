@@ -436,7 +436,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     const publishedAuthToken = localStorage.getItem('adminToken') || localStorage.getItem('token');
 
     Promise.all([
-      fetch(draftUrl).then(r => r.json()).catch(() => ({})),
+      fetch(draftUrl, { headers: publishedAuthToken ? { Authorization: `Bearer ${publishedAuthToken}` } : {} }).then(r => r.json()).catch(() => ({})),
       publishedUrl
         ? fetch(publishedUrl, {
             headers: {
