@@ -988,7 +988,9 @@ const ShareCardModal: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE
   // so WhatsApp/Instagram/etc. unfurl a real card - logo, name, tagline -
   // instead of the site's generic static preview. A real visitor clicking
   // this link gets redirected straight into the app by that same endpoint.
-  const shareUrl = `${window.location.origin}/s/${company.publishedId}`;
+  // Uses the readable slug, not the raw publishedId - a UUID in a shared
+  // link looks broken/untrustworthy; the backend resolves either one.
+  const shareUrl = `${window.location.origin}/s/${company.urlSlug || company.publishedId}`;
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(shareUrl).then(() => {
