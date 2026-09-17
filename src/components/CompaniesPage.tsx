@@ -164,20 +164,20 @@ export const CSS = `
 .co-mobile-overlay { display: none; }
 
 /* Card */
-.co-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; position: relative; }
+.co-card { container-type: inline-size; background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; position: relative; }
 .co-card-save { position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.9); border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
 .co-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.14); transform: translateY(-2px); }
 .co-card-top { padding: 13px 13px 0; display: flex; gap: 10px; align-items: flex-start; }
 .co-avatar { width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0; overflow: hidden; }
 .co-avatar img { width: 44px; height: 44px; border-radius: 9px; object-fit: cover; }
-.co-card-name { font-size: 12px; font-weight: 700; color: #111111; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.co-card-loc { display: flex; align-items: center; gap: 3px; font-size: 10px; color: #888; margin-top: 2px; min-width: 0; }
+.co-card-name { font-size: clamp(10.5px, 3.6cqw, 12px); font-weight: 700; color: #111111; line-height: 1.3; word-break: break-word; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.co-card-loc { display: flex; align-items: center; gap: 3px; font-size: clamp(9px, 2.7cqw, 10px); color: #888; margin-top: 2px; min-width: 0; }
 .co-card-loc svg { flex-shrink: 0; }
 .co-card-loc-text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; flex: 1; min-width: 0; }
-.co-card-desc { font-size: 12px; color: #777; line-height: 1.6; padding: 0 13px; margin-bottom: 9px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.co-card-desc { font-size: clamp(10.5px, 3.2cqw, 12px); color: #777; line-height: 1.6; padding: 0 13px; margin-bottom: 9px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .co-card-foot { padding: 9px 13px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; gap: 6px; }
-.co-btn-out { flex: 1; background: #fff; color: #111111; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; }
-.co-btn-red { flex: 1; background: #DC2626; color: #fff; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
+.co-btn-out { flex: 1; background: #fff; color: #111111; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: clamp(10px, 3cqw, 11.5px); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; white-space: nowrap; }
+.co-btn-red { flex: 1; background: #DC2626; color: #fff; padding: 6px 8px; border-radius: 7px; font-size: clamp(10px, 3cqw, 11.5px); font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; white-space: nowrap; }
 
 @media (max-width: 960px) {
   .co-layout { grid-template-columns: 1fr; }
@@ -197,16 +197,16 @@ export const CSS = `
 
 /* Premium (Silver / Gold / Platinum) verified-company spotlight card -
    full-width, matches the supplied mockups. Spans every column of .co-grid. */
-.pc-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; display: flex; flex-direction: column; }
+.pc-card { container-type: inline-size; background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; display: flex; flex-direction: column; }
 .pc-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,.12); }
 .pc-top { display: flex; gap: 12px; align-items: flex-start; padding-right: 52px; }
 .pc-logo { width: 64px; height: 64px; border: 1px solid #E0E0E0; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; text-align: center; font-size: 9px; color: #999; font-weight: 700; overflow: hidden; line-height: 1.3; }
 .pc-logo img { width: 100%; height: 100%; object-fit: contain; }
 .pc-id { flex: 1; min-width: 50px; }
-.pc-name { font-size: 15.5px; font-weight: 800; color: #111111; line-height: 1.25; }
-.pc-tagline { font-size: 11.5px; color: #8a8a8a; margin-top: 2px; }
+.pc-name { font-size: clamp(12px, 4.3cqw, 15.5px); font-weight: 800; color: #111111; line-height: 1.25; word-break: break-word; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-tagline { font-size: clamp(10px, 3cqw, 11.5px); color: #8a8a8a; margin-top: 2px; }
 .pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
-.pc-tag { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; background: #F0F0F0; color: #444; }
+.pc-tag { font-size: clamp(8px, 2.3cqw, 9px); font-weight: 800; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; background: #F0F0F0; color: #444; white-space: nowrap; }
 .pc-tag-verified { background: #DFF5E4; color: #1DA34C; }
 .pc-tag-premium { background: #F8C400; color: #1A1A1A; }
 .pc-badge-wrap { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; z-index: 3; }
@@ -215,10 +215,10 @@ export const CSS = `
 .pc-icon-btn { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
 .pc-icon-btn svg { width: 11px; height: 11px; }
 .pc-desc-row { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-.pc-desc { flex: 1 1 100%; font-size: 12.5px; color: #333333; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-desc { flex: 1 1 100%; font-size: clamp(11px, 3.3cqw, 12.5px); color: #333333; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .pc-callout { flex: 1 1 100%; background: #FFF3C4; border-radius: 9px; padding: 9px 12px; display: flex; gap: 8px; align-items: center; }
 .pc-callout-icon { width: 28px; height: 28px; border-radius: 7px; background: #F8C400; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.pc-callout-text { font-size: 11.5px; font-weight: 700; color: #333333; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-callout-text { font-size: clamp(10px, 2.9cqw, 11.5px); font-weight: 700; color: #333333; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .pc-photos { position: relative; margin-top: 12px; padding: 0 20px; }
 .pc-photos-track { display: flex; gap: 8px; }
 .pc-photo-tile { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
@@ -235,12 +235,12 @@ export const CSS = `
 .pc-hl-chip { display: flex; gap: 6px; align-items: center; border-radius: 8px; padding: 7px 10px; font-size: 10.5px; font-weight: 700; color: #333333; }
 .pc-stats { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #F0F0F0; }
 .pc-stat { display: flex; gap: 6px; align-items: center; background: #F5F5F5; border-radius: 8px; padding: 7px 12px; flex: 0 0 auto; }
-.pc-stat-n { font-size: 13px; font-weight: 800; color: #111111; line-height: 1.2; }
-.pc-stat-l { font-size: 9.5px; color: #888888; }
+.pc-stat-n { font-size: clamp(11px, 3.3cqw, 13px); font-weight: 800; color: #111111; line-height: 1.2; }
+.pc-stat-l { font-size: clamp(8px, 2.3cqw, 9.5px); color: #888888; white-space: nowrap; }
 .pc-cta { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.pc-btn-outline { flex: 1 1 0; max-width: 45%; padding: 8px; border-radius: 7px; border: 1.5px solid #E0E0E0; background: #fff; font-size: 12px; font-weight: 700; color: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.pc-btn-solid { flex: 1.3 1 0; padding: 8px; border-radius: 7px; border: none; background: #DC2626; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.pc-quote { margin: 12px -14px -14px; padding: 10px 14px; background: #FFF8DC; text-align: center; font-style: italic; font-size: 12px; color: #6B5900; border-radius: 0 0 14px 14px; }
+.pc-btn-outline { flex: 1 1 0; max-width: 45%; padding: 8px; border-radius: 7px; border: 1.5px solid #E0E0E0; background: #fff; font-size: clamp(10px, 2.9cqw, 12px); font-weight: 700; color: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.pc-btn-solid { flex: 1.3 1 0; padding: 8px; border-radius: 7px; border: none; background: #DC2626; color: #fff; font-size: clamp(10px, 2.9cqw, 12px); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.pc-quote { margin: 12px -14px -14px; padding: 10px 14px; background: #FFF8DC; text-align: center; font-style: italic; font-size: clamp(10.5px, 3cqw, 12px); color: #6B5900; border-radius: 0 0 14px 14px; }
 
 /* Platinum's dark card, per the approved design (the other 3 tiers stay
    on the light card - only Platinum switches the whole surface). */
@@ -264,7 +264,6 @@ export const CSS = `
 @media (max-width: 640px) {
   .pc-top { padding-right: 44px; }
   .pc-logo { width: 52px; height: 52px; font-size: 8px; }
-  .pc-name { font-size: 14px; }
   .pc-badge-wrap { top: 8px; right: 8px; }
   .pc-ribbon { width: 26px; height: 26px; }
   .pc-photo { height: 46px; }
