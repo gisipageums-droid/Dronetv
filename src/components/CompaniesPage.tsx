@@ -984,7 +984,11 @@ const ShareCardModal: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE
         company.teamSize ? { n: String(company.teamSize), l: 'Team Size' } : null,
       ].filter(Boolean) as { n: string; l: string }[];
 
-  const shareUrl = `${window.location.origin}/${company.templateSelection === 'template-2' || company.templateSelection === '2' ? 'companies' : 'company'}/${company.urlSlug || company.publishedId}`;
+  // Points at the crawler-aware preview endpoint (not the direct SPA route)
+  // so WhatsApp/Instagram/etc. unfurl a real card - logo, name, tagline -
+  // instead of the site's generic static preview. A real visitor clicking
+  // this link gets redirected straight into the app by that same endpoint.
+  const shareUrl = `${window.location.origin}/s/${company.publishedId}`;
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(shareUrl).then(() => {
