@@ -217,7 +217,7 @@ const CompaniesPage: React.FC = () => {
     if (selStates.length) {
       list = list.filter(c => selStates.includes(extractState(c.location)));
     }
-    if (verifiedOnly) list = list.filter(c => c.reviewStatus === 'approved');
+    if (verifiedOnly) list = list.filter(c => !!c.badgeStatus && c.badgeStatus !== 'NONE');
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(c =>
@@ -279,7 +279,7 @@ const CompaniesPage: React.FC = () => {
 
   const activeFiltersCount = selSectors.length + selStates.length + (verifiedOnly ? 1 : 0);
 
-  const verifiedCount = allCompanies.filter(c => c.reviewStatus === 'approved').length;
+  const verifiedCount = allCompanies.filter(c => !!c.badgeStatus && c.badgeStatus !== 'NONE').length;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
     .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
@@ -478,7 +478,10 @@ const CompaniesPage: React.FC = () => {
 const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void }> = ({ company, onClick, onEnquire }) => {
   const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
-  const verified = company.reviewStatus === 'approved';
+  // Verified badge = paid/confirmed verification (badgeStatus), not plain
+  // admin listing-approval (reviewStatus) - any approved company is
+  // publicly listed, but the checkmark is earned separately, via payment.
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
   const detectedSectors = getSectors(company);
