@@ -441,7 +441,7 @@ const CompaniesPage: React.FC = () => {
     if (selStates.length) {
       list = list.filter(c => selStates.includes(extractState(c.location)));
     }
-    if (verifiedOnly) list = list.filter(c => c.reviewStatus === 'approved');
+    if (verifiedOnly) list = list.filter(c => !!c.badgeStatus && c.badgeStatus !== 'NONE');
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(c =>
@@ -503,7 +503,7 @@ const CompaniesPage: React.FC = () => {
 
   const activeFiltersCount = selSectors.length + selStates.length + (verifiedOnly ? 1 : 0);
 
-  const verifiedCount = allCompanies.filter(c => c.reviewStatus === 'approved').length;
+  const verifiedCount = allCompanies.filter(c => !!c.badgeStatus && c.badgeStatus !== 'NONE').length;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
     .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
@@ -725,7 +725,11 @@ const CompaniesPage: React.FC = () => {
 export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
   const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
-  const verified = company.reviewStatus === 'approved';
+  // Verified badge = paid/confirmed verification (badgeStatus, set only by
+  // the Silver-badge workflow after fee payment), NOT plain admin listing-
+  // approval (reviewStatus) - those are two different things: any approved
+  // company is publicly listed, but the checkmark is earned separately.
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE';
   const silver = company.badgeStatus === 'SILVER';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
@@ -796,7 +800,11 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
   const style = TIER_STYLE[tier];
   const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
-  const verified = company.reviewStatus === 'approved';
+  // Verified badge = paid/confirmed verification (badgeStatus, set only by
+  // the Silver-badge workflow after fee payment), NOT plain admin listing-
+  // approval (reviewStatus) - those are two different things: any approved
+  // company is publicly listed, but the checkmark is earned separately.
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
   const [photoIdx, setPhotoIdx] = useState(0);
@@ -960,7 +968,11 @@ const ShareCardModal: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE
   const style = TIER_STYLE[tier];
   const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
-  const verified = company.reviewStatus === 'approved';
+  // Verified badge = paid/confirmed verification (badgeStatus, set only by
+  // the Silver-badge workflow after fee payment), NOT plain admin listing-
+  // approval (reviewStatus) - those are two different things: any approved
+  // company is publicly listed, but the checkmark is earned separately.
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
   const [copied, setCopied] = useState(false);
