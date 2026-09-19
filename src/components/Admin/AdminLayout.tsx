@@ -44,6 +44,7 @@ import {
   ShieldCheck,
   Share2,
   Megaphone,
+  UploadCloud,
 } from "lucide-react";
 import { COMPANY_API, EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 import { authHeader } from '../../lib/authService';
@@ -113,6 +114,13 @@ const NAV: Section[] = [
         label: "Hero Images",
         icon: <ImageIcon size={17} />,
         path: "/admin/hero-images",
+        superAdminOnly: true,
+      },
+      {
+        id: "bulk-import",
+        label: "Bulk Company Import",
+        icon: <UploadCloud size={17} />,
+        path: "/admin/company/bulk-import",
         superAdminOnly: true,
       },
       {
