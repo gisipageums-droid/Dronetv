@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { Package, Users, FileText, Coins, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { LEADS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
-import { getMyCompany, authHeaders } from "../api";
+import { getMyCompany, authHeaders, claimCompany } from "../api";
 import { PageHeader, Card, CardHeader, KpiRow, KpiCard, Badge, Btn, EmptyState } from "../ui";
 import VerifyBadgeCard from "../VerifyBadgeCard";
+import DocumentationCard from "../DocumentationCard";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -29,6 +30,12 @@ export default function Dashboard() {
         axios.get(`${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=5&offset=0&filter=all&publishedId=${c.publishedId}`, { headers: authHeaders() })
           .then((r) => setLeads(r.data?.leads || r.data?.data || []))
           .catch(() => {});
+        // Fixes-doc #2, step 6 - a bulk-imported, not-yet-claimed profile is
+        // claimed the moment its real owner opens the portal. No-op for
+        // every company today (nothing sets isClaimed=false yet - the
+        // bulk-import/outreach pipeline itself isn't built) - safe to call
+        // unconditionally since the backend action is idempotent.
+        if (c.isClaimed === false) claimCompany(c.publishedId);
       }
     }).finally(() => setLoading(false));
 
@@ -64,6 +71,8 @@ export default function Dashboard() {
       <PageHeader title="Dashboard" sub={`Welcome back, ${company.companyName}`} />
 
       <VerifyBadgeCard publishedId={company.publishedId} onVerified={() => setCompany({ ...company, badgeStatus: "SILVER" })} />
+
+      <DocumentationCard publishedId={company.publishedId} documentation={company.documentation} capacityStatus={company.capacityStatus} />
 
       <KpiRow>
         <KpiCard label="Profile Views" value={(company.profileViews ?? 0).toLocaleString("en-IN")} accent="yellow" />

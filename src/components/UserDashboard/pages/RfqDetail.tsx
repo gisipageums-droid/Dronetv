@@ -195,6 +195,14 @@ const RfqDetail: React.FC = () => {
                     ))}
                   </div>
                   {review.comment && <p>{review.comment}</p>}
+                  {/* Fixes-doc #9 - the vendor's right-of-reply is visible to
+                      the buyer too, same as any public review thread. */}
+                  {review.vendorReply && (
+                    <div className="mt-2 pl-3 border-l-2 border-white/10">
+                      <div className="text-[10px] font-bold text-white/30 uppercase tracking-wide mb-0.5">Vendor's reply</div>
+                      <p>{review.vendorReply}</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="mt-1">
@@ -278,6 +286,28 @@ const RfqDetail: React.FC = () => {
                     {q.priceAmount === lowestPrice && quotes.length > 1 && <span className="text-status-success ml-1.5">· lowest</span>}
                     {q.deliveryDays ? ` · ${q.deliveryDays} day delivery` : ""}
                   </div>
+                  {/* Fixes-doc #3/#19 - documentation completeness + availability,
+                      so this is visible at a glance without opening the vendor's
+                      profile separately. Absent (not fetchable / vendor hasn't
+                      filled anything in) just shows nothing, not a fake 0%. */}
+                  {(q.vendorDocumentation || q.vendorCapacityStatus) && (
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      {q.vendorDocumentation && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/5 text-white/50">
+                          {q.vendorDocumentation.score}% documented
+                        </span>
+                      )}
+                      {q.vendorCapacityStatus === "AVAILABLE" && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-status-success/10 text-status-success">Available</span>
+                      )}
+                      {q.vendorCapacityStatus === "LIMITED" && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-brand-yellow/10 text-brand-yellow">Limited capacity</span>
+                      )}
+                      {q.vendorCapacityStatus === "UNAVAILABLE" && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-status-error/10 text-status-error">Not taking new work</span>
+                      )}
+                    </div>
+                  )}
                 </div>
                 {q.status === "AWARDED" && (
                   <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-status-success/15 text-status-success flex items-center gap-1 whitespace-nowrap">

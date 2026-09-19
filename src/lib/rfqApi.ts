@@ -37,6 +37,10 @@ export interface Quote {
   status: "SUBMITTED" | "AWARDED" | "REJECTED" | "WITHDRAWN";
   createdAt: string;
   updatedAt: string;
+  // Fixes-doc #3/#19 - present only on the buyer-facing quotes list
+  // (GET /{rfqId}/quotes), best-effort enrichment from the company service.
+  vendorDocumentation?: { score: number; hasEquipment: boolean; hasUIN: boolean; hasInsurance: boolean; hasProjectHistory: boolean } | null;
+  vendorCapacityStatus?: "AVAILABLE" | "LIMITED" | "UNAVAILABLE" | null;
 }
 
 export interface Review {
@@ -47,6 +51,14 @@ export interface Review {
   rating: number;
   comment?: string | null;
   createdAt: string;
+  // Fixes-doc #9 - moderation + right-of-reply.
+  flagStatus?: "NONE" | "FLAGGED" | "UPHELD" | "DISMISSED";
+  flagReason?: string | null;
+  flaggedAt?: string | null;
+  vendorReply?: string | null;
+  vendorReplyAt?: string | null;
+  moderationNotes?: string | null;
+  moderatedAt?: string | null;
 }
 
 export interface Dispute {
@@ -138,6 +150,27 @@ export async function getReview(rfqId: string): Promise<Review | null> {
 export async function vendorRating(userId: string): Promise<{ count: number; average: number | null }> {
   const res = await axios.get(`${base}/vendor-rating`, { params: { userId } });
   return res.data;
+}
+
+// Fixes-doc #9 - review moderation + right-of-reply.
+export async function flagReview(rfqId: string, userId: string, reason: string): Promise<Review> {
+  const res = await axios.post(`${base}/${rfqId}/review/flag`, { userId, reason }, { headers: authHeader() });
+  return res.data.review;
+}
+
+export async function replyToReview(rfqId: string, userId: string, reply: string): Promise<Review> {
+  const res = await axios.post(`${base}/${rfqId}/review/reply`, { userId, reply }, { headers: authHeader() });
+  return res.data.review;
+}
+
+export async function adminListFlaggedReviews(): Promise<Review[]> {
+  const res = await axios.get(`${base}/admin/reviews/flagged`, { headers: authHeader() });
+  return res.data.reviews || [];
+}
+
+export async function adminModerateReview(rfqId: string, uphold: boolean, notes?: string): Promise<Review> {
+  const res = await axios.post(`${base}/admin/reviews/${rfqId}/moderate`, { uphold, notes }, { headers: authHeader() });
+  return res.data.review;
 }
 
 // Disputes

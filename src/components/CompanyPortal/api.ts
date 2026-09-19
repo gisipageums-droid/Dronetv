@@ -98,4 +98,20 @@ export async function uploadCompanyFile(userId: string, fieldName: string, file:
   return imageUrl;
 }
 
+// Fixes-doc #2 - claiming a bulk-imported, not-yet-claimed profile.
+// Idempotent on the backend, so safe to call unconditionally on portal load
+// without checking isClaimed first.
+export async function claimCompany(publishedId: string): Promise<void> {
+  const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/claim` : `${LAMBDA.company}/${publishedId}/claim`;
+  await fetch(url, { method: "POST", headers: authHeaders() }).catch(() => {});
+}
+
+// Fixes-doc #19 - vendor-set availability, factored into RFQ quote
+// comparisons the buyer sees.
+export async function setCapacityStatus(publishedId: string, capacityStatus: "AVAILABLE" | "LIMITED" | "UNAVAILABLE"): Promise<void> {
+  const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/capacity` : `${LAMBDA.company}/${publishedId}/capacity`;
+  const res = await fetch(url, { method: "PUT", headers: authHeaders(), body: JSON.stringify({ capacityStatus }) });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+}
+
 export { COMPANY_API, LEADS_API, AUTH_API, PAYMENT_API, MEDIA_API, LAMBDA };

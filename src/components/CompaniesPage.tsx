@@ -104,6 +104,19 @@ function getInitials(name: string): string {
   return name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
 }
 
+// Fixes-doc #2 - public, unauthenticated "this isn't us / remove this
+// listing" link, right on the unclaimed banner itself. The backend only
+// ever accepts this for a still-unclaimed, bulk-imported profile - a real
+// company can't be opted out this way.
+async function requestOptOut(publishedId: string, onDone: () => void) {
+  if (!window.confirm('Ask DroneTV to remove this unclaimed listing? This tells us the company should not be listed.')) return;
+  const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/optout` : `${LAMBDA.company}/${publishedId}/optout`;
+  try {
+    const res = await fetch(url, { method: 'POST' });
+    if (res.ok) onDone();
+  } catch { /* best-effort */ }
+}
+
 // Some scraped records have about.tagline == companyName, which just
 // repeats the name a second time in the callout box - only show a tagline
 // when it actually says something different from the name itself.
@@ -165,6 +178,10 @@ export const CSS = `
 
 /* Card */
 .co-card { container-type: inline-size; background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; position: relative; }
+/* Fixes-doc #2 - a pre-listed, not-yet-claimed company must never look the
+   same as a real, self-confirmed listing. Unmissable by design: full-width,
+   high-contrast, above everything else on the card. */
+.unclaimed-banner { background: #FEF3C7; color: #92400E; font-size: 10.5px; font-weight: 800; text-align: center; padding: 5px 8px; letter-spacing: .2px; }
 .co-card-save { position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.9); border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
 .co-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.14); transform: translateY(-2px); }
 .co-card-top { padding: 13px 13px 0; display: flex; gap: 10px; align-items: flex-start; }
@@ -733,10 +750,21 @@ export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEn
   const silver = company.badgeStatus === 'SILVER';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
+  const [optedOut, setOptedOut] = useState(false);
   const detectedSectors = getSectors(company);
 
   return (
     <div className="co-card" onClick={onClick}>
+      {company.bulkImported && company.isClaimed === false && (
+        <div className="unclaimed-banner">
+          {optedOut ? 'Opt-out requested — DroneTV will review' : (
+            <>Unclaimed — not yet confirmed by this company{' · '}
+              <button onClick={e => { e.stopPropagation(); requestOptOut(company.publishedId, () => setOptedOut(true)); }}
+                style={{ textDecoration: 'underline', fontWeight: 800 }}>Not us?</button>
+            </>
+          )}
+        </div>
+      )}
       <div style={{ height: 4, background: indColor }} />
 
       {onToggleSave && (
@@ -809,6 +837,7 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
   const [imgErr, setImgErr] = useState(false);
   const [photoIdx, setPhotoIdx] = useState(0);
   const [shareOpen, setShareOpen] = useState(false);
+  const [optedOut, setOptedOut] = useState(false);
   const detectedSectors = getSectors(company);
   const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
   const sinceYear = company.yearsInBusiness ? (String(company.yearsInBusiness).match(/\d{4}/) || [null])[0] : null;
@@ -845,6 +874,16 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
 
   return (
     <div className={`pc-card${style.dark ? ' pc-card-dark' : ''}`} onClick={onClick}>
+      {company.bulkImported && company.isClaimed === false && (
+        <div className="unclaimed-banner" style={{ margin: '-14px -14px 12px', borderRadius: '13px 13px 0 0' }}>
+          {optedOut ? 'Opt-out requested — DroneTV will review' : (
+            <>Unclaimed — not yet confirmed by this company{' · '}
+              <button onClick={e => { e.stopPropagation(); requestOptOut(company.publishedId, () => setOptedOut(true)); }}
+                style={{ textDecoration: 'underline', fontWeight: 800 }}>Not us?</button>
+            </>
+          )}
+        </div>
+      )}
       <div className="pc-top">
         <div className="pc-logo" style={{ background: company.headerLogo || company.previewImage ? undefined : bg, color: '#fff' }}>
           {(company.headerLogo || company.previewImage) && !imgErr ? (

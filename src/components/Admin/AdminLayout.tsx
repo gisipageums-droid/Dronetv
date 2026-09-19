@@ -122,6 +122,7 @@ const NAV: Section[] = [
         sub: [
           { label: "Pre-Listed Companies", path: "/admin/verification/prelisted", icon: <ListChecks size={14} /> },
           { label: "RFQ Disputes", path: "/admin/rfq/disputes", icon: <ListChecks size={14} /> },
+          { label: "Flagged Reviews", path: "/admin/rfq/reviews", icon: <ListChecks size={14} /> },
         ],
       },
       {
