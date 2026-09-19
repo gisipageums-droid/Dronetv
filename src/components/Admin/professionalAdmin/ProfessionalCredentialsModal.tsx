@@ -20,6 +20,122 @@ import React, { useEffect, useState } from 'react';
 import { PROFESSIONAL_API, LAMBDA } from '../../../lib/apiConfig';
 import { PrettyValue, prettyLabel } from '../../../lib/prettyValue';
 
+const PORTAL_PROFILE_API = PROFESSIONAL_API ? `${PROFESSIONAL_API}/portal-profile` : null;
+
+// Same section keys the Professional Portal itself saves under (see
+// ProfessionalPortal/pages/{EditProfile,Portfolio,Certifications,Skills}.tsx's
+// own savePortalProfileSection("<key>", ...) calls) - the member-filled data
+// (portfolio, certifications, medical certificate, skills) that, before this
+// section existed, had zero visibility anywhere in the admin panel even
+// though the backend already allowed admin to read it (require_self_or_admin
+// on the same endpoint the portal itself calls) - mirrors the identical
+// Company Portal Profile section added to the company admin modal.
+const PROF_PORTAL_PROFILE_SECTIONS: { key: string; title: string }[] = [
+  { key: 'profile', title: 'Profile Details' },
+  { key: 'portfolioItems', title: 'Portfolio' },
+  { key: 'certifications', title: 'Certifications' },
+  { key: 'medicalCertificate', title: 'Medical Certificate' },
+  { key: 'skills', title: 'Skills' },
+];
+
+function profIsSectionEmpty(v: unknown): boolean {
+  if (v === null || v === undefined) return true;
+  if (Array.isArray(v)) return v.length === 0;
+  if (typeof v === 'object') return Object.keys(v).length === 0;
+  return v === '';
+}
+
+function ProfessionalPortalSectionBlock({ title, value }: { title: string; value: unknown }) {
+  const empty = profIsSectionEmpty(value);
+  return (
+    <div className="bg-ink-offwhite p-4 rounded-lg">
+      <h5 className="font-semibold text-sm text-ink mb-3">{title}</h5>
+      {empty ? (
+        <p className="text-xs text-ink-caption italic">Not filled in by this professional yet</p>
+      ) : Array.isArray(value) ? (
+        <div className="space-y-3">
+          {value.map((entry, i) => (
+            <div key={i} className="bg-surface-card rounded-lg border border-ink-light p-3">
+              {entry && typeof entry === 'object' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+                  {Object.entries(entry as Record<string, unknown>).map(([k, v]) => (
+                    <div key={k} className="flex flex-col min-w-0">
+                      <span className="text-[11px] text-ink-caption uppercase tracking-wide break-words">{prettyLabel(k)}</span>
+                      <span className="text-sm text-ink break-words"><PrettyValue value={v} /></span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <PrettyValue value={entry} />
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+          {Object.entries(value as Record<string, unknown>).map(([k, v]) => (
+            <div key={k} className="flex flex-col min-w-0">
+              <span className="text-[11px] text-ink-caption uppercase tracking-wide break-words">{prettyLabel(k)}</span>
+              <span className="text-sm text-ink break-words"><PrettyValue value={v} /></span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Fetches independently of the submitted-form `data` state above - a
+// professional can have a full Portal profile with zero old-form data on
+// file (or vice versa), so this must not be gated behind that.
+function ProfessionalPortalProfileSection({ professionalId }: { professionalId: string | null }) {
+  const [profile, setProfile] = useState<Record<string, any> | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errored, setErrored] = useState(false);
+
+  useEffect(() => {
+    if (!professionalId || !PORTAL_PROFILE_API) return;
+    let cancelled = false;
+    setLoading(true);
+    setErrored(false);
+    fetch(`${PORTAL_PROFILE_API}/${professionalId}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((d) => { if (!cancelled) setProfile(d.portalProfile || {}); })
+      .catch(() => { if (!cancelled) setErrored(true); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [professionalId]);
+
+  if (!professionalId) return null;
+
+  return (
+    <details className="bg-ink-light/40 rounded-lg overflow-hidden" open>
+      <summary className="cursor-pointer select-none px-4 py-3 font-semibold text-ink text-sm">
+        Professional Portal Profile — everything this professional filled in on their own dashboard
+      </summary>
+      <div className="px-4 pb-4 space-y-4">
+        {loading ? (
+          <div className="text-center py-6">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-status-info mx-auto mb-2"></div>
+            <p className="text-ink-paragraph text-xs">Loading portal profile…</p>
+          </div>
+        ) : errored ? (
+          <p className="text-xs text-status-error py-2">Couldn't load this professional's portal profile - try reopening this panel.</p>
+        ) : (
+          PROF_PORTAL_PROFILE_SECTIONS.map(({ key, title }) => (
+            <ProfessionalPortalSectionBlock key={key} title={title} value={profile?.[key]} />
+          ))
+        )}
+      </div>
+    </details>
+  );
+}
+
 interface Professional {
   professionalId: string;
   userId: string;
@@ -180,6 +296,10 @@ const ProfessionalCredentialsModal: React.FC<ProfessionalCredentialsModalProps> 
             >
               <X className="w-6 h-6" />
             </button>
+          </div>
+
+          <div className="mb-6">
+            <ProfessionalPortalProfileSection professionalId={professionalId} />
           </div>
 
           {isLoading ? (
