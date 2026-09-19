@@ -1,10 +1,137 @@
 import React, { useEffect, useState } from "react";
 import { X, Eye, Key, Copy, Check, Lock, RefreshCw } from "lucide-react";
 import { toast } from "react-toastify";
-import { AUTH_API, LAMBDA } from "../../../../lib/apiConfig";
+import { AUTH_API, COMPANY_API, LAMBDA } from "../../../../lib/apiConfig";
 import { PrettyValue, prettyLabel } from "../../../../lib/prettyValue";
 
 const SET_PASSWORD_API = AUTH_API ? `${AUTH_API}/admin/set-password` : `${LAMBDA.auth}/admin/set-password`;
+const PORTAL_PROFILE_API = COMPANY_API ? `${COMPANY_API}/portal-profile` : null;
+
+// Same section keys the Company Portal itself saves under (see
+// CompanyPortal/pages/profile/*Tab.tsx's own save("<key>", ...) calls) -
+// this is the member-filled data (fleet, team, projects, certifications,
+// service areas, gallery, settings) that, before this section existed, had
+// zero visibility anywhere in the admin panel even though the backend
+// already allowed admin to read it (require_self_or_admin on the same
+// endpoint the portal itself calls) - only the original signup form
+// (below, "Complete Submitted Data") was ever shown to admin.
+const PORTAL_PROFILE_SECTIONS: { key: string; title: string }[] = [
+  { key: "overview", title: "Company Overview" },
+  { key: "fleet", title: "Drone Fleet" },
+  { key: "team", title: "Team & Staff" },
+  { key: "projects", title: "Projects" },
+  { key: "projectExpertise", title: "Project Expertise" },
+  { key: "skillsResources", title: "Skills & Resources" },
+  { key: "certifications", title: "Certifications" },
+  { key: "serviceAreas", title: "Service Areas" },
+  { key: "gallery", title: "Gallery" },
+  { key: "settings", title: "Profile Visibility Settings" },
+];
+
+function isSectionEmpty(v: unknown): boolean {
+  if (v === null || v === undefined) return true;
+  if (Array.isArray(v)) return v.length === 0;
+  if (typeof v === "object") return Object.keys(v).length === 0;
+  return v === "";
+}
+
+// One member-filled section (e.g. "Drone Fleet") rendered as a list of
+// entries if it's an array (fleet/team/projects/certifications are each a
+// list of records), or a flat field grid otherwise (overview/settings are
+// single objects) - PrettyValue already handles nested media/document
+// objects (renders an actual image thumbnail or a "View file" link instead
+// of a raw URL), so a team member's uploaded ID doc or a drone's spec sheet
+// shows the same way here as it does to the company on their own portal.
+function PortalProfileSectionBlock({ title, value }: { title: string; value: unknown }) {
+  const empty = isSectionEmpty(value);
+  return (
+    <div className="bg-ink-offwhite p-4 rounded-lg">
+      <h5 className="font-semibold text-sm text-ink-charcoal mb-3">{title}</h5>
+      {empty ? (
+        <p className="text-xs text-ink-caption italic">Not filled in by the company yet</p>
+      ) : Array.isArray(value) ? (
+        <div className="space-y-3">
+          {value.map((entry, i) => (
+            <div key={i} className="bg-surface-card rounded-lg border border-ink-light p-3">
+              {entry && typeof entry === "object" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+                  {Object.entries(entry as Record<string, unknown>).map(([k, v]) => (
+                    <div key={k} className="flex flex-col min-w-0">
+                      <span className="text-[11px] text-ink-caption uppercase tracking-wide break-words">{prettyLabel(k)}</span>
+                      <span className="text-sm text-ink break-words"><PrettyValue value={v} /></span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <PrettyValue value={entry} />
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+          {Object.entries(value as Record<string, unknown>).map(([k, v]) => (
+            <div key={k} className="flex flex-col min-w-0">
+              <span className="text-[11px] text-ink-caption uppercase tracking-wide break-words">{prettyLabel(k)}</span>
+              <span className="text-sm text-ink break-words"><PrettyValue value={v} /></span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Fetches independently of the signup-form `data` prop above - a company
+// can have a full Company Portal profile with zero signup-form data on
+// file (or vice versa), so this must not be gated behind that.
+function PortalProfileSection({ publishedId }: { publishedId?: string }) {
+  const [profile, setProfile] = useState<Record<string, any> | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [errored, setErrored] = useState(false);
+
+  useEffect(() => {
+    if (!publishedId || !PORTAL_PROFILE_API) return;
+    let cancelled = false;
+    setLoading(true);
+    setErrored(false);
+    fetch(`${PORTAL_PROFILE_API}/${publishedId}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((d) => { if (!cancelled) setProfile(d.portalProfile || {}); })
+      .catch(() => { if (!cancelled) setErrored(true); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [publishedId]);
+
+  if (!publishedId) return null;
+
+  return (
+    <details className="bg-ink-light/40 rounded-lg overflow-hidden" open>
+      <summary className="cursor-pointer select-none px-4 py-3 font-semibold text-ink-charcoal text-sm">
+        Company Portal Profile — everything the company filled in on their own dashboard
+      </summary>
+      <div className="px-4 pb-4 space-y-4">
+        {loading ? (
+          <div className="text-center py-6">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-status-info mx-auto mb-2"></div>
+            <p className="text-ink-paragraph text-xs">Loading portal profile…</p>
+          </div>
+        ) : errored ? (
+          <p className="text-xs text-status-error py-2">Couldn't load the company's portal profile - try reopening this panel.</p>
+        ) : (
+          PORTAL_PROFILE_SECTIONS.map(({ key, title }) => (
+            <PortalProfileSectionBlock key={key} title={title} value={profile?.[key]} />
+          ))
+        )}
+      </div>
+    </details>
+  );
+}
 
 // The signup form only ever collects one free-text address line, not
 // separate city/state inputs - those raw fields are empty for every
@@ -245,6 +372,8 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
               gstin={data?.formData?.rawData?.gstin}
               cin={data?.formData?.rawData?.cin || data?.formData?.rawData?.cinOrUdyamOrPan}
             />
+
+            <PortalProfileSection publishedId={company?.publishedId} />
 
             {loading && !data ? (
               <div className="text-center py-8">
