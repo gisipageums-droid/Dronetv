@@ -67,7 +67,7 @@ export default function ComplianceRegister() {
   const updateItem = async (id: string, patch: Partial<Pick<Item, "status" | "owner" | "notes">>) => {
     setSavingId(id);
     try {
-      const res = await fetch(`${API}/${id}`, { method: "PATCH", headers: authHeader(), body: JSON.stringify(patch) });
+      const res = await fetch(`${API}/${id}`, { method: "PATCH", headers: { ...authHeader(), "Content-Type": "application/json" }, body: JSON.stringify(patch) });
       if (!res.ok) throw new Error();
       const data = await res.json();
       setItems((prev) => prev.map((i) => (i.id === id ? data.item : i)));
