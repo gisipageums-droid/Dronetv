@@ -821,10 +821,15 @@ export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEn
 
       <p className="co-card-desc">{company.companyDescription || company.aboutDescription || 'No description available.'}</p>
 
-      {((Number(company.servicesCount) || 0) > 0 || (Number(company.productsCount) || 0) > 0) && (
+      {((Number(company.servicesCount) || 0) > 0 || (Number(company.productsCount) || 0) > 0 || (company.documentation?.score ?? 0) > 0) && (
         <div style={{ padding: '0 13px 9px', display: 'flex', gap: 5, flexWrap: 'wrap' }}>
           {(Number(company.productsCount) || 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>📦 {company.productsCount} products</span>}
           {(Number(company.servicesCount) || 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>🔧 {company.servicesCount} services</span>}
+          {/* Master Checklist Section 1 - this compact card, not the richer
+              badged-tier one, is what the overwhelming majority of real
+              listings actually use, so the indicator has to live here too
+              to be genuinely public, not just on the rare Silver+ card. */}
+          {(company.documentation?.score ?? 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>📋 {company.documentation!.score}% documented</span>}
         </div>
       )}
 
