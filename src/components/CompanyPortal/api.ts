@@ -98,12 +98,22 @@ export async function uploadCompanyFile(userId: string, fieldName: string, file:
   return imageUrl;
 }
 
-// Fixes-doc #2 - claiming a bulk-imported, not-yet-claimed profile.
-// Idempotent on the backend, so safe to call unconditionally on portal load
-// without checking isClaimed first.
-export async function claimCompany(publishedId: string): Promise<void> {
+// Fixes-doc #2 / Deployment Map 2.5 - claiming a bulk-imported, not-yet-
+// claimed profile. agreementAccepted is required the first time (the
+// backend 400s without it) - idempotent afterward, so a repeat call on an
+// already-claimed company is still safe with no argument.
+export async function claimCompany(publishedId: string, agreementAccepted = false): Promise<{ ok: boolean; detail?: string }> {
   const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/claim` : `${LAMBDA.company}/${publishedId}/claim`;
-  await fetch(url, { method: "POST", headers: authHeaders() }).catch(() => {});
+  try {
+    const res = await fetch(url, { method: "POST", headers: authHeaders(), body: JSON.stringify({ agreementAccepted }) });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      return { ok: false, detail: data.detail };
+    }
+    return { ok: true };
+  } catch {
+    return { ok: false };
+  }
 }
 
 // Fixes-doc #19 - vendor-set availability, factored into RFQ quote

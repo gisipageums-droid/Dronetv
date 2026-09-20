@@ -108,6 +108,9 @@ export default function VerifyBadgeCard({
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-bold text-white">Get your Verified Badge</div>
+          {/* Verification Policy Section 3 / Master Checklist Section 1 -
+              the published target turnaround, same wording as the policy. */}
+          <p className="text-[10.5px] text-white/30 mt-0.5">Target turnaround: 5 working days (up to 10 where DGCA credential cross-checks apply).</p>
           {status.readyToPay ? (
             <>
               <p className="text-xs text-white/50 mt-1">

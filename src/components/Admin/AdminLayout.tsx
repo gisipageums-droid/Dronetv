@@ -124,6 +124,13 @@ const NAV: Section[] = [
         superAdminOnly: true,
       },
       {
+        id: "compliance-register",
+        label: "Compliance Register",
+        icon: <ClipboardList size={17} />,
+        path: "/admin/compliance-register",
+        superAdminOnly: true,
+      },
+      {
         id: "verification",
         label: "Verification",
         icon: <ShieldCheck size={17} />,

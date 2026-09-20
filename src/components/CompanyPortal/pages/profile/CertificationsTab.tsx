@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Card, Field, FormGrid, Btn, EmptyState, Badge, inputCls } from "../../ui";
 import type { TabProps } from "./CompanyProfilePage";
 
-const TYPES = ["UAOP (Unmanned Aircraft Operator Permit)", "DGCA Approval", "ISO 9001", "ISO 27001", "NSDC Certified", "DGFT Import License", "WPC License", "Drone Insurance (Company)", "MSME / Udyam Registration", "Other"];
+// "DGCA RPTO Authorization" is a distinct type (not folded into "DGCA
+// Approval") because the badge distinction (Fix #1 Section B / Master
+// Checklist Section 1) specifically keys off this one - a Training
+// Provider claiming RPTO status needs a number here to earn that badge.
+const TYPES = ["UAOP (Unmanned Aircraft Operator Permit)", "DGCA Approval", "DGCA RPTO Authorization", "ISO 9001", "ISO 27001", "NSDC Certified", "DGFT Import License", "WPC License", "Drone Insurance (Company)", "MSME / Udyam Registration", "Other"];
 const empty = { type: "", number: "", authority: "", issueDate: "", expiryDate: "", status: "Active" };
 
 export default function CertificationsTab({ profile, save }: TabProps) {

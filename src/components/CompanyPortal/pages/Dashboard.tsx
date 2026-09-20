@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { Package, Users, FileText, Coins, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { LEADS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
-import { getMyCompany, authHeaders, claimCompany } from "../api";
+import { getMyCompany, authHeaders } from "../api";
 import { PageHeader, Card, CardHeader, KpiRow, KpiCard, Badge, Btn, EmptyState } from "../ui";
 import VerifyBadgeCard from "../VerifyBadgeCard";
 import DocumentationCard from "../DocumentationCard";
+import ClaimAgreementModal from "../ClaimAgreementModal";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -30,12 +31,6 @@ export default function Dashboard() {
         axios.get(`${base}/leads?userId=${encodeURIComponent(userId)}&mode=all&limit=5&offset=0&filter=all&publishedId=${c.publishedId}`, { headers: authHeaders() })
           .then((r) => setLeads(r.data?.leads || r.data?.data || []))
           .catch(() => {});
-        // Fixes-doc #2, step 6 - a bulk-imported, not-yet-claimed profile is
-        // claimed the moment its real owner opens the portal. No-op for
-        // every company today (nothing sets isClaimed=false yet - the
-        // bulk-import/outreach pipeline itself isn't built) - safe to call
-        // unconditionally since the backend action is idempotent.
-        if (c.isClaimed === false) claimCompany(c.publishedId);
       }
     }).finally(() => setLoading(false));
 
@@ -54,6 +49,24 @@ export default function Dashboard() {
       <div>
         <PageHeader title="Dashboard" sub="Welcome to your company portal" />
         <Card><EmptyState text="No published company yet. Complete your Company Profile to get started." /></Card>
+      </div>
+    );
+  }
+
+  // Deployment Map 2.5 - blocks the rest of the portal until the owner
+  // actively claims a bulk-imported profile (see ClaimAgreementModal).
+  // No-op for every company today in practice (nothing sets isClaimed=false
+  // yet - the bulk-import/outreach pipeline itself isn't built), but this
+  // is the real gate for whenever it is.
+  if (company.isClaimed === false) {
+    return (
+      <div>
+        <PageHeader title="Dashboard" sub="Welcome to your company portal" />
+        <ClaimAgreementModal
+          companyName={company.companyName}
+          publishedId={company.publishedId}
+          onClaimed={() => setCompany({ ...company, isClaimed: true })}
+        />
       </div>
     );
   }

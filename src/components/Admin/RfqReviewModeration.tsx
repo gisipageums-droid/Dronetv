@@ -62,7 +62,15 @@ export default function RfqReviewModeration() {
                     </div>
                   </div>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-amber-100 text-amber-800">FLAGGED</span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold whitespace-nowrap bg-amber-100 text-amber-800">FLAGGED</span>
+                  {/* Reviews Policy Section 5 / Advisory Item 17 - 5-working-day SLA */}
+                  {r.flaggedAt && (() => {
+                    const days = Math.floor((Date.now() - new Date(r.flaggedAt).getTime()) / 86400000);
+                    const overdue = days > 5;
+                    return <span className={`text-[10px] font-semibold ${overdue ? "text-status-error" : "text-ink-caption"}`}>{days}d since flagged{overdue ? " · overdue (5-day SLA)" : ""}</span>;
+                  })()}
+                </div>
               </div>
 
               {r.comment && (

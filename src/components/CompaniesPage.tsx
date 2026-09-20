@@ -35,6 +35,8 @@ export interface Company {
   capacityStatus?: string;
   deliveryTier?: 'MANAGED' | 'MARKETPLACE';
   documentation?: { score: number; hasEquipment: boolean; hasUIN: boolean; hasInsurance: boolean; hasProjectHistory: boolean };
+  rptoStatus?: 'DGCA_APPROVED_RPTO' | 'NOT_RPTO';
+  credentialsExpired?: boolean;
   [key: string]: any;
 }
 
@@ -751,7 +753,10 @@ export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEn
   // the Silver-badge workflow after fee payment), NOT plain admin listing-
   // approval (reviewStatus) - those are two different things: any approved
   // company is publicly listed, but the checkmark is earned separately.
-  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE';
+  // Verification Policy Section 4 - a badge is suspended (not shown as
+  // verified) once a required credential expires, even though badgeStatus
+  // itself is left untouched in the DB (audit trail stays intact).
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
   const silver = company.badgeStatus === 'SILVER';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
@@ -849,7 +854,10 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
   // the Silver-badge workflow after fee payment), NOT plain admin listing-
   // approval (reviewStatus) - those are two different things: any approved
   // company is publicly listed, but the checkmark is earned separately.
-  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE';
+  // Verification Policy Section 4 - a badge is suspended (not shown as
+  // verified) once a required credential expires, even though badgeStatus
+  // itself is left untouched in the DB (audit trail stays intact).
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
   const [photoIdx, setPhotoIdx] = useState(0);
@@ -927,6 +935,14 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
               <span className="pc-tag" style={{ background: '#DBEAFE', color: '#1D4ED8' }} title="Fulfilled directly by DroneTV's own group companies">DroneTV Managed</span>
             ) : (
               <span className="pc-tag" title="Independent vendor - DroneTV is a facilitator only">Marketplace Listing</span>
+            )}
+            {/* Fix #1 Section B - DGCA-Approved RPTO vs plain training
+                provider, self-declared, only shown when actually claimed. */}
+            {company.rptoStatus === 'DGCA_APPROVED_RPTO' && (
+              <span className="pc-tag" style={{ background: '#DCFCE7', color: '#15803D' }} title="Self-declared DGCA RPTO Authorization on file">DGCA-Approved RPTO</span>
+            )}
+            {company.credentialsExpired && (
+              <span className="pc-tag" style={{ background: '#FEE2E2', color: '#B91C1C' }} title="A required credential has expired - verification suspended until renewed">Verification Suspended</span>
             )}
           </div>
         </div>
@@ -1041,7 +1057,10 @@ const ShareCardModal: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE
   // the Silver-badge workflow after fee payment), NOT plain admin listing-
   // approval (reviewStatus) - those are two different things: any approved
   // company is publicly listed, but the checkmark is earned separately.
-  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE';
+  // Verification Policy Section 4 - a badge is suspended (not shown as
+  // verified) once a required credential expires, even though badgeStatus
+  // itself is left untouched in the DB (audit trail stays intact).
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
   const [copied, setCopied] = useState(false);
