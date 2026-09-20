@@ -822,6 +822,16 @@ export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEn
         {company.deliveryTier === 'MANAGED' && (
           <span title="Fulfilled directly by DroneTV's own group companies" style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#DBEAFE', color: '#1D4ED8' }}>DroneTV Managed</span>
         )}
+        {/* Fix #1 Section B - same RPTO/suspended signal as the premium
+            card, brought to the compact card too (documentation-score gap
+            pattern repeats here - this card, not the rare premium one, is
+            what most real listings actually use). */}
+        {company.rptoStatus === 'DGCA_APPROVED_RPTO' && (
+          <span title="Self-declared DGCA RPTO Authorization on file" style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#DCFCE7', color: '#15803D' }}>DGCA-Approved RPTO</span>
+        )}
+        {company.credentialsExpired && (
+          <span title="A required credential has expired - verification suspended until renewed" style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#FEE2E2', color: '#B91C1C' }}>Verification Suspended</span>
+        )}
       </div>
 
       <p className="co-card-desc">{company.companyDescription || company.aboutDescription || 'No description available.'}</p>
