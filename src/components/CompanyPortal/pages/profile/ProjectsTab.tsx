@@ -33,6 +33,7 @@ function ProjectHistory({ profile, save }: TabProps) {
 
   return (
     <div>
+      <div className="text-[11px] text-white/30 mb-3">As stated by vendor - not independently verified by DroneTV.</div>
       <div className="flex items-center justify-between mb-5">
         <div className="text-sm text-white/40 flex-1">Completed and ongoing drone service projects</div>
         <Btn onClick={() => setShowForm(!showForm)}>+ Add Project</Btn>

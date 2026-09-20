@@ -81,6 +81,13 @@ const RfqRespond: React.FC = () => {
         <Card><div className="p-6 text-center text-sm text-white/40">This requirement is no longer accepting quotes.</div></Card>
       ) : submitted ? (
         <Card><div className="p-6 text-center text-sm text-status-success">Your quote has been submitted. The buyer will review it and may award it.</div></Card>
+      ) : company?.capacityStatus === "UNAVAILABLE" ? (
+        <Card>
+          <div className="p-6 text-center text-sm text-white/50">
+            Your company is currently marked <strong className="text-white">"Not taking new work"</strong> in Company Portal → Dashboard.
+            Update your availability there to submit a quote on this requirement.
+          </div>
+        </Card>
       ) : (
         <Card>
           <div className="p-4 space-y-4">

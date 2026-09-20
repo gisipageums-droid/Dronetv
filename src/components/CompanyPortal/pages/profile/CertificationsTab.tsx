@@ -31,6 +31,11 @@ export default function CertificationsTab({ profile, save }: TabProps) {
 
   return (
     <div>
+      {/* No automated DGCA/issuing-authority cross-check exists yet (that's
+          a separate, not-yet-built piece) - until it does, every
+          certificate here is genuinely self-declared, not just equipment/
+          projects, so the same honest label applies. */}
+      <div className="text-[11px] text-white/30 mb-3">As stated by vendor - not independently verified by DroneTV.</div>
       <div className="flex items-center justify-between mb-5">
         <div className="text-sm text-white/40 flex-1">Company DGCA permits, ISO certifications, and industry approvals</div>
         <Btn onClick={() => setShowForm(!showForm)}>+ Add Certification</Btn>

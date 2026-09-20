@@ -30,6 +30,11 @@ export interface Company {
   quote?: string | null;
   yearsInBusiness?: string | null;
   teamSize?: string | null;
+  isClaimed?: boolean;
+  bulkImported?: boolean;
+  capacityStatus?: string;
+  deliveryTier?: 'MANAGED' | 'MARKETPLACE';
+  documentation?: { score: number; hasEquipment: boolean; hasUIN: boolean; hasInsurance: boolean; hasProjectHistory: boolean };
   [key: string]: any;
 }
 
@@ -805,6 +810,13 @@ export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEn
         {detectedSectors.slice(0, 1).map(s => (
           <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 7, background: '#F8F8F8', color: '#555', border: '1px solid #E5E5E5' }}>{s}</span>
         ))}
+        {/* Compact card stays uncluttered for the overwhelming-majority
+            Marketplace default; the one case worth a chip here is the rare,
+            high-signal Managed listing - full explicit labelling of both
+            states lives on the richer .pc-card below. */}
+        {company.deliveryTier === 'MANAGED' && (
+          <span title="Fulfilled directly by DroneTV's own group companies" style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#DBEAFE', color: '#1D4ED8' }}>DroneTV Managed</span>
+        )}
       </div>
 
       <p className="co-card-desc">{company.companyDescription || company.aboutDescription || 'No description available.'}</p>
@@ -865,6 +877,11 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
         (Number(company.productsCount) || 0) > 0 ? { n: String(company.productsCount), l: 'Products' } : null,
         (Number(company.servicesCount) || 0) > 0 ? { n: String(company.servicesCount), l: 'Services' } : null,
         company.teamSize ? { n: String(company.teamSize), l: 'Team Size' } : null,
+        // Master Checklist Section 1 - "profile completeness indicator
+        // visible on the profile", made public here (was portal/RFQ-only
+        // before). Only shown once real - a company with nothing filled in
+        // yet gets no stat at all, never a fabricated "0%".
+        (company.documentation?.score ?? 0) > 0 ? { n: `${company.documentation.score}%`, l: 'Documented' } : null,
       ].filter(Boolean) as { n: string; l: string }[];
 
   const handleShare = (e: React.MouseEvent) => {
@@ -898,6 +915,14 @@ const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_S
             {ind !== 'all' && <span className="pc-tag" style={{ background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor }}>{ind.toUpperCase()}</span>}
             {detectedSectors.slice(0, 2).map(s => <span key={s} className="pc-tag">{s}</span>)}
             {tier !== 'silver' && <span className="pc-tag pc-tag-premium">Premium</span>}
+            {/* ToS Section 5 / Master Checklist Section 3 - every listing
+                must visibly state which of the two tiers it is, before a
+                customer can book. */}
+            {company.deliveryTier === 'MANAGED' ? (
+              <span className="pc-tag" style={{ background: '#DBEAFE', color: '#1D4ED8' }} title="Fulfilled directly by DroneTV's own group companies">DroneTV Managed</span>
+            ) : (
+              <span className="pc-tag" title="Independent vendor - DroneTV is a facilitator only">Marketplace Listing</span>
+            )}
           </div>
         </div>
 
@@ -1032,6 +1057,11 @@ const ShareCardModal: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE
         (Number(company.productsCount) || 0) > 0 ? { n: String(company.productsCount), l: 'Products' } : null,
         (Number(company.servicesCount) || 0) > 0 ? { n: String(company.servicesCount), l: 'Services' } : null,
         company.teamSize ? { n: String(company.teamSize), l: 'Team Size' } : null,
+        // Master Checklist Section 1 - "profile completeness indicator
+        // visible on the profile", made public here (was portal/RFQ-only
+        // before). Only shown once real - a company with nothing filled in
+        // yet gets no stat at all, never a fabricated "0%".
+        (company.documentation?.score ?? 0) > 0 ? { n: `${company.documentation.score}%`, l: 'Documented' } : null,
       ].filter(Boolean) as { n: string; l: string }[];
 
   // Points at the crawler-aware preview endpoint (not the direct SPA route)
