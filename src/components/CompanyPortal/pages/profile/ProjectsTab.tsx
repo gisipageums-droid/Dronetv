@@ -7,6 +7,14 @@ const emptyProject = { title: "", client: "", industry: "", role: "", location: 
 
 const ENV_OPTIONS = ["Urban", "Rural", "Coastal / Maritime", "Forest / Hilly", "Industrial Site", "High Altitude"];
 
+const sanitizeInt = (v: string) => v.replace(/[^0-9]/g, "");
+const sanitizeDecimal = (v: string) => {
+  let s = v.replace(/[^0-9.]/g, "");
+  const firstDot = s.indexOf(".");
+  if (firstDot !== -1) s = s.slice(0, firstDot + 1) + s.slice(firstDot + 1).replace(/\./g, "");
+  return s;
+};
+
 function ProjectHistory({ profile, save }: TabProps) {
   const [projects, setProjects] = useState<any[]>(profile.projects || []);
   const [showForm, setShowForm] = useState(false);
@@ -110,9 +118,9 @@ function ProjectExpertise({ profile, save }: TabProps) {
       <div className="text-xs font-bold text-brand-gold uppercase tracking-wide mb-3">Flight Summary</div>
       <Card className="p-6 mb-7">
         <FormGrid>
-          <Field label="Total Flight Hours"><input className={inputCls} value={totalFlightHours} onChange={e => setTotalFlightHours(e.target.value)} placeholder="e.g. 3200" /></Field>
-          <Field label="Total Projects Delivered"><input className={inputCls} value={totalProjects} onChange={e => setTotalProjects(e.target.value)} placeholder="e.g. 145" /></Field>
-          <Field label="Total Area Covered (acres)"><input className={inputCls} value={areaCovered} onChange={e => setAreaCovered(e.target.value)} placeholder="e.g. 50000" /></Field>
+          <Field label="Total Flight Hours"><input className={inputCls} inputMode="decimal" value={totalFlightHours} onChange={e => setTotalFlightHours(sanitizeDecimal(e.target.value))} placeholder="e.g. 3200" /></Field>
+          <Field label="Total Projects Delivered"><input className={inputCls} inputMode="numeric" value={totalProjects} onChange={e => setTotalProjects(sanitizeInt(e.target.value))} placeholder="e.g. 145" /></Field>
+          <Field label="Total Area Covered (acres)"><input className={inputCls} inputMode="decimal" value={areaCovered} onChange={e => setAreaCovered(sanitizeDecimal(e.target.value))} placeholder="e.g. 50000" /></Field>
         </FormGrid>
       </Card>
       <div className="text-xs font-bold text-brand-gold uppercase tracking-wide mb-3">Operating Environments</div>
