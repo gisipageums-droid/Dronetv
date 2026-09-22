@@ -71,7 +71,7 @@ export default function ServiceDetailPage() {
         price: navState.price || "Contact for pricing",
         rating: navState.rating || 4.8,
         reviewCount: 85,
-        images: navState.image ? [navState.image] : ["/images/service-placeholder.jpg"],
+        images: navState.image ? [navState.image] : [SERVICE_IMAGE_PLACEHOLDER],
         features: (navState.features || []).map((f: string) => ({ icon: <Activity className="w-4 h-4" />, text: f })),
         benefits: navState.benefits || [],
         process: navState.process || [],
@@ -130,7 +130,7 @@ export default function ServiceDetailPage() {
           price: s.pricing?.trim() ? s.pricing : "Contact for pricing",
           rating: 4.8, // Default rating for services
           reviewCount: 85, // Default review count
-          images: s.image ? [s.image] : ["/images/service-placeholder.jpg"],
+          images: s.image ? [s.image] : [SERVICE_IMAGE_PLACEHOLDER],
           features: (s.features || []).map((f) => ({ icon: <Activity className="w-4 h-4" />, text: f })),
           benefits: s.benefits || [],
           process: s.process || [],
