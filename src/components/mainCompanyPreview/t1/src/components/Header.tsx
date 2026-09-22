@@ -133,7 +133,14 @@ export default function Header({
                       }}
                     >
                       <motion.img
-                        src={headerState.logoSrc}
+                        // headerData can be a real, sparse record whose
+                        // logoSrc is "" rather than missing entirely (the
+                        // top-level `headerData || {...}` fallback only
+                        // covers a wholly-absent object) - an empty src
+                        // resolves to the current page URL and shows as a
+                        // broken image, so fall back to the bundled default
+                        // here too, matching Footer.tsx and t2's Header.
+                        src={headerState.logoSrc || logo}
                         alt="Logo"
                         style={{
                           height: '65px',
