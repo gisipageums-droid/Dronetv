@@ -23,16 +23,6 @@ const MEDAL_SRC: Record<string, string> = {
   gold: '/assets/medals/gold-medal.png',
   platinum: '/assets/medals/platinum-medal.png',
 };
-// TIER_STYLE.label is already 'SILVER'/'GOLD BRAND'/'PLATINUM' - the
-// reference's exact ribbon text ("SILVER REACH", "GOLD BRAND", "PLATINUM
-// EXPAND") is label + the first word of the real packageLabel, computed
-// once here rather than re-typed per tier.
-const ribbonText = (tier: keyof typeof TIER_STYLE) => {
-  const s = TIER_STYLE[tier];
-  const firstWord = s.packageLabel.split(' ')[0].toUpperCase();
-  return s.label.includes(firstWord) ? s.label : `${s.label} ${firstWord}`;
-};
-
 const CompaniesPageV2: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
@@ -420,20 +410,25 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
         </div>
       )}
 
-      {/* Tier ribbon badge - top right, real medal artwork for Silver/Gold/
-          Platinum, plain LISTED pill otherwise. */}
-      <div className="absolute right-2.5 top-2.5 z-10">
-        {tier ? (
-          <span className="flex items-center gap-1 rounded-full py-1 pl-1 pr-2.5 text-[9.5px] font-extrabold text-white shadow" style={{ background: TIER_STYLE[tier].bannerBg }} title={`${TIER_STYLE[tier].label} - verified by DroneTV`}>
-            <img src={MEDAL_SRC[tier]} alt="" className="size-5 shrink-0 rounded-full bg-white/20 object-contain" />
-            {ribbonText(tier)}
-          </span>
-        ) : (
-          <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[9.5px] font-extrabold text-emerald-700">LISTED</span>
-        )}
-      </div>
+      {/* Tier badge - top right corner. The Silver/Gold/Platinum PNGs are
+          whole pre-composed banner graphics (medal + "SILVER"/"REACH
+          PACKAGE"/"Verified Listing" text baked into the image itself, not
+          a plain icon) - shown at ~object-fit:contain like the reference
+          design's own badge treatment, not cropped into a small circle.
+          LISTED (no tier) has no equivalent artwork, so it stays a plain
+          text pill, matching the reference's LISTED tag exactly. */}
+      {tier ? (
+        <img
+          src={MEDAL_SRC[tier]}
+          alt={`${TIER_STYLE[tier].label} package`}
+          title={`${TIER_STYLE[tier].label} - verified by DroneTV`}
+          className="absolute -right-px -top-px z-10 h-11 w-24 object-contain object-right-top"
+        />
+      ) : (
+        <span className="absolute right-2 top-2 z-10 rounded bg-emerald-50 px-2 py-1.5 text-[10px] font-black text-emerald-800">LISTED</span>
+      )}
 
-      <div className="flex items-start gap-2.5 p-3 pr-20">
+      <div className="flex items-start gap-2.5 p-3 pr-[104px]">
         <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 text-sm font-extrabold text-white" style={{ background: company.previewImage && !imgErr ? undefined : bg }}>
           {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
         </div>
