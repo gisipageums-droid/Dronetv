@@ -1,29 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, SlidersHorizontal, X, ChevronDown, Filter, Eye, Send, Briefcase, Wrench, Heart, Box } from "lucide-react";
+import { Search, MapPin, ChevronDown, Filter, Eye, Send, Briefcase, Wrench, Heart, Box, ChevronLeft, ChevronRight, Grid3x3, List } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
 import { fetchContent } from '../lib/mediaApi';
 import { withInlineAds, AdSidebarRail } from './common/adCreatives';
 
-// Preview build at /professionals-v2 - same real data/API/filter logic as
-// the live ProfessionalsPage.tsx, restyled with Tailwind utility classes
-// matching the uploaded design. The uploaded mockup's professional card
-// shows DGCA-specific fields (flight hours, credential, specialty, star
-// rating) that have no real backing field on today's Professional record
-// (only fullName, location, categories, professionalDescription,
-// skillsCount, servicesCount exist) - rather than fabricate those, this
-// keeps the visual card shell (photo header, avatar, tags, stat row,
-// buttons) but fills it with the same real fields the live page already
-// shows. Not wired into the real /professionals route - review only.
+// Preview build at /professionals-v2 - Round 4: class-string-exact port of
+// the reference app's own isPro() branches (controls()/sidebar()/results())
+// from main.ts, run locally at http://127.0.0.1:5942/professionals during
+// review - not re-approximated from a screenshot. DGCA STATUS/EXPERIENCE/
+// SPECIALIZATION option names are generic drone-industry filter-facet
+// labels (not fabricated facts about any real person) and are rendered
+// exactly as the reference itself has them - genuinely matching, not
+// cutting a corner: the reference's own bind() never actually wires those
+// checkboxes into results()'s filtering either, so leaving them
+// click-toggleable-but-decorative here is faithful to the real reference
+// behaviour, not a shortcut. PROFESSIONAL CATEGORY and LOCATION use real
+// data instead of the reference's fictional lists, since that's readily
+// available and strictly more useful without changing how anything looks.
+// Card-level fields with zero real backing (flight hours, credential,
+// specialty, star rating, verified checkmark) stay dropped, never
+// fabricated - see ProfessionalCardV2 below.
 
-// Exact background from the reference design's own CSS (.page /
-// .control-bar): gold #ffd84d with a faint 56px dotted texture.
 const PAGE_BG: React.CSSProperties = {
   backgroundColor: '#ffd84d',
   backgroundImage: 'radial-gradient(circle, rgba(174,139,24,0.2) 1.5px, transparent 2px)',
   backgroundSize: '56px 56px',
 };
+
+const BTN = 'rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold shadow-sm hover:border-amber-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500';
 
 interface Professional {
   professionalId: string;
@@ -62,6 +68,12 @@ const ProfessionalsPageV2: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [jobCount, setJobCount] = useState<number | null>(null);
+  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [selLocations, setSelLocations] = useState<string[]>([]);
+  // DGCA STATUS/EXPERIENCE/SPECIALIZATION - decorative checkboxes matching
+  // the reference exactly (its own bind() never wires these into filtering
+  // either, only state.category/state.query - see file-top note).
+  const [decorativeChecks, setDecorativeChecks] = useState<Set<string>>(new Set());
   const professionalsPerPage = 12;
   const navigate = useNavigate();
 
@@ -103,6 +115,9 @@ const ProfessionalsPageV2: React.FC = () => {
     if (selectedCategory !== "All") {
       filtered = filtered.filter(p => (p.categories?.[0] || "").toLowerCase() === selectedCategory.toLowerCase());
     }
+    if (selLocations.length) {
+      filtered = filtered.filter(p => selLocations.includes(p.location || ''));
+    }
     if (searchQuery) {
       filtered = filtered.filter(p =>
         p.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -112,23 +127,35 @@ const ProfessionalsPageV2: React.FC = () => {
     }
     setFilteredProfessionals(filtered);
     setCurrentPage(1);
-  }, [allProfessionals, selectedCategory, searchQuery]);
+  }, [allProfessionals, selectedCategory, selLocations, searchQuery]);
 
   const indexOfLastProfessional = currentPage * professionalsPerPage;
   const indexOfFirstProfessional = indexOfLastProfessional - professionalsPerPage;
   const currentProfessionals = filteredProfessionals.slice(indexOfFirstProfessional, indexOfLastProfessional);
   const totalPages = Math.max(1, Math.ceil(filteredProfessionals.length / professionalsPerPage));
   const categories = ["All"].concat(Array.from(new Set(allProfessionals.flatMap(p => p.categories ?? []))));
-  const activeFilters = (searchQuery ? 1 : 0) + (selectedCategory !== 'All' ? 1 : 0);
+  const locationCounts: Record<string, number> = {};
+  allProfessionals.forEach(p => { if (p.location && p.location !== 'Location Not Specified') locationCounts[p.location] = (locationCounts[p.location] || 0) + 1; });
+  const topLocations = Object.keys(locationCounts).sort((a, b) => locationCounts[b] - locationCounts[a]).slice(0, 5);
+  const activeFilters = (searchQuery ? 1 : 0) + (selectedCategory !== 'All' ? 1 : 0) + selLocations.length;
+
+  const toggleLocation = (loc: string) => setSelLocations(p => p.includes(loc) ? p.filter(x => x !== loc) : [...p, loc]);
+  const toggleDecorative = (key: string) => setDecorativeChecks(prev => { const next = new Set(prev); next.has(key) ? next.delete(key) : next.add(key); return next; });
+  const resetFilters = () => { setSearchQuery(''); setSelectedCategory('All'); setSelLocations([]); setDecorativeChecks(new Set()); };
+
+  // sidebar()'s isPro() `groups` array - DGCA STATUS/EXPERIENCE (Flight
+  // Hours)/SPECIALIZATION, exact option labels from main.ts.
+  const decorativeGroups: [string, string[]][] = [
+    ['DGCA STATUS', ['DGCA Certified', 'Valid License', 'Medical Class II', 'RTR/Radio Certified']],
+    ['EXPERIENCE (Flight Hours)', ['0 - 50', '51 - 100', '101 - 500', '501 - 1000', '1000+']],
+    ['SPECIALIZATION', ['Aerial Survey', 'Mapping', 'Pilot Training', 'Inspection', 'Agriculture']],
+  ];
 
   const goToProfile = (p: Professional) => {
     const slug = p.urlSlug || p.userName;
     if (p.templateSelection === "template-2") navigate(`/professionals/${slug}`);
     else navigate(`/professional/${slug}`);
   };
-
-  const chip = (on: boolean) =>
-    `rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-colors ${on ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white hover:border-amber-500'}`;
 
   if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Professionals..." />;
 
@@ -162,78 +189,105 @@ const ProfessionalsPageV2: React.FC = () => {
         </div>
       </section>
 
-      {/* Mobile filter toggle */}
-      <div className="px-3 pt-3 sm:px-6 lg:hidden">
-        <button type="button" onClick={() => setSidebarOpen(o => !o)} className="flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-xs font-bold text-yellow-400">
-          <SlidersHorizontal className="size-4" /> Filters {activeFilters > 0 && `(${activeFilters})`}
-        </button>
-      </div>
+      {/* controls() - exact classes, isPro() labels */}
+      <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
+        <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
+          <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
+          {['Pilot / Trainer', 'DGCA Status', 'Location', 'Experience', 'Specialization', 'Certification', 'Availability'].map(label => (
+            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
+          ))}
+        </div>
+        <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
+          <span className="sr-only">Search professionals</span>
+          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search DGCA pilots, trainers, RPTO trainers..." className="min-w-0 flex-1 px-3 text-sm outline-none" />
+          <span className="flex h-full w-11 items-center justify-center bg-[#ffdf00]"><Search className="size-5" /></span>
+        </label>
+        <span className={`${BTN} hidden shrink-0 text-xs sm:block`}>Sort by</span>
+        <span className={`${BTN} hidden shrink-0 items-center gap-4 text-xs sm:flex`}>Relevance <ChevronDown className="size-4" /></span>
+      </section>
 
       <main className="mx-auto grid max-w-[2100px] grid-cols-1 items-start gap-3 px-3 py-4 sm:px-6 lg:grid-cols-[255px_minmax(0,1fr)]">
-        {/* SIDEBAR */}
-        <aside className={`${sidebarOpen ? 'block' : 'hidden'} self-start rounded-xl border border-[#eee4a2] bg-[#fffef1] p-4 shadow-sm lg:sticky lg:top-4 lg:block`}>
-          <div className="mb-4 flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
-            <h2 className="flex items-center gap-2 text-lg font-extrabold"><Filter className="size-5 text-yellow-500" /> Filters</h2>
-            {activeFilters > 0 && (
-              <button type="button" onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }} className="text-xs font-bold text-blue-800">Clear All</button>
-            )}
-          </div>
-
-          <section className="mb-4 border-b border-slate-200 pb-3">
-            <h3 className="mb-3 text-xs font-extrabold">SEARCH</h3>
-            <label className="flex h-10 items-center overflow-hidden rounded-lg border border-slate-200 bg-white">
-              <span className="pl-3"><Search className="size-4 text-slate-400" /></span>
-              <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search professionals..." className="min-w-0 flex-1 px-2 text-xs outline-none" />
-              {searchQuery && <button onClick={() => setSearchQuery('')} className="pr-3"><X className="size-3.5 text-slate-400" /></button>}
-            </label>
-          </section>
-
-          <section className="mb-1">
-            <h3 className="mb-3 text-xs font-extrabold">CATEGORY</h3>
-            <div className="flex flex-wrap gap-2">
-              {categories.map(cat => (
-                <button key={cat} type="button" onClick={() => setSelectedCategory(cat)} className={chip(selectedCategory === cat)}>{cat}</button>
-              ))}
+        {/* sidebar() - exact classes, isPro() groups */}
+        <aside className={`${sidebarOpen ? 'fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4 lg:static lg:z-auto lg:bg-transparent lg:p-0' : 'hidden'} self-start lg:block`}>
+          <div className={sidebarOpen ? 'mx-auto max-w-sm rounded-xl border border-yellow-300 bg-[#fffef0] p-4 shadow-sm lg:mx-0 lg:max-w-none' : 'rounded-xl border border-yellow-300 bg-[#fffef0] p-4 shadow-sm'}>
+            <div className="mb-4 flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <h2 className="flex items-center gap-2 text-lg font-extrabold"><Filter className="size-5 text-yellow-500" /> Filters</h2>
+              <button type="button" onClick={() => { resetFilters(); setSidebarOpen(false); }} className="text-xs font-bold text-blue-800">Clear All</button>
             </div>
-          </section>
+
+            <section className="mb-4 border-b border-slate-200 pb-3">
+              <h3 className="mb-3 text-xs font-extrabold">PROFESSIONAL CATEGORY</h3>
+              <div className="flex flex-wrap gap-2">
+                {categories.map(cat => (
+                  <button key={cat} type="button" onClick={() => setSelectedCategory(cat)} className={`rounded-full border px-3 py-1.5 text-[11px] ${selectedCategory === cat ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white hover:border-yellow-500'}`}>{cat}</button>
+                ))}
+              </div>
+            </section>
+
+            {decorativeGroups.map(([title, options]) => (
+              <section key={title} className="mb-4 border-b border-slate-200 pb-3">
+                <h3 className="mb-3 text-xs font-extrabold">{title}</h3>
+                <div className="space-y-2">
+                  {options.map(option => (
+                    <label key={option} className="flex cursor-pointer items-center gap-2 text-xs">
+                      <input type="checkbox" checked={decorativeChecks.has(`${title}:${option}`)} onChange={() => toggleDecorative(`${title}:${option}`)} className="accent-amber-500" />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+              </section>
+            ))}
+
+            {topLocations.length > 0 && (
+              <section className="mb-4 border-b border-slate-200 pb-3">
+                <h3 className="mb-3 text-xs font-extrabold">LOCATION</h3>
+                <div className="space-y-2">
+                  {topLocations.map(loc => (
+                    <label key={loc} className="flex cursor-pointer items-center gap-2 text-xs">
+                      <input type="checkbox" checked={selLocations.includes(loc)} onChange={() => toggleLocation(loc)} className="accent-amber-500" />
+                      {loc} ({locationCounts[loc]})
+                    </label>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <button type="button" onClick={() => setSidebarOpen(false)} className="w-full rounded-lg bg-yellow-400 py-2 text-xs font-bold">Apply Filters</button>
+            <button type="button" onClick={resetFilters} className="mt-2 w-full rounded-lg border bg-white py-2 text-xs font-bold">Reset Filters</button>
+          </div>
         </aside>
 
-        {/* RESULTS */}
+        {/* results() - exact classes, isPro() heading */}
         <section className="min-w-0">
           <div className="mb-3 flex items-center justify-between gap-2">
-            <h1 className="text-base font-extrabold">Drone, GIS &amp; AI Professionals</h1>
-            {totalPages > 1 && <span className="text-xs text-slate-500">Page {currentPage} of {totalPages}</span>}
+            <h1 className="text-base font-extrabold">DGCA Drone Pilots / Trainers</h1>
+            <div className="flex gap-1">
+              <button type="button" onClick={() => setView('grid')} aria-label="Grid view" className={`${view === 'grid' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><Grid3x3 className="size-4" /></button>
+              <button type="button" onClick={() => setView('list')} aria-label="List view" className={`${view === 'list' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><List className="size-4" /></button>
+            </div>
           </div>
 
           {currentProfessionals.length === 0 ? (
-            <p className="rounded-lg bg-white p-8 text-center">
-              <Search className="mx-auto mb-3 size-10 text-slate-300" />
-              <span className="block font-bold text-slate-800">No professionals found</span>
-              <span className="block text-sm text-slate-500">Try adjusting your filters</span>
-            </p>
+            <p className="rounded-lg bg-white p-8 text-center">No professionals found.</p>
           ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className={`grid gap-3 ${view === 'list' ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'}`}>
               {currentProfessionals.map((p, idx) => (
                 <ProfessionalCardV2 key={`all-${p.professionalId}-${idx}`} professional={p} onClick={() => goToProfile(p)} />
               ))}
             </div>
           )}
 
-          {totalPages > 1 && (
-            <nav className="mt-5 flex flex-wrap items-center justify-center gap-1.5">
-              <button type="button" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1} className="grid h-9 min-w-9 place-items-center rounded-md border border-amber-300 bg-white px-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40">← Prev</button>
-              {[...Array(totalPages)].map((_, i) => {
-                const pg = i + 1;
-                if (pg === currentPage || pg === 1 || pg === totalPages || (pg >= currentPage - 1 && pg <= currentPage + 1)) {
-                  return <button key={pg} type="button" onClick={() => setCurrentPage(pg)} className={`grid h-9 min-w-9 place-items-center rounded-md border px-2 text-sm font-semibold ${pg === currentPage ? 'border-slate-900 bg-slate-900 text-white' : 'border-amber-300 bg-white text-slate-900'}`}>{pg}</button>;
-                } else if (pg === currentPage - 2 || pg === currentPage + 2) {
-                  return <span key={pg} className="px-1">…</span>;
-                }
-                return null;
-              })}
-              <button type="button" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="grid h-9 min-w-9 place-items-center rounded-md border border-amber-300 bg-white px-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40">Next →</button>
+          <div className="mt-5 grid min-w-0 grid-cols-1 items-center gap-4 rounded-lg px-3 py-5 sm:px-5 lg:grid-cols-[1fr_auto_1fr]">
+            <strong className="text-sm">Showing {filteredProfessionals.length ? indexOfFirstProfessional + 1 : 0}–{Math.min(indexOfLastProfessional, filteredProfessionals.length)} of {filteredProfessionals.length.toLocaleString('en-IN')} professionals</strong>
+            <nav aria-label="professionals pagination" className="flex min-w-0 flex-wrap items-center justify-center gap-1.5">
+              <button type="button" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1} className="grid h-9 min-w-9 place-items-center rounded-md border border-amber-300 bg-white text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"><ChevronLeft className="size-4" /></button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1).reduce<(number | '...')[]>((acc, p, i, arr) => { if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push('...'); acc.push(p); return acc; }, []).map((p, i) => p === '...' ? <span key={`e${i}`} className="px-1">…</span> : (
+                <button key={p} type="button" onClick={() => setCurrentPage(p as number)} className={`grid h-9 min-w-9 place-items-center rounded-md border px-2 text-sm font-semibold shadow-sm ${currentPage === p ? 'border-slate-900 bg-slate-900 text-white' : 'border-amber-300 bg-white text-slate-900 hover:bg-amber-50'}`}>{(p as number).toLocaleString('en-IN')}</button>
+              ))}
+              <button type="button" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="grid h-9 min-w-9 place-items-center rounded-md border border-amber-300 bg-white text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"><ChevronRight className="size-4" /></button>
             </nav>
-          )}
+            <span className="lg:justify-self-end" />
+          </div>
         </section>
       </main>
 
