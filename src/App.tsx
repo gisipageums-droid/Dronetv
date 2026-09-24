@@ -28,6 +28,8 @@ const LegalIndexPage = lazy(() => import("./components/legal/LegalIndexPage"));
 const PolicyPage = lazy(() => import("./components/legal/PolicyPage"));
 const ProductDetailPage = lazy(() => import("./components/ProductDetailPage"));
 const ProfessionalsPage = lazy(() => import("./components/ProfessionalsPage"));
+const CompaniesPageV2 = lazy(() => import("./components/CompaniesPageV2"));
+const ProfessionalsPageV2 = lazy(() => import("./components/ProfessionalsPageV2"));
 const ServicesPage = lazy(() => import("./components/ServicesPage"));
 const ServiceDetailPage = lazy(() => import("./components/ServiceDetailPage"));
 import ScrollingFooter from "./components/ScrollingFooter";
@@ -317,6 +319,10 @@ const AppContent = () => {
 
           <Route path="/professionals" element={<ProfessionalsPage />} />
           <Route path="/listed-companies" element={<CompaniesPage />} />
+          {/* Tailwind-redesign preview - same real data/logic as the live
+              pages above, review only, not linked from any nav. */}
+          <Route path="/companies-v2" element={<CompaniesPageV2 />} />
+          <Route path="/professionals-v2" element={<ProfessionalsPageV2 />} />
 
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/services" element={<ServicesPage />} />

@@ -40,7 +40,7 @@ export interface Company {
   [key: string]: any;
 }
 
-const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg: string; ribbonColor: string; bannerBg: string; bannerColor: string; verifiedListing: boolean; highlightBg: string; dark?: boolean }> = {
+export const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg: string; ribbonColor: string; bannerBg: string; bannerColor: string; verifiedListing: boolean; highlightBg: string; dark?: boolean }> = {
   silver: { label: 'SILVER', packageLabel: 'Reach Package', ribbonBg: 'linear-gradient(135deg,#E8E8E8,#9A9A9A)', ribbonColor: '#ffffff', bannerBg: 'linear-gradient(135deg,#8a8a8a,#4a4a4a)', bannerColor: '#ffffff', verifiedListing: false, highlightBg: '#F0F0F0' },
   gold: { label: 'GOLD BRAND', packageLabel: 'Package', ribbonBg: 'linear-gradient(135deg,#FFE38A,#C99400)', ribbonColor: '#7A5B00', bannerBg: 'linear-gradient(135deg,#E8B400,#8a6400)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: '#FFF3C4' },
   // Platinum renders on a dark card (see .pc-card-dark) per the approved
@@ -54,14 +54,14 @@ const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg
 // its company record yet (lives in a separate service) - so those two tiers
 // render correctly whenever that data exists, they just don't fire on any
 // company today. Not fabricated: no company currently gets Gold/Platinum.
-function getTier(c: Company): keyof typeof TIER_STYLE | null {
+export function getTier(c: Company): keyof typeof TIER_STYLE | null {
   if (c.badgeStatus === 'SILVER') return 'silver';
   if (c.badgeStatus === 'GOLD') return 'gold';
   if (c.badgeStatus === 'PLATINUM') return 'platinum';
   return null;
 }
 
-function useSavedCompanies() {
+export function useSavedCompanies() {
   const [saved, setSaved] = useState<Set<string>>(() => {
     try { return new Set(JSON.parse(localStorage.getItem('dronetv_saved_companies') || '[]')); }
     catch { return new Set(); }
@@ -82,7 +82,7 @@ const DRONE_KW = /drone|uav|uas|unmanned|aerial|aero(?:space)?|aviation|rotor|rp
 const GIS_KW   = /gis|geospatial|spatial|mapping|lidar|survey|topograph|remote.?sensing|cartograph|photogramm/i;
 const AI_KW    = /\bai\b|\bai\s+lab|\balgo|robot(?:ics)?|machine.?learn|deep.?learn|computer.?vision|neural|intelligence\b|automation/i;
 
-function getIndustry(c: Company): 'drone' | 'gis' | 'ai' | 'all' {
+export function getIndustry(c: Company): 'drone' | 'gis' | 'ai' | 'all' {
   const s = `${c.companyName || ''} ${c.companyDescription || ''} ${c.aboutDescription || ''}`;
   if (AI_KW.test(s)) return 'ai';
   if (GIS_KW.test(s)) return 'gis';
@@ -100,14 +100,14 @@ const SECTOR_KW: Record<string, RegExp> = {
   'Training': /train|academy|institute|education|school|learn|certif/i,
 };
 
-function getSectors(c: Company): string[] {
+export function getSectors(c: Company): string[] {
   const s = `${c.companyName || ''} ${c.companyDescription || ''} ${c.aboutDescription || ''}`;
   return Object.entries(SECTOR_KW)
     .filter(([, rx]) => rx.test(s))
     .map(([k]) => k);
 }
 
-function getInitials(name: string): string {
+export function getInitials(name: string): string {
   return name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
 }
 
@@ -115,7 +115,7 @@ function getInitials(name: string): string {
 // listing" link, right on the unclaimed banner itself. The backend only
 // ever accepts this for a still-unclaimed, bulk-imported profile - a real
 // company can't be opted out this way.
-async function requestOptOut(publishedId: string, onDone: () => void) {
+export async function requestOptOut(publishedId: string, onDone: () => void) {
   if (!window.confirm('Ask DroneTV to remove this unclaimed listing? This tells us the company should not be listed.')) return;
   const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/optout` : `${LAMBDA.company}/${publishedId}/optout`;
   try {
@@ -127,17 +127,17 @@ async function requestOptOut(publishedId: string, onDone: () => void) {
 // Some scraped records have about.tagline == companyName, which just
 // repeats the name a second time in the callout box - only show a tagline
 // when it actually says something different from the name itself.
-function realTagline(company: Company): string | null {
+export function realTagline(company: Company): string | null {
   const t = (company.tagline || '').trim();
   if (!t) return null;
   return t.toLowerCase() === (company.companyName || '').trim().toLowerCase() ? null : t;
 }
 
-const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#22C55E', ai: '#6B2FB5', all: '#444' };
-const IND_LABELS: Record<string, string> = { all: 'All', drone: '🚁 Drone', gis: '🗺️ GIS', ai: '🤖 AI' };
+export const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#22C55E', ai: '#6B2FB5', all: '#444' };
+export const IND_LABELS: Record<string, string> = { all: 'All', drone: '🚁 Drone', gis: '🗺️ GIS', ai: '🤖 AI' };
 const AV_COLORS = ['#0B5CB5','#22C55E','#DC2626','#6B2FB5','#c05800','#1a5a9a','#3a6a1a','#9a3a1a'];
 
-function avColor(name: string): string {
+export function avColor(name: string): string {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
   return AV_COLORS[h % AV_COLORS.length];
@@ -339,7 +339,7 @@ export const CSS = `
 }
 `;
 
-const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
+export const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
 
 // Addresses often end "...City, State, Pincode" — the state is the last
 // non-numeric, non-"India" comma segment, not simply the last segment
@@ -349,7 +349,7 @@ const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructu
 // Part of Sy. No. 83/1, TSIIC, Raidurg, NA Rangareddi Hyderabad Telangana
 // 500081 India") blow out the compact card's height - show just city/state
 // instead of the whole thing.
-function shortLocation(location: string | undefined): string {
+export function shortLocation(location: string | undefined): string {
   const state = extractState(location);
   const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
   const meaningful = parts.filter(p => p && !/^\d+$/.test(p) && p.toLowerCase() !== 'india');
@@ -387,7 +387,7 @@ const INDIAN_STATES = [
   'Delhi', 'Goa',
 ].sort((a, b) => b.length - a.length);
 
-function extractState(location: string | undefined): string {
+export function extractState(location: string | undefined): string {
   const text = location || '';
   for (const state of INDIAN_STATES) {
     if (new RegExp(`\\b${state.replace(/ /g, '\\s+')}\\b`, 'i').test(text)) return state;
