@@ -17,6 +17,14 @@ import { withInlineAds, AdSidebarRail } from './common/adCreatives';
 // buttons) but fills it with the same real fields the live page already
 // shows. Not wired into the real /professionals route - review only.
 
+// Exact background from the reference design's own CSS (.page /
+// .control-bar): gold #ffd84d with a faint 56px dotted texture.
+const PAGE_BG: React.CSSProperties = {
+  backgroundColor: '#ffd84d',
+  backgroundImage: 'radial-gradient(circle, rgba(174,139,24,0.2) 1.5px, transparent 2px)',
+  backgroundSize: '56px 56px',
+};
+
 interface Professional {
   professionalId: string;
   fullName: string;
@@ -125,7 +133,7 @@ const ProfessionalsPageV2: React.FC = () => {
   if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Professionals..." />;
 
   return (
-    <div className="min-h-screen bg-[#FFF8D6]">
+    <div className="min-h-screen" style={PAGE_BG}>
       {/* THIN TOP STRIP - matches CompaniesPageV2's header exactly */}
       <div className="hidden items-center justify-end gap-4 bg-slate-900 px-6 py-1 text-[10px] font-semibold uppercase tracking-wide text-yellow-400 sm:flex">
         <span>Connect</span><span>Explore</span><span>Do Business</span>
@@ -168,7 +176,7 @@ const ProfessionalsPageV2: React.FC = () => {
 
       <main className="mx-auto grid max-w-[2100px] grid-cols-1 items-start gap-3 px-3 py-4 sm:px-6 lg:grid-cols-[255px_minmax(0,1fr)]">
         {/* SIDEBAR */}
-        <aside className={`${sidebarOpen ? 'block' : 'hidden'} self-start rounded-xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-4 lg:block`}>
+        <aside className={`${sidebarOpen ? 'block' : 'hidden'} self-start rounded-xl border border-[#eee4a2] bg-[#fffef1] p-4 shadow-sm lg:sticky lg:top-4 lg:block`}>
           <div className="mb-4 flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
             <h2 className="flex items-center gap-2 text-lg font-extrabold"><Filter className="size-5 text-yellow-500" /> Filters</h2>
             {activeFilters > 0 && (
@@ -312,7 +320,7 @@ const ProfessionalCardV2: React.FC<{ professional: Professional; onClick: () => 
   const displayName = professional.fullName || professional.professionalName;
   const bg = avColor(displayName || '');
   return (
-    <article onClick={onClick} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-yellow-400 bg-[#f1ee8e] shadow-md transition-shadow hover:shadow-lg">
+    <article onClick={onClick} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e] shadow-md transition-shadow hover:shadow-lg">
       <div className="relative h-24 overflow-hidden">
         {professional.previewImage ? (
           <img src={professional.previewImage} alt={displayName} loading="lazy" className="size-full object-cover object-center" />

@@ -16,6 +16,15 @@ import { TIER_STYLE, getTier, useSavedCompanies, getIndustry, getSectors, getIni
 // dropped. Round 2 - round 1 matched the wrong upload's code structure
 // instead of this actual reference look; rebuilt to match this one exactly.
 
+// Exact background from the reference design's own CSS (.page /
+// .control-bar): gold #ffd84d with a faint 56px dotted texture - Round 2
+// had wrongly swapped this for the real live site's flat cream instead.
+const PAGE_BG: React.CSSProperties = {
+  backgroundColor: '#ffd84d',
+  backgroundImage: 'radial-gradient(circle, rgba(174,139,24,0.2) 1.5px, transparent 2px)',
+  backgroundSize: '56px 56px',
+};
+
 // Real medal artwork from the reference design, not a generic icon
 // substitute - copied into public/assets/medals/.
 const MEDAL_SRC: Record<string, string> = {
@@ -168,7 +177,7 @@ const CompaniesPageV2: React.FC = () => {
   const btn = 'rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold shadow-sm hover:border-amber-500';
 
   return (
-    <div className="min-h-screen bg-[#FFF8D6]">
+    <div className="min-h-screen" style={PAGE_BG}>
       {/* No page-local header here - the app already renders a persistent
           global <Navigation/> (fixed, h-16) above every route; an extra
           header here duplicated it and visually overlapped underneath it.
@@ -193,7 +202,7 @@ const CompaniesPageV2: React.FC = () => {
       </section>
 
       {/* CONTROLS */}
-      <section className="flex flex-wrap items-center gap-2 border-b border-yellow-300 bg-[#FFF8D6] px-3 py-3 sm:px-6">
+      <section className="flex flex-wrap items-center gap-2 border-b border-yellow-300 px-3 py-3 sm:px-6" style={PAGE_BG}>
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           {['Sector', 'State', 'Package', 'Verified', 'Experience', 'Services', 'Company Type'].map(label => (
             <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${btn} flex shrink-0 items-center gap-2 text-xs`}>{label} <ChevronDown className="size-4" /></button>
@@ -220,7 +229,7 @@ const CompaniesPageV2: React.FC = () => {
 
       <main className="mx-auto grid max-w-[1700px] grid-cols-1 items-start gap-4 px-3 py-4 sm:px-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         {/* SIDEBAR */}
-        <aside className={`${sidebarOpen ? 'block' : 'hidden'} self-start rounded-xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-4 lg:block`}>
+        <aside className={`${sidebarOpen ? 'block' : 'hidden'} self-start rounded-xl border border-[#eee4a2] bg-[#fffef1] p-4 shadow-sm lg:sticky lg:top-4 lg:block`}>
           <div className="mb-4 flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
             <h2 className="flex items-center gap-2 text-base font-extrabold text-slate-900"><Filter className="size-4 text-amber-500" /> Filters</h2>
             <button type="button" onClick={resetFilters} className="text-xs font-bold text-blue-700">Clear All</button>
@@ -399,7 +408,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
   ].filter(Boolean) as [any, any, string][];
 
   return (
-    <article onClick={onClick} className="relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow cursor-pointer hover:shadow-lg">
+    <article onClick={onClick} className="relative flex min-w-0 flex-col overflow-hidden rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e] shadow-sm transition-shadow cursor-pointer hover:shadow-lg">
       {company.bulkImported && company.isClaimed === false && (
         <div className="bg-amber-100 px-3 py-1.5 text-center text-[10px] font-extrabold text-amber-900">
           {optedOut ? 'Opt-out requested — DroneTV will review' : (
@@ -488,7 +497,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
       {company.quote && <p className="mx-3 mt-2 line-clamp-2 text-[10.5px] italic text-amber-700">&ldquo;{company.quote}&rdquo;</p>}
 
       <div className="mt-auto grid grid-cols-2 gap-2 p-3">
-        <button type="button" onClick={e => { e.stopPropagation(); onClick(); }} className="flex items-center justify-center gap-1 rounded-lg border border-slate-200 py-2 text-[11px] font-bold text-slate-800"><Eye className="size-3.5" /> View Profile</button>
+        <button type="button" onClick={e => { e.stopPropagation(); onClick(); }} className="flex items-center justify-center gap-1 rounded-lg border border-slate-300 bg-white py-2 text-[11px] font-bold text-slate-800"><Eye className="size-3.5" /> View Profile</button>
         <button type="button" onClick={e => { e.stopPropagation(); onEnquire(); }} className="flex items-center justify-center gap-1 rounded-lg bg-red-600 py-2 text-[11px] font-bold text-white"><Send className="size-3.5" /> Enquire Now</button>
       </div>
 
