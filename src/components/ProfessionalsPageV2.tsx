@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, SlidersHorizontal, X, Menu, UserRound, Globe2, ChevronDown, Filter, Eye, Send, Briefcase, Wrench } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { Search, MapPin, SlidersHorizontal, X, ChevronDown, Filter, Eye, Send, Briefcase, Wrench } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
 import { fetchContent } from '../lib/mediaApi';
@@ -38,8 +38,6 @@ interface Professional {
   [key: string]: any;
 }
 
-const NAV_ITEMS = ['Home', 'About Us', 'Companies', 'Products', 'Services', 'Professionals', 'Events', 'Partnerships', 'Media Hub', 'Advertising Plans', 'Contact'];
-
 const AV_COLORS = ['#0B5CB5', '#22C55E', '#DC2626', '#6B2FB5', '#c05800', '#1a5a9a', '#3a6a1a', '#9a3a1a'];
 function avColor(name: string): string {
   let h = 0;
@@ -55,7 +53,6 @@ const ProfessionalsPageV2: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [jobCount, setJobCount] = useState<number | null>(null);
   const professionalsPerPage = 12;
   const navigate = useNavigate();
@@ -134,32 +131,13 @@ const ProfessionalsPageV2: React.FC = () => {
         <span>Connect</span><span>Explore</span><span>Do Business</span>
       </div>
 
-      {/* HEADER */}
-      <header className="relative z-30 flex items-center gap-3 border-b-2 border-yellow-400 bg-white px-3 py-2 sm:px-6">
-        <Link to="/" className="flex shrink-0 items-center gap-2">
-          <div className="grid size-10 place-items-center rounded-lg bg-slate-900 text-lg font-black text-yellow-400">DT</div>
-          <div className="leading-tight">
-            <div className="text-lg font-black text-slate-900">DroneTV<span className="text-red-600">.in</span></div>
-            <div className="hidden text-[7.5px] font-bold tracking-wide text-slate-500 sm:block">VOICE OF DRONE TECHNOLOGY, GIS, AI &amp; ROBOTICS TECHNOLOGIES</div>
-          </div>
-        </Link>
-        <button type="button" onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu" className="ml-auto rounded p-2 xl:hidden">
-          {menuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-        </button>
-        <nav className={`${menuOpen ? 'grid' : 'hidden'} absolute inset-x-0 top-full grid-cols-2 gap-1 bg-white p-3 shadow-md xl:static xl:flex xl:flex-1 xl:flex-row xl:items-center xl:justify-center xl:gap-1 xl:p-0 xl:shadow-none`}>
-          {NAV_ITEMS.map(item => (
-            <a key={item} href="#" className={`rounded px-2 py-2 text-[11.5px] font-bold whitespace-nowrap text-slate-700 hover:text-amber-600 ${item === 'Professionals' ? 'text-amber-600 underline underline-offset-4' : ''}`}>{item}</a>
-          ))}
-        </nav>
-        <div className="hidden shrink-0 items-center gap-4 text-xs font-bold text-slate-700 xl:flex">
-          <Search className="size-5" />
-          <span className="flex items-center gap-1"><UserRound className="size-5" /> Account <ChevronDown className="size-3" /></span>
-          <span className="flex items-center gap-1"><Globe2 className="size-5" /> English <ChevronDown className="size-3" /></span>
-        </div>
-      </header>
+      {/* No page-local header - the app already renders a persistent global
+          <Navigation/> (fixed, h-16) above every route; a page-local header
+          duplicated it and rendered hidden underneath it. mt-16 below
+          reserves exactly the real nav's height instead. */}
 
       {/* STAT BAR */}
-      <section className="flex min-h-[64px] flex-wrap items-center gap-3 bg-[#0c1220] px-3 py-2 text-white sm:px-6">
+      <section className="mt-16 flex min-h-[64px] flex-wrap items-center gap-3 bg-[#0c1220] px-3 py-2 text-white sm:px-6">
         <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/20 pr-2 sm:w-auto sm:min-w-[160px]">
           <Briefcase className="size-6 shrink-0 text-yellow-400" />
           <span className="flex flex-col">

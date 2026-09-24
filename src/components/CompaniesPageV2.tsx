@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, SlidersHorizontal, X, Share2, Heart, BarChart2, Copy, Menu, UserRound, Globe2, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Star } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, SlidersHorizontal, X, Share2, Heart, BarChart2, Copy, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
@@ -15,8 +15,6 @@ import { TIER_STYLE, getTier, useSavedCompanies, getIndustry, getSectors, getIni
 // unclaimed-banner/quote/highlights/share) - nothing fabricated, nothing
 // dropped. Round 2 - round 1 matched the wrong upload's code structure
 // instead of this actual reference look; rebuilt to match this one exactly.
-
-const NAV_ITEMS = ['Home', 'About Us', 'Companies', 'Products', 'Services', 'Professionals', 'Events', 'Partnerships', 'Media Hub', 'Advertising Plans', 'Contact'];
 
 // Real medal artwork from the reference design, not a generic icon
 // substitute - copied into public/assets/medals/.
@@ -52,7 +50,6 @@ const CompaniesPageV2: React.FC = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(12);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const { saved: savedCompanies, toggle: toggleSaved } = useSavedCompanies();
   const navigate = useNavigate();
 
@@ -182,37 +179,13 @@ const CompaniesPageV2: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FFF8D6]">
-      {/* THIN TOP STRIP - matches reference's "Connect / Explore / Do Business" corner */}
-      <div className="hidden items-center justify-end gap-4 bg-slate-900 px-6 py-1 text-[10px] font-semibold uppercase tracking-wide text-yellow-400 sm:flex">
-        <span>Connect</span><span>Explore</span><span>Do Business</span>
-      </div>
-
-      {/* HEADER */}
-      <header className="relative z-30 flex items-center gap-3 border-b-2 border-yellow-400 bg-white px-3 py-2 sm:px-6">
-        <Link to="/" className="flex shrink-0 items-center gap-2">
-          <div className="grid size-10 place-items-center rounded-lg bg-slate-900 text-lg font-black text-yellow-400">DT</div>
-          <div className="leading-tight">
-            <div className="text-lg font-black text-slate-900">DroneTV<span className="text-red-600">.in</span></div>
-            <div className="hidden text-[7.5px] font-bold tracking-wide text-slate-500 sm:block">VOICE OF DRONE TECHNOLOGY, GIS, AI &amp; ROBOTICS TECHNOLOGIES</div>
-          </div>
-        </Link>
-        <button type="button" onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu" className="ml-auto rounded p-2 xl:hidden">
-          {menuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-        </button>
-        <nav className={`${menuOpen ? 'grid' : 'hidden'} absolute inset-x-0 top-full grid-cols-2 gap-1 bg-white p-3 shadow-md xl:static xl:flex xl:flex-1 xl:flex-row xl:items-center xl:justify-center xl:gap-1 xl:p-0 xl:shadow-none`}>
-          {NAV_ITEMS.map(item => (
-            <a key={item} href="#" className={`rounded px-2 py-2 text-[11.5px] font-bold whitespace-nowrap text-slate-700 hover:text-amber-600 ${item === 'Companies' ? 'text-amber-600 underline underline-offset-4' : ''}`}>{item}</a>
-          ))}
-        </nav>
-        <div className="hidden shrink-0 items-center gap-4 text-xs font-bold text-slate-700 xl:flex">
-          <Search className="size-5" />
-          <span className="flex items-center gap-1"><UserRound className="size-5" /> Account <ChevronDown className="size-3" /></span>
-          <span className="flex items-center gap-1"><Globe2 className="size-5" /> English <ChevronDown className="size-3" /></span>
-        </div>
-      </header>
+      {/* No page-local header here - the app already renders a persistent
+          global <Navigation/> (fixed, h-16) above every route; an extra
+          header here duplicated it and visually overlapped underneath it.
+          pt-16 below reserves exactly the real nav's height. */}
 
       {/* INDUSTRY STAT BAR */}
-      <section className="flex min-h-[64px] flex-wrap items-center gap-3 bg-[#0c1220] px-3 py-2 text-white sm:px-6">
+      <section className="mt-16 flex min-h-[64px] flex-wrap items-center gap-3 bg-[#0c1220] px-3 py-2 text-white sm:px-6">
         {stats.map(([label, value, Icon]) => (
           <div key={label} className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/20 pr-2 sm:w-auto sm:min-w-[110px]">
             <Icon className="size-6 shrink-0 text-yellow-400" />
