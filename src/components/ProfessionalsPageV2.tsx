@@ -36,6 +36,15 @@ interface Professional {
   fullName: string;
   professionalName: string;
   location?: string;
+  // `role` is the real field the live API actually returns (confirmed
+  // directly against professional-dashboard-cards - `categories` is not
+  // present on any of the 100 real dev records at all, not just empty; the
+  // live ProfessionalsPage.tsx references `categories` too, so this is a
+  // pre-existing gap there as well, not something introduced here). `role`
+  // works correctly once set - drives the card's category label + sidebar
+  // filter here instead. categories kept as a secondary fallback in case a
+  // record ever does populate it.
+  role?: string;
   categories?: string[];
   previewImage?: string;
   heroImage?: string;
@@ -57,6 +66,18 @@ function avColor(name: string): string {
   let h = 0;
   for (let i = 0; i < (name || '').length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
   return AV_COLORS[h % AV_COLORS.length];
+}
+
+// `role` is what the real API actually populates - `categories` kept as a
+// fallback only, see the interface comment above.
+const getCategory = (p: Professional): string | undefined => p.role || p.categories?.[0];
+// Deterministic per-category color, matching the reference's own varied
+// (not always-blue) label backgrounds.
+const CATEGORY_COLORS = ['#0878e7', '#16a34a', '#ea580c', '#7c3aed', '#0891b2', '#be123c', '#4d7c0f', '#0369a1'];
+function categoryColor(name: string): string {
+  let h = 0;
+  for (let i = 0; i < (name || '').length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return CATEGORY_COLORS[h % CATEGORY_COLORS.length];
 }
 
 const ProfessionalsPageV2: React.FC = () => {
@@ -113,7 +134,7 @@ const ProfessionalsPageV2: React.FC = () => {
   useEffect(() => {
     let filtered = allProfessionals;
     if (selectedCategory !== "All") {
-      filtered = filtered.filter(p => (p.categories?.[0] || "").toLowerCase() === selectedCategory.toLowerCase());
+      filtered = filtered.filter(p => (getCategory(p) || "").toLowerCase() === selectedCategory.toLowerCase());
     }
     if (selLocations.length) {
       filtered = filtered.filter(p => selLocations.includes(p.location || ''));
@@ -133,7 +154,7 @@ const ProfessionalsPageV2: React.FC = () => {
   const indexOfFirstProfessional = indexOfLastProfessional - professionalsPerPage;
   const currentProfessionals = filteredProfessionals.slice(indexOfFirstProfessional, indexOfLastProfessional);
   const totalPages = Math.max(1, Math.ceil(filteredProfessionals.length / professionalsPerPage));
-  const categories = ["All"].concat(Array.from(new Set(allProfessionals.flatMap(p => p.categories ?? []))));
+  const categories = ["All"].concat(Array.from(new Set(allProfessionals.map(getCategory).filter((c): c is string => !!c))));
   const locationCounts: Record<string, number> = {};
   allProfessionals.forEach(p => { if (p.location && p.location !== 'Location Not Specified') locationCounts[p.location] = (locationCounts[p.location] || 0) + 1; });
   const topLocations = Object.keys(locationCounts).sort((a, b) => locationCounts[b] - locationCounts[a]).slice(0, 5);
@@ -366,14 +387,15 @@ const ProfessionalsPageV2: React.FC = () => {
 // verified checkmark (no real "verified professional" concept exists),
 // skillsCount/servicesCount stand in for the reference's fabricated
 // flight-hours/credential/specialty trio (no real backing for those), no
-// star rating (no real reviews field). Everything else - card shape,
-// avatar overlay, category label, heart button, buttons - is copied
-// class-for-class.
+// star rating (no real reviews field). Category label uses the real `role`
+// field (see getCategory()) with a per-category color, matching the
+// reference's own varied label colors instead of one fixed blue. Card
+// shape, avatar overlay, heart button, buttons are copied class-for-class.
 const ProfessionalCardV2: React.FC<{ professional: Professional; onClick: () => void }> = ({ professional, onClick }) => {
   const displayName = professional.fullName || professional.professionalName;
   const bg = avColor(displayName || '');
   const [liked, setLiked] = useState(false);
-  const category = professional.categories?.[0];
+  const category = getCategory(professional);
   return (
     <article onClick={onClick} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-yellow-400 bg-[#f1ee8e] shadow-md transition-shadow hover:shadow-lg">
       <div className="relative h-24 overflow-hidden">
@@ -384,7 +406,7 @@ const ProfessionalCardV2: React.FC<{ professional: Professional; onClick: () => 
             <span className="text-3xl font-bold uppercase text-white/70">{displayName?.[0] || '?'}</span>
           </div>
         )}
-        {category && <span className="absolute left-2 top-2 rounded px-2 py-1 text-[9px] font-bold text-white" style={{ backgroundColor: '#0878e7' }}>{category}</span>}
+        {category && <span className="absolute left-2 top-2 rounded px-2 py-1 text-[9px] font-bold text-white" style={{ backgroundColor: categoryColor(category) }}>{category.toUpperCase()}</span>}
         <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Like ${displayName}`} aria-pressed={liked} className={`absolute right-2 top-2 grid size-8 place-items-center rounded-full bg-white ${liked ? 'text-red-600' : 'text-red-500'}`}>
           <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
         </button>
@@ -407,12 +429,6 @@ const ProfessionalCardV2: React.FC<{ professional: Professional; onClick: () => 
           <div className="flex min-w-0 items-start gap-1"><Box className="size-4 shrink-0" /><span className="min-w-0"><strong className="block truncate text-[9px]">{professional.skillsCount || 0}</strong><small className="block text-[7px]">Skills</small></span></div>
           <div className="flex min-w-0 items-start gap-1"><Wrench className="size-4 shrink-0" /><span className="min-w-0"><strong className="block truncate text-[9px]">{professional.servicesCount || 0}</strong><small className="block text-[7px]">Services</small></span></div>
         </div>
-
-        {professional.categories && professional.categories.length > 1 && (
-          <div className="flex flex-wrap gap-1">
-            {professional.categories.slice(1, 4).map(tag => <span key={tag} className="rounded border border-blue-200 bg-white px-1.5 py-1 text-[8px] font-semibold text-blue-700">{tag}</span>)}
-          </div>
-        )}
 
         <p className="line-clamp-2 min-h-6 text-[10px] leading-[14px]">{professional.professionalDescription || "No professional description."}</p>
 
