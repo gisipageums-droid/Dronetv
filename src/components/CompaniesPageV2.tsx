@@ -5,7 +5,7 @@ import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
 import type { Company } from './CompaniesPage';
-import { TIER_STYLE, getTier, useSavedCompanies, getIndustry, getSectors, getInitials, requestOptOut, realTagline, ALL_SECTORS, extractState } from './CompaniesPage';
+import { TIER_STYLE, getTier, useSavedCompanies, getIndustry, getSectors, getInitials, requestOptOut, realTagline, ALL_SECTORS, extractState, shortLocation } from './CompaniesPage';
 
 // Preview build at /companies-v2 - Round 4: a direct, class-string-exact
 // port of the reference app's own source (main.ts, run locally at
@@ -361,8 +361,8 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
         </div>
         <div className="min-w-0">
-          <h3 className="text-xs font-extrabold leading-tight">{company.companyName}</h3>
-          <p className="mt-1 flex items-center gap-1 text-[10px]"><MapPin className="size-3 shrink-0" />{company.location || '—'}</p>
+          <h3 className="line-clamp-2 text-xs font-extrabold leading-tight">{company.companyName}</h3>
+          {company.location && <p className="mt-1 flex items-center gap-1 text-[10px]"><MapPin className="size-3 shrink-0" /><span className="truncate">{shortLocation(company.location)}</span></p>}
           {verified && <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-blue-700"><BadgeCheck className="size-3.5 shrink-0" />Verified</p>}
         </div>
       </div>
