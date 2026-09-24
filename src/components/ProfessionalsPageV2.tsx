@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, SlidersHorizontal, X, ChevronDown, Filter, Eye, Send, Briefcase, Wrench } from "lucide-react";
+import { Search, MapPin, SlidersHorizontal, X, ChevronDown, Filter, Eye, Send, Briefcase, Wrench, Heart, Box } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
@@ -134,11 +134,6 @@ const ProfessionalsPageV2: React.FC = () => {
 
   return (
     <div className="min-h-screen" style={PAGE_BG}>
-      {/* THIN TOP STRIP - matches CompaniesPageV2's header exactly */}
-      <div className="hidden items-center justify-end gap-4 bg-slate-900 px-6 py-1 text-[10px] font-semibold uppercase tracking-wide text-yellow-400 sm:flex">
-        <span>Connect</span><span>Explore</span><span>Do Business</span>
-      </div>
-
       {/* No page-local header - the app already renders a persistent global
           <Navigation/> (fixed, h-16) above every route; a page-local header
           duplicated it and rendered hidden underneath it. mt-16 below
@@ -312,54 +307,65 @@ const ProfessionalsPageV2: React.FC = () => {
   );
 };
 
-// Real fields only - skillsCount/servicesCount (the two stats the live page
-// already shows), categories as tags, professionalDescription. No
-// fabricated flight-hours/credential/rating/DGCA-status fields, since
-// today's Professional record carries none of those.
+// professionalCard() - exact class-string port from the reference's own
+// source. Real fields only where the reference used fictional ones: no
+// verified checkmark (no real "verified professional" concept exists),
+// skillsCount/servicesCount stand in for the reference's fabricated
+// flight-hours/credential/specialty trio (no real backing for those), no
+// star rating (no real reviews field). Everything else - card shape,
+// avatar overlay, category label, heart button, buttons - is copied
+// class-for-class.
 const ProfessionalCardV2: React.FC<{ professional: Professional; onClick: () => void }> = ({ professional, onClick }) => {
   const displayName = professional.fullName || professional.professionalName;
   const bg = avColor(displayName || '');
+  const [liked, setLiked] = useState(false);
+  const category = professional.categories?.[0];
   return (
-    <article onClick={onClick} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e] shadow-md transition-shadow hover:shadow-lg">
+    <article onClick={onClick} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-yellow-400 bg-[#f1ee8e] shadow-md transition-shadow hover:shadow-lg">
       <div className="relative h-24 overflow-hidden">
         {professional.previewImage ? (
-          <img src={professional.previewImage} alt={displayName} loading="lazy" className="size-full object-cover object-center" />
+          <img src={professional.previewImage} alt={displayName} loading="lazy" className="h-full w-full object-cover object-center" />
         ) : (
-          <div className="flex size-full items-center justify-center" style={{ background: bg }}>
+          <div className="flex h-full w-full items-center justify-center" style={{ background: bg }}>
             <span className="text-3xl font-bold uppercase text-white/70">{displayName?.[0] || '?'}</span>
           </div>
         )}
-        {professional.categories?.[0] && (
-          <span className="absolute left-2 top-2 rounded bg-blue-700 px-2 py-1 text-[9px] font-bold text-white">{professional.categories[0]}</span>
-        )}
+        {category && <span className="absolute left-2 top-2 rounded px-2 py-1 text-[9px] font-bold text-white" style={{ backgroundColor: '#0878e7' }}>{category}</span>}
+        <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Like ${displayName}`} aria-pressed={liked} className={`absolute right-2 top-2 grid size-8 place-items-center rounded-full bg-white ${liked ? 'text-red-600' : 'text-red-500'}`}>
+          <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
+        </button>
       </div>
-      <div className="flex flex-1 flex-col gap-1.5 p-2.5">
+      <div className="flex flex-1 flex-col gap-1.5 p-2">
         <div className="flex items-center gap-2">
           <div className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-white text-[10px] font-bold text-white" style={{ background: bg }}>
             {professional.previewImage ? <img src={professional.previewImage} alt="" className="size-full object-cover" /> : (displayName?.[0] || '?')}
           </div>
           <div className="min-w-0">
             <h3 className="truncate text-xs font-extrabold">{displayName}</h3>
-            {professional.location && professional.location !== "Location Not Specified" && (
-              <p className="flex items-center gap-1 truncate text-[9px] text-slate-500"><MapPin className="size-2.5 shrink-0" /> {professional.location}</p>
-            )}
+            {category && <p className="truncate text-[9px]">{category}</p>}
           </div>
         </div>
+        {professional.location && professional.location !== "Location Not Specified" && (
+          <p className="flex items-center gap-1 text-[9px]"><MapPin className="size-3" /> {professional.location}</p>
+        )}
 
-        <p className="line-clamp-2 min-h-6 text-[10px] leading-[14px] text-slate-600">{professional.professionalDescription || "No professional description."}</p>
-
-        <div className="mt-auto grid grid-cols-2 gap-2 pt-1">
-          <div className="rounded-lg border border-slate-300 bg-white py-1.5 text-center">
-            <div className="text-sm font-bold">{professional.skillsCount || 0}</div>
-            <div className="text-[9px] text-slate-500">Skills</div>
-          </div>
-          <div className="rounded-lg border border-slate-300 bg-white py-1.5 text-center">
-            <div className="text-sm font-bold">{professional.servicesCount || 0}</div>
-            <div className="text-[9px] text-slate-500">Services</div>
-          </div>
+        <div className="grid grid-cols-2 gap-1 py-1">
+          <div className="flex min-w-0 items-start gap-1"><Box className="size-4 shrink-0" /><span className="min-w-0"><strong className="block truncate text-[9px]">{professional.skillsCount || 0}</strong><small className="block text-[7px]">Skills</small></span></div>
+          <div className="flex min-w-0 items-start gap-1"><Wrench className="size-4 shrink-0" /><span className="min-w-0"><strong className="block truncate text-[9px]">{professional.servicesCount || 0}</strong><small className="block text-[7px]">Services</small></span></div>
         </div>
 
-        <button type="button" onClick={e => { e.stopPropagation(); onClick(); }} className="mt-1 flex items-center justify-center gap-1 rounded bg-red-600 py-1.5 text-[10.5px] font-bold text-white"><Eye className="size-3" /> View Profile</button>
+        {professional.categories && professional.categories.length > 1 && (
+          <div className="flex flex-wrap gap-1">
+            {professional.categories.slice(1, 4).map(tag => <span key={tag} className="rounded border border-blue-200 bg-white px-1.5 py-1 text-[8px] font-semibold text-blue-700">{tag}</span>)}
+          </div>
+        )}
+
+        <p className="line-clamp-2 min-h-6 text-[10px] leading-[14px]">{professional.professionalDescription || "No professional description."}</p>
+
+        <div className="mt-auto grid grid-cols-2 gap-2">
+          <button type="button" onClick={e => { e.stopPropagation(); onClick(); }} className="rounded border bg-white py-2 text-[10px] font-bold"><Eye className="mr-1 inline size-3" />View Profile</button>
+          <button type="button" onClick={e => { e.stopPropagation(); onClick(); }} className="rounded bg-red-600 py-1.5 text-[10px] font-bold text-white"><Send className="mr-1 inline size-3" />Connect</button>
+        </div>
       </div>
     </article>
   );
