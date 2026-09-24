@@ -40,12 +40,6 @@ interface Professional {
 
 const NAV_ITEMS = ['Home', 'About Us', 'Companies', 'Products', 'Services', 'Professionals', 'Events', 'Partnerships', 'Media Hub', 'Advertising Plans', 'Contact'];
 
-const DOTTED_BG: React.CSSProperties = {
-  backgroundColor: '#ffd84d',
-  backgroundImage: 'radial-gradient(circle, rgba(174,139,24,.35) 1.5px, transparent 2px)',
-  backgroundSize: '28px 28px',
-};
-
 const AV_COLORS = ['#0B5CB5', '#22C55E', '#DC2626', '#6B2FB5', '#c05800', '#1a5a9a', '#3a6a1a', '#9a3a1a'];
 function avColor(name: string): string {
   let h = 0;
@@ -134,46 +128,55 @@ const ProfessionalsPageV2: React.FC = () => {
   if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Professionals..." />;
 
   return (
-    <div className="min-h-screen" style={DOTTED_BG}>
+    <div className="min-h-screen bg-[#FFF8D6]">
+      {/* THIN TOP STRIP - matches CompaniesPageV2's header exactly */}
+      <div className="hidden items-center justify-end gap-4 bg-slate-900 px-6 py-1 text-[10px] font-semibold uppercase tracking-wide text-yellow-400 sm:flex">
+        <span>Connect</span><span>Explore</span><span>Do Business</span>
+      </div>
+
       {/* HEADER */}
-      <header className="relative z-30 flex h-[70px] items-center gap-3 bg-[#ffe32a] px-3 shadow-sm sm:px-5 xl:px-7">
-        <Link to="/" className="flex h-14 w-[160px] shrink-0 items-center overflow-hidden sm:w-[180px]">
-          <img src="/images/logo.png" alt="DroneTV" className="h-full w-full object-contain object-left" />
+      <header className="relative z-30 flex items-center gap-3 border-b-2 border-yellow-400 bg-white px-3 py-2 sm:px-6">
+        <Link to="/" className="flex shrink-0 items-center gap-2">
+          <div className="grid size-10 place-items-center rounded-lg bg-slate-900 text-lg font-black text-yellow-400">DT</div>
+          <div className="leading-tight">
+            <div className="text-lg font-black text-slate-900">DroneTV<span className="text-red-600">.in</span></div>
+            <div className="hidden text-[7.5px] font-bold tracking-wide text-slate-500 sm:block">VOICE OF DRONE TECHNOLOGY, GIS, AI &amp; ROBOTICS TECHNOLOGIES</div>
+          </div>
         </Link>
         <button type="button" onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu" className="ml-auto rounded p-2 xl:hidden">
           {menuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
         </button>
-        <nav className={`${menuOpen ? 'grid' : 'hidden'} absolute inset-x-0 top-[70px] grid-cols-2 gap-1 bg-[#ffe32a] p-3 shadow-md xl:static xl:flex xl:flex-1 xl:flex-row xl:items-center xl:justify-center xl:gap-0 xl:bg-transparent xl:p-0 xl:shadow-none 2xl:gap-2`}>
+        <nav className={`${menuOpen ? 'grid' : 'hidden'} absolute inset-x-0 top-full grid-cols-2 gap-1 bg-white p-3 shadow-md xl:static xl:flex xl:flex-1 xl:flex-row xl:items-center xl:justify-center xl:gap-1 xl:p-0 xl:shadow-none`}>
           {NAV_ITEMS.map(item => (
-            <a key={item} href="#" className={`rounded px-1 py-2 text-[11px] font-bold whitespace-nowrap hover:bg-yellow-300 ${item === 'Professionals' ? 'underline underline-offset-4' : ''}`}>{item}</a>
+            <a key={item} href="#" className={`rounded px-2 py-2 text-[11.5px] font-bold whitespace-nowrap text-slate-700 hover:text-amber-600 ${item === 'Professionals' ? 'text-amber-600 underline underline-offset-4' : ''}`}>{item}</a>
           ))}
         </nav>
-        <div className="hidden shrink-0 items-center gap-4 text-xs font-bold 2xl:flex">
+        <div className="hidden shrink-0 items-center gap-4 text-xs font-bold text-slate-700 xl:flex">
           <Search className="size-5" />
-          <span className="flex items-center gap-1"><UserRound className="size-5" /> Account</span>
+          <span className="flex items-center gap-1"><UserRound className="size-5" /> Account <ChevronDown className="size-3" /></span>
           <span className="flex items-center gap-1"><Globe2 className="size-5" /> English <ChevronDown className="size-3" /></span>
         </div>
       </header>
 
       {/* STAT BAR */}
-      <section className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
-        <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[160px]">
-          <Briefcase className="size-7 shrink-0 text-yellow-400" />
+      <section className="flex min-h-[64px] flex-wrap items-center gap-3 bg-[#0c1220] px-3 py-2 text-white sm:px-6">
+        <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/20 pr-2 sm:w-auto sm:min-w-[160px]">
+          <Briefcase className="size-6 shrink-0 text-yellow-400" />
           <span className="flex flex-col">
-            <small className="text-[10px] leading-tight">Total Professionals</small>
-            <strong className="text-lg leading-tight text-yellow-300">{allProfessionals.length.toLocaleString('en-IN')}</strong>
+            <strong className="text-base leading-tight text-white">{allProfessionals.length.toLocaleString('en-IN')}</strong>
+            <small className="text-[9.5px] leading-tight text-slate-300">Total Professionals</small>
           </span>
         </div>
-        <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[160px]">
-          <Wrench className="size-7 shrink-0 text-yellow-400" />
+        <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/20 pr-2 sm:w-auto sm:min-w-[160px]">
+          <Wrench className="size-6 shrink-0 text-yellow-400" />
           <span className="flex flex-col">
-            <small className="text-[10px] leading-tight">Open Jobs</small>
-            <strong className="text-lg leading-tight text-yellow-300">{jobCount === null ? '…' : jobCount.toLocaleString('en-IN')}</strong>
+            <strong className="text-base leading-tight text-white">{jobCount === null ? '…' : jobCount.toLocaleString('en-IN')}</strong>
+            <small className="text-[9.5px] leading-tight text-slate-300">Open Jobs</small>
           </span>
         </div>
-        <button type="button" onClick={() => { try { localStorage.removeItem("professionalFormDraft"); } catch {} navigate("/professional/form"); }} className="flex h-9 min-w-[183px] shrink-0 items-center justify-center rounded-lg bg-[#ffdf00] px-3 text-sm font-extrabold text-black">+ List your Profile</button>
-        <div className="min-w-[255px] shrink-0 border-l border-yellow-500/25 pl-4">
-          <strong className="block text-sm leading-tight text-yellow-300">India&rsquo;s #1 Drone|GIS|AI Industry Platform</strong>
+        <button type="button" onClick={() => { try { localStorage.removeItem("professionalFormDraft"); } catch {} navigate("/professional/form"); }} className="flex h-9 shrink-0 items-center justify-center rounded-lg bg-[#ffdf00] px-4 text-sm font-extrabold text-black">+ List your Profile</button>
+        <div className="ml-auto shrink-0 text-right">
+          <strong className="block text-sm leading-tight text-yellow-300">India&rsquo;s #1 Drone Industry Platform</strong>
           <span className="block text-[11px] text-sky-300">Discover | Connect | Collaborate | Grow</span>
         </div>
       </section>
@@ -187,7 +190,7 @@ const ProfessionalsPageV2: React.FC = () => {
 
       <main className="mx-auto grid max-w-[2100px] grid-cols-1 items-start gap-3 px-3 py-4 sm:px-6 lg:grid-cols-[255px_minmax(0,1fr)]">
         {/* SIDEBAR */}
-        <aside className={`${sidebarOpen ? 'block' : 'hidden'} self-start rounded-xl border border-yellow-300 bg-[#fffef0] p-4 shadow-sm lg:block`}>
+        <aside className={`${sidebarOpen ? 'block' : 'hidden'} self-start rounded-xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-4 lg:block`}>
           <div className="mb-4 flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
             <h2 className="flex items-center gap-2 text-lg font-extrabold"><Filter className="size-5 text-yellow-500" /> Filters</h2>
             {activeFilters > 0 && (
