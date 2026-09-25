@@ -248,18 +248,24 @@ const NewsCardV2: React.FC<{ item: MediaItem; onRead: () => void }> = ({ item, o
           </div>
         )}
 
+        {item.source && <span className="truncate text-xs font-semibold text-slate-500">{item.source}</span>}
+
+        {/* Footer row - icons left, Read More right, same line, matching
+            the reference's card-footer alignment exactly (was two stacked
+            rows before: icons row, then a full-width button below). */}
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <span className="flex items-center gap-1 text-xs font-semibold text-slate-500" title="Views">
-            <Eye className="size-3.5 shrink-0" />{fmtCount(item.views ?? 0)}
-          </span>
-          {item.source && <span className="truncate text-xs font-semibold text-slate-500">{item.source}</span>}
-          <button type="button" onClick={handleShare} aria-label="Copy article link" className="flex shrink-0 items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700">
-            {copied ? <><Copy className="size-3.5" />Copied!</> : <><Share2 className="size-3.5" />Share</>}
-          </button>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1 text-xs font-semibold text-slate-500" title="Views">
+              <Eye className="size-3.5 shrink-0" />{fmtCount(item.views ?? 0)}
+            </span>
+            <button type="button" onClick={handleShare} aria-label="Copy article link" className="flex shrink-0 items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700">
+              {copied ? <Copy className="size-3.5" /> : <Share2 className="size-3.5" />}
+            </button>
+          </div>
+          <Link to={`/media/news/${item.contentId}`} state={{ item }} onClick={e => e.stopPropagation()} className="flex shrink-0 items-center rounded-lg bg-yellow-400 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-yellow-300">
+            Read More →
+          </Link>
         </div>
-        <Link to={`/media/news/${item.contentId}`} state={{ item }} onClick={e => e.stopPropagation()} className="mt-1 flex items-center justify-center rounded-lg bg-yellow-400 py-2 text-xs font-bold text-slate-900 hover:bg-yellow-300">
-          Read More →
-        </Link>
       </div>
     </article>
   );
