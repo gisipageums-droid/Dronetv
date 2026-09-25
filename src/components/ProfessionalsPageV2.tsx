@@ -436,22 +436,28 @@ const ProfessionalCardV2: React.FC<{ professional: Professional; onClick: () => 
           <p className="flex items-center gap-1 text-xs text-slate-500"><MapPin className="size-3.5 shrink-0" /> {professional.location}</p>
         )}
 
-        <div className="grid grid-cols-3 gap-2 border-y border-slate-100 py-2.5">
-          <div className="flex min-w-0 flex-col items-start gap-0.5">
+        <div className="grid grid-cols-3 gap-1.5 border-y border-slate-100 py-2.5">
+          <div className="flex min-w-0 items-center gap-1.5">
             <Box className="size-4 shrink-0 text-slate-400" />
-            <strong className="block truncate text-xs font-bold text-slate-900">{professional.skillsCount || 0}</strong>
-            <small className="block text-[10px] text-slate-500">Skills</small>
+            <span className="min-w-0 leading-tight">
+              <strong className="block truncate text-xs font-bold text-slate-900">{professional.skillsCount || 0}</strong>
+              <small className="block truncate text-[10px] text-slate-500">Skills</small>
+            </span>
           </div>
-          <div className="flex min-w-0 flex-col items-start gap-0.5">
+          <div className="flex min-w-0 items-center gap-1.5">
             <Wrench className="size-4 shrink-0 text-slate-400" />
-            <strong className="block truncate text-xs font-bold text-slate-900">{professional.servicesCount || 0}</strong>
-            <small className="block text-[10px] text-slate-500">Services</small>
+            <span className="min-w-0 leading-tight">
+              <strong className="block truncate text-xs font-bold text-slate-900">{professional.servicesCount || 0}</strong>
+              <small className="block truncate text-[10px] text-slate-500">Services</small>
+            </span>
           </div>
           {since && (
-            <div className="flex min-w-0 flex-col items-start gap-0.5">
+            <div className="flex min-w-0 items-center gap-1.5">
               <CalendarClock className="size-4 shrink-0 text-slate-400" />
-              <strong className="block truncate text-xs font-bold text-slate-900">{since}</strong>
-              <small className="block text-[10px] text-slate-500">Member Since</small>
+              <span className="min-w-0 leading-tight">
+                <strong className="block truncate text-xs font-bold text-slate-900">{since}</strong>
+                <small className="block truncate text-[10px] text-slate-500">Member Since</small>
+              </span>
             </div>
           )}
         </div>
