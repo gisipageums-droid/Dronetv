@@ -29,15 +29,17 @@ html{scroll-behavior:smooth}
 body{
     font-family:Inter,Arial,Helvetica,sans-serif;
     color:var(--text);
-    /* The highlight's radius was unset, so its default sizing (distance to
-       the farthest corner) scaled with the screen's diagonal - on a tall
-       narrow phone that diagonal is much longer than on a wide desktop, so
-       the same "26%" stop covered a far bigger share of the screen and
-       washed the gold out to pale cream on mobile. A fixed pixel radius
-       keeps the glow the same physical size everywhere. */
-    background:
-      radial-gradient(circle 380px at 12% 8%, rgba(255,255,255,.85), transparent 100%),
-      linear-gradient(135deg,#FFD83D 0%,#FFC400 48%,#F4B900 100%);
+    /* Pixel-sampled directly from the reference mockup (averaged 27 points
+       along both true background margins, outside any card/button content):
+       a flat, muted gold around #F1C645 - not the brighter, more saturated
+       #FFC400 this used before, and with no strong bright-glow highlight
+       (the earlier radial-gradient here doesn't exist in the reference;
+       what looked like a "glow" was this page's own pale card elements,
+       not the background). Kept the tiniest top-to-bottom gradient since
+       the very top edge sampled a hair paler than the rest, rather than a
+       fully flat fill.
+    */
+    background:linear-gradient(180deg,#F4CB4C 0%,#F1C645 12%,#F1C645 100%);
     min-height:100vh;
 }
 a{text-decoration:none;color:inherit}
