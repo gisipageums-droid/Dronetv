@@ -48,10 +48,28 @@ a{text-decoration:none;color:inherit}
     width:min(100%,620px);
     text-align:center;
     padding:32px 22px 28px;
-    background:rgba(255,255,255,.96);
-    border:1px solid rgba(255,255,255,.75);
-    border-radius:30px;
-    box-shadow:0 25px 70px rgba(0,0,0,.18);
+    background:transparent;
+}
+.list-company-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:min(100%,390px);
+    margin:0 auto 20px;
+    padding:15px 22px;
+    background:var(--yellow);
+    color:#111;
+    font-weight:900;
+    font-size:16px;
+    border-radius:999px;
+    box-shadow:0 10px 28px rgba(0,0,0,.14);
+    transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.list-company-btn:hover{
+    background:var(--yellow-dark);
+    transform:translateY(-2px);
+    box-shadow:0 14px 32px rgba(0,0,0,.18);
 }
 .brand-logo-wrap{
     width:min(100%,390px);
@@ -146,8 +164,8 @@ a{text-decoration:none;color:inherit}
     border-radius:13px;
     display:grid;
     place-items:center;
-    background:#FFF3BF;
-    color:#A46F00;
+    background:var(--yellow);
+    color:#111;
     font-size:19px;
 }
 .link-button:first-child .link-button-icon,
@@ -224,6 +242,7 @@ a{text-decoration:none;color:inherit}
 @media(max-width:500px){
     .linktree-wrap{padding:15px 10px 30px}
     .profile-card{border-radius:24px;padding:24px 14px 23px}
+    .list-company-btn{padding:13px 18px;font-size:14px}
     .brand-logo-wrap{border-radius:16px}
     .profile-card h1{font-size:27px}
     .profile-description{font-size:13px}
@@ -494,12 +513,9 @@ a{text-decoration:none;color:inherit}
                  alt="DroneTV.in company logo">
         </div>
 
-        <h1>DroneTV.in</h1>
-        <p class="profile-tagline">Voice of Drone Technology, GIS, AI Technologies</p>
-        <p class="profile-description">
-            India's drone industry ecosystem connecting companies, professionals,
-            products, services, jobs, events and technology.
-        </p>
+        <a href="https://www.dronetv.in/form" target="_blank" rel="noopener noreferrer" class="list-company-btn">
+            <i class="fa-solid fa-building"></i> + List Your Company
+        </a>
 
         <div class="social-row">
                             <a href="https://www.facebook.com/dronetv.in" class="social-icon" style="--social-color: #1877F2;" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook">
@@ -550,6 +566,7 @@ a{text-decoration:none;color:inherit}
             <span><i class="fa-solid fa-drone"></i> DRONE</span>
             <span><i class="fa-solid fa-map-location-dot"></i> GIS</span>
             <span><i class="fa-solid fa-brain"></i> AI</span>
+            <span><i class="fa-solid fa-robot"></i> ROBOTICS</span>
         </div>
 
         <div class="share-row">
