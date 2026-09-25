@@ -328,8 +328,12 @@ const AppContent = () => {
           <Route path="/listed-companies-v1" element={<CompaniesPage />} />
           <Route path="/professionals-v1" element={<ProfessionalsPage />} />
 
-          <Route path="/products" element={<ProductsPage />} />
+          {/* Tailwind redesign shifted to the real route (approved), same
+              pattern as /listed-companies and /professionals - old page
+              kept mounted at -v1 as a rollback path, not linked from nav. */}
+          <Route path="/products" element={<ProductsPageV2 />} />
           <Route path="/products-v2" element={<ProductsPageV2 />} />
+          <Route path="/products-v1" element={<ProductsPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/news" element={<NewsPage />} />
