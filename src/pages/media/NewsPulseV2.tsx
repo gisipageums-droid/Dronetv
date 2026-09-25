@@ -1,15 +1,21 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Share2, Newspaper, Tag, CalendarDays, Copy } from 'lucide-react';
+import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Share2, Newspaper, Tag, CalendarDays, Copy, Eye } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 
 // Preview build at /media/news-pulse-v2 - same treatment as the other V2
 // pages: real data from the news CMS (contentType 'news'), nothing
 // fabricated. The reference's view-count/comment-count pair (👁 1.2K,
-// 💬 24) has zero real backing - no such fields exist on a news article
-// record - dropped rather than invented. Tags ARE real (MediaItem.tags),
-// used for the pill row. Share is real (copies the article's own detail
-// link), not decorative.
+// 💬 24) had zero real backing when this page was first built - the eye/
+// view-count half is now real (MediaItem.views, a genuine per-article
+// counter incremented server-side on each detail-page open, same pattern
+// as professional/company profileViews - see incrementViews() in
+// mediaApi.ts and the useEffect in MediaDetailPage.tsx). The comment-count
+// half stays dropped: there is still no comment system anywhere in this
+// backend, that's a real feature build, not a redesign tweak, and was
+// explicitly out of scope when this was last discussed. Tags ARE real
+// (MediaItem.tags), used for the pill row. Share is real (copies the
+// article's own detail link), not decorative.
 
 const PAGE_BG: React.CSSProperties = {
   backgroundColor: '#ffd84d',
@@ -196,9 +202,14 @@ const NewsPulseV2: React.FC = () => {
   );
 };
 
+function fmtCount(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}K`;
+  return String(n);
+}
+
 // newsCard() - matches the reference's card anatomy (ribbon badge, heart,
-// photo, date, title, description, tag pills, share, Read More). No
-// fabricated view/comment counts - see file-top note.
+// photo, date, title, description, tag pills, real view count, share,
+// Read More). No fabricated comment count - see file-top note.
 const NewsCardV2: React.FC<{ item: MediaItem; onRead: () => void }> = ({ item, onRead }) => {
   const [imgErr, setImgErr] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -238,7 +249,10 @@ const NewsCardV2: React.FC<{ item: MediaItem; onRead: () => void }> = ({ item, o
         )}
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          {item.source ? <span className="truncate text-xs font-semibold text-slate-500">{item.source}</span> : <span />}
+          <span className="flex items-center gap-1 text-xs font-semibold text-slate-500" title="Views">
+            <Eye className="size-3.5 shrink-0" />{fmtCount(item.views ?? 0)}
+          </span>
+          {item.source && <span className="truncate text-xs font-semibold text-slate-500">{item.source}</span>}
           <button type="button" onClick={handleShare} aria-label="Copy article link" className="flex shrink-0 items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700">
             {copied ? <><Copy className="size-3.5" />Copied!</> : <><Share2 className="size-3.5" />Share</>}
           </button>

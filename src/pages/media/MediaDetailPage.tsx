@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, User, MapPin, ExternalLink, Tag } from 'lucide-react';
-import { fetchContent, MediaItem, ContentType } from '../../lib/mediaApi';
+import { ArrowLeft, Calendar, User, MapPin, ExternalLink, Tag, Eye } from 'lucide-react';
+import { fetchContent, incrementViews, MediaItem, ContentType } from '../../lib/mediaApi';
 
 interface Props {
   contentType: ContentType;
@@ -23,6 +23,16 @@ export default function MediaDetailPage({ contentType, backPath, backLabel, exte
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [contentId]);
+
+  // Real per-article view counter - increments once per detail-page open,
+  // not on every card render on the listing page. Guard ref prevents a
+  // double-fire from React StrictMode's dev-only double-invoke.
+  const viewedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!contentId || viewedRef.current === contentId) return;
+    viewedRef.current = contentId;
+    incrementViews(contentType, contentId);
+  }, [contentId, contentType]);
 
   if (loading) {
     return (
@@ -78,6 +88,11 @@ export default function MediaDetailPage({ contentType, backPath, backLabel, exte
             {item.location && (
               <span className="flex items-center gap-1.5 text-xs text-white/50">
                 <MapPin className="w-3.5 h-3.5" />{item.location}
+              </span>
+            )}
+            {typeof item.views === 'number' && (
+              <span className="flex items-center gap-1.5 text-xs text-white/50" title="Views">
+                <Eye className="w-3.5 h-3.5" />{item.views.toLocaleString('en-IN')} views
               </span>
             )}
           </div>

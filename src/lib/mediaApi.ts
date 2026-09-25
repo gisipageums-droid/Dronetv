@@ -27,6 +27,7 @@ export interface MediaItem {
   startDate?: string;
   endDate?: string;
   packageType?: string;
+  views?: number;
   isPublished: boolean;
   publishedAt?: string;
   createdAt: string;
@@ -103,6 +104,18 @@ export async function updateContent(item: Partial<MediaItem> & { contentType: st
   if (!res.ok) {
     const body = await res.json().catch(() => null);
     throw new Error(body?.error || body?.message || `HTTP ${res.status}`);
+  }
+}
+
+// Real per-article view counter (same pattern as professional/company
+// profileViews) - fire on a detail-page open, not on card render. Public,
+// no auth. Fire-and-forget: a failed increment shouldn't block reading the
+// article, so errors are swallowed rather than surfaced.
+export async function incrementViews(type: ContentType, contentId: string): Promise<void> {
+  try {
+    await fetch(`${BASE}/${type}/${contentId}/view`, { method: 'POST' });
+  } catch {
+    // best-effort
   }
 }
 
