@@ -187,6 +187,7 @@ const ProfessionalsDocumentTextExtractor = lazy(() => import("./components/profe
 
 // Media Hub pages
 const NewsPulsePage = lazy(() => import("./pages/media/NewsPulse"));
+const NewsPulsePageV2 = lazy(() => import("./pages/media/NewsPulseV2"));
 const MagazinePage = lazy(() => import("./pages/media/Magazine"));
 const VideoSpotlightPage = lazy(() => import("./pages/media/VideoSpotlight"));
 const ImpactStoriesPage = lazy(() => import("./pages/media/ImpactStories"));
@@ -291,6 +292,7 @@ const AppContent = () => {
           {/* Media Hub routes */}
           <Route path="/media" element={<MediaHubPage />} />
           <Route path="/media/news-pulse" element={<NewsPulsePage />} />
+          <Route path="/media/news-pulse-v2" element={<NewsPulsePageV2 />} />
           <Route path="/media/news/:contentId" element={<MediaDetailPage contentType="news" backPath="/media/news-pulse" backLabel="News Pulse" externalLinkLabel="Read Original Source" />} />
           <Route path="/media/magazine" element={<MagazinePage />} />
           <Route path="/media/magazine/:contentId" element={<MediaDetailPage contentType="magazine" backPath="/media/magazine" backLabel="Magazine" externalLinkLabel="View Full Article" />} />
