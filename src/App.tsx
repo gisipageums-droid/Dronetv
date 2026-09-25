@@ -225,6 +225,7 @@ const IndustryPlayersPage = lazy(() => import("./pages/partnerships/IndustryPlay
 const PartnerBenefitsPage = lazy(() => import("./pages/partnerships/PartnerBenefits"));
 const BecomePartnerPage = lazy(() => import("./pages/partnerships/BecomePartner"));
 const PartnershipsHubPage = lazy(() => import("./pages/partnerships/PartnershipsHub"));
+const PartnershipsHubPageV2 = lazy(() => import("./pages/partnerships/PartnershipsHubV2"));
 
 
 
@@ -314,6 +315,7 @@ const AppContent = () => {
 
           {/* Partnerships routes */}
           <Route path="/partnerships" element={<PartnershipsHubPage />} />
+          <Route path="/partnerships-v2" element={<PartnershipsHubPageV2 />} />
           <Route path="/partnerships/drone-manufacturers" element={<DroneManufacturersPage />} />
           <Route path="/partnerships/ai-tech" element={<AITechCompaniesPage />} />
           <Route path="/partnerships/event-organizers" element={<EventOrganizersPage />} />
