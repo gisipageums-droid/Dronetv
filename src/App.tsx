@@ -32,6 +32,7 @@ const ProfessionalsPage = lazy(() => import("./components/ProfessionalsPage"));
 const CompaniesPageV2 = lazy(() => import("./components/CompaniesPageV2"));
 const ProfessionalsPageV2 = lazy(() => import("./components/ProfessionalsPageV2"));
 const ServicesPage = lazy(() => import("./components/ServicesPage"));
+const ServicesPageV2 = lazy(() => import("./components/ServicesPageV2"));
 const ServiceDetailPage = lazy(() => import("./components/ServiceDetailPage"));
 import ScrollingFooter from "./components/ScrollingFooter";
 import AdsLoader from "./components/common/AdsLoader";
@@ -335,6 +336,7 @@ const AppContent = () => {
           <Route path="/products-v2" element={<ProductsPageV2 />} />
           <Route path="/products-v1" element={<ProductsPage />} />
           <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services-v2" element={<ServicesPageV2 />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/about" element={<AboutPage />} />

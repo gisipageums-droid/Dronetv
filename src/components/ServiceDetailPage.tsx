@@ -29,15 +29,21 @@ type ServiceAPIItem = {
   title?: string;
   category?: string;
   pricing?: string;
+  rating?: number;
+  reviewCount?: number;
+  reviews?: { name: string; rating: number; comment: string }[];
 };
+
+type ServiceReview = { name: string; rating: number; comment: string };
 
 type Service = {
   id: string;
   name: string;
   shortDescription: string;
   price: string; // Service pricing might be a string like "Contact for pricing"
-  rating: number;
-  reviewCount: number;
+  rating?: number;
+  reviewCount?: number;
+  reviews?: ServiceReview[];
   images: string[];
   features: ServiceFeature[];
   benefits: string[];
@@ -70,8 +76,9 @@ export default function ServiceDetailPage() {
         name: navState.title || "Untitled Service",
         shortDescription: navState.description || "No description available",
         price: navState.price || "Contact for pricing",
-        rating: navState.rating || 4.8,
-        reviewCount: 85,
+        rating: typeof navState.rating === 'number' ? navState.rating : undefined,
+        reviewCount: typeof navState.reviewCount === 'number' ? navState.reviewCount : undefined,
+        reviews: Array.isArray(navState.reviews) ? navState.reviews : undefined,
         images: navState.image ? [navState.image] : [SERVICE_IMAGE_PLACEHOLDER],
         features: (navState.features || []).map((f: string) => ({ icon: <Activity className="w-4 h-4" />, text: f })),
         benefits: navState.benefits || [],
@@ -129,8 +136,13 @@ export default function ServiceDetailPage() {
           name: s.title ?? "Untitled Service",
           shortDescription: s.description ?? "No description available",
           price: s.pricing?.trim() ? s.pricing : "Contact for pricing",
-          rating: 4.8, // Default rating for services
-          reviewCount: 85, // Default review count
+          // Real when present - previously hardcoded 4.8/85 on every
+          // service regardless of what it actually was, and renderStars()
+          // was never even called anywhere, so this never showed up in the
+          // UI at all (dead data). Now only shown when actually present.
+          rating: typeof s.rating === 'number' ? s.rating : undefined,
+          reviewCount: typeof s.reviewCount === 'number' ? s.reviewCount : undefined,
+          reviews: Array.isArray(s.reviews) ? s.reviews : undefined,
           images: s.image ? [s.image] : [SERVICE_IMAGE_PLACEHOLDER],
           features: (s.features || []).map((f) => ({ icon: <Activity className="w-4 h-4" />, text: f })),
           benefits: s.benefits || [],
@@ -180,7 +192,7 @@ export default function ServiceDetailPage() {
 
   const renderStars = (rating = 0) =>
     Array.from({ length: 5 }).map((_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "text-brand-gold" : "text-ink-light"}`} />
+      <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "text-brand-gold" : "text-ink-light"}`} fill={i < Math.floor(rating) ? "currentColor" : "none"} />
     ));
 
   return (
@@ -242,6 +254,15 @@ export default function ServiceDetailPage() {
                     <p className="mt-2 text-lg font-semibold text-ink-charcoal">
                       <span className="text-ink">{companyName}</span>
                     </p>
+                  )}
+                  {typeof service.rating === 'number' && (
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <div className="flex">{renderStars(service.rating)}</div>
+                      <span className="text-sm font-bold text-ink">{service.rating.toFixed(1)}</span>
+                      {typeof service.reviewCount === 'number' && (
+                        <span className="text-sm text-ink-paragraph">({service.reviewCount} reviews)</span>
+                      )}
+                    </div>
                   )}
                   <p className="mt-2 text-ink-paragraph text-justify">{service.shortDescription}</p>
                 </div>
@@ -330,6 +351,24 @@ export default function ServiceDetailPage() {
             <li>{service.detailedDescription}</li>
           </ul>
         </div>
+
+        {service.reviews && service.reviews.length > 0 && (
+          <div className="p-6 rounded-2xl shadow shadow-ink mt-[5px] bg-surface-card">
+            <h4 className="text-2xl font-bold text-ink mb-4">Customer Reviews</h4>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {service.reviews.map((r, i) => (
+                <div key={i} className="p-4 bg-surface-main rounded-xl">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-semibold text-ink">{r.name}</span>
+                    <div className="flex">{renderStars(r.rating)}</div>
+                  </div>
+                  <p className="text-sm text-ink-paragraph text-justify">{r.comment}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="mt-8 flex justify-center">
 
 
