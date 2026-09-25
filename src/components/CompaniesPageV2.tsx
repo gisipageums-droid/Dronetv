@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, X, Share2, Heart, Copy, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List, Plane, Map } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, X, Share2, Heart, Copy, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List, Plane, Map as MapIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -38,7 +38,7 @@ const MEDAL_SRC: Record<string, string> = {
 // image-hosting slowness affecting the Gallery pages.
 const CATEGORY_FALLBACK: Record<'drone' | 'gis' | 'ai' | 'all', { grad: string; Icon: typeof Plane; label: string }> = {
   drone: { grad: 'from-sky-600 to-blue-900', Icon: Plane, label: 'Drone Industry' },
-  gis: { grad: 'from-emerald-600 to-green-900', Icon: Map, label: 'GIS Industry' },
+  gis: { grad: 'from-emerald-600 to-green-900', Icon: MapIcon, label: 'GIS Industry' },
   ai: { grad: 'from-violet-600 to-purple-900', Icon: Cpu, label: 'AI Industry' },
   all: { grad: 'from-slate-600 to-slate-800', Icon: Building2, label: 'Drone Industry' },
 };
