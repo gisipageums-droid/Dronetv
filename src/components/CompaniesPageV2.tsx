@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, X, Share2, Heart, Copy, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List, Plane, Map as MapIcon } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, X, Share2, Heart, Copy, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -30,17 +30,33 @@ const MEDAL_SRC: Record<string, string> = {
   platinum: '/assets/medals/platinum-medal.png',
 };
 
-// A card should never show a blank/empty image slot. When a company has no
-// real uploaded logo/photos (getIndustry()'s own keyword match on
-// name+description decides drone/gis/ai/all), fall back to a themed
-// icon-on-gradient tile instead of nothing - CSS/icon based (no network
-// image request) so it's always instant and never subject to the
-// image-hosting slowness affecting the Gallery pages.
-const CATEGORY_FALLBACK: Record<'drone' | 'gis' | 'ai' | 'all', { grad: string; Icon: typeof Plane; label: string }> = {
-  drone: { grad: 'from-sky-600 to-blue-900', Icon: Plane, label: 'Drone Industry' },
-  gis: { grad: 'from-emerald-600 to-green-900', Icon: MapIcon, label: 'GIS Industry' },
-  ai: { grad: 'from-violet-600 to-purple-900', Icon: Cpu, label: 'AI Industry' },
-  all: { grad: 'from-slate-600 to-slate-800', Icon: Building2, label: 'Drone Industry' },
+// A card should never show a blank/empty photo slot. The small logo avatar
+// keeps its plain initials (unchanged, per user feedback - that part was
+// fine as-is). The 4-photo gallery row is the one that must never be
+// empty: when a company has no real uploaded photos, it's filled with real
+// themed stock photography matching getIndustry()'s own keyword match on
+// name+description (drone/gis/ai/all) - each URL hand-checked (downloaded
+// and visually inspected) before use, not guessed.
+const CATEGORY_PHOTOS: Record<'drone' | 'gis' | 'ai' | 'all', string[]> = {
+  drone: [
+    'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=400&q=70',
+    'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=400&q=70',
+    'https://images.unsplash.com/photo-1521405924368-64c5b84bec60?auto=format&fit=crop&w=400&q=70',
+  ],
+  gis: [
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=70',
+    'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=400&q=70',
+    'https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?auto=format&fit=crop&w=400&q=70',
+  ],
+  ai: [
+    'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=400&q=70',
+    'https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&w=400&q=70',
+    'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=70',
+  ],
+  all: [
+    'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=400&q=70',
+    'https://images.unsplash.com/photo-1521405924368-64c5b84bec60?auto=format&fit=crop&w=400&q=70',
+  ],
 };
 
 // Exact button class from main.ts's `const btn = '...'`.
@@ -318,7 +334,7 @@ const CompaniesPageV2: React.FC = () => {
 // invented, since no real field backs them).
 const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
   const ind = getIndustry(company);
-  const fallback = CATEGORY_FALLBACK[ind];
+  const fallbackPhotos = CATEGORY_PHOTOS[ind];
   const tier = getTier(company);
   const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
   const [imgErr, setImgErr] = useState(false);
@@ -373,12 +389,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
 
       <div className="flex min-h-[78px] items-start gap-2 pr-20">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-yellow-400 bg-slate-50 text-lg font-extrabold text-blue-600">
-          {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" className="size-full object-cover" onError={() => setImgErr(true)} /> : (
-            <div className={`flex size-full flex-col items-center justify-center gap-0.5 bg-gradient-to-br ${fallback.grad} text-white`}>
-              <fallback.Icon className="size-5" />
-              <span className="text-[8px] font-extrabold leading-none">{getInitials(company.companyName)}</span>
-            </div>
-          )}
+          {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
         </div>
         <div className="min-w-0">
           <h3 className="line-clamp-2 text-xs font-extrabold leading-tight">{company.companyName}</h3>
@@ -406,15 +417,13 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
 
       {realTagline(company) && <p className="text-[9px] italic text-amber-800 line-clamp-1">&ldquo;{realTagline(company)}&rdquo;</p>}
 
-      {/* Always exactly 4 tiles - real photos first, filled out with a
-          themed fallback (never an empty slot) when a company has fewer
-          than 4 real photos uploaded. */}
+      {/* Always exactly 4 tiles - real uploaded photos first, filled out
+          with real themed stock photography (never an empty slot, never a
+          fake gradient tile) when a company has fewer than 4 real photos. */}
       <div className="grid grid-cols-4 gap-1">
         {realPhotos.map((p, i) => <img key={i} src={p.url} alt={`${company.companyName} ${i + 1}`} loading="lazy" className="h-12 w-full rounded border border-black object-cover" />)}
         {Array.from({ length: missingPhotoCount }).map((_, i) => (
-          <div key={`fb-${i}`} className={`flex h-12 w-full items-center justify-center rounded border border-black bg-gradient-to-br ${fallback.grad}`}>
-            <fallback.Icon className="size-4 text-white/85" />
-          </div>
+          <img key={`fb-${i}`} src={fallbackPhotos[i % fallbackPhotos.length]} alt="" loading="lazy" className="h-12 w-full rounded border border-black object-cover" />
         ))}
       </div>
 
