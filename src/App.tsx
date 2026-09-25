@@ -18,6 +18,7 @@ import Footer from "./components/Footer";
 const VideosPage = lazy(() => import("./components/VideosPage"));
 const CompaniesPage = lazy(() => import("./components/CompaniesPage"));
 const ProductsPage = lazy(() => import("./components/ProductsPage"));
+const ProductsPageV2 = lazy(() => import("./components/ProductsPageV2"));
 const EventsPage = lazy(() => import("./components/EventsPage"));
 const NewsPage = lazy(() => import("./components/NewsPage"));
 const AboutPage = lazy(() => import("./components/AboutPage"));
@@ -328,6 +329,7 @@ const AppContent = () => {
           <Route path="/professionals-v1" element={<ProfessionalsPage />} />
 
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products-v2" element={<ProductsPageV2 />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/news" element={<NewsPage />} />
