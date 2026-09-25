@@ -291,8 +291,12 @@ const AppContent = () => {
 
           {/* Media Hub routes */}
           <Route path="/media" element={<MediaHubPage />} />
-          <Route path="/media/news-pulse" element={<NewsPulsePage />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
+          <Route path="/media/news-pulse" element={<NewsPulsePageV2 />} />
           <Route path="/media/news-pulse-v2" element={<NewsPulsePageV2 />} />
+          <Route path="/media/news-pulse-v1" element={<NewsPulsePage />} />
           <Route path="/media/news/:contentId" element={<MediaDetailPage contentType="news" backPath="/media/news-pulse" backLabel="News Pulse" externalLinkLabel="Read Original Source" />} />
           <Route path="/media/magazine" element={<MagazinePage />} />
           <Route path="/media/magazine/:contentId" element={<MediaDetailPage contentType="magazine" backPath="/media/magazine" backLabel="Magazine" externalLinkLabel="View Full Article" />} />
