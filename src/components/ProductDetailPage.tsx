@@ -23,7 +23,12 @@ type ProductAPIItem = {
   title?: string;
   category?: string;
   pricing?: string;
+  rating?: number;
+  reviewCount?: number;
+  reviews?: { name: string; rating: number; comment: string }[];
 };
+
+type ProductReview = { name: string; rating: number; comment: string };
 
 type Product = {
   id: string;
@@ -34,6 +39,7 @@ type Product = {
   discount?: number | null;
   rating?: number;
   reviewCount?: number;
+  reviews?: ProductReview[];
   inStock?: boolean;
   images: string[];
   features: ProductFeature[];
@@ -114,8 +120,14 @@ export default function ProductDetailPage() {
           price: parsedPrice,
           originalPrice: parsedPrice ? Math.round((parsedPrice || 0) * 1.2) : null,
           discount: parsedPrice ? 20 : null,
-          rating: 4.5,
-          reviewCount: 120,
+          // Real when present - previously hardcoded 4.5/120 on every
+          // product regardless of what it actually was, which is why the
+          // stars/count never appeared anywhere in the UI below (dead data,
+          // never rendered). Now only shown when the product actually has
+          // it, see renderStars()/the Customer Reviews section.
+          rating: typeof p.rating === 'number' ? p.rating : undefined,
+          reviewCount: typeof p.reviewCount === 'number' ? p.reviewCount : undefined,
+          reviews: Array.isArray(p.reviews) ? p.reviews : undefined,
           inStock: true,
           images: p.image ? [p.image] : ["/images/product1.png"],
           features: (p.features || []).map((f) => ({ icon: <Plane className="w-4 h-4" />, text: f })),
@@ -235,6 +247,15 @@ export default function ProductDetailPage() {
                       <span className="text-ink">{companyName}</span>
                     </p>
                   )}
+                  {typeof product.rating === 'number' && (
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <div className="flex">{renderStars(product.rating)}</div>
+                      <span className="text-sm font-bold text-ink">{product.rating.toFixed(1)}</span>
+                      {typeof product.reviewCount === 'number' && (
+                        <span className="text-sm text-ink-paragraph">({product.reviewCount} reviews)</span>
+                      )}
+                    </div>
+                  )}
                   <p className="mt-2 text-ink-paragraph text-justify">{product.shortDescription}</p>
                 </div>
               </div>
@@ -307,6 +328,24 @@ export default function ProductDetailPage() {
             <li>{product.detailedDescription}</li>
           </ul>
         </div>
+
+        {product.reviews && product.reviews.length > 0 && (
+          <div className="p-6 rounded-2xl shadow shadow-ink mt-[5px] bg-surface-card">
+            <h4 className="text-2xl font-bold text-ink mb-4">Customer Reviews</h4>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {product.reviews.map((r, i) => (
+                <div key={i} className="p-4 bg-surface-main rounded-xl">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-semibold text-ink">{r.name}</span>
+                    <div className="flex">{renderStars(r.rating)}</div>
+                  </div>
+                  <p className="text-sm text-ink-paragraph text-justify">{r.comment}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="mt-8 flex justify-center">
           <Link to={template === "template-1" ? `/company/${slugify(companyName)}#contact` : `/companies/${slugify(companyName)}#contact`}>
             <button className="px-6 py-2.5 bg-[#111111] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">

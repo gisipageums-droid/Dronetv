@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Eye, Send, Tag, Clock, CalendarDays, Building2, Boxes, Cpu, Bot, Briefcase } from 'lucide-react';
+import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Eye, Send, Tag, Clock, CalendarDays, Building2, Boxes, Cpu, Bot, Briefcase, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -45,6 +45,11 @@ interface Product {
   isPopular?: boolean;
   timeline?: string;
   timestamp?: string;
+  // Real when present (only ever set on the one labeled demo product so
+  // far) - never fabricated for a real listing, see file-top note.
+  rating?: number;
+  reviewCount?: number;
+  reviews?: { name: string; rating: number; comment: string }[];
 }
 
 interface ApiResponseItem {
@@ -133,6 +138,9 @@ const ProductsPageV2: React.FC = () => {
                 isPopular: p.isPopular || false,
                 timeline: p.timeline,
                 timestamp: item.timestamp,
+                rating: typeof p.rating === 'number' ? p.rating : undefined,
+                reviewCount: typeof p.reviewCount === 'number' ? p.reviewCount : undefined,
+                reviews: Array.isArray(p.reviews) ? p.reviews : undefined,
               });
             });
           });
@@ -421,6 +429,12 @@ const ProductCardV2: React.FC<{ product: Product; onView: () => void; onEnquire:
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
           <strong className="text-sm font-extrabold text-slate-900">{product.price}</strong>
+          {typeof product.rating === 'number' && (
+            <span className="flex items-center gap-1 text-xs font-bold text-amber-600">
+              <Star className="size-3.5 fill-amber-500 text-amber-500" />{product.rating.toFixed(1)}
+              {typeof product.reviewCount === 'number' && <span className="font-normal text-slate-400">({product.reviewCount} reviews)</span>}
+            </span>
+          )}
         </div>
         <div className="grid grid-cols-2 gap-2">
           <button type="button" onClick={e => { e.stopPropagation(); onView(); }} className="rounded-lg border border-slate-300 bg-white py-2 text-xs font-bold text-slate-900"><Eye className="mr-1 inline size-3.5" />View Details</button>
