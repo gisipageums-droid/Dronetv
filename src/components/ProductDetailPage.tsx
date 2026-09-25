@@ -185,7 +185,7 @@ export default function ProductDetailPage() {
 
   const renderStars = (rating = 0) =>
     Array.from({ length: 5 }).map((_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "text-brand-gold" : "text-ink-light"}`} />
+      <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "text-brand-gold" : "text-ink-light"}`} fill={i < Math.floor(rating) ? "currentColor" : "none"} />
     ));
 
   return (
