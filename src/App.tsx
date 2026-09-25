@@ -191,6 +191,7 @@ const NewsPulsePageV2 = lazy(() => import("./pages/media/NewsPulseV2"));
 const MagazinePage = lazy(() => import("./pages/media/Magazine"));
 const MagazinePageV2 = lazy(() => import("./pages/media/MagazineV2"));
 const VideoSpotlightPage = lazy(() => import("./pages/media/VideoSpotlight"));
+const VideoSpotlightPageV2 = lazy(() => import("./pages/media/VideoSpotlightV2"));
 const ImpactStoriesPage = lazy(() => import("./pages/media/ImpactStories"));
 const MarketIntelligencePage = lazy(() => import("./pages/media/MarketIntelligence"));
 const TechTrendsPage = lazy(() => import("./pages/media/TechTrends"));
@@ -307,6 +308,7 @@ const AppContent = () => {
           <Route path="/media/magazine-v1" element={<MagazinePage />} />
           <Route path="/media/magazine/:contentId" element={<MediaDetailPage contentType="magazine" backPath="/media/magazine" backLabel="Magazine" externalLinkLabel="View Full Article" />} />
           <Route path="/media/video-spotlight" element={<VideoSpotlightPage />} />
+          <Route path="/media/video-spotlight-v2" element={<VideoSpotlightPageV2 />} />
           <Route path="/media/impact-stories" element={<ImpactStoriesPage />} />
           <Route path="/media/impact-stories/:contentId" element={<MediaDetailPage contentType="impact-story" backPath="/media/impact-stories" backLabel="Impact Stories" externalLinkLabel="Read Full Story" />} />
           <Route path="/media/market-intelligence" element={<MarketIntelligencePage />} />
