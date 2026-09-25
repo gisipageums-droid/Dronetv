@@ -195,6 +195,7 @@ const VideoSpotlightPageV2 = lazy(() => import("./pages/media/VideoSpotlightV2")
 const ImpactStoriesPage = lazy(() => import("./pages/media/ImpactStories"));
 const ImpactStoriesPageV2 = lazy(() => import("./pages/media/ImpactStoriesV2"));
 const MarketIntelligencePage = lazy(() => import("./pages/media/MarketIntelligence"));
+const MarketIntelligencePageV2 = lazy(() => import("./pages/media/MarketIntelligenceV2"));
 const TechTrendsPage = lazy(() => import("./pages/media/TechTrends"));
 const PressReleasesPage = lazy(() => import("./pages/media/PressReleases"));
 const IndustryReportsPage = lazy(() => import("./pages/media/IndustryReports"));
@@ -322,6 +323,7 @@ const AppContent = () => {
           <Route path="/media/impact-stories-v1" element={<ImpactStoriesPage />} />
           <Route path="/media/impact-stories/:contentId" element={<MediaDetailPage contentType="impact-story" backPath="/media/impact-stories" backLabel="Impact Stories" externalLinkLabel="Read Full Story" />} />
           <Route path="/media/market-intelligence" element={<MarketIntelligencePage />} />
+          <Route path="/media/market-intelligence-v2" element={<MarketIntelligencePageV2 />} />
           <Route path="/media/market-intelligence/:contentId" element={<MediaDetailPage contentType="market-intelligence" backPath="/media/market-intelligence" backLabel="Market Intelligence" externalLinkLabel="View Original Source" />} />
           <Route path="/media/tech-trends" element={<TechTrendsPage />} />
           <Route path="/media/press-releases" element={<PressReleasesPage />} />
