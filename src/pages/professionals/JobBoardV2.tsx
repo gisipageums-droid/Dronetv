@@ -214,7 +214,7 @@ export default function JobBoardPageV2() {
 
   return (
     <div style={PAGE_BG} className="min-h-screen">
-      <div className="mt-16" />
+      <div className="mt-[108px]" />
 
       <section aria-label="Job listing statistics" className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
         {stats.map(([label, value, Icon]) => (

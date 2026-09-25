@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, X, Share2, Heart, Copy, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, X, Share2, Heart, Copy, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List, Plane, Map } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -28,6 +28,19 @@ const MEDAL_SRC: Record<string, string> = {
   silver: '/assets/medals/silver-medal.png',
   gold: '/assets/medals/gold-medal.png',
   platinum: '/assets/medals/platinum-medal.png',
+};
+
+// A card should never show a blank/empty image slot. When a company has no
+// real uploaded logo/photos (getIndustry()'s own keyword match on
+// name+description decides drone/gis/ai/all), fall back to a themed
+// icon-on-gradient tile instead of nothing - CSS/icon based (no network
+// image request) so it's always instant and never subject to the
+// image-hosting slowness affecting the Gallery pages.
+const CATEGORY_FALLBACK: Record<'drone' | 'gis' | 'ai' | 'all', { grad: string; Icon: typeof Plane; label: string }> = {
+  drone: { grad: 'from-sky-600 to-blue-900', Icon: Plane, label: 'Drone Industry' },
+  gis: { grad: 'from-emerald-600 to-green-900', Icon: Map, label: 'GIS Industry' },
+  ai: { grad: 'from-violet-600 to-purple-900', Icon: Cpu, label: 'AI Industry' },
+  all: { grad: 'from-slate-600 to-slate-800', Icon: Building2, label: 'Drone Industry' },
 };
 
 // Exact button class from main.ts's `const btn = '...'`.
@@ -305,6 +318,7 @@ const CompaniesPageV2: React.FC = () => {
 // invented, since no real field backs them).
 const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
   const ind = getIndustry(company);
+  const fallback = CATEGORY_FALLBACK[ind];
   const tier = getTier(company);
   const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
   const [imgErr, setImgErr] = useState(false);
@@ -317,9 +331,10 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
   // companyCard()'s own photo grid - real gallery photos scale to fill
   // that fixed box and crop to fit, never distorted, never a fake filler
   // image when a company has none (row just doesn't render then).
-  const photos = (company.galleryImages && company.galleryImages.length > 0)
+  const realPhotos = (company.galleryImages && company.galleryImages.length > 0)
     ? company.galleryImages.slice(0, 4)
     : [company.previewImage, company.heroImage].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).slice(0, 4).map(url => ({ url: url as string }));
+  const missingPhotoCount = Math.max(0, 4 - realPhotos.length);
 
   const sinceYear = company.yearsInBusiness ? (String(company.yearsInBusiness).match(/\d{4}/) || [null])[0] : null;
   const yearsEstablished = sinceYear ? String(new Date().getFullYear() - Number(sinceYear)) : null;
@@ -351,14 +366,19 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           text pill; Silver/Gold/Platinum use the real medal artwork at a
           fixed h-12 w-12 object-contain box, same as the reference. */}
       {tier ? (
-        <img src={MEDAL_SRC[tier]} alt={`${TIER_STYLE[tier].label} package`} title={TIER_STYLE[tier].label} className="absolute right-1 top-1 z-10 h-12 w-12 object-contain" />
+        <img src={MEDAL_SRC[tier]} alt={`${TIER_STYLE[tier].label} package`} title={TIER_STYLE[tier].label} className="absolute right-1 top-1 z-10 h-16 w-16 object-contain" />
       ) : (
         <span className="absolute right-2 top-2 z-10 rounded bg-[#dff0df] px-2 py-2 text-[10px] font-extrabold">LISTED</span>
       )}
 
-      <div className="flex min-h-[78px] items-start gap-2 pr-16">
+      <div className="flex min-h-[78px] items-start gap-2 pr-20">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-yellow-400 bg-slate-50 text-lg font-extrabold text-blue-600">
-          {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
+          {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" className="size-full object-cover" onError={() => setImgErr(true)} /> : (
+            <div className={`flex size-full flex-col items-center justify-center gap-0.5 bg-gradient-to-br ${fallback.grad} text-white`}>
+              <fallback.Icon className="size-5" />
+              <span className="text-[8px] font-extrabold leading-none">{getInitials(company.companyName)}</span>
+            </div>
+          )}
         </div>
         <div className="min-w-0">
           <h3 className="line-clamp-2 text-xs font-extrabold leading-tight">{company.companyName}</h3>
@@ -369,7 +389,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
 
       {/* Exact heart/share icon column position - star/rating dropped, no
           real rating field exists to back it (not fabricated). */}
-      <div className="absolute right-2 top-11 flex items-start justify-end gap-2 text-center">
+      <div className="absolute right-2 top-[70px] flex items-start justify-end gap-2 text-center">
         <div className="flex w-7 flex-col items-center">
           <button type="button" onClick={e => { e.stopPropagation(); onToggleSave?.(); }} aria-label="Save" className={`flex size-7 items-center justify-center ${saved ? 'text-red-600' : ''}`}><Heart className="size-5" fill={saved ? 'currentColor' : 'none'} /></button>
         </div>
@@ -386,11 +406,17 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
 
       {realTagline(company) && <p className="text-[9px] italic text-amber-800 line-clamp-1">&ldquo;{realTagline(company)}&rdquo;</p>}
 
-      {photos.length > 0 && (
-        <div className="grid grid-cols-4 gap-1">
-          {photos.map((p, i) => <img key={i} src={p.url} alt={`${company.companyName} ${i + 1}`} loading="lazy" className="h-12 w-full rounded border border-black object-cover" />)}
-        </div>
-      )}
+      {/* Always exactly 4 tiles - real photos first, filled out with a
+          themed fallback (never an empty slot) when a company has fewer
+          than 4 real photos uploaded. */}
+      <div className="grid grid-cols-4 gap-1">
+        {realPhotos.map((p, i) => <img key={i} src={p.url} alt={`${company.companyName} ${i + 1}`} loading="lazy" className="h-12 w-full rounded border border-black object-cover" />)}
+        {Array.from({ length: missingPhotoCount }).map((_, i) => (
+          <div key={`fb-${i}`} className={`flex h-12 w-full items-center justify-center rounded border border-black bg-gradient-to-br ${fallback.grad}`}>
+            <fallback.Icon className="size-4 text-white/85" />
+          </div>
+        ))}
+      </div>
 
       {statCells.length > 0 && (
         <div className="mt-auto grid border-y border-black/10 py-1 text-center" style={{ gridTemplateColumns: `repeat(${statCells.length}, 1fr)` }}>

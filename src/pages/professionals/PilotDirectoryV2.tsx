@@ -96,7 +96,7 @@ const PilotDirectoryPageV2: React.FC = () => {
 
   return (
     <div style={PAGE_BG} className="min-h-screen">
-      <div className="mt-16" />
+      <div className="mt-[108px]" />
 
       <section aria-label="Pilot directory statistics" className="flex min-h-[64px] flex-wrap items-center gap-3 bg-[#0c1220] px-3 py-2 text-white sm:px-6">
         <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/20 pr-2 sm:w-auto sm:min-w-[160px]">

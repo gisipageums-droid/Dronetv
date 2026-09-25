@@ -236,6 +236,7 @@ const PartnerBenefitsPage = lazy(() => import("./pages/partnerships/PartnerBenef
 const BecomePartnerPage = lazy(() => import("./pages/partnerships/BecomePartner"));
 const PartnershipsHubPage = lazy(() => import("./pages/partnerships/PartnershipsHub"));
 const PartnershipsHubPageV2 = lazy(() => import("./pages/partnerships/PartnershipsHubV2"));
+const PromotionalPackagesPageV2 = lazy(() => import("./pages/partnerships/PromotionalPackagesV2"));
 
 
 
@@ -381,6 +382,7 @@ const AppContent = () => {
           <Route path="/partnerships/education-partners" element={<EducationPartnersPage />} />
           <Route path="/partnerships/industry-players" element={<IndustryPlayersPage />} />
           <Route path="/advertising-plans" element={<PartnerBenefitsPage />} />
+          <Route path="/advertising-plans-v2" element={<PromotionalPackagesPageV2 />} />
           <Route path="/partnerships/become-a-partner" element={<BecomePartnerPage />} />
 
           {/* Tailwind redesign is now live at the real routes (approved) -

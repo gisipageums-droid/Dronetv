@@ -193,11 +193,14 @@ const ProfessionalsPageV2: React.FC = () => {
     <div className="min-h-screen" style={PAGE_BG}>
       {/* No page-local header - the app already renders a persistent global
           <Navigation/> (fixed, h-16) above every route; a page-local header
-          duplicated it and rendered hidden underneath it. mt-16 below
-          reserves exactly the real nav's height instead. */}
+          duplicated it and rendered hidden underneath it. This route also
+          falls under Navigation's "professionals" section, which adds its
+          own fixed secondary submenu bar (~44px) below the main navbar -
+          mt-[108px] reserves the real navbar + submenu height together, not
+          just the navbar alone. */}
 
       {/* STAT BAR */}
-      <section className="mt-16 flex min-h-[64px] flex-wrap items-center gap-3 bg-[#0c1220] px-3 py-2 text-white sm:px-6">
+      <section className="mt-[108px] flex min-h-[64px] flex-wrap items-center gap-3 bg-[#0c1220] px-3 py-2 text-white sm:px-6">
         <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/20 pr-2 sm:w-auto sm:min-w-[160px]">
           <Briefcase className="size-6 shrink-0 text-yellow-400" />
           <span className="flex flex-col">

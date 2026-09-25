@@ -98,7 +98,7 @@ const GalleryHubV2: React.FC = () => {
 
   return (
     <div style={PAGE_BG} className="min-h-screen">
-      <div className="mt-16" />
+      <div className="mt-[108px]" />
 
       <section aria-label="Gallery statistics" className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
         <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[150px]">
