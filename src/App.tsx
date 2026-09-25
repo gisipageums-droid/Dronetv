@@ -334,13 +334,28 @@ const AppContent = () => {
           <Route path="/media/market-intelligence-v2" element={<MarketIntelligencePageV2 />} />
           <Route path="/media/market-intelligence-v1" element={<MarketIntelligencePage />} />
           <Route path="/media/market-intelligence/:contentId" element={<MediaDetailPage contentType="market-intelligence" backPath="/media/market-intelligence" backLabel="Market Intelligence" externalLinkLabel="View Original Source" />} />
-          <Route path="/media/tech-trends" element={<TechTrendsPage />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
+          <Route path="/media/tech-trends" element={<TechTrendsPageV2 />} />
           <Route path="/media/tech-trends-v2" element={<TechTrendsPageV2 />} />
-          <Route path="/media/press-releases" element={<PressReleasesPage />} />
+          <Route path="/media/tech-trends-v1" element={<TechTrendsPage />} />
+          <Route path="/media/press-releases" element={<PressReleasesPageV2 />} />
           <Route path="/media/press-releases-v2" element={<PressReleasesPageV2 />} />
-          <Route path="/media/industry-reports" element={<IndustryReportsPage />} />
+          <Route path="/media/press-releases-v1" element={<PressReleasesPage />} />
+          <Route path="/media/industry-reports" element={<IndustryReportsPageV2 />} />
           <Route path="/media/industry-reports-v2" element={<IndustryReportsPageV2 />} />
+          <Route path="/media/industry-reports-v1" element={<IndustryReportsPage />} />
+          {/* Brand new page (no prior version existed) */}
+          <Route path="/media/drone-doctor" element={<DroneDoctorPageV2 />} />
           <Route path="/media/drone-doctor-v2" element={<DroneDoctorPageV2 />} />
+          {/* Gallery hub replaces the flat photo grid as the /gallery landing
+              page (approved); the flat grid stays live, unchanged, at
+              /media/gallery (which the hub's own "View Gallery" buttons
+              deep-link into via ?category=) and at /gallery-v1 as a
+              rollback. */}
+          <Route path="/gallery" element={<GalleryHubPageV2 />} />
+          <Route path="/gallery-v1" element={<GalleryPage />} />
           <Route path="/media/gallery" element={<GalleryPage />} />
           <Route path="/media/gallery-v2" element={<GalleryHubPageV2 />} />
 
@@ -399,7 +414,6 @@ const AppContent = () => {
           <Route path="/news" element={<NewsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/partner" element={<PartnerPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/legal" element={<LegalIndexPage />} />
           <Route path="/legal/:slug" element={<PolicyPage />} />

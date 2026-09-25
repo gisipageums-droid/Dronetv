@@ -86,6 +86,15 @@ const hubs: {
     countType: 'industry-report',
     countLabel: (n) => `${n} report${n === 1 ? '' : 's'} available`,
   },
+  {
+    to: '/media/drone-doctor',
+    icon: '🩺',
+    title: 'Drone Doctor',
+    desc: 'Troubleshooting help and guidance for common drone issues — technical support, compliance, maintenance.',
+    tags: ['Support', 'Guidance'],
+    countType: 'drone-doctor',
+    countLabel: (n) => `${n} help topic${n === 1 ? '' : 's'}`,
+  },
 ];
 
 export default function MediaHubPage() {
