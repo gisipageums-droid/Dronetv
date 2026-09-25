@@ -209,6 +209,7 @@ const MeetupsPage = lazy(() => import("./pages/events/Meetups"));
 const JobBoardPage = lazy(() => import("./pages/professionals/JobBoard"));
 const JobBoardPageV2 = lazy(() => import("./pages/professionals/JobBoardV2"));
 const PilotDirectoryPage = lazy(() => import("./pages/professionals/PilotDirectory"));
+const PilotDirectoryPageV2 = lazy(() => import("./pages/professionals/PilotDirectoryV2"));
 const CertificationsPage = lazy(() => import("./pages/professionals/Certifications"));
 const PortfolioPage = lazy(() => import("./pages/professionals/Portfolio"));
 const TrainingPage = lazy(() => import("./pages/professionals/Training"));
@@ -469,6 +470,7 @@ const AppContent = () => {
           <Route path="/professionals/job-board-v2" element={<JobBoardPageV2 />} />
           <Route path="/professionals/job-board-v1" element={<JobBoardPage />} />
           <Route path="/professionals/pilot-directory" element={<PilotDirectoryPage />} />
+          <Route path="/professionals/pilot-directory-v2" element={<PilotDirectoryPageV2 />} />
           <Route path="/professionals/certifications" element={<CertificationsPage />} />
           {/* This is the platform's own "About" content (company entity,
           packages, industry coverage), not a professionals-community page -

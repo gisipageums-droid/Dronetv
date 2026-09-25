@@ -31,7 +31,7 @@ const PAGE_BG: React.CSSProperties = {
 
 const BTN = 'rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold shadow-sm hover:border-amber-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500';
 
-interface Professional {
+export interface Professional {
   professionalId: string;
   fullName: string;
   professionalName: string;
@@ -61,8 +61,8 @@ interface Professional {
   [key: string]: any;
 }
 
-const AV_COLORS = ['#0B5CB5', '#22C55E', '#DC2626', '#6B2FB5', '#c05800', '#1a5a9a', '#3a6a1a', '#9a3a1a'];
-function avColor(name: string): string {
+export const AV_COLORS = ['#0B5CB5', '#22C55E', '#DC2626', '#6B2FB5', '#c05800', '#1a5a9a', '#3a6a1a', '#9a3a1a'];
+export function avColor(name: string): string {
   let h = 0;
   for (let i = 0; i < (name || '').length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
   return AV_COLORS[h % AV_COLORS.length];
@@ -70,11 +70,11 @@ function avColor(name: string): string {
 
 // `role` is what the real API actually populates - `categories` kept as a
 // fallback only, see the interface comment above.
-const getCategory = (p: Professional): string | undefined => p.role || p.categories?.[0];
+export const getCategory = (p: Professional): string | undefined => p.role || p.categories?.[0];
 // Real, computed "on platform since" year from createdAt/publishedDate -
 // third stat-row slot, standing in for the reference's fabricated
 // flight-hours count without inventing a number that doesn't exist.
-function memberSince(p: Professional): string | undefined {
+export function memberSince(p: Professional): string | undefined {
   const raw = p.createdAt || p.publishedDate;
   if (!raw) return undefined;
   const year = new Date(raw).getFullYear();
@@ -82,8 +82,8 @@ function memberSince(p: Professional): string | undefined {
 }
 // Deterministic per-category color, matching the reference's own varied
 // (not always-blue) label backgrounds.
-const CATEGORY_COLORS = ['#0878e7', '#16a34a', '#ea580c', '#7c3aed', '#0891b2', '#be123c', '#4d7c0f', '#0369a1'];
-function categoryColor(name: string): string {
+export const CATEGORY_COLORS = ['#0878e7', '#16a34a', '#ea580c', '#7c3aed', '#0891b2', '#be123c', '#4d7c0f', '#0369a1'];
+export function categoryColor(name: string): string {
   let h = 0;
   for (let i = 0; i < (name || '').length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
   return CATEGORY_COLORS[h % CATEGORY_COLORS.length];
@@ -400,7 +400,7 @@ const ProfessionalsPageV2: React.FC = () => {
 // field (see getCategory()) with a per-category color, matching the
 // reference's own varied label colors instead of one fixed blue. Card
 // shape, avatar overlay, heart button, buttons are copied class-for-class.
-const ProfessionalCardV2: React.FC<{ professional: Professional; onClick: () => void }> = ({ professional, onClick }) => {
+export const ProfessionalCardV2: React.FC<{ professional: Professional; onClick: () => void }> = ({ professional, onClick }) => {
   const displayName = professional.fullName || professional.professionalName;
   const bg = avColor(displayName || '');
   const [liked, setLiked] = useState(false);
