@@ -20,6 +20,7 @@ const CompaniesPage = lazy(() => import("./components/CompaniesPage"));
 const ProductsPage = lazy(() => import("./components/ProductsPage"));
 const ProductsPageV2 = lazy(() => import("./components/ProductsPageV2"));
 const EventsPage = lazy(() => import("./components/EventsPage"));
+const EventsPageV2 = lazy(() => import("./components/EventsPageV2"));
 const NewsPage = lazy(() => import("./components/NewsPage"));
 const AboutPage = lazy(() => import("./components/AboutPage"));
 const PartnerPage = lazy(() => import("./components/PartnerPage"));
@@ -344,6 +345,7 @@ const AppContent = () => {
           <Route path="/services-v2" element={<ServicesPageV2 />} />
           <Route path="/services-v1" element={<ServicesPage />} />
           <Route path="/events" element={<EventsPage />} />
+          <Route path="/events-v2" element={<EventsPageV2 />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/partner" element={<PartnerPage />} />
