@@ -469,8 +469,12 @@ const AppContent = () => {
           <Route path="/professionals/job-board" element={<JobBoardPageV2 />} />
           <Route path="/professionals/job-board-v2" element={<JobBoardPageV2 />} />
           <Route path="/professionals/job-board-v1" element={<JobBoardPage />} />
-          <Route path="/professionals/pilot-directory" element={<PilotDirectoryPage />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
+          <Route path="/professionals/pilot-directory" element={<PilotDirectoryPageV2 />} />
           <Route path="/professionals/pilot-directory-v2" element={<PilotDirectoryPageV2 />} />
+          <Route path="/professionals/pilot-directory-v1" element={<PilotDirectoryPage />} />
           <Route path="/professionals/certifications" element={<CertificationsPage />} />
           {/* This is the platform's own "About" content (company entity,
           packages, industry coverage), not a professionals-community page -
