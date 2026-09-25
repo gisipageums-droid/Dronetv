@@ -42,7 +42,7 @@ export type ContentType =
   | 'job' | 'training' | 'certification' | 'networking' | 'community'
   | 'applications' | 'manufacturer' | 'ai-company' | 'event-organizer'
   | 'education-partner' | 'industry-player'
-  | 'ad';
+  | 'ad' | 'drone-doctor';
 
 export async function fetchContent(type: ContentType, signal?: AbortSignal): Promise<MediaItem[]> {
   const res = await fetch(`${BASE}?type=${type}&isPublished=true`, { signal });

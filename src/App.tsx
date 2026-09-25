@@ -38,6 +38,7 @@ const ServiceDetailPage = lazy(() => import("./components/ServiceDetailPage"));
 import ScrollingFooter from "./components/ScrollingFooter";
 import AdsLoader from "./components/common/AdsLoader";
 const GalleryPage = lazy(() => import("./components/GalleryPage"));
+const GalleryHubPageV2 = lazy(() => import("./pages/media/GalleryHubV2"));
 import GalleryGlimpse from "./components/GalleryGlimpse";
 const SubApp = lazy(() => import("./components/webbuilder/src/App"));
 import OurPartners from "./components/Ourpartners";
@@ -197,8 +198,12 @@ const ImpactStoriesPageV2 = lazy(() => import("./pages/media/ImpactStoriesV2"));
 const MarketIntelligencePage = lazy(() => import("./pages/media/MarketIntelligence"));
 const MarketIntelligencePageV2 = lazy(() => import("./pages/media/MarketIntelligenceV2"));
 const TechTrendsPage = lazy(() => import("./pages/media/TechTrends"));
+const TechTrendsPageV2 = lazy(() => import("./pages/media/TechTrendsV2"));
 const PressReleasesPage = lazy(() => import("./pages/media/PressReleases"));
+const PressReleasesPageV2 = lazy(() => import("./pages/media/PressReleasesV2"));
 const IndustryReportsPage = lazy(() => import("./pages/media/IndustryReports"));
+const IndustryReportsPageV2 = lazy(() => import("./pages/media/IndustryReportsV2"));
+const DroneDoctorPageV2 = lazy(() => import("./pages/media/DroneDoctorV2"));
 const MediaHubPage = lazy(() => import("./pages/media/MediaHub"));
 const MediaDetailPage = lazy(() => import("./pages/media/MediaDetailPage"));
 
@@ -330,9 +335,14 @@ const AppContent = () => {
           <Route path="/media/market-intelligence-v1" element={<MarketIntelligencePage />} />
           <Route path="/media/market-intelligence/:contentId" element={<MediaDetailPage contentType="market-intelligence" backPath="/media/market-intelligence" backLabel="Market Intelligence" externalLinkLabel="View Original Source" />} />
           <Route path="/media/tech-trends" element={<TechTrendsPage />} />
+          <Route path="/media/tech-trends-v2" element={<TechTrendsPageV2 />} />
           <Route path="/media/press-releases" element={<PressReleasesPage />} />
+          <Route path="/media/press-releases-v2" element={<PressReleasesPageV2 />} />
           <Route path="/media/industry-reports" element={<IndustryReportsPage />} />
+          <Route path="/media/industry-reports-v2" element={<IndustryReportsPageV2 />} />
+          <Route path="/media/drone-doctor-v2" element={<DroneDoctorPageV2 />} />
           <Route path="/media/gallery" element={<GalleryPage />} />
+          <Route path="/media/gallery-v2" element={<GalleryHubPageV2 />} />
 
           {/* Events sub-routes — must be before dynamic /event/:name */}
           <Route path="/events/calendar" element={<EventCalendarPage />} />

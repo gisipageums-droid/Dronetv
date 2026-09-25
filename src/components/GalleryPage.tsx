@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Search, ChevronDown, X, ChevronLeft, ChevronRight, Download, Share2, Heart, Calendar, MapPin, Users, Plus, Upload, Tag, SlidersHorizontal } from 'lucide-react';
 import { fetchContent } from '../lib/mediaApi';
 import CompactHero from './common/CompactHero';
 
 const GalleryPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  // Pre-filter support for links from the new Gallery category hub
+  // (/media/gallery-v2 -> /media/gallery?category=X) - real categories
+  // only, same list this page already filters by.
+  const [searchParams] = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredImages, setFilteredImages] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
