@@ -207,6 +207,7 @@ const MeetupsPage = lazy(() => import("./pages/events/Meetups"));
 
 // Professionals sub-pages
 const JobBoardPage = lazy(() => import("./pages/professionals/JobBoard"));
+const JobBoardPageV2 = lazy(() => import("./pages/professionals/JobBoardV2"));
 const PilotDirectoryPage = lazy(() => import("./pages/professionals/PilotDirectory"));
 const CertificationsPage = lazy(() => import("./pages/professionals/Certifications"));
 const PortfolioPage = lazy(() => import("./pages/professionals/Portfolio"));
@@ -461,6 +462,7 @@ const AppContent = () => {
           <Route path="/professional/t1" element={<ProTemp1 />} />
           {/* Professionals sub-routes — must be before dynamic /:urlSlug? */}
           <Route path="/professionals/job-board" element={<JobBoardPage />} />
+          <Route path="/professionals/job-board-v2" element={<JobBoardPageV2 />} />
           <Route path="/professionals/pilot-directory" element={<PilotDirectoryPage />} />
           <Route path="/professionals/certifications" element={<CertificationsPage />} />
           {/* This is the platform's own "About" content (company entity,
