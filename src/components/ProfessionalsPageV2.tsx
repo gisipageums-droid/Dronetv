@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, ChevronDown, Filter, Eye, Send, Briefcase, Wrench, Heart, Box, ChevronLeft, ChevronRight, Grid3x3, List } from "lucide-react";
+import { Search, MapPin, ChevronDown, Filter, Eye, Send, Briefcase, Wrench, Heart, Box, ChevronLeft, ChevronRight, Grid3x3, List, CalendarClock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
@@ -71,6 +71,15 @@ function avColor(name: string): string {
 // `role` is what the real API actually populates - `categories` kept as a
 // fallback only, see the interface comment above.
 const getCategory = (p: Professional): string | undefined => p.role || p.categories?.[0];
+// Real, computed "on platform since" year from createdAt/publishedDate -
+// third stat-row slot, standing in for the reference's fabricated
+// flight-hours count without inventing a number that doesn't exist.
+function memberSince(p: Professional): string | undefined {
+  const raw = p.createdAt || p.publishedDate;
+  if (!raw) return undefined;
+  const year = new Date(raw).getFullYear();
+  return Number.isFinite(year) ? String(year) : undefined;
+}
 // Deterministic per-category color, matching the reference's own varied
 // (not always-blue) label backgrounds.
 const CATEGORY_COLORS = ['#0878e7', '#16a34a', '#ea580c', '#7c3aed', '#0891b2', '#be123c', '#4d7c0f', '#0369a1'];
@@ -396,45 +405,62 @@ const ProfessionalCardV2: React.FC<{ professional: Professional; onClick: () => 
   const bg = avColor(displayName || '');
   const [liked, setLiked] = useState(false);
   const category = getCategory(professional);
+  const since = memberSince(professional);
   return (
-    <article onClick={onClick} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-yellow-400 bg-[#f1ee8e] shadow-md transition-shadow hover:shadow-lg">
-      <div className="relative h-24 overflow-hidden">
+    <article onClick={onClick} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-lg">
+      <div className="relative h-44 shrink-0 overflow-hidden bg-slate-100">
         {professional.previewImage ? (
           <img src={professional.previewImage} alt={displayName} loading="lazy" className="h-full w-full object-cover object-center" />
         ) : (
           <div className="flex h-full w-full items-center justify-center" style={{ background: bg }}>
-            <span className="text-3xl font-bold uppercase text-white/70">{displayName?.[0] || '?'}</span>
+            <span className="text-5xl font-bold uppercase text-white/70">{displayName?.[0] || '?'}</span>
           </div>
         )}
-        {category && <span className="absolute left-2 top-2 rounded px-2 py-1 text-[9px] font-bold text-white" style={{ backgroundColor: categoryColor(category) }}>{category.toUpperCase()}</span>}
-        <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Like ${displayName}`} aria-pressed={liked} className={`absolute right-2 top-2 grid size-8 place-items-center rounded-full bg-white ${liked ? 'text-red-600' : 'text-red-500'}`}>
+        {category && (
+          <span className="absolute left-3 top-3 rounded px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white shadow" style={{ backgroundColor: categoryColor(category) }}>
+            {category}
+          </span>
+        )}
+        <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Like ${displayName}`} aria-pressed={liked} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
           <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
         </button>
       </div>
-      <div className="flex flex-1 flex-col gap-1.5 p-2">
-        <div className="flex items-center gap-2">
-          <div className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-white text-[10px] font-bold text-white" style={{ background: bg }}>
-            {professional.previewImage ? <img src={professional.previewImage} alt="" className="size-full object-cover" /> : (displayName?.[0] || '?')}
-          </div>
-          <div className="min-w-0">
-            <h3 className="truncate text-xs font-extrabold">{displayName}</h3>
-            {category && <p className="truncate text-[9px]">{category}</p>}
-          </div>
+
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <div className="min-w-0">
+          <h3 className="truncate text-base font-extrabold leading-tight text-slate-900">{displayName}</h3>
+          {category && <p className="truncate text-sm text-slate-500">{category}</p>}
         </div>
+
         {professional.location && professional.location !== "Location Not Specified" && (
-          <p className="flex items-center gap-1 text-[9px]"><MapPin className="size-3" /> {professional.location}</p>
+          <p className="flex items-center gap-1 text-xs text-slate-500"><MapPin className="size-3.5 shrink-0" /> {professional.location}</p>
         )}
 
-        <div className="grid grid-cols-2 gap-1 py-1">
-          <div className="flex min-w-0 items-start gap-1"><Box className="size-4 shrink-0" /><span className="min-w-0"><strong className="block truncate text-[9px]">{professional.skillsCount || 0}</strong><small className="block text-[7px]">Skills</small></span></div>
-          <div className="flex min-w-0 items-start gap-1"><Wrench className="size-4 shrink-0" /><span className="min-w-0"><strong className="block truncate text-[9px]">{professional.servicesCount || 0}</strong><small className="block text-[7px]">Services</small></span></div>
+        <div className="grid grid-cols-3 gap-2 border-y border-slate-100 py-2.5">
+          <div className="flex min-w-0 flex-col items-start gap-0.5">
+            <Box className="size-4 shrink-0 text-slate-400" />
+            <strong className="block truncate text-xs font-bold text-slate-900">{professional.skillsCount || 0}</strong>
+            <small className="block text-[10px] text-slate-500">Skills</small>
+          </div>
+          <div className="flex min-w-0 flex-col items-start gap-0.5">
+            <Wrench className="size-4 shrink-0 text-slate-400" />
+            <strong className="block truncate text-xs font-bold text-slate-900">{professional.servicesCount || 0}</strong>
+            <small className="block text-[10px] text-slate-500">Services</small>
+          </div>
+          {since && (
+            <div className="flex min-w-0 flex-col items-start gap-0.5">
+              <CalendarClock className="size-4 shrink-0 text-slate-400" />
+              <strong className="block truncate text-xs font-bold text-slate-900">{since}</strong>
+              <small className="block text-[10px] text-slate-500">Member Since</small>
+            </div>
+          )}
         </div>
 
-        <p className="line-clamp-2 min-h-6 text-[10px] leading-[14px]">{professional.professionalDescription || "No professional description."}</p>
+        <p className="line-clamp-2 min-h-9 text-xs leading-[18px] text-slate-600">{professional.professionalDescription || "No professional description."}</p>
 
-        <div className="mt-auto grid grid-cols-2 gap-2">
-          <button type="button" onClick={e => { e.stopPropagation(); onClick(); }} className="rounded border bg-white py-2 text-[10px] font-bold"><Eye className="mr-1 inline size-3" />View Profile</button>
-          <button type="button" onClick={e => { e.stopPropagation(); onClick(); }} className="rounded bg-red-600 py-1.5 text-[10px] font-bold text-white"><Send className="mr-1 inline size-3" />Connect</button>
+        <div className="mt-auto grid grid-cols-2 gap-2 pt-1">
+          <button type="button" onClick={e => { e.stopPropagation(); onClick(); }} className="rounded-lg border border-slate-300 bg-white py-2 text-xs font-bold text-slate-900"><Eye className="mr-1 inline size-3.5" />View Profile</button>
+          <button type="button" onClick={e => { e.stopPropagation(); onClick(); }} className="rounded-lg bg-red-600 py-2 text-xs font-bold text-white"><Send className="mr-1 inline size-3.5" />Connect</button>
         </div>
       </div>
     </article>
