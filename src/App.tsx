@@ -461,8 +461,13 @@ const AppContent = () => {
           <Route path="/professional/t2" element={<ProTemp2 />} />
           <Route path="/professional/t1" element={<ProTemp1 />} />
           {/* Professionals sub-routes — must be before dynamic /:urlSlug? */}
-          <Route path="/professionals/job-board" element={<JobBoardPage />} />
+          {/* Tailwind redesign shifted to the real route (approved), same
+              pattern as companies/professionals/products/services - old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
+          <Route path="/professionals/job-board" element={<JobBoardPageV2 />} />
           <Route path="/professionals/job-board-v2" element={<JobBoardPageV2 />} />
+          <Route path="/professionals/job-board-v1" element={<JobBoardPage />} />
           <Route path="/professionals/pilot-directory" element={<PilotDirectoryPage />} />
           <Route path="/professionals/certifications" element={<CertificationsPage />} />
           {/* This is the platform's own "About" content (company entity,
