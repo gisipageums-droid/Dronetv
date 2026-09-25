@@ -314,8 +314,12 @@ const AppContent = () => {
           <Route path="/media/video-spotlight" element={<VideoSpotlightPageV2 />} />
           <Route path="/media/video-spotlight-v2" element={<VideoSpotlightPageV2 />} />
           <Route path="/media/video-spotlight-v1" element={<VideoSpotlightPage />} />
-          <Route path="/media/impact-stories" element={<ImpactStoriesPage />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
+          <Route path="/media/impact-stories" element={<ImpactStoriesPageV2 />} />
           <Route path="/media/impact-stories-v2" element={<ImpactStoriesPageV2 />} />
+          <Route path="/media/impact-stories-v1" element={<ImpactStoriesPage />} />
           <Route path="/media/impact-stories/:contentId" element={<MediaDetailPage contentType="impact-story" backPath="/media/impact-stories" backLabel="Impact Stories" externalLinkLabel="Read Full Story" />} />
           <Route path="/media/market-intelligence" element={<MarketIntelligencePage />} />
           <Route path="/media/market-intelligence/:contentId" element={<MediaDetailPage contentType="market-intelligence" backPath="/media/market-intelligence" backLabel="Market Intelligence" externalLinkLabel="View Original Source" />} />
