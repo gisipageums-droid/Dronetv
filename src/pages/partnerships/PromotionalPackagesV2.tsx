@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
 import { Search, ChevronDown, Filter, Heart, Share2, Eye, Check, X as XIcon, Building2, Globe, ListChecks, Mail, Star, LayoutTemplate, Video, Crown, Users as UsersIcon, ShieldCheck, Layers, Mic, Camera, Film, Plane, FileText, Newspaper, Monitor, MessageCircle, Share as ShareIcon, PenTool, Radio } from 'lucide-react';
 
 // New page at /advertising-plans-v2, matching the reference infographic's
@@ -204,7 +205,9 @@ const PromotionalPackagesV2: React.FC = () => {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          <span className={`${BTN} hidden shrink-0 items-center gap-1 text-xs lg:flex`}>Package Type <ChevronDown className="size-4" /></span>
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ToolbarFilterDropdown label="Package Type" options={['All', 'Annual Plans', 'Add-On Services']} selected={packageType === 'All' ? [] : [packageType]} onToggle={v => setPackageType(v as typeof packageType)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search promotional packages</span>

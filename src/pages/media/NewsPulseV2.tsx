@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Share2, Newspaper, Tag, CalendarDays, Copy, Eye } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
 
 // Preview build at /media/news-pulse-v2 - same treatment as the other V2
 // pages: real data from the news CMS (contentType 'news'), nothing
@@ -55,6 +56,7 @@ const NewsPulseV2: React.FC = () => {
   const [perPage, setPerPage] = useState(12);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selSources, setSelSources] = useState<string[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,10 +66,13 @@ const NewsPulseV2: React.FC = () => {
   }, []);
 
   const categories = useMemo(() => Array.from(new Set(allNews.map(n => n.category).filter(Boolean))) as string[], [allNews]);
+  const topSources = useMemo(() => Array.from(new Set(allNews.map(n => n.source).filter(Boolean))) as string[], [allNews]);
+  const toggleSource = (v: string) => setSelSources(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]);
 
   const filtered = useMemo(() => {
     let list = allNews;
     if (category !== 'All') list = list.filter(n => n.category === category);
+    if (selSources.length) list = list.filter(n => selSources.includes(n.source || ''));
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(n => n.title.toLowerCase().includes(q) || n.description.toLowerCase().includes(q) || (n.source || '').toLowerCase().includes(q));
@@ -76,13 +81,13 @@ const NewsPulseV2: React.FC = () => {
       if (sortBy === 'oldest') return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
       return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
     });
-  }, [allNews, category, search, sortBy]);
+  }, [allNews, category, selSources, search, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [totalPages, page]);
   const first = (page - 1) * perPage;
   const visible = filtered.slice(first, first + perPage);
-  const resetFilters = () => { setCategory('All'); setSearch(''); setSortBy('newest'); setPage(1); };
+  const resetFilters = () => { setCategory('All'); setSelSources([]); setSearch(''); setSortBy('newest'); setPage(1); };
   const recentCount = allNews.filter(n => isRecent(n.createdAt)).length;
 
   if (loading) return (
@@ -117,9 +122,10 @@ const NewsPulseV2: React.FC = () => {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          {['Category', 'Date', 'Source'].map(label => (
-            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
-          ))}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ToolbarFilterDropdown label="Category" options={categories} selected={category === 'All' ? [] : [category]} onToggle={v => setCategory(v)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            {topSources.length > 0 && <ToolbarFilterDropdown label="Source" options={topSources} selected={selSources} onToggle={toggleSource} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />}
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search news</span>

@@ -5,6 +5,7 @@ import LoadingScreen from "./loadingscreen";
 import { EVENTS_API, LAMBDA } from "../lib/apiConfig";
 import { useUserAuth } from "./context/context";
 import { withInlineAds } from "./common/adCreatives";
+import ToolbarFilterDropdown from "./common/ToolbarFilterDropdown";
 
 // Preview build at /events-v2 - same treatment as Products/Services/Job
 // Board V2: real data from events-dashboard, nothing fabricated. The
@@ -113,6 +114,7 @@ const EventsPageV2: React.FC = () => {
   const [perPage, setPerPage] = useState(12);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dateFilter, setDateFilter] = useState<string[]>([]);
   const navigate = useNavigate();
   const { isLogin } = useUserAuth();
 
@@ -156,9 +158,17 @@ const EventsPageV2: React.FC = () => {
 
   const categories = useMemo(() => Array.from(new Set(allEvents.map(e => e.category).filter(Boolean))), [allEvents]);
 
+  const toggleDateFilter = (v: string) => setDateFilter(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]);
+
   const filtered = useMemo(() => {
     let list = allEvents;
     if (category !== 'All') list = list.filter(e => e.category === category);
+    if (dateFilter.length) list = list.filter(e => {
+      const tone = eventStatus(e.eventDate, e.eventTime)?.tone;
+      return (dateFilter.includes('Upcoming') && tone === 'upcoming')
+        || (dateFilter.includes('Live Now') && tone === 'live')
+        || (dateFilter.includes('Ended') && tone === 'ended');
+    });
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(e => e.name.toLowerCase().includes(q) || e.description.toLowerCase().includes(q) || e.location.toLowerCase().includes(q));
@@ -170,14 +180,14 @@ const EventsPageV2: React.FC = () => {
       if (sortBy === 'past') return db - da;
       return (Number.isFinite(da) ? da : Infinity) - (Number.isFinite(db) ? db : Infinity);
     });
-  }, [allEvents, category, search, sortBy]);
+  }, [allEvents, category, dateFilter, search, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [totalPages, page]);
   const first = (page - 1) * perPage;
   const visible = filtered.slice(first, first + perPage);
 
-  const resetFilters = () => { setCategory('All'); setSearch(''); setSortBy('upcoming'); setPage(1); };
+  const resetFilters = () => { setCategory('All'); setDateFilter([]); setSearch(''); setSortBy('upcoming'); setPage(1); };
 
   const goDetails = (e: EventItem) => {
     let slug = e.cleanUrl || e.name;
@@ -219,9 +229,10 @@ const EventsPageV2: React.FC = () => {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          {['Event Type', 'Date'].map(label => (
-            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
-          ))}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ToolbarFilterDropdown label="Event Type" options={categories} selected={category === 'All' ? [] : [category]} onToggle={v => setCategory(v)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            <ToolbarFilterDropdown label="Date" options={['Live Now', 'Upcoming', 'Ended']} selected={dateFilter} onToggle={toggleDateFilter} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search events</span>
@@ -249,6 +260,18 @@ const EventsPageV2: React.FC = () => {
               <div className="flex flex-wrap gap-2">
                 {['All', ...categories].map(cat => (
                   <button key={cat} type="button" onClick={() => { setCategory(cat); setPage(1); }} className={`rounded-full border px-3 py-1.5 text-[11px] capitalize ${category === cat ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white hover:border-yellow-500'}`}>{cat}</button>
+                ))}
+              </div>
+            </section>
+
+            <section className="mb-4 border-b border-slate-200 pb-3">
+              <h3 className="mb-3 text-xs font-extrabold">DATE</h3>
+              <div className="space-y-2">
+                {['Live Now', 'Upcoming', 'Ended'].map(v => (
+                  <label key={v} className="flex cursor-pointer items-center gap-2 text-xs">
+                    <input type="checkbox" checked={dateFilter.includes(v)} onChange={() => toggleDateFilter(v)} className="accent-amber-500" />
+                    {v}
+                  </label>
                 ))}
               </div>
             </section>

@@ -6,6 +6,7 @@ import { submitApplication, uploadResumeFile } from '../../lib/jobApplicationsAp
 import { useUserAuth } from '../../components/context/context';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail, AdDetailBanner } from '../../components/common/adCreatives';
+import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
 import { COMPANY_API, LAMBDA } from '../../lib/apiConfig';
 
 // Preview build at /professionals/job-board-v2 - same treatment as
@@ -232,9 +233,11 @@ export default function JobBoardPageV2() {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          {['Job Type', 'Category', 'New Listings'].map(label => (
-            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
-          ))}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            {topJobTypes.length > 0 && <ToolbarFilterDropdown label="Job Type" options={topJobTypes} selected={selTypes} onToggle={toggleType} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />}
+            <ToolbarFilterDropdown label="Category" options={categories} selected={category === 'All' ? [] : [category]} onToggle={v => setCategory(v)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            <ToolbarFilterDropdown label="New Listings" options={[`New this month (${newCount})`]} selected={newOnly ? [`New this month (${newCount})`] : []} onToggle={() => setNewOnly(v => !v)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search jobs</span>

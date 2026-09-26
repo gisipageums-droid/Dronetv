@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../../components/loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from "../../lib/apiConfig";
 import { withInlineAds } from "../../components/common/adCreatives";
+import ToolbarFilterDropdown from "../../components/common/ToolbarFilterDropdown";
 import { Professional, getCategory, ProfessionalCardV2 } from "../../components/ProfessionalsPageV2";
 
 // Preview build at /professionals/pilot-directory-v2 - same reference
@@ -123,9 +124,10 @@ const PilotDirectoryPageV2: React.FC = () => {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          {['Category', 'Location'].map(label => (
-            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
-          ))}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ToolbarFilterDropdown label="Category" options={categories.filter(c => c !== 'All')} selected={selectedCategory === 'All' ? [] : [selectedCategory]} onToggle={v => setSelectedCategory(v)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            {topLocations.length > 0 && <ToolbarFilterDropdown label="Location" options={topLocations} selected={selLocations} onToggle={toggleLocation} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />}
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search pilots</span>

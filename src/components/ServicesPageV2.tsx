@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
+import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
 
 // Preview build at /services-v2 - same treatment as ProductsPageV2: real
 // data from services/view, nothing fabricated. The real live ServicesPage
@@ -220,9 +221,12 @@ const ServicesPageV2: React.FC = () => {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          {['Category', 'Provider', 'New Launch', 'Featured'].map(label => (
-            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
-          ))}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ToolbarFilterDropdown label="Category" options={categories} selected={category === 'All' ? [] : [category]} onToggle={v => { setCategory(v); setPage(1); }} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            {topProviders.length > 0 && <ToolbarFilterDropdown label="Provider" options={topProviders} selected={selProviders} onToggle={toggleProvider} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />}
+            <ToolbarFilterDropdown label="New Launch" options={[`New Launch (${newLaunchCount})`]} selected={newLaunchOnly ? [`New Launch (${newLaunchCount})`] : []} onToggle={() => { setNewLaunchOnly(v => !v); setPage(1); }} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            <ToolbarFilterDropdown label="Featured" options={[`Featured (${featuredCount})`]} selected={featuredOnly ? [`Featured (${featuredCount})`] : []} onToggle={() => { setFeaturedOnly(v => !v); setPage(1); }} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search services</span>

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Eye, FileDown, BookOpen, Tag, CalendarDays } from 'lucide-react';
 import { MEDIA_API, LAMBDA } from '../../lib/apiConfig';
 import { MediaItem } from '../../lib/mediaApi';
+import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
 
 // Preview build at /media/magazine-v2 - same treatment as News Pulse V2:
 // real data from the magazine CMS (contentType 'magazine'), nothing
@@ -64,6 +65,7 @@ const MagazineV2: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [selSources, setSelSources] = useState<string[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,10 +77,13 @@ const MagazineV2: React.FC = () => {
   }, []);
 
   const categories = useMemo(() => Array.from(new Set(allArticles.map(a => a.category).filter(Boolean))) as string[], [allArticles]);
+  const topSources = useMemo(() => Array.from(new Set(allArticles.map(a => a.source).filter(Boolean))) as string[], [allArticles]);
+  const toggleSource = (v: string) => setSelSources(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]);
 
   const filtered = useMemo(() => {
     let list = allArticles;
     if (category !== 'All') list = list.filter(a => a.category === category);
+    if (selSources.length) list = list.filter(a => selSources.includes(a.source || ''));
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(a => a.title.toLowerCase().includes(q) || a.description.toLowerCase().includes(q) || (a.source || '').toLowerCase().includes(q));
@@ -87,13 +92,13 @@ const MagazineV2: React.FC = () => {
       if (sortBy === 'oldest') return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
       return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
     });
-  }, [allArticles, category, search, sortBy]);
+  }, [allArticles, category, selSources, search, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [totalPages, page]);
   const first = (page - 1) * perPage;
   const visible = filtered.slice(first, first + perPage);
-  const resetFilters = () => { setCategory('All'); setSearch(''); setSortBy('newest'); setPage(1); };
+  const resetFilters = () => { setCategory('All'); setSelSources([]); setSearch(''); setSortBy('newest'); setPage(1); };
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,9 +139,10 @@ const MagazineV2: React.FC = () => {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          {['Category', 'Source'].map(label => (
-            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
-          ))}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ToolbarFilterDropdown label="Category" options={categories} selected={category === 'All' ? [] : [category]} onToggle={v => setCategory(v)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            {topSources.length > 0 && <ToolbarFilterDropdown label="Source" options={topSources} selected={selSources} onToggle={toggleSource} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />}
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search magazine articles</span>

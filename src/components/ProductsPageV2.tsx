@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
+import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
 
 // Preview build at /products-v2 - same treatment as CompaniesPageV2 /
 // ProfessionalsPageV2: reference layout (ribbon badge, photo header, brand
@@ -235,9 +236,18 @@ const ProductsPageV2: React.FC = () => {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          {['Category', 'Brand', 'Price Range', 'New Launch', 'Featured'].map(label => (
-            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
-          ))}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ToolbarFilterDropdown label="Category" options={categories} selected={category === 'All' ? [] : [category]} onToggle={v => { setCategory(v); setPage(1); }} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            {topBrands.length > 0 && <ToolbarFilterDropdown label="Brand" options={topBrands} selected={selBrands} onToggle={toggleBrand} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />}
+            <ToolbarFilterDropdown label="Price Range" badgeCount={(minPrice ? 1 : 0) + (maxPrice ? 1 : 0)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`}>
+              <div className="flex items-center gap-2 p-1">
+                <input value={minPrice} onChange={e => { setMinPrice(e.target.value); setPage(1); }} type="number" placeholder="Min" className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-xs outline-none" />
+                <input value={maxPrice} onChange={e => { setMaxPrice(e.target.value); setPage(1); }} type="number" placeholder="Max" className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-xs outline-none" />
+              </div>
+            </ToolbarFilterDropdown>
+            <ToolbarFilterDropdown label="New Launch" options={[`New Launch (${newLaunchCount})`]} selected={newLaunchOnly ? [`New Launch (${newLaunchCount})`] : []} onToggle={() => { setNewLaunchOnly(v => !v); setPage(1); }} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            <ToolbarFilterDropdown label="Featured" options={[`Featured (${featuredCount})`]} selected={featuredOnly ? [`Featured (${featuredCount})`] : []} onToggle={() => { setFeaturedOnly(v => !v); setPage(1); }} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search products</span>

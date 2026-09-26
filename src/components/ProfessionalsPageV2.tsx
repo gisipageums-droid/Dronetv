@@ -5,23 +5,28 @@ import LoadingScreen from "./loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
 import { fetchContent } from '../lib/mediaApi';
 import { withInlineAds, AdSidebarRail } from './common/adCreatives';
+import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
 
 // Preview build at /professionals-v2 - Round 4: class-string-exact port of
 // the reference app's own isPro() branches (controls()/sidebar()/results())
 // from main.ts, run locally at http://127.0.0.1:5942/professionals during
-// review - not re-approximated from a screenshot. DGCA STATUS/EXPERIENCE/
-// SPECIALIZATION option names are generic drone-industry filter-facet
-// labels (not fabricated facts about any real person) and are rendered
-// exactly as the reference itself has them - genuinely matching, not
-// cutting a corner: the reference's own bind() never actually wires those
-// checkboxes into results()'s filtering either, so leaving them
-// click-toggleable-but-decorative here is faithful to the real reference
-// behaviour, not a shortcut. PROFESSIONAL CATEGORY and LOCATION use real
-// data instead of the reference's fictional lists, since that's readily
-// available and strictly more useful without changing how anything looks.
+// review - not re-approximated from a screenshot. PROFESSIONAL CATEGORY and
+// LOCATION use real data instead of the reference's fictional lists.
 // Card-level fields with zero real backing (flight hours, credential,
 // specialty, star rating, verified checkmark) stay dropped, never
 // fabricated - see ProfessionalCardV2 below.
+//
+// DGCA STATUS/EXPERIENCE (Flight Hours)/SPECIALIZATION/Certification/
+// Availability were originally kept as decorative-but-toggleable checkboxes
+// "matching the reference's own behaviour" (its bind() never wired them
+// into filtering either) - removed entirely (round 20260926, user feedback:
+// a filter control that visibly toggles but never changes results reads as
+// broken, not faithful). The professional API confirms no dgcaStatus/
+// flightHours/specialization/certification/availability field exists at
+// all (grepped the real dashboard-cards response) - there's nothing real
+// to filter by, so no filter control is shown for it, consistent with the
+// rest of this session's "don't fabricate a facet over data that doesn't
+// exist" rule.
 
 const PAGE_BG: React.CSSProperties = {
   backgroundColor: '#ffd84d',
@@ -100,10 +105,6 @@ const ProfessionalsPageV2: React.FC = () => {
   const [jobCount, setJobCount] = useState<number | null>(null);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [selLocations, setSelLocations] = useState<string[]>([]);
-  // DGCA STATUS/EXPERIENCE/SPECIALIZATION - decorative checkboxes matching
-  // the reference exactly (its own bind() never wires these into filtering
-  // either, only state.category/state.query - see file-top note).
-  const [decorativeChecks, setDecorativeChecks] = useState<Set<string>>(new Set());
   const professionalsPerPage = 12;
   const navigate = useNavigate();
 
@@ -170,16 +171,7 @@ const ProfessionalsPageV2: React.FC = () => {
   const activeFilters = (searchQuery ? 1 : 0) + (selectedCategory !== 'All' ? 1 : 0) + selLocations.length;
 
   const toggleLocation = (loc: string) => setSelLocations(p => p.includes(loc) ? p.filter(x => x !== loc) : [...p, loc]);
-  const toggleDecorative = (key: string) => setDecorativeChecks(prev => { const next = new Set(prev); next.has(key) ? next.delete(key) : next.add(key); return next; });
-  const resetFilters = () => { setSearchQuery(''); setSelectedCategory('All'); setSelLocations([]); setDecorativeChecks(new Set()); };
-
-  // sidebar()'s isPro() `groups` array - DGCA STATUS/EXPERIENCE (Flight
-  // Hours)/SPECIALIZATION, exact option labels from main.ts.
-  const decorativeGroups: [string, string[]][] = [
-    ['DGCA STATUS', ['DGCA Certified', 'Valid License', 'Medical Class II', 'RTR/Radio Certified']],
-    ['EXPERIENCE (Flight Hours)', ['0 - 50', '51 - 100', '101 - 500', '501 - 1000', '1000+']],
-    ['SPECIALIZATION', ['Aerial Survey', 'Mapping', 'Pilot Training', 'Inspection', 'Agriculture']],
-  ];
+  const resetFilters = () => { setSearchQuery(''); setSelectedCategory('All'); setSelLocations([]); };
 
   const goToProfile = (p: Professional) => {
     const slug = p.urlSlug || p.userName;
@@ -226,9 +218,10 @@ const ProfessionalsPageV2: React.FC = () => {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          {['Pilot / Trainer', 'DGCA Status', 'Location', 'Experience', 'Specialization', 'Certification', 'Availability'].map(label => (
-            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
-          ))}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ToolbarFilterDropdown label="Pilot / Trainer" options={categories.filter(c => c !== 'All')} selected={selectedCategory === 'All' ? [] : [selectedCategory]} onToggle={v => setSelectedCategory(v)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            {topLocations.length > 0 && <ToolbarFilterDropdown label="Location" options={topLocations} selected={selLocations} onToggle={toggleLocation} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />}
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search professionals</span>
@@ -257,19 +250,6 @@ const ProfessionalsPageV2: React.FC = () => {
               </div>
             </section>
 
-            {decorativeGroups.map(([title, options]) => (
-              <section key={title} className="mb-4 border-b border-slate-200 pb-3">
-                <h3 className="mb-3 text-xs font-extrabold">{title}</h3>
-                <div className="space-y-2">
-                  {options.map(option => (
-                    <label key={option} className="flex cursor-pointer items-center gap-2 text-xs">
-                      <input type="checkbox" checked={decorativeChecks.has(`${title}:${option}`)} onChange={() => toggleDecorative(`${title}:${option}`)} className="accent-amber-500" />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-              </section>
-            ))}
 
             {topLocations.length > 0 && (
               <section className="mb-4 border-b border-slate-200 pb-3">

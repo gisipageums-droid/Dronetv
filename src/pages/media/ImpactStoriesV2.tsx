@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Eye, Share2, Copy, Sparkles, Tag, MapPin } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
 
 // Preview build at /media/impact-stories-v2 - same treatment as News/
 // Magazine/Video V2: real data from the impact-story CMS, nothing
@@ -44,6 +45,7 @@ const ImpactStoriesV2: React.FC = () => {
   const [perPage, setPerPage] = useState(12);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selLocations, setSelLocations] = useState<string[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,10 +55,13 @@ const ImpactStoriesV2: React.FC = () => {
   }, []);
 
   const categories = useMemo(() => Array.from(new Set(allStories.map(s => s.category).filter(Boolean))) as string[], [allStories]);
+  const topLocations = useMemo(() => Array.from(new Set(allStories.map(s => s.location).filter(Boolean))) as string[], [allStories]);
+  const toggleLocation = (v: string) => setSelLocations(p => p.includes(v) ? p.filter(x => x !== v) : [...p, v]);
 
   const filtered = useMemo(() => {
     let list = allStories;
     if (category !== 'All') list = list.filter(s => s.category === category);
+    if (selLocations.length) list = list.filter(s => selLocations.includes(s.location || ''));
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(s => s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q) || (s.location || '').toLowerCase().includes(q));
@@ -66,13 +71,13 @@ const ImpactStoriesV2: React.FC = () => {
       if (sortBy === 'popular') return (b.views ?? 0) - (a.views ?? 0);
       return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
     });
-  }, [allStories, category, search, sortBy]);
+  }, [allStories, category, selLocations, search, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [totalPages, page]);
   const first = (page - 1) * perPage;
   const visible = filtered.slice(first, first + perPage);
-  const resetFilters = () => { setCategory('All'); setSearch(''); setSortBy('newest'); setPage(1); };
+  const resetFilters = () => { setCategory('All'); setSelLocations([]); setSearch(''); setSortBy('newest'); setPage(1); };
 
   if (loading) return (
     <div style={PAGE_BG} className="flex min-h-screen items-center justify-center">
@@ -107,9 +112,10 @@ const ImpactStoriesV2: React.FC = () => {
       <section style={PAGE_BG} className="flex flex-wrap items-center gap-2 px-3 py-3 sm:px-6">
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
           <button type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} flex shrink-0 items-center gap-1 text-xs lg:hidden`}>Filters <ChevronDown className="size-4" /></button>
-          {['Impact Category', 'Location'].map(label => (
-            <button key={label} type="button" onClick={() => setSidebarOpen(true)} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs lg:flex`}>{label} <ChevronDown className="size-4" /></button>
-          ))}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <ToolbarFilterDropdown label="Impact Category" options={categories} selected={category === 'All' ? [] : [category]} onToggle={v => setCategory(v)} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />
+            {topLocations.length > 0 && <ToolbarFilterDropdown label="Location" options={topLocations} selected={selLocations} onToggle={toggleLocation} buttonClassName={`${BTN} flex items-center gap-4 text-xs`} />}
+          </div>
         </div>
         <label className="flex h-10 w-full items-center overflow-hidden rounded-lg border border-slate-200 bg-white md:w-[min(100%,360px)]">
           <span className="sr-only">Search impact stories</span>
