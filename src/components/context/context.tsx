@@ -400,7 +400,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errBody = await response.json().catch(() => null);
+        throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
@@ -422,7 +423,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
-      toast.error("Failed to publish. Please try again.");
+      const detail = error instanceof Error ? error.message : "";
+      toast.error(detail ? `Failed to publish: ${detail}` : "Failed to publish. Please try again.");
     }
   }
 
@@ -456,7 +458,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errBody = await response.json().catch(() => null);
+        throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
@@ -476,7 +479,8 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
       setFinaleDataReview({});
     } catch (error) {
       console.error("Upload failed:", error);
-      toast.error("Failed to publish. Please try again.");
+      const detail = error instanceof Error ? error.message : "";
+      toast.error(detail ? `Failed to publish: ${detail}` : "Failed to publish. Please try again.");
     }
   }
 
