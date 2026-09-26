@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Eye, Send, Tag, Clock, CalendarDays, Building2, Wrench, Cpu, Bot, Briefcase, Star, X } from 'lucide-react';
+import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Heart, Eye, Send, Tag, Clock, CalendarDays, Building2, Wrench, Cpu, Bot, Briefcase, Star, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -100,7 +100,6 @@ const ServicesPageV2: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(12);
-  const [view, setView] = useState<'grid' | 'list'>('grid');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -208,12 +207,12 @@ const ServicesPageV2: React.FC = () => {
 
       <section aria-label="Service statistics" className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
         {stats.map(([label, value, Icon]) => (
-          <div key={label} className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px] 2xl:min-w-[150px]">
-            <Icon className="size-7 shrink-0 text-yellow-400" />
-            <span className="flex flex-col"><small className="text-[10px] leading-tight">{label}</small><strong className="text-lg leading-tight text-yellow-300">{value.toLocaleString('en-IN')}</strong></span>
+          <div key={label} className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px] 2xl:min-w-[150px]">
+            <Icon className="size-5 shrink-0 text-yellow-400 sm:size-7" />
+            <span className="flex flex-col"><small className="text-[10px] leading-tight">{label}</small><strong className="text-sm leading-tight text-yellow-300 sm:text-lg">{value.toLocaleString('en-IN')}</strong></span>
           </div>
         ))}
-        <div className="min-w-[220px] shrink-0 border-l border-yellow-500/25 pl-4">
+        <div className="min-w-0 shrink-0 sm:min-w-[220px] border-l border-yellow-500/25 pl-4">
           <strong className="block text-sm leading-tight text-yellow-300">India&rsquo;s #1 Drone|GIS|AI Marketplace</strong>
           <span className="block text-[11px] text-sky-300">Discover | Book | Enquire</span>
         </div>
@@ -297,10 +296,6 @@ const ServicesPageV2: React.FC = () => {
         <section className="min-w-0">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h1 className="text-base font-extrabold">Book Drone, GIS &amp; AI Services</h1>
-            <div className="flex gap-1">
-              <button type="button" onClick={() => setView('grid')} aria-label="Grid view" className={`${view === 'grid' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><Grid3x3 className="size-4" /></button>
-              <button type="button" onClick={() => setView('list')} aria-label="List view" className={`${view === 'list' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><List className="size-4" /></button>
-            </div>
           </div>
 
           <div className="mb-3 rounded-lg bg-white/70 px-3 py-2 text-[11.5px] text-amber-900">📦 Book via DroneTV — connect directly with providers. Send enquiries and get quotes.</div>
@@ -308,7 +303,7 @@ const ServicesPageV2: React.FC = () => {
           {visible.length === 0 ? (
             <p className="rounded-lg bg-white p-8 text-center">No services found.</p>
           ) : (
-            <div className={`grid gap-3 ${view === 'list' ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'}`}>
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {withInlineAds(visible, (s, i) => (
                 <ServiceCardV2 key={`${s.id}-${i}`} service={s} onView={() => goDetails(s)} onEnquire={() => goEnquire(s)} />
               ))}
