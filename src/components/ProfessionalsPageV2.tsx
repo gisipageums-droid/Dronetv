@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, MapPin, ChevronDown, Filter, Eye, Send, Briefcase, Wrench, Heart, Box, ChevronLeft, ChevronRight, Grid3x3, List, CalendarClock, X } from "lucide-react";
+import { Search, MapPin, ChevronDown, Filter, Eye, Send, Briefcase, Wrench, Heart, Box, ChevronLeft, ChevronRight, CalendarClock, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./loadingscreen";
 import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
@@ -104,7 +104,6 @@ const ProfessionalsPageV2: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [jobCount, setJobCount] = useState<number | null>(null);
-  const [view, setView] = useState<'grid' | 'list'>('grid');
   const [selLocations, setSelLocations] = useState<string[]>([]);
   const professionalsPerPage = 12;
   const navigate = useNavigate();
@@ -278,16 +277,12 @@ const ProfessionalsPageV2: React.FC = () => {
         <section className="min-w-0">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h1 className="text-base font-extrabold">DGCA Drone Pilots / Trainers</h1>
-            <div className="flex gap-1">
-              <button type="button" onClick={() => setView('grid')} aria-label="Grid view" className={`${view === 'grid' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><Grid3x3 className="size-4" /></button>
-              <button type="button" onClick={() => setView('list')} aria-label="List view" className={`${view === 'list' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><List className="size-4" /></button>
-            </div>
           </div>
 
           {currentProfessionals.length === 0 ? (
             <p className="rounded-lg bg-white p-8 text-center">No professionals found.</p>
           ) : (
-            <div className={`grid gap-3 ${view === 'list' ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'}`}>
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {currentProfessionals.map((p, idx) => (
                 <ProfessionalCardV2 key={`all-${p.professionalId}-${idx}`} professional={p} onClick={() => goToProfile(p)} />
               ))}

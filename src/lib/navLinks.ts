@@ -18,7 +18,6 @@ export const mediaItems: NavItem[] = [
   { path: "/media/tech-trends", label: "Tech Trends" },
   { path: "/media/press-releases", label: "Press Releases" },
   { path: "/media/industry-reports", label: "Industry Reports" },
-  { path: "/media/drone-doctor", label: "Drone Doctor" },
 ];
 
 export const eventsItems: NavItem[] = [

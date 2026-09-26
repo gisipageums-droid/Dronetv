@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { MapPin, Search, X, Briefcase, Plus, Paperclip, Tag, CalendarDays, ChevronDown, Filter, Grid3x3, List, Heart, Eye, Send, IndianRupee, Building2 } from 'lucide-react';
+import { MapPin, Search, X, Briefcase, Plus, Paperclip, Tag, CalendarDays, ChevronDown, Filter, Heart, Eye, Send, IndianRupee, Building2 } from 'lucide-react';
 import { fetchContent, fetchMyContent, createContent, MediaItem } from '../../lib/mediaApi';
 import { submitApplication, uploadResumeFile } from '../../lib/jobApplicationsApi';
 import { useUserAuth } from '../../components/context/context';
@@ -68,7 +68,6 @@ export default function JobBoardPageV2() {
   const [category, setCategory] = useState('All');
   const [selTypes, setSelTypes] = useState<string[]>([]);
   const [newOnly, setNewOnly] = useState(false);
-  const [view, setView] = useState<'grid' | 'list'>('grid');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [detailModal, setDetailModal] = useState<MediaItem | null>(null);
   const [applyModal, setApplyModal] = useState<{ open: boolean; item: MediaItem | null }>({ open: false, item: null });
@@ -220,12 +219,12 @@ export default function JobBoardPageV2() {
 
       <section aria-label="Job listing statistics" className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
         {stats.map(([label, value, Icon]) => (
-          <div key={label} className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px] 2xl:min-w-[150px]">
-            <Icon className="size-7 shrink-0 text-yellow-400" />
-            <span className="flex flex-col"><small className="text-[10px] leading-tight">{label}</small><strong className="text-lg leading-tight text-yellow-300">{value.toLocaleString('en-IN')}</strong></span>
+          <div key={label} className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px] 2xl:min-w-[150px]">
+            <Icon className="size-5 shrink-0 text-yellow-400 sm:size-7" />
+            <span className="flex flex-col"><small className="text-[10px] leading-tight">{label}</small><strong className="text-sm leading-tight text-yellow-300 sm:text-lg">{value.toLocaleString('en-IN')}</strong></span>
           </div>
         ))}
-        <div className="min-w-[220px] shrink-0 border-l border-yellow-500/25 pl-4">
+        <div className="min-w-0 shrink-0 sm:min-w-[220px] border-l border-yellow-500/25 pl-4">
           <strong className="block text-sm leading-tight text-yellow-300">India&rsquo;s #1 Drone|GIS|AI Job Board</strong>
           <span className="block text-[11px] text-sky-300">Rs.25K – Rs.1L+ monthly salary range</span>
         </div>
@@ -306,10 +305,6 @@ export default function JobBoardPageV2() {
           <div>
             <div className="mb-3 flex items-center justify-between gap-2">
               <h1 className="text-base font-extrabold">Drone, GIS &amp; AI Job Listings</h1>
-              <div className="flex gap-1">
-                <button type="button" onClick={() => setView('grid')} aria-label="Grid view" className={`${view === 'grid' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><Grid3x3 className="size-4" /></button>
-                <button type="button" onClick={() => setView('list')} aria-label="List view" className={`${view === 'list' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><List className="size-4" /></button>
-              </div>
             </div>
 
             {loading ? (
@@ -317,7 +312,7 @@ export default function JobBoardPageV2() {
             ) : filtered.length === 0 ? (
               <p className="rounded-lg bg-white p-8 text-center">No jobs found.</p>
             ) : (
-              <div className={`grid gap-3 ${view === 'list' ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'}`}>
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {withInlineAds(filtered, item => (
                   <JobCardV2 key={item.contentId} job={item} onView={() => setDetailModal(item)} onApply={() => openApply(item)} />
                 ))}
