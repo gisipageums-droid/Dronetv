@@ -4,11 +4,12 @@ import { Share2, Copy, Check } from 'lucide-react';
 
 // Real per-platform share links (WhatsApp/Facebook/LinkedIn all have
 // genuine public web share-intent URLs, opened in a new tab - not a
-// fabricated "share" that does nothing). Instagram has no public web
-// share-intent for an arbitrary external URL (no equivalent of
-// facebook.com/sharer or wa.me exists for IG) - handled honestly as
-// copy-link + open Instagram, the same real-world workaround every site
-// without Graph API business access uses, not pretending otherwise.
+// fabricated "share" that does nothing). Instagram deliberately dropped -
+// it has no public web share-intent for an arbitrary external URL (no
+// equivalent of facebook.com/sharer or wa.me exists for IG), and a
+// copy-link-then-open-the-app workaround isn't a real "share", so rather
+// than show a platform option that doesn't actually share anything, it's
+// left out entirely (user call, 20260926).
 // Portaled to document.body with fixed positioning (same reason as
 // ToolbarFilterDropdown - escapes ancestor overflow/stacking clipping).
 
@@ -69,14 +70,6 @@ const ShareMenu: React.FC<Props> = ({ url, title, buttonClassName, iconClassName
     { name: 'WhatsApp', color: '#25D366', action: () => openTab(`https://api.whatsapp.com/send?text=${encodeURIComponent(`${title} ${url}`)}`) },
     { name: 'Facebook', color: '#1877F2', action: () => openPopup(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`) },
     { name: 'LinkedIn', color: '#0A66C2', action: () => openPopup(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`) },
-    {
-      name: 'Instagram', color: '#E4405F', action: () => {
-        // No public web share-intent for IG exists - copy the link, then
-        // hand off to the app/site so the user can paste it themselves.
-        copyLink();
-        window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
-      },
-    },
   ];
 
   return (
