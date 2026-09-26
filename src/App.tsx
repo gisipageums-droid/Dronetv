@@ -38,7 +38,7 @@ const ServiceDetailPage = lazy(() => import("./components/ServiceDetailPage"));
 import ScrollingFooter from "./components/ScrollingFooter";
 import AdsLoader from "./components/common/AdsLoader";
 const GalleryPage = lazy(() => import("./components/GalleryPage"));
-const GalleryHubPageV2 = lazy(() => import("./pages/media/GalleryHubV2"));
+const GalleryPageV2 = lazy(() => import("./components/GalleryPageV2"));
 import GalleryGlimpse from "./components/GalleryGlimpse";
 const SubApp = lazy(() => import("./components/webbuilder/src/App"));
 import OurPartners from "./components/Ourpartners";
@@ -355,10 +355,16 @@ const AppContent = () => {
               /media/gallery (which the hub's own "View Gallery" buttons
               deep-link into via ?category=) and at /gallery-v1 as a
               rollback. */}
-          <Route path="/gallery" element={<GalleryHubPageV2 />} />
+          {/* Real card design applied directly onto the real gallery -
+              user explicitly said no separate hub/"View Gallery" button
+              step, the new card anatomy goes on the actual photo grid
+              itself. Old plain-card page kept at -v1 for rollback. */}
+          <Route path="/gallery" element={<GalleryPageV2 />} />
+          <Route path="/gallery-v2" element={<GalleryPageV2 />} />
           <Route path="/gallery-v1" element={<GalleryPage />} />
-          <Route path="/media/gallery" element={<GalleryPage />} />
-          <Route path="/media/gallery-v2" element={<GalleryHubPageV2 />} />
+          <Route path="/media/gallery" element={<GalleryPageV2 />} />
+          <Route path="/media/gallery-v2" element={<GalleryPageV2 />} />
+          <Route path="/media/gallery-v1" element={<GalleryPage />} />
 
           {/* Events sub-routes — must be before dynamic /event/:name */}
           <Route path="/events/calendar" element={<EventCalendarPage />} />
