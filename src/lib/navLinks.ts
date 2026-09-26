@@ -38,6 +38,15 @@ export const professionalsItems: NavItem[] = [
   { path: "/professionals/career-path", label: "Career Path" },
 ];
 
+export const contactItems: NavItem[] = [
+  { path: "/contact", label: "Contact Us" },
+  { path: "/media/drone-doctor", label: "Drone Doctor / Help Center" },
+  { path: "/faqs", label: "FAQs" },
+  { path: "/advertising-plans", label: "Advertise With Us" },
+  { path: "/contact?topic=report-issue", label: "Report an Issue / Feedback" },
+  { path: "/contact?topic=media-press", label: "Media & Press Inquiries" },
+];
+
 export const partnershipsItems: NavItem[] = [
   { path: "/partnerships/drone-manufacturers", label: "Drone Manufacturers" },
   { path: "/partnerships/ai-tech", label: "AI & Tech Companies" },

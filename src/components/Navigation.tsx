@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useUserAuth } from "./context/context";
 import { motion } from "motion/react";
-import { aboutItems, mediaItems, eventsItems, professionalsItems, partnershipsItems } from "../lib/navLinks";
+import { aboutItems, mediaItems, eventsItems, professionalsItems, partnershipsItems, contactItems } from "../lib/navLinks";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,6 +15,7 @@ const Navigation = () => {
   const [isPartnershipsOpen, setIsPartnershipsOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const [selectedLang, setSelectedLang] = useState("English");
 
   const { isLogin, isAdminLogin, setHaveAccount, user } = useUserAuth();
@@ -34,6 +35,7 @@ const Navigation = () => {
   const partnershipsRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -130,6 +132,7 @@ const Navigation = () => {
     setIsProfessionalsOpen(false);
     setIsPartnershipsOpen(false);
     setIsAboutOpen(false);
+    setIsContactOpen(false);
   };
 
   const chevron = (
@@ -161,6 +164,7 @@ const Navigation = () => {
     events:        { index: "/events",        label: "Events",        items: eventsItems },
     professionals: { index: "/professionals", label: "Professionals", items: professionalsItems },
     partnerships:  { index: "/partnerships",  label: "Partnerships",  items: partnershipsItems },
+    contact:       { index: "/contact",       label: "Contact",       items: contactItems },
   };
 
   const currentSection = (() => {
@@ -169,6 +173,7 @@ const Navigation = () => {
     if (location.pathname === "/events" || location.pathname.startsWith("/events/")) return "events";
     if (location.pathname === "/professionals" || location.pathname.startsWith("/professionals/")) return "professionals";
     if (location.pathname.startsWith("/partnerships") || location.pathname === "/partner") return "partnerships";
+    if (location.pathname === "/contact" || location.pathname === "/faqs") return "contact";
     return null;
   })();
 
@@ -353,11 +358,28 @@ const Navigation = () => {
               <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
             </Link>
 
-            {/* Contact */}
-            <Link to="/contact" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/contact" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
-              <span className="relative z-10">Contact</span>
-              <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-            </Link>
+            {/* Contact dropdown */}
+            <div className="relative" ref={contactRef}
+              onMouseEnter={() => { closeAllDropdowns(); setIsContactOpen(true); }}
+              onMouseLeave={() => setIsContactOpen(false)}
+            >
+              <motion.button
+                onClick={() => { closeAllDropdowns(); handleNavigation("/contact"); }}
+                className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-ink flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${location.pathname === "/contact" || location.pathname === "/faqs" ? "bg-ink/10" : ""}`}
+              >
+                <span className="relative z-10">Contact</span>
+                {chevron}
+                <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+              </motion.button>
+              <div className="absolute top-full left-0 h-1 w-full" />
+              {isContactOpen && (
+                <motion.div {...dropdownMotion} className={`${dropdownBase} min-w-[240px]`}>
+                  <div className="p-2 flex flex-col">
+                    {contactItems.map(i => navDropdownItem(i.path, i.label))}
+                  </div>
+                </motion.div>
+              )}
+            </div>
 
             {/* Account / Login */}
             {isLogin || isAdminLogin ? (
@@ -482,7 +504,11 @@ const Navigation = () => {
             ))}
 
             <Link to="/advertising-plans" className="block w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-ink-charcoal/10 text-ink">Advertising Plans</Link>
-            <Link to="/contact" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Contact</Link>
+
+            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Contact</p>
+            {contactItems.map(i => (
+              <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
+            ))}
 
             {isLogin || isAdminLogin ? (
               <>

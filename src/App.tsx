@@ -25,6 +25,7 @@ const NewsPage = lazy(() => import("./components/NewsPage"));
 const AboutPage = lazy(() => import("./components/AboutPage"));
 const PartnerPage = lazy(() => import("./components/PartnerPage"));
 const ContactPage = lazy(() => import("./components/ContactPage"));
+const FAQPage = lazy(() => import("./components/FAQPage"));
 const SearchPage = lazy(() => import("./components/SearchPage"));
 const LegalIndexPage = lazy(() => import("./components/legal/LegalIndexPage"));
 const PolicyPage = lazy(() => import("./components/legal/PolicyPage"));
@@ -427,6 +428,7 @@ const AppContent = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/partner" element={<PartnerPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/faqs" element={<FAQPage />} />
           <Route path="/legal" element={<LegalIndexPage />} />
           <Route path="/legal/:slug" element={<PolicyPage />} />
           {/* Back-compat: the two old standalone legal pages now live under /legal/* */}

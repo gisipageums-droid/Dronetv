@@ -19,6 +19,21 @@ import CompactHero from './common/CompactHero';
 const TOPIC_MESSAGE: Record<string, string> = {
   "list-rpto":
     "I run a DGCA-approved RPTO and would like to list it on DroneTv.in's Training section.\n\nRPTO name:\nDGCA approval number:\nLocation:\nWebsite (if any):\n\n(We'll follow up for a copy of your DGCA approval certificate.)",
+  "report-issue":
+    "[Report an Issue]\n\nPage/URL where this happened:\nWhat went wrong:\nWhat you expected instead:\n\n(Screenshots help — you can email them to bd@dronetv.in after submitting this.)",
+  "media-press":
+    "[Media & Press Inquiry]\n\nPublication/Organization:\nStory or coverage you're working on:\nWhat you need from us (interview, data, comment, images):\nDeadline (if any):",
+};
+
+const TOPIC_HEADING: Record<string, { title: string; subtitle: string }> = {
+  "report-issue": {
+    title: "Report an Issue",
+    subtitle: "Found a bug or something that doesn't look right? Tell us what happened and we'll look into it.",
+  },
+  "media-press": {
+    title: "Media & Press Inquiries",
+    subtitle: "Journalist or partner covering the drone industry? Reach our team directly for interviews, data, or comment.",
+  },
 };
 
 const ContactPage = () => {
@@ -26,6 +41,7 @@ const ContactPage = () => {
     typeof window !== "undefined"
       ? new URLSearchParams(window.location.search).get("topic") || ""
       : "";
+  const topicHeading = TOPIC_HEADING[topic];
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -72,7 +88,7 @@ const ContactPage = () => {
   ];
 
   return (
-    <div className="pt-20 min-h-screen bg-surface-main">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero
         title={<>Get In <span>Touch</span></>}
@@ -87,7 +103,8 @@ const ContactPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Contact Form */}
           <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm p-8">
-            <h2 className="text-xl font-bold text-ink mb-6">Send Us a Message</h2>
+            <h2 className="text-xl font-bold text-ink mb-1">{topicHeading ? topicHeading.title : "Send Us a Message"}</h2>
+            <p className="text-sm text-ink-caption mb-5">{topicHeading ? topicHeading.subtitle : "Have a question or need help? Fill out the form and our team will get back to you."}</p>
 
             {!isSubmitted ? (
               <form onSubmit={handleSubmit} className="space-y-5">
