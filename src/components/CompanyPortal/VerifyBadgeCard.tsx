@@ -9,7 +9,6 @@ import { Card, Btn } from "./ui";
 const FEE = 499;
 
 interface VerifyStatus {
-  badgeStatus: string;
   verificationFeePaid: boolean;
   readyToPay: boolean;
   missingLabels: string[];
@@ -39,9 +38,10 @@ export default function VerifyBadgeCard({
   useEffect(load, [publishedId]);
 
   if (loading || !status) return null;
-  // Once the badge is live — via this flow or the admin-reviewed path —
-  // this card's job is done. Never show it again.
-  if (status.badgeStatus === "SILVER") return null;
+  // Once the ₹499 fee is paid, this Verified checkmark is live - this
+  // card's job is done. Never show it again. (Verified is NOT the same as
+  // Silver/Gold/Platinum - those are separate paid package tiers.)
+  if (status.verificationFeePaid) return null;
 
   const handlePay = async () => {
     if (!PAYMENT_API) return;
