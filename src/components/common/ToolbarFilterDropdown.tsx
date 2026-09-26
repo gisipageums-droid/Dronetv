@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 
 // The V2 redesign's toolbar filter pills (Category/Sector/State/Package/...)
@@ -7,6 +8,12 @@ import { ChevronDown } from 'lucide-react';
 // desktop, clicking any of them visibly did nothing. This is a real
 // dropdown: it opens its own small popover of that filter's actual real
 // options, right under the button, closes on an outside click.
+//
+// Portaled to document.body and positioned with `fixed` coordinates
+// (not `absolute` inside the button's own wrapper) - every toolbar row
+// this renders into sits inside an `overflow-x-auto` scroll container for
+// the mobile pill strip, which silently clips a plain `absolute` popover
+// on desktop. Portaling escapes that entirely.
 
 interface Props {
   label: string;
@@ -20,22 +27,40 @@ interface Props {
 
 const ToolbarFilterDropdown: React.FC<Props> = ({ label, options, selected, onToggle, buttonClassName, badgeCount, children }) => {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const popRef = useRef<HTMLDivElement>(null);
+
+  const place = () => {
+    const r = btnRef.current?.getBoundingClientRect();
+    if (r) setCoords({ top: r.bottom + 4, left: r.left });
+  };
 
   useEffect(() => {
     if (!open) return;
-    const onClick = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    place();
+    const onClick = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (btnRef.current?.contains(t) || popRef.current?.contains(t)) return;
+      setOpen(false);
+    };
     document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
+    window.addEventListener('scroll', place, true);
+    window.addEventListener('resize', place);
+    return () => {
+      document.removeEventListener('mousedown', onClick);
+      window.removeEventListener('scroll', place, true);
+      window.removeEventListener('resize', place);
+    };
   }, [open]);
 
   return (
-    <div ref={ref} className="relative shrink-0">
-      <button type="button" onClick={() => setOpen(v => !v)} aria-expanded={open} className={buttonClassName}>
+    <>
+      <button ref={btnRef} type="button" onClick={() => setOpen(v => !v)} aria-expanded={open} className={buttonClassName}>
         {label}{(badgeCount ?? selected?.length ?? 0) > 0 ? ` (${badgeCount ?? selected?.length})` : ''} <ChevronDown className="size-4" />
       </button>
-      {open && (
-        <div className="absolute left-0 top-full z-30 mt-1 max-h-64 w-56 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 shadow-lg">
+      {open && createPortal(
+        <div ref={popRef} style={{ position: 'fixed', top: coords.top, left: coords.left, zIndex: 100000 }} className="max-h-64 w-56 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 shadow-lg">
           {children ? children : (
             !options || options.length === 0 ? (
               <p className="px-2 py-1.5 text-xs text-slate-400">No options yet</p>
@@ -46,9 +71,10 @@ const ToolbarFilterDropdown: React.FC<Props> = ({ label, options, selected, onTo
               </label>
             ))
           )}
-        </div>
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   );
 };
 
