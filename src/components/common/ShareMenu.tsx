@@ -27,9 +27,15 @@ const ShareMenu: React.FC<Props> = ({ url, title, buttonClassName, iconClassName
   const btnRef = useRef<HTMLButtonElement>(null);
   const popRef = useRef<HTMLDivElement>(null);
 
+  const POP_HEIGHT = 160; // approx rendered height, used to flip above when there's no room below
+
   const place = () => {
     const r = btnRef.current?.getBoundingClientRect();
-    if (r) setCoords({ top: r.bottom + 4, left: Math.min(r.left, window.innerWidth - 220) });
+    if (!r) return;
+    const left = Math.min(Math.max(r.left, 8), window.innerWidth - 220);
+    const fitsBelow = r.bottom + 4 + POP_HEIGHT <= window.innerHeight;
+    const top = fitsBelow ? r.bottom + 4 : Math.max(8, r.top - 4 - POP_HEIGHT);
+    setCoords({ top, left });
   };
 
   useEffect(() => {
@@ -78,7 +84,7 @@ const ShareMenu: React.FC<Props> = ({ url, title, buttonClassName, iconClassName
         <Share2 className={iconClassName ?? 'size-5'} />
       </button>
       {open && createPortal(
-        <div ref={popRef} onClick={e => e.stopPropagation()} style={{ position: 'fixed', top: coords.top, left: coords.left, zIndex: 100000 }} className="w-52 overflow-hidden rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg">
+        <div ref={popRef} onClick={e => e.stopPropagation()} style={{ position: 'fixed', top: coords.top, left: coords.left, zIndex: 100000000 }} className="w-52 overflow-hidden rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg">
           {platforms.map(p => (
             <button key={p.name} type="button" onClick={() => { p.action(); setOpen(false); }} className="flex w-full items-center gap-2.5 rounded px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50">
               <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: p.color }} />
