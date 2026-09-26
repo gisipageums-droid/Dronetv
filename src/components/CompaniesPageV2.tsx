@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Heart, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Heart, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List, X } from 'lucide-react';
 import ShareMenu from './common/ShareMenu';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
@@ -180,11 +180,12 @@ const CompaniesPageV2: React.FC = () => {
   allCompanies.forEach(c => { const st = extractState(c.location); if (st) stateCounts[st] = (stateCounts[st] || 0) + 1; });
   const topStates = [...states].sort((a, b) => (stateCounts[b] || 0) - (stateCounts[a] || 0)).slice(0, 5);
 
-  // Same [title, options] group shape as sidebar()'s `groups` array -
-  // INDUSTRY/PACKAGE/LOCATION/SERVICES, not the CATEGORY-pills+STATE-search
-  // layout an earlier round wrongly copied from a different upload.
+  // PACKAGE/LOCATION/SERVICES only - INDUSTRY dropped from here (user
+  // flagged on mobile, 20260926): the CATEGORY pill row above already
+  // filters by the exact same industry state, so this checkbox group was
+  // the identical filter shown a second time right underneath it in a
+  // different widget style, not a second real dimension.
   const groups: [string, string[], (s: string) => void, string[]][] = [
-    ['INDUSTRY', ['Drone', 'GIS', 'AI'], v => { setIndustry(v); setPage(1); }, industry === 'All' ? [] : [industry]],
     ['PACKAGE', ['Listed', 'Silver', 'Gold', 'Platinum'], togglePackage, selPackages],
     ['LOCATION', topStates, toggleState, selStates],
     ['SERVICES', ALL_SECTORS, toggleSector, selSectors],
@@ -240,11 +241,14 @@ const CompaniesPageV2: React.FC = () => {
 
       {/* main + sidebar() + results() - exact classes */}
       <main className="mx-auto grid max-w-[2100px] grid-cols-1 items-start gap-3 px-3 py-4 sm:px-6 lg:grid-cols-[255px_minmax(0,1fr)]">
-        <aside className={`${sidebarOpen ? 'fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4 lg:static lg:z-auto lg:bg-transparent lg:p-0' : 'hidden'} self-start lg:block`}>
+        <aside onClick={e => { if (e.target === e.currentTarget) setSidebarOpen(false); }} className={`${sidebarOpen ? 'fixed inset-0 z-50 overflow-y-auto bg-black/50 p-4 lg:static lg:z-auto lg:bg-transparent lg:p-0' : 'hidden'} self-start lg:block`}>
           <div className={sidebarOpen ? 'mx-auto max-w-sm rounded-xl border border-yellow-300 bg-[#fffef0] p-4 shadow-sm lg:mx-0 lg:max-w-none' : 'rounded-xl border border-yellow-300 bg-[#fffef0] p-4 shadow-sm'}>
             <div className="mb-4 flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
               <h2 className="flex items-center gap-2 text-lg font-extrabold"><Filter className="size-5 text-yellow-500" /> Filters</h2>
-              <button type="button" onClick={() => { resetFilters(); setSidebarOpen(false); }} className="text-xs font-bold text-blue-800">Clear All</button>
+              <div className="flex items-center gap-3">
+                <button type="button" onClick={() => { resetFilters(); setSidebarOpen(false); }} className="text-xs font-bold text-blue-800">Clear All</button>
+                <button type="button" onClick={() => setSidebarOpen(false)} aria-label="Close filters" className="lg:hidden"><X className="size-5 text-slate-500" /></button>
+              </div>
             </div>
 
             <section className="mb-4 border-b border-slate-200 pb-3">
