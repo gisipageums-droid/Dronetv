@@ -10,16 +10,22 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/images/image.png" />
   <link rel="apple-touch-icon" href="/images/image.png" />
   <link rel="shortcut icon" href="/images/image.png" />
-  <!-- Open Graph / link preview -->
+  <!-- Open Graph / link preview - this branch (dev) only ever deploys to
+       dev.dronetv.in (see CI/CD rule in CLAUDE.md), but the og:image/og:url
+       were hardcoded to the PRODUCTION domain (www.dronetv.in) - and that
+       exact image path is currently broken on production (returns an HTML
+       page instead of an image), so sharing any dev link produced no
+       preview image at all in WhatsApp/etc. Pointed at this branch's own
+       real domain, where the same file already serves correctly. -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.dronetv.in/" />
+  <meta property="og:url" content="https://dev.dronetv.in/" />
   <meta property="og:title" content="DroneTv.in — India's Drone, GIS & AI Ecosystem" />
   <meta property="og:description" content="Discover the Drone Ecosystem in one place with Dronetv.in. We showcase products and technologies of Drone, GIS and AI industries." />
-  <meta property="og:image" content="https://www.dronetv.in/images/dronetv-social-preview.png" />
+  <meta property="og:image" content="https://dev.dronetv.in/images/dronetv-social-preview.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="DroneTv.in — India's Drone, GIS & AI Ecosystem" />
   <meta name="twitter:description" content="Discover the Drone Ecosystem in one place with Dronetv.in. We showcase products and technologies of Drone, GIS and AI industries." />
-  <meta name="twitter:image" content="https://www.dronetv.in/images/dronetv-social-preview.png" />
+  <meta name="twitter:image" content="https://dev.dronetv.in/images/dronetv-social-preview.png" />
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
