@@ -381,8 +381,12 @@ const AppContent = () => {
           <Route path="/partnerships/event-organizers" element={<EventOrganizersPage />} />
           <Route path="/partnerships/education-partners" element={<EducationPartnersPage />} />
           <Route path="/partnerships/industry-players" element={<IndustryPlayersPage />} />
-          <Route path="/advertising-plans" element={<PartnerBenefitsPage />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
+          <Route path="/advertising-plans" element={<PromotionalPackagesPageV2 />} />
           <Route path="/advertising-plans-v2" element={<PromotionalPackagesPageV2 />} />
+          <Route path="/advertising-plans-v1" element={<PartnerBenefitsPage />} />
           <Route path="/partnerships/become-a-partner" element={<BecomePartnerPage />} />
 
           {/* Tailwind redesign is now live at the real routes (approved) -

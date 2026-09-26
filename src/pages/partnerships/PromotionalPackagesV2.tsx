@@ -268,7 +268,7 @@ const PromotionalPackagesV2: React.FC = () => {
           {resultCount === 0 && <p className="rounded-lg bg-white p-8 text-center text-sm text-slate-500">No promotional packages match your search.</p>}
 
           {packageType === 'All' && !search && (
-            <div className="mt-10 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div id="comparison" className="mt-10 overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
               <h2 className="flex items-center gap-2 px-4 pt-4 text-sm font-extrabold text-slate-900"><Star className="size-4 text-amber-600" /> Package Feature Comparison</h2>
               <table className="mt-3 w-full min-w-[640px] border-collapse text-left text-xs">
                 <thead>
@@ -353,7 +353,7 @@ const PackageCardV2: React.FC<{ pkg: Pkg; liked: boolean; onToggleLike: () => vo
       </ul>
 
       <div className="grid grid-cols-2 gap-2 p-4 pt-0">
-        <Link to="/advertising-plans" className="flex items-center justify-center rounded-lg border border-slate-300 bg-white py-2 text-xs font-bold text-slate-900"><Eye className="mr-1 inline size-3.5" />View Details</Link>
+        <a href="#comparison" className="flex items-center justify-center rounded-lg border border-slate-300 bg-white py-2 text-xs font-bold text-slate-900"><Eye className="mr-1 inline size-3.5" />View Details</a>
         <Link to="/partnerships/become-a-partner" className="flex items-center justify-center rounded-lg bg-amber-500 py-2 text-xs font-bold text-slate-900"><Share2 className="mr-1 inline size-3.5" />Choose {pkg.name}</Link>
       </div>
     </article>
