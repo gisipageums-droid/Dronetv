@@ -63,7 +63,7 @@ export default function Dashboard() {
     <div>
       <PageHeader title="Dashboard" sub={`Welcome back, ${company.companyName}`} />
 
-      <VerifyBadgeCard publishedId={company.publishedId} onVerified={() => setCompany({ ...company, badgeStatus: "SILVER" })} />
+      <VerifyBadgeCard publishedId={company.publishedId} onVerified={() => setCompany({ ...company, verificationFeePaid: true })} />
 
       <KpiRow>
         <KpiCard label="Profile Views" value={(company.profileViews ?? 0).toLocaleString("en-IN")} accent="yellow" />
