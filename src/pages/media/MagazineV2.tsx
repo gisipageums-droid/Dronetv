@@ -4,6 +4,7 @@ import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, 
 import { MEDIA_API, LAMBDA } from '../../lib/apiConfig';
 import { MediaItem } from '../../lib/mediaApi';
 import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
+import ShareMenu from '../../components/common/ShareMenu';
 
 // Preview build at /media/magazine-v2 - same treatment as News Pulse V2:
 // real data from the magazine CMS (contentType 'magazine'), nothing
@@ -320,9 +321,12 @@ const MagazineCardV2: React.FC<{ item: MediaItem; onView: () => void }> = ({ ite
         )}
         {item.category && <span className="absolute left-3 top-3 rounded px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white shadow" style={{ backgroundColor: categoryColor(item.category) }}>{item.category}</span>}
         {item.date && <span className="absolute right-3 top-3 rounded bg-white/90 px-2 py-1 text-[11px] font-bold text-slate-700 shadow">{item.date}</span>}
-        <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${item.title}`} aria-pressed={liked} className={`absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
-          <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
-        </button>
+        <div className="absolute bottom-3 right-3 flex items-center gap-2">
+          <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${item.title}`} aria-pressed={liked} className={`grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
+            <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
+          </button>
+          <ShareMenu url={`${window.location.origin}/media/magazine/${item.contentId}`} title={item.title} buttonClassName="grid size-9 place-items-center rounded-full bg-white text-slate-600 shadow" iconClassName="size-4" />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">

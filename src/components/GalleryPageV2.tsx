@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, ChevronDown, Filter, X, ChevronLeft, ChevronRight, Download, Share2, Heart, Calendar, MapPin, Users, Plus, Upload, Tag, Eye, Camera, Grid3x3, List } from 'lucide-react';
+import { Search, ChevronDown, Filter, X, ChevronLeft, ChevronRight, Download, Heart, Calendar, MapPin, Users, Plus, Upload, Tag, Eye, Camera, Grid3x3, List } from 'lucide-react';
 import { fetchContent } from '../lib/mediaApi';
 import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
+import ShareMenu from './common/ShareMenu';
 
 // Redesign of the real Gallery (was GalleryPage.tsx, plain white-card
 // layout) into this session's established card anatomy (gold dotted
@@ -216,15 +217,6 @@ const GalleryPageV2: React.FC = () => {
       document.body.removeChild(a);
     } catch {
       window.open(selectedImage.src, '_blank');
-    }
-  };
-
-  const handleShare = async () => {
-    if (!selectedImage) return;
-    if (navigator.share) {
-      try { await navigator.share({ title: selectedImage.title, text: selectedImage.description, url: window.location.href }); } catch { /* cancelled */ }
-    } else {
-      navigator.clipboard.writeText(window.location.href).catch(() => {});
     }
   };
 
@@ -499,7 +491,7 @@ const GalleryPageV2: React.FC = () => {
               </div>
               <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
                 <button onClick={() => setIsLiked(!isLiked)} className={`rounded-full p-2 transition-all sm:p-3 ${isLiked ? 'bg-red-600 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}><Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${isLiked ? 'fill-current' : ''}`} /></button>
-                <button onClick={handleShare} className="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3"><Share2 className="h-4 w-4 sm:h-5 sm:w-5" /></button>
+                <ShareMenu url={window.location.href} title={selectedImage.title} buttonClassName="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3" iconClassName="h-4 w-4 sm:h-5 sm:w-5" />
                 <button onClick={handleDownload} className="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3"><Download className="h-4 w-4 sm:h-5 sm:w-5" /></button>
               </div>
             </div>

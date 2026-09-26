@@ -7,6 +7,7 @@ import { useUserAuth } from '../../components/context/context';
 import ContentCard from '../../components/common/ContentCard';
 import { withInlineAds, AdSidebarRail, AdDetailBanner } from '../../components/common/adCreatives';
 import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
+import ShareMenu from '../../components/common/ShareMenu';
 import { COMPANY_API, LAMBDA } from '../../lib/apiConfig';
 
 // Preview build at /professionals/job-board-v2 - same treatment as
@@ -598,9 +599,15 @@ const JobCardV2: React.FC<{ job: MediaItem; onView: () => void; onApply: () => v
           <div className="flex h-full w-full items-center justify-center text-5xl">{icon}</div>
         )}
         {isNew && <span className="absolute left-3 top-3 rounded bg-red-600 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white shadow">New</span>}
-        <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${job.title}`} aria-pressed={liked} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
-          <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
-        </button>
+        <div className="absolute right-3 top-3 flex flex-col items-center gap-2">
+          <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${job.title}`} aria-pressed={liked} className={`grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
+            <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
+          </button>
+          {/* No dedicated per-job route exists (jobs open in a modal, not a
+              URL) - shares the real Job Board page itself rather than
+              fabricating a deep link that wouldn't resolve to this job. */}
+          <ShareMenu url={`${window.location.origin}/professionals/job-board`} title={job.title} buttonClassName="grid size-9 place-items-center rounded-full bg-white text-slate-600 shadow" iconClassName="size-4" />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, X, Share2, Heart, Copy, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Heart, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List } from 'lucide-react';
+import ShareMenu from './common/ShareMenu';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -343,7 +344,6 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
   const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
   const [imgErr, setImgErr] = useState(false);
   const [optedOut, setOptedOut] = useState(false);
-  const [shareOpen, setShareOpen] = useState(false);
   const detectedSectors = getSectors(company);
   const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
 
@@ -408,7 +408,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
         <div className="flex w-7 flex-col items-center">
           <button type="button" onClick={e => { e.stopPropagation(); onToggleSave?.(); }} aria-label="Save" className={`flex size-7 items-center justify-center ${saved ? 'text-red-600' : ''}`}><Heart className="size-5" fill={saved ? 'currentColor' : 'none'} /></button>
         </div>
-        <button type="button" onClick={e => { e.stopPropagation(); setShareOpen(true); }} aria-label="Share" className="flex size-7 items-center justify-center"><Share2 className="size-5" /></button>
+        <ShareMenu url={`${window.location.origin}/s/${company.urlSlug || company.publishedId}`} title={company.companyName} />
       </div>
 
       <div className="flex flex-wrap gap-1">
@@ -447,29 +447,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
         <button type="button" onClick={e => { e.stopPropagation(); onEnquire(); }} className="rounded bg-red-600 py-1.5 text-[10px] font-bold text-white"><Send className="mr-1 inline size-3" />Enquire Now</button>
       </div>
 
-      {shareOpen && <ShareOverlay company={company} onClose={() => setShareOpen(false)} />}
     </article>
-  );
-};
-
-const ShareOverlay: React.FC<{ company: Company; onClose: () => void }> = ({ company, onClose }) => {
-  const [copied, setCopied] = useState(false);
-  const shareUrl = `${window.location.origin}/s/${company.urlSlug || company.publishedId}`;
-  const handleCopy = () => { navigator.clipboard?.writeText(shareUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }).catch(() => {}); };
-  const handleNativeShare = () => { if (navigator.share) navigator.share({ title: company.companyName, url: shareUrl }).catch(() => {}); else handleCopy(); };
-  return (
-    <div onClick={e => { e.stopPropagation(); onClose(); }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-5">
-      <div onClick={e => e.stopPropagation()} className="w-full max-w-xs rounded-xl bg-white p-4 shadow-2xl">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-extrabold text-slate-900">Share {company.companyName}</h3>
-          <button onClick={onClose}><X className="size-4 text-slate-400" /></button>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={handleCopy} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-xs font-bold"><Copy className="size-3.5" /> {copied ? 'Copied!' : 'Copy Link'}</button>
-          <button onClick={handleNativeShare} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-900 py-2 text-xs font-bold text-white"><Share2 className="size-3.5" /> Share</button>
-        </div>
-      </div>
-    </div>
   );
 };
 

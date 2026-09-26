@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Play, Eye, Share2, Copy, Video as VideoIcon, Tag } from 'lucide-react';
+import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Play, Eye, Video as VideoIcon, Tag } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
+import ShareMenu from '../../components/common/ShareMenu';
 
 // Preview build at /media/video-spotlight-v2 - same treatment as News
 // Pulse / Magazine V2: real data from the video CMS (contentType 'video'),
@@ -214,7 +215,6 @@ const VideoSpotlightV2: React.FC = () => {
 const VideoCardV2: React.FC<{ item: MediaItem }> = ({ item }) => {
   const [playing, setPlaying] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [imgErr, setImgErr] = useState(false);
   const embedUrl = item.videoUrl ? getYoutubeEmbed(item.videoUrl) : null;
   const thumb = item.imageUrl || (item.videoUrl ? getYoutubeThumbnail(item.videoUrl) : null);
@@ -225,11 +225,6 @@ const VideoCardV2: React.FC<{ item: MediaItem }> = ({ item }) => {
     if (embedUrl) setPlaying(true);
     else if (item.externalLink) window.open(item.externalLink, '_blank', 'noopener,noreferrer');
   };
-  const handleShare = () => {
-    const url = item.externalLink || window.location.href;
-    navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1800); }).catch(() => {});
-  };
-
   return (
     <article className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-lg">
       <div className="relative aspect-video shrink-0 overflow-hidden bg-slate-900">
@@ -268,9 +263,7 @@ const VideoCardV2: React.FC<{ item: MediaItem }> = ({ item }) => {
             <span className="flex items-center gap-1 text-xs font-semibold text-slate-500" title="Views">
               <Eye className="size-3.5 shrink-0" />{fmtCount(item.views ?? 0)}
             </span>
-            <button type="button" onClick={handleShare} aria-label="Copy video link" className="flex shrink-0 items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700">
-              {copied ? <Copy className="size-3.5" /> : <Share2 className="size-3.5" />}
-            </button>
+            <ShareMenu url={item.externalLink || window.location.href} title={item.title} buttonClassName="flex shrink-0 items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700" iconClassName="size-3.5" />
           </div>
           <button type="button" onClick={handleWatch} className="flex shrink-0 items-center rounded-lg bg-yellow-400 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-yellow-300">
             Watch Now →

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
+import ShareMenu from '../../components/common/ShareMenu';
 import { Search, ChevronDown, Filter, Heart, Share2, Eye, Check, X as XIcon, Building2, Globe, ListChecks, Mail, Star, LayoutTemplate, Video, Crown, Users as UsersIcon, ShieldCheck, Layers, Mic, Camera, Film, Plane, FileText, Newspaper, Monitor, MessageCircle, Share as ShareIcon, PenTool, Radio } from 'lucide-react';
 
 // New page at /advertising-plans-v2, matching the reference infographic's
@@ -320,9 +321,12 @@ const PackageCardV2: React.FC<{ pkg: Pkg; liked: boolean; onToggleLike: () => vo
       {pkg.ribbon && (
         <span className="absolute left-3 top-3 z-10 rounded px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white shadow" style={{ backgroundColor: pkg.ribbonColor }}>{pkg.ribbon}</span>
       )}
-      <button type="button" onClick={onToggleLike} aria-label={`Save ${pkg.name}`} aria-pressed={liked} className={`absolute right-3 top-3 z-10 grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
-        <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
-      </button>
+      <div className="absolute right-3 top-3 z-10 flex flex-col items-center gap-2">
+        <button type="button" onClick={onToggleLike} aria-label={`Save ${pkg.name}`} aria-pressed={liked} className={`grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
+          <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
+        </button>
+        <ShareMenu url={`${window.location.origin}/advertising-plans`} title={`${pkg.name} - DroneTv Promotional Package`} buttonClassName="grid size-9 place-items-center rounded-full bg-white text-slate-600 shadow" iconClassName="size-4" />
+      </div>
 
       <div className="flex flex-col gap-1 bg-slate-900 px-5 pb-5 pt-14">
         <h3 className="text-2xl font-extrabold leading-tight text-white">{pkg.name}</h3>

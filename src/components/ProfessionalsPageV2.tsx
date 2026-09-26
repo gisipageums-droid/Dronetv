@@ -6,6 +6,7 @@ import { PROFESSIONAL_API, LAMBDA } from '../lib/apiConfig';
 import { fetchContent } from '../lib/mediaApi';
 import { withInlineAds, AdSidebarRail } from './common/adCreatives';
 import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
+import ShareMenu from './common/ShareMenu';
 
 // Preview build at /professionals-v2 - Round 4: class-string-exact port of
 // the reference app's own isPro() branches (controls()/sidebar()/results())
@@ -404,9 +405,12 @@ export const ProfessionalCardV2: React.FC<{ professional: Professional; onClick:
             {category}
           </span>
         )}
-        <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Like ${displayName}`} aria-pressed={liked} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
-          <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
-        </button>
+        <div className="absolute right-3 top-3 flex flex-col items-center gap-2">
+          <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Like ${displayName}`} aria-pressed={liked} className={`grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
+            <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
+          </button>
+          <ShareMenu url={`${window.location.origin}${professional.templateSelection === 'template-2' ? '/professionals/' : '/professional/'}${professional.urlSlug || professional.userName}`} title={displayName || 'Professional'} buttonClassName="grid size-9 place-items-center rounded-full bg-white text-slate-600 shadow" iconClassName="size-4" />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">

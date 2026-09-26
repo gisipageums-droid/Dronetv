@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Eye, Share2, Copy, Stethoscope, Tag } from 'lucide-react';
+import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Grid3x3, List, Heart, Eye, Stethoscope, Tag } from 'lucide-react';
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
+import ShareMenu from '../../components/common/ShareMenu';
 
 // Preview build at /media/drone-doctor-v2 - a BRAND NEW page (no live
 // equivalent existed before this - grepped the whole codebase, confirmed).
@@ -192,15 +193,8 @@ const DroneDoctorV2: React.FC = () => {
 const HelpCardV2: React.FC<{ item: MediaItem; onView: () => void }> = ({ item, onView }) => {
   const [imgErr, setImgErr] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [copied, setCopied] = useState(false);
   const showImg = item.imageUrl && !imgErr;
   const tags = (item.tags || []).slice(0, 3);
-
-  const handleShare = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const url = `${window.location.origin}/media/drone-doctor/${item.contentId}`;
-    navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1800); }).catch(() => {});
-  };
 
   return (
     <article onClick={onView} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-lg">
@@ -231,9 +225,7 @@ const HelpCardV2: React.FC<{ item: MediaItem; onView: () => void }> = ({ item, o
             <span className="flex items-center gap-1 text-xs font-semibold text-slate-500" title="Views">
               <Eye className="size-3.5 shrink-0" />{fmtCount(item.views ?? 0)}
             </span>
-            <button type="button" onClick={handleShare} aria-label="Copy link" className="flex shrink-0 items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700">
-              {copied ? <Copy className="size-3.5" /> : <Share2 className="size-3.5" />}
-            </button>
+            <ShareMenu url={`${window.location.origin}/media/drone-doctor/${item.contentId}`} title={item.title} buttonClassName="flex shrink-0 items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700" iconClassName="size-3.5" />
           </div>
           <Link to={`/media/drone-doctor/${item.contentId}`} state={{ item }} onClick={e => e.stopPropagation()} className="flex shrink-0 items-center rounded-lg bg-yellow-400 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-yellow-300">
             Get Help →

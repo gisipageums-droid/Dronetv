@@ -6,6 +6,7 @@ import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
 import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
+import ShareMenu from './common/ShareMenu';
 
 // Preview build at /products-v2 - same treatment as CompaniesPageV2 /
 // ProfessionalsPageV2: reference layout (ribbon badge, photo header, brand
@@ -392,9 +393,12 @@ const ProductCardV2: React.FC<{ product: Product; onView: () => void; onEnquire:
           <div className="flex h-full w-full items-center justify-center text-5xl">{icon}</div>
         )}
         {badge && <span className="absolute left-3 top-3 rounded px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white shadow" style={{ backgroundColor: badge.color }}>{badge.text}</span>}
-        <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${product.title}`} aria-pressed={liked} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
-          <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
-        </button>
+        <div className="absolute right-3 top-3 flex flex-col items-center gap-2">
+          <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${product.title}`} aria-pressed={liked} className={`grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
+            <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
+          </button>
+          <ShareMenu url={`${window.location.origin}/product/${product.id}`} title={product.title} buttonClassName="grid size-9 place-items-center rounded-full bg-white text-slate-600 shadow" iconClassName="size-4" />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">

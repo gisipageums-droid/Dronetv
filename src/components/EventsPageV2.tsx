@@ -6,6 +6,7 @@ import { EVENTS_API, LAMBDA } from "../lib/apiConfig";
 import { useUserAuth } from "./context/context";
 import { withInlineAds } from "./common/adCreatives";
 import ToolbarFilterDropdown from "./common/ToolbarFilterDropdown";
+import ShareMenu from "./common/ShareMenu";
 
 // Preview build at /events-v2 - same treatment as Products/Services/Job
 // Board V2: real data from events-dashboard, nothing fabricated. The
@@ -352,6 +353,9 @@ const EventCardV2: React.FC<{ event: EventItem; onView: () => void }> = ({ event
   const showImg = event.image && !imgErr;
   const dateBox = parseDateBox(event.eventDate);
   const status = eventStatus(event.eventDate, event.eventTime);
+  let eventSlug = event.cleanUrl || event.name;
+  if (eventSlug && eventSlug.startsWith('http')) eventSlug = eventSlug.split('/').pop() || event.name;
+  const shareUrl = `${window.location.origin}${event.templateSelection === '1' ? '/event/' : '/events/'}${eventSlug}`;
 
   return (
     <article onClick={onView} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-lg">
@@ -362,9 +366,12 @@ const EventCardV2: React.FC<{ event: EventItem; onView: () => void }> = ({ event
           <div className="flex h-full w-full items-center justify-center text-5xl">{icon}</div>
         )}
         <span className="absolute left-3 top-3 rounded px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white shadow" style={{ backgroundColor: categoryColor(event.category) }}>{event.category}</span>
-        <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${event.name}`} aria-pressed={liked} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
-          <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
-        </button>
+        <div className="absolute right-3 top-3 flex flex-col items-center gap-2">
+          <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${event.name}`} aria-pressed={liked} className={`grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
+            <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
+          </button>
+          <ShareMenu url={shareUrl} title={event.name} buttonClassName="grid size-9 place-items-center rounded-full bg-white text-slate-600 shadow" iconClassName="size-4" />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Eye, Send, Users, TrendingUp, Building2, Settings, Film, Newspaper, ThumbsUp, Share2, BarChart3, GraduationCap, Award, Briefcase, Compass, Calendar as CalendarIcon, Mic, ClipboardList, UserCheck, Network, Handshake, Megaphone } from 'lucide-react';
 import ContentCard from '../../components/common/ContentCard';
 import { AdSidebarRail } from '../../components/common/adCreatives';
+import ShareMenu from '../../components/common/ShareMenu';
 
 // Fix + redesign for /partnerships, matching the reference's 6-type card
 // grid (image-hero, overlay headline/tagline, icon-stat row, tag pills,
@@ -268,9 +269,12 @@ const PartnerCardV2: React.FC<{ partner: PartnerType; onView: () => void }> = ({
         <img src={partner.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-50" />
         <div className="relative z-10 flex items-start justify-between">
           <span className="rounded px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white shadow" style={{ backgroundColor: partner.badgeColor }}>{partner.badge}</span>
-          <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${partner.headline}`} aria-pressed={liked} className={`grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
-            <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${partner.headline}`} aria-pressed={liked} className={`grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
+              <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
+            </button>
+            <ShareMenu url={`${window.location.origin}${partner.to}`} title={partner.headline} buttonClassName="grid size-9 place-items-center rounded-full bg-white text-slate-600 shadow" iconClassName="size-4" />
+          </div>
         </div>
         <div className="relative z-10">
           <h3 className="text-xl font-extrabold leading-tight text-white">{partner.headline}</h3>
