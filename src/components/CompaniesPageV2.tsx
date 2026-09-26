@@ -362,9 +362,14 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
 
   const sinceYear = company.yearsInBusiness ? (String(company.yearsInBusiness).match(/\d{4}/) || [null])[0] : null;
   const yearsEstablished = sinceYear ? String(new Date().getFullYear() - Number(sinceYear)) : null;
+  // Products/Services always render (even as a real 0) so every card keeps
+  // the same structure and height - most companies have no products or
+  // services on file yet, and hiding the row for them made ~2/3 of the
+  // grid look broken/incomplete next to the companies that do have counts.
+  // Team Size/Years stay conditional since they're genuinely optional extras.
   const statCells: [any, any, string][] = [
-    (Number(company.productsCount) || 0) > 0 ? [Box, company.productsCount, 'Products'] : null,
-    (Number(company.servicesCount) || 0) > 0 ? [Wrench, company.servicesCount, 'Services'] : null,
+    [Box, Number(company.productsCount) || 0, 'Products'],
+    [Wrench, Number(company.servicesCount) || 0, 'Services'],
     company.teamSize ? [Users, company.teamSize, 'Team Size'] : null,
     yearsEstablished ? [CalendarDays, yearsEstablished, 'Years Established'] : null,
   ].filter(Boolean) as [any, any, string][];
