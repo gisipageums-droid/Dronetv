@@ -177,7 +177,20 @@ const EventsPageV2: React.FC = () => {
       if (sortBy === 'name') return a.name.localeCompare(b.name);
       const da = new Date((a.eventDate || '').split(' to ')[0]).getTime();
       const db = new Date((b.eventDate || '').split(' to ')[0]).getTime();
-      if (sortBy === 'past') return db - da;
+      if (sortBy === 'past') {
+        // Most recently ended first, regardless of upcoming/ended status -
+        // a flat "latest date first" sort.
+        return (Number.isFinite(db) ? db : -Infinity) - (Number.isFinite(da) ? da : -Infinity);
+      }
+      // 'upcoming' (default): live/upcoming events first (soonest first),
+      // then ended events (most recently ended first) - was previously a
+      // flat ascending date sort, which put the OLDEST past event first
+      // instead of what's actually upcoming/current, since past and
+      // future dates were never bucketed apart.
+      const endedA = eventStatus(a.eventDate, a.eventTime)?.tone === 'ended' ? 1 : 0;
+      const endedB = eventStatus(b.eventDate, b.eventTime)?.tone === 'ended' ? 1 : 0;
+      if (endedA !== endedB) return endedA - endedB;
+      if (endedA === 1) return (Number.isFinite(db) ? db : -Infinity) - (Number.isFinite(da) ? da : -Infinity);
       return (Number.isFinite(da) ? da : Infinity) - (Number.isFinite(db) ? db : Infinity);
     });
   }, [allEvents, category, dateFilter, search, sortBy]);
