@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Mail,
   Phone,
@@ -9,6 +10,8 @@ import {
   Instagram,
   Youtube,
   Twitter,
+  Stethoscope,
+  ArrowRight,
 } from "lucide-react";
 import { ADMIN_API, LAMBDA } from '../lib/apiConfig';
 import CompactHero from './common/CompactHero';
@@ -204,6 +207,20 @@ const ContactPage = () => {
                 </div>
               </div>
             </div>
+
+            <Link
+              to="/media/drone-doctor"
+              className="group flex items-center gap-4 bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:border-yellow-400 transition-all"
+            >
+              <div className="bg-yellow-400 rounded-full p-3 flex-shrink-0">
+                <Stethoscope className="h-5 w-5 text-black" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-bold text-gray-900">Drone Doctor Help Line</h3>
+                <p className="text-sm text-gray-500 mt-0.5">Troubleshooting help and guidance for common drone issues — technical support, compliance, maintenance.</p>
+              </div>
+              <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-gray-900 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+            </Link>
 
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
               <h2 className="text-xl font-bold text-gray-900 mb-2">Follow Us</h2>
