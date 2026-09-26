@@ -53,12 +53,22 @@ const ShareMenu: React.FC<Props> = ({ url, title, buttonClassName, iconClassName
     navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1800); }).catch(() => {});
   };
 
-  const openWindow = (href: string) => window.open(href, '_blank', 'noopener,noreferrer,width=600,height=600');
+  // Facebook/LinkedIn's own share dialogs are designed as small popups (that's
+  // how their official share buttons behave) - a constrained window is right
+  // for those. WhatsApp Web is a full page app, not a dialog - forcing it into
+  // a 600x600 popup breaks its own compose flow (shows a bare QR/loading
+  // screen instead of the prefilled-message picker), so it gets a plain new
+  // tab instead, same as opening whatsapp.com directly.
+  const openPopup = (href: string) => window.open(href, '_blank', 'noopener,noreferrer,width=600,height=600');
+  const openTab = (href: string) => window.open(href, '_blank', 'noopener,noreferrer');
 
   const platforms = [
-    { name: 'WhatsApp', color: '#25D366', action: () => openWindow(`https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`) },
-    { name: 'Facebook', color: '#1877F2', action: () => openWindow(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`) },
-    { name: 'LinkedIn', color: '#0A66C2', action: () => openWindow(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`) },
+    // api.whatsapp.com/send (not wa.me, which needs a phone number in the
+    // path to reliably prefill text) - the documented "share text, let the
+    // user pick who to send it to" endpoint, works with no recipient.
+    { name: 'WhatsApp', color: '#25D366', action: () => openTab(`https://api.whatsapp.com/send?text=${encodeURIComponent(`${title} ${url}`)}`) },
+    { name: 'Facebook', color: '#1877F2', action: () => openPopup(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`) },
+    { name: 'LinkedIn', color: '#0A66C2', action: () => openPopup(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`) },
     {
       name: 'Instagram', color: '#E4405F', action: () => {
         // No public web share-intent for IG exists - copy the link, then
