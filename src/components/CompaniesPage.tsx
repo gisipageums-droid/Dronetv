@@ -5,7 +5,10 @@ import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
 
-interface Company {
+// Widened for CompaniesPageV2 (redesign, shares this file's utility
+// functions rather than duplicating them) - purely additive optional
+// fields, doesn't change this page's own rendering below at all.
+export interface Company {
   companyName: string;
   location?: string;
   sectors?: string[];
@@ -20,9 +23,79 @@ interface Company {
   servicesCount?: number;
   productsCount?: number;
   reviewStatus?: string;
+  badgeStatus?: string;
   publishedId?: string;
   companyId?: string;
+  realDescription?: string | null;
+  tagline?: string | null;
+  galleryImages?: { url: string; label?: string | null }[];
+  heroStats?: { id?: string; value?: string; label?: string }[];
+  quote?: string | null;
+  yearsInBusiness?: string | null;
+  teamSize?: string | null;
+  isClaimed?: boolean;
+  bulkImported?: boolean;
+  capacityStatus?: string;
+  deliveryTier?: 'MANAGED' | 'MARKETPLACE';
+  documentation?: { score: number; hasEquipment: boolean; hasUIN: boolean; hasInsurance: boolean; hasProjectHistory: boolean };
+  rptoStatus?: 'DGCA_APPROVED_RPTO' | 'NOT_RPTO';
+  credentialsExpired?: boolean;
   [key: string]: any;
+}
+
+export const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg: string; ribbonColor: string; bannerBg: string; bannerColor: string; verifiedListing: boolean; highlightBg: string; dark?: boolean }> = {
+  silver: { label: 'SILVER', packageLabel: 'Reach Package', ribbonBg: 'linear-gradient(135deg,#E8E8E8,#9A9A9A)', ribbonColor: '#ffffff', bannerBg: 'linear-gradient(135deg,#8a8a8a,#4a4a4a)', bannerColor: '#ffffff', verifiedListing: false, highlightBg: '#F0F0F0' },
+  gold: { label: 'GOLD BRAND', packageLabel: 'Package', ribbonBg: 'linear-gradient(135deg,#FFE38A,#C99400)', ribbonColor: '#7A5B00', bannerBg: 'linear-gradient(135deg,#E8B400,#8a6400)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: '#FFF3C4' },
+  platinum: { label: 'PLATINUM', packageLabel: 'Expand Package', ribbonBg: 'linear-gradient(135deg,#CBD5E1,#64748B)', ribbonColor: '#F8C400', bannerBg: 'linear-gradient(135deg,#1e293b,#0F172A)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: 'rgba(255,255,255,.08)', dark: true },
+};
+
+// Silver comes from real Silver-badge verification. Gold/Platinum map to the
+// paid Brand/Expand packages - not fabricated: renders correctly whenever
+// badgeStatus carries that value, doesn't fire on a company that doesn't
+// have it.
+export function getTier(c: Company): keyof typeof TIER_STYLE | null {
+  if (c.badgeStatus === 'SILVER') return 'silver';
+  if (c.badgeStatus === 'GOLD') return 'gold';
+  if (c.badgeStatus === 'PLATINUM') return 'platinum';
+  return null;
+}
+
+export function useSavedCompanies() {
+  const [saved, setSaved] = useState<Set<string>>(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('dronetv_saved_companies') || '[]')); }
+    catch { return new Set(); }
+  });
+  const toggle = (id: string) => {
+    setSaved(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      try { localStorage.setItem('dronetv_saved_companies', JSON.stringify(Array.from(next))); } catch {}
+      return next;
+    });
+  };
+  return { saved, toggle };
+}
+
+// Fixes-doc #2 - public, unauthenticated "this isn't us / remove this
+// listing" link, right on the unclaimed banner itself. The backend only
+// ever accepts this for a still-unclaimed, bulk-imported profile - a real
+// company can't be opted out this way.
+export async function requestOptOut(publishedId: string, onDone: () => void) {
+  if (!window.confirm('Ask DroneTV to remove this unclaimed listing? This tells us the company should not be listed.')) return;
+  const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/optout` : `${LAMBDA.company}/${publishedId}/optout`;
+  try {
+    const res = await fetch(url, { method: 'POST' });
+    if (res.ok) onDone();
+  } catch { /* best-effort */ }
+}
+
+// Some scraped records have about.tagline == companyName, which just
+// repeats the name a second time in the callout box - only show a tagline
+// when it actually says something different from the name itself.
+export function realTagline(company: Company): string | null {
+  const t = (company.tagline || '').trim();
+  if (!t) return null;
+  return t.toLowerCase() === (company.companyName || '').trim().toLowerCase() ? null : t;
 }
 
 // Industry detection from company name (sectors API field is always "General")
@@ -30,7 +103,7 @@ const DRONE_KW = /drone|uav|uas|unmanned|aerial|aero(?:space)?|aviation|rotor|rp
 const GIS_KW   = /gis|geospatial|spatial|mapping|lidar|survey|topograph|remote.?sensing|cartograph|photogramm/i;
 const AI_KW    = /\bai\b|\bai\s+lab|\balgo|robot(?:ics)?|machine.?learn|deep.?learn|computer.?vision|neural|intelligence\b|automation/i;
 
-function getIndustry(c: Company): 'drone' | 'gis' | 'ai' | 'all' {
+export function getIndustry(c: Company): 'drone' | 'gis' | 'ai' | 'all' {
   const s = `${c.companyName || ''} ${c.companyDescription || ''} ${c.aboutDescription || ''}`;
   if (AI_KW.test(s)) return 'ai';
   if (GIS_KW.test(s)) return 'gis';
@@ -48,14 +121,14 @@ const SECTOR_KW: Record<string, RegExp> = {
   'Training': /train|academy|institute|education|school|learn|certif/i,
 };
 
-function getSectors(c: Company): string[] {
+export function getSectors(c: Company): string[] {
   const s = `${c.companyName || ''} ${c.companyDescription || ''} ${c.aboutDescription || ''}`;
   return Object.entries(SECTOR_KW)
     .filter(([, rx]) => rx.test(s))
     .map(([k]) => k);
 }
 
-function getInitials(name: string): string {
+export function getInitials(name: string): string {
   return name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
 }
 
@@ -141,19 +214,28 @@ const CSS = `
 }
 `;
 
-const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
+export const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
 
 // Addresses often end "...City, State, Pincode" — the state is the last
 // non-numeric, non-"India" comma segment, not simply the last segment
 // (which is frequently the pincode itself, e.g. "Nellore, Andhra Pradesh,
 // 524002" was showing "524002" as the state filter chip).
-function extractState(location: string | undefined): string {
+export function extractState(location: string | undefined): string {
   const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
   for (let i = parts.length - 1; i >= 0; i--) {
     const p = parts[i];
     if (p && !/^\d+$/.test(p) && p.toLowerCase() !== 'india') return p;
   }
   return '';
+}
+
+// City + state only, for the compact card location line - a full address
+// is too long for that space.
+export function shortLocation(location: string | undefined): string {
+  const state = extractState(location);
+  const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
+  const city = parts.find(p => p !== state && !/^\d+$/.test(p) && p.toLowerCase() !== 'india');
+  return [city, state].filter(Boolean).join(', ') || (location || '');
 }
 
 const CompaniesPage: React.FC = () => {

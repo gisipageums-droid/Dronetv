@@ -17,8 +17,11 @@ import Newsletter from "./components/Newsletter";
 import Footer from "./components/Footer";
 const VideosPage = lazy(() => import("./components/VideosPage"));
 const CompaniesPage = lazy(() => import("./components/CompaniesPage"));
+const CompaniesPageV2 = lazy(() => import("./components/CompaniesPageV2"));
 const ProductsPage = lazy(() => import("./components/ProductsPage"));
+const ProductsPageV2 = lazy(() => import("./components/ProductsPageV2"));
 const EventsPage = lazy(() => import("./components/EventsPage"));
+const EventsPageV2 = lazy(() => import("./components/EventsPageV2"));
 const NewsPage = lazy(() => import("./components/NewsPage"));
 const AboutPage = lazy(() => import("./components/AboutPage"));
 const PartnerPage = lazy(() => import("./components/PartnerPage"));
@@ -28,11 +31,14 @@ const LegalIndexPage = lazy(() => import("./components/legal/LegalIndexPage"));
 const PolicyPage = lazy(() => import("./components/legal/PolicyPage"));
 const ProductDetailPage = lazy(() => import("./components/ProductDetailPage"));
 const ProfessionalsPage = lazy(() => import("./components/ProfessionalsPage"));
+const ProfessionalsPageV2 = lazy(() => import("./components/ProfessionalsPageV2"));
 const ServicesPage = lazy(() => import("./components/ServicesPage"));
+const ServicesPageV2 = lazy(() => import("./components/ServicesPageV2"));
 const ServiceDetailPage = lazy(() => import("./components/ServiceDetailPage"));
 import ScrollingFooter from "./components/ScrollingFooter";
 import AdsLoader from "./components/common/AdsLoader";
 const GalleryPage = lazy(() => import("./components/GalleryPage"));
+const GalleryPageV2 = lazy(() => import("./components/GalleryPageV2"));
 import GalleryGlimpse from "./components/GalleryGlimpse";
 const SubApp = lazy(() => import("./components/webbuilder/src/App"));
 import OurPartners from "./components/Ourpartners";
@@ -174,8 +180,17 @@ const VideoSpotlightPage = lazy(() => import("./pages/media/VideoSpotlight"));
 const ImpactStoriesPage = lazy(() => import("./pages/media/ImpactStories"));
 const MarketIntelligencePage = lazy(() => import("./pages/media/MarketIntelligence"));
 const TechTrendsPage = lazy(() => import("./pages/media/TechTrends"));
+const TechTrendsPageV2 = lazy(() => import("./pages/media/TechTrendsV2"));
 const PressReleasesPage = lazy(() => import("./pages/media/PressReleases"));
+const PressReleasesPageV2 = lazy(() => import("./pages/media/PressReleasesV2"));
 const IndustryReportsPage = lazy(() => import("./pages/media/IndustryReports"));
+const IndustryReportsPageV2 = lazy(() => import("./pages/media/IndustryReportsV2"));
+const DroneDoctorPageV2 = lazy(() => import("./pages/media/DroneDoctorV2"));
+const ImpactStoriesPageV2 = lazy(() => import("./pages/media/ImpactStoriesV2"));
+const MagazinePageV2 = lazy(() => import("./pages/media/MagazineV2"));
+const MarketIntelligencePageV2 = lazy(() => import("./pages/media/MarketIntelligenceV2"));
+const NewsPulsePageV2 = lazy(() => import("./pages/media/NewsPulseV2"));
+const VideoSpotlightPageV2 = lazy(() => import("./pages/media/VideoSpotlightV2"));
 const MediaHubPage = lazy(() => import("./pages/media/MediaHub"));
 const MediaDetailPage = lazy(() => import("./pages/media/MediaDetailPage"));
 
@@ -190,7 +205,9 @@ const MeetupsPage = lazy(() => import("./pages/events/Meetups"));
 
 // Professionals sub-pages
 const JobBoardPage = lazy(() => import("./pages/professionals/JobBoard"));
+const JobBoardPageV2 = lazy(() => import("./pages/professionals/JobBoardV2"));
 const PilotDirectoryPage = lazy(() => import("./pages/professionals/PilotDirectory"));
+const PilotDirectoryPageV2 = lazy(() => import("./pages/professionals/PilotDirectoryV2"));
 const CertificationsPage = lazy(() => import("./pages/professionals/Certifications"));
 const PortfolioPage = lazy(() => import("./pages/professionals/Portfolio"));
 const TrainingPage = lazy(() => import("./pages/professionals/Training"));
@@ -205,8 +222,10 @@ const EventOrganizersPage = lazy(() => import("./pages/partnerships/EventOrganiz
 const EducationPartnersPage = lazy(() => import("./pages/partnerships/EducationPartners"));
 const IndustryPlayersPage = lazy(() => import("./pages/partnerships/IndustryPlayers"));
 const PartnerBenefitsPage = lazy(() => import("./pages/partnerships/PartnerBenefits"));
+const PromotionalPackagesPageV2 = lazy(() => import("./pages/partnerships/PromotionalPackagesV2"));
 const BecomePartnerPage = lazy(() => import("./pages/partnerships/BecomePartner"));
 const PartnershipsHubPage = lazy(() => import("./pages/partnerships/PartnershipsHub"));
+const PartnershipsHubPageV2 = lazy(() => import("./pages/partnerships/PartnershipsHubV2"));
 
 
 const PageLoadingFallback = () => (
@@ -268,21 +287,38 @@ const AppContent = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/videos" element={<VideosPage />} />
 
-          {/* Media Hub routes */}
+          {/* Media Hub routes - Tailwind redesign shifted to the real
+              routes (approved), old pages kept mounted at -v1 as a
+              rollback path, not linked from nav. */}
           <Route path="/media" element={<MediaHubPage />} />
-          <Route path="/media/news-pulse" element={<NewsPulsePage />} />
+          <Route path="/media/news-pulse" element={<NewsPulsePageV2 />} />
+          <Route path="/media/news-pulse-v1" element={<NewsPulsePage />} />
           <Route path="/media/news/:contentId" element={<MediaDetailPage contentType="news" backPath="/media/news-pulse" backLabel="News Pulse" externalLinkLabel="Read Original Source" />} />
-          <Route path="/media/magazine" element={<MagazinePage />} />
+          <Route path="/media/magazine" element={<MagazinePageV2 />} />
+          <Route path="/media/magazine-v1" element={<MagazinePage />} />
           <Route path="/media/magazine/:contentId" element={<MediaDetailPage contentType="magazine" backPath="/media/magazine" backLabel="Magazine" externalLinkLabel="View Full Article" />} />
-          <Route path="/media/video-spotlight" element={<VideoSpotlightPage />} />
-          <Route path="/media/impact-stories" element={<ImpactStoriesPage />} />
+          <Route path="/media/video-spotlight" element={<VideoSpotlightPageV2 />} />
+          <Route path="/media/video-spotlight-v1" element={<VideoSpotlightPage />} />
+          <Route path="/media/impact-stories" element={<ImpactStoriesPageV2 />} />
+          <Route path="/media/impact-stories-v1" element={<ImpactStoriesPage />} />
           <Route path="/media/impact-stories/:contentId" element={<MediaDetailPage contentType="impact-story" backPath="/media/impact-stories" backLabel="Impact Stories" externalLinkLabel="Read Full Story" />} />
-          <Route path="/media/market-intelligence" element={<MarketIntelligencePage />} />
+          <Route path="/media/market-intelligence" element={<MarketIntelligencePageV2 />} />
+          <Route path="/media/market-intelligence-v1" element={<MarketIntelligencePage />} />
           <Route path="/media/market-intelligence/:contentId" element={<MediaDetailPage contentType="market-intelligence" backPath="/media/market-intelligence" backLabel="Market Intelligence" externalLinkLabel="View Original Source" />} />
-          <Route path="/media/tech-trends" element={<TechTrendsPage />} />
-          <Route path="/media/press-releases" element={<PressReleasesPage />} />
-          <Route path="/media/industry-reports" element={<IndustryReportsPage />} />
+          <Route path="/media/tech-trends" element={<TechTrendsPageV2 />} />
+          <Route path="/media/tech-trends-v1" element={<TechTrendsPage />} />
+          <Route path="/media/press-releases" element={<PressReleasesPageV2 />} />
+          <Route path="/media/press-releases-v1" element={<PressReleasesPage />} />
+          <Route path="/media/industry-reports" element={<IndustryReportsPageV2 />} />
+          <Route path="/media/industry-reports-v1" element={<IndustryReportsPage />} />
+          {/* Brand new page (no prior version existed) */}
+          <Route path="/media/drone-doctor" element={<DroneDoctorPageV2 />} />
+          {/* Gallery hub replaces the flat photo grid as the /gallery landing
+              page; the flat grid stays live, unchanged, at /media/gallery
+              (which the hub's own "View Gallery" buttons deep-link into via
+              ?category=) and at /gallery-v1 as a rollback. */}
           <Route path="/media/gallery" element={<GalleryPage />} />
+          <Route path="/gallery-v1" element={<GalleryPage />} />
 
           {/* Events sub-routes — must be before dynamic /event/:name */}
           <Route path="/events/calendar" element={<EventCalendarPage />} />
@@ -293,27 +329,42 @@ const AppContent = () => {
           <Route path="/events/webinars" element={<WebinarsPage />} />
           <Route path="/events/meetups" element={<MeetupsPage />} />
 
-          {/* Partnerships routes */}
-          <Route path="/partnerships" element={<PartnershipsHubPage />} />
+          {/* Partnerships routes - Tailwind redesign shifted to the real
+              route (approved), old page kept at -v1 as a rollback. */}
+          <Route path="/partnerships" element={<PartnershipsHubPageV2 />} />
+          <Route path="/partnerships-v1" element={<PartnershipsHubPage />} />
           <Route path="/partnerships/drone-manufacturers" element={<DroneManufacturersPage />} />
           <Route path="/partnerships/ai-tech" element={<AITechCompaniesPage />} />
           <Route path="/partnerships/event-organizers" element={<EventOrganizersPage />} />
           <Route path="/partnerships/education-partners" element={<EducationPartnersPage />} />
           <Route path="/partnerships/industry-players" element={<IndustryPlayersPage />} />
           <Route path="/partnerships/benefits" element={<PartnerBenefitsPage />} />
-          <Route path="/advertising-plans" element={<PartnerBenefitsPage />} />
+          <Route path="/advertising-plans" element={<PromotionalPackagesPageV2 />} />
+          <Route path="/advertising-plans-v1" element={<PartnerBenefitsPage />} />
           <Route path="/partnerships/become-a-partner" element={<BecomePartnerPage />} />
 
-          <Route path="/professionals" element={<ProfessionalsPage />} />
-          <Route path="/listed-companies" element={<CompaniesPage />} />
+          {/* Tailwind redesign is now live at the real routes (approved) -
+              old pages kept mounted at -v1 as a rollback path, not linked
+              from any nav. */}
+          <Route path="/professionals" element={<ProfessionalsPageV2 />} />
+          <Route path="/professionals-v1" element={<ProfessionalsPage />} />
+          <Route path="/listed-companies" element={<CompaniesPageV2 />} />
+          <Route path="/listed-companies-v1" element={<CompaniesPage />} />
 
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/events" element={<EventsPage />} />
+          <Route path="/products" element={<ProductsPageV2 />} />
+          <Route path="/products-v1" element={<ProductsPage />} />
+          <Route path="/services" element={<ServicesPageV2 />} />
+          <Route path="/services-v1" element={<ServicesPage />} />
+          <Route path="/events" element={<EventsPageV2 />} />
+          <Route path="/events-v1" element={<EventsPage />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/partner" element={<PartnerPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
+          {/* Real card design applied directly onto the real gallery - the
+              new card anatomy goes on the actual photo grid itself, no
+              separate hub/"View Gallery" button step. Old plain-card page
+              kept at -v1 for rollback. */}
+          <Route path="/gallery" element={<GalleryPageV2 />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/legal" element={<LegalIndexPage />} />
           <Route path="/legal/:slug" element={<PolicyPage />} />
@@ -428,8 +479,10 @@ const AppContent = () => {
           <Route path="/professional/t2" element={<ProTemp2 />} />
           <Route path="/professional/t1" element={<ProTemp1 />} />
           {/* Professionals sub-routes — must be before dynamic /:urlSlug? */}
-          <Route path="/professionals/job-board" element={<JobBoardPage />} />
-          <Route path="/professionals/pilot-directory" element={<PilotDirectoryPage />} />
+          <Route path="/professionals/job-board" element={<JobBoardPageV2 />} />
+          <Route path="/professionals/job-board-v1" element={<JobBoardPage />} />
+          <Route path="/professionals/pilot-directory" element={<PilotDirectoryPageV2 />} />
+          <Route path="/professionals/pilot-directory-v1" element={<PilotDirectoryPage />} />
           <Route path="/professionals/certifications" element={<CertificationsPage />} />
           <Route path="/professionals/portfolio" element={<PortfolioPage />} />
           <Route path="/professionals/training" element={<TrainingPage />} />
