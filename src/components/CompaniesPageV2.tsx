@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Heart, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, Grid3x3, List, X } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Heart, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, X } from 'lucide-react';
 import ShareMenu from './common/ShareMenu';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
@@ -78,7 +78,6 @@ const CompaniesPageV2: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(12);
-  const [view, setView] = useState<'grid' | 'list'>('grid');
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { saved: savedCompanies, toggle: toggleSaved } = useSavedCompanies();
@@ -203,13 +202,13 @@ const CompaniesPageV2: React.FC = () => {
       {/* industryBar() - exact classes */}
       <section aria-label="Industry statistics" className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
         {stats.map(([label, value, Icon]) => (
-          <div key={label} className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px] 2xl:min-w-[165px]">
-            <Icon className="size-7 shrink-0 text-yellow-400" />
-            <span className="flex flex-col"><small className="text-[10px] leading-tight">{label}</small><strong className="text-lg leading-tight text-yellow-300">{value.toLocaleString('en-IN')}</strong></span>
+          <div key={label} className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px] 2xl:min-w-[165px]">
+            <Icon className="size-5 shrink-0 text-yellow-400 sm:size-7" />
+            <span className="flex flex-col"><small className="text-[10px] leading-tight">{label}</small><strong className="text-sm leading-tight text-yellow-300 sm:text-lg">{value.toLocaleString('en-IN')}</strong></span>
           </div>
         ))}
-        <a href="/form" className="flex h-9 min-w-[183px] shrink-0 items-center justify-center rounded-lg bg-[#ffdf00] px-3 text-sm font-extrabold text-black">+ List Your Company</a>
-        <div className="min-w-[255px] shrink-0 border-l border-yellow-500/25 pl-4">
+        <a href="/form" className="flex h-9 min-w-0 shrink-0 sm:min-w-[183px] items-center justify-center rounded-lg bg-[#ffdf00] px-3 text-sm font-extrabold text-black">+ List Your Company</a>
+        <div className="min-w-0 shrink-0 sm:min-w-[255px] border-l border-yellow-500/25 pl-4">
           <strong className="block text-sm leading-tight text-yellow-300">India&rsquo;s #1 Drone|GIS|AI|ROBO<br />Industry Platform</strong>
           <span className="block text-[11px] text-sky-300">Discover | Connect | Collaborate | Grow</span>
         </div>
@@ -290,15 +289,11 @@ const CompaniesPageV2: React.FC = () => {
         <section className="min-w-0">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h1 className="text-base font-extrabold">Explore Drone Industry Companies</h1>
-            <div className="flex gap-1">
-              <button type="button" onClick={() => setView('grid')} aria-label="Grid view" className={`${view === 'grid' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><Grid3x3 className="size-4" /></button>
-              <button type="button" onClick={() => setView('list')} aria-label="List view" className={`${view === 'list' ? 'bg-slate-900 text-white' : 'bg-white'} rounded border px-2 py-1`}><List className="size-4" /></button>
-            </div>
           </div>
 
           <div className="mb-3 rounded-lg bg-white/70 px-3 py-2 text-[11.5px] text-amber-900">⭐ Verified companies appear first. Get your company verified by submitting GST documents in your dashboard.</div>
 
-          <div className={`grid gap-3 ${view === 'list' ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'}`}>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {withInlineAds(visible, (c, i) => {
               const id = c.publishedId || c.companyId || c.companyName;
               return <CompanyCardV2 key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} saved={savedCompanies.has(id)} onToggleSave={() => toggleSaved(id)} />;

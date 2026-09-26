@@ -156,20 +156,20 @@ const PartnershipsHubV2: React.FC = () => {
       <div className="mt-[108px]" />
 
       <section aria-label="Partnership statistics" className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
-        <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px]">
-          <Handshake className="size-7 shrink-0 text-yellow-400" />
+        <div className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px]">
+          <Handshake className="size-5 shrink-0 text-yellow-400 sm:size-7" />
           <span className="flex flex-col"><small className="text-[10px] leading-tight">Partnership Types</small><strong className="text-lg leading-tight text-yellow-300">6</strong></span>
         </div>
-        <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px]">
-          <Building2 className="size-7 shrink-0 text-yellow-400" />
+        <div className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px]">
+          <Building2 className="size-5 shrink-0 text-yellow-400 sm:size-7" />
           <span className="flex flex-col"><small className="text-[10px] leading-tight">Partner Companies</small><strong className="text-lg leading-tight text-yellow-300">515+</strong></span>
         </div>
-        <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px]">
-          <TrendingUp className="size-7 shrink-0 text-yellow-400" />
+        <div className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[130px]">
+          <TrendingUp className="size-5 shrink-0 text-yellow-400 sm:size-7" />
           <span className="flex flex-col"><small className="text-[10px] leading-tight">Platform Views</small><strong className="text-lg leading-tight text-yellow-300">5M+</strong></span>
         </div>
         <Link to="/partnerships/become-a-partner" className="flex h-9 shrink-0 items-center justify-center rounded-lg bg-[#ffdf00] px-4 text-sm font-extrabold text-black">+ Become a Partner</Link>
-        <div className="ml-auto min-w-[200px] shrink-0 text-right">
+        <div className="ml-auto min-w-0 shrink-0 sm:min-w-[200px] text-right">
           <strong className="block text-sm leading-tight text-yellow-300">Partner with DroneTv.in</strong>
           <span className="block text-[11px] text-sky-300">India&rsquo;s #1 Drone Industry Platform</span>
         </div>

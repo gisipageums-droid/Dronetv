@@ -189,15 +189,15 @@ const PromotionalPackagesV2: React.FC = () => {
       <div className="mt-16" />
 
       <section aria-label="Promotional package statistics" className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
-        <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[150px]">
-          <Star className="size-7 shrink-0 text-yellow-400" />
+        <div className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[150px]">
+          <Star className="size-5 shrink-0 text-yellow-400 sm:size-7" />
           <span className="flex flex-col"><small className="text-[10px] leading-tight">Annual Plans</small><strong className="text-lg leading-tight text-yellow-300">{PACKAGES.length}</strong></span>
         </div>
-        <div className="flex w-[calc(50%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[150px]">
-          <Layers className="size-7 shrink-0 text-yellow-400" />
+        <div className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[150px]">
+          <Layers className="size-5 shrink-0 text-yellow-400 sm:size-7" />
           <span className="flex flex-col"><small className="text-[10px] leading-tight">Add-On Services</small><strong className="text-lg leading-tight text-yellow-300">{ADD_ONS.length}</strong></span>
         </div>
-        <div className="ml-auto min-w-[200px] shrink-0 text-right">
+        <div className="ml-auto min-w-0 shrink-0 sm:min-w-[200px] text-right">
           <strong className="block text-sm leading-tight text-yellow-300">Promotional Packages</strong>
           <span className="block text-[11px] text-sky-300">Annual Subscription Plans — Drone, GIS &amp; AI</span>
         </div>
