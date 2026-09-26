@@ -166,6 +166,8 @@ const AdminLogin = lazy(() => import("./components/Admin/adminLogin/AdminLogin")
 const AdminMediaDashboard = lazy(() => import("./components/Admin/mediaAdmin/AdminMediaDashboard"));
 const AdminJobBoardDashboard = lazy(() => import("./components/Admin/jobBoardAdmin/AdminJobBoardDashboard"));
 const AdminLayout = lazy(() => import("./components/Admin/AdminLayout"));
+const PrelistedCompanies = lazy(() => import("./components/Admin/verification/PrelistedCompanies"));
+const PrelistedCompanyReview = lazy(() => import("./components/Admin/verification/PrelistedCompanyReview"));
 const AdminTokenEconomy = lazy(() => import("./components/Admin/AdminTokenEconomy"));
 const AdminInvoicesPage = lazy(() => import("./pages/admin/AdminInvoicesPage"));
 const AdminSettingsPage = lazy(() => import("./pages/admin/AdminSettingsPage"));
@@ -505,6 +507,8 @@ const AppContent = () => {
           <Route path="/admin/users" element={<AdminProtectedRoute><AdminLayout><AdminUsersDashboard /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/staff" element={<AdminProtectedRoute><AdminLayout><StaffManagement /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/hero-images" element={<AdminProtectedRoute><AdminLayout><AdminHeroImages /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/verification/prelisted" element={<AdminProtectedRoute><AdminLayout><PrelistedCompanies /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/verification/prelisted/:publishedId" element={<AdminProtectedRoute><AdminLayout><PrelistedCompanyReview /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/companies/details/:publishedId/:userId" element={<AdminProtectedRoute><AdminCompanyEdit /></AdminProtectedRoute>} />
           <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route
