@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { Building2, Loader2 } from "lucide-react";
 import { Card, Field, FormGrid, ActionBar, inputCls } from "../../ui";
+import { getCompanyContent, saveCompanyContent, uploadCompanyFile } from "../../api";
 import type { TabProps } from "./CompanyProfilePage";
 
 const CATEGORIES = ["Drone Service Provider", "Drone Manufacturer / OEM", "Component / Parts Supplier", "Software / Platform", "Training / RPTO", "Consulting", "Agriculture Drone Services", "Survey & Mapping", "Inspection Services", "Defence / Security", "GIS / Remote Sensing", "AI / ML Solutions", "Other"];
@@ -15,7 +17,7 @@ const REQUIRED_FIELDS: [string, string][] = [
   ["description", "Company Description"],
 ];
 
-export default function OverviewTab({ profile, save }: TabProps) {
+export default function OverviewTab({ publishedId, userId, profile, save }: TabProps) {
   const [form, setForm] = useState(() => ({
     legalEntityName: "", category: "", yearEstablished: "", cin: "", gstin: "",
     email: "", phone: "", website: "", linkedin: "", address: "", city: "", state: "", pincode: "",
@@ -23,6 +25,53 @@ export default function OverviewTab({ profile, save }: TabProps) {
     ...(profile.overview || {}),
   }));
   const [saving, setSaving] = useState(false);
+
+  // Real, publicly-shown company logo - lives in the site's own websiteContent
+  // blob (what the public profile/card/share-preview all read), not in this
+  // tab's own "overview" section (that's a separate blob nothing public
+  // renders). Was previously only reachable by clicking through all 5 steps
+  // of the Services & Products wizard to its last "Media Uploads" step - real
+  // members reported never finding it. Fetched/saved directly here instead so
+  // it's visible the moment the profile page opens, no wizard needed.
+  const [logoUrl, setLogoUrl] = useState("");
+  const [logoLoading, setLogoLoading] = useState(true);
+  const [logoUploading, setLogoUploading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    getCompanyContent(publishedId)
+      .then(data => {
+        if (cancelled) return;
+        const content = data?.content || {};
+        setLogoUrl(content.header?.logoSrc || content.company?.logo || "");
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLogoLoading(false); });
+    return () => { cancelled = true; };
+  }, [publishedId]);
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setLogoUploading(true);
+    try {
+      const url = await uploadCompanyFile(userId, "companyLogoUrl", file);
+      const data = await getCompanyContent(publishedId);
+      const existing = data?.content || {};
+      await saveCompanyContent(userId, publishedId, {
+        ...existing,
+        company: { ...existing.company, logo: url },
+        header: { ...existing.header, logoSrc: url, logoUrl: url },
+      });
+      setLogoUrl(url);
+      toast.success("Logo updated - it's now live on your public listing.");
+    } catch {
+      toast.error("Failed to update logo - please try again.");
+    } finally {
+      setLogoUploading(false);
+    }
+  };
 
   const set = (k: string, v: string) => setForm((f: any) => ({ ...f, [k]: v }));
 
@@ -38,7 +87,31 @@ export default function OverviewTab({ profile, save }: TabProps) {
   };
 
   return (
-    <Card className="p-6">
+    <>
+      <Card className="p-6 mb-4">
+        <div className="flex items-center gap-4">
+          <div className="w-20 h-20 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center overflow-hidden flex-shrink-0">
+            {logoLoading ? (
+              <Loader2 className="w-5 h-5 text-white/30 animate-spin" />
+            ) : logoUrl ? (
+              <img src={logoUrl} alt="Company logo" className="w-full h-full object-contain" />
+            ) : (
+              <Building2 className="w-8 h-8 text-white/20" />
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-white mb-0.5">Company Logo</p>
+            <p className="text-xs text-white/40 mb-2.5">Shown on your listing card, public profile, and shared links. PNG/JPG/SVG.</p>
+            <label className="inline-flex items-center gap-1.5 rounded-lg bg-brand-yellow px-3 py-1.5 text-xs font-semibold text-ink hover:bg-brand-gold transition-colors cursor-pointer disabled:opacity-50">
+              {logoUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+              {logoUploading ? "Uploading..." : logoUrl ? "Change Logo" : "Upload Logo"}
+              <input type="file" accept="image/*" className="hidden" onChange={handleLogoChange} disabled={logoUploading} />
+            </label>
+          </div>
+        </div>
+      </Card>
+
+      <Card className="p-6">
       <FormGrid>
         <Field label="Legal Entity Name"><input className={inputCls} value={form.legalEntityName} onChange={e => set("legalEntityName", e.target.value)} placeholder="Registered name as per MCA/GSTIN" /></Field>
         <Field label="Company Category" required>
@@ -69,6 +142,7 @@ export default function OverviewTab({ profile, save }: TabProps) {
         </Field>
       </FormGrid>
       <ActionBar onSave={handleSave} saveLabel={saving ? "Saving..." : "Save Changes"} />
-    </Card>
+      </Card>
+    </>
   );
 }
