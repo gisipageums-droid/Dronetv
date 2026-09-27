@@ -89,7 +89,14 @@ export default function MyCompanies() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-bold text-white truncate">{c.companyName || "Untitled company"}</span>
+                        {/* min-w-0 on the span itself, not just the ancestor -
+                            a flex item's default min-width is its own content
+                            width, so without this the long real company names
+                            (e.g. "BHARATROHAN AIRBORNE INNOVATIONS LIMITED")
+                            never actually shrank enough for truncate to
+                            engage, overflowing the card past the screen edge
+                            on mobile instead of the intended ellipsis. */}
+                        <span className="min-w-0 truncate text-sm font-bold text-white">{c.companyName || "Untitled company"}</span>
                         {isActive && <Badge tone="info">Managing</Badge>}
                       </div>
                       <div className="text-[11.5px] text-white/40 truncate mt-0.5">{c.location || "Location not set"}</div>
