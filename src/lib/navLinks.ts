@@ -32,12 +32,10 @@ export const eventsItems: NavItem[] = [
 
 export const professionalsItems: NavItem[] = [
   { path: "/professionals/job-board", label: "Job Board" },
-  { path: "/professionals/pilot-directory", label: "Pilot Directory" },
-  { path: "/professionals/certifications", label: "Certifications" },
   { path: "/professionals/training", label: "Training" },
   { path: "/professionals/career-path", label: "Career Path" },
   { path: "/professionals/networking", label: "Networking" },
-  { path: "/professionals/community", label: "Community" },
+  { path: "/media", label: "Media" },
 ];
 
 export const contactItems: NavItem[] = [
