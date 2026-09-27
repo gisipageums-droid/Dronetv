@@ -351,6 +351,7 @@ const AppContent = () => {
           {/* Brand new page (no prior version existed) */}
           <Route path="/media/drone-doctor" element={<DroneDoctorPageV2 />} />
           <Route path="/media/drone-doctor-v2" element={<DroneDoctorPageV2 />} />
+          <Route path="/media/drone-doctor/:contentId" element={<MediaDetailPage contentType="drone-doctor" backPath="/media/drone-doctor" backLabel="Drone Doctor" />} />
           {/* Gallery hub replaces the flat photo grid as the /gallery landing
               page (approved); the flat grid stays live, unchanged, at
               /media/gallery (which the hub's own "View Gallery" buttons
