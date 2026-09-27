@@ -1233,11 +1233,15 @@ const AdminDashboard: React.FC = () => {
       switch (type) {
         case "edit":
           if (company) {
-            if (company.templateSelection === "template-1") {
+            // Real stored values are plain "1"/"2", not "template-1"/"template-2"
+            // (see share.py's same defensive check) - matching only the long
+            // form meant every real company fell into "Unknown template
+            // selection" instead of ever navigating to the edit page.
+            if (["template-1", "1"].includes(company.templateSelection)) {
               navigate(
                 `/admin/companies/edit/1/${publishedId}/${company.userId}`
               );
-            } else if (company.templateSelection === "template-2") {
+            } else if (["template-2", "2"].includes(company.templateSelection)) {
               navigate(
                 `/admin/companies/edit/2/${publishedId}/${company.userId}`
               );
@@ -1352,9 +1356,9 @@ const AdminDashboard: React.FC = () => {
         publishedId,
         company.userId
       );
-      if (details.templateSelection === "template-1") {
+      if (["template-1", "1"].includes(details.templateSelection)) {
         navigate(`/admin/companies/preview/1/${publishedId}/${company.userId}`);
-      } else if (details.templateSelection === "template-2") {
+      } else if (["template-2", "2"].includes(details.templateSelection)) {
         navigate(`/admin/companies/preview/2/${publishedId}/${company.userId}`);
       } else {
         toast.info("Unknown template selection");
