@@ -752,15 +752,21 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
   }, []);
 
   // Step 1 validation logic
+  //
+  // Every toast below carries a stable toastId. Without one, react-toastify
+  // stacks a brand-new toast on every call - clicking Next repeatedly while
+  // still missing the same field (e.g. scrolled past Geography of Operations,
+  // not yet visible) piled up 3-4 identical-looking error popups instead of
+  // just refreshing one, reading as "everything is broken" (real user report).
   const validateStep1 = () => {
     // Company Category: at least 1
     if (!formData.companyCategory || formData.companyCategory.length === 0) {
-      toast.error("Please select at least one Company Category.");
+      toast.error("Please select at least one Company Category.", { toastId: "val-company-category" });
       return false;
     }
     // Company Name: required
     if (!formData.companyName || formData.companyName.trim() === "") {
-      toast.error("Company Name is required.");
+      toast.error("Company Name is required.", { toastId: "val-company-name" });
       return false;
     }
     // Website URL is now optional
@@ -772,28 +778,28 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     */
     // Director/MD Information required
     if (!formData.directorName || formData.directorName.trim() === "") {
-      toast.error("Director Name is required.");
+      toast.error("Director Name is required.", { toastId: "val-director-name" });
       return false;
     }
     const phoneDigits = (formData.directorPhone || '').replace(/\D/g, '');
     if (phoneDigits.length < 12) {
-      toast.error("Please enter a valid 10-digit Indian phone number.");
+      toast.error("Please enter a valid 10-digit Indian phone number.", { toastId: "val-director-phone" });
       return false;
     }
     if (!formData.directorEmail || formData.directorEmail.trim() === "") {
-      toast.error("Director Email is required.");
+      toast.error("Director Email is required.", { toastId: "val-director-email" });
       return false;
     }
     if (!formData.altContactEmail || formData.altContactEmail.trim() === "") {
-      toast.error("Company Email is required.");
+      toast.error("Company Email is required.", { toastId: "val-company-email" });
       return false;
     }
     if (!formData.gstin || formData.gstin.trim() === "") {
-      toast.error("GST/CIN/LLPIN verification is required to list your company.");
+      toast.error("GST/CIN/LLPIN verification is required to list your company.", { toastId: "val-gstin" });
       return false;
     }
     if (!formData.gstVerified) {
-      toast.error("Please verify your GST/CIN/LLPIN before proceeding.");
+      toast.error("Please verify your GST/CIN/LLPIN before proceeding.", { toastId: "val-gst-verified" });
       return false;
     }
     return true;
@@ -802,7 +808,7 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
   // Step 3 validation logic
   const validateStep3 = () => {
     if (!formData.sectorsServed || typeof formData.sectorsServed !== "object") {
-      toast.error("Please select at least one sector.");
+      toast.error("Please select at least one sector.", { toastId: "val-sectors" });
       return false;
     }
     // Check if at least one selected category has at least one sector selected
@@ -813,7 +819,8 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
     );
     if (!hasAny) {
       toast.error(
-        "Please select at least one sector for your company category."
+        "Please select at least one sector for your company category.",
+        { toastId: "val-sectors-per-category" }
       );
       return false;
     }
@@ -823,14 +830,14 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
   // Step 4 validation logic
   const validateStep4 = () => {
     if (!formData.mainCategories || formData.mainCategories.length === 0) {
-      toast.error("Please select at least one Main Business Category.");
+      toast.error("Please select at least one Main Business Category.", { toastId: "val-main-categories" });
       return false;
     }
     if (
       !formData.geographyOfOperations ||
       formData.geographyOfOperations.length === 0
     ) {
-      toast.error("Please select at least one Geography of Operations.");
+      toast.error("Please select at least one Geography of Operations - scroll down, it's just below Main Business Categories.", { toastId: "val-geography" });
       return false;
     }
     return true;
@@ -844,12 +851,13 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
   // Step 7 validation logic
   const validateStep7 = () => {
     if (!formData.promoFormats || formData.promoFormats.length === 0) {
-      toast.error("Please select at least one Promotion Preference.");
+      toast.error("Please select at least one Promotion Preference.", { toastId: "val-promo-formats" });
       return false;
     }
     if (!formData.acceptTerms || !formData.acceptPrivacy) {
       toast.error(
-        "Please accept Terms & Conditions and Privacy Policy to continue."
+        "Please accept Terms & Conditions and Privacy Policy to continue.",
+        { toastId: "val-terms" }
       );
       return false;
     }
