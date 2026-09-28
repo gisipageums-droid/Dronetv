@@ -278,7 +278,7 @@ const GalleryPageV2: React.FC = () => {
           <span className="flex flex-col"><small className="text-[10px] leading-tight">Total Photos</small><strong className="text-lg leading-tight text-yellow-300">{allImages.length.toLocaleString('en-IN')}</strong></span>
         </div>
         <div className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[150px]">
-          <Grid3x3 className="size-5 shrink-0 text-yellow-400 sm:size-7" />
+          <Tag className="size-5 shrink-0 text-yellow-400 sm:size-7" />
           <span className="flex flex-col"><small className="text-[10px] leading-tight">Categories</small><strong className="text-lg leading-tight text-yellow-300">{categories.length - 1}</strong></span>
         </div>
         <button type="button" onClick={() => setShowAddImageModal(true)} className="flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#ffdf00] px-4 text-sm font-extrabold text-black"><Plus className="size-4" /> Add Photo</button>

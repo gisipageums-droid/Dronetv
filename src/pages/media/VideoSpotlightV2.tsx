@@ -231,7 +231,7 @@ const VideoCardV2: React.FC<{ item: MediaItem }> = ({ item }) => {
         ) : (
           <>
             {showThumb ? (
-              <img src={thumb!} alt={item.title} onError={() => setImgErr(true)} className="h-full w-full object-cover" />
+              <img src={thumb!} alt={item.title} onError={() => setImgErr(true)} className="h-full w-full object-cover pointer-events-none" />
             ) : (
               <div className="flex h-full w-full items-center justify-center"><VideoIcon className="size-10 text-slate-500" /></div>
             )}
