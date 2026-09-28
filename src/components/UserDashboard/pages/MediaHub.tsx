@@ -234,7 +234,7 @@ const MediaHub: React.FC = () => {
                       <p className="text-sm text-gray-600 mt-3 mb-3">{d.desc}</p>
                       <div className="flex items-center gap-3">
                         <a
-                          href={`mailto:media@dronetv.in?subject=${encodeURIComponent("Media Request: " + d.title)}&body=${encodeURIComponent("Hi DroneTv team,\n\nI'd like to initiate my " + d.title + " deliverable.\n\nMy email: " + userId)}`}
+                          href={`mailto:bd@dronetv.in?subject=${encodeURIComponent("Media Request: " + d.title)}&body=${encodeURIComponent("Hi DroneTv team,\n\nI'd like to initiate my " + d.title + " deliverable.\n\nMy email: " + userId)}`}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-400 text-black text-xs font-bold hover:bg-yellow-500 transition-colors"
                         >
                           <Mail size={13} />
