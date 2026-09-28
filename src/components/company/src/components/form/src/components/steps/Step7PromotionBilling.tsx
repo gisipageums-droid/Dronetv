@@ -85,7 +85,7 @@ By using the Services, you agree that you have read, understood, and are bound b
 (b) Business Listings: DroneTV facilitates business development for verified companies and individual professionals in the drone, GIS, and AI industries by allowing them to list their products and services on the Platform. DroneTV does not provide any of the products or services listed by businesses or professionals; it only serves as a platform for business visibility and connection.
 (c) The Platform is for your personal and non-commercial use only, unless otherwise agreed upon in accordance with the terms of a separate agreement. You agree that in the event you avail the Services or business listing services from a legal jurisdiction other than the territory of India, you will be deemed to have accepted DroneTV’s terms and conditions applicable to that jurisdiction.
 (d) DroneTV is a platform owned and operated by DroneTV Inc. and its affiliates.
-(e) Communication: A key part of the Services is DroneTV's ability to send you text messages, emails, or WhatsApp messages, including in connection with your business listing, content updates, promotional and marketing strategies. You may opt out of receiving these messages by contacting DroneTV at privacy@dronetv.in or through the in-Platform settings, but please note that this may impact DroneTV's ability to provide certain services to you.
+(e) Communication: A key part of the Services is DroneTV's ability to send you text messages, emails, or WhatsApp messages, including in connection with your business listing, content updates, promotional and marketing strategies. You may opt out of receiving these messages by contacting DroneTV at bd@dronetv.in or through the in-Platform settings, but please note that this may impact DroneTV's ability to provide certain services to you.
 
 2. ACCOUNT CREATION
 (a) To avail the Services, you will be required to create an account on the Platform ("Account"). For this Account, you may be required to furnish certain details, including but not limited to your name, phone number, and email address. To create an Account, you must be at least 18 years of age.
@@ -209,10 +209,10 @@ We may share your personal data with third parties set out below for the purpose
 • External third parties such as trusted third parties, our service providers, data analytics providers, and regulatory bodies.
 
 7. YOUR RIGHTS IN RELATION TO YOUR PERSONAL DATA
-You hereby warrant that all personal data that you provide us with is accurate, up-to-date, and true. You can access, update, or correct your personal data by contacting us at privacy@dronetv.in.
+You hereby warrant that all personal data that you provide us with is accurate, up-to-date, and true. You can access, update, or correct your personal data by contacting us at bd@dronetv.in.
 
 8. DELETION OF ACCOUNT AND PERSONAL DATA
-You may delete your account as well as your personal data stored with DroneTV by sending an email to privacy@dronetv.in. DroneTV may take up to 7 (seven) working days to process your request. Once your account is deleted, you will lose access to all Services.
+You may delete your account as well as your personal data stored with DroneTV by sending an email to bd@dronetv.in. DroneTV may take up to 7 (seven) working days to process your request. Once your account is deleted, you will lose access to all Services.
 
 9. TRANSFERS OF YOUR PERSONAL DATA
 By using our Services, you agree to the transfer, storage, and processing of your personal data in accordance with this Privacy Policy, which may involve transfer to countries other than the one you are based in.
@@ -234,7 +234,7 @@ We may update this Privacy Policy from time to time. Any changes will be posted 
 
 15. CONTACT DETAILS
 For any questions or concerns regarding this Privacy Policy or the way your personal data is processed, please contact us at:
-Email: privacy@dronetv.in`;
+Email: bd@dronetv.in`;
 
   return (
     <>

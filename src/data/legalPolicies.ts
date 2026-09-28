@@ -14,11 +14,11 @@ export const LEGAL_CONFIG = {
 
 export const LEGAL_CONTACTS = {
   support: 'support@dronetv.in',
-  privacy: 'privacy@dronetv.in',
-  grievance: 'grievance@dronetv.in',
-  billing: 'billing@dronetv.in',
-  legal: 'legal@dronetv.in',
-  security: 'security@dronetv.in',
+  privacy: 'bd@dronetv.in',
+  grievance: 'bd@dronetv.in',
+  billing: 'bd@dronetv.in',
+  legal: 'bd@dronetv.in',
+  security: 'bd@dronetv.in',
   office: '5A/6B, White Waters, Timber Lake Colony, Shaikpet, Hyderabad – 500008, Telangana, India',
 };
 
@@ -167,7 +167,7 @@ export const LEGAL_POLICIES: Policy[] = [
       {
         "title": "9. User Rights",
         "items": [
-          "Subject to applicable law, users may request correction/updating, erasure where applicable, withdrawal of consent, grievance redressal and other rights available under the applicable Indian data-protection framework. Requests: privacy@dronetv.in."
+          "Subject to applicable law, users may request correction/updating, erasure where applicable, withdrawal of consent, grievance redressal and other rights available under the applicable Indian data-protection framework. Requests: bd@dronetv.in."
         ]
       },
       {
@@ -191,8 +191,8 @@ export const LEGAL_POLICIES: Policy[] = [
       {
         "title": "13. Privacy Contact",
         "items": [
-          "Privacy enquiries: privacy@dronetv.in",
-          "Grievance contact: {{grievanceOfficer}}, grievance@dronetv.in, 5A/6B, White Waters, Timber Lake Colony, Shaikpet, Hyderabad – 500008, Telangana, India"
+          "Privacy enquiries: bd@dronetv.in",
+          "Grievance contact: {{grievanceOfficer}}, bd@dronetv.in, 5A/6B, White Waters, Timber Lake Colony, Shaikpet, Hyderabad – 500008, Telangana, India"
         ]
       }
     ]
@@ -399,7 +399,7 @@ export const LEGAL_POLICIES: Policy[] = [
       {
         "title": "1. Grievance Officer",
         "items": [
-          "Grievance Officer: {{grievanceOfficer}}, grievance@dronetv.in, 5A/6B, White Waters, Timber Lake Colony, Shaikpet, Hyderabad – 500008, Telangana, India. DroneTV must publish the final officer details and implement the response/escalation timelines applicable to its actual legal role."
+          "Grievance Officer: {{grievanceOfficer}}, bd@dronetv.in, 5A/6B, White Waters, Timber Lake Colony, Shaikpet, Hyderabad – 500008, Telangana, India. DroneTV must publish the final officer details and implement the response/escalation timelines applicable to its actual legal role."
         ]
       },
       {
@@ -428,7 +428,7 @@ export const LEGAL_POLICIES: Policy[] = [
       {
         "title": "5. IP Complaints",
         "items": [
-          "Rights holders should send complaints to legal@dronetv.in with contact details, protected work, precise location of the allegedly infringing material, ownership/authority evidence and a good-faith declaration. Repeated infringement may lead to account termination."
+          "Rights holders should send complaints to bd@dronetv.in with contact details, protected work, precise location of the allegedly infringing material, ownership/authority evidence and a good-faith declaration. Repeated infringement may lead to account termination."
         ]
       },
       {
@@ -475,7 +475,7 @@ export const LEGAL_POLICIES: Policy[] = [
       {
         "title": "5. Payment Disputes",
         "items": [
-          "Billing disputes should be sent to billing@dronetv.in with transaction ID and evidence. Legitimate statutory consumer rights are unaffected."
+          "Billing disputes should be sent to bd@dronetv.in with transaction ID and evidence. Legitimate statutory consumer rights are unaffected."
         ]
       },
       {
@@ -666,7 +666,7 @@ export const LEGAL_POLICIES: Policy[] = [
       {
         "title": "1. Reporting",
         "items": [
-          "Security researchers may report suspected vulnerabilities to security@dronetv.in. Include affected URL/system, reproducible steps, potential impact and contact details."
+          "Security researchers may report suspected vulnerabilities to bd@dronetv.in. Include affected URL/system, reproducible steps, potential impact and contact details."
         ]
       },
       {
