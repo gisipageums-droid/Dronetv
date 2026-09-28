@@ -231,7 +231,12 @@ const VideoCardV2: React.FC<{ item: MediaItem }> = ({ item }) => {
         ) : (
           <>
             {showThumb ? (
-              <img src={thumb!} alt={item.title} onError={() => setImgErr(true)} className="h-full w-full object-cover" />
+              /* pointer-events-none - without it, a tap that lands on the
+                 image itself (not the transparent overlay button painted on
+                 top of it) can register as a tap on the <img> instead of the
+                 Play button underneath it on some mobile browsers, opening
+                 the raw image instead of ever calling handleWatch(). */
+              <img src={thumb!} alt={item.title} onError={() => setImgErr(true)} className="h-full w-full object-cover pointer-events-none" />
             ) : (
               <div className="flex h-full w-full items-center justify-center"><VideoIcon className="size-10 text-slate-500" /></div>
             )}
