@@ -16,9 +16,12 @@ import {
   AlertCircle,
   Edit,
   Calendar,
+  Download,
+  FileSpreadsheet,
 } from "lucide-react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
 import CredentialsModal from "./credentialProp/Prop";
 import { motion, AnimatePresence } from "motion/react";
 import { COMPANY_API, AUTH_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
@@ -68,6 +71,15 @@ interface Company {
   isApproved: boolean;
   dashboardType: string;
   needsAdminAction: boolean;
+  // Contact/PII fields - only present when fetched via viewType=admin
+  // (backend gates these behind admin auth, see _to_card's include_contact).
+  directorEmail?: string;
+  companyEmail?: string;
+  phone?: string;
+  address?: string;
+  gstin?: string;
+  cin?: string;
+  urlSlug?: string;
 }
 
 interface ContactLead {
@@ -892,6 +904,30 @@ const RecentCompaniesSection: React.FC<{
     );
   };
 
+// -------------------- Export field definitions --------------------
+// key -> [column label, value getter]. Deliberately only real, existing
+// data - no fabricated placeholder for a field a company never filled in
+// (e.g. phone is blank, not "N/A" or a guessed number).
+const EXPORT_FIELD_DEFS: { key: string; label: string; get: (c: Company) => string }[] = [
+  { key: "companyName", label: "Company Name", get: c => c.companyName || "" },
+  { key: "directorEmail", label: "Director/Login Email", get: c => c.directorEmail || "" },
+  { key: "companyEmail", label: "Company Email", get: c => c.companyEmail || "" },
+  { key: "phone", label: "Phone", get: c => c.phone || "" },
+  { key: "address", label: "Address", get: c => c.address || c.location || "" },
+  { key: "gstin", label: "GSTIN", get: c => c.gstin || "" },
+  { key: "cin", label: "CIN", get: c => c.cin || "" },
+  { key: "sectors", label: "Sectors", get: c => (c.sectors || []).join(", ") },
+  { key: "reviewStatus", label: "Review Status", get: c => c.reviewStatus || "" },
+  { key: "isApproved", label: "Approved", get: c => (c.isApproved ? "Yes" : "No") },
+  { key: "createdAt", label: "Created Date", get: c => c.createdAt ? new Date(c.createdAt).toLocaleDateString("en-IN") : "" },
+  {
+    key: "publicUrl", label: "Public Profile URL",
+    get: c => c.urlSlug
+      ? `https://www.dronetv.in/${["template-2", "2"].includes(c.templateSelection) ? "companies" : "company"}/${c.urlSlug}`
+      : "",
+  },
+];
+
 // -------------------- Main Component --------------------
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -920,6 +956,14 @@ const AdminDashboard: React.FC = () => {
     data: any;
     company: Company | null;
   }>({ isOpen: false, data: null, company: null });
+
+  // Search + export (selected fields) - exports whatever the current
+  // search/status filter has already narrowed down to (sortedCompanies),
+  // so "search then export" genuinely means export just that result set.
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFields, setExportFields] = useState<Set<string>>(
+    new Set(["companyName", "directorEmail", "companyEmail", "phone", "address", "publicUrl"])
+  );
 
   // leads (contact form + webinar registration submissions)
   const [leads, setLeads] = useState<ContactLead[]>([]);
@@ -1390,6 +1434,35 @@ const AdminDashboard: React.FC = () => {
     fetchCompanies();
   };
 
+  const toggleExportField = (key: string) => {
+    setExportFields(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  };
+
+  const handleExport = () => {
+    if (exportFields.size === 0) {
+      toast.error("Select at least one field to export");
+      return;
+    }
+    const activeFields = EXPORT_FIELD_DEFS.filter(f => exportFields.has(f.key));
+    const rows = sortedCompanies.map(c => {
+      const row: Record<string, string> = {};
+      activeFields.forEach(f => { row[f.label] = f.get(c); });
+      return row;
+    });
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws["!cols"] = activeFields.map(f => ({ wch: Math.max(f.label.length + 2, 20) }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Companies");
+    const stamp = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `DroneTv_Companies_${stamp}.xlsx`);
+    toast.success(`Exported ${rows.length} ${rows.length === 1 ? "company" : "companies"}`);
+    setShowExportModal(false);
+  };
+
   // -------------------- Modal Configuration --------------------
   const getModalConfig = () => {
     const { type, company } = confirmationModal;
@@ -1709,6 +1782,15 @@ const AdminDashboard: React.FC = () => {
               {sortedCompanies.length}{" "}
               {sortedCompanies.length === 1 ? "company" : "companies"}
             </span>
+            <button
+              type="button"
+              onClick={() => setShowExportModal(true)}
+              disabled={sortedCompanies.length === 0}
+              className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-yellow text-ink text-xs font-bold hover:bg-brand-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Export the companies matching your current search/filter to Excel"
+            >
+              <Download className="w-3.5 h-3.5" /> Export to Excel
+            </button>
           </div>
 
           {isFetching ? (
@@ -1783,6 +1865,69 @@ const AdminDashboard: React.FC = () => {
           company={credentialsModal.company}
         />
       )}
+
+      {/* Export to Excel Modal - field selection, exports whatever the
+          current search/status filter already narrowed sortedCompanies to. */}
+      <AnimatePresence>
+        {showExportModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4"
+            onClick={() => setShowExportModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-md rounded-xl bg-surface-card border border-ink-light shadow-lg"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-ink-light px-5 py-4">
+                <div className="flex items-center gap-2">
+                  <FileSpreadsheet className="w-5 h-5 text-brand-gold" />
+                  <h3 className="text-sm font-bold text-ink">Export to Excel</h3>
+                </div>
+                <button type="button" onClick={() => setShowExportModal(false)} aria-label="Close">
+                  <X className="w-4 h-4 text-ink-caption hover:text-ink" />
+                </button>
+              </div>
+
+              <div className="px-5 py-4">
+                <p className="text-xs text-ink-caption mb-3">
+                  Exports the <strong className="text-ink">{sortedCompanies.length}</strong> {sortedCompanies.length === 1 ? "company" : "companies"} matching your current search/filter. Adjust the search above first if you want a narrower list.
+                </p>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wide text-ink-caption">Fields to include</span>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setExportFields(new Set(EXPORT_FIELD_DEFS.map(f => f.key)))} className="text-xs font-semibold text-ink-link hover:underline">Select all</button>
+                    <button type="button" onClick={() => setExportFields(new Set())} className="text-xs font-semibold text-ink-link hover:underline">Clear</button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1">
+                  {EXPORT_FIELD_DEFS.map(f => (
+                    <label key={f.key} className="flex items-center gap-2 rounded-lg border border-ink-light px-2.5 py-2 text-xs font-semibold text-ink cursor-pointer hover:border-brand-yellow">
+                      <input
+                        type="checkbox"
+                        checked={exportFields.has(f.key)}
+                        onChange={() => toggleExportField(f.key)}
+                        className="accent-brand-yellow"
+                      />
+                      {f.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 border-t border-ink-light px-5 py-4">
+                <button type="button" onClick={() => setShowExportModal(false)} className="px-4 py-2 rounded-lg text-xs font-bold text-ink-paragraph hover:bg-ink-light transition-colors">
+                  Cancel
+                </button>
+                <button type="button" onClick={handleExport} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-yellow text-ink text-xs font-bold hover:bg-brand-gold transition-colors">
+                  <Download className="w-3.5 h-3.5" /> Export {sortedCompanies.length} {sortedCompanies.length === 1 ? "row" : "rows"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
