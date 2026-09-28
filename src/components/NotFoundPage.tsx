@@ -6,9 +6,9 @@ const NotFoundPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-ink flex flex-col items-center justify-center text-white px-4">
       <div className="text-center max-w-md">
-        <div className="text-9xl font-black text-brand-yellow mb-4">404</div>
-        <h1 className="text-3xl font-bold mb-2">Page Not Found</h1>
-        <p className="text-ink-caption mb-8">The page you're looking for doesn't exist or has been moved.</p>
+        <div className="text-6xl mb-4">🚧</div>
+        <h1 className="text-3xl font-bold mb-2">Coming Soon</h1>
+        <p className="text-ink-caption mb-8">This page isn't ready yet, or the link you followed has moved. Check back soon, or head back to explore the rest of the platform.</p>
         <div className="flex gap-4 justify-center">
           <button
             onClick={() => navigate(-1)}
