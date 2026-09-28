@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { X, Eye, Key, Copy, Check, Lock, RefreshCw } from "lucide-react";
+import { X, Eye, Key, Copy, Check, Lock, RefreshCw, Trash2, Plus } from "lucide-react";
 import { toast } from "react-toastify";
 import { AUTH_API, COMPANY_API, LAMBDA } from "../../../../lib/apiConfig";
 import { PrettyValue, prettyLabel } from "../../../../lib/prettyValue";
 
 const SET_PASSWORD_API = AUTH_API ? `${AUTH_API}/admin/set-password` : `${LAMBDA.auth}/admin/set-password`;
+const ALT_EMAILS_BASE = AUTH_API ? `${AUTH_API}/admin/users/by-email` : null; // self-hosted only, no legacy Lambda support
 const PORTAL_PROFILE_API = COMPANY_API ? `${COMPANY_API}/portal-profile` : null;
 
 // Same section keys the Company Portal itself saves under (see
@@ -181,9 +182,27 @@ function genPassword(): string {
 
 function AccountAccess({ email, gstin, cin }: { email?: string; gstin?: string; cin?: string }) {
   const [pw, setPw] = useState("");
+  const [newLoginEmail, setNewLoginEmail] = useState("");
   const [notify, setNotify] = useState(true);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const [altEmails, setAltEmails] = useState<{ email: string; createdAt?: string }[]>([]);
+  const [altLoading, setAltLoading] = useState(false);
+  const [deletingEmail, setDeletingEmail] = useState<string | null>(null);
+
+  const authHeaders = { Authorization: `Bearer ${localStorage.getItem("adminToken")}` };
+
+  useEffect(() => {
+    if (!email || !ALT_EMAILS_BASE) { setAltEmails([]); return; }
+    let cancelled = false;
+    setAltLoading(true);
+    fetch(`${ALT_EMAILS_BASE}/${encodeURIComponent(email)}/alt-emails`, { headers: authHeaders })
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`HTTP ${res.status}`))))
+      .then((d) => { if (!cancelled) setAltEmails(d.altEmails || []); })
+      .catch(() => { if (!cancelled) setAltEmails([]); })
+      .finally(() => { if (!cancelled) setAltLoading(false); });
+    return () => { cancelled = true; };
+  }, [email]);
 
   const copy = (v: string, k: string) => {
     navigator.clipboard.writeText(v);
@@ -191,20 +210,60 @@ function AccountAccess({ email, gstin, cin }: { email?: string; gstin?: string; 
     setTimeout(() => setCopied(null), 1500);
   };
 
-  const save = async () => {
-    if (!email) { toast.error("No login email on this listing"); return; }
-    if (pw.trim().length < 6) { toast.error("Password must be at least 6 characters"); return; }
-    setSaving(true);
+  const deleteAltEmail = async (altEmail: string) => {
+    if (!email || !ALT_EMAILS_BASE) return;
+    setDeletingEmail(altEmail);
     try {
-      const res = await fetch(SET_PASSWORD_API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
-        body: JSON.stringify({ email, newPassword: pw.trim(), notify }),
+      const res = await fetch(`${ALT_EMAILS_BASE}/${encodeURIComponent(email)}/alt-emails/${encodeURIComponent(altEmail)}`, {
+        method: "DELETE",
+        headers: authHeaders,
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.detail || `Failed (${res.status})`);
-      toast.success(notify ? "Password updated — new password emailed to the user" : "Password updated");
+      setAltEmails(body.altEmails || []);
+      toast.success("Login email removed");
+    } catch (e: any) {
+      toast.error(e.message || "Could not remove that email");
+    } finally {
+      setDeletingEmail(null);
+    }
+  };
+
+  const save = async () => {
+    if (!email) { toast.error("No login email on this listing"); return; }
+    if (pw.trim().length < 6) { toast.error("Password must be at least 6 characters"); return; }
+    const addingNewEmail = newLoginEmail.trim().length > 0;
+    if (addingNewEmail && !ALT_EMAILS_BASE) { toast.error("Adding a login email isn't available on this environment"); return; }
+    setSaving(true);
+    try {
+      let targetEmail = email;
+      if (addingNewEmail) {
+        const newEmail = newLoginEmail.trim().toLowerCase();
+        const addRes = await fetch(`${ALT_EMAILS_BASE}/${encodeURIComponent(email)}/alt-emails`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...authHeaders },
+          body: JSON.stringify({ email: newEmail }),
+        });
+        const addBody = await addRes.json().catch(() => ({}));
+        if (!addRes.ok) throw new Error(addBody.detail || `Could not add that email (${addRes.status})`);
+        setAltEmails(addBody.altEmails || []);
+        targetEmail = newEmail;
+      }
+
+      const res = await fetch(SET_PASSWORD_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders },
+        body: JSON.stringify({ email: targetEmail, newPassword: pw.trim(), notify }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.detail || `Failed (${res.status})`);
+      toast.success(
+        addingNewEmail
+          ? `Login email added and password ${notify ? "updated — emailed to " + targetEmail : "updated"}`
+          : notify ? "Password updated — new password emailed to the user" : "Password updated"
+      );
       setPw("");
+      setNewLoginEmail("");
     } catch (e: any) {
       toast.error(e.message || "Could not update password");
     } finally {
@@ -237,8 +296,53 @@ function AccountAccess({ email, gstin, cin }: { email?: string; gstin?: string; 
         <Field label="CIN" value={cin} k="cin" />
       </div>
 
+      {ALT_EMAILS_BASE && (altLoading || altEmails.length > 0) && (
+        <div className="mb-4">
+          <p className="text-sm text-ink-paragraph mb-1.5">Additional Login Emails</p>
+          {altLoading ? (
+            <p className="text-xs text-ink-caption italic">Loading…</p>
+          ) : (
+            <div className="flex flex-col gap-1.5">
+              {altEmails.map((a) => (
+                <div key={a.email} className="flex items-center gap-2 bg-surface-card border border-ink-light rounded-lg px-3 py-1.5">
+                  <p className="font-medium font-mono text-sm break-all flex-1">{a.email}</p>
+                  <button onClick={() => copy(a.email, `alt-${a.email}`)} className="text-ink-caption hover:text-ink-paragraph flex-shrink-0">
+                    {copied === `alt-${a.email}` ? <Check className="w-4 h-4 text-status-success" /> : <Copy className="w-3 h-3" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deleteAltEmail(a.email)}
+                    disabled={deletingEmail === a.email}
+                    className="text-status-error hover:text-status-error/80 flex-shrink-0 disabled:opacity-50"
+                    title="Remove this login email"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="p-3 bg-surface-card rounded-lg border border-ink-light">
         <h5 className="font-medium text-ink-paragraph mb-2 text-sm">Reset this company's password</h5>
+        {ALT_EMAILS_BASE && (
+          <div className="mb-2">
+            <input
+              type="email"
+              value={newLoginEmail}
+              onChange={(e) => setNewLoginEmail(e.target.value)}
+              placeholder="Add a new login email (optional) — leave blank to keep using the existing one"
+              className="w-full px-3 py-2 border border-ink-light rounded-lg text-sm focus:outline-none focus:border-brand-yellow"
+            />
+            {newLoginEmail.trim() && (
+              <p className="text-[11px] text-ink-caption mt-1 flex items-center gap-1">
+                <Plus className="w-3 h-3" /> Will be added as another login email for this company, and the new password below will be sent to it.
+              </p>
+            )}
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
           <input
             type="text"
@@ -265,7 +369,7 @@ function AccountAccess({ email, gstin, cin }: { email?: string; gstin?: string; 
         </div>
         <label className="flex items-center gap-2 mt-2.5 text-xs text-ink-paragraph cursor-pointer">
           <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} />
-          Email the new password to <span className="font-medium">{email || "the user"}</span>
+          Email the new password to <span className="font-medium">{newLoginEmail.trim() || email || "the user"}</span>
         </label>
       </div>
     </div>
