@@ -37,6 +37,13 @@ function categoryColor(cat: string): string { return CAT_COLORS[cat] || '#475569
 
 interface GalleryImage {
   id: number;
+  // Stable per-image identifier used for share links - the CMS's real
+  // contentId for gallery photos (the numeric `id` above is regenerated
+  // from Date.now() on every fetch, so it can't be used for a link that
+  // has to keep working after a reload). Falls back to String(id) for the
+  // hardcoded demo photos and locally-added ones, whose numeric id is
+  // already stable across reloads.
+  shareId?: string;
   src: string;
   title: string;
   category: string;
@@ -47,8 +54,13 @@ interface GalleryImage {
   tags?: string[];
 }
 
+function imageShareId(img: GalleryImage): string {
+  return img.shareId ?? String(img.id);
+}
+
 const GalleryPageV2: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const deepLinkHandled = useRef(false);
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredImages, setFilteredImages] = useState<GalleryImage[]>([]);
@@ -145,6 +157,7 @@ const GalleryPageV2: React.FC = () => {
         const base = Date.now();
         setCmsImages(items.map((item, i) => ({
           id: base + i,
+          shareId: item.contentId,
           src: item.imageUrl || '',
           title: item.title,
           category: item.category || 'Events',
@@ -198,8 +211,31 @@ const GalleryPageV2: React.FC = () => {
     setSelectedImage(image);
     setLightboxIndex(globalIndex);
     setIsLiked(false);
+    setSearchParams(prev => { const p = new URLSearchParams(prev); p.set('photo', imageShareId(image)); return p; }, { replace: true });
   };
-  const closeLightbox = () => { setSelectedImage(null); setLightboxIndex(0); };
+  const closeLightbox = () => {
+    setSelectedImage(null);
+    setLightboxIndex(0);
+    setSearchParams(prev => { const p = new URLSearchParams(prev); p.delete('photo'); return p; }, { replace: true });
+  };
+
+  // A shared /gallery?photo=<id> link should open straight to that photo -
+  // runs once real content has loaded, so it can find CMS-backed photos too
+  // (not just the always-available hardcoded demo set).
+  useEffect(() => {
+    if (deepLinkHandled.current) return;
+    const photoId = searchParams.get('photo');
+    if (!photoId) return;
+    if (cmsImages.length === 0 && allImages.length === 0) return;
+    const idx = filteredImages.findIndex(img => imageShareId(img) === photoId);
+    if (idx !== -1) {
+      setSelectedImage(filteredImages[idx]);
+      setLightboxIndex(idx);
+      deepLinkHandled.current = true;
+    } else if (cmsImages.length > 0 || allImages.length > 0) {
+      deepLinkHandled.current = true;
+    }
+  }, [filteredImages, searchParams, cmsImages, allImages]);
 
   const handleDownload = async () => {
     if (!selectedImage) return;
@@ -223,6 +259,7 @@ const GalleryPageV2: React.FC = () => {
     const newIndex = direction === 'next' ? (lightboxIndex + 1) % filteredImages.length : (lightboxIndex - 1 + filteredImages.length) % filteredImages.length;
     setLightboxIndex(newIndex);
     setSelectedImage(filteredImages[newIndex]);
+    setSearchParams(prev => { const p = new URLSearchParams(prev); p.set('photo', imageShareId(filteredImages[newIndex])); return p; }, { replace: true });
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -489,7 +526,7 @@ const GalleryPageV2: React.FC = () => {
               </div>
               <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
                 <button onClick={() => setIsLiked(!isLiked)} className={`rounded-full p-2 transition-all sm:p-3 ${isLiked ? 'bg-red-600 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}><Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${isLiked ? 'fill-current' : ''}`} /></button>
-                <ShareMenu url={window.location.href} title={selectedImage.title} buttonClassName="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3" iconClassName="h-4 w-4 sm:h-5 sm:w-5" />
+                <ShareMenu url={`${window.location.origin}/gallery?photo=${imageShareId(selectedImage)}`} title={selectedImage.title} buttonClassName="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3" iconClassName="h-4 w-4 sm:h-5 sm:w-5" />
                 <button onClick={handleDownload} className="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3"><Download className="h-4 w-4 sm:h-5 sm:w-5" /></button>
               </div>
             </div>
@@ -531,9 +568,12 @@ const GalleryCardV2: React.FC<{ image: GalleryImage; onOpen: () => void }> = ({ 
             {image.tags.slice(0, 3).map((t, i) => <span key={i} className="rounded bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase text-blue-700">{t}</span>)}
           </div>
         )}
-        <button type="button" onClick={e => { e.stopPropagation(); onOpen(); }} className="mt-auto flex items-center justify-center gap-1 rounded-lg border border-slate-300 bg-white py-2 text-xs font-bold text-slate-900 hover:border-amber-500">
-          <Eye className="size-3.5" /> View Photo
-        </button>
+        <div className="mt-auto flex items-center gap-2">
+          <button type="button" onClick={e => { e.stopPropagation(); onOpen(); }} className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-slate-300 bg-white py-2 text-xs font-bold text-slate-900 hover:border-amber-500">
+            <Eye className="size-3.5" /> View Photo
+          </button>
+          <ShareMenu url={`${window.location.origin}/gallery?photo=${imageShareId(image)}`} title={image.title} buttonClassName="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-900 hover:border-amber-500" iconClassName="size-3.5" />
+        </div>
       </div>
     </article>
   );
