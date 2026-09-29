@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, ChevronDown, Filter, X, ChevronLeft, ChevronRight, Download, Heart, Calendar, MapPin, Users, Plus, Upload, Tag, Eye, Camera } from 'lucide-react';
+import { Search, ChevronDown, Filter, X, ChevronLeft, ChevronRight, Download, Heart, Calendar, MapPin, Users, Tag, Eye, Camera } from 'lucide-react';
 import { fetchContent } from '../lib/mediaApi';
 import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
 import ShareMenu from './common/ShareMenu';
@@ -12,11 +12,11 @@ import ShareMenu from './common/ShareMenu';
 // per explicit user correction: not a separate category-hub page with a
 // "View Gallery" button in front of it (that was GalleryHubV2, now
 // retired), the new card design goes ON the real gallery itself.
-// Every real behaviour is untouched and still lives in this file: CMS
-// photos (fetchContent('gallery')) + localStorage-added photos, search,
-// category filter, pagination, Add Photo modal, and the full lightbox
-// (like/share/download, prev/next). Nothing here is fabricated - the
-// category ribbon colors are decoration only, not new data.
+// Real behaviour lives in this file: CMS photos (fetchContent('gallery')),
+// search, category filter, pagination, and the full lightbox
+// (like/share/download, prev/next). Uploads happen only through the admin
+// CMS (/admin/media/dashboard?type=gallery), which is what every visitor
+// actually sees here.
 
 const PAGE_BG: React.CSSProperties = {
   backgroundColor: '#ffd84d',
@@ -68,14 +68,7 @@ const GalleryPageV2: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
-  const [showAddImageModal, setShowAddImageModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const isInitialLoad = useRef(true);
-
-  const [formData, setFormData] = useState({
-    title: '', category: 'Events', description: '', tags: '', location: '', attendees: '',
-    image: null as File | null, imagePreview: null as string | null,
-  });
 
   const imagesPerPage = 24;
   const categories = ['All', 'Events', 'Collaborations', 'Conferences', 'Interviews', 'Product Launches', 'Team Photos'];
@@ -131,25 +124,9 @@ const GalleryPageV2: React.FC = () => {
     { id: 49, src: "/images/25.png", title: "Company Milestone Celebration", category: "Interviews", date: "June 1, 2022", location: "San Francisco, CA", attendees: "80+", description: "Celebrating major company milestones and achievements.", tags: ["Rini Bansal"] },
   ];
 
-  const [allImages, setAllImages] = useState<GalleryImage[]>([]);
+  const [allImages] = useState<GalleryImage[]>(defaultImages);
   const [cmsImages, setCmsImages] = useState<GalleryImage[]>([]);
   const [cmsLoaded, setCmsLoaded] = useState(false);
-  const STORAGE_KEY = 'droneTV_gallery_images_v3';
-
-  useEffect(() => {
-    try {
-      const savedImages = localStorage.getItem(STORAGE_KEY);
-      if (savedImages) {
-        const parsedImages = JSON.parse(savedImages);
-        setAllImages(Array.isArray(parsedImages) && parsedImages.length > 0 ? parsedImages : defaultImages);
-      } else {
-        setAllImages(defaultImages);
-      }
-    } catch {
-      setAllImages(defaultImages);
-    }
-    isInitialLoad.current = false;
-  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -172,16 +149,6 @@ const GalleryPageV2: React.FC = () => {
     }).catch(() => {}).finally(() => setCmsLoaded(true));
     return () => controller.abort();
   }, []);
-
-  useEffect(() => {
-    if (!isInitialLoad.current && allImages.length > 0) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allImages));
-      } catch { /* storage full, ignore */ }
-    }
-  }, [allImages]);
-
-  const getCurrentDate = () => new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const displayImages = [...cmsImages, ...allImages];
 
@@ -264,46 +231,6 @@ const GalleryPageV2: React.FC = () => {
     setSearchParams(prev => { const p = new URLSearchParams(prev); p.set('photo', imageShareId(filteredImages[newIndex])); return p; }, { replace: true });
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) return;
-      const reader = new FileReader();
-      reader.onload = e => setFormData(f => ({ ...f, image: file, imagePreview: e.target?.result as string }));
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(f => ({ ...f, [name]: value }));
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.imagePreview) return;
-    const tagsArray = formData.tags.split(',').map(t => t.trim()).filter(Boolean);
-    const newImage: GalleryImage = {
-      id: Date.now() + Math.floor(Math.random() * 1000),
-      src: formData.imagePreview,
-      title: formData.title.trim(),
-      category: formData.category,
-      date: getCurrentDate(),
-      location: formData.location.trim() || 'Location not specified',
-      attendees: formData.attendees.trim() || 'Not specified',
-      description: formData.description.trim(),
-      tags: tagsArray,
-    };
-    setAllImages(prev => [newImage, ...prev]);
-    setFormData({ title: '', category: 'Events', description: '', tags: '', location: '', attendees: '', image: null, imagePreview: null });
-    setShowAddImageModal(false);
-  };
-
-  const closeAddImageModal = () => {
-    setFormData({ title: '', category: 'Events', description: '', tags: '', location: '', attendees: '', image: null, imagePreview: null });
-    setShowAddImageModal(false);
-  };
-
   const categoryCounts: Record<string, number> = {};
   displayImages.forEach(img => { categoryCounts[img.category] = (categoryCounts[img.category] || 0) + 1; });
 
@@ -320,7 +247,6 @@ const GalleryPageV2: React.FC = () => {
           <Tag className="size-5 shrink-0 text-yellow-400 sm:size-7" />
           <span className="flex flex-col"><small className="text-[10px] leading-tight">Categories</small><strong className="text-lg leading-tight text-yellow-300">{categories.length - 1}</strong></span>
         </div>
-        <button type="button" onClick={() => setShowAddImageModal(true)} className="flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#ffdf00] px-4 text-sm font-extrabold text-black"><Plus className="size-4" /> Add Photo</button>
         <div className="ml-auto min-w-0 shrink-0 sm:min-w-[200px] text-right">
           <strong className="block text-sm leading-tight text-yellow-300">DroneTv Photo Gallery</strong>
           <span className="block text-[11px] text-sky-300">Events · Community · Moments</span>
@@ -413,84 +339,6 @@ const GalleryPageV2: React.FC = () => {
         <span>Explore verified drone products &amp; services</span><span className="hidden lg:inline">│</span>
         <span>Connect │ Collaborate │ Grow</span>
       </footer>
-
-      {/* Add Image Modal - unchanged real functionality */}
-      {showAddImageModal && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-5 sm:p-6">
-            <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900">Add New Photo</h2>
-              <button onClick={closeAddImageModal} className="text-slate-400 hover:text-slate-600"><X className="h-5 w-5" /></button>
-            </div>
-
-            <form onSubmit={handleFormSubmit} className="space-y-4">
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">Upload Image *</label>
-                <div className="rounded-xl border-2 border-dashed border-slate-200 p-5 text-center">
-                  {formData.imagePreview ? (
-                    <div className="relative">
-                      <img src={formData.imagePreview} alt="Preview" className="mx-auto max-h-40 max-w-full rounded-lg" />
-                      <button type="button" onClick={() => setFormData(f => ({ ...f, image: null, imagePreview: null }))} className="absolute right-2 top-2 rounded-full bg-red-600 p-1 text-white hover:bg-red-700"><X className="h-3 w-3" /></button>
-                    </div>
-                  ) : (
-                    <div>
-                      <Upload className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-                      <p className="mb-3 text-sm text-slate-500">Click to upload (Max 10MB)</p>
-                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="imageUpload" />
-                      <label htmlFor="imageUpload" className="cursor-pointer rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-yellow-300">Choose File</label>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="title" className="mb-1.5 block text-sm font-semibold text-slate-700">Title *</label>
-                <input type="text" id="title" name="title" value={formData.title} onChange={handleInputChange} className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400" placeholder="Enter image title" required />
-              </div>
-
-              <div>
-                <label htmlFor="category" className="mb-1.5 block text-sm font-semibold text-slate-700">Category</label>
-                <select id="category" name="category" value={formData.category} onChange={handleInputChange} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400">
-                  {categories.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Date</label>
-                <input type="text" value={getCurrentDate()} disabled className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-400" />
-              </div>
-
-              <div>
-                <label htmlFor="description" className="mb-1.5 block text-sm font-semibold text-slate-700">Description *</label>
-                <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} rows={3} className="w-full resize-none rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400" placeholder="Enter image description" required />
-              </div>
-
-              <div>
-                <label htmlFor="location" className="mb-1.5 block text-sm font-semibold text-slate-700">Location</label>
-                <input type="text" id="location" name="location" value={formData.location} onChange={handleInputChange} className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400" placeholder="Enter location" />
-              </div>
-
-              <div>
-                <label htmlFor="attendees" className="mb-1.5 block text-sm font-semibold text-slate-700">Attendees</label>
-                <input type="text" id="attendees" name="attendees" value={formData.attendees} onChange={handleInputChange} className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400" placeholder="e.g., 100+, 50 people" />
-              </div>
-
-              <div>
-                <label htmlFor="tags" className="mb-1.5 block text-sm font-semibold text-slate-700">Tags</label>
-                <div className="relative">
-                  <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <input type="text" id="tags" name="tags" value={formData.tags} onChange={handleInputChange} className="w-full rounded-xl border border-slate-200 py-2.5 pl-9 pr-3 text-sm outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400" placeholder="Tags separated by commas" />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={closeAddImageModal} className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
-                <button type="submit" className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-yellow-400 hover:bg-slate-800">Add Photo</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Lightbox - unchanged real functionality */}
       {selectedImage && (
