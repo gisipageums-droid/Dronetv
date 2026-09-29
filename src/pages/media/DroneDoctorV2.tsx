@@ -60,6 +60,9 @@ const DroneDoctorV2: React.FC = () => {
       list = list.filter(t => t.title.toLowerCase().includes(q) || t.description.toLowerCase().includes(q));
     }
     return [...list].sort((a, b) => {
+      const aOther = a.category === 'Other' ? 1 : 0;
+      const bOther = b.category === 'Other' ? 1 : 0;
+      if (aOther !== bOther) return aOther - bOther;
       if (sortBy === 'oldest') return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
       if (sortBy === 'popular') return (b.views ?? 0) - (a.views ?? 0);
       return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
