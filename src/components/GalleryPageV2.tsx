@@ -133,6 +133,7 @@ const GalleryPageV2: React.FC = () => {
 
   const [allImages, setAllImages] = useState<GalleryImage[]>([]);
   const [cmsImages, setCmsImages] = useState<GalleryImage[]>([]);
+  const [cmsLoaded, setCmsLoaded] = useState(false);
   const STORAGE_KEY = 'droneTV_gallery_images_v3';
 
   useEffect(() => {
@@ -168,7 +169,7 @@ const GalleryPageV2: React.FC = () => {
           tags: item.tags || [],
         })));
       }
-    }).catch(() => {});
+    }).catch(() => {}).finally(() => setCmsLoaded(true));
     return () => controller.abort();
   }, []);
 
@@ -219,23 +220,24 @@ const GalleryPageV2: React.FC = () => {
     setSearchParams(prev => { const p = new URLSearchParams(prev); p.delete('photo'); return p; }, { replace: true });
   };
 
-  // A shared /gallery?photo=<id> link should open straight to that photo -
-  // runs once real content has loaded, so it can find CMS-backed photos too
-  // (not just the always-available hardcoded demo set).
+  // A shared /gallery?photo=<id> link should open straight to that photo.
+  // allImages (localStorage/hardcoded demo set) is ready almost instantly,
+  // but the real CMS photo this link usually points to only arrives once
+  // fetchContent('gallery') resolves over the network - waiting on
+  // allImages alone made this give up and show the plain grid before the
+  // real photo had even loaded. Must wait for cmsLoaded specifically.
   useEffect(() => {
     if (deepLinkHandled.current) return;
     const photoId = searchParams.get('photo');
     if (!photoId) return;
-    if (cmsImages.length === 0 && allImages.length === 0) return;
+    if (!cmsLoaded) return;
     const idx = filteredImages.findIndex(img => imageShareId(img) === photoId);
     if (idx !== -1) {
       setSelectedImage(filteredImages[idx]);
       setLightboxIndex(idx);
-      deepLinkHandled.current = true;
-    } else if (cmsImages.length > 0 || allImages.length > 0) {
-      deepLinkHandled.current = true;
     }
-  }, [filteredImages, searchParams, cmsImages, allImages]);
+    deepLinkHandled.current = true;
+  }, [filteredImages, searchParams, cmsLoaded]);
 
   const handleDownload = async () => {
     if (!selectedImage) return;
