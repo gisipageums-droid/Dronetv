@@ -188,23 +188,25 @@ const GalleryPageV2: React.FC = () => {
   };
 
   // A shared /gallery?photo=<id> link should open straight to that photo.
-  // allImages (localStorage/hardcoded demo set) is ready almost instantly,
-  // but the real CMS photo this link usually points to only arrives once
-  // fetchContent('gallery') resolves over the network - waiting on
-  // allImages alone made this give up and show the plain grid before the
-  // real photo had even loaded. Must wait for cmsLoaded specifically.
+  // Computed directly from cmsImages/allImages (always in sync with the
+  // render that observes cmsLoaded===true) rather than from the separate
+  // `filteredImages` state, which is populated by the effect above on its
+  // own schedule - depending on that state instead let this give up before
+  // that other effect had caught up with the newly-loaded CMS photos.
   useEffect(() => {
     if (deepLinkHandled.current) return;
     const photoId = searchParams.get('photo');
     if (!photoId) return;
     if (!cmsLoaded) return;
-    const idx = filteredImages.findIndex(img => imageShareId(img) === photoId);
+    const sorted = [...displayImages].sort((a, b) => b.id - a.id);
+    const idx = sorted.findIndex(img => imageShareId(img) === photoId);
     if (idx !== -1) {
-      setSelectedImage(filteredImages[idx]);
+      setSelectedImage(sorted[idx]);
       setLightboxIndex(idx);
     }
     deepLinkHandled.current = true;
-  }, [filteredImages, searchParams, cmsLoaded]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cmsImages, allImages, searchParams, cmsLoaded]);
 
   const handleDownload = async () => {
     if (!selectedImage) return;
