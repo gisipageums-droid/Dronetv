@@ -22,6 +22,7 @@ interface Row {
   category: string;
   tags: string;
   aiFilled: boolean;
+  aiPending: boolean;
   error?: string;
 }
 
@@ -43,17 +44,18 @@ function titleFromFilename(name: string): string {
   return /^(img|dsc|image|photo|whatsapp)?\s*[\d\s]+$/i.test(base) ? '' : base;
 }
 
-// Sent to the AI only: a smaller copy keeps the request fast and well under the
-// server limit. The original file is what gets stored and shown.
+// Sent to the AI only. A small copy (about 30 KB) is plenty to caption a photo
+// and uploads quickly even on a slow connection. The original file is what gets
+// stored and shown.
 async function downscale(file: File): Promise<Blob> {
   try {
     const bmp = await createImageBitmap(file);
-    const scale = Math.min(1, 1280 / Math.max(bmp.width, bmp.height));
+    const scale = Math.min(1, 640 / Math.max(bmp.width, bmp.height));
     const canvas = document.createElement('canvas');
     canvas.width = Math.round(bmp.width * scale);
     canvas.height = Math.round(bmp.height * scale);
     canvas.getContext('2d')!.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-    const blob = await new Promise<Blob | null>(res => canvas.toBlob(res, 'image/jpeg', 0.8));
+    const blob = await new Promise<Blob | null>(res => canvas.toBlob(res, 'image/jpeg', 0.7));
     return blob || file;
   } catch {
     return file;
@@ -64,9 +66,23 @@ async function describePhoto(file: File): Promise<{ title: string; description: 
   const base = COMPANY_API || LAMBDA.company;
   const form = new FormData();
   form.append('file', await downscale(file), 'photo.jpg');
-  const res = await fetch(`${base}/ai/describe-photo`, { method: 'POST', headers: authHeader(), body: form });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 45000);
+  try {
+    const res = await fetch(`${base}/ai/describe-photo`, { method: 'POST', headers: authHeader(), body: form, signal: ctl.signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function uploadWithRetry(upload: (f: File) => Promise<string>, file: File): Promise<string> {
+  try {
+    return await upload(file);
+  } catch {
+    return upload(file);
+  }
 }
 
 export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Props) {
@@ -85,22 +101,31 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
   }, []);
 
   const processOne = useCallback(async (row: Row) => {
+    let imageUrl: string;
     try {
-      const [imageUrl, ai] = await Promise.all([
-        uploadImage(row.file),
-        describePhoto(row.file).catch(() => null),
-      ]);
-      patch(row.id, {
-        status: 'ready',
-        imageUrl,
-        title: ai?.title || row.title,
-        description: ai?.description || '',
-        category: ai?.category && CATEGORIES.includes(ai.category) ? ai.category : 'Events',
-        tags: (ai?.tags || []).join(', '),
-        aiFilled: !!ai,
-      });
+      imageUrl = await uploadWithRetry(uploadImage, row.file);
     } catch {
-      patch(row.id, { status: 'error', error: 'Upload failed' });
+      patch(row.id, { status: 'error', error: 'Upload failed - remove it and try again', aiPending: false });
+      return;
+    }
+    patch(row.id, { status: 'ready', imageUrl, aiPending: true });
+    try {
+      const ai = await describePhoto(row.file);
+      setRows(rs => rs.map(r => {
+        if (r.id !== row.id) return r;
+        return {
+          ...r,
+          // Never overwrite something the admin has already typed.
+          title: r.title.trim() ? r.title : ai.title,
+          description: r.description.trim() ? r.description : ai.description,
+          category: ai.category && CATEGORIES.includes(ai.category) ? ai.category : r.category,
+          tags: r.tags.trim() ? r.tags : (ai.tags || []).join(', '),
+          aiFilled: true,
+          aiPending: false,
+        };
+      }));
+    } catch {
+      patch(row.id, { aiPending: false });
     }
   }, [patch, uploadImage]);
 
@@ -116,7 +141,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
       return {
         id: `${Date.now()}-${i}-${file.name}`,
         file, preview, status: 'working', imageUrl: '',
-        title: titleFromFilename(file.name), description: '', category: 'Events', tags: '', aiFilled: false,
+        title: titleFromFilename(file.name), description: '', category: 'Events', tags: '', aiFilled: false, aiPending: false,
       };
     });
     setRows(rs => [...rs, ...newRows]);
@@ -126,7 +151,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
     }));
   }, [rows.length, processOne]);
 
-  const busy = rows.some(r => r.status === 'working');
+  const busy = rows.some(r => r.status === 'working' || r.aiPending);
   const ready = rows.filter(r => r.status === 'ready');
 
   const saveAll = async () => {
@@ -203,7 +228,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
                   <div key={r.id} className="flex gap-3 border border-ink-light rounded-lg p-3">
                     <img src={r.preview} alt="" className="w-28 h-24 object-cover rounded-md shrink-0 bg-ink-offwhite" />
                     {r.status === 'working' ? (
-                      <div className="flex items-center gap-2 text-sm text-ink-caption"><Loader2 className="w-4 h-4 animate-spin" /> Uploading and writing caption...</div>
+                      <div className="flex items-center gap-2 text-sm text-ink-caption"><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</div>
                     ) : r.status === 'error' ? (
                       <div className="flex-1 flex items-center gap-2 text-sm text-status-error"><AlertTriangle className="w-4 h-4" /> {r.error}</div>
                     ) : (
@@ -214,7 +239,8 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
                         </select>
                         <textarea value={r.description} onChange={e => patch(r.id, { description: e.target.value })} rows={2} className={`${inp} sm:col-span-2 resize-none`} placeholder="Description" />
                         <input value={r.tags} onChange={e => patch(r.id, { tags: e.target.value })} className={`${inp} sm:col-span-2`} placeholder="Tags, comma separated (add people names here)" />
-                        {!r.aiFilled && <p className="text-[11px] text-ink-caption sm:col-span-2">Automatic caption was not available for this photo - please fill the details.</p>}
+                        {r.aiPending && <p className="text-[11px] text-ink-caption sm:col-span-2 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Writing caption...</p>}
+                        {!r.aiPending && !r.aiFilled && <p className="text-[11px] text-ink-caption sm:col-span-2">Automatic caption was not available for this photo - please fill the details.</p>}
                       </div>
                     )}
                     <button onClick={() => setRows(rs => rs.filter(x => x.id !== r.id))} disabled={saving} className="self-start p-1.5 rounded hover:bg-ink-light text-ink-caption"><X className="w-4 h-4" /></button>
@@ -226,7 +252,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
         </div>
 
         <div className="flex items-center justify-between px-6 py-4 border-t border-ink-light">
-          <span className="text-xs text-ink-caption">{ready.length} ready{busy ? ' · processing...' : ''}</span>
+          <span className="text-xs text-ink-caption">{ready.length} ready{busy ? ' · still working...' : ''}</span>
           <div className="flex gap-2">
             <button onClick={onClose} disabled={saving} className="px-4 py-2 rounded-lg text-sm font-medium bg-ink-light hover:bg-ink-light">Cancel</button>
             <button onClick={saveAll} disabled={saving || busy || ready.length === 0}
