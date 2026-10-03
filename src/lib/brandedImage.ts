@@ -26,6 +26,18 @@ async function fetchBlob(url: string): Promise<Blob> {
 
 // Some image hosts send no CORS headers, which makes the browser refuse to read them into a canvas.
 // Fall back to our own image proxy (allow-listed hosts only) in that case.
+let fontsReady: Promise<void> | null = null;
+// Poppins is bundled in /fonts so the image looks the same on every device.
+function ensureFonts(): Promise<void> {
+  if (!fontsReady) {
+    fontsReady = Promise.all([500, 600, 700, 800].map(async w => {
+      const face = new FontFace('Poppins', `url(/fonts/Poppins-${w}.woff2)`, { weight: String(w) });
+      document.fonts.add(await face.load());
+    })).then(() => undefined).catch(() => undefined);
+  }
+  return fontsReady;
+}
+
 async function loadBitmap(url: string): Promise<ImageBitmap> {
   try {
     return await createImageBitmap(await fetchBlob(url));
@@ -163,6 +175,7 @@ function venueLines(venue: string): string[] {
 }
 
 export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
+  await ensureFonts();
   const photo = await loadBitmap(input.photoUrl);
   const ev = input.event || null;
   const partnerUrls = (ev?.partners || []).slice(0, 8);
@@ -192,14 +205,21 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
     }
   }
 
-  // Header: DroneTV logo (left) + tagline lines (right)
-  if (brand) drawContain(ctx, brand, 52, 4, 390, 152, 8, 150, 484, 215);
+  // Header: DroneTV logo (left, graphic only) + tagline, and the two header lines (right)
+  if (brand) drawContain(ctx, brand, 62, 8, 362, 118, 10, 150, 484, 178);
   ctx.fillStyle = '#111';
+  ctx.textAlign = 'left';
+  const tagText = 'VOICE OF DRONE TECHNOLOGY, FOR ALL TECHNOLOGIES';
+  let tagSize = 14;
+  ctx.font = `800 ${tagSize}px ${FONT}`;
+  tagSize = Math.max(9, Math.min(16, (tagSize * 350) / ctx.measureText(tagText).width));
+  ctx.font = `800 ${tagSize}px ${FONT}`;
+  ctx.fillText(tagText, 70, 136);
   ctx.textAlign = 'right';
-  ctx.font = `700 30px ${FONT}`;
-  ctx.fillText('Connect  |  Explore  |  Do Business', 1190, 74);
-  ctx.font = `700 27px ${FONT}`;
-  ctx.fillText('Drones  |  GIS  |  AI  |  People  |  Opportunities', 1190, 113);
+  ctx.font = `600 28px ${FONT}`;
+  ctx.fillText('Connect  |  Explore  |  Do Business', 1190, 76);
+  ctx.font = `600 25px ${FONT}`;
+  ctx.fillText('Drones  |  GIS  |  AI  |  People  |  Opportunities', 1190, 112);
 
   // Layout depends on whether there are partner logos to show
   const hasPartners = partners.length > 0;
@@ -222,7 +242,7 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   roundRect(ctx, 36, infoY, 1182, infoH, 22);
   ctx.fill();
   const mid = infoY + infoH / 2;
-  drawIcon(ctx, 'handshake', 58, mid - 40, 80, NAVY, 1.7);
+  drawIcon(ctx, 'handshake', 54, mid - 44, 88, NAVY, 2.5);
   const capX = 160;
   const capRight = hasEvent ? 700 : 1196;
   ctx.textAlign = 'left';
@@ -242,7 +262,7 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
     ctx.strokeStyle = '#222';
     ctx.lineWidth = 2;
     for (const x of [712, 982]) { ctx.beginPath(); ctx.moveTo(x, infoY + 22); ctx.lineTo(x, infoY + infoH - 22); ctx.stroke(); }
-    drawIcon(ctx, 'calendar', 726, mid - 27, 54, '#111', 1.8);
+    drawIcon(ctx, 'calendar', 724, mid - 29, 58, '#111', 2.5);
     if (eventLogo) {
       drawContain(ctx, eventLogo, 794, infoY + 10, 180, infoH - 20);
     } else if (ev?.name) {
@@ -258,16 +278,16 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
       ctx.fillStyle = '#1a1a1a';
       const lines = venueLines(ev.location);
       const sizes = [30, 25, 22];
-      const weights = [600, 500, 500];
+      const weights = [500, 500, 500];
       const lineH = 1.2;
       const total = lines.reduce((h, _, i) => h + (sizes[i] ?? 22) * lineH, 0);
       let y = mid - total / 2;
       lines.forEach((text, i) => {
         let size = sizes[i] ?? 22;
         ctx.font = `${weights[i] ?? 500} ${size}px ${FONT}`;
-        while (ctx.measureText(text).width > 160 && size > 14) { size -= 1; ctx.font = `${weights[i] ?? 500} ${size}px ${FONT}`; }
+        while (ctx.measureText(text).width > 150 && size > 13) { size -= 1; ctx.font = `${weights[i] ?? 500} ${size}px ${FONT}`; }
         y += (sizes[i] ?? 22) * lineH;
-        ctx.fillText(text, 1048, y - (sizes[i] ?? 22) * 0.22);
+        ctx.fillText(text, 1046, y - (sizes[i] ?? 22) * 0.22);
       });
     }
   }
@@ -319,17 +339,17 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   const fy = footerY + (GRID - footerY) / 2;
   ctx.fillStyle = '#111';
   ctx.textAlign = 'left';
-  drawIcon(ctx, 'globe', 50, fy - 26, 52, '#111', 1.8);
-  ctx.font = `700 32px ${FONT}`;
-  ctx.fillText(footer.website, 114, fy + 11);
+  drawIcon(ctx, 'globe', 46, fy - 27, 54, '#111', 2.2);
+  ctx.font = `600 30px ${FONT}`;
+  ctx.fillText(footer.website, 112, fy + 11);
   ctx.strokeStyle = '#222'; ctx.lineWidth = 2;
-  for (const x of [392, 868]) { ctx.beginPath(); ctx.moveTo(x, fy - 28); ctx.lineTo(x, fy + 28); ctx.stroke(); }
-  const tag = fitText(ctx, footer.tagline, 700, 424, 1, 33, 20);
-  ctx.font = `700 ${tag.size}px ${FONT}`;
-  ctx.fillText(tag.lines[0] || '', 414, fy + 11);
-  drawPhoneBadge(ctx, 912, fy, 26);
-  ctx.font = `700 34px ${FONT}`;
-  ctx.fillText(footer.phone, 952, fy + 12);
+  for (const x of [392, 872]) { ctx.beginPath(); ctx.moveTo(x, fy - 28); ctx.lineTo(x, fy + 28); ctx.stroke(); }
+  const tag = fitText(ctx, footer.tagline, 600, 440, 1, 31, 20);
+  ctx.font = `600 ${tag.size}px ${FONT}`;
+  ctx.fillText(tag.lines[0] || '', 412, fy + 11);
+  drawPhoneBadge(ctx, 916, fy, 26);
+  ctx.font = `600 31px ${FONT}`;
+  ctx.fillText(footer.phone, 956, fy + 11);
 
   const blob = await new Promise<Blob | null>(res => canvas.toBlob(res, 'image/jpeg', 0.92));
   if (!blob) throw new Error('Could not create the image');
