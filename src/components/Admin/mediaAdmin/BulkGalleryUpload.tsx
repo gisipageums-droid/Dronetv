@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Upload, X, Loader2, AlertTriangle, Sparkles } from 'lucide-react';
+import { Upload, X, Loader2, AlertTriangle, Sparkles, Settings2 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { createContent } from '../../../lib/mediaApi';
+import { createContent, fetchAdminContent } from '../../../lib/mediaApi';
+import { eventFromItem, type GalleryEvent } from '../../../lib/galleryEvent';
+import GalleryEventManager from './GalleryEventManager';
 import { ADMIN_API } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 
@@ -63,9 +65,14 @@ async function downscale(file: File): Promise<Blob> {
   }
 }
 
-async function describePhoto(file: File): Promise<{ title: string; description: string; category: string; tags: string[]; peopleCount?: number | null }> {
+interface CaptionContext { event?: string; venue?: string; avoid: string[] }
+
+async function describePhoto(file: File, ctx: CaptionContext): Promise<{ title: string; description: string; category: string; tags: string[]; peopleCount?: number | null }> {
   const form = new FormData();
   form.append('file', await downscale(file), 'photo.jpg');
+  if (ctx.event) form.append('event', ctx.event);
+  if (ctx.venue) form.append('venue', ctx.venue);
+  if (ctx.avoid.length) form.append('avoid', JSON.stringify(ctx.avoid.slice(0, 40)));
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 90000);
   try {
@@ -75,6 +82,15 @@ async function describePhoto(file: File): Promise<{ title: string; description: 
   } finally {
     clearTimeout(timer);
   }
+}
+
+const words = (t: string) => new Set(t.toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2));
+function similar(a: string, b: string): boolean {
+  const A = words(a), B = words(b);
+  if (A.size === 0 || B.size === 0) return false;
+  let both = 0;
+  A.forEach(w => { if (B.has(w)) both++; });
+  return both / (A.size + B.size - both) >= 0.7;
 }
 
 async function uploadWithRetry(upload: (f: File) => Promise<string>, file: File): Promise<string> {
@@ -91,7 +107,26 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
   const [publish, setPublish] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [events, setEvents] = useState<GalleryEvent[]>([]);
+  const [eventId, setEventId] = useState('');
+  const [showManager, setShowManager] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const rowsRef = useRef<Row[]>([]);
+  rowsRef.current = rows;
+  const event = events.find(e => e.id === eventId) || null;
+  const eventRef = useRef<GalleryEvent | null>(null);
+  eventRef.current = event;
+
+  const loadEvents = useCallback(async () => {
+    try {
+      const items = await fetchAdminContent(undefined, 'gallery-event');
+      setEvents(items.map(eventFromItem));
+    } catch {
+      toast.error('Could not load events');
+    }
+  }, []);
+  useEffect(() => { loadEvents(); }, [loadEvents]);
+
   const previews = useRef<string[]>([]);
 
   useEffect(() => () => previews.current.forEach(URL.revokeObjectURL), []);
@@ -113,7 +148,11 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
       let ai: Awaited<ReturnType<typeof describePhoto>> | null = null;
       for (let attempt = 0; attempt < 3 && !ai; attempt++) {
         try {
-          ai = await describePhoto(row.file);
+          ai = await describePhoto(row.file, {
+            event: eventRef.current?.name,
+            venue: eventRef.current?.location,
+            avoid: rowsRef.current.filter(r => r.id !== row.id && r.description.trim()).map(r => r.description),
+          });
         } catch (err) {
           if (attempt === 2) throw err;
           await new Promise(res => setTimeout(res, 3000 * (attempt + 1)));
@@ -163,7 +202,25 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
     await Promise.all(Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
       for (let r = queue.shift(); r; r = queue.shift()) await processOne(r);
     }));
+    await dedupeCaptions();
   }, [rows.length, processOne]);
+
+  // Photos captioned at the same moment can end up with near-identical captions;
+  // re-caption the later one asking the model to describe what is different.
+  const dedupeCaptions = useCallback(async () => {
+    const snapshot = rowsRef.current;
+    const dups = snapshot.filter((r, i) => r.description.trim() && snapshot.slice(0, i).some(o => o.description.trim() && similar(o.description, r.description)));
+    for (const row of dups) {
+      patch(row.id, { aiPending: true });
+      try {
+        const others = rowsRef.current.filter(o => o.id !== row.id && o.description.trim()).map(o => o.description);
+        const ai = await describePhoto(row.file, { event: eventRef.current?.name, venue: eventRef.current?.location, avoid: others });
+        setRows(rs => rs.map(r => (r.id === row.id ? { ...r, description: ai.description || r.description, aiPending: false } : r)));
+      } catch {
+        patch(row.id, { aiPending: false });
+      }
+    }
+  }, [patch]);
 
   const busy = rows.some(r => r.status === 'working' || r.aiPending);
   const ready = rows.filter(r => r.status === 'ready');
@@ -182,9 +239,11 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
           description: r.description.trim(),
           imageUrl: r.imageUrl,
           category: r.category,
-          location: location.trim(),
+          location: (event?.location || location).trim(),
           date,
-          tags: r.tags.split(',').map(t => t.trim()).filter(Boolean),
+          // 'platform' carries the event id so the gallery can apply the event's logos and details.
+          platform: event?.id,
+          tags: [...r.tags.split(',').map(t => t.trim()).filter(Boolean), ...(event ? [event.name.toLowerCase()] : [])],
           isPublished: publish,
         });
         saved++;
@@ -201,6 +260,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center overflow-y-auto py-6">
+      {showManager && <GalleryEventManager uploadImage={uploadImage} onClose={() => setShowManager(false)} onChanged={loadEvents} />}
       <div className="bg-surface-card rounded-xl shadow-2xl w-full max-w-5xl mx-4">
         <div className="flex items-center justify-between px-6 py-4 border-b border-ink-light">
           <div>
@@ -228,8 +288,24 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
             <>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Location (applies to all, optional)</label>
-                  <input value={location} onChange={e => setLocation(e.target.value)} className={inp} placeholder="e.g. Pragati Maidan, New Delhi" />
+                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Event (applies to all photos)</label>
+                  <div className="flex gap-2">
+                    <select value={eventId} onChange={e => setEventId(e.target.value)} className={inp}>
+                      <option value="">No event</option>
+                      {events.map(ev => <option key={ev.id} value={ev.id}>{ev.name}</option>)}
+                    </select>
+                    <button type="button" onClick={() => setShowManager(true)} className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-ink-light text-sm font-medium">
+                      <Settings2 className="w-4 h-4" /> Events
+                    </button>
+                  </div>
+                  {event ? (
+                    <div className="mt-2 flex items-center gap-3 text-xs text-ink-caption">
+                      {event.logo && <img src={event.logo} alt="" className="h-8 max-w-[90px] object-contain" />}
+                      <span>{event.location || 'No venue set'} · {event.partners.length} partner logo{event.partners.length === 1 ? '' : 's'}</span>
+                    </div>
+                  ) : (
+                    <input value={location} onChange={e => setLocation(e.target.value)} className={`${inp} mt-2`} placeholder="Location (optional) e.g. Pragati Maidan, New Delhi" />
+                  )}
                 </div>
                 <label className="flex items-center gap-2 text-sm text-ink mt-5">
                   <input type="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)} className="accent-amber-500" />

@@ -258,6 +258,8 @@ const FIELD_CONFIG: Record<ContentType, FieldKey[]> = {
   'industry-player':     ['company', 'location', 'category'],
   'applications':        ['company', 'location', 'category'],
   'ad':                  ['zone', 'targetPages', 'startDate', 'endDate', 'packageType', 'company'],
+  'gallery-event':       [],
+  'drone-doctor':        ['category', 'date'],
 };
 
 const FIELD_LABELS: Partial<Record<ContentType, Partial<Record<FieldKey, string>>>> = {

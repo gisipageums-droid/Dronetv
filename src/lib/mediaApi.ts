@@ -37,7 +37,7 @@ export interface MediaItem {
 export type ContentType =
   | 'news' | 'magazine' | 'video' | 'impact-story'
   | 'market-intelligence' | 'tech-trends' | 'press-release' | 'industry-report'
-  | 'gallery'
+  | 'gallery' | 'gallery-event'
   | 'competition' | 'webinar' | 'meetup'
   | 'job' | 'training' | 'certification' | 'networking' | 'community'
   | 'applications' | 'manufacturer' | 'ai-company' | 'event-organizer'
