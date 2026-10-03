@@ -467,7 +467,9 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
       // Priority: unsaved local draft > cached Update Details > published website content > raw registration form
       // (the raw registration form's services/products/images are frequently left as placeholders — the
       // published site's AI-generated content is the more reliable source once it exists)
+      const publishedInfo = publishedData?.companyInfo && typeof publishedData.companyInfo === 'object' ? publishedData.companyInfo : {};
       const mergedFormData = {
+        ...publishedInfo,
         ...formDataFromDraft,
         ...cachedFields,
         ...localDraft,

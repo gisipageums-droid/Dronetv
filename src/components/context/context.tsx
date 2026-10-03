@@ -22,6 +22,14 @@ function applyAxiosAuthHeader(token: string | null) {
 }
 applyAxiosAuthHeader(localStorage.getItem('token'));
 
+axios.interceptors.request.use((config) => {
+  if (!config.headers.has('Authorization')) {
+    const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+    if (token) config.headers.set('Authorization', `Bearer ${token}`);
+  }
+  return config;
+});
+
 // User Authentication Types and Context
 interface User {
   email: string;
