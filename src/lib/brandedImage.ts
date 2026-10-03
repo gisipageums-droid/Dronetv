@@ -240,15 +240,17 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   ctx.font = `600 25px ${FONT}`;
   ctx.fillText('Drones  |  GIS  |  AI  |  People  |  Opportunities', 1190, 112);
 
-  // Layout depends on whether there are partner logos to show
+  // Layout depends on whether there are partner logos / an info strip to show
   const hasPartners = partners.length > 0;
-  const photoH = hasPartners ? 682 : 782;
-  const infoY = 176 + photoH + 8;
-  const infoH = 144;
-  const partnersY = infoY + infoH + 12;
-  const frameBottom = hasPartners ? 1150 : infoY + infoH + 16;
-  const footerY = Math.max(frameBottom, 1150);
   const hasEvent = !!(ev && (ev.logo || ev.location || ev.name));
+  const captionText = (input.caption || '').trim() || (ev?.name || '').trim();
+  const hasInfo = !!captionText || hasEvent;
+  const infoH = 144;
+  const photoH = (hasPartners ? 682 : 782) + (hasInfo ? 0 : infoH + 8);
+  const infoY = 176 + photoH + 8;
+  const partnersY = infoY + (hasInfo ? infoH + 12 : 0);
+  const frameBottom = hasPartners ? 1150 : (hasInfo ? infoY + infoH + 16 : infoY + 8);
+  const footerY = Math.max(frameBottom, 1150);
 
   // White frame + photo
   ctx.fillStyle = '#fff';
@@ -257,16 +259,17 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   drawPhoto(ctx, photo, 38, 176, 1178, photoH, 24);
 
   // Info strip: handshake + caption | calendar + event logo | pin + venue
+  if (hasInfo) {
   ctx.fillStyle = '#FFF6D6';
   roundRect(ctx, 36, infoY, 1182, infoH, 22);
   ctx.fill();
   const mid = infoY + infoH / 2;
-  drawIcon(ctx, 'handshake', 54, mid - 44, 88, NAVY, 2.5);
-  const capX = 160;
+  if (captionText) drawIcon(ctx, 'handshake', 54, mid - 44, 88, NAVY, 2.5);
+  const capX = captionText ? 160 : 62;
   const capRight = hasEvent ? 700 : 1196;
   ctx.textAlign = 'left';
   ctx.fillStyle = NAVY;
-  const caption = shortenCaption(ctx, input.caption || '', capRight - capX);
+  const caption = shortenCaption(ctx, captionText, capRight - capX);
   const cap = fitText(ctx, caption, 700, capRight - capX, 3, 36, 22);
   const capLineH = cap.size * 1.2;
   const capTop = mid - (capLineH * cap.lines.length) / 2 + cap.size * 0.84;
@@ -295,20 +298,28 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
       drawIcon(ctx, 'pin', 996, mid - 24, 48, '#E11D1D', 2);
       ctx.textAlign = 'left';
       ctx.fillStyle = '#1a1a1a';
-      const lines = venueLines(ev.location);
-      const sizes = [30, 25, 22];
-      const weights = [500, 500, 500];
-      const lineH = 1.2;
-      const total = lines.reduce((h, _, i) => h + (sizes[i] ?? 22) * lineH, 0);
-      let y = mid - total / 2;
-      lines.forEach((text, i) => {
-        let size = sizes[i] ?? 22;
-        ctx.font = `${weights[i] ?? 500} ${size}px ${FONT}`;
-        while (ctx.measureText(text).width > 150 && size > 13) { size -= 1; ctx.font = `${weights[i] ?? 500} ${size}px ${FONT}`; }
-        y += (sizes[i] ?? 22) * lineH;
-        ctx.fillText(text, 1046, y - (sizes[i] ?? 22) * 0.22);
+      const parts = venueLines(ev.location);
+      const blocks: { text: string; size: number; weight: number }[] = [];
+      parts.forEach((text, i) => {
+        const fit = fitText(ctx, text, 500, 156, i === 0 ? 2 : 1, i === 0 ? 30 : i === 1 ? 25 : 22, 12);
+        // A single long word cannot wrap: shrink until every line fits the column.
+        let size = fit.size;
+        const widest = () => { ctx.font = `500 ${size}px ${FONT}`; return Math.max(...fit.lines.map(l => ctx.measureText(l).width)); };
+        while (size > 12 && widest() > 156) size -= 1;
+        fit.lines.forEach(line => blocks.push({ text: line, size, weight: 500 }));
+      });
+      const avail = infoH - 26;
+      const total = blocks.reduce((h, b) => h + b.size * 1.2, 0);
+      const scale = total > avail ? avail / total : 1;
+      let y = mid - (Math.min(total, avail)) / 2;
+      blocks.forEach(b => {
+        const size = Math.max(13, b.size * scale);
+        ctx.font = `${b.weight} ${size}px ${FONT}`;
+        y += size * 1.2;
+        ctx.fillText(b.text, 1046, y - size * 0.22);
       });
     }
+  }
   }
 
   // Industry partners strip (up to 8 logos)
