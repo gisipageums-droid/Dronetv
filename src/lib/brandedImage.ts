@@ -128,16 +128,10 @@ function drawPhone(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: num
   ctx.save();
   ctx.fillStyle = '#111';
   ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-  // handset: two ends joined by a curved grip
-  ctx.strokeStyle = '#fff';
-  ctx.lineCap = 'round';
-  ctx.lineWidth = r * 0.34;
-  ctx.beginPath();
-  ctx.arc(cx + r * 0.1, cy - r * 0.1, r * 0.5, Math.PI * 0.95, Math.PI * 1.6, false);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(cx - r * 0.1, cy + r * 0.1, r * 0.5, Math.PI * -0.05, Math.PI * 0.6, false);
-  ctx.stroke();
+  ctx.translate(cx - r * 0.56, cy - r * 0.56);
+  ctx.scale((r * 1.12) / 24, (r * 1.12) / 24);
+  ctx.fillStyle = '#fff';
+  ctx.fill(new Path2D('M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z'));
   ctx.restore();
 }
 
