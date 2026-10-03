@@ -87,6 +87,23 @@ function fitText(ctx: CanvasRenderingContext2D, text: string, weight: number, ma
   return { size: to, lines };
 }
 
+// Captions that are too long for three lines are cut at a natural clause ("..., and ...")
+// instead of mid-sentence with an ellipsis.
+function shortenCaption(ctx: CanvasRenderingContext2D, text: string, maxW: number): string {
+  const clean = text.trim().replace(/\s+/g, ' ');
+  const fits = (c: string) => { ctx.font = `700 24px ${FONT}`; return wrap(ctx, c, maxW).length <= 3; };
+  if (fits(clean)) return clean;
+  let cand = clean.split(/(?<=[.!?])\s+/)[0];
+  if (fits(cand)) return cand;
+  const parts = cand.split(/,\s+/);
+  while (parts.length > 1) {
+    parts.pop();
+    const c = parts.join(', ');
+    if (fits(c)) return `${c.replace(/[,;:]+$/, '')}.`;
+  }
+  return cand;
+}
+
 function drawContain(ctx: CanvasRenderingContext2D, img: ImageBitmap, x: number, y: number, w: number, h: number, sx = 0, sy = 0, sw = img.width, sh = img.height) {
   const scale = Math.min(w / sw, h / sh);
   const dw = sw * scale, dh = sh * scale;
@@ -249,7 +266,7 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   const capRight = hasEvent ? 700 : 1196;
   ctx.textAlign = 'left';
   ctx.fillStyle = NAVY;
-  const caption = (input.caption || '').trim();
+  const caption = shortenCaption(ctx, input.caption || '', capRight - capX);
   const cap = fitText(ctx, caption, 700, capRight - capX, 3, 36, 22);
   const capLineH = cap.size * 1.2;
   const capTop = mid - (capLineH * cap.lines.length) / 2 + cap.size * 0.84;
