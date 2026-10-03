@@ -39,6 +39,7 @@ export const professionalsItems: NavItem[] = [
 
 export const contactItems: NavItem[] = [
   { path: "/contact", label: "Contact Us" },
+  { path: "/book-a-call", label: "Book a Call" },
   { path: "/media/drone-doctor", label: "Drone Doctor / Help Center" },
   { path: "/faqs", label: "FAQs" },
   { path: "/advertising-plans", label: "Advertise With Us" },
