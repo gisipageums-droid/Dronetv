@@ -66,7 +66,7 @@ async function describePhoto(file: File): Promise<{ title: string; description: 
   const form = new FormData();
   form.append('file', await downscale(file), 'photo.jpg');
   const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), 45000);
+  const timer = setTimeout(() => ctl.abort(), 90000);
   try {
     const res = await fetch(`${ADMIN_API}/ai/describe-photo`, { method: 'POST', headers: authHeader(), body: form, signal: ctl.signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
