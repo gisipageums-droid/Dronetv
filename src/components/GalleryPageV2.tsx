@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, ChevronDown, Filter, X, ChevronLeft, ChevronRight, Download, Heart, Calendar, MapPin, Users, Tag, Eye, Camera } from 'lucide-react';
+import { Search, ChevronDown, Filter, X, ChevronLeft, ChevronRight, Download, Heart, Calendar, MapPin, Users, Tag, Eye, Camera, Share2, Loader2 } from 'lucide-react';
 import { fetchContent } from '../lib/mediaApi';
+import { fetchGalleryEvents, type GalleryEvent } from '../lib/galleryEvent';
+import { generateBrandedImage, brandedFileName, downloadBlob, shareBlob } from '../lib/brandedImage';
 import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
 import ShareMenu from './common/ShareMenu';
 
@@ -52,6 +54,7 @@ interface GalleryImage {
   attendees?: string;
   description?: string;
   tags?: string[];
+  event?: GalleryEvent;
 }
 
 function imageShareId(img: GalleryImage): string {
@@ -135,10 +138,14 @@ const GalleryPageV2: React.FC = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchContent('gallery', controller.signal).then(items => {
+    Promise.all([
+      fetchContent('gallery', controller.signal),
+      fetchGalleryEvents(controller.signal).catch(() => [] as GalleryEvent[]),
+    ]).then(([items, events]) => {
       if (items.length > 0) {
         const base = Date.now();
         setCmsImages(items.map((item, i) => ({
+          event: events.find(e => e.id === item.platform),
           id: base + items.length - i,
           shareId: item.contentId,
           src: item.imageUrl || '',
@@ -240,21 +247,42 @@ const GalleryPageV2: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cmsImages, allImages, searchParams, cmsLoaded]);
 
+  const [brandBusy, setBrandBusy] = useState<'download' | 'share' | null>(null);
+
+  const brandedFor = async (img: GalleryImage) => {
+    const blob = await generateBrandedImage({
+      photoUrl: img.src,
+      caption: img.description || img.title,
+      event: img.event || null,
+    });
+    return { blob, name: brandedFileName(img.title) };
+  };
+
+  // The branded template is generated on the fly from the untouched original photo.
   const handleDownload = async () => {
-    if (!selectedImage) return;
+    if (!selectedImage || brandBusy) return;
+    setBrandBusy('download');
     try {
-      const response = await fetch(selectedImage.src);
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${selectedImage.title}.jpg`;
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      const { blob, name } = await brandedFor(selectedImage);
+      downloadBlob(blob, name);
     } catch {
       window.open(selectedImage.src, '_blank');
+    } finally {
+      setBrandBusy(null);
+    }
+  };
+
+  const handleShareImage = async () => {
+    if (!selectedImage || brandBusy) return;
+    setBrandBusy('share');
+    try {
+      const { blob, name } = await brandedFor(selectedImage);
+      const shared = await shareBlob(blob, name, selectedImage.title, selectedImage.description || selectedImage.title, `${window.location.origin}/gallery?photo=${imageShareId(selectedImage)}`);
+      if (!shared) downloadBlob(blob, name);
+    } catch {
+      /* the share-link button next to this one still works */
+    } finally {
+      setBrandBusy(null);
     }
   };
 
@@ -397,6 +425,19 @@ const GalleryPageV2: React.FC = () => {
               <div className="min-w-0 flex-1">
                 <h3 className="mb-1 text-base font-bold text-white sm:text-xl">{selectedImage.title}</h3>
                 <p className="mb-2 text-sm text-white/80 sm:text-base">{selectedImage.description}</p>
+                {selectedImage.event && (
+                  <div className="mb-2 flex flex-wrap items-center gap-3 text-xs text-white/80 sm:text-sm">
+                    {selectedImage.event.logo && <img src={selectedImage.event.logo} alt={selectedImage.event.name} className="h-9 max-w-[120px] rounded bg-white/90 object-contain p-1" />}
+                    <span className="font-semibold text-white">{selectedImage.event.name}</span>
+                    {selectedImage.event.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3 sm:h-4 sm:w-4" />{selectedImage.event.location}</span>}
+                  </div>
+                )}
+                {selectedImage.event && selectedImage.event.partners.length > 0 && (
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wide text-white/60">Industry partners</span>
+                    {selectedImage.event.partners.map((u, i) => <img key={u + i} src={u} alt="Industry partner logo" className="h-8 w-14 rounded bg-white object-contain p-1" loading="lazy" />)}
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-2 text-xs text-white/60 sm:gap-4 sm:text-sm">
                   {selectedImage.date && <div className="flex items-center gap-1"><Calendar className="h-3 w-3 sm:h-4 sm:w-4" />{selectedImage.date}</div>}
                   {selectedImage.location && <div className="flex items-center gap-1"><MapPin className="h-3 w-3 sm:h-4 sm:w-4" />{selectedImage.location}</div>}
@@ -411,7 +452,8 @@ const GalleryPageV2: React.FC = () => {
               <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
                 <button onClick={() => setIsLiked(!isLiked)} className={`rounded-full p-2 transition-all sm:p-3 ${isLiked ? 'bg-red-600 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}><Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${isLiked ? 'fill-current' : ''}`} /></button>
                 <ShareMenu url={`${window.location.origin}/gallery?photo=${imageShareId(selectedImage)}`} title={selectedImage.title} buttonClassName="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3" iconClassName="h-4 w-4 sm:h-5 sm:w-5" />
-                <button onClick={handleDownload} className="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3"><Download className="h-4 w-4 sm:h-5 sm:w-5" /></button>
+                <button onClick={handleShareImage} disabled={!!brandBusy} title="Share branded image" aria-label="Share branded image" className="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 disabled:opacity-60 sm:p-3">{brandBusy === 'share' ? <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" /> : <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />}</button>
+                <button onClick={handleDownload} disabled={!!brandBusy} title="Download branded image" aria-label="Download branded image" className="flex items-center gap-2 rounded-full bg-yellow-400 px-3 py-2 text-sm font-bold text-black transition-all hover:bg-yellow-300 disabled:opacity-60 sm:px-4 sm:py-3">{brandBusy === 'download' ? <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" /> : <Download className="h-4 w-4 sm:h-5 sm:w-5" />}<span className="hidden sm:inline">Download</span></button>
               </div>
             </div>
           </div>
@@ -441,6 +483,12 @@ const GalleryCardV2: React.FC<{ image: GalleryImage; onOpen: () => void }> = ({ 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <h3 className="line-clamp-1 text-sm font-extrabold leading-snug text-slate-900">{image.title}</h3>
         <p className="line-clamp-2 min-h-8 text-xs leading-[18px] text-slate-600">{image.description}</p>
+        {image.event && (
+          <div className="flex items-center gap-2">
+            {image.event.logo && <img src={image.event.logo} alt={image.event.name} loading="lazy" className="h-6 max-w-[72px] shrink-0 object-contain" />}
+            <span className="line-clamp-1 text-[10px] font-semibold text-slate-700">{image.event.name}</span>
+          </div>
+        )}
         {(image.location || image.date) && (
           <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-500">
             {image.location && <span className="flex items-center gap-1"><MapPin className="size-3" />{image.location}</span>}
