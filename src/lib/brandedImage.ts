@@ -18,14 +18,6 @@ export interface BrandedInput {
   event?: Pick<GalleryEvent, 'name' | 'logo' | 'location' | 'partners' | 'website' | 'tagline' | 'phone'> | null;
 }
 
-async function fetchBlob(url: string): Promise<Blob> {
-  const res = await fetch(url, { mode: 'cors', cache: 'force-cache' });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.blob();
-}
-
-// Some image hosts send no CORS headers, which makes the browser refuse to read them into a canvas.
-// Fall back to our own image proxy (allow-listed hosts only) in that case.
 let fontsReady: Promise<void> | null = null;
 // Poppins is bundled in /fonts so the image looks the same on every device.
 function ensureFonts(): Promise<void> {
@@ -38,13 +30,25 @@ function ensureFonts(): Promise<void> {
   return fontsReady;
 }
 
-async function loadBitmap(url: string): Promise<ImageBitmap> {
+async function fetchBlob(url: string): Promise<Blob> {
+  const res = await fetch(url, { mode: 'cors', cache: 'force-cache' });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.blob();
+}
+
+// Some image hosts send no CORS headers, which makes the browser refuse to read them.
+// Fall back to our own image proxy (allow-listed hosts only) in that case.
+export async function fetchImageBlob(url: string): Promise<Blob> {
   try {
-    return await createImageBitmap(await fetchBlob(url));
+    return await fetchBlob(url);
   } catch (err) {
     if (!MEDIA_API || url.startsWith('/') || url.startsWith(window.location.origin)) throw err;
-    return createImageBitmap(await fetchBlob(`${MEDIA_API}/image-proxy?url=${encodeURIComponent(url)}`));
+    return fetchBlob(`${MEDIA_API}/image-proxy?url=${encodeURIComponent(url)}`);
   }
+}
+
+async function loadBitmap(url: string): Promise<ImageBitmap> {
+  return createImageBitmap(await fetchImageBlob(url));
 }
 
 async function tryBitmap(url?: string): Promise<ImageBitmap | null> {
@@ -384,6 +388,25 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   const blob = await new Promise<Blob | null>(res => canvas.toBlob(res, 'image/jpeg', 0.92));
   if (!blob) throw new Error('Could not create the image');
   return blob;
+}
+
+// The plain photo at the size it was uploaded (no branding). Photos are stored as WebP to save
+// space; the download is turned back into an ordinary full-size JPEG that opens everywhere.
+export async function downloadOriginalPhoto(photoUrl: string, title: string): Promise<void> {
+  const blob = await fetchImageBlob(photoUrl);
+  let out = blob;
+  let ext = blob.type === 'image/png' ? 'png' : 'jpg';
+  if (blob.type === 'image/webp') {
+    const bmp = await createImageBitmap(blob);
+    const canvas = document.createElement('canvas');
+    canvas.width = bmp.width;
+    canvas.height = bmp.height;
+    canvas.getContext('2d')!.drawImage(bmp, 0, 0);
+    bmp.close();
+    const jpeg = await new Promise<Blob | null>(res => canvas.toBlob(res, 'image/jpeg', 0.95));
+    if (jpeg) out = jpeg;
+  }
+  downloadBlob(out, brandedFileName(title).replace(/^dronetv-/, '').replace(/\.jpg$/, `-original.${ext}`));
 }
 
 export function brandedFileName(title: string): string {

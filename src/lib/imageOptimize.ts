@@ -1,12 +1,14 @@
 // Re-encodes uploads as WebP in the browser before they are stored. WebP files are
 // ordinary images (<img> tags, downloads, share sheets all work unchanged) but
-// typically 25-35% smaller than JPEG at the same visual quality, and the long
-// edge is capped so a 12 MB phone photo does not stay 12 MB. A small preview is
-// made for grids so a page of photos does not download full-size files.
+// much smaller than the camera JPEG at the same visual quality, with the same
+// pixel dimensions. A small preview is made for grids so a page of photos does
+// not download full-size files.
 // Browsers that cannot encode WebP (older Safari) fall back to JPEG.
 
-const MASTER_MAX = 3000;
-const MASTER_QUALITY = 0.85;
+// The stored photo keeps its original pixel size (the cap only guards against absurd inputs);
+// only the file encoding changes, so a download comes back at the size it was uploaded.
+const MASTER_MAX = 12000;
+const MASTER_QUALITY = 0.9;
 const THUMB_MAX = 640;
 const THUMB_QUALITY = 0.78;
 const LOGO_MAX = 800;

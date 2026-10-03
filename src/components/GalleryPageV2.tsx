@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, ChevronDown, Filter, X, ChevronLeft, ChevronRight, Download, Heart, Calendar, MapPin, Users, Tag, Eye, Camera, Send, Loader2 } from 'lucide-react';
+import { Search, ChevronDown, Filter, X, ChevronLeft, ChevronRight, Download, Heart, Calendar, MapPin, Users, Tag, Eye, Camera, Send, Loader2, ImageDown } from 'lucide-react';
 import { fetchContent } from '../lib/mediaApi';
 import { fetchGalleryEvents, type GalleryEvent } from '../lib/galleryEvent';
-import { generateBrandedImage, brandedFileName, downloadBlob, shareBlob } from '../lib/brandedImage';
+import { generateBrandedImage, brandedFileName, downloadBlob, shareBlob, downloadOriginalPhoto } from '../lib/brandedImage';
 import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
 import ShareMenu from './common/ShareMenu';
 
@@ -249,7 +249,7 @@ const GalleryPageV2: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cmsImages, allImages, searchParams, cmsLoaded]);
 
-  const [brandBusy, setBrandBusy] = useState<'download' | 'share' | null>(null);
+  const [brandBusy, setBrandBusy] = useState<'download' | 'share' | 'original' | null>(null);
 
   const brandedFor = async (img: GalleryImage) => {
     const blob = await generateBrandedImage({
@@ -267,6 +267,18 @@ const GalleryPageV2: React.FC = () => {
     try {
       const { blob, name } = await brandedFor(selectedImage);
       downloadBlob(blob, name);
+    } catch {
+      window.open(selectedImage.src, '_blank');
+    } finally {
+      setBrandBusy(null);
+    }
+  };
+
+  const handleDownloadOriginal = async () => {
+    if (!selectedImage || brandBusy) return;
+    setBrandBusy('original');
+    try {
+      await downloadOriginalPhoto(selectedImage.src, selectedImage.title);
     } catch {
       window.open(selectedImage.src, '_blank');
     } finally {
@@ -455,6 +467,7 @@ const GalleryPageV2: React.FC = () => {
                 <button onClick={() => setIsLiked(!isLiked)} className={`rounded-full p-2 transition-all sm:p-3 ${isLiked ? 'bg-red-600 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}><Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${isLiked ? 'fill-current' : ''}`} /></button>
                 <ShareMenu url={`${window.location.origin}/gallery?photo=${imageShareId(selectedImage)}`} title={selectedImage.title} buttonClassName="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3" iconClassName="h-4 w-4 sm:h-5 sm:w-5" />
                 <button onClick={handleShareImage} disabled={!!brandBusy} title="Send branded image (WhatsApp, LinkedIn, Facebook...)" aria-label="Share branded image" className="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 disabled:opacity-60 sm:p-3">{brandBusy === 'share' ? <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" /> : <Send className="h-4 w-4 sm:h-5 sm:w-5" />}</button>
+                <button onClick={handleDownloadOriginal} disabled={!!brandBusy} title="Download original photo (full size, no branding)" aria-label="Download original photo" className="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 disabled:opacity-60 sm:p-3">{brandBusy === 'original' ? <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" /> : <ImageDown className="h-4 w-4 sm:h-5 sm:w-5" />}</button>
                 <button onClick={handleDownload} disabled={!!brandBusy} title="Download branded image" aria-label="Download branded image" className="flex items-center gap-2 rounded-full bg-yellow-400 px-3 py-2 text-sm font-bold text-black transition-all hover:bg-yellow-300 disabled:opacity-60 sm:px-4 sm:py-3">{brandBusy === 'download' ? <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" /> : <Download className="h-4 w-4 sm:h-5 sm:w-5" />}<span className="hidden sm:inline">Download</span></button>
               </div>
             </div>
