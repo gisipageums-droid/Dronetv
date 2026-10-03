@@ -134,7 +134,7 @@ const GalleryPageV2: React.FC = () => {
       if (items.length > 0) {
         const base = Date.now();
         setCmsImages(items.map((item, i) => ({
-          id: base + i,
+          id: base + items.length - i,
           shareId: item.contentId,
           src: item.imageUrl || '',
           title: item.title,
