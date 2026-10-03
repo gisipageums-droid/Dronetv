@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Upload, X, Loader2, AlertTriangle, Sparkles } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { createContent } from '../../../lib/mediaApi';
-import { PROFESSIONAL_API } from '../../../lib/apiConfig';
+import { ADMIN_API } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 
 const CATEGORIES = ['Events', 'Collaborations', 'Conferences', 'Interviews', 'Product Launches', 'Team Photos'];
@@ -68,7 +68,7 @@ async function describePhoto(file: File): Promise<{ title: string; description: 
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 45000);
   try {
-    const res = await fetch(`${PROFESSIONAL_API}/ai/describe-photo`, { method: 'POST', headers: authHeader(), body: form, signal: ctl.signal });
+    const res = await fetch(`${ADMIN_API}/ai/describe-photo`, { method: 'POST', headers: authHeader(), body: form, signal: ctl.signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
   } finally {
