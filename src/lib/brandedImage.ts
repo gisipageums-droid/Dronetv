@@ -1,3 +1,4 @@
+import { MEDIA_API } from './apiConfig';
 import { DEFAULT_FOOTER, type GalleryEvent } from './galleryEvent';
 
 // Generates the approved DroneTV share template in the browser. The original
@@ -17,10 +18,21 @@ export interface BrandedInput {
   event?: Pick<GalleryEvent, 'name' | 'logo' | 'location' | 'partners' | 'website' | 'tagline' | 'phone'> | null;
 }
 
-async function loadBitmap(url: string): Promise<ImageBitmap> {
+async function fetchBlob(url: string): Promise<Blob> {
   const res = await fetch(url, { mode: 'cors', cache: 'force-cache' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return createImageBitmap(await res.blob());
+  return res.blob();
+}
+
+// Some image hosts send no CORS headers, which makes the browser refuse to read them into a canvas.
+// Fall back to our own image proxy (allow-listed hosts only) in that case.
+async function loadBitmap(url: string): Promise<ImageBitmap> {
+  try {
+    return await createImageBitmap(await fetchBlob(url));
+  } catch (err) {
+    if (!MEDIA_API || url.startsWith('/') || url.startsWith(window.location.origin)) throw err;
+    return createImageBitmap(await fetchBlob(`${MEDIA_API}/image-proxy?url=${encodeURIComponent(url)}`));
+  }
 }
 
 async function tryBitmap(url?: string): Promise<ImageBitmap | null> {
