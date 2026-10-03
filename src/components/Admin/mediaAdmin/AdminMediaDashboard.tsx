@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle, Upload } from 'lucide-react';
+import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle, Upload, Images } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, createContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
 import { ADMIN_API, COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 import AdminJobBoardDashboard from '../jobBoardAdmin/AdminJobBoardDashboard';
+import BulkGalleryUpload from './BulkGalleryUpload';
 
 // The media service only handles content CRUD, not file uploads - there's no
 // presign route on it. Reuse the company service's public /upload-file
@@ -296,6 +297,7 @@ export default function AdminMediaDashboard() {
   const navigate = useNavigate();
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showBulk, setShowBulk] = useState(false);
 
   const urlType = searchParams.get('type') as ContentType | null;
   const urlSection = searchParams.get('section') ?? '';
@@ -531,11 +533,22 @@ export default function AdminMediaDashboard() {
           </p>
         </div>
         {activeType !== 'applications' && (
-          <button onClick={openCreate} className="flex items-center gap-2 bg-brand-yellow text-ink font-bold px-4 py-2 rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm">
+          <div className="flex items-center gap-2">
+            {activeType === 'gallery' && (
+              <button onClick={() => setShowBulk(true)} className="flex items-center gap-2 bg-ink text-white font-bold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity text-sm">
+                <Images className="w-4 h-4" /> Bulk Upload
+              </button>
+            )}
+            <button onClick={openCreate} className="flex items-center gap-2 bg-brand-yellow text-ink font-bold px-4 py-2 rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm">
             <Plus className="w-4 h-4" /> Add Content
           </button>
+          </div>
         )}
       </div>
+
+      {showBulk && (
+        <BulkGalleryUpload uploadImage={uploadContentImage} onClose={() => setShowBulk(false)} onSaved={() => { setShowBulk(false); loadItems(); }} />
+      )}
 
       {mode === 'ads' && (
         <div className="mb-5 bg-white border border-ink-light rounded-lg overflow-hidden">
