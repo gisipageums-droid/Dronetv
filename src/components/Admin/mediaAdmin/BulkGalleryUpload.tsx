@@ -110,23 +110,36 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
     }
     patch(row.id, { status: 'ready', imageUrl, aiPending: true });
     try {
-      const ai = await describePhoto(row.file);
+      let ai: Awaited<ReturnType<typeof describePhoto>> | null = null;
+      for (let attempt = 0; attempt < 3 && !ai; attempt++) {
+        try {
+          ai = await describePhoto(row.file);
+        } catch (err) {
+          if (attempt === 2) throw err;
+          await new Promise(res => setTimeout(res, 3000 * (attempt + 1)));
+        }
+      }
+      if (!ai) throw new Error('no caption');
+      const result = ai;
       setRows(rs => rs.map(r => {
         if (r.id !== row.id) return r;
         return {
           ...r,
           // Never overwrite something the admin has already typed.
-          title: r.title.trim() ? r.title : ai.title,
-          description: r.description.trim() ? r.description : ai.description,
-          category: ai.category && CATEGORIES.includes(ai.category) ? ai.category : r.category,
-          tags: r.tags.trim() ? r.tags : (ai.tags || []).join(', '),
+          title: r.title.trim() ? r.title : result.title,
+          description: r.description.trim() ? r.description : result.description,
+          category: result.category && CATEGORIES.includes(result.category) ? result.category : r.category,
+          tags: r.tags.trim() ? r.tags : (result.tags || []).join(', '),
           aiFilled: true,
           aiPending: false,
-          peopleCount: ai.peopleCount ?? null,
+          peopleCount: result.peopleCount ?? null,
         };
       }));
     } catch {
-      patch(row.id, { aiPending: false });
+      // Captions unavailable: fall back to a title from the file name so the row can still be saved.
+      setRows(rs => rs.map(r => (r.id === row.id
+        ? { ...r, aiPending: false, title: r.title.trim() ? r.title : titleFromFilename(row.file.name) }
+        : r)));
     }
   }, [patch, uploadImage]);
 
@@ -142,7 +155,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
       return {
         id: `${Date.now()}-${i}-${file.name}`,
         file, preview, status: 'working', imageUrl: '',
-        title: titleFromFilename(file.name), description: '', category: 'Events', tags: '', aiFilled: false, aiPending: false,
+        title: '', description: '', category: 'Events', tags: '', aiFilled: false, aiPending: false,
       };
     });
     setRows(rs => [...rs, ...newRows]);
