@@ -12,6 +12,14 @@ import { CheckCircle, X } from "lucide-react";
 import { COMPANY_API, PROFESSIONAL_API, EVENTS_API, LAMBDA } from '../../lib/apiConfig';
 import { validateToken, getMe, clearSession } from '../../lib/authService';
 
+axios.interceptors.request.use((config) => {
+  if (!config.headers.has('Authorization')) {
+    const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+    if (token) config.headers.set('Authorization', `Bearer ${token}`);
+  }
+  return config;
+});
+
 // User Authentication Types and Context
 interface User {
   email: string;

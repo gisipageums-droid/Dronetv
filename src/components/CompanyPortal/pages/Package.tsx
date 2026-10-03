@@ -56,7 +56,7 @@ export default function PackagePage() {
     if (!confirmPkg || !userId) return;
     setUpgrading(true);
     try {
-      const res = await axios.post(UPGRADE_API, { userId, packageId: confirmPkg.id });
+      const res = await axios.post(UPGRADE_API, { userId, packageId: confirmPkg.id }, { headers: authHeader() });
       if (res.data?.success) {
         setProfile((prev) => ({ ...prev, tokenBalance: res.data.tokenBalance, packageType: res.data.packageType, packageExpiry: res.data.packageExpiry }));
         toast.success(`Upgraded to ${confirmPkg.name}!`);

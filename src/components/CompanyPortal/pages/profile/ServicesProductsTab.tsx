@@ -85,7 +85,11 @@ export default function ServicesProductsTab({ publishedId, userId, draftId, temp
           userId,
           draftId,
           templateSelection,
-          content: { ...(hasExisting ? mergedContent : newContent), _detailsUpdatedAt: new Date().toISOString() },
+          content: {
+            ...(hasExisting ? mergedContent : newContent),
+            ...(aiGenData._updateCache ? { _updateCache: aiGenData._updateCache } : {}),
+            _detailsUpdatedAt: new Date().toISOString(),
+          },
         }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
