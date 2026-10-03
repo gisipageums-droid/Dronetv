@@ -128,11 +128,16 @@ function drawPhone(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: num
   ctx.save();
   ctx.fillStyle = '#111';
   ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.translate(cx, cy);
-  ctx.rotate(-Math.PI / 4);
-  roundRect(ctx, -r * 0.22, -r * 0.58, r * 0.44, r * 1.16, r * 0.14);
-  ctx.fill();
+  // handset: two ends joined by a curved grip
+  ctx.strokeStyle = '#fff';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = r * 0.34;
+  ctx.beginPath();
+  ctx.arc(cx + r * 0.1, cy - r * 0.1, r * 0.5, Math.PI * 0.95, Math.PI * 1.6, false);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx - r * 0.1, cy + r * 0.1, r * 0.5, Math.PI * -0.05, Math.PI * 0.6, false);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -236,12 +241,11 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
     ctx.fill();
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'left';
-    ctx.font = `800 33px ${FONT}`;
-    ctx.fillText('Industry', 58, partnersY + 50);
-    ctx.fillText('Partners', 58, partnersY + 88);
-    ctx.fillStyle = YELLOW;
+    ctx.font = `800 27px ${FONT}`;
+    ctx.fillText('Industry', 52, partnersY + 48);
+    ctx.fillText('Partners', 52, partnersY + 86);
     ctx.beginPath();
-    ctx.moveTo(190, partnersY + 40); ctx.lineTo(204, partnersY + 55); ctx.lineTo(190, partnersY + 70);
+    ctx.moveTo(196, partnersY + 42); ctx.lineTo(210, partnersY + 55); ctx.lineTo(196, partnersY + 68);
     ctx.lineWidth = 7; ctx.strokeStyle = YELLOW; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
 
     const areaX = 246, areaW = 972, gap = 8;
