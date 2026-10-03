@@ -271,6 +271,33 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
         </div>
 
         <div className="p-6 space-y-5">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Event (applies to all photos)</label>
+              <div className="flex gap-2">
+                <select value={eventId} onChange={e => setEventId(e.target.value)} className={inp}>
+                  <option value="">No event</option>
+                  {events.map(ev => <option key={ev.id} value={ev.id}>{ev.name}</option>)}
+                </select>
+                <button type="button" onClick={() => setShowManager(true)} className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-ink-light text-sm font-medium">
+                  <Settings2 className="w-4 h-4" /> Events
+                </button>
+              </div>
+              {event ? (
+                <div className="mt-2 flex items-center gap-3 text-xs text-ink-caption">
+                  {event.logo && <img src={event.logo} alt="" className="h-8 max-w-[90px] object-contain" />}
+                  <span>{event.location || 'No venue set'} · {event.partners.length} partner logo{event.partners.length === 1 ? '' : 's'}</span>
+                </div>
+              ) : (
+                <input value={location} onChange={e => setLocation(e.target.value)} className={`${inp} mt-2`} placeholder="Location (optional) e.g. Pragati Maidan, New Delhi" />
+              )}
+            </div>
+            <label className="flex items-center gap-2 text-sm text-ink mt-5">
+              <input type="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)} className="accent-amber-500" />
+              Publish to the gallery right away (uncheck to save as drafts)
+            </label>
+          </div>
+
           <div
             onDragOver={e => { e.preventDefault(); setDragging(true); }}
             onDragLeave={() => setDragging(false)}
@@ -286,33 +313,6 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
 
           {rows.length > 0 && (
             <>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Event (applies to all photos)</label>
-                  <div className="flex gap-2">
-                    <select value={eventId} onChange={e => setEventId(e.target.value)} className={inp}>
-                      <option value="">No event</option>
-                      {events.map(ev => <option key={ev.id} value={ev.id}>{ev.name}</option>)}
-                    </select>
-                    <button type="button" onClick={() => setShowManager(true)} className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-ink-light text-sm font-medium">
-                      <Settings2 className="w-4 h-4" /> Events
-                    </button>
-                  </div>
-                  {event ? (
-                    <div className="mt-2 flex items-center gap-3 text-xs text-ink-caption">
-                      {event.logo && <img src={event.logo} alt="" className="h-8 max-w-[90px] object-contain" />}
-                      <span>{event.location || 'No venue set'} · {event.partners.length} partner logo{event.partners.length === 1 ? '' : 's'}</span>
-                    </div>
-                  ) : (
-                    <input value={location} onChange={e => setLocation(e.target.value)} className={`${inp} mt-2`} placeholder="Location (optional) e.g. Pragati Maidan, New Delhi" />
-                  )}
-                </div>
-                <label className="flex items-center gap-2 text-sm text-ink mt-5">
-                  <input type="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)} className="accent-amber-500" />
-                  Publish to the gallery right away (uncheck to save as drafts)
-                </label>
-              </div>
-
               <div className="space-y-3">
                 {rows.map(r => (
                   <div key={r.id} className="flex gap-3 border border-ink-light rounded-lg p-3">
