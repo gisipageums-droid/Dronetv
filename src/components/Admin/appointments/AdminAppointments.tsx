@@ -122,13 +122,13 @@ const AdminAppointments: React.FC = () => {
       {tab === 'bookings' && (
         <div className="space-y-3">
           <div className="flex flex-wrap gap-3">
-            <select aria-label="When" value={filters.when} onChange={e => setFilters({ ...filters, when: e.target.value })} className={`${inp} w-auto`}>
+            <select aria-label="When" value={filters.when} onChange={e => setFilters({ ...filters, when: e.target.value })} className={`${inp.replace('w-full', '')} w-auto`}>
               <option value="upcoming">Upcoming</option><option value="past">Past</option><option value="all">All dates</option>
             </select>
-            <select aria-label="Status" value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })} className={`${inp} w-auto`}>
+            <select aria-label="Status" value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })} className={`${inp.replace('w-full', '')} w-auto`}>
               <option value="all">All statuses</option><option value="confirmed">Confirmed</option><option value="cancelled">Cancelled</option>
             </select>
-            <input aria-label="Search" value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder="Search name, email, phone" className={`${inp} w-64`} />
+            <input aria-label="Search" value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder="Search name, email, phone" className={`${inp.replace('w-full', '')} w-64`} />
           </div>
           <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-x-auto">
             <table className="w-full min-w-[760px] text-sm">
