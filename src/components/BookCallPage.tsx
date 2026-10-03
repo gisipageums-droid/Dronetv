@@ -16,6 +16,9 @@ const visitorTz = (): string => {
 const localTime = (iso: string): string =>
   new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 
+// True when the visitor's local clock time already equals the host's IST time (no need to show both).
+const sameClock = (s: Slot): boolean => localTime(s.start).replace(/\s/g, '').toLowerCase() === s.label.replace(/\s/g, '').toLowerCase();
+
 const inp = 'w-full px-4 py-3 rounded-xl border border-ink-light bg-ink-offwhite focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow text-sm text-ink';
 const lbl = 'block text-sm font-semibold text-ink-paragraph mb-1.5';
 
@@ -31,6 +34,7 @@ const BookCallPage: React.FC = () => {
   const [form, setForm] = useState({ name: '', email: '', phone: '', topic: '', website: '' });
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
+  const [notice, setNotice] = useState('');
   const [done, setDone] = useState<BookingInfo | null>(null);
   const tz = useMemo(visitorTz, []);
 
@@ -87,7 +91,10 @@ const BookCallPage: React.FC = () => {
     } catch (err) {
       const message = err instanceof BookingApiError ? err.message : 'Something went wrong. Please try again.';
       setFormError(message);
-      if (err instanceof BookingApiError && err.status === 409) await refreshAfterConflict();
+      if (err instanceof BookingApiError && err.status === 409) {
+        setNotice(message);
+        await refreshAfterConflict();
+      }
     } finally {
       setSubmitting(false);
     }
@@ -153,7 +160,7 @@ const BookCallPage: React.FC = () => {
                   return (
                     <button
                       key={c} type="button" disabled={n === 0}
-                      onClick={() => { setSelectedDate(c); setSlot(null); setFormError(''); }}
+                      onClick={() => { setSelectedDate(c); setSlot(null); setFormError(''); setNotice(''); }}
                       aria-label={`${c}, ${n} times available`}
                       className={`aspect-square rounded-xl text-sm font-semibold transition-colors ${selected ? 'bg-brand-yellow text-ink ring-2 ring-ink' : n > 0 ? 'bg-ink-offwhite text-ink hover:bg-brand-yellow/40' : 'text-ink-caption/50 cursor-not-allowed'}`}
                     >
@@ -174,12 +181,13 @@ const BookCallPage: React.FC = () => {
               <p className="text-sm text-ink-caption">Choose a highlighted day to see the available times.</p>
             ) : !slot ? (
               <>
+                {notice && <div role="alert" className="mb-3 rounded-xl border border-status-warning bg-status-warning/10 p-3 text-sm text-ink">{notice}</div>}
                 <h3 className="font-bold text-ink mb-3">{new Date(selectedDate + 'T00:00:00').toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })}</h3>
                 <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
                   {daySlots.map(s => (
-                    <button key={s.start} type="button" onClick={() => { setSlot(s); setFormError(''); }} className="px-3 py-2.5 rounded-xl border border-ink-light text-sm font-semibold text-ink hover:border-brand-yellow hover:bg-brand-yellow/20 text-left">
+                    <button key={s.start} type="button" onClick={() => { setSlot(s); setFormError(''); setNotice(''); }} className="px-3 py-2.5 rounded-xl border border-ink-light text-sm font-semibold text-ink hover:border-brand-yellow hover:bg-brand-yellow/20 text-left">
                       {localTime(s.start)}
-                      <span className="block text-[11px] font-normal text-ink-caption">{s.label} IST</span>
+                      {!sameClock(s) && <span className="block text-[11px] font-normal text-ink-caption">{s.label} IST</span>}
                     </button>
                   ))}
                 </div>
@@ -188,7 +196,7 @@ const BookCallPage: React.FC = () => {
               <form onSubmit={submit} className="space-y-4">
                 <div className="rounded-xl bg-ink-offwhite border border-ink-light p-3 text-sm">
                   <div className="font-bold text-ink">{new Date(slot.start).toLocaleString([], { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}</div>
-                  <div className="text-ink-caption text-xs">{slot.label} IST · {avail?.slotMinutes} min</div>
+                  <div className="text-ink-caption text-xs">{sameClock(slot) ? 'IST' : `${slot.label} IST`} · {avail?.slotMinutes} min</div>
                   <button type="button" className="text-xs underline text-ink-link mt-1" onClick={() => setSlot(null)}>Change time</button>
                 </div>
                 <div><label htmlFor="bk-name" className={lbl}>Full name *</label><input id="bk-name" className={inp} required minLength={2} maxLength={100} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
