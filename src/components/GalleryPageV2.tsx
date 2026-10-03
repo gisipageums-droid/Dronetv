@@ -58,6 +58,11 @@ function imageShareId(img: GalleryImage): string {
   return img.shareId ?? String(img.id);
 }
 
+const altText = (img: { title: string; description?: string }) => {
+  const d = (img.description || '').trim();
+  return (d || img.title).slice(0, 125);
+};
+
 const GalleryPageV2: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const deepLinkHandled = useRef(false);
@@ -173,6 +178,33 @@ const GalleryPageV2: React.FC = () => {
   const indexOfLastImage = currentPage * imagesPerPage;
   const indexOfFirstImage = indexOfLastImage - imagesPerPage;
   const currentImages = filteredImages.slice(indexOfFirstImage, indexOfLastImage);
+
+  useEffect(() => {
+    const items = currentImages.filter(img => img.shareId && img.src);
+    const id = 'gallery-jsonld';
+    document.getElementById(id)?.remove();
+    if (items.length === 0) return;
+    const script = document.createElement('script');
+    script.id = id;
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'ImageGallery',
+      name: 'DroneTv Photo Gallery',
+      url: `${window.location.origin}/gallery`,
+      image: items.map(img => ({
+        '@type': 'ImageObject',
+        contentUrl: img.src,
+        name: img.title,
+        caption: img.title,
+        description: img.description || img.title,
+        keywords: (img.tags || []).join(', ') || undefined,
+        url: `${window.location.origin}/gallery?photo=${img.shareId}`,
+      })),
+    });
+    document.head.appendChild(script);
+    return () => { document.getElementById(id)?.remove(); };
+  }, [filteredImages, currentPage]);
   const totalPages = Math.ceil(filteredImages.length / imagesPerPage);
 
   const openLightbox = (image: GalleryImage, globalIndex: number) => {
@@ -357,7 +389,7 @@ const GalleryPageV2: React.FC = () => {
                 <button onClick={() => navigateLightbox('next')} className="absolute right-2 z-10 rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:right-4 sm:p-3" style={{ top: '50%', transform: 'translateY(-50%)' }}><ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" /></button>
               </>
             )}
-            <img src={selectedImage.src} alt={selectedImage.title} className="max-h-full max-w-full rounded-lg object-contain shadow-2xl" />
+            <img src={selectedImage.src} alt={altText(selectedImage)} className="max-h-full max-w-full rounded-lg object-contain shadow-2xl" />
           </div>
 
           <div className="flex-shrink-0 bg-gradient-to-t from-black/95 to-transparent px-4 pb-5 pt-3 sm:px-6 sm:pb-6 sm:pt-4">
@@ -396,7 +428,7 @@ const GalleryCardV2: React.FC<{ image: GalleryImage; onOpen: () => void }> = ({ 
     <article onClick={onOpen} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-lg">
       <div className="relative h-40 shrink-0 overflow-hidden bg-slate-100">
         {!imgErr ? (
-          <img src={image.src} alt={image.title} loading="lazy" onError={() => setImgErr(true)} className="h-full w-full object-cover object-center transition-transform duration-300 hover:scale-105" />
+          <img src={image.src} alt={altText(image)} loading="lazy" onError={() => setImgErr(true)} className="h-full w-full object-cover object-center transition-transform duration-300 hover:scale-105" />
         ) : (
           <div className="flex h-full w-full items-center justify-center"><Camera className="size-10 text-slate-300" /></div>
         )}

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Upload, X, Loader2, AlertTriangle, Sparkles } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { createContent } from '../../../lib/mediaApi';
-import { PROFESSIONAL_API } from '../../../lib/apiConfig';
+import { ADMIN_API } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 
 const CATEGORIES = ['Events', 'Collaborations', 'Conferences', 'Interviews', 'Product Launches', 'Team Photos'];
@@ -23,6 +23,7 @@ interface Row {
   tags: string;
   aiFilled: boolean;
   aiPending: boolean;
+  peopleCount?: number | null;
   error?: string;
 }
 
@@ -62,13 +63,13 @@ async function downscale(file: File): Promise<Blob> {
   }
 }
 
-async function describePhoto(file: File): Promise<{ title: string; description: string; category: string; tags: string[] }> {
+async function describePhoto(file: File): Promise<{ title: string; description: string; category: string; tags: string[]; peopleCount?: number | null }> {
   const form = new FormData();
   form.append('file', await downscale(file), 'photo.jpg');
   const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), 45000);
+  const timer = setTimeout(() => ctl.abort(), 90000);
   try {
-    const res = await fetch(`${PROFESSIONAL_API}/ai/describe-photo`, { method: 'POST', headers: authHeader(), body: form, signal: ctl.signal });
+    const res = await fetch(`${ADMIN_API}/ai/describe-photo`, { method: 'POST', headers: authHeader(), body: form, signal: ctl.signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
   } finally {
@@ -121,6 +122,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
           tags: r.tags.trim() ? r.tags : (ai.tags || []).join(', '),
           aiFilled: true,
           aiPending: false,
+          peopleCount: ai.peopleCount ?? null,
         };
       }));
     } catch {
@@ -238,6 +240,9 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
                         </select>
                         <textarea value={r.description} onChange={e => patch(r.id, { description: e.target.value })} rows={2} className={`${inp} sm:col-span-2 resize-none`} placeholder="Description" />
                         <input value={r.tags} onChange={e => patch(r.id, { tags: e.target.value })} className={`${inp} sm:col-span-2`} placeholder="Tags, comma separated (add people names here)" />
+                        {typeof r.peopleCount === 'number' && r.peopleCount > 0 && (
+                          <p className="text-[11px] text-ink-caption sm:col-span-2">{r.peopleCount} {r.peopleCount === 1 ? 'face' : 'faces'} detected - add people names in tags if you want them searchable.</p>
+                        )}
                         {r.aiPending && <p className="text-[11px] text-ink-caption sm:col-span-2 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Writing caption...</p>}
                         {!r.aiPending && !r.aiFilled && <p className="text-[11px] text-ink-caption sm:col-span-2">Automatic caption was not available for this photo - please fill the details.</p>}
                       </div>
