@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, FC } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI("AIzaSyDBuEscUVq4Ys6rEVMRMuI7tp4aK9g10vA");
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "");
 
 interface AIInputFieldProps {
   label?: string;
