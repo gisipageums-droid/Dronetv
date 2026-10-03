@@ -123,5 +123,8 @@ export const adminListBookings = (params: { status: string; when: string; q: str
 export const adminCancelBooking = (id: string, notifyVisitor: boolean) =>
   call<BookingInfo>(`/admin/bookings/${id}/cancel`, json({ notifyVisitor }, authHeader()));
 
+export const adminDeleteBooking = (id: string) =>
+  call<{ message: string }>(`/admin/bookings/${id}`, { method: 'DELETE', headers: authHeader() });
+
 export const ymd = (d: Date): string =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;

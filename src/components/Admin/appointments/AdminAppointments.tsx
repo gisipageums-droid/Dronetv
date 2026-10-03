@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { AlertTriangle, CalendarClock, Copy, Loader2, Plus, Trash2, X } from 'lucide-react';
 import {
-  AdminBooking, BookingSettings, WEEKDAYS, adminCancelBooking, adminGetSettings, adminListBookings, adminSaveSettings,
+  AdminBooking, BookingSettings, WEEKDAYS, adminCancelBooking, adminDeleteBooking, adminGetSettings, adminListBookings, adminSaveSettings,
 } from '../../../lib/bookingApi';
 
 const inp = 'w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow';
@@ -54,6 +54,17 @@ const AdminAppointments: React.FC = () => {
       toast.error((e as Error).message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const remove = async (id: string) => {
+    try {
+      await adminDeleteBooking(id);
+      toast.success('Booking deleted');
+      setConfirmId(null);
+      load();
+    } catch (e) {
+      toast.error((e as Error).message);
     }
   };
 
@@ -145,6 +156,14 @@ const AdminAppointments: React.FC = () => {
                         </span>
                       ) : (
                         <button type="button" onClick={() => setConfirmId(b.id)} className="px-2 py-1 rounded border border-status-error text-status-error text-xs font-semibold hover:bg-status-error/10">Cancel</button>
+                      ))}
+                      {b.status === 'cancelled' && (confirmId === b.id ? (
+                        <span className="flex items-center gap-1">
+                          <button type="button" onClick={() => remove(b.id)} className="px-2 py-1 rounded bg-status-error text-white text-xs font-bold">Delete for good</button>
+                          <button type="button" aria-label="Keep record" onClick={() => setConfirmId(null)} className="p-1 rounded hover:bg-ink-light"><X className="w-4 h-4" /></button>
+                        </span>
+                      ) : (
+                        <button type="button" onClick={() => setConfirmId(b.id)} aria-label="Delete booking record" className="p-1.5 rounded hover:bg-ink-light text-ink-caption"><Trash2 className="w-4 h-4" /></button>
                       ))}
                     </td>
                   </tr>
