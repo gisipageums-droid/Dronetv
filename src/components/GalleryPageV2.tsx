@@ -55,6 +55,7 @@ interface GalleryImage {
   description?: string;
   tags?: string[];
   event?: GalleryEvent;
+  thumb?: string;
 }
 
 function imageShareId(img: GalleryImage): string {
@@ -146,6 +147,7 @@ const GalleryPageV2: React.FC = () => {
         const base = Date.now();
         setCmsImages(items.map((item, i) => ({
           event: events.find(e => e.id === item.platform),
+          thumb: item.externalLink || undefined,
           id: base + items.length - i,
           shareId: item.contentId,
           src: item.imageUrl || '',
@@ -465,12 +467,13 @@ const GalleryPageV2: React.FC = () => {
 
 const GalleryCardV2: React.FC<{ image: GalleryImage; onOpen: () => void }> = ({ image, onOpen }) => {
   const [imgErr, setImgErr] = useState(false);
+  const [useThumb, setUseThumb] = useState(!!image.thumb);
   const [liked, setLiked] = useState(false);
   return (
     <article onClick={onOpen} className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-lg">
       <div className="relative h-40 shrink-0 overflow-hidden bg-slate-100">
         {!imgErr ? (
-          <img src={image.src} alt={altText(image)} loading="lazy" onError={() => setImgErr(true)} className="h-full w-full object-cover object-center transition-transform duration-300 hover:scale-105" />
+          <img src={useThumb && image.thumb ? image.thumb : image.src} alt={altText(image)} loading="lazy" onError={() => (useThumb ? setUseThumb(false) : setImgErr(true))} className="h-full w-full object-cover object-center transition-transform duration-300 hover:scale-105" />
         ) : (
           <div className="flex h-full w-full items-center justify-center"><Camera className="size-10 text-slate-300" /></div>
         )}
