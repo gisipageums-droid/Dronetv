@@ -194,6 +194,8 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   ctx.scale(k, k);
   ctx.imageSmoothingQuality = 'high';
   ctx.textBaseline = 'alphabetic';
+  ctx.textRendering = 'geometricPrecision';
+  ctx.fontKerning = 'normal';
 
   // Background with the subtle dot pattern of the approved template
   ctx.fillStyle = YELLOW;
@@ -214,7 +216,7 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   ctx.font = `800 ${tagSize}px ${FONT}`;
   tagSize = Math.max(9, Math.min(16, (tagSize * 350) / ctx.measureText(tagText).width));
   ctx.font = `800 ${tagSize}px ${FONT}`;
-  ctx.fillText(tagText, 70, 136);
+  ctx.fillText(tagText, 70, 140);
   ctx.textAlign = 'right';
   ctx.font = `600 28px ${FONT}`;
   ctx.fillText('Connect  |  Explore  |  Do Business', 1190, 76);
