@@ -109,42 +109,57 @@ function drawPhoto(ctx: CanvasRenderingContext2D, img: ImageBitmap, x: number, y
   ctx.restore();
 }
 
-function drawPin(ctx: CanvasRenderingContext2D, cx: number, cy: number, s: number) {
+type IconPart = { d: string } | { circle: [number, number, number] } | { rect: [number, number, number, number, number] };
+
+// Vector paths copied from the Lucide icon set (24x24 grid, drawn as strokes).
+const ICONS: Record<string, IconPart[]> = {
+  handshake: [
+    { d: 'm11 17 2 2a1 1 0 1 0 3-3' },
+    { d: 'm14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4' },
+    { d: 'm21 3 1 11h-2' },
+    { d: 'M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3' },
+    { d: 'M3 4h8' },
+  ],
+  calendar: [
+    { d: 'M8 2v4' }, { d: 'M16 2v4' }, { rect: [3, 4, 18, 18, 2] }, { d: 'M3 10h18' },
+    { d: 'M8 14h.01' }, { d: 'M12 14h.01' }, { d: 'M16 14h.01' }, { d: 'M8 18h.01' }, { d: 'M12 18h.01' }, { d: 'M16 18h.01' },
+  ],
+  pin: [{ d: 'M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z' }, { circle: [12, 10, 3] }],
+  globe: [{ circle: [12, 12, 10] }, { d: 'M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20' }, { d: 'M2 12h20' }],
+  phone: [{ d: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z' }],
+};
+
+function drawIcon(ctx: CanvasRenderingContext2D, name: keyof typeof ICONS, x: number, y: number, size: number, color: string, weight = 2) {
   ctx.save();
-  ctx.fillStyle = '#E11D1D';
-  ctx.beginPath();
-  ctx.arc(cx, cy - s * 0.15, s * 0.55, Math.PI * 0.85, Math.PI * 0.15, false);
-  ctx.lineTo(cx, cy + s * 0.95);
-  ctx.closePath();
-  ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.beginPath();
-  ctx.arc(cx, cy - s * 0.15, s * 0.2, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.translate(x, y);
+  ctx.scale(size / 24, size / 24);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = weight;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  for (const part of ICONS[name]) {
+    if ('d' in part) ctx.stroke(new Path2D(part.d));
+    else if ('circle' in part) { ctx.beginPath(); ctx.arc(part.circle[0], part.circle[1], part.circle[2], 0, Math.PI * 2); ctx.stroke(); }
+    else { roundRect(ctx, ...part.rect); ctx.stroke(); }
+  }
   ctx.restore();
 }
 
-function drawGlobe(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) {
+function drawPhoneBadge(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) {
   ctx.save();
   ctx.fillStyle = '#111';
   ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = r * 0.12;
-  ctx.beginPath(); ctx.arc(cx, cy, r * 0.72, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.ellipse(cx, cy, r * 0.32, r * 0.72, 0, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx - r * 0.72, cy); ctx.lineTo(cx + r * 0.72, cy); ctx.stroke();
   ctx.restore();
+  drawIcon(ctx, 'phone', cx - r * 0.55, cy - r * 0.55, r * 1.1, '#fff', 2.4);
 }
 
-function drawPhone(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) {
-  ctx.save();
-  ctx.fillStyle = '#111';
-  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-  ctx.translate(cx - r * 0.56, cy - r * 0.56);
-  ctx.scale((r * 1.12) / 24, (r * 1.12) / 24);
-  ctx.fillStyle = '#fff';
-  ctx.fill(new Path2D('M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z'));
-  ctx.restore();
+// Venue split like the approved template: "Yashobhoomi" / "New Delhi, India" / "at the DroneTV Podium".
+function venueLines(venue: string): string[] {
+  const [place, ...rest] = venue.split(/\s+at\s+/i);
+  const parts = place.split(',').map(t => t.trim()).filter(Boolean);
+  const lines = [parts[0] || '', parts.slice(1).join(', ')];
+  if (rest.length) lines.push(`at ${rest.join(' at ')}`.trim());
+  return lines.filter(Boolean);
 }
 
 export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
@@ -167,28 +182,34 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   ctx.imageSmoothingQuality = 'high';
   ctx.textBaseline = 'alphabetic';
 
-  // Background
+  // Background with the subtle dot pattern of the approved template
   ctx.fillStyle = YELLOW;
   ctx.fillRect(0, 0, GRID, GRID);
+  ctx.fillStyle = 'rgba(255,255,255,0.28)';
+  for (let y = 12; y < GRID; y += 24) {
+    for (let x = ((y / 24) % 2) * 12 + 6; x < GRID; x += 24) {
+      ctx.beginPath(); ctx.arc(x, y, 1.7, 0, Math.PI * 2); ctx.fill();
+    }
+  }
 
-  // Header
-  if (brand) drawContain(ctx, brand, 56, 8, 330, 140, 8, 150, 484, 215);
+  // Header: DroneTV logo (left) + tagline lines (right)
+  if (brand) drawContain(ctx, brand, 52, 4, 390, 152, 8, 150, 484, 215);
   ctx.fillStyle = '#111';
   ctx.textAlign = 'right';
-  ctx.font = `700 29px ${FONT}`;
+  ctx.font = `700 30px ${FONT}`;
   ctx.fillText('Connect  |  Explore  |  Do Business', 1190, 74);
-  ctx.font = `600 26px ${FONT}`;
-  ctx.fillText('Drones  |  GIS  |  AI  |  People  |  Opportunities', 1190, 112);
+  ctx.font = `700 27px ${FONT}`;
+  ctx.fillText('Drones  |  GIS  |  AI  |  People  |  Opportunities', 1190, 113);
 
   // Layout depends on whether there are partner logos to show
   const hasPartners = partners.length > 0;
-  const hasEvent = !!(ev && (ev.logo || ev.location || ev.name));
   const photoH = hasPartners ? 682 : 782;
   const infoY = 176 + photoH + 8;
   const infoH = 144;
   const partnersY = infoY + infoH + 12;
   const frameBottom = hasPartners ? 1150 : infoY + infoH + 16;
   const footerY = Math.max(frameBottom, 1150);
+  const hasEvent = !!(ev && (ev.logo || ev.location || ev.name));
 
   // White frame + photo
   ctx.fillStyle = '#fff';
@@ -196,43 +217,62 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   ctx.fill();
   drawPhoto(ctx, photo, 38, 176, 1178, photoH, 24);
 
-  // Info strip: caption | event logo | location
+  // Info strip: handshake + caption | calendar + event logo | pin + venue
   ctx.fillStyle = '#FFF6D6';
   roundRect(ctx, 36, infoY, 1182, infoH, 22);
   ctx.fill();
-  const captionRight = hasEvent ? 700 : 1190;
+  const mid = infoY + infoH / 2;
+  drawIcon(ctx, 'handshake', 58, mid - 40, 80, NAVY, 1.7);
+  const capX = 160;
+  const capRight = hasEvent ? 700 : 1196;
   ctx.textAlign = 'left';
   ctx.fillStyle = NAVY;
   const caption = (input.caption || '').trim();
-  const cap = fitText(ctx, caption, 700, captionRight - 70, 3, 38, 22);
-  const capLineH = cap.size * 1.22;
-  const capTop = infoY + (infoH - capLineH * cap.lines.length) / 2 + cap.size * 0.86;
-  cap.lines.forEach((line, i) => ctx.fillText(line, 62, capTop + i * capLineH));
+  const cap = fitText(ctx, caption, 700, capRight - capX, 3, 36, 22);
+  const capLineH = cap.size * 1.2;
+  const capTop = mid - (capLineH * cap.lines.length) / 2 + cap.size * 0.84;
+  cap.lines.forEach((line, i) => {
+    // bold lead lines, lighter final line - like the approved template
+    const lighter = cap.lines.length >= 2 && i === cap.lines.length - 1;
+    ctx.font = `${lighter ? 500 : 700} ${cap.size}px ${FONT}`;
+    ctx.fillText(line, capX, capTop + i * capLineH);
+  });
 
   if (hasEvent) {
     ctx.strokeStyle = '#222';
     ctx.lineWidth = 2;
-    for (const x of [712, 978]) { ctx.beginPath(); ctx.moveTo(x, infoY + 22); ctx.lineTo(x, infoY + infoH - 22); ctx.stroke(); }
+    for (const x of [712, 982]) { ctx.beginPath(); ctx.moveTo(x, infoY + 22); ctx.lineTo(x, infoY + infoH - 22); ctx.stroke(); }
+    drawIcon(ctx, 'calendar', 726, mid - 27, 54, '#111', 1.8);
     if (eventLogo) {
-      drawContain(ctx, eventLogo, 728, infoY + 12, 236, infoH - 24);
+      drawContain(ctx, eventLogo, 794, infoY + 10, 180, infoH - 20);
     } else if (ev?.name) {
       ctx.fillStyle = NAVY;
       ctx.textAlign = 'center';
-      const nm = fitText(ctx, ev.name, 800, 220, 3, 30, 18);
+      const nm = fitText(ctx, ev.name, 800, 170, 3, 30, 18);
       const lh = nm.size * 1.2;
-      nm.lines.forEach((l, i) => ctx.fillText(l, 846, infoY + (infoH - lh * nm.lines.length) / 2 + nm.size * 0.85 + i * lh));
+      nm.lines.forEach((l, i) => ctx.fillText(l, 884, mid - (lh * nm.lines.length) / 2 + nm.size * 0.85 + i * lh));
     }
     if (ev?.location) {
-      drawPin(ctx, 1014, infoY + infoH / 2 - 4, 26);
+      drawIcon(ctx, 'pin', 996, mid - 24, 48, '#E11D1D', 2);
       ctx.textAlign = 'left';
       ctx.fillStyle = '#1a1a1a';
-      const loc = fitText(ctx, ev.location, 600, 150, 4, 26, 18);
-      const lh = loc.size * 1.22;
-      loc.lines.forEach((l, i) => ctx.fillText(l, 1046, infoY + (infoH - lh * loc.lines.length) / 2 + loc.size * 0.86 + i * lh));
+      const lines = venueLines(ev.location);
+      const sizes = [30, 25, 22];
+      const weights = [600, 500, 500];
+      const lineH = 1.2;
+      const total = lines.reduce((h, _, i) => h + (sizes[i] ?? 22) * lineH, 0);
+      let y = mid - total / 2;
+      lines.forEach((text, i) => {
+        let size = sizes[i] ?? 22;
+        ctx.font = `${weights[i] ?? 500} ${size}px ${FONT}`;
+        while (ctx.measureText(text).width > 160 && size > 14) { size -= 1; ctx.font = `${weights[i] ?? 500} ${size}px ${FONT}`; }
+        y += (sizes[i] ?? 22) * lineH;
+        ctx.fillText(text, 1048, y - (sizes[i] ?? 22) * 0.22);
+      });
     }
   }
 
-  // Industry partners strip
+  // Industry partners strip (up to 8 logos)
   if (hasPartners) {
     ctx.fillStyle = NAVY;
     ctx.beginPath();
@@ -270,7 +310,7 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
     });
   }
 
-  // Footer
+  // Footer: globe + website | tagline | phone
   const footer = {
     website: ev?.website || DEFAULT_FOOTER.website,
     tagline: ev?.tagline || DEFAULT_FOOTER.tagline,
@@ -279,15 +319,15 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   const fy = footerY + (GRID - footerY) / 2;
   ctx.fillStyle = '#111';
   ctx.textAlign = 'left';
-  ctx.font = `700 34px ${FONT}`;
-  drawGlobe(ctx, 78, fy, 25);
-  ctx.fillText(footer.website, 118, fy + 12);
+  drawIcon(ctx, 'globe', 50, fy - 26, 52, '#111', 1.8);
+  ctx.font = `700 32px ${FONT}`;
+  ctx.fillText(footer.website, 114, fy + 11);
   ctx.strokeStyle = '#222'; ctx.lineWidth = 2;
-  for (const x of [376, 868]) { ctx.beginPath(); ctx.moveTo(x, fy - 28); ctx.lineTo(x, fy + 28); ctx.stroke(); }
-  const tag = fitText(ctx, footer.tagline, 700, 440, 1, 34, 22);
+  for (const x of [392, 868]) { ctx.beginPath(); ctx.moveTo(x, fy - 28); ctx.lineTo(x, fy + 28); ctx.stroke(); }
+  const tag = fitText(ctx, footer.tagline, 700, 424, 1, 33, 20);
   ctx.font = `700 ${tag.size}px ${FONT}`;
-  ctx.fillText(tag.lines[0] || '', 400, fy + 12);
-  drawPhone(ctx, 912, fy, 25);
+  ctx.fillText(tag.lines[0] || '', 414, fy + 11);
+  drawPhoneBadge(ctx, 912, fy, 26);
   ctx.font = `700 34px ${FONT}`;
   ctx.fillText(footer.phone, 952, fy + 12);
 

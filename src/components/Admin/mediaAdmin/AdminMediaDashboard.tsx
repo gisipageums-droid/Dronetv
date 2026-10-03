@@ -7,6 +7,7 @@ import { ADMIN_API, COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 import AdminJobBoardDashboard from '../jobBoardAdmin/AdminJobBoardDashboard';
 import BulkGalleryUpload from './BulkGalleryUpload';
+import { fetchGalleryEvents, type GalleryEvent } from '../../../lib/galleryEvent';
 
 // The media service only handles content CRUD, not file uploads - there's no
 // presign route on it. Reuse the company service's public /upload-file
@@ -300,6 +301,10 @@ export default function AdminMediaDashboard() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showBulk, setShowBulk] = useState(false);
+  const [events, setEvents] = useState<GalleryEvent[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [assignEvent, setAssignEvent] = useState('');
+  const [assigning, setAssigning] = useState(false);
 
   const urlType = searchParams.get('type') as ContentType | null;
   const urlSection = searchParams.get('section') ?? '';
@@ -412,6 +417,33 @@ export default function AdminMediaDashboard() {
       (sub.email || '').toLowerCase().includes(q) ||
       (sub.message || '').toLowerCase().includes(q);
   });
+
+  const isGallery = activeType === 'gallery';
+  useEffect(() => {
+    if (!isGallery) { setSelected(new Set()); return; }
+    fetchGalleryEvents().then(setEvents).catch(() => setEvents([]));
+  }, [isGallery, showBulk]);
+
+  const eventName = (id?: string) => events.find(e => e.id === id)?.name;
+  const toggleSelected = (id: string) => setSelected(prev => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+
+  const applyEventToSelected = async () => {
+    const ev = events.find(e => e.id === assignEvent);
+    if (!ev || selected.size === 0) return;
+    setAssigning(true);
+    let done = 0;
+    for (const id of Array.from(selected)) {
+      try {
+        // 'platform' carries the event id; the event's venue becomes the photo location.
+        await updateContent({ contentType: 'gallery', contentId: id, platform: ev.id, location: ev.location });
+        done++;
+      } catch { /* continue with the rest */ }
+    }
+    setAssigning(false);
+    setSelected(new Set());
+    toast.success(`Event "${ev.name}" applied to ${done} photo${done === 1 ? '' : 's'}`);
+    loadItems();
+  };
 
   const sectionItems = items.filter(i => config.types.some(t => t.value === i.contentType));
 
@@ -685,10 +717,28 @@ export default function AdminMediaDashboard() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-ink-caption">No content yet. Click "Add Content" to create your first item.</div>
         ) : (
+          <>
+          {isGallery && (
+            <div className="mb-3 flex flex-wrap items-center gap-3 rounded-xl border border-ink-light bg-surface-card px-4 py-3 text-sm">
+              <span className="font-semibold text-ink">Apply an event to photos</span>
+              <select value={assignEvent} onChange={e => setAssignEvent(e.target.value)} className="border border-ink-light rounded-lg px-2.5 py-1.5 text-sm bg-surface-card">
+                <option value="">Choose event...</option>
+                {events.map(ev => <option key={ev.id} value={ev.id}>{ev.name}</option>)}
+              </select>
+              <button type="button" onClick={() => setSelected(new Set(filtered.filter(i => !i.platform).map(i => i.contentId)))} className="px-3 py-1.5 rounded-lg bg-ink-light text-xs font-semibold">Select photos without an event</button>
+              <button type="button" onClick={applyEventToSelected} disabled={!assignEvent || selected.size === 0 || assigning} className="px-3 py-1.5 rounded-lg bg-brand-yellow text-ink text-xs font-bold disabled:opacity-50">
+                {assigning ? 'Applying...' : `Apply to ${selected.size} selected`}
+              </button>
+              {events.length === 0 && <span className="text-xs text-ink-caption">No events yet - create one from Bulk Upload → Events.</span>}
+            </div>
+          )}
           <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-x-auto">
             <table className="w-full min-w-[600px] text-sm">
               <thead className="bg-ink-offwhite border-b border-ink-light">
                 <tr>
+                  {isGallery && (
+                    <th className="px-4 py-3 w-8"><input type="checkbox" aria-label="Select all photos" checked={filtered.length > 0 && filtered.every(i => selected.has(i.contentId))} onChange={e => setSelected(e.target.checked ? new Set(filtered.map(i => i.contentId)) : new Set())} className="accent-amber-500" /></th>
+                  )}
                   <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Title</th>
                   <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Type</th>
                   <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Source</th>
@@ -703,6 +753,9 @@ export default function AdminMediaDashboard() {
                   const displayTitle = isApplication ? item.title.replace('[Application] ', '') : item.title;
                   return (
                   <tr key={item.contentId} className={`hover:bg-ink-offwhite transition-colors ${isApplication ? 'bg-status-info/40' : ''}`}>
+                    {isGallery && (
+                      <td className="px-4 py-3"><input type="checkbox" aria-label={`Select ${displayTitle}`} checked={selected.has(item.contentId)} onChange={() => toggleSelected(item.contentId)} className="accent-amber-500" /></td>
+                    )}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {item.imageUrl && <img src={item.imageUrl} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />}
@@ -722,7 +775,7 @@ export default function AdminMediaDashboard() {
                         {isApplication ? 'Job Application' : (ALL_TYPE_DEFS.find(t => t.value === item.contentType)?.label || item.contentType)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-ink-caption text-xs">{isApplication ? (item.source || '—') : (item.source || item.company || '—')}</td>
+                    <td className="px-4 py-3 text-ink-caption text-xs">{isApplication ? (item.source || '—') : (isGallery ? (eventName(item.platform) || 'No event') : (item.source || item.company || '—'))}</td>
                     <td className="px-4 py-3 text-ink-caption text-xs">{item.date || new Date(item.createdAt).toLocaleDateString('en-IN')}</td>
                     <td className="px-4 py-3">
                       <span className={`text-xs font-bold px-2 py-0.5 rounded ${item.isPublished ? 'bg-status-success/15 text-status-success' : 'bg-ink-light text-ink-caption'}`}>
@@ -749,6 +802,7 @@ export default function AdminMediaDashboard() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
 
