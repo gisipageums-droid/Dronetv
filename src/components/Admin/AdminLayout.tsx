@@ -44,6 +44,7 @@ import {
   ShieldCheck,
   Share2,
   Megaphone,
+  CalendarClock,
 } from "lucide-react";
 import { COMPANY_API, EVENTS_API, PROFESSIONAL_API, LAMBDA } from '../../lib/apiConfig';
 
@@ -126,6 +127,12 @@ const NAV: Section[] = [
           { label: "Networking",      path: "/admin/media/dashboard?type=networking",    icon: <Users2 size={14} /> },
           { label: "Community",       path: "/admin/media/dashboard?type=community",     icon: <Users size={14} /> },
         ],
+      },
+      {
+        id: "appointments",
+        label: "Appointments",
+        icon: <CalendarClock size={17} />,
+        path: "/admin/appointments",
       },
       {
         id: "content-review",
@@ -239,6 +246,7 @@ const PATH_TO_ID: Record<string, string> = {
   "/admin/media/dashboard": "media",
   "/admin/event/dashboard": "events",
   "/admin/user-content": "content-review",
+  "/admin/appointments": "appointments",
   "/admin/plans": "plans",
   "/admin/invoices": "invoices",
   "/admin/settings": "settings",
@@ -257,6 +265,7 @@ const BREADCRUMBS: Record<string, string> = {
   "/admin/media/dashboard": "Media Hub",
   "/admin/event/dashboard": "Events",
   "/admin/user-content": "Content Review",
+  "/admin/appointments": "Appointments",
   "/admin/plans": "Packages & Revenue",
   "/admin/invoices": "Invoices",
   "/admin/settings": "Settings",

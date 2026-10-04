@@ -3,6 +3,8 @@ import { X, Plus, Trash2, Loader2, Upload, Pencil } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { createContent, deleteContent, fetchAdminContent, updateContent } from '../../../lib/mediaApi';
 import { DEFAULT_FOOTER, MAX_PARTNER_LOGOS, eventFromItem, eventToFields, type GalleryEvent } from '../../../lib/galleryEvent';
+import { optimizeLogo } from '../../../lib/imageOptimize';
+import { PARTNER_LOGO_SLUGS, partnerLogoPath, partnerName } from '../../../lib/partners';
 
 interface Props {
   uploadImage: (file: File) => Promise<string>;
@@ -24,6 +26,7 @@ export default function GalleryEventManager({ uploadImage, onClose, onChanged }:
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -46,7 +49,7 @@ export default function GalleryEventManager({ uploadImage, onClose, onChanged }:
       const urls: string[] = [];
       for (const f of Array.from(files)) {
         if (!f.type.startsWith('image/')) continue;
-        urls.push(await uploadImage(f));
+        urls.push(await uploadImage(await optimizeLogo(f)));
       }
       apply(urls);
     } catch {
@@ -171,6 +174,30 @@ export default function GalleryEventManager({ uploadImage, onClose, onChanged }:
                   </label>
                 )}
               </div>
+            </div>
+
+            <div>
+              <button type="button" onClick={() => setShowPicker(v => !v)} className="text-sm font-semibold text-ink underline underline-offset-2">
+                {showPicker ? 'Hide website partners' : 'Choose from website partners (no upload needed)'}
+              </button>
+              {showPicker && (
+                <div className="mt-3 grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 gap-2 max-h-64 overflow-y-auto border border-ink-light rounded-lg p-3">
+                  {PARTNER_LOGO_SLUGS.map(slug => {
+                    const path = partnerLogoPath(slug);
+                    const on = draft.partners.includes(path);
+                    const full = !on && draft.partners.length >= MAX_PARTNER_LOGOS;
+                    return (
+                      <button key={slug} type="button" disabled={full} title={partnerName(slug)}
+                        onClick={() => setDraft(d => d && { ...d, partners: on ? d.partners.filter(x => x !== path) : [...d.partners, path].slice(0, MAX_PARTNER_LOGOS) })}
+                        className={`relative h-16 rounded-lg border bg-white p-1.5 transition-colors ${on ? 'border-brand-yellow ring-2 ring-brand-yellow' : 'border-ink-light hover:border-brand-yellow'} ${full ? 'opacity-40 cursor-not-allowed' : ''}`}>
+                        <img src={path} alt={partnerName(slug)} loading="lazy" className="w-full h-full object-contain" />
+                        {on && <span className="absolute -top-1.5 -right-1.5 bg-brand-yellow text-ink rounded-full text-[10px] font-bold w-4 h-4 flex items-center justify-center">&#10003;</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <p className="text-[11px] text-ink-caption mt-1">Picked logos are used straight from the website, so they take no extra storage.</p>
             </div>
 
             <div>

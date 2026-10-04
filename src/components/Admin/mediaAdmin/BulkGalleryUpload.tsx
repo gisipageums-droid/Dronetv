@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { createContent, fetchAdminContent } from '../../../lib/mediaApi';
 import { eventFromItem, type GalleryEvent } from '../../../lib/galleryEvent';
 import GalleryEventManager from './GalleryEventManager';
+import { optimizePhoto, formatBytes } from '../../../lib/imageOptimize';
 import { ADMIN_API } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 
@@ -19,6 +20,9 @@ interface Row {
   preview: string;
   status: RowStatus;
   imageUrl: string;
+  thumbUrl?: string;
+  originalUrl?: string;
+  sizeNote?: string;
   title: string;
   description: string;
   category: string;
@@ -137,13 +141,28 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
 
   const processOne = useCallback(async (row: Row) => {
     let imageUrl: string;
+    let thumbUrl: string | undefined;
+    let originalUrl: string | undefined;
+    let sizeNote: string | undefined;
     try {
-      imageUrl = await uploadWithRetry(uploadImage, row.file);
+      // Three files per photo: a small WebP copy for the website, a tiny grid preview, and the
+      // untouched original (only used by "Download original photo").
+      let display: File = row.file;
+      let thumbFile: File | null = null;
+      try {
+        const opt = await optimizePhoto(row.file);
+        display = opt.master;
+        thumbFile = opt.thumb;
+        sizeNote = `Original kept: ${formatBytes(opt.originalBytes)} · website copy: ${formatBytes(opt.master.size)}`;
+      } catch { /* unreadable by the browser: upload the file as it is */ }
+      imageUrl = await uploadWithRetry(uploadImage, display);
+      if (thumbFile) thumbUrl = await uploadWithRetry(uploadImage, thumbFile).catch(() => undefined);
+      originalUrl = display === row.file ? imageUrl : await uploadWithRetry(uploadImage, row.file);
     } catch {
       patch(row.id, { status: 'error', error: 'Upload failed - remove it and try again', aiPending: false });
       return;
     }
-    patch(row.id, { status: 'ready', imageUrl, aiPending: true });
+    patch(row.id, { status: 'ready', imageUrl, thumbUrl, originalUrl, sizeNote, aiPending: true });
     try {
       let ai: Awaited<ReturnType<typeof describePhoto>> | null = null;
       for (let attempt = 0; attempt < 3 && !ai; attempt++) {
@@ -238,6 +257,10 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
           title: r.title.trim(),
           description: r.description.trim(),
           imageUrl: r.imageUrl,
+          // gallery photos keep their small grid preview in externalLink (unused for this type)
+          externalLink: r.thumbUrl,
+          // the untouched original file (gallery photos do not use videoUrl otherwise)
+          videoUrl: r.originalUrl,
           category: r.category,
           location: (event?.location || location).trim(),
           date,
@@ -329,6 +352,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
                         </select>
                         <textarea value={r.description} onChange={e => patch(r.id, { description: e.target.value })} rows={2} className={`${inp} sm:col-span-2 resize-none`} placeholder="Description" />
                         <input value={r.tags} onChange={e => patch(r.id, { tags: e.target.value })} className={`${inp} sm:col-span-2`} placeholder="Tags, comma separated (add people names here)" />
+                        {r.sizeNote && <p className="text-[11px] text-ink-caption sm:col-span-2">{r.sizeNote}</p>}
                         {typeof r.peopleCount === 'number' && r.peopleCount > 0 && (
                           <p className="text-[11px] text-ink-caption sm:col-span-2">{r.peopleCount} {r.peopleCount === 1 ? 'face' : 'faces'} detected - add people names in tags if you want them searchable.</p>
                         )}

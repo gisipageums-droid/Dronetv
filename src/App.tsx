@@ -61,6 +61,10 @@ const Logout = lazy(() => import("./components/Logout"));
 const ResetPassword = lazy(() => import("./components/ResetPassword"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 const AdminProtectedRoute = lazy(() => import("./components/adminProtectedRoute"));
+const BookCallPage = lazy(() => import("./components/BookCallPage"));
+const BookingManagePage = lazy(() => import("./components/BookingManagePage"));
+const BookingIcsRedirect = lazy(() => import("./components/BookingIcsRedirect"));
+const AdminAppointments = lazy(() => import("./components/Admin/appointments/AdminAppointments"));
 import AiProtectedRoute from "./components/AiProtectedRoute";
 const RoleGuard = lazy(() => import("./components/RoleGuard"));
 const AdminDashboard = lazy(() => import("./components/Admin/CompaniesDashboard/AdminDashboard"));
@@ -371,6 +375,9 @@ const AppContent = () => {
               kept at -v1 for rollback. */}
           <Route path="/gallery" element={<GalleryPageV2 />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/book-a-call" element={<BookCallPage />} />
+          <Route path="/booking/manage" element={<BookingManagePage />} />
+          <Route path="/booking/ics" element={<BookingIcsRedirect />} />
           <Route path="/faqs" element={<FAQPage />} />
           <Route path="/legal" element={<LegalIndexPage />} />
           <Route path="/legal/:slug" element={<PolicyPage />} />
@@ -428,6 +435,12 @@ const AppContent = () => {
             <AdminProtectedRoute>
               <AdminLayout>
                 <AdminTokenPlan />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+          <Route path="/admin/appointments" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminAppointments />
               </AdminLayout>
             </AdminProtectedRoute>} />
           <Route path="/admin/invoices" element={
