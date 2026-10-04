@@ -56,6 +56,7 @@ interface GalleryImage {
   tags?: string[];
   event?: GalleryEvent;
   thumb?: string;
+  original?: string;
 }
 
 function imageShareId(img: GalleryImage): string {
@@ -148,6 +149,7 @@ const GalleryPageV2: React.FC = () => {
         setCmsImages(items.map((item, i) => ({
           event: events.find(e => e.id === item.platform),
           thumb: item.externalLink || undefined,
+          original: item.videoUrl || undefined,
           id: base + items.length - i,
           shareId: item.contentId,
           src: item.imageUrl || '',
@@ -278,7 +280,7 @@ const GalleryPageV2: React.FC = () => {
     if (!selectedImage || brandBusy) return;
     setBrandBusy('original');
     try {
-      await downloadOriginalPhoto(selectedImage.src, selectedImage.title);
+      await downloadOriginalPhoto(selectedImage.original || selectedImage.src, selectedImage.title, !!selectedImage.original);
     } catch {
       window.open(selectedImage.src, '_blank');
     } finally {

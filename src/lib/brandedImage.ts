@@ -390,10 +390,18 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   return blob;
 }
 
-// The plain photo at the size it was uploaded (no branding). Photos are stored as WebP to save
-// space; the download is turned back into an ordinary full-size JPEG that opens everywhere.
-export async function downloadOriginalPhoto(photoUrl: string, title: string): Promise<void> {
+// "Download original photo". With an original URL the exact stored file is saved untouched.
+// Without one (older photos stored only as a website copy) a WebP is turned back into a normal
+// full-size JPEG so it still opens everywhere.
+export async function downloadOriginalPhoto(photoUrl: string, title: string, exact: boolean): Promise<void> {
   const blob = await fetchImageBlob(photoUrl);
+  const base = brandedFileName(title).replace(/^dronetv-/, '').replace(/\.jpg$/, '');
+  const urlExt = (photoUrl.split('?')[0].match(/\.([a-z0-9]{3,4})$/i) || [])[1]?.toLowerCase();
+  if (exact) {
+    const typeExt = blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : blob.type === 'image/jpeg' ? 'jpg' : undefined;
+    downloadBlob(blob, `${base}-original.${urlExt || typeExt || 'jpg'}`);
+    return;
+  }
   let out = blob;
   let ext = blob.type === 'image/png' ? 'png' : 'jpg';
   if (blob.type === 'image/webp') {
@@ -406,7 +414,7 @@ export async function downloadOriginalPhoto(photoUrl: string, title: string): Pr
     const jpeg = await new Promise<Blob | null>(res => canvas.toBlob(res, 'image/jpeg', 0.95));
     if (jpeg) out = jpeg;
   }
-  downloadBlob(out, brandedFileName(title).replace(/^dronetv-/, '').replace(/\.jpg$/, `-original.${ext}`));
+  downloadBlob(out, `${base}-original.${ext}`);
 }
 
 export function brandedFileName(title: string): string {

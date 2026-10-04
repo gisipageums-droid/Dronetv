@@ -1,21 +1,21 @@
 // Re-encodes uploads as WebP in the browser before they are stored. WebP files are
 // ordinary images (<img> tags, downloads, share sheets all work unchanged) but
-// much smaller than the camera JPEG at the same visual quality, with the same
-// pixel dimensions. A small preview is made for grids so a page of photos does
-// not download full-size files.
+// much smaller than the camera JPEG at the same visual quality. A small preview is
+// made for grids so a page of photos does not download full-size files.
 // Browsers that cannot encode WebP (older Safari) fall back to JPEG.
 
-// The stored photo keeps its original pixel size (the cap only guards against absurd inputs);
-// only the file encoding changes, so a download comes back at the size it was uploaded.
-const MASTER_MAX = 12000;
-const MASTER_QUALITY = 0.9;
+// The website copy is plenty sharp for the viewer and the branded share image; the untouched
+// original is stored separately and is what "Download original photo" returns.
+const MASTER_MAX = 2400;
+const MASTER_QUALITY = 0.85;
 const THUMB_MAX = 640;
 const THUMB_QUALITY = 0.78;
 const LOGO_MAX = 800;
 
 export interface OptimizedPhoto {
-  master: File;
-  thumb: File;
+  master: File;       // website copy (WebP, long edge <= 2400px); may be the original file itself if that is already smaller
+  thumb: File;        // grid preview
+  original: File;     // the untouched upload
   originalBytes: number;
 }
 
@@ -55,6 +55,7 @@ export async function optimizePhoto(file: File): Promise<OptimizedPhoto> {
     return {
       master,
       thumb: new File([thumbBlob], `thumb-${renamed(file.name, thumbBlob)}`, { type: thumbBlob.type }),
+      original: file,
       originalBytes: file.size,
     };
   } finally {
