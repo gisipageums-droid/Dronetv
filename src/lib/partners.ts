@@ -9,10 +9,16 @@ export const PARTNER_LOGO_SLUGS = [
   "aarvi", "aspire-spaces", "eesha", "pristine-properties", "margana", "botanika",
 ];
 
+// Group companies' logos: offered in the gallery event picker only (not in the website's "Our Partners" section).
+export const GROUP_LOGO_SLUGS = ["ipageums", "virelbiz", "dev-ai-labs", "dronetv", "ipage-vision"];
+export const EVENT_LOGO_SLUGS = [...PARTNER_LOGO_SLUGS, ...GROUP_LOGO_SLUGS];
+
+const NAMES: Record<string, string> = { ipageums: "IPAGEUMS", virelbiz: "Virelbiz", "dev-ai-labs": "Dev AI Labs", dronetv: "DroneTv.in", "ipage-vision": "IPAGE Vision" };
+
 export const partnerLogoPath = (slug: string) => `/images/partners/${slug}.png`;
 
 export const partnerName = (slug: string) =>
-  slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  NAMES[slug] ?? slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 
 export const partnerSlugFromPath = (path: string): string | null => {
   const m = path.match(/^\/images\/partners\/([a-z0-9-]+)\.png$/);

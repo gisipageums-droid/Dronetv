@@ -244,7 +244,11 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   const captionText = (input.caption || '').trim() || (ev?.name || '').trim();
   const hasInfo = !!captionText || hasEvent;
   const infoH = 144;
-  const photoH = (hasPartners ? 682 : 782) + (hasInfo ? 0 : infoH + 8);
+  // Up to 8 logos sit in one row; more go in two rows so every logo stays readable.
+  const partnerRows = partners.length > 8 ? 2 : 1;
+  const partnerCellH = partnerRows === 1 ? 110 : 84;
+  const partnersH = partnerRows * partnerCellH + (partnerRows - 1) * 8;
+  const photoH = (hasPartners ? 792 - partnersH : 782) + (hasInfo ? 0 : infoH + 8);
   const infoY = 176 + photoH + 8;
   const partnersY = infoY + (hasInfo ? infoH + 12 : 0);
   const frameBottom = hasPartners ? 1150 : (hasInfo ? infoY + infoH + 16 : infoY + 8);
@@ -283,7 +287,7 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
     for (const x of [712, 982]) { ctx.beginPath(); ctx.moveTo(x, infoY + 22); ctx.lineTo(x, infoY + infoH - 22); ctx.stroke(); }
     drawIcon(ctx, 'calendar', 724, mid - 29, 58, '#111', 2.5);
     if (eventLogo) {
-      drawContain(ctx, eventLogo, 794, infoY + 10, 180, infoH - 20);
+      drawContain(ctx, eventLogo, 809, mid - 42, 150, 84);
     } else if (ev?.name) {
       ctx.fillStyle = NAVY;
       ctx.textAlign = 'center';
@@ -319,33 +323,56 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   }
   }
 
-  // Industry partners strip: the logos use the whole width, and a small one-line label sits on top of
-  // the strip's upper-left edge (drawn last so it is above the logos).
+  // Industry partners: logo tiles across the full width (two rows when there are many), with a slim
+  // navy ribbon strip laid across the top edge (drawn last, so it sits above the tiles).
   if (hasPartners) {
     const areaX = 36, areaW = 1182, gap = 8;
     const n = partners.length;
-    const slotW = Math.min(128, (areaW - gap * (n - 1)) / n);
-    const startX = areaX + (areaW - (slotW * n + gap * (n - 1))) / 2;
+    const perRow = Math.ceil(n / partnerRows);
+    const slotW = Math.min(partnerRows === 1 ? 128 : 168, (areaW - gap * (perRow - 1)) / perRow);
     partners.forEach((logo, i) => {
-      const x = startX + i * (slotW + gap);
+      const r = Math.floor(i / perRow);
+      const inRow = r === partnerRows - 1 ? n - perRow * (partnerRows - 1) : perRow;
+      const rowW = inRow * slotW + gap * (inRow - 1);
+      const x = areaX + (areaW - rowW) / 2 + (i - r * perRow) * (slotW + gap);
+      const y = partnersY + r * (partnerCellH + 8);
       ctx.fillStyle = '#fff';
-      roundRect(ctx, x, partnersY, slotW, 110, 16);
+      roundRect(ctx, x, y, slotW, partnerCellH, 16);
       ctx.fill();
       ctx.strokeStyle = '#E3E3E3';
       ctx.lineWidth = 2;
       ctx.stroke();
-      drawContain(ctx, logo, x + 10, partnersY + 16, slotW - 20, 82);
+      const top = r === 0 ? 20 : 10;
+      drawContain(ctx, logo, x + 10, y + top, slotW - 20, partnerCellH - top - 8);
     });
-    ctx.font = `800 20px ${FONT}`;
-    const labelText = 'Industry Partners';
-    const labelW = ctx.measureText(labelText).width + 44;
-    const labelX = startX, labelY = partnersY - 15, labelH = 30;
-    ctx.fillStyle = NAVY;
-    roundRect(ctx, labelX, labelY, labelW, labelH, 15);
+    const ribbonH = 30, ribbonY = partnersY - 15;
+    const grad = ctx.createLinearGradient(areaX, 0, areaX + areaW, 0);
+    grad.addColorStop(0, '#08205A');
+    grad.addColorStop(0.5, NAVY);
+    grad.addColorStop(1, '#08205A');
+    ctx.fillStyle = grad;
+    roundRect(ctx, areaX, ribbonY, areaW, ribbonH, 15);
     ctx.fill();
     ctx.fillStyle = '#fff';
-    ctx.textAlign = 'left';
-    ctx.fillText(labelText, labelX + 22, labelY + 21.5);
+    ctx.textAlign = 'center';
+    ctx.font = `800 18px ${FONT}`;
+    (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '5px';
+    const label = 'INDUSTRY PARTNERS';
+    const cx = areaX + areaW / 2;
+    ctx.fillText(label, cx + 2.5, ribbonY + 21);
+    const labelW = ctx.measureText(label).width;
+    (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '0px';
+    // small yellow diamonds either side of the label
+    ctx.fillStyle = YELLOW;
+    for (const dx of [-(labelW / 2 + 26), labelW / 2 + 26]) {
+      ctx.beginPath();
+      ctx.moveTo(cx + dx, ribbonY + ribbonH / 2 - 7);
+      ctx.lineTo(cx + dx + 7, ribbonY + ribbonH / 2);
+      ctx.lineTo(cx + dx, ribbonY + ribbonH / 2 + 7);
+      ctx.lineTo(cx + dx - 7, ribbonY + ribbonH / 2);
+      ctx.closePath();
+      ctx.fill();
+    }
   }
 
   // Footer: globe + website | tagline | phone
