@@ -1,5 +1,5 @@
 import { MEDIA_API } from './apiConfig';
-import { DEFAULT_FOOTER, type GalleryEvent } from './galleryEvent';
+import { DEFAULT_FOOTER, MAX_PARTNER_LOGOS, type GalleryEvent } from './galleryEvent';
 
 // Generates the approved DroneTV share template in the browser. The original
 // photo is only read (never modified or re-uploaded); the branded image exists
@@ -193,7 +193,7 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   await ensureFonts();
   const photo = await loadBitmap(input.photoUrl);
   const ev = input.event || null;
-  const partnerUrls = (ev?.partners || []).slice(0, 8);
+  const partnerUrls = (ev?.partners || []).slice(0, MAX_PARTNER_LOGOS);
   const [brand, eventLogo, ...partnerBitmaps] = await Promise.all([
     tryBitmap(LOGO_URL),
     tryBitmap(ev?.logo),
@@ -256,14 +256,13 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   ctx.fill();
   drawPhoto(ctx, photo, 38, 176, 1178, photoH, 24);
 
-  // Info strip: handshake + caption | calendar + event logo | pin + venue
+  // Info strip: caption | calendar + event logo | pin + venue
   if (hasInfo) {
   ctx.fillStyle = '#FFF6D6';
   roundRect(ctx, 36, infoY, 1182, infoH, 22);
   ctx.fill();
   const mid = infoY + infoH / 2;
-  if (captionText) drawIcon(ctx, 'handshake', 54, mid - 44, 88, NAVY, 2.5);
-  const capX = captionText ? 160 : 62;
+  const capX = 62;
   const capRight = hasEvent ? 700 : 1196;
   ctx.textAlign = 'left';
   ctx.fillStyle = NAVY;
@@ -320,31 +319,12 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   }
   }
 
-  // Industry partners strip (up to 8 logos)
+  // Industry partners strip: the logos use the whole width, and a small one-line label sits on top of
+  // the strip's upper-left edge (drawn last so it is above the logos).
   if (hasPartners) {
-    ctx.fillStyle = NAVY;
-    ctx.beginPath();
-    ctx.moveTo(36, partnersY + 16);
-    ctx.arcTo(36, partnersY, 52, partnersY, 16);
-    ctx.lineTo(206, partnersY);
-    ctx.lineTo(236, partnersY + 55);
-    ctx.lineTo(206, partnersY + 110);
-    ctx.lineTo(52, partnersY + 110);
-    ctx.arcTo(36, partnersY + 110, 36, partnersY + 94, 16);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.textAlign = 'left';
-    ctx.font = `800 27px ${FONT}`;
-    ctx.fillText('Industry', 52, partnersY + 48);
-    ctx.fillText('Partners', 52, partnersY + 86);
-    ctx.beginPath();
-    ctx.moveTo(196, partnersY + 42); ctx.lineTo(210, partnersY + 55); ctx.lineTo(196, partnersY + 68);
-    ctx.lineWidth = 7; ctx.strokeStyle = YELLOW; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
-
-    const areaX = 246, areaW = 972, gap = 8;
+    const areaX = 36, areaW = 1182, gap = 8;
     const n = partners.length;
-    const slotW = Math.min(124, (areaW - gap * (n - 1)) / n);
+    const slotW = Math.min(128, (areaW - gap * (n - 1)) / n);
     const startX = areaX + (areaW - (slotW * n + gap * (n - 1))) / 2;
     partners.forEach((logo, i) => {
       const x = startX + i * (slotW + gap);
@@ -354,8 +334,18 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
       ctx.strokeStyle = '#E3E3E3';
       ctx.lineWidth = 2;
       ctx.stroke();
-      drawContain(ctx, logo, x + 12, partnersY + 12, slotW - 24, 86);
+      drawContain(ctx, logo, x + 10, partnersY + 16, slotW - 20, 82);
     });
+    ctx.font = `800 20px ${FONT}`;
+    const labelText = 'Industry Partners';
+    const labelW = ctx.measureText(labelText).width + 44;
+    const labelX = startX, labelY = partnersY - 15, labelH = 30;
+    ctx.fillStyle = NAVY;
+    roundRect(ctx, labelX, labelY, labelW, labelH, 15);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'left';
+    ctx.fillText(labelText, labelX + 22, labelY + 21.5);
   }
 
   // Footer: globe + website | tagline | phone
