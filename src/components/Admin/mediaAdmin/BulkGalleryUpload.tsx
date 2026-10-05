@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Upload, X, Loader2, AlertTriangle, Sparkles, Settings2 } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { createContent, fetchAdminContent } from '../../../lib/mediaApi';
-import { eventFromItem, type GalleryEvent } from '../../../lib/galleryEvent';
+import { createContent } from '../../../lib/mediaApi';
+import { loadEventsForAdmin, type GalleryEvent } from '../../../lib/galleryEvent';
 import GalleryEventManager from './GalleryEventManager';
 import { optimizePhoto, formatBytes, SIZE_CHOICES, SHAPE_CHOICES, DEFAULT_PHOTO_OPTIONS } from '../../../lib/imageOptimize';
 import { ADMIN_API } from '../../../lib/apiConfig';
@@ -127,8 +127,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
 
   const loadEvents = useCallback(async () => {
     try {
-      const items = await fetchAdminContent(undefined, 'gallery-event');
-      setEvents(items.map(eventFromItem));
+      setEvents(await loadEventsForAdmin());
     } catch {
       toast.error('Could not load events');
     }
