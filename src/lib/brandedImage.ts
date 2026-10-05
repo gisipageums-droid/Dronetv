@@ -248,9 +248,11 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   const partnerRows = partners.length > 8 ? 2 : 1;
   const partnerCellH = partnerRows === 1 ? 110 : 84;
   const partnersH = partnerRows * partnerCellH + (partnerRows - 1) * 8;
-  const photoH = (hasPartners ? 792 - partnersH : 782) + (hasInfo ? 0 : infoH + 8);
+  // the ribbon above the partner tiles needs its own 34px
+  const ribbonSpace = hasPartners ? 34 : 0;
+  const photoH = (hasPartners ? 792 - partnersH - ribbonSpace : 782) + (hasInfo ? 0 : infoH + 8);
   const infoY = 176 + photoH + 8;
-  const partnersY = infoY + (hasInfo ? infoH + 12 : 0);
+  const partnersY = infoY + (hasInfo ? infoH + 12 : 0) + ribbonSpace;
   const frameBottom = hasPartners ? 1150 : (hasInfo ? infoY + infoH + 16 : infoY + 8);
   const footerY = Math.max(frameBottom, 1150);
 
@@ -287,7 +289,7 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
     for (const x of [712, 982]) { ctx.beginPath(); ctx.moveTo(x, infoY + 22); ctx.lineTo(x, infoY + infoH - 22); ctx.stroke(); }
     drawIcon(ctx, 'calendar', 724, mid - 29, 58, '#111', 2.5);
     if (eventLogo) {
-      drawContain(ctx, eventLogo, 809, mid - 42, 150, 84);
+      drawContain(ctx, eventLogo, 801, mid - 48, 164, 96);
     } else if (ev?.name) {
       ctx.fillStyle = NAVY;
       ctx.textAlign = 'center';
@@ -324,7 +326,7 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   }
 
   // Industry partners: logo tiles across the full width (two rows when there are many), with a slim
-  // navy ribbon strip laid across the top edge (drawn last, so it sits above the tiles).
+  // navy ribbon strip across the top.
   if (hasPartners) {
     const areaX = 36, areaW = 1182, gap = 8;
     const n = partners.length;
@@ -342,10 +344,10 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
       ctx.strokeStyle = '#E3E3E3';
       ctx.lineWidth = 2;
       ctx.stroke();
-      const top = r === 0 ? 20 : 10;
+      const top = 12;
       drawContain(ctx, logo, x + 10, y + top, slotW - 20, partnerCellH - top - 8);
     });
-    const ribbonH = 30, ribbonY = partnersY - 15;
+    const ribbonH = 28, ribbonY = partnersY - 32;
     const grad = ctx.createLinearGradient(areaX, 0, areaX + areaW, 0);
     grad.addColorStop(0, '#08205A');
     grad.addColorStop(0.5, NAVY);
