@@ -467,7 +467,7 @@ const GalleryPageV2: React.FC = () => {
               </div>
               <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
                 <button onClick={() => setIsLiked(!isLiked)} className={`rounded-full p-2 transition-all sm:p-3 ${isLiked ? 'bg-red-600 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}><Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${isLiked ? 'fill-current' : ''}`} /></button>
-                <ShareMenu url={`${window.location.origin}/gallery?photo=${imageShareId(selectedImage)}`} title={selectedImage.title} buttonClassName="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3" iconClassName="h-4 w-4 sm:h-5 sm:w-5" />
+                <ShareMenu url={`${window.location.origin}/gp/${imageShareId(selectedImage)}`} title={selectedImage.title} onInstagram={handleShareImage} buttonClassName="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 sm:p-3" iconClassName="h-4 w-4 sm:h-5 sm:w-5" />
                 <button onClick={handleShareImage} disabled={!!brandBusy} title="Send branded image (WhatsApp, LinkedIn, Facebook...)" aria-label="Share branded image" className="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 disabled:opacity-60 sm:p-3">{brandBusy === 'share' ? <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" /> : <Send className="h-4 w-4 sm:h-5 sm:w-5" />}</button>
                 <button onClick={handleDownloadOriginal} disabled={!!brandBusy} title="Download original photo (full size, no branding)" aria-label="Download original photo" className="rounded-full bg-white/20 p-2 text-white transition-all hover:bg-white/30 disabled:opacity-60 sm:p-3">{brandBusy === 'original' ? <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" /> : <ImageDown className="h-4 w-4 sm:h-5 sm:w-5" />}</button>
                 <button onClick={handleDownload} disabled={!!brandBusy} title="Download branded image" aria-label="Download branded image" className="flex items-center gap-2 rounded-full bg-yellow-400 px-3 py-2 text-sm font-bold text-black transition-all hover:bg-yellow-300 disabled:opacity-60 sm:px-4 sm:py-3">{brandBusy === 'download' ? <Loader2 className="h-4 w-4 animate-spin sm:h-5 sm:w-5" /> : <Download className="h-4 w-4 sm:h-5 sm:w-5" />}<span className="hidden sm:inline">Download</span></button>
@@ -522,7 +522,7 @@ const GalleryCardV2: React.FC<{ image: GalleryImage; onOpen: () => void }> = ({ 
           <button type="button" onClick={e => { e.stopPropagation(); onOpen(); }} className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-slate-300 bg-white py-2 text-xs font-bold text-slate-900 hover:border-amber-500">
             <Eye className="size-3.5" /> View Photo
           </button>
-          <ShareMenu url={`${window.location.origin}/gallery?photo=${imageShareId(image)}`} title={image.title} buttonClassName="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-900 hover:border-amber-500" iconClassName="size-3.5" />
+          <ShareMenu url={`${window.location.origin}/gp/${imageShareId(image)}`} title={image.title} buttonClassName="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-900 hover:border-amber-500" iconClassName="size-3.5" />
         </div>
       </div>
     </article>
