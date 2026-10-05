@@ -441,6 +441,7 @@ const AppContent = () => {
           <Route path="/book-a-call" element={<BookCallPage />} />
           <Route path="/booking/manage" element={<BookingManagePage />} />
           <Route path="/booking/ics" element={<BookingIcsRedirect />} />
+          <Route path="/drone-doctor" element={<Navigate to="/media/drone-doctor" replace />} />
           <Route path="/drone-doctor/consult" element={<DroneDoctorConsultPage />} />
           <Route path="/drone-doctor/booking" element={<DoctorBookingPage />} />
           <Route path="/drone-doctor/booking/ics" element={<DoctorIcsRedirect />} />

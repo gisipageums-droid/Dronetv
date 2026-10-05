@@ -4,6 +4,7 @@ import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Heart, Eye, Ste
 import { fetchContent, MediaItem } from '../../lib/mediaApi';
 import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
 import ShareMenu from '../../components/common/ShareMenu';
+import { DOCTOR_CONSULT_ENABLED } from '../../lib/features';
 
 // Preview build at /media/drone-doctor-v2 - a BRAND NEW page (no live
 // equivalent existed before this - grepped the whole codebase, confirmed).
@@ -97,9 +98,17 @@ const DroneDoctorV2: React.FC = () => {
             <span className="flex flex-col"><small className="text-[10px] leading-tight">{label}</small><strong className="text-sm leading-tight text-yellow-300 sm:text-lg">{value.toLocaleString('en-IN')}</strong></span>
           </div>
         ))}
-        <div className="ml-auto min-w-0 shrink-0 sm:min-w-[200px] text-right">
-          <strong className="block text-sm leading-tight text-yellow-300">Drone Doctor Help Line</strong>
-          <span className="block text-[11px] text-sky-300">Technical Support · Guidance</span>
+        <div className="ml-auto flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-3 text-right">
+          <div className="min-w-0 sm:min-w-[200px]">
+            <strong className="block text-sm leading-tight text-yellow-300">Drone Doctor Help Line</strong>
+            <span className="block text-[11px] text-sky-300">Technical Support · Guidance</span>
+          </div>
+          {DOCTOR_CONSULT_ENABLED && (
+            <Link to="/drone-doctor/consult" className="flex items-center gap-2 rounded-lg bg-[#ffdf00] px-4 py-2 text-left text-xs font-extrabold text-[#07130f] shadow-sm transition hover:bg-yellow-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-300">
+              <Stethoscope className="size-5 shrink-0" />
+              <span className="flex flex-col leading-tight"><span>Book a Consultation</span><span className="text-[10px] font-semibold opacity-80">1-on-1 with Dr. Pranay Kumar · ₹500</span></span>
+            </Link>
+          )}
         </div>
       </section>
 

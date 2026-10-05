@@ -1,3 +1,5 @@
+import { DOCTOR_CONSULT_ENABLED } from './features';
+
 export interface NavItem {
   path: string;
   label: string;
@@ -41,6 +43,7 @@ export const contactItems: NavItem[] = [
   { path: "/contact", label: "Contact Us" },
   { path: "/book-a-call", label: "Book a Call" },
   { path: "/media/drone-doctor", label: "Drone Doctor / Help Center" },
+  ...(DOCTOR_CONSULT_ENABLED ? [{ path: "/drone-doctor/consult", label: "Book a Drone Doctor Consultation" }] : []),
   { path: "/faqs", label: "FAQs" },
   { path: "/advertising-plans", label: "Advertise With Us" },
   { path: "/contact?topic=report-issue", label: "Report an Issue / Feedback" },

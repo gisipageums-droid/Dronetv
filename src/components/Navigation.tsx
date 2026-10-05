@@ -167,7 +167,16 @@ const Navigation = () => {
     contact:       { index: "/contact",       label: "Contact",       items: contactItems },
   };
 
+  // Every page reachable from the Contact menu belongs to the Contact section (checked before Media,
+  // because Drone Doctor / Help Center lives under /media but is a Contact menu link).
+  const isContactPage = (() => {
+    const path = location.pathname;
+    return path === "/contact" || path === "/faqs" || path.startsWith("/book-a-call") || path.startsWith("/drone-doctor")
+      || path.startsWith("/media/drone-doctor") || (path.startsWith("/booking/") && !path.startsWith("/booking/ics"));
+  })();
+
   const currentSection = (() => {
+    if (isContactPage) return "contact";
     if (location.pathname === "/about" || location.pathname === "/aboutus/portfolio") return "about";
     if (location.pathname.startsWith("/media") || location.pathname === "/gallery") return "media";
     if (location.pathname === "/events" || location.pathname.startsWith("/events/")) return "events";
