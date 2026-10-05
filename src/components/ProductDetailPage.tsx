@@ -119,9 +119,14 @@ export default function ProductDetailPage() {
           images: p.image ? [p.image] : ["/images/product1.png"],
           features: (p.features || []).map((f) => ({ icon: <Plane className="w-4 h-4" />, text: f })),
           specifications: {
-            Category: p.category ?? "General",
-            Timeline: p.timeline?.trim() ? p.timeline! : "N/A",
+            Category: p.category?.trim() ? p.category : "General",
+            ...(p.timeline?.trim() ? { Timeline: p.timeline } : {}),
             Pricing: p.pricing?.trim() ? p.pricing! : "Contact for pricing",
+            ...Object.fromEntries(
+              (Array.isArray((p as any).specifications) ? (p as any).specifications : [])
+                .filter((x: any) => x?.name && x?.value)
+                .map((x: any) => [x.name, x.value]),
+            ),
           },
           description: p.detailedDescription ?? p.description ?? "",
           detailedDescription: p.detailedDescription,
@@ -266,6 +271,7 @@ export default function ProductDetailPage() {
                     <h3 className="text-2xl font-bold text-black mb-4">Key Features</h3>
 
                     {/* Show features as a clean list with icons */}
+                    {product.features.length === 0 && <p className="text-ink-caption text-sm">The supplier has not listed key features for this product yet.</p>}
                     <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {product.features.map((f, i) => (
                         <li key={i} className="flex gap-3 items-start p-3 bg-yellow-50 rounded-xl">
@@ -303,7 +309,7 @@ export default function ProductDetailPage() {
         <div className=" p-4 rounded-2xl shadow shadow-black mt-[5px] bg-white ">
           <h4 className="font-semibold mb-3">Description</h4>
           <ul className="grid grid-cols-1 text-justify">
-            <li>{product.detailedDescription}</li>
+            <li>{product.detailedDescription || product.description}</li>
           </ul>
         </div>
         <div className="mt-8 flex justify-center">
