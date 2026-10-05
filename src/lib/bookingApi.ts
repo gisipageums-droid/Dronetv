@@ -39,6 +39,8 @@ export interface AdminBooking extends BookingInfo {
 
 export type WeeklyHours = Record<string, string[][]>;
 
+export interface BlockedTime { date: string; start: string; end: string; reason: string }
+
 export interface BookingSettings {
   meetLink: string;
   hostName: string;
@@ -49,6 +51,7 @@ export interface BookingSettings {
   minNoticeHours: number;
   weeklyHours: WeeklyHours;
   blockedDates: string[];
+  blockedTimes?: BlockedTime[];
   notifyEmail: string;
   siteUrl: string;
 }
@@ -111,8 +114,10 @@ export const icsUrl = (id: string, token: string) =>
 
 export const adminGetSettings = () => call<BookingSettings>('/admin/settings', { headers: authHeader() });
 
+export type SavedSettings = BookingSettings & { blockedConflicts?: { id: string; name: string; when: string }[] };
+
 export const adminSaveSettings = (s: BookingSettings) =>
-  call<BookingSettings>('/admin/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeader() }, body: JSON.stringify(s) });
+  call<SavedSettings>('/admin/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeader() }, body: JSON.stringify(s) });
 
 export const adminListBookings = (params: { status: string; when: string; q: string }) =>
   call<{ bookings: AdminBooking[]; count: number }>(

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { AlertTriangle, CalendarClock, Copy, Loader2, Plus, Trash2, X } from 'lucide-react';
 import {
-  AdminBooking, BookingSettings, WEEKDAYS, adminCancelBooking, adminDeleteBooking, adminGetSettings, adminListBookings, adminSaveSettings,
+  AdminBooking, BlockedTime, BookingSettings, WEEKDAYS, adminCancelBooking, adminDeleteBooking, adminGetSettings, adminListBookings, adminSaveSettings,
 } from '../../../lib/bookingApi';
 
 const inp = 'w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow';
@@ -20,6 +20,7 @@ const AdminAppointments: React.FC = () => {
   const [settings, setSettings] = useState<BookingSettings | null>(null);
   const [saving, setSaving] = useState(false);
   const [newBlocked, setNewBlocked] = useState('');
+  const [newTime, setNewTime] = useState<BlockedTime>({ date: '', start: '12:00', end: '13:00', reason: '' });
   const [bookings, setBookings] = useState<AdminBooking[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ when: 'upcoming', status: 'all', q: '' });
@@ -48,8 +49,12 @@ const AdminAppointments: React.FC = () => {
     if (!settings) return;
     setSaving(true);
     try {
-      setSettings(await adminSaveSettings(settings));
+      const saved = await adminSaveSettings(settings);
+      setSettings(saved);
       toast.success('Booking settings saved');
+      if (saved.blockedConflicts && saved.blockedConflicts.length > 0) {
+        toast.warn(`${saved.blockedConflicts.length} existing booking(s) fall inside a blocked time and were kept: ${saved.blockedConflicts.map(c => `${c.name} (${c.when})`).join(', ')}. Cancel them from the Bookings tab if needed.`, { autoClose: 12000 });
+      }
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -240,6 +245,50 @@ const AdminAppointments: React.FC = () => {
               <input aria-label="Date to block" type="date" className={`${inp} w-48`} value={newBlocked} onChange={e => setNewBlocked(e.target.value)} />
               <button type="button" disabled={!newBlocked} onClick={() => { if (!settings.blockedDates.includes(newBlocked)) set('blockedDates', [...settings.blockedDates, newBlocked].sort()); setNewBlocked(''); }} className="px-3 py-2 rounded-lg bg-ink-light text-sm font-semibold disabled:opacity-50">Block date</button>
             </div>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-ink mb-1">Blocked times (part of a day)</h3>
+            <p className="text-xs text-ink-caption mb-2">For when you are free for most of the day but not at certain hours, for example lunch or a meeting. Times are in {settings.timezone}.</p>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {(settings.blockedTimes ?? []).length === 0 && <span className="text-xs text-ink-caption">No blocked times.</span>}
+              {(settings.blockedTimes ?? []).map(bt => {
+                const key = `${bt.date}-${bt.start}-${bt.end}`;
+                return (
+                  <span key={key} className="flex items-center gap-1 bg-ink-offwhite border border-ink-light rounded-full pl-3 pr-1 py-1 text-xs font-semibold text-ink">
+                    {bt.date} · {bt.start}–{bt.end}{bt.reason ? ` · ${bt.reason}` : ''}
+                    <button type="button" aria-label={`Unblock ${bt.date} ${bt.start} to ${bt.end}`} onClick={() => set('blockedTimes', (settings.blockedTimes ?? []).filter(x => x !== bt))} className="p-0.5 rounded-full hover:bg-ink-light"><X className="w-3 h-3" /></button>
+                  </span>
+                );
+              })}
+            </div>
+            <div className="flex flex-wrap items-end gap-2">
+              <div>
+                <label className="text-[11px] text-ink-caption block" htmlFor="ap-bt-date">Date</label>
+                <input id="ap-bt-date" aria-label="Date for blocked time" type="date" className={`${inp} w-44`} value={newTime.date} onChange={e => setNewTime(t => ({ ...t, date: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-[11px] text-ink-caption block" htmlFor="ap-bt-from">From</label>
+                <input id="ap-bt-from" aria-label="Blocked time from" type="time" className={`${inp} w-32`} value={newTime.start} onChange={e => setNewTime(t => ({ ...t, start: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-[11px] text-ink-caption block" htmlFor="ap-bt-to">To</label>
+                <input id="ap-bt-to" aria-label="Blocked time to" type="time" className={`${inp} w-32`} value={newTime.end} onChange={e => setNewTime(t => ({ ...t, end: e.target.value }))} />
+              </div>
+              <div className="flex-1 min-w-[140px]">
+                <label className="text-[11px] text-ink-caption block" htmlFor="ap-bt-reason">Reason (only you see it)</label>
+                <input id="ap-bt-reason" aria-label="Reason for blocked time" type="text" maxLength={120} placeholder="e.g. Lunch" className={inp} value={newTime.reason} onChange={e => setNewTime(t => ({ ...t, reason: e.target.value }))} />
+              </div>
+              <button type="button" disabled={!newTime.date || !newTime.start || !newTime.end || newTime.start >= newTime.end}
+                onClick={() => {
+                  const cur = settings.blockedTimes ?? [];
+                  const entry = { ...newTime, reason: newTime.reason.trim() };
+                  if (!cur.some(x => x.date === entry.date && x.start === entry.start && x.end === entry.end)) set('blockedTimes', [...cur, entry].sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start)));
+                  setNewTime(t => ({ ...t, reason: '' }));
+                }}
+                className="px-3 py-2 rounded-lg bg-ink-light text-sm font-semibold disabled:opacity-50">Block time</button>
+            </div>
+            {newTime.start >= newTime.end && <p className="text-xs text-status-error mt-1">The end time must be after the start time.</p>}
           </div>
 
           <div>
