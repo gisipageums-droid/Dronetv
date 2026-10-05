@@ -6,6 +6,7 @@ import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
 import type { Company } from './CompaniesPage';
+import { usePackageTiers } from '../lib/packageTier';
 import { TIER_STYLE, getTier, useSavedCompanies, getIndustry, getSectors, getInitials, requestOptOut, realTagline, ALL_SECTORS, extractState, shortLocation } from './CompaniesPage';
 import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
 
@@ -65,6 +66,7 @@ const CATEGORY_PHOTOS: Record<'drone' | 'gis' | 'ai' | 'all', string[]> = {
 const BTN = 'rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold shadow-sm hover:border-amber-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500';
 
 const CompaniesPageV2: React.FC = () => {
+  usePackageTiers();
   const [loading, setLoading] = useState(true);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [listedTotal, setListedTotal] = useState(0);

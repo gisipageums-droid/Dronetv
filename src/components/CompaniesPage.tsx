@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
+import { packageTierFor, usePackageTiers } from '../lib/packageTier';
 
 // Widened for CompaniesPageV2 (redesign, shares this file's utility
 // functions rather than duplicating them) - purely additive optional
@@ -49,15 +50,16 @@ export const TIER_STYLE: Record<string, { label: string; packageLabel: string; r
   platinum: { label: 'PLATINUM', packageLabel: 'Expand Package', ribbonBg: 'linear-gradient(135deg,#CBD5E1,#64748B)', ribbonColor: '#F8C400', bannerBg: 'linear-gradient(135deg,#1e293b,#0F172A)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: 'rgba(255,255,255,.08)', dark: true },
 };
 
-// Silver comes from real Silver-badge verification. Gold/Platinum map to the
-// paid Brand/Expand packages - not fabricated: renders correctly whenever
-// badgeStatus carries that value, doesn't fire on a company that doesn't
-// have it.
+const TIER_RANK: Record<string, number> = { silver: 1, gold: 2, platinum: 3 };
+
+// The higher of the verification badge and the package the company's owner bought (Reach = Silver,
+// Brand = Gold, Expand = Platinum).
 export function getTier(c: Company): keyof typeof TIER_STYLE | null {
-  if (c.badgeStatus === 'SILVER') return 'silver';
-  if (c.badgeStatus === 'GOLD') return 'gold';
-  if (c.badgeStatus === 'PLATINUM') return 'platinum';
-  return null;
+  const fromBadge = c.badgeStatus === 'SILVER' ? 'silver' : c.badgeStatus === 'GOLD' ? 'gold' : c.badgeStatus === 'PLATINUM' ? 'platinum' : null;
+  const fromPackage = packageTierFor(c.userId);
+  if (!fromBadge) return fromPackage;
+  if (!fromPackage) return fromBadge;
+  return TIER_RANK[fromPackage] > TIER_RANK[fromBadge] ? fromPackage : fromBadge;
 }
 
 export function useSavedCompanies() {
@@ -239,6 +241,7 @@ export function shortLocation(location: string | undefined): string {
 }
 
 const CompaniesPage: React.FC = () => {
+  usePackageTiers();
   const [loading, setLoading] = useState(true);
   const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [listedTotal, setListedTotal] = useState(0);
