@@ -52,9 +52,10 @@ const BookingManagePage: React.FC = () => {
               <div className={`inline-block text-xs font-bold px-2.5 py-1 rounded-full mb-4 ${cancelled ? 'bg-status-error/15 text-status-error' : 'bg-status-success/15 text-status-success'}`}>
                 {cancelled ? 'Cancelled' : past ? 'Completed' : 'Confirmed'}
               </div>
-              <h2 className="text-xl font-bold text-ink mb-4">Call with DroneTV</h2>
+              <h2 className="text-xl font-bold text-ink mb-1">{booking.purposeLabel || 'Appointment with DroneTV'}</h2>
+              <p className="text-xs text-ink-caption mb-4">{booking.ref}{booking.company ? ` · ${booking.company}` : ''}</p>
               <div className="space-y-2 mb-6 text-sm">
-                <div className="flex items-center gap-2 text-ink"><CalendarDays className="w-4 h-4" /><b>{booking.whenLabel} IST</b></div>
+                <div className="flex items-center gap-2 text-ink"><CalendarDays className="w-4 h-4" /><b>{booking.dateLabel}, {booking.timeRangeLabel} IST</b></div>
                 <div className="flex items-center gap-2 text-ink-paragraph"><Clock className="w-4 h-4" />Your time: {new Date(booking.start).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</div>
                 {!cancelled && (
                   <div className="flex items-center gap-2 text-ink-paragraph">
@@ -62,7 +63,7 @@ const BookingManagePage: React.FC = () => {
                     {booking.meetLink ? <a href={booking.meetLink} target="_blank" rel="noreferrer" className="text-ink-link underline break-all">{booking.meetLink}</a> : 'The meeting link will be emailed before the call.'}
                   </div>
                 )}
-                {booking.topic && <p className="text-ink-paragraph pt-1"><span className="font-semibold">Topic:</span> {booking.topic}</p>}
+                {booking.message && <p className="text-ink-paragraph pt-1"><span className="font-semibold">Additional information:</span> {booking.message}</p>}
               </div>
               {error && <div role="alert" className="text-sm text-status-error mb-3">{error}</div>}
               {cancelled ? (

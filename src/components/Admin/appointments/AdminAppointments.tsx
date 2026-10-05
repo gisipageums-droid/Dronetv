@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { AlertTriangle, CalendarClock, Copy, Loader2, Plus, Trash2, X } from 'lucide-react';
 import {
-  AdminBooking, BlockedTime, BookingSettings, WEEKDAYS, adminCancelBooking, adminDeleteBooking, adminGetSettings, adminListBookings, adminSaveSettings,
+  AdminBooking, BlockedTime, BookingSettings, Purpose, fetchPurposes, WEEKDAYS, adminCancelBooking, adminDeleteBooking, adminGetSettings, adminListBookings, adminSaveSettings,
 } from '../../../lib/bookingApi';
 
 const inp = 'w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow';
@@ -23,9 +23,12 @@ const AdminAppointments: React.FC = () => {
   const [newTime, setNewTime] = useState<BlockedTime>({ date: '', start: '12:00', end: '13:00', reason: '' });
   const [bookings, setBookings] = useState<AdminBooking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ when: 'upcoming', status: 'all', q: '' });
+  const [filters, setFilters] = useState({ when: 'upcoming', status: 'all', q: '', purpose: '' });
+  const [purposes, setPurposes] = useState<Purpose[]>([]);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [error, setError] = useState('');
+
+  useEffect(() => { fetchPurposes().then(r => setPurposes(r.purposes)).catch(() => undefined); }, []);
 
   useEffect(() => {
     adminGetSettings().then(setSettings).catch(e => setError((e as Error).message));
@@ -133,12 +136,16 @@ const AdminAppointments: React.FC = () => {
             <select aria-label="Status" value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })} className={`${inp.replace('w-full', '')} w-auto`}>
               <option value="all">All statuses</option><option value="confirmed">Confirmed</option><option value="cancelled">Cancelled</option>
             </select>
-            <input aria-label="Search" value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder="Search name, email, phone" className={`${inp.replace('w-full', '')} w-64`} />
+            <select aria-label="Purpose" value={filters.purpose} onChange={e => setFilters({ ...filters, purpose: e.target.value })} className={`${inp.replace('w-full', '')} w-auto`}>
+              <option value="">All purposes</option>
+              {purposes.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
+            </select>
+            <input aria-label="Search" value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder="Search name, company, email, ID" className={`${inp.replace('w-full', '')} w-64`} />
           </div>
           <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-x-auto">
-            <table className="w-full min-w-[760px] text-sm">
+            <table className="w-full min-w-[900px] text-sm">
               <thead className="bg-ink-offwhite border-b border-ink-light">
-                <tr>{['When (IST)', 'Visitor', 'Contact', 'Topic', 'Status', 'Emails', ''].map(h => <th key={h} className="text-left px-4 py-3 text-xs uppercase tracking-wide font-bold text-ink-paragraph">{h}</th>)}</tr>
+                <tr>{['When (IST)', 'Visitor', 'Contact', 'Purpose', 'Status', 'Emails', ''].map(h => <th key={h} className="text-left px-4 py-3 text-xs uppercase tracking-wide font-bold text-ink-paragraph">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-ink-light">
                 {loading ? (
@@ -147,10 +154,10 @@ const AdminAppointments: React.FC = () => {
                   <tr><td colSpan={7} className="px-4 py-8 text-center text-ink-caption">No bookings match these filters.</td></tr>
                 ) : bookings.map(b => (
                   <tr key={b.id} className="hover:bg-ink-offwhite">
-                    <td className="px-4 py-3 whitespace-nowrap font-medium text-ink">{b.whenLabel}</td>
-                    <td className="px-4 py-3 text-ink">{b.name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap font-medium text-ink">{b.dateLabel}<br /><span className="text-xs font-normal text-ink-paragraph">{b.timeRangeLabel}</span></td>
+                    <td className="px-4 py-3 text-ink">{b.name}<br /><span className="text-xs text-ink-paragraph">{b.company || '-'}</span><br /><span className="text-[11px] text-ink-caption">{b.ref}</span></td>
                     <td className="px-4 py-3 text-ink-paragraph text-xs">{b.email}<br />{b.phone}</td>
-                    <td className="px-4 py-3 text-ink-paragraph text-xs max-w-[220px] truncate" title={b.topic}>{b.topic || '-'}</td>
+                    <td className="px-4 py-3 text-ink-paragraph text-xs max-w-[240px]" title={b.message}><span className="font-semibold text-ink">{b.purposeLabel}</span><br />{b.message ? <span className="block truncate">{b.message}</span> : null}</td>
                     <td className="px-4 py-3"><span className={`text-xs font-bold px-2 py-0.5 rounded ${b.status === 'confirmed' ? 'bg-status-success/15 text-status-success' : 'bg-ink-light text-ink-caption'}`}>{b.status === 'cancelled' ? `Cancelled${b.cancelledBy ? ` (${b.cancelledBy})` : ''}` : 'Confirmed'}</span></td>
                     <td className="px-4 py-3 text-xs text-ink-caption" title={b.emails.map(e => `${e.kind}: ${e.status}${e.error ? ` - ${e.error}` : ''}`).join('\n')}>{emailSummary(b)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">
