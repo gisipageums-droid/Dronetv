@@ -32,12 +32,12 @@ const ShareMenu: React.FC<Props> = ({ url, title, onInstagram, buttonClassName, 
   const btnRef = useRef<HTMLButtonElement>(null);
   const popRef = useRef<HTMLDivElement>(null);
 
-  const POP_HEIGHT = 250; // approx rendered height, used to flip above when there's no room below
+  const POP_HEIGHT = 64; // approx rendered height, used to flip above when there's no room below
 
   const place = () => {
     const r = btnRef.current?.getBoundingClientRect();
     if (!r) return;
-    const left = Math.min(Math.max(r.left, 8), window.innerWidth - 300);
+    const left = Math.min(Math.max(r.left, 8), window.innerWidth - 400);
     const fitsBelow = r.bottom + 4 + POP_HEIGHT <= window.innerHeight;
     const top = fitsBelow ? r.bottom + 4 : Math.max(8, r.top - 4 - POP_HEIGHT);
     setCoords({ top, left });
@@ -97,17 +97,15 @@ const ShareMenu: React.FC<Props> = ({ url, title, onInstagram, buttonClassName, 
         <Share2 className={iconClassName ?? 'size-5'} />
       </button>
       {open && createPortal(
-        <div ref={popRef} onClick={e => e.stopPropagation()} role="menu" aria-label="Share" style={{ position: 'fixed', top: coords.top, left: coords.left, zIndex: 100000000 }} className="w-72 overflow-hidden rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
-          <div className="grid grid-cols-4 gap-x-2 gap-y-3">
+        <div ref={popRef} onClick={e => e.stopPropagation()} role="menu" aria-label="Share" style={{ position: 'fixed', top: coords.top, left: coords.left, zIndex: 100000000 }} className="max-w-[calc(100vw-16px)] overflow-x-auto rounded-xl border border-slate-200 bg-white px-3 py-2.5 shadow-lg">
+          <div className="flex flex-nowrap items-center gap-2.5">
             {platforms.map(p => (
-              <button key={p.name} type="button" role="menuitem" onClick={() => { p.action(); setOpen(false); }} className="flex flex-col items-center gap-1 text-[11px] font-semibold text-slate-700">
-                <span className="flex size-11 items-center justify-center rounded-full text-white shadow-sm transition-transform hover:scale-105" style={{ background: p.bg }}><p.Icon className="size-5" /></span>
-                {p.name}
+              <button key={p.name} type="button" role="menuitem" onClick={() => { p.action(); setOpen(false); }} title={p.name} aria-label={p.name} className="shrink-0">
+                <span className="flex size-9 items-center justify-center rounded-full text-white shadow-sm transition-transform hover:scale-105" style={{ background: p.bg }}><p.Icon className="size-5" /></span>
               </button>
             ))}
-            <button type="button" role="menuitem" onClick={copyLink} className="flex flex-col items-center gap-1 text-[11px] font-semibold text-slate-700">
-              <span className="flex size-11 items-center justify-center rounded-full bg-slate-100 text-slate-700 shadow-sm transition-transform hover:scale-105">{copied ? <Check className="size-5 text-green-600" /> : <Copy className="size-5" />}</span>
-              {copied ? 'Copied!' : 'Copy link'}
+            <button type="button" role="menuitem" onClick={copyLink} title="Copy link" aria-label="Copy link" className="shrink-0">
+              <span className="flex size-9 items-center justify-center rounded-full bg-slate-100 text-slate-700 shadow-sm transition-transform hover:scale-105">{copied ? <Check className="size-5 text-green-600" /> : <Copy className="size-4" />}</span>
             </button>
           </div>
         </div>,
