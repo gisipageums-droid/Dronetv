@@ -10,7 +10,7 @@ useEffect(()=>{
     if(isAdminLogin===false){
         navigate("/admin/login");
     }
-},[])
+},[isAdminLogin])
 
   return (
        children
