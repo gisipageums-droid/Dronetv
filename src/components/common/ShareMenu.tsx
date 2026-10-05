@@ -37,7 +37,7 @@ const ShareMenu: React.FC<Props> = ({ url, title, onInstagram, buttonClassName, 
   const place = () => {
     const r = btnRef.current?.getBoundingClientRect();
     if (!r) return;
-    const left = Math.min(Math.max(r.left, 8), window.innerWidth - 270);
+    const left = Math.min(Math.max(r.left, 8), window.innerWidth - 300);
     const fitsBelow = r.bottom + 4 + POP_HEIGHT <= window.innerHeight;
     const top = fitsBelow ? r.bottom + 4 : Math.max(8, r.top - 4 - POP_HEIGHT);
     setCoords({ top, left });
@@ -97,7 +97,7 @@ const ShareMenu: React.FC<Props> = ({ url, title, onInstagram, buttonClassName, 
         <Share2 className={iconClassName ?? 'size-5'} />
       </button>
       {open && createPortal(
-        <div ref={popRef} onClick={e => e.stopPropagation()} role="menu" aria-label="Share" style={{ position: 'fixed', top: coords.top, left: coords.left, zIndex: 100000000 }} className="w-64 overflow-hidden rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
+        <div ref={popRef} onClick={e => e.stopPropagation()} role="menu" aria-label="Share" style={{ position: 'fixed', top: coords.top, left: coords.left, zIndex: 100000000 }} className="w-72 overflow-hidden rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
           <div className="grid grid-cols-4 gap-x-2 gap-y-3">
             {platforms.map(p => (
               <button key={p.name} type="button" role="menuitem" onClick={() => { p.action(); setOpen(false); }} className="flex flex-col items-center gap-1 text-[11px] font-semibold text-slate-700">
