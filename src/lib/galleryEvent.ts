@@ -1,6 +1,6 @@
 import { fetchAdminContent, fetchContent, type MediaItem } from './mediaApi';
 
-export const MAX_PARTNER_LOGOS = 10;
+export const MAX_PARTNER_LOGOS = 14;
 
 export const DEFAULT_FOOTER = {
   website: 'www.dronetv.in',

@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { createContent, deleteContent, updateContent } from '../../../lib/mediaApi';
 import { DEFAULT_FOOTER, MAX_PARTNER_LOGOS, loadEventsForAdmin, eventToFields, type GalleryEvent } from '../../../lib/galleryEvent';
 import { optimizeLogo } from '../../../lib/imageOptimize';
-import { PARTNER_LOGO_SLUGS, partnerLogoPath, partnerName } from '../../../lib/partners';
+import { EVENT_LOGO_SLUGS, partnerLogoPath, partnerName } from '../../../lib/partners';
 
 interface Props {
   uploadImage: (file: File) => Promise<string>;
@@ -181,7 +181,7 @@ export default function GalleryEventManager({ uploadImage, onClose, onChanged }:
               </button>
               {showPicker && (
                 <div className="mt-3 grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 gap-2 max-h-64 overflow-y-auto border border-ink-light rounded-lg p-3">
-                  {PARTNER_LOGO_SLUGS.map(slug => {
+                  {EVENT_LOGO_SLUGS.map(slug => {
                     const path = partnerLogoPath(slug);
                     const on = draft.partners.includes(path);
                     const full = !on && draft.partners.length >= MAX_PARTNER_LOGOS;
