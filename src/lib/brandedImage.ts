@@ -126,19 +126,13 @@ function drawPhoto(ctx: CanvasRenderingContext2D, img: ImageBitmap, x: number, y
   ctx.save();
   roundRect(ctx, x, y, w, h, r);
   ctx.clip();
-  const ratio = img.width / img.height;
-  const boxRatio = w / h;
-  if (Math.abs(ratio / boxRatio - 1) <= 0.12) {
-    drawCover(ctx, img, x, y, w, h);
-  } else {
-    // Photo shape differs a lot from the frame: show all of it (nothing cropped) over a blurred copy.
-    ctx.filter = 'blur(28px)';
-    drawCover(ctx, img, x - 40, y - 40, w + 80, h + 80);
-    ctx.filter = 'none';
-    ctx.fillStyle = 'rgba(0,0,0,0.12)';
-    ctx.fillRect(x, y, w, h);
-    drawContain(ctx, img, x, y, w, h);
-  }
+  // The whole photo is always shown (nothing cropped), centred over a blurred copy of itself.
+  ctx.filter = 'blur(28px)';
+  drawCover(ctx, img, x - 40, y - 40, w + 80, h + 80);
+  ctx.filter = 'none';
+  ctx.fillStyle = 'rgba(0,0,0,0.12)';
+  ctx.fillRect(x, y, w, h);
+  drawContain(ctx, img, x, y, w, h);
   ctx.restore();
 }
 

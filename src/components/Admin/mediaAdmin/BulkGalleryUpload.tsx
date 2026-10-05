@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { createContent } from '../../../lib/mediaApi';
 import { loadEventsForAdmin, type GalleryEvent } from '../../../lib/galleryEvent';
 import GalleryEventManager from './GalleryEventManager';
-import { optimizePhoto, formatBytes } from '../../../lib/imageOptimize';
+import { optimizePhoto, formatBytes, SIZE_CHOICES, SHAPE_CHOICES, DEFAULT_PHOTO_OPTIONS } from '../../../lib/imageOptimize';
 import { ADMIN_API } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 
@@ -114,6 +114,10 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
   const [events, setEvents] = useState<GalleryEvent[]>([]);
   const [eventId, setEventId] = useState('');
   const [showManager, setShowManager] = useState(false);
+  const [maxDim, setMaxDim] = useState(DEFAULT_PHOTO_OPTIONS.maxDim);
+  const [aspect, setAspect] = useState(DEFAULT_PHOTO_OPTIONS.aspect);
+  const photoOptsRef = useRef({ maxDim, aspect });
+  photoOptsRef.current = { maxDim, aspect };
   const inputRef = useRef<HTMLInputElement>(null);
   const rowsRef = useRef<Row[]>([]);
   rowsRef.current = rows;
@@ -149,7 +153,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
       let display: File = row.file;
       let thumbFile: File | null = null;
       try {
-        const opt = await optimizePhoto(row.file);
+        const opt = await optimizePhoto(row.file, photoOptsRef.current);
         display = opt.master;
         thumbFile = opt.thumb;
         sizeNote = `Original kept: ${formatBytes(opt.originalBytes)} · website copy: ${formatBytes(opt.master.size)}`;
@@ -313,6 +317,21 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
               ) : (
                 <input value={location} onChange={e => setLocation(e.target.value)} className={`${inp} mt-2`} placeholder="Location (optional) e.g. Pragati Maidan, New Delhi" />
               )}
+            </div>
+            <div className="sm:col-span-2 grid sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="bulk-size" className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Photo size on the website</label>
+                <select id="bulk-size" value={maxDim} onChange={e => setMaxDim(Number(e.target.value))} className={inp}>
+                  {SIZE_CHOICES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="bulk-shape" className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Photo shape</label>
+                <select id="bulk-shape" value={aspect} onChange={e => setAspect(Number(e.target.value))} className={inp}>
+                  {SHAPE_CHOICES.map(c => <option key={c.label} value={c.value}>{c.label}</option>)}
+                </select>
+              </div>
+              <p className="sm:col-span-2 text-[11px] text-ink-caption -mt-2">Applies to photos added after you change it. A fixed shape trims the edges and keeps the centre. The untouched original is always kept for "Download original photo".</p>
             </div>
             <label className="flex items-center gap-2 text-sm text-ink mt-5">
               <input type="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)} className="accent-amber-500" />
