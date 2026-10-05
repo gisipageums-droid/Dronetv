@@ -161,6 +161,12 @@ const NAV: Section[] = [
         path: "/admin/appointments",
       },
       {
+        id: "drone-doctor-consults",
+        label: "Drone Doctor Bookings",
+        icon: <CalendarClock size={17} />,
+        path: "/admin/drone-doctor-consultations",
+      },
+      {
         id: "content-review",
         label: "Content Review",
         icon: <Share2 size={17} />,
@@ -292,6 +298,7 @@ const BREADCRUMBS: Record<string, string> = {
   "/admin/event/dashboard": "Events",
   "/admin/user-content": "Content Review",
   "/admin/appointments": "Appointments",
+  "/admin/drone-doctor-consultations": "Drone Doctor Bookings",
   "/admin/plans": "Packages & Revenue",
   "/admin/invoices": "Invoices",
   "/admin/settings": "Settings",
