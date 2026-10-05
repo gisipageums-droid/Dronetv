@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { AlertTriangle, CalendarClock, Copy, Loader2, Plus, Trash2, X } from 'lucide-react';
 import {
-  AdminBooking, BookingSettings, WEEKDAYS, adminCancelBooking, adminDeleteBooking, adminGetSettings, adminListBookings, adminSaveSettings,
+  AdminBooking, BlockedTime, BookingSettings, Purpose, fetchPurposes, WEEKDAYS, adminCancelBooking, adminDeleteBooking, adminGetSettings, adminListBookings, adminSaveSettings,
 } from '../../../lib/bookingApi';
 
 const inp = 'w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:border-brand-yellow';
@@ -20,11 +20,15 @@ const AdminAppointments: React.FC = () => {
   const [settings, setSettings] = useState<BookingSettings | null>(null);
   const [saving, setSaving] = useState(false);
   const [newBlocked, setNewBlocked] = useState('');
+  const [newTime, setNewTime] = useState<BlockedTime>({ date: '', start: '12:00', end: '13:00', reason: '' });
   const [bookings, setBookings] = useState<AdminBooking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ when: 'upcoming', status: 'all', q: '' });
+  const [filters, setFilters] = useState({ when: 'upcoming', status: 'all', q: '', purpose: '' });
+  const [purposes, setPurposes] = useState<Purpose[]>([]);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [error, setError] = useState('');
+
+  useEffect(() => { fetchPurposes().then(r => setPurposes(r.purposes)).catch(() => undefined); }, []);
 
   useEffect(() => {
     adminGetSettings().then(setSettings).catch(e => setError((e as Error).message));
@@ -48,8 +52,12 @@ const AdminAppointments: React.FC = () => {
     if (!settings) return;
     setSaving(true);
     try {
-      setSettings(await adminSaveSettings(settings));
+      const saved = await adminSaveSettings(settings);
+      setSettings(saved);
       toast.success('Booking settings saved');
+      if (saved.blockedConflicts && saved.blockedConflicts.length > 0) {
+        toast.warn(`${saved.blockedConflicts.length} existing booking(s) fall inside a blocked time and were kept: ${saved.blockedConflicts.map(c => `${c.name} (${c.when})`).join(', ')}. Cancel them from the Bookings tab if needed.`, { autoClose: 12000 });
+      }
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -128,12 +136,16 @@ const AdminAppointments: React.FC = () => {
             <select aria-label="Status" value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })} className={`${inp.replace('w-full', '')} w-auto`}>
               <option value="all">All statuses</option><option value="confirmed">Confirmed</option><option value="cancelled">Cancelled</option>
             </select>
-            <input aria-label="Search" value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder="Search name, email, phone" className={`${inp.replace('w-full', '')} w-64`} />
+            <select aria-label="Purpose" value={filters.purpose} onChange={e => setFilters({ ...filters, purpose: e.target.value })} className={`${inp.replace('w-full', '')} w-auto`}>
+              <option value="">All purposes</option>
+              {purposes.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
+            </select>
+            <input aria-label="Search" value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder="Search name, company, email, ID" className={`${inp.replace('w-full', '')} w-64`} />
           </div>
           <div className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-x-auto">
-            <table className="w-full min-w-[760px] text-sm">
+            <table className="w-full min-w-[900px] text-sm">
               <thead className="bg-ink-offwhite border-b border-ink-light">
-                <tr>{['When (IST)', 'Visitor', 'Contact', 'Topic', 'Status', 'Emails', ''].map(h => <th key={h} className="text-left px-4 py-3 text-xs uppercase tracking-wide font-bold text-ink-paragraph">{h}</th>)}</tr>
+                <tr>{['When (IST)', 'Visitor', 'Contact', 'Purpose', 'Status', 'Emails', ''].map(h => <th key={h} className="text-left px-4 py-3 text-xs uppercase tracking-wide font-bold text-ink-paragraph">{h}</th>)}</tr>
               </thead>
               <tbody className="divide-y divide-ink-light">
                 {loading ? (
@@ -142,10 +154,10 @@ const AdminAppointments: React.FC = () => {
                   <tr><td colSpan={7} className="px-4 py-8 text-center text-ink-caption">No bookings match these filters.</td></tr>
                 ) : bookings.map(b => (
                   <tr key={b.id} className="hover:bg-ink-offwhite">
-                    <td className="px-4 py-3 whitespace-nowrap font-medium text-ink">{b.whenLabel}</td>
-                    <td className="px-4 py-3 text-ink">{b.name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap font-medium text-ink">{b.dateLabel}<br /><span className="text-xs font-normal text-ink-paragraph">{b.timeRangeLabel}</span></td>
+                    <td className="px-4 py-3 text-ink">{b.name}<br /><span className="text-xs text-ink-paragraph">{b.company || '-'}</span><br /><span className="text-[11px] text-ink-caption">{b.ref}</span></td>
                     <td className="px-4 py-3 text-ink-paragraph text-xs">{b.email}<br />{b.phone}</td>
-                    <td className="px-4 py-3 text-ink-paragraph text-xs max-w-[220px] truncate" title={b.topic}>{b.topic || '-'}</td>
+                    <td className="px-4 py-3 text-ink-paragraph text-xs max-w-[240px]" title={b.message}><span className="font-semibold text-ink">{b.purposeLabel}</span><br />{b.message ? <span className="block truncate">{b.message}</span> : null}</td>
                     <td className="px-4 py-3"><span className={`text-xs font-bold px-2 py-0.5 rounded ${b.status === 'confirmed' ? 'bg-status-success/15 text-status-success' : 'bg-ink-light text-ink-caption'}`}>{b.status === 'cancelled' ? `Cancelled${b.cancelledBy ? ` (${b.cancelledBy})` : ''}` : 'Confirmed'}</span></td>
                     <td className="px-4 py-3 text-xs text-ink-caption" title={b.emails.map(e => `${e.kind}: ${e.status}${e.error ? ` - ${e.error}` : ''}`).join('\n')}>{emailSummary(b)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">
@@ -240,6 +252,50 @@ const AdminAppointments: React.FC = () => {
               <input aria-label="Date to block" type="date" className={`${inp} w-48`} value={newBlocked} onChange={e => setNewBlocked(e.target.value)} />
               <button type="button" disabled={!newBlocked} onClick={() => { if (!settings.blockedDates.includes(newBlocked)) set('blockedDates', [...settings.blockedDates, newBlocked].sort()); setNewBlocked(''); }} className="px-3 py-2 rounded-lg bg-ink-light text-sm font-semibold disabled:opacity-50">Block date</button>
             </div>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-ink mb-1">Blocked times (part of a day)</h3>
+            <p className="text-xs text-ink-caption mb-2">For when you are free for most of the day but not at certain hours, for example lunch or a meeting. Times are in {settings.timezone}.</p>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {(settings.blockedTimes ?? []).length === 0 && <span className="text-xs text-ink-caption">No blocked times.</span>}
+              {(settings.blockedTimes ?? []).map(bt => {
+                const key = `${bt.date}-${bt.start}-${bt.end}`;
+                return (
+                  <span key={key} className="flex items-center gap-1 bg-ink-offwhite border border-ink-light rounded-full pl-3 pr-1 py-1 text-xs font-semibold text-ink">
+                    {bt.date} · {bt.start}–{bt.end}{bt.reason ? ` · ${bt.reason}` : ''}
+                    <button type="button" aria-label={`Unblock ${bt.date} ${bt.start} to ${bt.end}`} onClick={() => set('blockedTimes', (settings.blockedTimes ?? []).filter(x => x !== bt))} className="p-0.5 rounded-full hover:bg-ink-light"><X className="w-3 h-3" /></button>
+                  </span>
+                );
+              })}
+            </div>
+            <div className="flex flex-wrap items-end gap-2">
+              <div>
+                <label className="text-[11px] text-ink-caption block" htmlFor="ap-bt-date">Date</label>
+                <input id="ap-bt-date" aria-label="Date for blocked time" type="date" className={`${inp} w-44`} value={newTime.date} onChange={e => setNewTime(t => ({ ...t, date: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-[11px] text-ink-caption block" htmlFor="ap-bt-from">From</label>
+                <input id="ap-bt-from" aria-label="Blocked time from" type="time" className={`${inp} w-32`} value={newTime.start} onChange={e => setNewTime(t => ({ ...t, start: e.target.value }))} />
+              </div>
+              <div>
+                <label className="text-[11px] text-ink-caption block" htmlFor="ap-bt-to">To</label>
+                <input id="ap-bt-to" aria-label="Blocked time to" type="time" className={`${inp} w-32`} value={newTime.end} onChange={e => setNewTime(t => ({ ...t, end: e.target.value }))} />
+              </div>
+              <div className="flex-1 min-w-[140px]">
+                <label className="text-[11px] text-ink-caption block" htmlFor="ap-bt-reason">Reason (only you see it)</label>
+                <input id="ap-bt-reason" aria-label="Reason for blocked time" type="text" maxLength={120} placeholder="e.g. Lunch" className={inp} value={newTime.reason} onChange={e => setNewTime(t => ({ ...t, reason: e.target.value }))} />
+              </div>
+              <button type="button" disabled={!newTime.date || !newTime.start || !newTime.end || newTime.start >= newTime.end}
+                onClick={() => {
+                  const cur = settings.blockedTimes ?? [];
+                  const entry = { ...newTime, reason: newTime.reason.trim() };
+                  if (!cur.some(x => x.date === entry.date && x.start === entry.start && x.end === entry.end)) set('blockedTimes', [...cur, entry].sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start)));
+                  setNewTime(t => ({ ...t, reason: '' }));
+                }}
+                className="px-3 py-2 rounded-lg bg-ink-light text-sm font-semibold disabled:opacity-50">Block time</button>
+            </div>
+            {newTime.start >= newTime.end && <p className="text-xs text-status-error mt-1">The end time must be after the start time.</p>}
           </div>
 
           <div>

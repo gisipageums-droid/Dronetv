@@ -23,10 +23,24 @@ export interface BookingInfo {
   timezone: string;
   meetLink: string;
   topic: string;
+  message: string;
+  company: string;
+  purpose: string;
+  purposeLabel: string;
+  purposeDescription: string;
+  purposeTeam: string;
+  ref: string;
+  durationMinutes: number;
+  dateLabel: string;
+  startLabel: string;
+  endLabel: string;
+  timeRangeLabel: string;
   googleCalendarUrl: string;
   token?: string;
   manageUrl?: string;
 }
+
+export interface Purpose { id: string; label: string; description: string; team: string; bullets: string[] }
 
 export interface AdminBooking extends BookingInfo {
   email: string;
@@ -39,6 +53,8 @@ export interface AdminBooking extends BookingInfo {
 
 export type WeeklyHours = Record<string, string[][]>;
 
+export interface BlockedTime { date: string; start: string; end: string; reason: string }
+
 export interface BookingSettings {
   meetLink: string;
   hostName: string;
@@ -49,6 +65,7 @@ export interface BookingSettings {
   minNoticeHours: number;
   weeklyHours: WeeklyHours;
   blockedDates: string[];
+  blockedTimes?: BlockedTime[];
   notifyEmail: string;
   siteUrl: string;
 }
@@ -97,7 +114,9 @@ const json = (body: unknown, extra: Record<string, string> = {}): RequestInit =>
 export const fetchAvailability = (from: string, to: string) =>
   call<Availability>(`/availability?from=${from}&to=${to}`);
 
-export const createBooking = (payload: { name: string; email: string; phone: string; topic: string; start: string; tz: string; website: string }) =>
+export const fetchPurposes = () => call<{ purposes: Purpose[] }>('/purposes');
+
+export const createBooking = (payload: { name: string; email: string; phone: string; company: string; purpose: string; message: string; start: string; tz: string; website: string }) =>
   call<BookingInfo | undefined>('', json(payload));
 
 export const fetchBooking = (id: string, token: string) =>
@@ -111,12 +130,14 @@ export const icsUrl = (id: string, token: string) =>
 
 export const adminGetSettings = () => call<BookingSettings>('/admin/settings', { headers: authHeader() });
 
-export const adminSaveSettings = (s: BookingSettings) =>
-  call<BookingSettings>('/admin/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeader() }, body: JSON.stringify(s) });
+export type SavedSettings = BookingSettings & { blockedConflicts?: { id: string; name: string; when: string }[] };
 
-export const adminListBookings = (params: { status: string; when: string; q: string }) =>
+export const adminSaveSettings = (s: BookingSettings) =>
+  call<SavedSettings>('/admin/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeader() }, body: JSON.stringify(s) });
+
+export const adminListBookings = (params: { status: string; when: string; q: string; purpose?: string }) =>
   call<{ bookings: AdminBooking[]; count: number }>(
-    `/admin/bookings?status=${params.status}&when=${params.when}&q=${encodeURIComponent(params.q)}`,
+    `/admin/bookings?status=${params.status}&when=${params.when}&q=${encodeURIComponent(params.q)}&purpose=${encodeURIComponent(params.purpose || '')}`,
     { headers: authHeader() },
   );
 
