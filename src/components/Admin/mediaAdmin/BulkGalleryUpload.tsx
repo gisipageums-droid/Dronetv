@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Upload, X, Loader2, AlertTriangle, Sparkles, Settings2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { createContent } from '../../../lib/mediaApi';
+import { makeShareCardUrl } from '../../../lib/shareCard';
 import { loadEventsForAdmin, type GalleryEvent } from '../../../lib/galleryEvent';
 import GalleryEventManager from './GalleryEventManager';
 import { optimizePhoto, formatBytes, SIZE_CHOICES, SHAPE_CHOICES, DEFAULT_PHOTO_OPTIONS } from '../../../lib/imageOptimize';
@@ -255,8 +256,10 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
     let saved = 0;
     for (const r of ready) {
       try {
+        const shareImageUrl = await makeShareCardUrl({ imageUrl: r.imageUrl, title: r.title.trim(), description: r.description.trim() }, event, uploadImage);
         await createContent({
           contentType: 'gallery',
+          shareImageUrl,
           title: r.title.trim(),
           description: r.description.trim(),
           imageUrl: r.imageUrl,

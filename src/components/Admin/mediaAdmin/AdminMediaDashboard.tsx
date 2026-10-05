@@ -7,6 +7,7 @@ import { ADMIN_API, COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 import AdminJobBoardDashboard from '../jobBoardAdmin/AdminJobBoardDashboard';
 import BulkGalleryUpload from './BulkGalleryUpload';
 import { fetchGalleryEvents, type GalleryEvent } from '../../../lib/galleryEvent';
+import { makeShareCardUrl, refreshShareCard } from '../../../lib/shareCard';
 
 // The media service only handles content CRUD, not file uploads - there's no
 // presign route on it. Reuse the company service's public /upload-file
@@ -426,6 +427,23 @@ export default function AdminMediaDashboard() {
   const eventName = (id?: string) => events.find(e => e.id === id)?.name;
   const toggleSelected = (id: string) => setSelected(prev => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
 
+  const [cardProgress, setCardProgress] = useState<{ done: number; total: number } | null>(null);
+  const rebuildShareCards = async () => {
+    const photos = items.filter(i => i.contentType === 'gallery' && i.imageUrl);
+    if (photos.length === 0 || cardProgress) return;
+    setCardProgress({ done: 0, total: photos.length });
+    let ok = 0;
+    for (let i = 0; i < photos.length; i++) {
+      const photo = photos[i];
+      const ev = events.find(e => e.id === photo.platform) || null;
+      try { if (await refreshShareCard(photo, ev, uploadContentImage)) ok++; } catch { /* keep going */ }
+      setCardProgress({ done: i + 1, total: photos.length });
+    }
+    setCardProgress(null);
+    toast.success(`Share cards rebuilt for ${ok} of ${photos.length} photos`);
+    loadItems();
+  };
+
   const applyEventToSelected = async () => {
     const ev = events.find(e => e.id === assignEvent);
     if (!ev || selected.size === 0) return;
@@ -435,6 +453,8 @@ export default function AdminMediaDashboard() {
       try {
         // 'platform' carries the event id; the event's venue becomes the photo location.
         await updateContent({ contentType: 'gallery', contentId: id, platform: ev.id, location: ev.location });
+        const photo = items.find(i => i.contentId === id);
+        if (photo) await refreshShareCard(photo, ev, uploadContentImage).catch(() => false);
         done++;
       } catch { /* continue with the rest */ }
     }
@@ -498,11 +518,16 @@ export default function AdminMediaDashboard() {
     if (!form.title.trim()) { toast.error('Title is required'); return; }
     setSaving(true);
     try {
+      let payload = form;
+      if (form.contentType === 'gallery' && form.imageUrl) {
+        const url = await makeShareCardUrl(form, events.find(e => e.id === form.platform) || null, uploadContentImage);
+        if (url) payload = { ...form, shareImageUrl: url };
+      }
       if (editItem) {
-        await updateContent({ ...form, contentId: editItem.contentId });
+        await updateContent({ ...payload, contentId: editItem.contentId });
         toast.success('Updated');
       } else {
-        await createContent(form);
+        await createContent(payload);
         toast.success('Created');
       }
       setShowForm(false);
@@ -729,6 +754,9 @@ export default function AdminMediaDashboard() {
                 {assigning ? 'Applying...' : `Apply to ${selected.size} selected`}
               </button>
               {events.length === 0 && <span className="text-xs text-gray-500">No events yet - create one from Bulk Upload → Events.</span>}
+              <button type="button" onClick={rebuildShareCards} disabled={!!cardProgress} title="Rebuilds the picture shown when a photo link is shared on WhatsApp, LinkedIn and other apps" className="ml-auto px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-semibold disabled:opacity-60">
+                {cardProgress ? `Rebuilding ${cardProgress.done}/${cardProgress.total}...` : 'Rebuild share cards'}
+              </button>
             </div>
           )}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
