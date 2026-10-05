@@ -27,6 +27,10 @@ const AboutPage = lazy(() => import("./components/AboutPage"));
 const PartnerPage = lazy(() => import("./components/PartnerPage"));
 const ContactPage = lazy(() => import("./components/ContactPage"));
 const FAQPage = lazy(() => import("./components/FAQPage"));
+const DroneDoctorConsultPage = lazy(() => import("./components/DroneDoctorConsultPage"));
+const DoctorBookingPage = lazy(() => import("./components/DoctorBookingPage"));
+const DoctorIcsRedirect = lazy(() => import("./components/DoctorIcsRedirect"));
+const AdminDoctorConsults = lazy(() => import("./components/Admin/appointments/AdminDoctorConsults"));
 const SearchPage = lazy(() => import("./components/SearchPage"));
 const LegalIndexPage = lazy(() => import("./components/legal/LegalIndexPage"));
 const PolicyPage = lazy(() => import("./components/legal/PolicyPage"));
@@ -380,6 +384,9 @@ const AppContent = () => {
           <Route path="/booking/ics" element={<BookingIcsRedirect />} />
           <Route path="/drone-doctor" element={<Navigate to="/media/drone-doctor" replace />} />
           <Route path="/faqs" element={<FAQPage />} />
+          <Route path="/drone-doctor/consult" element={<DroneDoctorConsultPage />} />
+          <Route path="/drone-doctor/booking" element={<DoctorBookingPage />} />
+          <Route path="/drone-doctor/booking/ics" element={<DoctorIcsRedirect />} />
           <Route path="/legal" element={<LegalIndexPage />} />
           <Route path="/legal/:slug" element={<PolicyPage />} />
           {/* Back-compat: the two old standalone legal pages now live under /legal/* */}
@@ -436,6 +443,12 @@ const AppContent = () => {
             <AdminProtectedRoute>
               <AdminLayout>
                 <AdminTokenPlan />
+              </AdminLayout>
+            </AdminProtectedRoute>} />
+          <Route path="/admin/drone-doctor-consultations" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminDoctorConsults />
               </AdminLayout>
             </AdminProtectedRoute>} />
           <Route path="/admin/appointments" element={
