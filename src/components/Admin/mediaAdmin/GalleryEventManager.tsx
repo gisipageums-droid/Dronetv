@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { X, Plus, Trash2, Loader2, Upload, Pencil } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { createContent, deleteContent, fetchAdminContent, updateContent } from '../../../lib/mediaApi';
-import { DEFAULT_FOOTER, MAX_PARTNER_LOGOS, eventFromItem, eventToFields, type GalleryEvent } from '../../../lib/galleryEvent';
+import { createContent, deleteContent, updateContent } from '../../../lib/mediaApi';
+import { DEFAULT_FOOTER, MAX_PARTNER_LOGOS, loadEventsForAdmin, eventToFields, type GalleryEvent } from '../../../lib/galleryEvent';
 import { optimizeLogo } from '../../../lib/imageOptimize';
 import { PARTNER_LOGO_SLUGS, partnerLogoPath, partnerName } from '../../../lib/partners';
 
@@ -31,8 +31,7 @@ export default function GalleryEventManager({ uploadImage, onClose, onChanged }:
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const items = await fetchAdminContent(undefined, 'gallery-event');
-      setEvents(items.map(eventFromItem));
+      setEvents(await loadEventsForAdmin());
     } catch {
       toast.error('Could not load events');
     } finally {

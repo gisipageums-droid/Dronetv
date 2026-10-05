@@ -1,4 +1,4 @@
-import { fetchContent, type MediaItem } from './mediaApi';
+import { fetchAdminContent, fetchContent, type MediaItem } from './mediaApi';
 
 export const MAX_PARTNER_LOGOS = 8;
 
@@ -54,4 +54,18 @@ export function eventToFields(e: Omit<GalleryEvent, 'id'>) {
 export async function fetchGalleryEvents(signal?: AbortSignal): Promise<GalleryEvent[]> {
   const items = await fetchContent('gallery-event', signal);
   return items.map(eventFromItem);
+}
+
+// Admin screens: a one-off network or server hiccup must not leave the event list empty with an error.
+// Tries the admin list twice, then falls back to the public list of published events.
+export async function loadEventsForAdmin(): Promise<GalleryEvent[]> {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const items = await fetchAdminContent(undefined, 'gallery-event');
+      return items.map(eventFromItem);
+    } catch {
+      if (attempt === 0) await new Promise(r => setTimeout(r, 600));
+    }
+  }
+  return fetchGalleryEvents();
 }
