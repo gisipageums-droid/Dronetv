@@ -1,13 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Plus, Trash2, Edit, X, Package as PackageIcon, Wrench } from "lucide-react";
+import { Plus, Trash2, Edit, X, Minus, Package as PackageIcon, Wrench } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { COMPANY_API, LAMBDA } from "../../../lib/apiConfig";
 import { authHeaders, getMyCompany, uploadCompanyFile } from "../api";
 import { PageHeader, Card, Btn, Field, inputCls, FormGrid, EmptyState } from "../ui";
 
-interface Item { title: string; description: string; image?: string; category?: string; }
+interface Spec { name: string; value: string }
+interface Item {
+  title: string; description: string; image?: string; category?: string;
+  pricing?: string; timeline?: string; detailedDescription?: string;
+  features?: string[]; specifications?: Spec[];
+}
 
 type ListType = "products" | "services";
 
@@ -79,9 +84,14 @@ export default function Listings() {
 
   const submitEdit = async () => {
     if (!editing || !editing.item.title.trim()) { toast.error("Title is required"); return; }
+    const cleaned: Item = {
+      ...editing.item,
+      features: (editing.item.features || []).map(f => f.trim()).filter(Boolean),
+      specifications: (editing.item.specifications || []).map(x => ({ name: x.name.trim(), value: x.value.trim() })).filter(x => x.name && x.value),
+    };
     const next = [...items];
-    if (editing.index === -1) next.push(editing.item);
-    else next[editing.index] = editing.item;
+    if (editing.index === -1) next.push(cleaned);
+    else next[editing.index] = cleaned;
     await save(next);
     setEditing(null);
   };
@@ -170,12 +180,12 @@ export default function Listings() {
 
       {editing && (
         <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/60 p-4">
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-lg max-h-[92vh] flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
               <h2 className="text-base font-bold text-white">{editing.index === -1 ? `Add ${meta.singular}` : `Edit ${meta.singular}`}</h2>
               <button onClick={() => setEditing(null)} className="p-1.5 rounded hover:bg-white/10"><X className="w-5 h-5" /></button>
             </div>
-            <div className="p-5">
+            <div className="p-5 overflow-y-auto">
               <FormGrid>
                 <Field label="Image" wide>
                   {editing.item.image ? (
@@ -213,6 +223,61 @@ export default function Listings() {
                   <textarea className={inputCls} rows={4} value={editing.item.description}
                     onChange={(e) => setEditing({ ...editing, item: { ...editing.item, description: e.target.value } })} />
                 </Field>
+                <Field label={activeType === "products" ? "Category" : "Pricing"} wide>
+                  {activeType === "products" ? (
+                    <input className={inputCls} value={editing.item.category || ""} placeholder="e.g. Drones, Sensors, Software"
+                      onChange={(e) => setEditing({ ...editing, item: { ...editing.item, category: e.target.value } })} />
+                  ) : (
+                    <input className={inputCls} value={editing.item.pricing || ""} placeholder="e.g. From Rs 5,000 or Contact for pricing"
+                      onChange={(e) => setEditing({ ...editing, item: { ...editing.item, pricing: e.target.value } })} />
+                  )}
+                </Field>
+                {activeType === "products" && (
+                  <Field label="Pricing" wide>
+                    <input className={inputCls} value={editing.item.pricing || ""} placeholder="e.g. Rs 45,000 or Contact for pricing"
+                      onChange={(e) => setEditing({ ...editing, item: { ...editing.item, pricing: e.target.value } })} />
+                  </Field>
+                )}
+                {activeType === "services" && (
+                  <Field label="Timeline" wide>
+                    <input className={inputCls} value={editing.item.timeline || ""} placeholder="e.g. 2-3 weeks"
+                      onChange={(e) => setEditing({ ...editing, item: { ...editing.item, timeline: e.target.value } })} />
+                  </Field>
+                )}
+                <Field label="Detailed description" wide>
+                  <textarea className={inputCls} rows={4} value={editing.item.detailedDescription || ""} placeholder="Shown in the Description section of the details page"
+                    onChange={(e) => setEditing({ ...editing, item: { ...editing.item, detailedDescription: e.target.value } })} />
+                </Field>
+                <Field label="Key features" wide>
+                  <div className="space-y-2">
+                    {(editing.item.features || []).map((f, i) => (
+                      <div key={i} className="flex gap-2">
+                        <input className={inputCls} value={f} placeholder="e.g. 4K video recording"
+                          onChange={(e) => { const list = [...(editing.item.features || [])]; list[i] = e.target.value; setEditing({ ...editing, item: { ...editing.item, features: list } }); }} />
+                        <button type="button" aria-label="Remove feature" className="p-2 rounded hover:bg-white/10 text-white/50"
+                          onClick={() => setEditing({ ...editing, item: { ...editing.item, features: (editing.item.features || []).filter((_, j) => j !== i) } })}><Minus className="w-4 h-4" /></button>
+                      </div>
+                    ))}
+                    <Btn size="sm" variant="outline" onClick={() => setEditing({ ...editing, item: { ...editing.item, features: [...(editing.item.features || []), ""] } })}>+ Add feature</Btn>
+                  </div>
+                </Field>
+                {activeType === "products" && (
+                  <Field label="Specifications" wide>
+                    <div className="space-y-2">
+                      {(editing.item.specifications || []).map((sp, i) => (
+                        <div key={i} className="flex gap-2">
+                          <input className={inputCls} value={sp.name} placeholder="Name e.g. Flight time"
+                            onChange={(e) => { const list = [...(editing.item.specifications || [])]; list[i] = { ...sp, name: e.target.value }; setEditing({ ...editing, item: { ...editing.item, specifications: list } }); }} />
+                          <input className={inputCls} value={sp.value} placeholder="Value e.g. 30 min"
+                            onChange={(e) => { const list = [...(editing.item.specifications || [])]; list[i] = { ...sp, value: e.target.value }; setEditing({ ...editing, item: { ...editing.item, specifications: list } }); }} />
+                          <button type="button" aria-label="Remove specification" className="p-2 rounded hover:bg-white/10 text-white/50"
+                            onClick={() => setEditing({ ...editing, item: { ...editing.item, specifications: (editing.item.specifications || []).filter((_, j) => j !== i) } })}><Minus className="w-4 h-4" /></button>
+                        </div>
+                      ))}
+                      <Btn size="sm" variant="outline" onClick={() => setEditing({ ...editing, item: { ...editing.item, specifications: [...(editing.item.specifications || []), { name: "", value: "" }] } })}>+ Add specification</Btn>
+                    </div>
+                  </Field>
+                )}
               </FormGrid>
             </div>
             <div className="px-5 py-4 border-t border-white/10 flex justify-end gap-3">
