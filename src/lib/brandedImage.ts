@@ -248,8 +248,8 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
   const partnerRows = partners.length > 8 ? 2 : 1;
   const partnerCellH = partnerRows === 1 ? 110 : 84;
   const partnersH = partnerRows * partnerCellH + (partnerRows - 1) * 8;
-  // the ribbon above the partner tiles needs its own 34px
-  const ribbonSpace = hasPartners ? 34 : 0;
+  // the ribbon banner above the partner tiles needs its own 46px
+  const ribbonSpace = hasPartners ? 46 : 0;
   const photoH = (hasPartners ? 792 - partnersH - ribbonSpace : 782) + (hasInfo ? 0 : infoH + 8);
   const infoY = 176 + photoH + 8;
   const partnersY = infoY + (hasInfo ? infoH + 12 : 0) + ribbonSpace;
@@ -347,31 +347,63 @@ export async function generateBrandedImage(input: BrandedInput): Promise<Blob> {
       const top = 12;
       drawContain(ctx, logo, x + 10, y + top, slotW - 20, partnerCellH - top - 8);
     });
-    const ribbonH = 28, ribbonY = partnersY - 32;
-    const grad = ctx.createLinearGradient(areaX, 0, areaX + areaW, 0);
-    grad.addColorStop(0, '#08205A');
-    grad.addColorStop(0.5, NAVY);
-    grad.addColorStop(1, '#08205A');
+    // Ribbon banner: centre band with two folded swallow-tail ends, in the site's navy and yellow.
+    const cx = areaX + areaW / 2;
+    const bandW = 560, bandH = 34, tail = 76, drop = 12;
+    const bandL = cx - bandW / 2, bandR = cx + bandW / 2;
+    const bandY = partnersY - bandH - drop;
+    const DARK = '#061A4A', FOLD = '#030F2B';
+    const tailShape = (dir: 1 | -1) => {
+      const edge = dir === 1 ? bandR : bandL;
+      const inner = edge - dir * 16;
+      const outer = edge + dir * tail;
+      ctx.beginPath();
+      ctx.moveTo(inner, bandY + drop);
+      ctx.lineTo(outer, bandY + drop);
+      ctx.lineTo(outer - dir * 20, bandY + drop + bandH / 2);
+      ctx.lineTo(outer, bandY + drop + bandH);
+      ctx.lineTo(inner, bandY + drop + bandH);
+      ctx.closePath();
+      ctx.fillStyle = DARK;
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = YELLOW;
+      ctx.stroke();
+      // the fold where the tail tucks behind the band
+      ctx.beginPath();
+      ctx.moveTo(edge, bandY + bandH);
+      ctx.lineTo(inner, bandY + bandH);
+      ctx.lineTo(inner, bandY + drop + bandH);
+      ctx.closePath();
+      ctx.fillStyle = FOLD;
+      ctx.fill();
+    };
+    tailShape(-1);
+    tailShape(1);
+    const grad = ctx.createLinearGradient(0, bandY, 0, bandY + bandH);
+    grad.addColorStop(0, '#12388C');
+    grad.addColorStop(1, NAVY);
     ctx.fillStyle = grad;
-    roundRect(ctx, areaX, ribbonY, areaW, ribbonH, 15);
+    roundRect(ctx, bandL, bandY, bandW, bandH, 6);
     ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = YELLOW;
+    ctx.stroke();
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
-    ctx.font = `800 18px ${FONT}`;
+    ctx.font = `800 19px ${FONT}`;
     (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '5px';
     const label = 'INDUSTRY PARTNERS';
-    const cx = areaX + areaW / 2;
-    ctx.fillText(label, cx + 2.5, ribbonY + 21);
+    ctx.fillText(label, cx + 2.5, bandY + 24);
     const labelW = ctx.measureText(label).width;
     (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '0px';
-    // small yellow diamonds either side of the label
     ctx.fillStyle = YELLOW;
-    for (const dx of [-(labelW / 2 + 26), labelW / 2 + 26]) {
+    for (const dx of [-(labelW / 2 + 28), labelW / 2 + 28]) {
       ctx.beginPath();
-      ctx.moveTo(cx + dx, ribbonY + ribbonH / 2 - 7);
-      ctx.lineTo(cx + dx + 7, ribbonY + ribbonH / 2);
-      ctx.lineTo(cx + dx, ribbonY + ribbonH / 2 + 7);
-      ctx.lineTo(cx + dx - 7, ribbonY + ribbonH / 2);
+      ctx.moveTo(cx + dx, bandY + bandH / 2 - 7);
+      ctx.lineTo(cx + dx + 7, bandY + bandH / 2);
+      ctx.lineTo(cx + dx, bandY + bandH / 2 + 7);
+      ctx.lineTo(cx + dx - 7, bandY + bandH / 2);
       ctx.closePath();
       ctx.fill();
     }
