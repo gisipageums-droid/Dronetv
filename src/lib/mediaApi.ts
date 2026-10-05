@@ -27,6 +27,7 @@ export interface MediaItem {
   startDate?: string;
   endDate?: string;
   packageType?: string;
+  shareImageUrl?: string;
   views?: number;
   isPublished: boolean;
   publishedAt?: string;
