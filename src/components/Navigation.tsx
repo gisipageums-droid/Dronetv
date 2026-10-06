@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useUserAuth } from "./context/context";
 import { motion } from "motion/react";
+import { portalAccess } from "../lib/doctorPortalApi";
+import { getToken } from "../lib/authService";
 import { aboutItems, mediaItems, eventsItems, professionalsItems, partnershipsItems, contactItems } from "../lib/navLinks";
 
 const Navigation = () => {
@@ -19,6 +21,13 @@ const Navigation = () => {
   const [selectedLang, setSelectedLang] = useState("English");
 
   const { isLogin, isAdminLogin, setHaveAccount, user } = useUserAuth();
+
+  const [doctorAccess, setDoctorAccess] = useState(false);
+  useEffect(() => {
+    if (!(isLogin || isAdminLogin) || !getToken()) { setDoctorAccess(false); return; }
+    portalAccess().then(a => setDoctorAccess(!!a.doctor)).catch(() => setDoctorAccess(false));
+  }, [isLogin, isAdminLogin]);
+
   const role = (user as any)?.userData?.role || (user as any)?.role;
   const dashboardPath = isAdminLogin
     ? "/admin/company/dashboard"
@@ -412,6 +421,13 @@ const Navigation = () => {
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
                         Dashboard
                       </Link>
+                      {doctorAccess && (
+                        <Link to="/doctor-portal" onClick={() => setIsAccountOpen(false)}
+                          className="px-3 py-2 rounded-lg hover:bg-brand-yellow-soft flex items-center gap-2 text-sm font-medium text-ink whitespace-nowrap">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-3-3v6m9-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                          Doctor Portal
+                        </Link>
+                      )}
                       <Link to="/logout" onClick={() => setIsAccountOpen(false)}
                         className="px-3 py-2 rounded-lg hover:bg-brand-yellow-soft flex items-center gap-2 text-sm font-medium text-status-error">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
@@ -521,6 +537,7 @@ const Navigation = () => {
             {isLogin || isAdminLogin ? (
               <>
                 <Link to={dashboardPath} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Dashboard</Link>
+                {doctorAccess && <Link to="/doctor-portal" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Doctor Portal</Link>}
                 <Link to="/logout" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-status-error">Logout</Link>
               </>
             ) : (
