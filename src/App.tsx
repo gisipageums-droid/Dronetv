@@ -32,6 +32,16 @@ const BookingIcsRedirect = lazy(() => import("./components/BookingIcsRedirect"))
 const DroneDoctorConsultPage = lazy(() => import("./components/DroneDoctorConsultPage"));
 const DoctorBookingPage = lazy(() => import("./components/DoctorBookingPage"));
 const DoctorIcsRedirect = lazy(() => import("./components/DoctorIcsRedirect"));
+const DoctorPortalLayout = lazy(() => import("./components/DoctorPortal/DoctorPortalLayout"));
+const DoctorDashboard = lazy(() => import("./components/DoctorPortal/DoctorDashboard"));
+const DoctorAppointments = lazy(() => import("./components/DoctorPortal/DoctorAppointments"));
+const DoctorMeetingLinks = lazy(() => import("./components/DoctorPortal/DoctorMeetingLinks"));
+const DoctorClients = lazy(() => import("./components/DoctorPortal/DoctorClients"));
+const DoctorNotes = lazy(() => import("./components/DoctorPortal/DoctorNotes"));
+const DoctorFollowUps = lazy(() => import("./components/DoctorPortal/DoctorFollowUps"));
+const DoctorReports = lazy(() => import("./components/DoctorPortal/DoctorReports"));
+const DoctorSettings = lazy(() => import("./components/DoctorPortal/DoctorSettings"));
+const DoctorSupport = lazy(() => import("./components/DoctorPortal/DoctorSupport"));
 const AdminDoctorConsults = lazy(() => import("./components/Admin/appointments/AdminDoctorConsults"));
 const AdminAppointments = lazy(() => import("./components/Admin/appointments/AdminAppointments"));
 const SearchPage = lazy(() => import("./components/SearchPage"));
@@ -281,6 +291,7 @@ const AppContent = () => {
   const location = useLocation();
   const hideFooter =
     location.pathname.startsWith("/company-portal") ||
+    location.pathname.startsWith("/doctor-portal") ||
     location.pathname.startsWith("/professional-portal") ||
     location.pathname.startsWith("/form") ||
     location.pathname.startsWith("/user") ||
@@ -290,6 +301,7 @@ const AppContent = () => {
     location.pathname.startsWith("/template") ||
     location.pathname.startsWith("/event/leads");
   const hideNavigation =
+    location.pathname.startsWith("/doctor-portal") ||
     location.pathname.startsWith("/admin/") ||
     location.pathname.startsWith("/user/companies/edit") ||
     location.pathname.startsWith("/user/companies/preview") ||
@@ -441,6 +453,17 @@ const AppContent = () => {
           <Route path="/book-a-call" element={<BookCallPage />} />
           <Route path="/booking/manage" element={<BookingManagePage />} />
           <Route path="/booking/ics" element={<BookingIcsRedirect />} />
+          <Route path="/doctor-portal" element={<DoctorPortalLayout />}>
+            <Route index element={<DoctorDashboard />} />
+            <Route path="appointments" element={<DoctorAppointments />} />
+            <Route path="meeting-links" element={<DoctorMeetingLinks />} />
+            <Route path="clients" element={<DoctorClients />} />
+            <Route path="notes" element={<DoctorNotes />} />
+            <Route path="follow-ups" element={<DoctorFollowUps />} />
+            <Route path="reports" element={<DoctorReports />} />
+            <Route path="settings" element={<DoctorSettings />} />
+            <Route path="support" element={<DoctorSupport />} />
+          </Route>
           <Route path="/drone-doctor" element={<Navigate to="/media/drone-doctor" replace />} />
           <Route path="/drone-doctor/consult" element={<DroneDoctorConsultPage />} />
           <Route path="/drone-doctor/booking" element={<DoctorBookingPage />} />

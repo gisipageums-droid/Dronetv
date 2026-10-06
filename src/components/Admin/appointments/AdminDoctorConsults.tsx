@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { AlertTriangle, CalendarClock, Copy, Loader2, Plus, Trash2, X } from 'lucide-react';
 import { BlockedTime, BookingSettings, WEEKDAYS } from '../../../lib/bookingApi';
+import { DoctorAccessPanel, ManualBookingButton } from './DoctorAccessPanel';
 import {
   AdminDoctorBooking as AdminBooking, DoctorTopic as Purpose, doctorAdminCancel, doctorAdminDelete as adminDeleteBooking, doctorAdminGetSettings as adminGetSettings,
   doctorAdminList as adminListBookings, doctorAdminSaveSettings as adminSaveSettings, fetchDoctorConfig,
@@ -108,7 +109,10 @@ const AdminDoctorConsults: React.FC = () => {
           <h1 className="text-xl font-extrabold text-ink flex items-center gap-2"><CalendarClock className="w-5 h-5" />Drone Doctor Consultations</h1>
           <p className="text-sm text-ink-caption">Paid consultations (Rs 500) are booked on <a className="underline" href={bookingPage} target="_blank" rel="noreferrer">{bookingPage}</a></p>
         </div>
-        <button type="button" onClick={() => { navigator.clipboard?.writeText(bookingPage); toast.info('Consultation link copied'); }} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-ink-light text-sm font-semibold"><Copy className="w-4 h-4" />Copy link</button>
+        <div className="flex flex-wrap gap-2">
+          <ManualBookingButton onCreated={load} />
+          <button type="button" onClick={() => { navigator.clipboard?.writeText(bookingPage); toast.info('Consultation link copied'); }} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-ink-light text-sm font-semibold"><Copy className="w-4 h-4" />Copy link</button>
+        </div>
       </div>
 
       {settings && !settings.meetLink && (
@@ -307,6 +311,7 @@ const AdminDoctorConsults: React.FC = () => {
             <input id="ap-site" className={`${inp} max-w-md`} value={settings.siteUrl} onChange={e => set('siteUrl', e.target.value)} placeholder="https://www.dronetv.in" />
           </div>
 
+          <DoctorAccessPanel />
           <div className="flex justify-end">
             <button type="button" onClick={save} disabled={saving} className="px-5 py-2.5 rounded-lg bg-brand-yellow text-ink font-bold text-sm disabled:opacity-60 flex items-center gap-2">{saving && <Loader2 className="w-4 h-4 animate-spin" />}Save settings</button>
           </div>
