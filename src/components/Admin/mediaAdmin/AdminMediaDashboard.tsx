@@ -7,6 +7,7 @@ import { ADMIN_API, COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 import AdminJobBoardDashboard from '../jobBoardAdmin/AdminJobBoardDashboard';
 import BulkGalleryUpload from './BulkGalleryUpload';
+import ResizeGalleryPhotos from './ResizeGalleryPhotos';
 import { fetchGalleryEvents, type GalleryEvent } from '../../../lib/galleryEvent';
 import { makeShareCardUrl, refreshShareCard } from '../../../lib/shareCard';
 
@@ -302,6 +303,7 @@ export default function AdminMediaDashboard() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showBulk, setShowBulk] = useState(false);
+  const [showResize, setShowResize] = useState(false);
   const [events, setEvents] = useState<GalleryEvent[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [assignEvent, setAssignEvent] = useState('');
@@ -605,6 +607,15 @@ export default function AdminMediaDashboard() {
         )}
       </div>
 
+      {showResize && (
+        <ResizeGalleryPhotos
+          photos={items.filter(i => i.contentType === 'gallery' && selected.has(i.contentId))}
+          events={events}
+          uploadImage={uploadContentImage}
+          onClose={() => setShowResize(false)}
+          onDone={loadItems}
+        />
+      )}
       {showBulk && (
         <BulkGalleryUpload uploadImage={uploadContentImage} onClose={() => setShowBulk(false)} onSaved={() => { setShowBulk(false); loadItems(); }} />
       )}
@@ -755,6 +766,7 @@ export default function AdminMediaDashboard() {
                 {assigning ? 'Applying...' : `Apply to ${selected.size} selected`}
               </button>
               {events.length === 0 && <span className="text-xs text-ink-caption">No events yet - create one from Bulk Upload → Events.</span>}
+              <button type="button" onClick={() => setShowResize(true)} disabled={selected.size === 0} title="Change the size or shape of the selected photos" className="px-3 py-1.5 rounded-lg bg-ink text-white text-xs font-bold disabled:opacity-50">{`Resize ${selected.size || ''} selected`.replace('  ', ' ')}</button>
               <button type="button" onClick={rebuildShareCards} disabled={!!cardProgress} title="Rebuilds the picture shown when a photo link is shared on WhatsApp, LinkedIn and other apps" className="ml-auto px-3 py-1.5 rounded-lg border border-ink-light text-xs font-semibold disabled:opacity-60">
                 {cardProgress ? `Rebuilding ${cardProgress.done}/${cardProgress.total}...` : 'Rebuild share cards'}
               </button>
