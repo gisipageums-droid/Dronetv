@@ -16,6 +16,9 @@ const LOGO_MAX = 800;
 export interface PhotoOptions {
   maxDim: number;      // long edge in px; 0 keeps the original pixel size
   aspect: number | 0;  // width / height to centre-crop to; 0 keeps the photo's own shape
+  // Exact pixel box typed by the admin. fill = crop the edges so the photo fills the box shape,
+  // otherwise the whole photo is kept and shrunk to fit inside it. Never enlarges a photo.
+  box?: { w: number; h: number; fill: boolean };
 }
 
 export const SIZE_CHOICES: { label: string; value: number }[] = [
@@ -46,14 +49,15 @@ async function decode(file: File): Promise<ImageBitmap> {
   return createImageBitmap(file, { imageOrientation: 'from-image' });
 }
 
-async function encode(bmp: ImageBitmap, maxDim: number, quality: number, keepAlpha: boolean, aspect = 0): Promise<Blob> {
+async function encode(bmp: ImageBitmap, maxDim: number, quality: number, keepAlpha: boolean, aspect = 0, box?: PhotoOptions['box']): Promise<Blob> {
   // centre-crop to the requested shape first, then scale the result down to maxDim (0 = no scaling)
   let sx = 0, sy = 0, sw = bmp.width, sh = bmp.height;
   if (aspect > 0) {
     if (bmp.width / bmp.height > aspect) { sw = Math.round(bmp.height * aspect); sx = Math.round((bmp.width - sw) / 2); }
     else { sh = Math.round(bmp.width / aspect); sy = Math.round((bmp.height - sh) / 2); }
   }
-  const scale = maxDim > 0 ? Math.min(1, maxDim / Math.max(sw, sh)) : 1;
+  let scale = maxDim > 0 ? Math.min(1, maxDim / Math.max(sw, sh)) : 1;
+  if (box) scale = Math.min(1, box.w / sw, box.h / sh);
   const canvas = document.createElement('canvas');
   canvas.width = Math.max(1, Math.round(sw * scale));
   canvas.height = Math.max(1, Math.round(sh * scale));
@@ -76,11 +80,13 @@ function renamed(name: string, blob: Blob): string {
 export async function optimizePhoto(file: File, opts: PhotoOptions = DEFAULT_PHOTO_OPTIONS): Promise<OptimizedPhoto> {
   const bmp = await decode(file);
   try {
-    const masterBlob = await encode(bmp, opts.maxDim, MASTER_QUALITY, false, opts.aspect);
-    const thumbBlob = await encode(bmp, THUMB_MAX, THUMB_QUALITY, false, opts.aspect);
+    const boxAspect = opts.box && opts.box.fill ? opts.box.w / opts.box.h : 0;
+    const aspect = boxAspect || opts.aspect;
+    const masterBlob = await encode(bmp, opts.box ? 0 : opts.maxDim, MASTER_QUALITY, false, aspect, opts.box);
+    const thumbBlob = await encode(bmp, THUMB_MAX, THUMB_QUALITY, false, aspect);
     // A file that is already smaller than its re-encode (small, heavily compressed) is kept as is,
     // but only when no resize or reshape was asked for.
-    const unchanged = opts.aspect === 0 && (opts.maxDim === 0 || (bmp.width <= opts.maxDim && bmp.height <= opts.maxDim));
+    const unchanged = !opts.box && opts.aspect === 0 && (opts.maxDim === 0 || (bmp.width <= opts.maxDim && bmp.height <= opts.maxDim));
     const useOriginal = unchanged && masterBlob.size >= file.size;
     const master = useOriginal ? file : new File([masterBlob], renamed(file.name, masterBlob), { type: masterBlob.type });
     return {
@@ -112,4 +118,14 @@ export async function optimizeLogo(file: File): Promise<File> {
 
 export function formatBytes(n: number): string {
   return n >= 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
+}
+
+export const MIN_BOX = 100;
+export const MAX_BOX = 8000;
+
+export function describeOptions(o: PhotoOptions): string {
+  if (o.box) return `${o.box.w} x ${o.box.h} px (${o.box.fill ? 'crops edges to fill' : 'whole photo, fitted'})`;
+  const size = SIZE_CHOICES.find(c => c.value === o.maxDim)?.label.split(' - ')[0] || `${o.maxDim} px`;
+  const shape = SHAPE_CHOICES.find(c => Math.abs(c.value - o.aspect) < 0.001)?.label.replace(/^Keep each photo's own shape$/, 'own shape') || 'own shape';
+  return `${size}, ${shape}`;
 }

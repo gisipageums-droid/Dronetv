@@ -5,7 +5,8 @@ import { createContent } from '../../../lib/mediaApi';
 import { makeShareCardUrl } from '../../../lib/shareCard';
 import { loadEventsForAdmin, type GalleryEvent } from '../../../lib/galleryEvent';
 import GalleryEventManager from './GalleryEventManager';
-import { optimizePhoto, formatBytes, SIZE_CHOICES, SHAPE_CHOICES, DEFAULT_PHOTO_OPTIONS } from '../../../lib/imageOptimize';
+import { optimizePhoto, formatBytes, describeOptions, DEFAULT_PHOTO_OPTIONS, type PhotoOptions } from '../../../lib/imageOptimize';
+import PhotoSizePicker from './PhotoSizePicker';
 import { ADMIN_API } from '../../../lib/apiConfig';
 import { authHeader } from '../../../lib/authService';
 
@@ -32,6 +33,9 @@ interface Row {
   aiPending: boolean;
   peopleCount?: number | null;
   error?: string;
+  resizeOpen?: boolean;
+  resizeOpts?: PhotoOptions;
+  resizing?: boolean;
 }
 
 interface Props {
@@ -115,10 +119,9 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
   const [events, setEvents] = useState<GalleryEvent[]>([]);
   const [eventId, setEventId] = useState('');
   const [showManager, setShowManager] = useState(false);
-  const [maxDim, setMaxDim] = useState(DEFAULT_PHOTO_OPTIONS.maxDim);
-  const [aspect, setAspect] = useState(DEFAULT_PHOTO_OPTIONS.aspect);
-  const photoOptsRef = useRef({ maxDim, aspect });
-  photoOptsRef.current = { maxDim, aspect };
+  const [photoOpts, setPhotoOpts] = useState<PhotoOptions>(DEFAULT_PHOTO_OPTIONS);
+  const photoOptsRef = useRef(photoOpts);
+  photoOptsRef.current = photoOpts;
   const inputRef = useRef<HTMLInputElement>(null);
   const rowsRef = useRef<Row[]>([]);
   rowsRef.current = rows;
@@ -205,6 +208,34 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
     }
   }, [patch, uploadImage]);
 
+  // Re-makes the website copy of one already-added photo with new size/shape settings. The photo's
+  // details (title, caption, tags) are left alone and the untouched original stays as uploaded.
+  const resizeOne = useCallback(async (row: Row, opts: PhotoOptions) => {
+    patch(row.id, { resizing: true });
+    try {
+      const opt = await optimizePhoto(row.file, opts);
+      const imageUrl = opt.master === row.file && row.originalUrl ? row.originalUrl : await uploadWithRetry(uploadImage, opt.master);
+      const thumbUrl = await uploadWithRetry(uploadImage, opt.thumb).catch(() => row.thumbUrl);
+      patch(row.id, {
+        imageUrl, thumbUrl, resizing: false, resizeOpen: false,
+        sizeNote: `Original kept: ${formatBytes(opt.originalBytes)} · website copy: ${formatBytes(opt.master.size)} · ${describeOptions(opts)}`,
+      });
+    } catch {
+      patch(row.id, { resizing: false });
+      toast.error('Could not resize that photo');
+    }
+  }, [patch, uploadImage]);
+
+  const resizeAllAdded = async () => {
+    const todo = rowsRef.current.filter(r => r.status === 'ready' && !r.resizing);
+    if (todo.length === 0) { toast.info('No photos added yet'); return; }
+    const queue = [...todo];
+    await Promise.all(Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
+      for (let r = queue.shift(); r; r = queue.shift()) await resizeOne(r, photoOptsRef.current);
+    }));
+    toast.success(`Resized ${todo.length} photo${todo.length === 1 ? '' : 's'}`);
+  };
+
   const addFiles = useCallback(async (list: FileList | File[]) => {
     const files = Array.from(list).filter(f => f.type.startsWith('image/'));
     if (files.length === 0) { toast.error('Select image files'); return; }
@@ -245,7 +276,7 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
     }
   }, [patch]);
 
-  const busy = rows.some(r => r.status === 'working' || r.aiPending);
+  const busy = rows.some(r => r.status === 'working' || r.aiPending || r.resizing);
   const ready = rows.filter(r => r.status === 'ready');
 
   const saveAll = async () => {
@@ -321,20 +352,12 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
                 <input value={location} onChange={e => setLocation(e.target.value)} className={`${inp} mt-2`} placeholder="Location (optional) e.g. Pragati Maidan, New Delhi" />
               )}
             </div>
-            <div className="sm:col-span-2 grid sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="bulk-size" className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Photo size on the website</label>
-                <select id="bulk-size" value={maxDim} onChange={e => setMaxDim(Number(e.target.value))} className={inp}>
-                  {SIZE_CHOICES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="bulk-shape" className="text-xs font-bold text-ink-paragraph uppercase tracking-wide block mb-1">Photo shape</label>
-                <select id="bulk-shape" value={aspect} onChange={e => setAspect(Number(e.target.value))} className={inp}>
-                  {SHAPE_CHOICES.map(c => <option key={c.label} value={c.value}>{c.label}</option>)}
-                </select>
-              </div>
-              <p className="sm:col-span-2 text-[11px] text-ink-caption -mt-2">Applies to photos added after you change it. A fixed shape trims the edges and keeps the centre. The untouched original is always kept for "Download original photo".</p>
+            <div className="sm:col-span-2 space-y-2">
+              <PhotoSizePicker idPrefix="bulk" value={photoOpts} onChange={setPhotoOpts} />
+              <p className="text-[11px] text-ink-caption">Applies to photos added after you change it. A fixed shape trims the edges and keeps the centre. The untouched original is always kept for "Download original photo".</p>
+              {rows.some(r => r.status === 'ready') && (
+                <button type="button" onClick={resizeAllAdded} disabled={rows.some(r => r.resizing || r.status === 'working')} className="px-3 py-1.5 rounded-lg border border-ink-light text-xs font-semibold disabled:opacity-60">Apply these settings to the photos already added</button>
+              )}
             </div>
             <label className="flex items-center gap-2 text-sm text-ink mt-5">
               <input type="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)} className="accent-amber-500" />
@@ -374,6 +397,17 @@ export default function BulkGalleryUpload({ uploadImage, onClose, onSaved }: Pro
                         <textarea value={r.description} onChange={e => patch(r.id, { description: e.target.value })} rows={2} className={`${inp} sm:col-span-2 resize-none`} placeholder="Description" />
                         <input value={r.tags} onChange={e => patch(r.id, { tags: e.target.value })} className={`${inp} sm:col-span-2`} placeholder="Tags, comma separated (add people names here)" />
                         {r.sizeNote && <p className="text-[11px] text-ink-caption sm:col-span-2">{r.sizeNote}</p>}
+                        <div className="sm:col-span-2">
+                          <button type="button" onClick={() => patch(r.id, { resizeOpen: !r.resizeOpen, resizeOpts: r.resizeOpts || photoOpts })} disabled={r.resizing} className="text-xs font-semibold text-ink underline underline-offset-2 disabled:opacity-60">{r.resizeOpen ? 'Close size options' : 'Change size of this photo'}</button>
+                          {r.resizeOpen && (
+                            <div className="mt-2 rounded-lg border border-ink-light bg-ink-offwhite p-3 space-y-2">
+                              <PhotoSizePicker idPrefix={`row-${r.id}`} value={r.resizeOpts || photoOpts} onChange={o => patch(r.id, { resizeOpts: o })} />
+                              <button type="button" onClick={() => resizeOne(r, r.resizeOpts || photoOpts)} disabled={r.resizing} className="px-3 py-1.5 rounded-lg bg-brand-yellow text-ink text-xs font-bold disabled:opacity-60 flex items-center gap-2">
+                                {r.resizing && <Loader2 className="w-3 h-3 animate-spin" />}Resize this photo
+                              </button>
+                            </div>
+                          )}
+                        </div>
                         {typeof r.peopleCount === 'number' && r.peopleCount > 0 && (
                           <p className="text-[11px] text-ink-caption sm:col-span-2">{r.peopleCount} {r.peopleCount === 1 ? 'face' : 'faces'} detected - add people names in tags if you want them searchable.</p>
                         )}
