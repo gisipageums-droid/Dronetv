@@ -416,11 +416,13 @@ const Navigation = () => {
                 {isAccountOpen && (
                   <motion.div {...dropdownMotion} className="absolute z-50 mt-1 font-medium bg-brand-yellow-soft border-2 border-ink/20 rounded-xl shadow-lg shadow-ink/15 left-0">
                     <div className="p-2 flex flex-col min-w-[150px]">
-                      <Link to={dashboardPath} onClick={() => setIsAccountOpen(false)}
-                        className="px-3 py-2 rounded-lg hover:bg-brand-yellow-soft flex items-center gap-2 text-sm font-medium text-ink">
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-                        Dashboard
-                      </Link>
+                      {!(doctorAccess && !isAdminLogin) && (
+                        <Link to={dashboardPath} onClick={() => setIsAccountOpen(false)}
+                          className="px-3 py-2 rounded-lg hover:bg-brand-yellow-soft flex items-center gap-2 text-sm font-medium text-ink">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                          Dashboard
+                        </Link>
+                      )}
                       {doctorAccess && (
                         <Link to="/doctor-portal" onClick={() => setIsAccountOpen(false)}
                           className="px-3 py-2 rounded-lg hover:bg-brand-yellow-soft flex items-center gap-2 text-sm font-medium text-ink whitespace-nowrap">
@@ -536,7 +538,7 @@ const Navigation = () => {
 
             {isLogin || isAdminLogin ? (
               <>
-                <Link to={dashboardPath} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Dashboard</Link>
+                {!(doctorAccess && !isAdminLogin) && <Link to={dashboardPath} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Dashboard</Link>}
                 {doctorAccess && <Link to="/doctor-portal" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Doctor Portal</Link>}
                 <Link to="/logout" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-status-error">Logout</Link>
               </>

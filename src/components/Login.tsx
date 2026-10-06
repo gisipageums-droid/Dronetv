@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useUserAuth } from "./context/context";
 import { toast } from "react-toastify";
 import * as authService from "../lib/authService";
+import { portalAccess } from "../lib/doctorPortalApi";
 interface LoginData {
   email: string;
   password: string;
@@ -190,19 +191,26 @@ export default function Login() {
     }
   };
 
+  // A listed Drone Doctor goes straight to the Doctor Portal; everyone else to their usual dashboard.
+  const landingPath = async (data: any): Promise<string> => {
+    try {
+      const access = await portalAccess();
+      if (access.doctor) return "/doctor-portal";
+    } catch { /* not a doctor, or the check is unavailable */ }
+    return data?.userData?.role === "company"
+      ? "/company-portal"
+      : data?.userData?.role === "professional"
+        ? "/professional-portal"
+        : "/user-dashboard";
+  };
+
   const handleGoogleSuccess = async (credentialResponse: any) => {
     if (!credentialResponse.credential) return;
     try {
       const data = await authService.googleLogin(credentialResponse.credential);
       login(data);
       toast.success("Google login successful!");
-      navigate(
-        data?.userData?.role === "company"
-          ? "/company-portal"
-          : data?.userData?.role === "professional"
-            ? "/professional-portal"
-            : "/user-dashboard"
-      );
+      navigate(await landingPath(data));
     } catch (error: any) {
       toast.error(error.message || "Google authentication failed");
     }
@@ -217,13 +225,7 @@ export default function Login() {
       const data = await authService.login(loginData);
       login(data);
       setLoginData({ email: "", password: "" });
-      navigate(
-        data?.userData?.role === "company"
-          ? "/company-portal"
-          : data?.userData?.role === "professional"
-            ? "/professional-portal"
-            : "/user-dashboard"
-      );
+      navigate(await landingPath(data));
     } catch (error: any) {
       toast.error(error.message || "Login failed. Please check your credentials.");
     } finally {
