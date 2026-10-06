@@ -90,7 +90,7 @@ const DoctorPortalLayout: React.FC = () => {
           <button type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu" className="rounded-lg p-2 text-[#07130f] hover:bg-black/10 lg:hidden"><Menu className="size-6" /></button>
           <Link to="/doctor-portal" className="flex min-w-0 items-center gap-3 lg:gap-5" aria-label="Drone Doctor dashboard">
             <span className="flex shrink-0 flex-col items-center">
-              <img src="/images/Drone%20tv%20.in.png" alt="DroneTV.in" className="h-9 w-auto sm:h-10 lg:h-[4.75rem]" />
+              <span className="block h-9 w-14 overflow-hidden sm:h-10 sm:w-16 lg:h-[4.6rem] lg:w-44"><img src="/images/Drone%20tv%20.in.png" alt="DroneTV.in" className="h-14 w-14 max-w-none -translate-y-[1.1rem] sm:h-16 sm:w-16 sm:-translate-y-[1.3rem] lg:h-44 lg:w-44 lg:-translate-y-[4.3rem]" /></span>
               <span className="mt-0.5 hidden whitespace-nowrap text-[8px] font-bold uppercase tracking-wide text-[#07130f] lg:block">Voice of drone technology, for all technologies</span>
             </span>
             <span className="hidden h-14 w-px bg-black/30 lg:block" />
