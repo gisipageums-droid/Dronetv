@@ -128,7 +128,7 @@ const DoctorDashboard: React.FC = () => {
           </Card>
 
           <Card className="p-4 sm:p-5">
-            <div className="mb-2 flex items-center justify-between"><h2 className="flex items-center gap-2 text-lg font-extrabold text-slate-900"><FileText className="size-5" />Recent Notes / Follow-ups</h2><Link to="/doctor-portal/notes" className="text-xs font-bold text-blue-700 hover:underline">View all</Link></div>
+            <div className="mb-2 flex items-center justify-between"><h2 className="flex items-center gap-2 text-base font-extrabold text-slate-900"><FileText className="size-5 shrink-0" />Recent Notes / Follow-ups</h2><Link to="/doctor-portal/notes" className="text-xs font-bold text-blue-700 hover:underline">View all</Link></div>
             {!s ? <Spinner /> : s.recentNotes.length === 0 && s.followUps.length === 0 ? <p className="rounded-xl bg-slate-50 p-4 text-center text-sm text-slate-500">Notes and follow-ups you add will show here.</p> : (
               <ul className="space-y-2">
                 {s.followUps.map(f => (
