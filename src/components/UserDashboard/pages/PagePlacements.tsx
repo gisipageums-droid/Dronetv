@@ -25,8 +25,8 @@ const SLOT_DEFINITIONS = [
   { id: "cat-agri",    label: "Agriculture",          category: "Categories", costPerDay: 40,  description: "Top spot on Agriculture category page" },
   { id: "cat-defence", label: "Defence & Security",  category: "Categories", costPerDay: 40,  description: "Top spot on Defence & Security page" },
   { id: "cat-training",label: "Training & RPTOs",    category: "Categories", costPerDay: 40,  description: "Top spot on Training page" },
-  { id: "media-news",    label: "News Pulse Spot",   category: "Media Hub",  costPerDay: 60,  description: "Featured company card in news section" },
-  { id: "media-video",   label: "Video Spotlight",   category: "Media Hub",  costPerDay: 80,  description: "Featured video in Video Spotlight" },
+  { id: "media-news",    label: "News Spot",   category: "Media Hub",  costPerDay: 60,  description: "Featured company card in news section" },
+  { id: "media-video",   label: "Video Gallery",   category: "Media Hub",  costPerDay: 80,  description: "Featured video in Video Gallery" },
   { id: "media-magazine",label: "Magazine Feature",  category: "Media Hub",  costPerDay: 70,  description: "Featured article placement in Magazine" },
 ];
 

@@ -5,7 +5,7 @@ import { useUserAuth } from "./context/context";
 import { motion } from "motion/react";
 import { portalAccess } from "../lib/doctorPortalApi";
 import { getToken } from "../lib/authService";
-import { aboutItems, mediaItems, eventsItems, professionalsItems, partnershipsItems, contactItems } from "../lib/navLinks";
+import { aboutItems, mediaItems, eventsItems, professionalsItems, contactItems } from "../lib/navLinks";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,7 +14,6 @@ const Navigation = () => {
   const [isMediaOpen, setIsMediaOpen] = useState(false);
   const [isEventsOpen, setIsEventsOpen] = useState(false);
   const [isProfessionalsOpen, setIsProfessionalsOpen] = useState(false);
-  const [isPartnershipsOpen, setIsPartnershipsOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -40,7 +39,6 @@ const Navigation = () => {
   const mediaRef = useRef<HTMLDivElement>(null);
   const eventsRef = useRef<HTMLDivElement>(null);
   const professionalsRef = useRef<HTMLDivElement>(null);
-  const partnershipsRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
@@ -96,7 +94,6 @@ const Navigation = () => {
       if (mediaRef.current && !mediaRef.current.contains(e.target as Node)) setIsMediaOpen(false);
       if (eventsRef.current && !eventsRef.current.contains(e.target as Node)) setIsEventsOpen(false);
       if (professionalsRef.current && !professionalsRef.current.contains(e.target as Node)) setIsProfessionalsOpen(false);
-      if (partnershipsRef.current && !partnershipsRef.current.contains(e.target as Node)) setIsPartnershipsOpen(false);
       if (aboutRef.current && !aboutRef.current.contains(e.target as Node)) setIsAboutOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -110,6 +107,7 @@ const Navigation = () => {
     { label: "Telugu", code: "te" },
     { label: "Tamil", code: "ta" },
     { label: "Kannada", code: "kn" },
+    { label: "Malayalam", code: "ml" },
     { label: "Odia", code: "or" },
     { label: "Assamese", code: "as" },
     { label: "Nepali", code: "ne" },
@@ -138,7 +136,6 @@ const Navigation = () => {
     setIsMediaOpen(false);
     setIsEventsOpen(false);
     setIsProfessionalsOpen(false);
-    setIsPartnershipsOpen(false);
     setIsAboutOpen(false);
     setIsContactOpen(false);
   };
@@ -171,7 +168,6 @@ const Navigation = () => {
     media:         { index: "/media",         label: "Media Hub",     items: mediaItems },
     events:        { index: "/events",        label: "Events",        items: eventsItems },
     professionals: { index: "/professionals", label: "Professionals", items: professionalsItems },
-    partnerships:  { index: "/partnerships",  label: "Partnerships",  items: partnershipsItems },
     contact:       { index: "/contact",       label: "Contact",       items: contactItems },
   };
 
@@ -189,7 +185,6 @@ const Navigation = () => {
     if (location.pathname.startsWith("/media") || location.pathname === "/gallery") return "media";
     if (location.pathname === "/events" || location.pathname.startsWith("/events/")) return "events";
     if (location.pathname === "/professionals" || location.pathname.startsWith("/professionals/")) return "professionals";
-    if (location.pathname.startsWith("/partnerships") || location.pathname === "/partner") return "partnerships";
     if (location.pathname === "/contact" || location.pathname === "/faqs") return "contact";
     return null;
   })();
@@ -323,29 +318,6 @@ const Navigation = () => {
               )}
             </div>
 
-            {/* Partnerships dropdown */}
-            <div className="relative" ref={partnershipsRef}
-              onMouseEnter={() => { closeAllDropdowns(); setIsPartnershipsOpen(true); }}
-              onMouseLeave={() => setIsPartnershipsOpen(false)}
-            >
-              <motion.button
-                onClick={() => { closeAllDropdowns(); handleNavigation("/partnerships"); }}
-                className={`relative px-2.5 py-2 rounded-lg text-sm font-medium text-ink flex items-center gap-1.5 group overflow-hidden transition-all duration-300 whitespace-nowrap ${(partnershipsItems.some(i => location.pathname === i.path) || location.pathname === "/partner") ? "bg-ink/10" : ""}`}
-              >
-                <span className="relative z-10">Partnerships</span>
-                {chevron}
-                <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-              </motion.button>
-              <div className="absolute top-full left-0 h-1 w-full" />
-              {isPartnershipsOpen && (
-                <motion.div {...dropdownMotion} className={`${dropdownBase} min-w-[220px]`}>
-                  <div className="p-2 flex flex-col">
-                    {partnershipsItems.map(i => navDropdownItem(i.path, i.label))}
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
             {/* Media Hub dropdown */}
             <div className="relative" ref={mediaRef}
               onMouseEnter={() => { closeAllDropdowns(); setIsMediaOpen(true); }}
@@ -369,9 +341,9 @@ const Navigation = () => {
               )}
             </div>
 
-            {/* Advertising Plans */}
+            {/* Promotional Plans */}
             <Link to="/advertising-plans" className={`relative px-2.5 py-2 rounded-lg text-sm font-semibold transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/advertising-plans" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
-              <span className="relative z-10">Advertising Plans</span>
+              <span className="relative z-10">Promotional Plans</span>
               <div className="absolute inset-0 rounded-lg bg-ink/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
             </Link>
 
@@ -500,7 +472,7 @@ const Navigation = () => {
 
             <Link to="/" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Home</Link>
 
-            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">About</p>
+            <Link to="/about" className="block px-3 py-2 text-xs font-bold text-ink/60 uppercase tracking-widest hover:text-ink">About</Link>
             {aboutItems.map(i => (
               <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
@@ -509,29 +481,24 @@ const Navigation = () => {
             <Link to="/products" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Products</Link>
             <Link to="/services" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-ink-charcoal/10 text-ink">Services</Link>
 
-            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Professionals</p>
+            <Link to="/professionals" className="block px-3 py-2 text-xs font-bold text-ink/60 uppercase tracking-widest hover:text-ink">Professionals</Link>
             {professionalsItems.map(i => (
               <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
 
-            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Events</p>
+            <Link to="/events" className="block px-3 py-2 text-xs font-bold text-ink/60 uppercase tracking-widest hover:text-ink">Events</Link>
             {eventsItems.map(i => (
               <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
 
-            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Partnerships</p>
-            {partnershipsItems.map(i => (
-              <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
-            ))}
-
-            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Media Hub</p>
+            <Link to="/media" className="block px-3 py-2 text-xs font-bold text-ink/60 uppercase tracking-widest hover:text-ink">Media Hub</Link>
             {mediaItems.map(i => (
               <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
 
-            <Link to="/advertising-plans" className="block w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-ink-charcoal/10 text-ink">Advertising Plans</Link>
+            <Link to="/advertising-plans" className="block w-full text-left px-3 py-2 rounded-md text-base font-semibold hover:bg-ink-charcoal/10 text-ink">Promotional Plans</Link>
 
-            <p className="px-3 py-1 text-xs font-bold text-ink/50 uppercase tracking-widest">Contact</p>
+            <Link to="/contact" className="block px-3 py-2 text-xs font-bold text-ink/60 uppercase tracking-widest hover:text-ink">Contact</Link>
             {contactItems.map(i => (
               <Link key={i.path} to={i.path} className="block w-full text-left px-5 py-2 rounded-md text-sm font-medium hover:bg-ink-charcoal/10 text-ink">{i.label}</Link>
             ))}
@@ -551,7 +518,7 @@ const Navigation = () => {
       </div>
     </nav>
 
-    {/* Secondary submenu bar — shows on Media/Events/Professionals/Partnerships pages */}
+    {/* Secondary submenu bar — shows on Media/Events/Professionals pages */}
     {subNav && (
       <div className="fixed top-16 left-0 w-full z-[9999998] bg-surface-darksection border-b-2 border-brand-yellow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

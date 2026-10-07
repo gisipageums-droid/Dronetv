@@ -21,18 +21,12 @@ const TOPIC_MESSAGE: Record<string, string> = {
     "I run a DGCA-approved RPTO and would like to list it on DroneTv.in's Training section.\n\nRPTO name:\nDGCA approval number:\nLocation:\nWebsite (if any):\n\n(We'll follow up for a copy of your DGCA approval certificate.)",
   "report-issue":
     "[Report an Issue]\n\nPage/URL where this happened:\nWhat went wrong:\nWhat you expected instead:\n\n(Screenshots help — you can email them to bd@dronetv.in after submitting this.)",
-  "media-press":
-    "[Media & Press Inquiry]\n\nPublication/Organization:\nStory or coverage you're working on:\nWhat you need from us (interview, data, comment, images):\nDeadline (if any):",
 };
 
 const TOPIC_HEADING: Record<string, { title: string; subtitle: string }> = {
   "report-issue": {
     title: "Report an Issue",
     subtitle: "Found a bug or something that doesn't look right? Tell us what happened and we'll look into it.",
-  },
-  "media-press": {
-    title: "Media & Press Inquiries",
-    subtitle: "Journalist or partner covering the drone industry? Reach our team directly for interviews, data, or comment.",
   },
 };
 
@@ -226,7 +220,7 @@ const ContactPage = () => {
             </div>
 
             <Link
-              to="/media/drone-doctor"
+              to="/book-a-call"
               className="group flex items-center gap-4 bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:border-yellow-400 transition-all"
             >
               <div className="bg-yellow-400 rounded-full p-3 flex-shrink-0">

@@ -6,14 +6,14 @@ import { MediaItem } from '../../lib/mediaApi';
 import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
 import ShareMenu from '../../components/common/ShareMenu';
 
-// Preview build at /media/magazine-v2 - same treatment as News Pulse V2:
+// Preview build at /media/magazine-v2 - same treatment as News V2:
 // real data from the magazine CMS (contentType 'magazine'), nothing
 // fabricated. Only 2 real magazine records exist right now, so this shows
 // a real "2 magazine issues" count, not the reference's fictional 219. The
 // reference's "Vol 5 Issue 9" numbering has no real backing (no volume/
 // issue field exists) - dropped rather than invented; the real `date`
 // fills that badge slot instead. Views is real (same counter just built
-// for News Pulse - the backend increments it for every media content
+// for News - the backend increments it for every media content
 // type, not just news). "Download PDF" only renders when a record
 // actually has a real externalLink to open - never a dead button.
 

@@ -8,7 +8,7 @@ import { PageHeader, Card, EmptyState, Badge, Chip } from "../ui";
 const TABS: { value: ContentType | "all"; label: string }[] = [
   { value: "all", label: "All" },
   { value: "news", label: "News" },
-  { value: "video", label: "Video Spotlight" },
+  { value: "video", label: "Video Gallery" },
   { value: "gallery", label: "Gallery" },
   { value: "impact-story", label: "Impact Story" },
   { value: "market-intelligence", label: "Market Intelligence" },

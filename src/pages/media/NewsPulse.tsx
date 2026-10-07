@@ -61,7 +61,7 @@ export default function NewsPulsePage() {
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       <CompactHero
-        title={<>Drone Industry <span>News Pulse</span></>}
+        title={<>Drone Industry <span>News</span></>}
         stats={[
           { n: 'Daily', l: 'Updated' },
           { n: 6, l: 'Categories Covered' },
@@ -218,11 +218,10 @@ export default function NewsPulsePage() {
             <div className="bg-white border border-gray-200 rounded-b-xl px-4 py-4 space-y-2">
               {[
                 { label: 'Magazine', to: '/media/magazine' },
-                { label: 'Video Spotlight', to: '/media/video-spotlight' },
+                { label: 'Video Gallery', to: '/media/video-spotlight' },
                 { label: 'Impact Stories', to: '/media/impact-stories' },
                 { label: 'Market Intelligence', to: '/media/market-intelligence' },
                 { label: 'Tech Trends 2026', to: '/media/tech-trends' },
-                { label: 'Press Releases', to: '/media/press-releases' },
                 { label: 'Industry Reports', to: '/media/industry-reports' },
               ].map((l) => (
                 <Link
@@ -253,7 +252,7 @@ export default function NewsPulsePage() {
 
         <div className="lg:col-span-3">
           <PostContentCTA contentType="news" typeLabel="News Article"
-            ctaDescription="Have drone/GIS/AI industry news to share? Submit your article for the News Pulse." />
+            ctaDescription="Have drone/GIS/AI industry news to share? Submit your article for the News." />
         </div>
       </div>
     </div>

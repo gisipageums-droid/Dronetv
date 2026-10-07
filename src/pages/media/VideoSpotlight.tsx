@@ -100,7 +100,7 @@ export default function VideoSpotlightPage() {
   return (
     <div className="pt-[104px] min-h-screen bg-gray-50">
       <CompactHero
-        title={<>DroneTv <span>Video Spotlight</span></>}
+        title={<>DroneTv <span>Video Gallery</span></>}
         stats={[
           { n: items.length || '50+', l: 'Interviews' },
           { n: '5M+', l: 'Views' },
@@ -176,7 +176,7 @@ export default function VideoSpotlightPage() {
         </div>
 
           <PostContentCTA contentType="video" typeLabel="Video"
-            ctaDescription="Have a drone demo, interview, or event recap video to share? Submit it for the Video Spotlight." />
+            ctaDescription="Have a drone demo, interview, or event recap video to share? Submit it for the Video Gallery." />
         </div>
         <AdSidebarRail />
       </div>

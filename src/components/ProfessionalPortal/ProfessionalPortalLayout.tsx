@@ -45,14 +45,11 @@ const NAV: NavSection[] = [
   {
     heading: "Learn & Grow",
     items: [
-      { id: "training", label: "Training / RPTOs", icon: GraduationCap, path: "/professional-portal/training" },
-      { id: "career", label: "Career Path", icon: TrendingUp, path: "/professional-portal/career" },
     ],
   },
   {
     heading: "Community",
     items: [
-      { id: "networking", label: "Networking", icon: Users, path: "/professional-portal/networking" },
       { id: "community", label: "Community Forum", icon: MessagesSquare, path: "/professional-portal/community" },
       { id: "events", label: "Events Near Me", icon: CalendarDays, path: "/professional-portal/events" },
     ],
@@ -73,9 +70,6 @@ const TITLES: Record<string, string> = {
   "/professional-portal/skills": "Skills & Tools",
   "/professional-portal/jobs": "Browse Jobs",
   "/professional-portal/applications": "My Applications",
-  "/professional-portal/training": "Training / RPTOs",
-  "/professional-portal/career": "Career Path",
-  "/professional-portal/networking": "Networking",
   "/professional-portal/community": "Community Forum",
   "/professional-portal/events": "Events Near Me",
   "/professional-portal/settings": "Account Settings",
