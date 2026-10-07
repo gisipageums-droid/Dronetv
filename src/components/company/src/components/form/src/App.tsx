@@ -15,7 +15,7 @@ import { COMPANY_API, LAMBDA } from '../../../../../../lib/apiConfig';
 
 type DigiStatus = 'idle' | 'loading' | 'polling' | 'verified' | 'error';
 
-function mapFormDataToAIGenData(fd: FormData, draftId: string, userId: string) {
+export function mapFormDataToAIGenData(fd: FormData, draftId: string, userId: string) {
   const companyName = fd.companyName || '';
   const industry = fd.companyCategory?.[0] || 'Drone Technology';
   const established = fd.yearEstablished || '';
@@ -166,7 +166,7 @@ function mapFormDataToAIGenData(fd: FormData, draftId: string, userId: string) {
 }
 
 // ---- initial form state ----
-const initialFormData: FormData = {
+export const initialFormData: FormData = {
   // Company Information
   companyCategory: [],
   companyName: "",

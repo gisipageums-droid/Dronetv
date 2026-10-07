@@ -65,6 +65,7 @@ import OurPartners from "./components/Ourpartners";
 const Select = lazy(() => import("./components/company/src/components/select-template/Select"));
 const Template2 = lazy(() => import("./components/company/src/components/template/t2/src/main"));
 const Form = lazy(() => import("./components/company/src/components/form/src/main"));
+const CompanyRegistrationForm = lazy(() => import("./components/company/src/components/form/CompanyRegistrationForm"));
 const EditTemp2 = lazy(() => import("./components/company/src/components/template/t2/edit/src/main"));
 const EditTemp1 = lazy(() => import("./components/company/src/components/template/t1/edit/src/main"));
 const Template1 = lazy(() => import("./components/company/src/components/template/t1/src/main"));
@@ -471,7 +472,8 @@ const AppContent = () => {
           <Route path="/companies" element={<Select />} />
           <Route path="/template/t1" element={<Template1 />} />
           <Route path="/template/t2" element={<Template2 />} />
-          <Route path="/form" element={<Form />} />
+          <Route path="/form" element={<CompanyRegistrationForm />} />
+          <Route path="/form-v1" element={<Form />} />
           <Route path="/form/:publicId/:userId/:draftId" element={<Form />} />
           {/* AI get not found */}
           <Route path="/form/notfound" element={<NotFound />} />
