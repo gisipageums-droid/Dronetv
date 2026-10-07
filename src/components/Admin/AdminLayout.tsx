@@ -148,6 +148,7 @@ const NAV: Section[] = [
         sub: [
           { label: "Job Board",        path: "/admin/media/dashboard?type=job",           icon: <Briefcase size={14} /> },
           { label: "Pilot Directory", path: "/admin/professional/dashboard",             icon: <UserCircle size={14} /> },
+          { label: "Verification",    path: "/admin/professional/verification",          icon: <Award size={14} /> },
           { label: "Certifications",  path: "/admin/media/dashboard?type=certification", icon: <Award size={14} /> },
           { label: "Training / RPTOs",path: "/admin/media/dashboard?type=training",      icon: <GraduationCap size={14} /> },
           { label: "Networking",      path: "/admin/media/dashboard?type=networking",    icon: <Users2 size={14} /> },
@@ -275,6 +276,7 @@ const PATH_TO_ID: Record<string, string> = {
   "/admin/users": "users",
   "/admin/hero-images": "hero-images",
   "/admin/professional/dashboard": "professionals",
+  "/admin/professional/verification": "professionals",
   "/admin/media/dashboard": "media",
   "/admin/event/dashboard": "events",
   "/admin/user-content": "content-review",
@@ -294,6 +296,7 @@ const BREADCRUMBS: Record<string, string> = {
   "/admin/company/dashboard": "Company Listings",
   "/admin/hero-images": "Hero Images",
   "/admin/professional/dashboard": "Professionals",
+  "/admin/professional/verification": "Professional Verification",
   "/admin/media/dashboard": "Media Hub",
   "/admin/event/dashboard": "Events",
   "/admin/user-content": "Content Review",

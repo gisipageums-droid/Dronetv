@@ -548,6 +548,31 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                 </div>
               </div>
 
+              {/* Registration details from the new registration form */}
+              {data.formData.rawData.company && (() => {
+                const co = data.formData.rawData.company;
+                const consent = co.consents || {};
+                const row = (label: string, value: any) => (
+                  <div>
+                    <p className="text-sm text-ink-paragraph">{label}</p>
+                    <p className="font-medium break-words">{value || "Not provided"}</p>
+                  </div>
+                );
+                return (
+                  <div className="bg-ink-offwhite p-4 rounded-lg">
+                    <h4 className="font-semibold text-lg text-ink-charcoal mb-3">Registration Details</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {row("GST check", co.gst_verified ? "Verified by DroneTV" : "Not verified - check the GST number")}
+                      {row("Primary sector", co.primary_sector)}
+                      {row("Business support category", co.business_support_category === "Other Business Services" ? `Other: ${co.business_support_other}` : co.business_support_category)}
+                      {row("Business entity type", co.business_entity_type)}
+                      {row("Registered state / pincode", [co.registered_state, co.registered_pincode].filter(Boolean).join(" - "))}
+                      {row("Declarations accepted", consent.accepted_at ? `${new Date(consent.accepted_at).toLocaleString()} (version ${consent.declaration_version}, IP ${consent.ip || "unknown"})` : "")}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Identity & Tax Information */}
               <div className="bg-brand-gold/10 p-4 rounded-lg">
                 <h4 className="font-semibold text-lg text-ink-charcoal mb-3">

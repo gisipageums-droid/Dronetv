@@ -106,6 +106,7 @@ const AdminUsersDashboard = lazy(() => import("./components/Admin/userAdmin/Admi
 const StaffManagement = lazy(() => import("./components/Admin/staffAdmin/StaffManagement"));
 const AdminHeroImages = lazy(() => import("./components/Admin/heroImagesAdmin/AdminHeroImages"));
 const PrelistedCompanies = lazy(() => import("./components/Admin/verification/PrelistedCompanies"));
+const ProfessionalVerification = lazy(() => import("./components/Admin/professionalAdmin/ProfessionalVerification"));
 const RfqDisputes = lazy(() => import("./components/Admin/RfqDisputes"));
 const RfqReviewModeration = lazy(() => import("./components/Admin/RfqReviewModeration"));
 const AdminBulkImport = lazy(() => import("./components/Admin/AdminBulkImport"));
@@ -627,6 +628,7 @@ const AppContent = () => {
           <Route path="/admin/company/bulk-import" element={<AdminProtectedRoute><AdminLayout><AdminBulkImport /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/compliance-register" element={<AdminProtectedRoute><AdminLayout><ComplianceRegister /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/companies/details/:publishedId/:userId" element={<AdminProtectedRoute><AdminCompanyEdit /></AdminProtectedRoute>} />
+          <Route path="/admin/professional/verification" element={<AdminProtectedRoute><AdminLayout><ProfessionalVerification /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route
             path="/user/professionals/preview/2/:professionalId/:userId"
