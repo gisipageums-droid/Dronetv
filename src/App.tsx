@@ -88,6 +88,7 @@ const AdminDashboard = lazy(() => import("./components/Admin/CompaniesDashboard/
 const MainCompPreviewT1 = lazy(() => import("./components/mainCompanyPreview/t1/src/App"));
 const MainCompPreviewT2 = lazy(() => import("./components/mainCompanyPreview/t2/src/App"));
 const ProfessionalForm = lazy(() => import("./components/Professional/form/src/App"));
+const ProfessionalProfileForm = lazy(() => import("./components/Professional/form/ProfessionalProfileForm"));
 const EventsForm = lazy(() => import("./components/event/form/src/App"));
 const ProfessionalTemplateSelector = lazy(() => import("./components/Professional/Select-Template/select"));
 const ProTemp2 = lazy(() => import("./components/Professional/Template/T-2/src/App"));
@@ -566,8 +567,10 @@ const AppContent = () => {
           <Route path="/companies/:urlSlug" element={<MainCompPreviewT2 />} />
 
           {/* professionals route */}
-          <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalForm />} />
-          <Route path="/professional/form" element={<ProfessionalForm />} />
+          <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalProfileForm />} />
+          <Route path="/professional/form" element={<ProfessionalProfileForm />} />
+          <Route path="/professional/form-v1" element={<ProfessionalForm />} />
+          <Route path="/professional/form-v1/:userId/:professionalId" element={<ProfessionalForm />} />
           <Route path="/events/form" element={<EventsForm />} />
           <Route
             path="/professional/select"
