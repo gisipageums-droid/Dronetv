@@ -112,20 +112,35 @@ const ProfessionalProfileForm: React.FC = () => {
   useEffect(() => {
     if (!editing) return;
     let cancelled = false;
+    const load = async (): Promise<any> => {
+      // The owner (or an admin) can always read the saved form. Anyone else only
+      // gets it from the draft link once the website content has been built.
+      try {
+        const own = await axios.get(`${PROFESSIONAL_API}/${editProfessionalId}`, { timeout: 20000 });
+        if (own.data?.formData) return { ...own.data, templateSelection: own.data.templateSelection };
+      } catch { /* fall back to the draft link */ }
+      for (let i = 0; i < 20; i++) {
+        const res = await fetch(`${PROFESSIONAL_API}/draft/${editUserId}/${editProfessionalId}`);
+        if (res.status === 200) return res.json();
+        if (res.status !== 202) throw new Error(String(res.status));
+        await new Promise(r => setTimeout(r, 4000));
+        if (cancelled) throw new Error("cancelled");
+      }
+      throw new Error("timeout");
+    };
     (async () => {
       try {
-        const res = await fetch(`${PROFESSIONAL_API}/draft/${editUserId}/${editProfessionalId}`);
-        if (!res.ok) throw new Error(String(res.status));
-        const d = await res.json();
+        const d = await load();
         if (cancelled) return;
         setV(profileFromStored(d.formData));
-        if (d.templateSelection) setTemplateSelection(String(d.templateSelection));
         const fd = d.formData || {};
+        const tpl = d.templateSelection || fd.templateSelection;
+        if (tpl) setTemplateSelection(String(tpl));
         setResumeDocs(Array.isArray(fd.resume) ? fd.resume : []);
         setMedia(Array.isArray(fd.media) ? fd.media : []);
         setAlreadyVerified(!!fd.profile?.identity_verified);
       } catch {
-        setMessage({ text: "We could not open this profile. Please go back and try again.", kind: "bad" });
+        if (!cancelled) setMessage({ text: "We could not open this profile yet. If you just created it, wait a minute and try again.", kind: "bad" });
       } finally {
         if (!cancelled) setLoadingDraft(false);
       }
