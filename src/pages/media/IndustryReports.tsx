@@ -64,7 +64,7 @@ const staticReports = [
     highlights: [{num:'100+',label:'Companies Listed'},{num:'5',label:'Verticals Covered'},{num:'Free',label:'Full Access'}],
     access: 'Free — dronetv.in',
     badge: 'DroneTv', badgeColor: 'bg-brand-yellow-soft text-brand-gold',
-    link: '/partnerships',
+    link: '/listed-companies',
     linkLabel: 'Browse Directory →',
   },
 ];

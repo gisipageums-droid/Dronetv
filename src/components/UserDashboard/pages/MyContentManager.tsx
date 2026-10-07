@@ -33,7 +33,7 @@ const GROUPS: { id: string; types: { value: ContentType; label: string }[] }[] =
   { id: 'media', types: [
     { value: 'news', label: 'News' },
     { value: 'magazine', label: 'Magazine' },
-    { value: 'video', label: 'Video Spotlight' },
+    { value: 'video', label: 'Video Gallery' },
     { value: 'gallery', label: 'Gallery' },
     { value: 'impact-story', label: 'Impact Story' },
     { value: 'market-intelligence', label: 'Market Intelligence' },

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Youtube, Heart, ArrowUp } from 'lucide-react';
-import { mediaItems, eventsItems, professionalsItems, partnershipsItems, plainNavItems, NavItem } from '../lib/navLinks';
+import { mediaItems, eventsItems, professionalsItems, plainNavItems, NavItem } from '../lib/navLinks';
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -104,7 +104,6 @@ const Footer = () => {
           <FooterColumn title="Media Hub" indexPath="/media" items={mediaItems} />
           <FooterColumn title="Events" indexPath="/events" items={eventsItems} />
           <FooterColumn title="Professionals" indexPath="/professionals" items={professionalsItems} />
-          <FooterColumn title="Partnerships" indexPath="/partnerships" items={partnershipsItems} />
         </div>
 
         <div className="mt-6 pt-5 border-t border-white/10">

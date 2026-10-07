@@ -144,7 +144,7 @@ const BookCallPage: React.FC = () => {
   return (
     <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
-        title={<>Book an <span>Appointment</span></>}
+        title={<>Book a Call / <span>Help Center</span></>}
         stats={avail ? [{ n: `${avail.slotMinutes} min`, l: 'Google Meet' }, { n: 'Free', l: 'No charge' }] : undefined}
       />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 pb-16">

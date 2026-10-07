@@ -92,7 +92,7 @@ const NewsPulseV2: React.FC = () => {
 
   if (loading) return (
     <div style={PAGE_BG} className="flex min-h-screen items-center justify-center">
-      <p className="text-sm font-semibold text-slate-700">Loading News Pulse...</p>
+      <p className="text-sm font-semibold text-slate-700">Loading News...</p>
     </div>
   );
 
@@ -114,7 +114,7 @@ const NewsPulseV2: React.FC = () => {
           </div>
         ))}
         <div className="ml-auto min-w-0 shrink-0 sm:min-w-[200px] text-right">
-          <strong className="block text-sm leading-tight text-yellow-300">Drone Industry News Pulse</strong>
+          <strong className="block text-sm leading-tight text-yellow-300">Drone Industry News</strong>
           <span className="block text-[11px] text-sky-300">Updated daily · Drone, GIS &amp; AI</span>
         </div>
       </section>

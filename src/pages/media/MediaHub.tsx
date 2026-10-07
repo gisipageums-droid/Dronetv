@@ -11,7 +11,7 @@ const hubs: {
   {
     to: '/media/news-pulse',
     icon: '📰',
-    title: 'News Pulse',
+    title: 'News',
     desc: 'Daily coverage of India\'s drone industry — policy, market, defence, agriculture.',
     tags: ['Market', 'Policy', 'Defence'],
     countType: 'news',
@@ -29,7 +29,7 @@ const hubs: {
   {
     to: '/media/video-spotlight',
     icon: '🎬',
-    title: 'Video Spotlight',
+    title: 'Video Gallery',
     desc: 'Video interviews with India\'s top drone manufacturers, pilots, and policymakers.',
     tags: ['Interviews', 'Expo', 'YouTube'],
     countType: 'video',
@@ -38,7 +38,7 @@ const hubs: {
   {
     to: '/gallery',
     icon: '📷',
-    title: 'Gallery',
+    title: 'Photo Gallery',
     desc: 'Photo and video coverage from India\'s major drone events and exhibitions.',
     tags: ['Photos', 'Events', '2025'],
     update: 'Drone Expo 2025 Mumbai',
@@ -68,14 +68,6 @@ const hubs: {
     tags: ['AI', 'BVLOS', 'Swarm'],
     countType: 'tech-trends',
     countLabel: (n) => `${n} trend${n === 1 ? '' : 's'} for 2026`,
-  },
-  {
-    to: '/media/press-releases',
-    icon: '📣',
-    title: 'Press Releases',
-    desc: 'Official announcements from government, industry associations, and companies.',
-    tags: ['Government', 'Companies'],
-    update: 'Submit free',
   },
   {
     to: '/media/industry-reports',

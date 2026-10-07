@@ -9,7 +9,7 @@ import ShareMenu from '../../components/common/ShareMenu';
 // nothing fabricated. The reference's duration badge (12:46, 08:32...) has
 // zero real backing - no duration field exists anywhere on a video record
 // - dropped rather than invented. Views is real (same counter built for
-// News Pulse, works across every media content type). Tags ARE real
+// News, works across every media content type). Tags ARE real
 // (MediaItem.tags). "Watch Now" plays the video inline (YouTube embed,
 // same real behaviour the live page already had) rather than navigating
 // away - a genuinely better UX than a dead link, kept from the original.
@@ -82,7 +82,7 @@ const VideoSpotlightV2: React.FC = () => {
 
   if (loading) return (
     <div style={PAGE_BG} className="flex min-h-screen items-center justify-center">
-      <p className="text-sm font-semibold text-slate-700">Loading Video Spotlight...</p>
+      <p className="text-sm font-semibold text-slate-700">Loading Video Gallery...</p>
     </div>
   );
 
@@ -106,7 +106,7 @@ const VideoSpotlightV2: React.FC = () => {
         ))}
         <a href="https://www.youtube.com/@indiadronetv" target="_blank" rel="noopener noreferrer" className="flex h-9 shrink-0 items-center justify-center rounded-lg bg-[#ffdf00] px-4 text-sm font-extrabold text-black">Visit Channel →</a>
         <div className="ml-auto min-w-0 shrink-0 sm:min-w-[200px] text-right">
-          <strong className="block text-sm leading-tight text-yellow-300">DroneTv Video Spotlight</strong>
+          <strong className="block text-sm leading-tight text-yellow-300">DroneTv Video Gallery</strong>
           <span className="block text-[11px] text-sky-300">Interviews · Demos · Event Coverage</span>
         </div>
       </section>

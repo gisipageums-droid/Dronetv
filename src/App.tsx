@@ -134,9 +134,6 @@ const ProfessionalPortalPortfolio = lazy(() => import("./components/Professional
 const ProfessionalPortalSkills = lazy(() => import("./components/ProfessionalPortal/pages/Skills"));
 const ProfessionalPortalJobBoard = lazy(() => import("./components/ProfessionalPortal/pages/JobBoard"));
 const ProfessionalPortalApplications = lazy(() => import("./components/ProfessionalPortal/pages/Applications"));
-const ProfessionalPortalTraining = lazy(() => import("./components/ProfessionalPortal/pages/Training"));
-const ProfessionalPortalCareerPath = lazy(() => import("./components/ProfessionalPortal/pages/CareerPath"));
-const ProfessionalPortalNetworking = lazy(() => import("./components/ProfessionalPortal/pages/Networking"));
 const ProfessionalPortalCommunity = lazy(() => import("./components/ProfessionalPortal/pages/Community"));
 const ProfessionalPortalEvents = lazy(() => import("./components/ProfessionalPortal/pages/Events"));
 const ProfessionalPortalSettings = lazy(() => import("./components/ProfessionalPortal/pages/Settings"));
@@ -218,22 +215,16 @@ const MarketIntelligencePage = lazy(() => import("./pages/media/MarketIntelligen
 const MarketIntelligencePageV2 = lazy(() => import("./pages/media/MarketIntelligenceV2"));
 const TechTrendsPage = lazy(() => import("./pages/media/TechTrends"));
 const TechTrendsPageV2 = lazy(() => import("./pages/media/TechTrendsV2"));
-const PressReleasesPage = lazy(() => import("./pages/media/PressReleases"));
-const PressReleasesPageV2 = lazy(() => import("./pages/media/PressReleasesV2"));
 const IndustryReportsPage = lazy(() => import("./pages/media/IndustryReports"));
 const IndustryReportsPageV2 = lazy(() => import("./pages/media/IndustryReportsV2"));
-const DroneDoctorPageV2 = lazy(() => import("./pages/media/DroneDoctorV2"));
 const MediaHubPage = lazy(() => import("./pages/media/MediaHub"));
 const MediaDetailPage = lazy(() => import("./pages/media/MediaDetailPage"));
 
 // Events sub-pages
-const EventCalendarPage = lazy(() => import("./pages/events/EventCalendar"));
 const ExposPage = lazy(() => import("./pages/events/Expos"));
-const ConferencesPage = lazy(() => import("./pages/events/Conferences"));
 const WorkshopsPage = lazy(() => import("./pages/events/Workshops"));
 const CompetitionsPage = lazy(() => import("./pages/events/Competitions"));
 const WebinarsPage = lazy(() => import("./pages/events/Webinars"));
-const MeetupsPage = lazy(() => import("./pages/events/Meetups"));
 
 // Professionals sub-pages
 const JobBoardPage = lazy(() => import("./pages/professionals/JobBoard"));
@@ -242,19 +233,10 @@ const PilotDirectoryPage = lazy(() => import("./pages/professionals/PilotDirecto
 const PilotDirectoryPageV2 = lazy(() => import("./pages/professionals/PilotDirectoryV2"));
 const CertificationsPage = lazy(() => import("./pages/professionals/Certifications"));
 const PortfolioPage = lazy(() => import("./pages/professionals/Portfolio"));
-const TrainingPage = lazy(() => import("./pages/professionals/Training"));
-const CareerPathPage = lazy(() => import("./pages/professionals/CareerPath"));
 
 // Partnerships pages
-const DroneManufacturersPage = lazy(() => import("./pages/partnerships/DroneManufacturers"));
-const AITechCompaniesPage = lazy(() => import("./pages/partnerships/AITechCompanies"));
-const EventOrganizersPage = lazy(() => import("./pages/partnerships/EventOrganizers"));
-const EducationPartnersPage = lazy(() => import("./pages/partnerships/EducationPartners"));
-const IndustryPlayersPage = lazy(() => import("./pages/partnerships/IndustryPlayers"));
 const PartnerBenefitsPage = lazy(() => import("./pages/partnerships/PartnerBenefits"));
 const BecomePartnerPage = lazy(() => import("./pages/partnerships/BecomePartner"));
-const PartnershipsHubPage = lazy(() => import("./pages/partnerships/PartnershipsHub"));
-const PartnershipsHubPageV2 = lazy(() => import("./pages/partnerships/PartnershipsHubV2"));
 const PromotionalPackagesPageV2 = lazy(() => import("./pages/partnerships/PromotionalPackagesV2"));
 
 
@@ -328,7 +310,7 @@ const AppContent = () => {
           <Route path="/media/news-pulse" element={<NewsPulsePageV2 />} />
           <Route path="/media/news-pulse-v2" element={<NewsPulsePageV2 />} />
           <Route path="/media/news-pulse-v1" element={<NewsPulsePage />} />
-          <Route path="/media/news/:contentId" element={<MediaDetailPage contentType="news" backPath="/media/news-pulse" backLabel="News Pulse" externalLinkLabel="Read Original Source" />} />
+          <Route path="/media/news/:contentId" element={<MediaDetailPage contentType="news" backPath="/media/news-pulse" backLabel="News" externalLinkLabel="Read Original Source" />} />
           {/* Tailwind redesign shifted to the real route (approved), old
               page kept mounted at -v1 as a rollback path, not linked from
               nav. */}
@@ -362,15 +344,15 @@ const AppContent = () => {
           <Route path="/media/tech-trends" element={<TechTrendsPageV2 />} />
           <Route path="/media/tech-trends-v2" element={<TechTrendsPageV2 />} />
           <Route path="/media/tech-trends-v1" element={<TechTrendsPage />} />
-          <Route path="/media/press-releases" element={<PressReleasesPageV2 />} />
-          <Route path="/media/press-releases-v2" element={<PressReleasesPageV2 />} />
-          <Route path="/media/press-releases-v1" element={<PressReleasesPage />} />
+          <Route path="/media/press-releases" element={<Navigate to="/media" replace />} />
+          <Route path="/media/press-releases-v2" element={<Navigate to="/media" replace />} />
+          <Route path="/media/press-releases-v1" element={<Navigate to="/media" replace />} />
           <Route path="/media/industry-reports" element={<IndustryReportsPageV2 />} />
           <Route path="/media/industry-reports-v2" element={<IndustryReportsPageV2 />} />
           <Route path="/media/industry-reports-v1" element={<IndustryReportsPage />} />
           {/* Brand new page (no prior version existed) */}
-          <Route path="/media/drone-doctor" element={<DroneDoctorPageV2 />} />
-          <Route path="/media/drone-doctor-v2" element={<DroneDoctorPageV2 />} />
+          <Route path="/media/drone-doctor" element={<Navigate to="/book-a-call" replace />} />
+          <Route path="/media/drone-doctor-v2" element={<Navigate to="/book-a-call" replace />} />
           <Route path="/media/drone-doctor/:contentId" element={<MediaDetailPage contentType="drone-doctor" backPath="/media/drone-doctor" backLabel="Drone Doctor" />} />
           {/* Gallery hub replaces the flat photo grid as the /gallery landing
               page (approved); the flat grid stays live, unchanged, at
@@ -389,26 +371,26 @@ const AppContent = () => {
           <Route path="/media/gallery-v1" element={<GalleryPage />} />
 
           {/* Events sub-routes — must be before dynamic /event/:name */}
-          <Route path="/events/calendar" element={<EventCalendarPage />} />
+          <Route path="/events/calendar" element={<Navigate to="/events" replace />} />
           <Route path="/events/expos" element={<ExposPage />} />
-          <Route path="/events/conferences" element={<ConferencesPage />} />
+          <Route path="/events/conferences" element={<Navigate to="/events" replace />} />
           <Route path="/events/workshops" element={<WorkshopsPage />} />
           <Route path="/events/competitions" element={<CompetitionsPage />} />
           <Route path="/events/webinars" element={<WebinarsPage />} />
-          <Route path="/events/meetups" element={<MeetupsPage />} />
+          <Route path="/events/meetups" element={<Navigate to="/events" replace />} />
 
           {/* Partnerships routes */}
           {/* Tailwind redesign shifted to the real route (approved), old
               page kept mounted at -v1 as a rollback path, not linked from
               nav. */}
-          <Route path="/partnerships" element={<PartnershipsHubPageV2 />} />
-          <Route path="/partnerships-v2" element={<PartnershipsHubPageV2 />} />
-          <Route path="/partnerships-v1" element={<PartnershipsHubPage />} />
-          <Route path="/partnerships/drone-manufacturers" element={<DroneManufacturersPage />} />
-          <Route path="/partnerships/ai-tech" element={<AITechCompaniesPage />} />
-          <Route path="/partnerships/event-organizers" element={<EventOrganizersPage />} />
-          <Route path="/partnerships/education-partners" element={<EducationPartnersPage />} />
-          <Route path="/partnerships/industry-players" element={<IndustryPlayersPage />} />
+          <Route path="/partnerships" element={<Navigate to="/" replace />} />
+          <Route path="/partnerships-v2" element={<Navigate to="/" replace />} />
+          <Route path="/partnerships-v1" element={<Navigate to="/" replace />} />
+          <Route path="/partnerships/drone-manufacturers" element={<Navigate to="/" replace />} />
+          <Route path="/partnerships/ai-tech" element={<Navigate to="/" replace />} />
+          <Route path="/partnerships/event-organizers" element={<Navigate to="/" replace />} />
+          <Route path="/partnerships/education-partners" element={<Navigate to="/" replace />} />
+          <Route path="/partnerships/industry-players" element={<Navigate to="/" replace />} />
           {/* Tailwind redesign shifted to the real route (approved), old
               page kept mounted at -v1 as a rollback path, not linked from
               nav. */}
@@ -613,8 +595,8 @@ const AppContent = () => {
           where it was first built. Redirect old links/bookmarks forward. */}
           <Route path="/professionals/portfolio" element={<Navigate to="/aboutus/portfolio" replace />} />
           <Route path="/aboutus/portfolio" element={<PortfolioPage />} />
-          <Route path="/professionals/training" element={<TrainingPage />} />
-          <Route path="/professionals/career-path" element={<CareerPathPage />} />
+          <Route path="/professionals/training" element={<Navigate to="/professionals" replace />} />
+          <Route path="/professionals/career-path" element={<Navigate to="/professionals" replace />} />
           <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
           <Route path="/professional/:urlSlug?" element={<FinalT1 />} />
 
@@ -812,9 +794,9 @@ const AppContent = () => {
           <Route path="/professional-portal/skills" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalSkills /></ProfessionalPortalLayout></ProtectedRoute>} />
           <Route path="/professional-portal/jobs" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalJobBoard /></ProfessionalPortalLayout></ProtectedRoute>} />
           <Route path="/professional-portal/applications" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalApplications /></ProfessionalPortalLayout></ProtectedRoute>} />
-          <Route path="/professional-portal/training" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalTraining /></ProfessionalPortalLayout></ProtectedRoute>} />
-          <Route path="/professional-portal/career" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalCareerPath /></ProfessionalPortalLayout></ProtectedRoute>} />
-          <Route path="/professional-portal/networking" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalNetworking /></ProfessionalPortalLayout></ProtectedRoute>} />
+          <Route path="/professional-portal/training" element={<Navigate to="/professional-portal" replace />} />
+          <Route path="/professional-portal/career" element={<Navigate to="/professional-portal" replace />} />
+          <Route path="/professional-portal/networking" element={<Navigate to="/professional-portal" replace />} />
           <Route path="/professional-portal/community" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalCommunity /></ProfessionalPortalLayout></ProtectedRoute>} />
           <Route path="/professional-portal/events" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalEvents /></ProfessionalPortalLayout></ProtectedRoute>} />
           <Route path="/professional-portal/settings" element={<ProtectedRoute><ProfessionalPortalLayout><ProfessionalPortalSettings /></ProfessionalPortalLayout></ProtectedRoute>} />

@@ -183,9 +183,9 @@ const NAV: Section[] = [
         label: "Media Hub",
         icon: <Tv size={17} />,
         sub: [
-          { label: "News Pulse",          path: "/admin/media/dashboard?type=news",               icon: <Newspaper size={14} /> },
+          { label: "News",          path: "/admin/media/dashboard?type=news",               icon: <Newspaper size={14} /> },
           { label: "Magazine",            path: "/admin/media/dashboard?type=magazine",            icon: <BookOpen size={14} /> },
-          { label: "Video Spotlight",     path: "/admin/media/dashboard?type=video",              icon: <Video size={14} /> },
+          { label: "Video Gallery",     path: "/admin/media/dashboard?type=video",              icon: <Video size={14} /> },
           { label: "Gallery",             path: "/admin/media/dashboard?type=gallery",             icon: <ImageIcon size={14} /> },
           { label: "Impact Stories",      path: "/admin/media/dashboard?type=impact-story",        icon: <Star size={14} /> },
           { label: "Market Intelligence", path: "/admin/media/dashboard?type=market-intelligence", icon: <BarChart2 size={14} /> },

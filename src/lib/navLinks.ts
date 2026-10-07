@@ -1,5 +1,3 @@
-import { DOCTOR_CONSULT_ENABLED } from './features';
-
 export interface NavItem {
   path: string;
   label: string;
@@ -11,52 +9,34 @@ export const aboutItems: NavItem[] = [
 ];
 
 export const mediaItems: NavItem[] = [
-  { path: "/media/news-pulse", label: "News Pulse" },
+  { path: "/media/news-pulse", label: "News" },
   { path: "/media/magazine", label: "Magazine" },
-  { path: "/media/video-spotlight", label: "Video Spotlight" },
-  { path: "/gallery", label: "Gallery" },
+  { path: "/media/video-spotlight", label: "Video Gallery" },
+  { path: "/gallery", label: "Photo Gallery" },
   { path: "/media/impact-stories", label: "Impact Stories" },
   { path: "/media/market-intelligence", label: "Market Intelligence" },
   { path: "/media/tech-trends", label: "Tech Trends" },
-  { path: "/media/press-releases", label: "Press Releases" },
   { path: "/media/industry-reports", label: "Industry Reports" },
 ];
 
 export const eventsItems: NavItem[] = [
-  { path: "/events/calendar", label: "Event Calendar" },
   { path: "/events/expos", label: "Expos" },
-  { path: "/events/conferences", label: "Conferences" },
   { path: "/events/workshops", label: "Workshops" },
   { path: "/events/competitions", label: "Competitions" },
   { path: "/events/webinars", label: "Webinars" },
-  { path: "/events/meetups", label: "Meetups" },
 ];
 
 export const professionalsItems: NavItem[] = [
   { path: "/professionals/job-board", label: "Job Board" },
-  { path: "/professionals/training", label: "Training" },
-  { path: "/professionals/career-path", label: "Career Path" },
   { path: "/media", label: "Media" },
 ];
 
 export const contactItems: NavItem[] = [
   { path: "/contact", label: "Contact Us" },
-  { path: "/book-a-call", label: "Book a Call" },
-  { path: "/media/drone-doctor", label: "Drone Doctor / Help Center" },
-  ...(DOCTOR_CONSULT_ENABLED ? [{ path: "/drone-doctor/consult", label: "Book a Drone Doctor Consultation" }] : []),
+  { path: "/book-a-call", label: "Book a Call / Help Center" },
   { path: "/faqs", label: "FAQs" },
-  { path: "/advertising-plans", label: "Advertise With Us" },
+  { path: "/advertising-plans", label: "Promotional Plans" },
   { path: "/contact?topic=report-issue", label: "Report an Issue / Feedback" },
-  { path: "/contact?topic=media-press", label: "Media & Press Inquiries" },
-];
-
-export const partnershipsItems: NavItem[] = [
-  { path: "/partnerships/drone-manufacturers", label: "Drone Manufacturers" },
-  { path: "/partnerships/ai-tech", label: "AI & Tech Companies" },
-  { path: "/partnerships/event-organizers", label: "Event Organizers" },
-  { path: "/partnerships/education-partners", label: "Education Partners" },
-  { path: "/partnerships/industry-players", label: "Industry Players" },
-  { path: "/partner", label: "Partner With Us" },
 ];
 
 export const plainNavItems: NavItem[] = [

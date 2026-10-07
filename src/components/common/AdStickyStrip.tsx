@@ -5,7 +5,7 @@ import AdSlot from './AdSlot';
 import { ExpoAdCreative, getAdsFor } from './adCreatives';
 
 // Pages excluded from ad placements entirely (per explicit user instruction):
-// Home, About Us, Contact, Advertising Plans (which is /advertising-plans) —
+// Home, About Us, Contact, Promotional Plans (which is /advertising-plans) —
 // plus internal editor/form/admin/dashboard routes where a fixed overlay would
 // sit on top of active UI instead of content. Note "/professional/" (singular,
 // trailing slash) only matches the form/edit/select/t1/t2 routes, not the

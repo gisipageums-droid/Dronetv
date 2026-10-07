@@ -40,7 +40,7 @@ const FAQ_GROUPS: FAQGroup[] = [
       },
       {
         q: "What are the Silver, Gold and Platinum badges?",
-        a: "These are separate paid brand packages (not part of the ₹499 Verified fee) that increase your listing's visibility — a premium tier ribbon on your card, higher placement in search and category pages, and extra profile features. You can view current plans and pricing on the Advertising Plans page.",
+        a: "These are separate paid brand packages (not part of the ₹499 Verified fee) that increase your listing's visibility — a premium tier ribbon on your card, higher placement in search and category pages, and extra profile features. You can view current plans and pricing on the Promotional Plans page.",
       },
       {
         q: "Can I edit my listing after it's published?",
@@ -83,7 +83,7 @@ const FAQ_GROUPS: FAQGroup[] = [
           <>
             Check our{" "}
             <Link to="/advertising-plans" className="text-ink-link font-semibold hover:underline">
-              Advertising Plans
+              Promotional Plans
             </Link>{" "}
             for brand packages, homepage placements, and sponsored listings.
           </>
@@ -179,7 +179,7 @@ const FAQPage = () => {
         </Link>
 
         <Link
-          to="/media/drone-doctor"
+          to="/book-a-call"
           className="group flex items-center gap-4 bg-surface-card rounded-xl border border-ink-light shadow-sm p-6 hover:border-brand-yellow transition-all mt-4"
         >
           <div className="bg-brand-yellow rounded-full p-3 flex-shrink-0">

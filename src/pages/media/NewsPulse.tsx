@@ -62,7 +62,7 @@ export default function NewsPulsePage() {
   return (
     <div className="pt-[104px] min-h-screen bg-surface-main">
       <CompactHero
-        title={<>Drone Industry <span>News Pulse</span></>}
+        title={<>Drone Industry <span>News</span></>}
         stats={[
           { n: 'Daily', l: 'Updated' },
           { n: 6, l: 'Categories Covered' },
@@ -117,7 +117,7 @@ export default function NewsPulsePage() {
           </div>}
 
           <div>
-            {/* "News Pulse Spot" paid placement — booked via User Dashboard > Page Placements */}
+            {/* "News Spot" paid placement — booked via User Dashboard > Page Placements */}
             <PagePlacementSlot slotId="media-news" aspect="4/1" minHeight={90} className="mb-5 w-full" />
 
             <h2 className="text-lg font-bold text-ink flex items-center gap-3 mb-5 after:flex-1 after:h-0.5 after:bg-ink-light after:content-['']">
@@ -173,19 +173,6 @@ export default function NewsPulsePage() {
             })()}
           </div>
 
-          <div className="bg-brand-yellow rounded-xl p-6 flex items-start gap-4">
-            <div className="text-2xl">📰</div>
-            <div>
-              <h3 className="font-bold text-ink mb-1">Submit a News Story or Press Release</h3>
-              <p className="text-sm text-ink/70 mb-3">Share industry news, announcements, or press releases with India's drone community.</p>
-              <Link
-                to="/media/press-releases"
-                className="inline-block bg-ink text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-ink-charcoal transition-colors"
-              >
-                Go to Press Releases →
-              </Link>
-            </div>
-          </div>
         </div>
 
         <div className="space-y-4">
@@ -222,11 +209,10 @@ export default function NewsPulsePage() {
             <div className="bg-surface-card border border-ink-light rounded-b-xl px-4 py-4 space-y-2">
               {[
                 { label: 'Magazine', to: '/media/magazine' },
-                { label: 'Video Spotlight', to: '/media/video-spotlight' },
+                { label: 'Video Gallery', to: '/media/video-spotlight' },
                 { label: 'Impact Stories', to: '/media/impact-stories' },
                 { label: 'Market Intelligence', to: '/media/market-intelligence' },
                 { label: 'Tech Trends 2026', to: '/media/tech-trends' },
-                { label: 'Press Releases', to: '/media/press-releases' },
                 { label: 'Industry Reports', to: '/media/industry-reports' },
               ].map((l) => (
                 <Link
@@ -257,7 +243,7 @@ export default function NewsPulsePage() {
 
         <div className="lg:col-span-3">
           <PostContentCTA contentType="news" typeLabel="News Article"
-            ctaDescription="Have drone/GIS/AI industry news to share? Submit your article for the News Pulse." />
+            ctaDescription="Have drone/GIS/AI industry news to share? Submit your article for the News." />
         </div>
       </div>
     </div>
