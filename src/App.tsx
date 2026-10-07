@@ -597,6 +597,7 @@ const AppContent = () => {
           <Route path="/aboutus/portfolio" element={<PortfolioPage />} />
           <Route path="/professionals/training" element={<Navigate to="/professionals" replace />} />
           <Route path="/professionals/career-path" element={<Navigate to="/professionals" replace />} />
+          <Route path="/professionals/networking" element={<Navigate to="/professionals" replace />} />
           <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
           <Route path="/professional/:urlSlug?" element={<FinalT1 />} />
 
