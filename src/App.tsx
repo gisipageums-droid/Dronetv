@@ -51,6 +51,7 @@ const ProductDetailPage = lazy(() => import("./components/ProductDetailPage"));
 const ProfessionalsPage = lazy(() => import("./components/ProfessionalsPage"));
 const CompaniesPageV2 = lazy(() => import("./components/CompaniesPageV2"));
 const ProfessionalsPageV2 = lazy(() => import("./components/ProfessionalsPageV2"));
+const ProfessionalDirectory = lazy(() => import("./components/ProfessionalDirectory"));
 const ServicesPage = lazy(() => import("./components/ServicesPage"));
 const ServicesPageV2 = lazy(() => import("./components/ServicesPageV2"));
 const ServiceDetailPage = lazy(() => import("./components/ServiceDetailPage"));
@@ -402,7 +403,7 @@ const AppContent = () => {
           {/* Tailwind redesign is now live at the real routes (approved) -
               old CompaniesPage/ProfessionalsPage kept mounted at -v1 as a
               rollback path, not linked from any nav. */}
-          <Route path="/professionals" element={<ProfessionalsPageV2 />} />
+          <Route path="/professionals" element={<ProfessionalDirectory />} />
           <Route path="/listed-companies" element={<CompaniesPageV2 />} />
           <Route path="/companies-v2" element={<CompaniesPageV2 />} />
           <Route path="/professionals-v2" element={<ProfessionalsPageV2 />} />
