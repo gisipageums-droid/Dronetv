@@ -309,7 +309,6 @@ const ProfessionalsPage: React.FC = () => {
             { to: '/professionals/pilot-directory', icon: '🧑‍✈️', count: '100', unit: 'Tokens To List', title: 'Pilot Directory', desc: 'Create your verified pilot profile. Get discovered by drone companies hiring or contracting.' },
             { to: '/professionals/certifications', icon: '🏅', count: '3', unit: 'Categories', title: 'Certifications', desc: 'Complete DGCA RPC certification guide — Small, Medium, and Large drone categories.' },
             { to: '/professionals/portfolio', icon: '🗂️', count: '100', unit: 'Tokens To Upload', title: 'Portfolio', desc: 'Showcase your drone work — aerial maps, farm surveys, inspection reports, cinematic reels.' },
-            { to: '/professionals/networking', icon: '🔗', count: 'Events', unit: 'Meetups', title: 'Networking', desc: 'Connect with drone companies, fellow pilots, and industry professionals at events.' },
             { to: '/professionals/community', icon: '👥', count: 'Active', unit: 'Community', title: 'Community', desc: 'Discussion forums, WhatsApp groups, flyins, and peer support across India.' },
             { to: '/professionals/certifications', icon: '⚡', count: 'Rs.50K', unit: 'Starting Cost', title: 'Start Here', desc: 'New to drones? Complete 5-day DGCA Small category certification. Start earning from month one.', highlight: true },
           ], card => (

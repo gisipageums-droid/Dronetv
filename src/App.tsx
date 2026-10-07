@@ -222,7 +222,6 @@ const PilotDirectoryPage = lazy(() => import("./pages/professionals/PilotDirecto
 const PilotDirectoryPageV2 = lazy(() => import("./pages/professionals/PilotDirectoryV2"));
 const CertificationsPage = lazy(() => import("./pages/professionals/Certifications"));
 const PortfolioPage = lazy(() => import("./pages/professionals/Portfolio"));
-const NetworkingPage = lazy(() => import("./pages/professionals/Networking"));
 const CommunityPage = lazy(() => import("./pages/professionals/Community"));
 
 // Partnerships pages
@@ -529,7 +528,7 @@ const AppContent = () => {
           <Route path="/professionals/portfolio" element={<Navigate to="/aboutus/portfolio" replace />} />
           <Route path="/aboutus/portfolio" element={<PortfolioPage />} />
           <Route path="/professionals/training" element={<Navigate to="/professionals" replace />} />
-          <Route path="/professionals/networking" element={<NetworkingPage />} />
+          <Route path="/professionals/networking" element={<Navigate to="/professionals" replace />} />
           <Route path="/professionals/community" element={<CommunityPage />} />
           <Route path="/professionals/career-path" element={<Navigate to="/professionals" replace />} />
           <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />

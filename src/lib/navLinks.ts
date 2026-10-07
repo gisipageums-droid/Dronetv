@@ -28,7 +28,6 @@ export const eventsItems: NavItem[] = [
 
 export const professionalsItems: NavItem[] = [
   { path: "/professionals/job-board", label: "Job Board" },
-  { path: "/professionals/networking", label: "Networking" },
   { path: "/media", label: "Media" },
 ];
 
