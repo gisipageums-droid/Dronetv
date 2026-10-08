@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Filter, X, ChevronDown, MapPin, BadgeCheck } from "lucide-react";
+import { Filter, X, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { PROFESSIONAL_API } from "../lib/apiConfig";
 import { fetchContent } from "../lib/mediaApi";
 import { withInlineAds, AdSidebarRail } from "./common/adCreatives";
-import ShareMenu from "./common/ShareMenu";
+import { ProfessionalCardV2, type Professional } from "./ProfessionalsPageV2";
 import {
   SECTOR_LABEL, SPECIALIZATIONS, INDIA_STATES, CERT_TYPES, BUSINESS_SUPPORT_CATEGORIES,
   PROFESSIONAL_TYPES, EXPERIENCE_LEVELS, AVAILABILITY, WORK_PREFERENCES, type SectorKey,
@@ -38,6 +37,7 @@ interface Row {
   city: string;
   state: string;
   skills: string[];
+  services_count?: number;
   certifications: string[];
   member_since: number | null;
   identity_verified: boolean;
@@ -94,10 +94,21 @@ function pageList(cur: number, last: number): (number | "...")[] {
 
 const profilePath = (r: Row) => `${r.template_selection === "template-2" ? "/professionals/" : "/professional/"}${r.url_slug || r.user_name}`;
 
-const SAVED_KEY = "dronetv_saved_professionals";
-function loadSaved(): string[] {
-  try { return JSON.parse(localStorage.getItem(SAVED_KEY) || "[]"); } catch { return []; }
-}
+const toCardData = (r: Row): Professional => ({
+  professionalId: r.professional_id,
+  fullName: r.full_name,
+  professionalName: r.full_name,
+  role: r.job_title || r.specialization || r.business_support_category,
+  location: [r.city, r.state].filter(Boolean).join(", "),
+  previewImage: /^https?:\/\//i.test(r.photo_url || "") ? r.photo_url : "",
+  professionalDescription: r.summary || r.tagline,
+  createdAt: r.member_since ? `${r.member_since}-06-15` : undefined,
+  templateSelection: r.template_selection,
+  urlSlug: r.url_slug,
+  userName: r.user_name,
+  skillsCount: r.skills.length,
+  servicesCount: r.services_count || 0,
+});
 
 const ProfessionalDirectory: React.FC = () => {
   const navigate = useNavigate();
@@ -112,7 +123,6 @@ const ProfessionalDirectory: React.FC = () => {
   const [failed, setFailed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [jobCount, setJobCount] = useState<number | null>(null);
-  const [saved, setSaved] = useState<string[]>(loadSaved);
   const first = useRef(true);
 
   useEffect(() => {
@@ -146,13 +156,6 @@ const ProfessionalDirectory: React.FC = () => {
   const toggleIn = (g: "professional_type" | "availability" | "work_preference" | "certification", v: string) =>
     update({ [g]: filters[g].includes(v) ? filters[g].filter(x => x !== v) : [...filters[g], v] } as Partial<Filters>);
   const reset = () => { setFilters(EMPTY); setPage(1); };
-
-  const toggleSave = (r: Row) => {
-    const next = saved.includes(r.professional_id) ? saved.filter(x => x !== r.professional_id) : [...saved, r.professional_id];
-    setSaved(next);
-    try { localStorage.setItem(SAVED_KEY, JSON.stringify(next)); } catch { /* storage unavailable */ }
-    if (next.includes(r.professional_id)) toast.success("Saved on this device.");
-  };
 
   const specOptions: string[] = filters.sector && filters.sector !== "business_support"
     ? SPECIALIZATIONS[filters.sector as Exclude<SectorKey, "business_support">]
@@ -331,7 +334,7 @@ const ProfessionalDirectory: React.FC = () => {
               </div>
             ) : (
               <div className={`grid gap-3.5 [grid-template-columns:repeat(auto-fill,minmax(255px,1fr))] ${loading ? "opacity-60" : ""}`}>
-                {rows.map(r => <ProfessionalResultCard key={r.professional_id} r={r} saved={saved.includes(r.professional_id)} onSave={() => toggleSave(r)} />)}
+                {rows.map(r => <ProfessionalCardV2 key={r.professional_id} professional={toCardData(r)} onClick={() => navigate(profilePath(r))} />)}
               </div>
             )}
 
@@ -423,56 +426,6 @@ const ProfessionalDirectory: React.FC = () => {
         <span>Connect │ Collaborate │ Grow</span>
       </footer>
     </div>
-  );
-};
-
-const ProfessionalResultCard: React.FC<{ r: Row; saved: boolean; onSave: () => void }> = ({ r, saved, onSave }) => {
-  const sub = [r.job_title, r.organisation].filter(Boolean).join(" at ");
-  const loc = [r.city, r.state].filter(Boolean).join(", ");
-  const spec = r.specialization || r.business_support_category;
-  const path = profilePath(r);
-  return (
-    <article className="flex min-w-0 flex-col gap-2.5 rounded-[10px] border border-[#ecd16a] bg-[#f8e48a] p-3 shadow">
-      <div className="flex items-start gap-2.5">
-        <div className="flex size-[42px] shrink-0 items-center justify-center overflow-hidden rounded-md bg-[#2f4fb0] text-lg font-extrabold text-white">
-          {r.photo_url && /^https?:\/\//i.test(r.photo_url) ? <img src={r.photo_url} alt={r.full_name} loading="lazy" className="h-full w-full object-cover" /> : (r.full_name || "?").trim().charAt(0).toUpperCase()}
-        </div>
-        <div className="min-w-0 flex-1">
-          <b className="block break-words text-[11px] font-extrabold uppercase leading-tight">{r.full_name}</b>
-          {sub && <span className="mt-0.5 block text-[10px] leading-tight text-slate-700">{sub}</span>}
-          {loc && <span className="mt-0.5 flex items-center gap-0.5 text-[10px] leading-tight text-slate-700"><MapPin className="size-3" />{loc}</span>}
-        </div>
-        {r.identity_verified && <span className="flex shrink-0 items-center gap-0.5 rounded bg-slate-900 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-[#fbc50b]"><BadgeCheck className="size-3" />Verified</span>}
-      </div>
-
-      <div className="flex justify-end gap-1.5">
-        <button type="button" onClick={onSave} aria-pressed={saved} className={`rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ${saved ? "bg-slate-900 text-white" : "bg-white"}`}>{saved ? "Saved" : "Save"}</button>
-        <ShareMenu url={`${window.location.origin}${path}`} title={r.full_name} buttonClassName="grid size-[22px] place-items-center rounded-full bg-white" iconClassName="size-3" />
-      </div>
-
-      <div className="flex flex-wrap gap-1">
-        {r.sectors.map(s => <span key={s} className="rounded-[3px] border border-[#2f4fb0] bg-[#eef1fb] px-1.5 py-0.5 text-[9px] font-bold uppercase text-[#2f4fb0]">{SECTOR_LABEL[s] || s}</span>)}
-        {spec && <span className="rounded-[3px] border border-[#2f4fb0] bg-[#eef1fb] px-1.5 py-0.5 text-[9px] font-bold uppercase text-[#2f4fb0]">{spec}</span>}
-        {r.availability && <span className={`rounded-[3px] border px-1.5 py-0.5 text-[9px] font-bold uppercase ${/^Not Currently/.test(r.availability) ? "border-slate-500 bg-slate-200 text-slate-600" : "border-green-700 bg-green-100 text-green-800"}`}>{r.availability}</span>}
-      </div>
-
-      <p className="line-clamp-2 min-h-[30px] text-[10px] leading-relaxed text-slate-800">{r.summary || r.tagline}</p>
-
-      <div className="grid min-h-[40px] grid-cols-4 auto-rows-[40px] gap-1">
-        {r.skills.slice(0, 4).map(s => <div key={s} className="flex items-center justify-center overflow-hidden rounded border border-[#ecd16a] bg-white/75 p-0.5 text-center text-[9px] font-bold leading-tight [overflow-wrap:anywhere]">{s}</div>)}
-      </div>
-
-      <div className="mt-auto grid grid-cols-3 gap-1.5 text-center">
-        {[[String(r.skills.length), "Skills"], [String(r.certifications.length), "Certificates"], [r.member_since ? String(r.member_since) : "-", "Member Since"]].map(([v, l]) => (
-          <div key={l}><b className="block text-xs font-extrabold leading-tight">{v}</b><span className="text-[9px] text-slate-600">{l}</span></div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-2 gap-2">
-        <Link to={path} className="rounded border border-slate-300 bg-white py-2 text-center text-[11px] font-extrabold text-slate-900 hover:bg-slate-50">View Profile</Link>
-        <Link to={path} className="rounded bg-[#c8352b] py-2 text-center text-[11px] font-extrabold text-white hover:bg-[#a82a21]">Connect Now</Link>
-      </div>
-    </article>
   );
 };
 
