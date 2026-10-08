@@ -245,7 +245,7 @@ const ProfessionalDirectory: React.FC = () => {
   return (
     <div className="min-h-screen" style={PAGE_BG}>
       {/* Reserve the fixed navbar plus the professionals submenu bar. */}
-      <section className="mt-[108px] flex min-h-[64px] flex-wrap items-center gap-x-5 gap-y-2 bg-[#0c1220] px-3 py-2 text-white sm:px-6" aria-label="Directory counts">
+      <section className="mt-[108px] grid min-h-[64px] grid-cols-3 items-center gap-x-3 gap-y-1.5 bg-[#0c1220] px-3 py-2 text-white sm:flex sm:flex-wrap sm:gap-x-5 sm:gap-y-2 sm:px-6" aria-label="Directory counts">
         {[
           ["Total Professionals", stats.registered], ["Drone / Aerospace", by.drone_aerospace], ["GIS", by.gis],
           ["AI", by.ai], ["Robotics", by.robotics], ["Business Support", by.business_support],
@@ -255,8 +255,8 @@ const ProfessionalDirectory: React.FC = () => {
             <b className="text-base font-extrabold">{Number(n || 0).toLocaleString("en-IN")}</b>
           </div>
         ))}
-        <button type="button" onClick={addProfile} className="flex h-9 items-center rounded-lg bg-[#ffdf00] px-4 text-sm font-extrabold text-black">+ Add Your Profile</button>
-        <div className="ml-auto text-right text-sm font-bold leading-tight text-yellow-300">
+        <button type="button" onClick={addProfile} className="col-span-3 flex h-9 items-center justify-center rounded-lg bg-[#ffdf00] px-4 text-sm font-extrabold text-black sm:col-span-1">+ Add Your Profile</button>
+        <div className="col-span-3 hidden text-right text-sm font-bold leading-tight text-yellow-300 sm:ml-auto sm:block">
           India&rsquo;s Professional Directory<span className="block text-[11px] font-normal text-sky-300">Discover, Connect, Collaborate, Grow</span>
         </div>
       </section>
