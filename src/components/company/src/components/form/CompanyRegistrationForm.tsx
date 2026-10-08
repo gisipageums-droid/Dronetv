@@ -144,6 +144,7 @@ const CompanyRegistrationForm: React.FC = () => {
   const [gst, setGst] = useState<{ s: "idle" | "loading" | "ok" | "bad"; msg: string }>({ s: "idle", msg: "" });
   const [panAuto, setPanAuto] = useState(true);
   const [logoBusy, setLogoBusy] = useState(false);
+  const [logoNote, setLogoNote] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -252,6 +253,22 @@ const CompanyRegistrationForm: React.FC = () => {
       await axios.put(pre.data.uploadUrl, file, { headers: { "Content-Type": file.type || "image/png" }, timeout: 120000 });
       set("company_logo", pre.data.imageUrl);
     } catch { setErrors(e => ({ ...e, company_logo: "Upload failed. Please try again." })); }
+    finally { setLogoBusy(false); }
+  };
+
+  // Picks the logo up from the company website once, unless one is already there.
+  const fetchedFor = useRef("");
+  const fetchLogoFromWebsite = async () => {
+    const url = v.website_url.trim();
+    if (!url || !isHttp(url) || v.company_logo || logoBusy || fetchedFor.current === url) return;
+    fetchedFor.current = url;
+    setLogoBusy(true); setLogoNote("Looking for your logo on the website...");
+    try {
+      const owner = loggedInEmail || (EMAIL_RE.test(v.director_email) ? v.director_email : "guest");
+      const res = await axios.post(`${COMPANY_API}/logo-from-website`, { url, userId: owner }, { timeout: 40000 });
+      if (res.data?.success && res.data.logoUrl) { setV(p => (p.company_logo ? p : { ...p, company_logo: res.data.logoUrl })); setLogoNote("Logo taken from your website. You can change it."); }
+      else setLogoNote("We could not find a logo on that website. Please upload it.");
+    } catch { setLogoNote("We could not fetch the logo. Please upload it."); }
     finally { setLogoBusy(false); }
   };
 
@@ -382,10 +399,10 @@ const CompanyRegistrationForm: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white text-[14px] text-[#1c1c1c]">
-      <header className="mt-16 bg-[#fbc50b] px-5 py-3.5">
+      <header className="mt-16 bg-[#fbc50b] px-5 py-2">
         <div className="mx-auto flex max-w-[760px] items-center justify-between gap-3">
           <button type="button" onClick={() => navigate(-1)} aria-label="Go back" className="size-[30px] rounded-full border border-[#c99a00] bg-white text-[15px] font-bold">&lt;</button>
-          <div className="ml-2 flex-1"><div className="text-base font-extrabold">DroneTV</div><div className="text-[11px] text-[#4a3a00]">Company Registration</div></div>
+          <div className="ml-2 flex flex-1 items-center gap-3"><img src="/images/Drone tv .in.png" alt="DroneTV" className="h-14 w-auto" /><div className="text-[11px] text-[#4a3a00]">Company Registration</div></div>
           <div className="hidden text-right text-[11px] leading-snug text-[#4a3a00] sm:block">Drone / Aerospace, GIS, AI, Robotics<br />and Business Support</div>
         </div>
       </header>
@@ -517,9 +534,9 @@ const CompanyRegistrationForm: React.FC = () => {
               <input id="udyam" type="text" maxLength={19} autoComplete="off" value={v.udyam_number} onChange={e => set("udyam_number", e.target.value.toUpperCase().replace(/\s/g, ""))} placeholder="Enter UDYAM Registration Number" className={cls("udyam_number")} />
             </Field>
             <Field label="Website URL" htmlFor="website_url" required error={err("website_url")}>
-              <input id="website_url" type="url" value={v.website_url} onChange={e => set("website_url", e.target.value)} placeholder="https://www.yourcompany.com" className={cls("website_url")} />
+              <input id="website_url" type="url" value={v.website_url} onChange={e => set("website_url", e.target.value)} onBlur={fetchLogoFromWebsite} placeholder="https://www.yourcompany.com" className={cls("website_url")} />
             </Field>
-            <Field label="Company Logo (optional)" htmlFor="company_logo" error={err("company_logo")} help={logoBusy ? "Uploading..." : v.company_logo ? "Logo uploaded." : "PNG, JPG, SVG. Shown in your website header. Maximum 2 MB."}>
+            <Field label="Company Logo (optional)" htmlFor="company_logo" error={err("company_logo")} help={logoBusy ? (logoNote || "Uploading...") : v.company_logo ? (logoNote || "Logo uploaded.") : logoNote || "PNG, JPG, SVG. Shown in your website header. Maximum 2 MB."}>
               <div className="flex items-center gap-3.5">
                 <div className="flex size-14 flex-none items-center justify-center overflow-hidden rounded-md border border-dashed border-[#c9b25a] bg-white text-[10px] text-slate-500">
                   {v.company_logo ? <img src={v.company_logo} alt="Logo preview" className="max-h-full max-w-full" /> : "Logo"}

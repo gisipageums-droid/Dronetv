@@ -398,11 +398,11 @@ const ProfessionalProfileForm: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white text-[14px] text-[#1c1c1c]">
-      <header className="bg-[#fbc50b] px-5 py-3.5">
+      <header className="bg-[#fbc50b] px-5 py-2">
         <div className="mx-auto flex max-w-[760px] items-center justify-between gap-3">
           <button type="button" onClick={() => navigate(-1)} aria-label="Go back" className="size-[30px] rounded-full border border-[#c99a00] bg-white text-[15px] font-bold">&lt;</button>
           <div className="ml-2 flex-1">
-            <div className="text-base font-extrabold">DroneTV</div>
+            <img src="/images/Drone tv .in.png" alt="DroneTV" className="h-14 w-auto" />
             <div className="text-[11px] text-[#4a3a00]">Professional Profile</div>
           </div>
           <div className="hidden text-right text-[11px] leading-snug text-[#4a3a00] sm:block">Drone / Aerospace, GIS, AI, Robotics<br />and Business Support</div>

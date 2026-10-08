@@ -245,19 +245,19 @@ const ProfessionalDirectory: React.FC = () => {
   return (
     <div className="min-h-screen" style={PAGE_BG}>
       {/* Reserve the fixed navbar plus the professionals submenu bar. */}
-      <section className="mt-[108px] flex flex-wrap items-center gap-x-6 gap-y-3 border-b-2 border-[#fbc50b] bg-[#0d0d0d] px-3 py-3 text-white sm:px-6" aria-label="Directory counts">
+      <section className="mt-[108px] flex min-h-[64px] flex-wrap items-center gap-x-5 gap-y-2 bg-[#0c1220] px-3 py-2 text-white sm:px-6" aria-label="Directory counts">
         {[
           ["Total Professionals", stats.registered], ["Drone / Aerospace", by.drone_aerospace], ["GIS", by.gis],
           ["AI", by.ai], ["Robotics", by.robotics], ["Business Support", by.business_support],
         ].map(([label, n]) => (
-          <div key={label as string} className="min-w-[88px]">
-            <span className="block text-[10px] text-slate-300">{label}</span>
-            <b className="text-xl font-extrabold">{Number(n || 0).toLocaleString("en-IN")}</b>
+          <div key={label as string} className="min-w-[72px] leading-tight">
+            <span className="block text-[9.5px] text-slate-300">{label}</span>
+            <b className="text-base font-extrabold">{Number(n || 0).toLocaleString("en-IN")}</b>
           </div>
         ))}
-        <button type="button" onClick={addProfile} className="rounded-md bg-[#fbc50b] px-4 py-2.5 text-sm font-extrabold text-slate-900 hover:bg-white">+ Add Your Profile</button>
-        <div className="ml-auto text-xs font-extrabold leading-snug text-[#fbc50b]">
-          India&rsquo;s Professional Directory<span className="block text-[10px] font-normal text-sky-300">Discover, Connect, Collaborate, Grow</span>
+        <button type="button" onClick={addProfile} className="flex h-9 items-center rounded-lg bg-[#ffdf00] px-4 text-sm font-extrabold text-black">+ Add Your Profile</button>
+        <div className="ml-auto text-right text-sm font-bold leading-tight text-yellow-300">
+          India&rsquo;s Professional Directory<span className="block text-[11px] font-normal text-sky-300">Discover, Connect, Collaborate, Grow</span>
         </div>
       </section>
 

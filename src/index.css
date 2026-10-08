@@ -149,3 +149,7 @@ body {
   top: 70%;
 }
 
+
+/* Pages reserve room for the navbar plus the sub menu bar; without the sub menu only the navbar remains. */
+body.no-subnav .mt-\[108px\] { margin-top: 64px; }
+body.no-subnav .pt-\[104px\] { padding-top: 64px; }
