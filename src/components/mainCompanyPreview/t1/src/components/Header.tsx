@@ -141,6 +141,18 @@ export default function Header({
                         // broken image, so fall back to the bundled default
                         // here too, matching Footer.tsx and t2's Header.
                         src={headerState.logoSrc || logo}
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          // Some auto-fetched logo URLs point at the company's own
+                          // site and get blocked by that site's hotlink/referrer
+                          // protection when loaded from dronetv.in (confirmed live:
+                          // a 403 keyed off the Referer header, not a dead link) -
+                          // referrerPolicy avoids most of those, onError catches the
+                          // rest (plain dead links) by falling back to the bundled
+                          // default rather than showing a broken image icon.
+                          const img = e.currentTarget;
+                          if (img.src !== logo) img.src = logo;
+                        }}
                         alt="Logo"
                         style={{
                           height: '65px',

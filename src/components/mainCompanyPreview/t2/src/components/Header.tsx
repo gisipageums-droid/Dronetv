@@ -107,6 +107,10 @@ export default function Header({
                   content.logoUrl.startsWith("http")) ? (
                 <img referrerPolicy="no-referrer"
                   src={content.logoUrl || logo}
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    if (img.src !== logo) img.src = logo;
+                  }}
                   alt="Logo"
                   className="cursor-pointer group-hover:scale-110 transition-all duration-300 rounded-xl object-contain h-[65px] min-w-[77px] max-w-[200px]"
                 />
