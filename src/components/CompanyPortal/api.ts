@@ -98,6 +98,33 @@ export async function uploadCompanyFile(userId: string, fieldName: string, file:
   return imageUrl;
 }
 
+// GST lookup for the Overview tab's "Verify" action - same backend endpoint
+// and response shape the registration wizard (Step1CompanyCategory) already
+// parses; kept here as a thin, public (no-auth) call so the portal profile
+// screen can auto-fill legal name/address/state/pincode without retyping.
+export async function verifyGstinLookup(gstin: string): Promise<any> {
+  const base = COMPANY_API || LAMBDA.company;
+  const res = await fetch(`${base}/verify/gstin`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id_number: gstin }),
+  });
+  return res.json();
+}
+
+// Fetches the company's logo from its own website (same public endpoint the
+// new registration form uses) - used on the Overview tab when a website URL
+// is entered and no logo has been uploaded yet.
+export async function fetchLogoFromWebsite(url: string, userId: string): Promise<{ success: boolean; logoUrl?: string; message?: string }> {
+  const base = COMPANY_API || LAMBDA.company;
+  const res = await fetch(`${base}/logo-from-website`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url, userId }),
+  });
+  return res.json();
+}
+
 // Fixes-doc #2 / Deployment Map 2.5 - claiming a bulk-imported, not-yet-
 // claimed profile. agreementAccepted is required the first time (the
 // backend 400s without it) - idempotent afterward, so a repeat call on an
