@@ -66,12 +66,18 @@ export function mapFormDataToAIGenData(fd: FormData, draftId: string, userId: st
       },
       services: {
         heading: { head: fd.servicesTitle || 'Our Services', desc: fd.servicesDescription || 'Professional services tailored to your needs' },
-        services: (fd.services || []).filter(s => s.title?.trim()).map(s => ({ icon: s.icon || '', title: s.title.trim(), description: s.description || '' })),
+        services: (fd.services || []).filter(s => s.title?.trim()).map(s => ({
+          icon: s.icon || '',
+          title: s.title.trim(),
+          description: s.description || '',
+          benefits: (s.benefits || []).filter(b => b?.trim()),
+          process: (s.process || []).filter(p => p?.trim()),
+        })),
         categories: ['All']
       },
       products: {
         heading: { title: fd.productsTitle || 'Professional Products', heading: 'Innovative Solutions', description: 'Quality solutions.', trust: 'for your business.' },
-        products: (fd.products || []).filter(p => p.title?.trim()).map(p => ({ title: p.title.trim(), description: p.description || '' })),
+        products: (fd.products || []).filter(p => p.title?.trim()).map(p => ({ title: p.title.trim(), description: p.description || '', pricing: p.pricing || '' })),
         benefits: [
           { icon: '30', color: 'red-accent', title: '30-Day Money Back', desc: 'Try our solutions risk-free.' },
           { icon: '99%', color: 'primary', title: '99% Success Rate', desc: 'Industry-leading success rate.' },
@@ -478,14 +484,14 @@ function App({ embedded = false, initialCompanyCategory, companyData, onEmbedded
           : cachedFields.services?.length > 0
             ? cachedFields.services
             : publishedServices.length > 0
-              ? publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '' }))
+              ? publishedServices.map((s: any) => ({ icon: s.icon || 'service', title: s.title || '', description: s.description || '', benefits: s.benefits || [], process: s.process || [] }))
               : formDataFromDraft.services || [],
         products: localDraft.products?.length > 0
           ? localDraft.products
           : cachedFields.products?.length > 0
             ? cachedFields.products
             : publishedProducts.length > 0
-              ? publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '' }))
+              ? publishedProducts.map((p: any) => ({ title: p.title || '', description: p.description || '', pricing: p.pricing || p.price || '' }))
               : formDataFromDraft.products || [],
         aboutImageUrl: localDraft.aboutImageUrl || cachedFields.aboutImageUrl || formDataFromDraft.aboutImageUrl || publishedAboutImage,
         heroBackgroundUrl: localDraft.heroBackgroundUrl || cachedFields.heroBackgroundUrl || formDataFromDraft.heroBackgroundUrl || publishedHeroImage,

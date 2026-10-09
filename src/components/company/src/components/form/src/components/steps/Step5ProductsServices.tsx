@@ -146,6 +146,62 @@ const Step5ProductsServices: React.FC<StepProps> = ({
     });
   };
 
+  const addServiceBenefit = (index: number) => {
+    updateFormData((prev) => {
+      const updated = [...prev.services];
+      const benefits = [...(updated[index].benefits || []), ""];
+      updated[index] = { ...updated[index], benefits };
+      return { services: updated };
+    });
+  };
+
+  const updateServiceBenefit = (index: number, bi: number, value: string) => {
+    updateFormData((prev) => {
+      const updated = [...prev.services];
+      const benefits = [...(updated[index].benefits || [])];
+      benefits[bi] = value;
+      updated[index] = { ...updated[index], benefits };
+      return { services: updated };
+    });
+  };
+
+  const removeServiceBenefit = (index: number, bi: number) => {
+    updateFormData((prev) => {
+      const updated = [...prev.services];
+      const benefits = (updated[index].benefits || []).filter((_, i) => i !== bi);
+      updated[index] = { ...updated[index], benefits };
+      return { services: updated };
+    });
+  };
+
+  const addServiceProcessStep = (index: number) => {
+    updateFormData((prev) => {
+      const updated = [...prev.services];
+      const process = [...(updated[index].process || []), ""];
+      updated[index] = { ...updated[index], process };
+      return { services: updated };
+    });
+  };
+
+  const updateServiceProcessStep = (index: number, pi: number, value: string) => {
+    updateFormData((prev) => {
+      const updated = [...prev.services];
+      const process = [...(updated[index].process || [])];
+      process[pi] = value;
+      updated[index] = { ...updated[index], process };
+      return { services: updated };
+    });
+  };
+
+  const removeServiceProcessStep = (index: number, pi: number) => {
+    updateFormData((prev) => {
+      const updated = [...prev.services];
+      const process = (updated[index].process || []).filter((_, i) => i !== pi);
+      updated[index] = { ...updated[index], process };
+      return { services: updated };
+    });
+  };
+
   const addProduct = () => {
     updateFormData((prev) => ({ products: [...prev.products, { title: "" }] }));
   };
@@ -166,6 +222,14 @@ const Step5ProductsServices: React.FC<StepProps> = ({
     updateFormData((prev) => {
       const updated = [...prev.products];
       updated[index] = { ...updated[index], description: value };
+      return { products: updated };
+    });
+  };
+
+  const updateProductPricing = (index: number, value: string) => {
+    updateFormData((prev) => {
+      const updated = [...prev.products];
+      updated[index] = { ...updated[index], pricing: value };
       return { products: updated };
     });
   };
@@ -276,6 +340,77 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   }`}>
                     {(service.description || "").length}/1000
                   </div>
+
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between">
+                      <h5 className="text-xs font-semibold text-status-success">Key Benefits</h5>
+                      <button
+                        type="button"
+                        onClick={() => addServiceBenefit(index)}
+                        className="flex items-center text-xs text-status-success"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add Benefit
+                      </button>
+                    </div>
+                    <div className="mt-1 space-y-1">
+                      {(service.benefits || []).map((benefit, bi) => (
+                        <div key={bi} className="flex items-center gap-2">
+                          <div className="flex-1">
+                            <FormInput
+                              label=""
+                              value={benefit}
+                              onChange={(value) => updateServiceBenefit(index, bi, value)}
+                              placeholder="e.g., Faster turnaround, Lower operating cost"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeServiceBenefit(index, bi)}
+                            className="p-1 text-status-error rounded-md hover:bg-status-error/10"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between">
+                      <h5 className="text-xs font-semibold text-status-info">Our Process (steps, in order)</h5>
+                      <button
+                        type="button"
+                        onClick={() => addServiceProcessStep(index)}
+                        className="flex items-center text-xs text-status-info"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add Step
+                      </button>
+                    </div>
+                    <div className="mt-1 space-y-1">
+                      {(service.process || []).map((step, pi) => (
+                        <div key={pi} className="flex items-center gap-2">
+                          <span className="w-5 shrink-0 text-xs font-bold text-status-info">{pi + 1}.</span>
+                          <div className="flex-1">
+                            <FormInput
+                              label=""
+                              value={step}
+                              onChange={(value) => updateServiceProcessStep(index, pi, value)}
+                              placeholder="e.g., Site survey and requirement study"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeServiceProcessStep(index, pi)}
+                            className="p-1 text-status-error rounded-md hover:bg-status-error/10"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -378,6 +513,12 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   }`}>
                     {(product.description || "").length}/1000
                   </div>
+                  <FormInput
+                    label="Price (shown to buyers)"
+                    value={product.pricing || ""}
+                    onChange={(value) => updateProductPricing(index, value)}
+                    placeholder="e.g., ₹49,999 or Contact for pricing"
+                  />
                 </div>
               ))}
             </div>

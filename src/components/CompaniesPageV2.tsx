@@ -388,11 +388,16 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
         </div>
       )}
 
-      {/* Exact tier badge treatment from companyCard(): LISTED is a plain
-          text pill; Silver/Gold/Platinum use the real medal artwork at a
-          fixed h-12 w-12 object-contain box, same as the reference. */}
+      {/* Tier badge: the source artwork is a wide banner (medal + ribbon on
+          the left third, "SILVER/GOLD/PLATINUM — Verified Listing" text on
+          the right two-thirds). object-contain in a square box was shrinking
+          the whole banner down to fit its width, leaving the actual medal
+          a barely-visible sliver surrounded by empty space. object-cover +
+          object-left on a square box instead crops to exactly the left
+          square slice of the source (which fully contains the medal+ribbon),
+          filling the box edge-to-edge - same artwork, no new assets needed. */}
       {tier ? (
-        <img src={MEDAL_SRC[tier]} alt={`${TIER_STYLE[tier].label} package`} title={TIER_STYLE[tier].label} className="absolute right-1 top-1 z-10 h-16 w-16 object-contain" />
+        <img src={MEDAL_SRC[tier]} alt={`${TIER_STYLE[tier].label} package`} title={TIER_STYLE[tier].label} className="absolute right-1 top-1 z-10 h-20 w-20 rounded-md object-cover object-left shadow-sm" />
       ) : (
         <span className="absolute right-2 top-2 z-10 rounded bg-[#dff0df] px-2 py-2 text-[10px] font-extrabold">LISTED</span>
       )}
