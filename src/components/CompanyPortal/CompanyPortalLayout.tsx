@@ -88,6 +88,8 @@ const TITLES: Record<string, string> = {
   "/company-portal/package": "My Package",
   "/company-portal/invoices": "Invoices",
   "/company-portal/settings": "Account Settings",
+  "/user-rfq": "My Requirements",
+  "/user-rfq/new": "Post Requirement",
 };
 
 interface SidebarContentProps {
@@ -193,7 +195,8 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
 
   const displayName = user?.userData?.fullName || user?.userData?.companyName || user?.email || "Company";
   const initials = displayName.slice(0, 2).toUpperCase();
-  const pageTitle = TITLES[location.pathname] || "Dashboard";
+  const pageTitle = TITLES[location.pathname]
+    || (location.pathname.startsWith("/user-rfq/") ? "Requirement Details" : "Dashboard");
 
   const userId = (user as any)?.userData?.email || (user as any)?.email || "";
   const [companies, setCompanies] = useState<any[]>([]);
@@ -317,7 +320,11 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
 
           <div className="flex-1" />
           <a
-            href="/listed-companies"
+            href={
+              activeCompany
+                ? `/${activeCompany.templateSelection === "template-2" || activeCompany.templateSelection === "2" ? "companies" : "company"}/${activeCompany.urlSlug || activeCompany.publishedId}`
+                : "/listed-companies"
+            }
             target="_blank"
             rel="noreferrer"
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 border border-white/15 rounded-lg text-xs font-semibold text-white/70 hover:border-white/30 hover:text-white"
