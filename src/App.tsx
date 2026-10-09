@@ -107,12 +107,14 @@ const StaffManagement = lazy(() => import("./components/Admin/staffAdmin/StaffMa
 const AdminHeroImages = lazy(() => import("./components/Admin/heroImagesAdmin/AdminHeroImages"));
 const PrelistedCompanies = lazy(() => import("./components/Admin/verification/PrelistedCompanies"));
 const ProfessionalVerification = lazy(() => import("./components/Admin/professionalAdmin/ProfessionalVerification"));
+const RfqListings = lazy(() => import("./components/Admin/RfqListings"));
 const RfqDisputes = lazy(() => import("./components/Admin/RfqDisputes"));
 const RfqReviewModeration = lazy(() => import("./components/Admin/RfqReviewModeration"));
 const AdminBulkImport = lazy(() => import("./components/Admin/AdminBulkImport"));
 const ComplianceRegister = lazy(() => import("./components/Admin/ComplianceRegister"));
 const PrelistedCompanyReview = lazy(() => import("./components/Admin/verification/PrelistedCompanyReview"));
 const CompanyPortalLayout = lazy(() => import("./components/CompanyPortal/CompanyPortalLayout"));
+const RfqPortalLayout = lazy(() => import("./components/RfqPortalLayout"));
 const CompanyPortalDashboard = lazy(() => import("./components/CompanyPortal/pages/Dashboard"));
 const CompanyPortalMyCompanies = lazy(() => import("./components/CompanyPortal/pages/MyCompanies"));
 const CompanyPortalProfile = lazy(() => import("./components/CompanyPortal/pages/profile/CompanyProfilePage"));
@@ -623,6 +625,7 @@ const AppContent = () => {
           <Route path="/admin/hero-images" element={<AdminProtectedRoute><AdminLayout><AdminHeroImages /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/verification/prelisted" element={<AdminProtectedRoute><AdminLayout><PrelistedCompanies /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/verification/prelisted/:publishedId" element={<AdminProtectedRoute><AdminLayout><PrelistedCompanyReview /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/rfq/all" element={<AdminProtectedRoute><AdminLayout><RfqListings /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/rfq/disputes" element={<AdminProtectedRoute><AdminLayout><RfqDisputes /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/rfq/reviews" element={<AdminProtectedRoute><AdminLayout><RfqReviewModeration /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/company/bulk-import" element={<AdminProtectedRoute><AdminLayout><AdminBulkImport /></AdminLayout></AdminProtectedRoute>} />
@@ -906,15 +909,15 @@ const AppContent = () => {
               another vendor) per the "one account, every role" design. */}
           <Route
             path="/user-rfq"
-            element={<ProtectedRoute><UserDashboardLayout><RfqList /></UserDashboardLayout></ProtectedRoute>}
+            element={<ProtectedRoute><RfqPortalLayout><RfqList /></RfqPortalLayout></ProtectedRoute>}
           />
           <Route
             path="/user-rfq/new"
-            element={<ProtectedRoute><UserDashboardLayout><RfqNew /></UserDashboardLayout></ProtectedRoute>}
+            element={<ProtectedRoute><RfqPortalLayout><RfqNew /></RfqPortalLayout></ProtectedRoute>}
           />
           <Route
             path="/user-rfq/:rfqId"
-            element={<ProtectedRoute><UserDashboardLayout><RfqDetail /></UserDashboardLayout></ProtectedRoute>}
+            element={<ProtectedRoute><RfqPortalLayout><RfqDetail /></RfqPortalLayout></ProtectedRoute>}
           />
 
           <Route

@@ -184,6 +184,11 @@ export async function listDisputes(rfqId: string): Promise<Dispute[]> {
   return res.data.disputes || [];
 }
 
+export async function adminListAllRfqs(status?: string, limit = 50, offset = 0): Promise<{ total: number; rfqs: Rfq[] }> {
+  const res = await axios.get(`${base}/admin/all`, { params: { status, limit, offset }, headers: authHeader() });
+  return { total: res.data.total || 0, rfqs: res.data.rfqs || [] };
+}
+
 export async function adminListDisputes(status?: string): Promise<Dispute[]> {
   const res = await axios.get(`${base}/admin/disputes`, { params: { status }, headers: authHeader() });
   return res.data.disputes || [];
