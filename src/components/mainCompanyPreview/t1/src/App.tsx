@@ -171,7 +171,7 @@ export default function App() {
       />
       <Products
         productData={finaleDataReview.content.products}
-
+        publishedId={finaleDataReview.publishedId}
       />
 
       <GallerySection

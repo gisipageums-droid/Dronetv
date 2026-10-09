@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Heart, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, X } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Heart, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, X, Star } from 'lucide-react';
 import ShareMenu from './common/ShareMenu';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
@@ -334,10 +334,11 @@ const CompaniesPageV2: React.FC = () => {
 
 // companyCard() - exact class-string port. Real business-logic signals
 // (verified checkmark, RPTO/Managed/Suspended tags, documentation stat,
-// unclaimed banner, quote, share) are threaded in as additive elements
-// using the same sizing/spacing language as the reference, never
-// fabricated data (no fake like-count or star rating - dropped, not
-// invented, since no real field backs them).
+// unclaimed banner, quote, share, star rating) are threaded in as additive
+// elements using the same sizing/spacing language as the reference, never
+// fabricated data (no fake like-count; the star rating only renders when a
+// real `rating` field is present on the record - there is no review system
+// behind companies yet, so it stays invisible until one exists).
 const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
   const ind = getIndustry(company);
   const fallbackPhotos = CATEGORY_PHOTOS[ind];
@@ -410,11 +411,21 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           <h3 className="line-clamp-2 text-xs font-extrabold leading-tight">{company.companyName}</h3>
           {company.location && <p className="mt-1 flex items-center gap-1 text-[10px]"><MapPin className="size-3 shrink-0" /><span className="truncate">{shortLocation(company.location)}</span></p>}
           {verified && <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-blue-700"><BadgeCheck className="size-3.5 shrink-0" />Verified</p>}
+          {typeof company.rating === 'number' && (
+            <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-amber-600">
+              <Star className="size-3 shrink-0 fill-amber-500 text-amber-500" />{company.rating.toFixed(1)}
+              {typeof company.reviewCount === 'number' && <span className="font-normal text-slate-500">({company.reviewCount})</span>}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Exact heart/share icon column position - star/rating dropped, no
-          real rating field exists to back it (not fabricated). */}
+      {/* Heart/share icon column. A star rating now renders next to the
+          company name, but ONLY when a real `rating` field is present on
+          the record (same pattern already used for products in
+          ProductsPageV2.tsx) - there is still no review/rating system
+          backing companies today, so most cards show no star yet. Nothing
+          here is fabricated. */}
       <div className="absolute right-2 top-[70px] flex items-start justify-end gap-2 text-center">
         <div className="flex w-7 flex-col items-center">
           <button type="button" onClick={e => { e.stopPropagation(); onToggleSave?.(); }} aria-label="Save" className={`flex size-7 items-center justify-center ${saved ? 'text-red-600' : ''}`}><Heart className="size-5" fill={saved ? 'currentColor' : 'none'} /></button>
