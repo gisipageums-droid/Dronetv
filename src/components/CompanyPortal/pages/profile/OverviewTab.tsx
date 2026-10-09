@@ -1,9 +1,28 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { Building2, Loader2 } from "lucide-react";
-import { Card, Field, FormGrid, ActionBar, inputCls } from "../../ui";
-import { getCompanyContent, saveCompanyContent, uploadCompanyFile } from "../../api";
+import { Building2, Loader2, BadgeCheck } from "lucide-react";
+import { Card, Field, FormGrid, ActionBar, inputCls, Btn } from "../../ui";
+import { getCompanyContent, saveCompanyContent, uploadCompanyFile, verifyGstinLookup, fetchLogoFromWebsite } from "../../api";
 import type { TabProps } from "./CompanyProfilePage";
+
+// Same field parsing as the registration wizard's GST verify step
+// (Step1CompanyCategory.tsx) so a company can re-verify its GSTIN here later
+// and get the identical auto-fill behavior, instead of retyping everything.
+function parseGstResponse(apiData: any): { legalName: string; address: string; state: string; pincode: string } {
+  const notNA = (v: string | undefined | null) => (v && v !== "NA") ? v : "";
+  const legalName = notNA(apiData.legal_name) || notNA(apiData.trade_name) || notNA(apiData.business_name) || "";
+  const fullAddress = apiData.contact_details?.principal?.address || "";
+  let state = "";
+  let pincode = "";
+  if (fullAddress) {
+    const parts = fullAddress.split(",").map((s: string) => s.trim());
+    const last = parts[parts.length - 1] || "";
+    const pincodeMatch = last.match(/\d{6}/);
+    if (pincodeMatch) pincode = pincodeMatch[0];
+    if (parts.length >= 2) state = parts[parts.length - 2];
+  }
+  return { legalName, address: fullAddress, state, pincode };
+}
 
 const CATEGORIES = ["Drone Service Provider", "Drone Manufacturer / OEM", "Component / Parts Supplier", "Software / Platform", "Training / RPTO", "Consulting", "Agriculture Drone Services", "Survey & Mapping", "Inspection Services", "Defence / Security", "GIS / Remote Sensing", "AI / ML Solutions", "Other"];
 const SIZES = ["1-10 employees", "11-50 employees", "51-200 employees", "201-500 employees", "500+ employees"];
@@ -36,6 +55,9 @@ export default function OverviewTab({ publishedId, userId, profile, save }: TabP
   const [logoUrl, setLogoUrl] = useState("");
   const [logoLoading, setLogoLoading] = useState(true);
   const [logoUploading, setLogoUploading] = useState(false);
+  const [verifyingGst, setVerifyingGst] = useState(false);
+  const [gstVerified, setGstVerified] = useState(false);
+  const [fetchingWebsiteLogo, setFetchingWebsiteLogo] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,6 +96,64 @@ export default function OverviewTab({ publishedId, userId, profile, save }: TabP
   };
 
   const set = (k: string, v: string) => setForm((f: any) => ({ ...f, [k]: v }));
+
+  const handleVerifyGst = async () => {
+    const gstin = form.gstin.trim().toUpperCase();
+    if (gstin.length !== 15) {
+      toast.error("Enter a valid 15 character GSTIN first.");
+      return;
+    }
+    setVerifyingGst(true);
+    try {
+      const response = await verifyGstinLookup(gstin);
+      if (!response?.success || !response?.data) {
+        toast.error(response?.message || "GST verification is unavailable right now - please fill details manually.");
+        return;
+      }
+      const { legalName, address, state, pincode } = parseGstResponse(response.data);
+      setForm((f: any) => ({
+        ...f,
+        gstin,
+        legalEntityName: legalName || f.legalEntityName,
+        address: address || f.address,
+        state: state || f.state,
+        pincode: pincode || f.pincode,
+      }));
+      setGstVerified(true);
+      toast.success("GST verified - details filled in below.");
+    } catch {
+      toast.error("GST verification failed - please try again.");
+    } finally {
+      setVerifyingGst(false);
+    }
+  };
+
+  // One-time convenience: if the owner types a website and hasn't uploaded a
+  // logo yet, try to pull one from the site itself (same public endpoint the
+  // registration form uses) instead of leaving the logo slot empty.
+  const handleWebsiteBlur = async () => {
+    const url = form.website.trim();
+    if (!url || logoUrl || fetchingWebsiteLogo) return;
+    setFetchingWebsiteLogo(true);
+    try {
+      const result = await fetchLogoFromWebsite(url, userId);
+      if (result.success && result.logoUrl) {
+        const data = await getCompanyContent(publishedId);
+        const existing = data?.content || {};
+        await saveCompanyContent(userId, publishedId, {
+          ...existing,
+          company: { ...existing.company, logo: result.logoUrl },
+          header: { ...existing.header, logoSrc: result.logoUrl, logoUrl: result.logoUrl },
+        });
+        setLogoUrl(result.logoUrl);
+        toast.success("Logo found on your website and added.");
+      }
+    } catch {
+      /* best-effort only - no error shown, manual upload still available */
+    } finally {
+      setFetchingWebsiteLogo(false);
+    }
+  };
 
   const handleSave = async () => {
     const missing = REQUIRED_FIELDS.filter(([key]) => !String(form[key] || "").trim());
@@ -122,10 +202,18 @@ export default function OverviewTab({ publishedId, userId, profile, save }: TabP
         </Field>
         <Field label="Year of Establishment"><input type="number" className={inputCls} value={form.yearEstablished} onChange={e => set("yearEstablished", e.target.value)} min={1950} max={2026} /></Field>
         <Field label="CIN Number"><input className={inputCls} value={form.cin} onChange={e => set("cin", e.target.value)} placeholder="Company Identification Number" /></Field>
-        <Field label="GSTIN"><input className={inputCls} value={form.gstin} onChange={e => set("gstin", e.target.value)} placeholder="GST Identification Number" /></Field>
+        <Field label="GSTIN">
+          <div className="flex gap-2">
+            <input className={inputCls} value={form.gstin} onChange={e => { set("gstin", e.target.value); setGstVerified(false); }} placeholder="GST Identification Number" />
+            <Btn variant="outline" size="sm" onClick={handleVerifyGst} disabled={verifyingGst}>
+              {verifyingGst ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : gstVerified ? <BadgeCheck className="w-3.5 h-3.5 text-status-success" /> : "Verify"}
+            </Btn>
+          </div>
+          <p className="text-[11px] text-white/30 mt-0.5">Verify to auto-fill legal name, address, state and pincode below.</p>
+        </Field>
         <Field label="Company Email" required><input type="email" className={inputCls} value={form.email} onChange={e => set("email", e.target.value)} /></Field>
         <Field label="Phone (WhatsApp)" required><input type="tel" className={inputCls} value={form.phone} onChange={e => set("phone", e.target.value)} placeholder="+91 ..." /></Field>
-        <Field label="Website"><input type="url" className={inputCls} value={form.website} onChange={e => set("website", e.target.value)} placeholder="https://yourcompany.com" /></Field>
+        <Field label="Website"><input type="url" className={inputCls} value={form.website} onChange={e => set("website", e.target.value)} onBlur={handleWebsiteBlur} placeholder="https://yourcompany.com" /></Field>
         <Field label="LinkedIn"><input type="url" className={inputCls} value={form.linkedin} onChange={e => set("linkedin", e.target.value)} placeholder="https://linkedin.com/company/..." /></Field>
         <Field label="Company Size">
           <select className={inputCls} value={form.companySize} onChange={e => set("companySize", e.target.value)}>
