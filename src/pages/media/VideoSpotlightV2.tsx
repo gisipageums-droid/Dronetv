@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Search, ChevronDown, Filter, ChevronLeft, ChevronRight, Heart, Play, Eye, Video as VideoIcon, Tag, X } from 'lucide-react';
-import { fetchContent, MediaItem } from '../../lib/mediaApi';
+import { fetchContent, incrementViews, MediaItem } from '../../lib/mediaApi';
 import ToolbarFilterDropdown from '../../components/common/ToolbarFilterDropdown';
 import ShareMenu from '../../components/common/ShareMenu';
 
@@ -219,7 +219,16 @@ const VideoCardV2: React.FC<{ item: MediaItem }> = ({ item }) => {
   const showThumb = thumb && !imgErr;
   const tags = (item.tags || []).slice(0, 3);
 
+  // Real per-video view counter, same endpoint/pattern as MediaDetailPage's
+  // article view count - videos play inline on this card (no detail-page
+  // navigation to hang the increment off), so it fires once per card the
+  // first time it's actually watched.
+  const countedRef = useRef(false);
   const handleWatch = () => {
+    if (!countedRef.current && item.contentId) {
+      countedRef.current = true;
+      incrementViews('video', item.contentId);
+    }
     if (embedUrl) setPlaying(true);
     else if (item.externalLink) window.open(item.externalLink, '_blank', 'noopener,noreferrer');
   };
