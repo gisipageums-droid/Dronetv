@@ -157,10 +157,10 @@ export interface FormData {
   companyValuesSelection: string[];
   servicesTitle: string;
   servicesDescription?: string;
-  services: Array<{ icon: string; title: string; description?: string }>;
+  services: Array<{ icon: string; title: string; description?: string; benefits?: string[]; process?: string[] }>;
   productsTitle: string;
   productCategories?: string;
-  products: Array<{ title: string; description?: string }>;
+  products: Array<{ title: string; description?: string; pricing?: string }>;
   clientsTitle?: string;
   clients: Array<{ name: string; logo?: string; industry: string }>;
   testimonials: Array<{
