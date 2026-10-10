@@ -223,7 +223,7 @@ const Navigation = () => {
           </div>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-0.5 min-w-0 overflow-x-auto overflow-y-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="hidden lg:flex items-center gap-0.5 min-w-0">
 
             {/* Home */}
             <Link to="/" className={`relative px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 group overflow-hidden whitespace-nowrap ${location.pathname === "/" ? "text-ink bg-ink/10" : "text-ink hover:text-ink"}`}>
