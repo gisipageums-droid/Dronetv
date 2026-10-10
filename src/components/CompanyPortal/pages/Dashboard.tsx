@@ -30,14 +30,16 @@ export default function Dashboard() {
           .then((r) => setLeads(r.data?.leads || r.data?.data || []))
           .catch(() => {});
       }
-    }).finally(() => setLoading(false));
 
-    axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeaders() })
-      .then((r) => {
-        setTokenBalance(r.data?.tokenBalance ?? 0);
-        setPackageType(r.data?.packageType ?? "");
-      })
-      .catch(() => {});
+      // Package is purchased per company - look it up for this specific
+      // company, not the whole account.
+      axios.get(`${PROFILE_API}?userId=${userId}&companyId=${c?.publishedId || ""}`, { headers: authHeaders() })
+        .then((r) => {
+          setTokenBalance(r.data?.tokenBalance ?? 0);
+          setPackageType(r.data?.packageType ?? "");
+        })
+        .catch(() => {});
+    }).finally(() => setLoading(false));
   }, [userId]);
 
   if (loading) return <Card className="text-center py-16 text-white/40">Loading...</Card>;

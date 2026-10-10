@@ -26,10 +26,11 @@ import CredentialsModal from "./credentialProp/Prop";
 import { motion, AnimatePresence } from "motion/react";
 import { COMPANY_API, AUTH_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
 
-const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 const PROFILE_BATCH_API = AUTH_API ? `${AUTH_API}/profile/batch` : null;
+const PROFILE_BATCH_BY_COMPANY_API = AUTH_API ? `${AUTH_API}/profile/batch-by-company` : null;
 
 interface CompanySubscription {
+  companyId: string;
   userId: string;
   companyName: string;
   packageType: string;
@@ -1068,75 +1069,63 @@ const AdminDashboard: React.FC = () => {
     return () => controller.abort();
   }, [viewFilter, leadsRefreshKey]);
 
-  // Fetch real package/subscription status for each company owner when the tab is opened
+  // Fetch real package/subscription status for each company when the tab is
+  // opened - one row per company (package is purchased per company, not per
+  // account), with token balance (genuinely account-wide) looked up per
+  // unique owner and applied to each of their company rows.
   useEffect(() => {
     if (viewFilter !== "subscriptions" || companies.length === 0) return;
     const controller = new AbortController();
     setSubscriptionsLoading(true);
 
-    const uniqueByUser = new Map<string, Company>();
-    companies.forEach((c) => {
-      if (c.userId && !uniqueByUser.has(c.userId)) uniqueByUser.set(c.userId, c);
-    });
-    const uniqueCompanies = Array.from(uniqueByUser.values());
+    const rowCompanies = companies.filter((c) => !!c.publishedId);
+    const uniqueUserIds = Array.from(new Set(rowCompanies.map((c) => c.userId).filter(Boolean)));
 
-    // Single batched call instead of one /profile request per company (each
-    // of which also fanned out to payment service internally) - was firing
-    // up to hundreds of parallel requests every time this tab opened.
-    if (PROFILE_BATCH_API) {
-      fetch(PROFILE_BATCH_API, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-        },
-        body: JSON.stringify({ userIds: uniqueCompanies.map((c) => c.userId) }),
-        signal: controller.signal,
-      })
-        .then((res) => (res.ok ? res.json() : { profiles: [] }))
-        .then((data) => {
-          const byUser = new Map((data.profiles || []).map((p: any) => [p.userId, p]));
-          const results = uniqueCompanies
-            .map((company) => {
-              const profile: any = byUser.get(company.userId);
-              if (!profile) return null;
-              return {
-                userId: company.userId,
-                companyName: company.companyName,
-                packageType: profile.packageType || "",
-                packageExpiry: profile.packageExpiry || "",
-                tokenBalance: profile.tokenBalance ?? 0,
-              } as CompanySubscription;
-            })
-            .filter((r): r is CompanySubscription => r !== null);
-          setSubscriptions(results);
+    const tokenBalanceByUser: Promise<Map<string, number>> = PROFILE_BATCH_API
+      ? fetch(PROFILE_BATCH_API, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
+          body: JSON.stringify({ userIds: uniqueUserIds }),
+          signal: controller.signal,
         })
-        .catch((err) => {
-          if (err?.name !== "AbortError") setSubscriptions([]);
-        })
-        .finally(() => setSubscriptionsLoading(false));
-      return () => controller.abort();
-    }
+          .then((res) => (res.ok ? res.json() : { profiles: [] }))
+          .then((data) => new Map((data.profiles || []).map((p: any) => [p.userId, p.tokenBalance ?? 0])))
+          .catch(() => new Map())
+      : Promise.resolve(new Map());
 
-    Promise.all(
-      uniqueCompanies.map(async (company) => {
-        try {
-          const res = await fetch(`${PROFILE_API}?userId=${company.userId}`, { signal: controller.signal });
-          if (!res.ok) return null;
-          const data = await res.json();
-          return {
-            userId: company.userId,
-            companyName: company.companyName,
-            packageType: data?.profile?.packageType || "",
-            packageExpiry: data?.profile?.packageExpiry || "",
-            tokenBalance: data?.profile?.tokenBalance ?? 0,
-          } as CompanySubscription;
-        } catch {
-          return null;
-        }
+    const packageByCompany: Promise<Map<string, string>> = PROFILE_BATCH_BY_COMPANY_API
+      ? fetch(PROFILE_BATCH_BY_COMPANY_API, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
+          body: JSON.stringify({ companies: rowCompanies.map((c) => ({ userId: c.userId, companyId: c.publishedId })) }),
+          signal: controller.signal,
+        })
+          .then((res) => (res.ok ? res.json() : []))
+          .then((entries: any[]) => new Map(entries.map((e) => [e.companyId, e.packageType || ""])))
+          .catch(() => new Map())
+      : Promise.resolve(new Map());
+
+    Promise.all([tokenBalanceByUser, packageByCompany])
+      .then(([tokenMap, pkgMap]) => {
+        const results: CompanySubscription[] = rowCompanies.map((company) => ({
+          companyId: company.publishedId,
+          userId: company.userId,
+          companyName: company.companyName,
+          packageType: pkgMap.get(company.publishedId) || "",
+          packageExpiry: "",
+          tokenBalance: tokenMap.get(company.userId) ?? 0,
+        }));
+        setSubscriptions(results);
       })
-    )
-      .then((results) => setSubscriptions(results.filter((r): r is CompanySubscription => r !== null)))
+      .catch((err) => {
+        if (err?.name !== "AbortError") setSubscriptions([]);
+      })
       .finally(() => setSubscriptionsLoading(false));
 
     return () => controller.abort();
@@ -1628,7 +1617,7 @@ const AdminDashboard: React.FC = () => {
                     </thead>
                     <tbody>
                       {filteredSubs.map(sub => (
-                        <tr key={sub.userId} className="border-b border-ink-light last:border-0 hover:bg-ink-offwhite">
+                        <tr key={sub.companyId} className="border-b border-ink-light last:border-0 hover:bg-ink-offwhite">
                           <td className="px-4 py-3 font-semibold text-ink align-top whitespace-nowrap">{sub.companyName}</td>
                           <td className="px-4 py-3 text-ink-paragraph align-top whitespace-nowrap">{sub.userId}</td>
                           <td className="px-4 py-3 align-top">
