@@ -5,6 +5,7 @@ import { Check, Zap, TrendingUp, Crown } from "lucide-react";
 import { useUserAuth } from "../../context/context";
 import { AUTH_API, PAYMENT_API, LAMBDA } from "../../../lib/apiConfig";
 import { authHeader } from "../../../lib/authService";
+import { getMyCompany } from "../api";
 import { PageHeader, Card, CardHeader, Btn, Badge, KpiRow, KpiCard } from "../ui";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
@@ -39,6 +40,7 @@ interface ProfileData {
 export default function PackagePage() {
   const { user } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || "";
+  const [companyId, setCompanyId] = useState<string | null>(null);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirmPkg, setConfirmPkg] = useState<(typeof PACKAGES)[number] | null>(null);
@@ -46,17 +48,21 @@ export default function PackagePage() {
 
   useEffect(() => {
     if (!userId) { setLoading(false); return; }
-    axios.get(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
-      .then((r) => setProfile(r.data ?? null))
+    getMyCompany(userId).then((c) => {
+      const publishedId = c?.publishedId || null;
+      setCompanyId(publishedId);
+      return axios.get(`${PROFILE_API}?userId=${userId}&companyId=${publishedId || ""}`, { headers: authHeader() });
+    })
+      .then((r: any) => setProfile(r?.data ?? null))
       .catch(() => setProfile(null))
       .finally(() => setLoading(false));
   }, [userId]);
 
   const handleUpgrade = async () => {
-    if (!confirmPkg || !userId) return;
+    if (!confirmPkg || !userId || !companyId) return;
     setUpgrading(true);
     try {
-      const res = await axios.post(UPGRADE_API, { userId, packageId: confirmPkg.id }, { headers: authHeader() });
+      const res = await axios.post(UPGRADE_API, { userId, companyId, packageId: confirmPkg.id }, { headers: authHeader() });
       if (res.data?.success) {
         setProfile((prev) => ({ ...prev, tokenBalance: res.data.tokenBalance, packageType: res.data.packageType, packageExpiry: res.data.packageExpiry }));
         toast.success(`Upgraded to ${confirmPkg.name}!`);
