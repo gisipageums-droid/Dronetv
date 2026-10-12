@@ -19,24 +19,44 @@ interface AdSlotProps {
 // "Advertise Here" placeholder sized to the same slot so empty zones don't
 // collapse or look broken before they're sold.
 export default function AdSlot({ image, href, alt = 'Advertisement', width, height, aspect, minHeight, className = '', children }: AdSlotProps) {
-  const style = aspect ? { aspectRatio: aspect, minHeight } : { width, height };
+  // A fluid `aspect` slot has no intrinsic size of its own, so it's normally
+  // forced to the zone's declared ratio. But a real uploaded creative rarely
+  // matches that ratio exactly — forcing it anyway just letterboxes the image
+  // with visible white gaps top/bottom. Once there's a real image, let it set
+  // its own height instead; keep the forced ratio only for the empty
+  // placeholder / dummy-creative state, which does need a defined box.
+  const useNaturalHeight = !!(image && aspect);
+  const style = useNaturalHeight
+    ? {}
+    : aspect ? { aspectRatio: aspect, minHeight } : { width, height };
 
   const inner = (
     <div
-      className={`relative rounded-xl overflow-hidden border border-gray-200 bg-white flex-shrink-0 ${className}`}
+      className={`relative rounded-xl overflow-hidden border border-ink-light bg-surface-card flex-shrink-0 ${className}`}
       style={style}
     >
       {image ? (
         // object-contain (not cover) — real uploaded creatives can be any aspect
         // ratio and shouldn't get aggressively cropped into an unrecognizable
         // sliver just to fill a slot with a different shape.
-        <img src={image} alt={alt} className="w-full h-full object-contain bg-white" />
+        // For fluid `aspect` slots: `max-w-full` (not `w-full`) so a small
+        // low-res upload is shown at its own size instead of being stretched
+        // to fill the whole container and coming out huge and blurry; a wide
+        // real banner still shrinks to fit the container exactly as before.
+        // `maxHeight` is a safety net against an accidentally very tall upload
+        // dominating the page's layout height.
+        <img
+          src={image}
+          alt={alt}
+          className={useNaturalHeight ? "max-w-full h-auto block mx-auto" : "w-full h-full object-contain bg-surface-card"}
+          style={useNaturalHeight ? { maxHeight: 320 } : undefined}
+        />
       ) : children ? (
         children
       ) : (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 text-center p-3">
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Advertise Here</span>
-          {(width || height) && <span className="text-[10px] text-gray-400 mt-1">{width}×{height}</span>}
+        <div className="w-full h-full flex flex-col items-center justify-center bg-surface-alt text-center p-3">
+          <span className="text-xs font-semibold text-ink-caption uppercase tracking-wide">Advertise Here</span>
+          {(width || height) && <span className="text-[10px] text-ink-caption mt-1">{width}×{height}</span>}
         </div>
       )}
     </div>

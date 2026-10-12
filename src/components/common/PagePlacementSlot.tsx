@@ -41,6 +41,9 @@ export default function PagePlacementSlot({ slotId, width, height, aspect, minHe
     return () => controller.abort();
   }, [slotId]);
 
+  // No paid placement booked for this slot → render nothing on the public
+  // site (same as the Zone Ads: no "Advertise Here" filler when the slot is
+  // empty). The dashboard's Page Placements page still lists every slot.
   if (!image) return null;
 
   return (

@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Card, Field, FormGrid, Btn, EmptyState, Badge, inputCls } from "../../ui";
 import type { TabProps } from "./CompanyProfilePage";
 
-const TYPES = ["UAOP (Unmanned Aircraft Operator Permit)", "DGCA Approval", "ISO 9001", "ISO 27001", "NSDC Certified", "DGFT Import License", "WPC License", "Drone Insurance (Company)", "MSME / Udyam Registration", "Other"];
+// "DGCA RPTO Authorization" is a distinct type (not folded into "DGCA
+// Approval") because the badge distinction (Fix #1 Section B / Master
+// Checklist Section 1) specifically keys off this one - a Training
+// Provider claiming RPTO status needs a number here to earn that badge.
+const TYPES = ["UAOP (Unmanned Aircraft Operator Permit)", "DGCA Approval", "DGCA RPTO Authorization", "ISO 9001", "ISO 27001", "NSDC Certified", "DGFT Import License", "WPC License", "Drone Insurance (Company)", "MSME / Udyam Registration", "Other"];
 const empty = { type: "", number: "", authority: "", issueDate: "", expiryDate: "", status: "Active" };
 
 export default function CertificationsTab({ profile, save }: TabProps) {
@@ -31,6 +35,11 @@ export default function CertificationsTab({ profile, save }: TabProps) {
 
   return (
     <div>
+      {/* No automated DGCA/issuing-authority cross-check exists yet (that's
+          a separate, not-yet-built piece) - until it does, every
+          certificate here is genuinely self-declared, not just equipment/
+          projects, so the same honest label applies. */}
+      <div className="text-[11px] text-white/30 mb-3">As stated by vendor - not independently verified by DroneTV.</div>
       <div className="flex items-center justify-between mb-5">
         <div className="text-sm text-white/40 flex-1">Company DGCA permits, ISO certifications, and industry approvals</div>
         <Btn onClick={() => setShowForm(!showForm)}>+ Add Certification</Btn>

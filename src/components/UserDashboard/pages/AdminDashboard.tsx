@@ -1,23 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Search, Users, Briefcase, Calendar, Coins } from "lucide-react";
+import { Search, Coins, Award } from "lucide-react";
 import { useUserAuth } from "../../context/context";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from "recharts";
 import axios from "axios";
-import { ADMIN_API, AUTH_API, LEADS_API, LAMBDA } from '../../../lib/apiConfig';
+import { AUTH_API, COMPANY_API, PROFESSIONAL_API, EVENTS_API, LEADS_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 interface Lead {
   leadId: string;
@@ -61,79 +47,62 @@ const AdminDashboard: React.FC = () => {
   );
   const [eventError, setEventError] = useState<string | null>(null);
   const [companyCount, setCompanyCount] = useState(0);
+  const [companyDraftCount, setCompanyDraftCount] = useState(0);
   const [professionalCount, setProfessionalCount] = useState(0);
   const [eventCount, setEventCount] = useState(0);
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
+  const [packageType, setPackageType] = useState<string>("");
 
   // Mock data (keeping other static data as is for now)
   const stats = [
-    {
-      label: "Total Companies",
-      value: companyCount,
-      icon: Briefcase,
-      color: "bg-blue-500",
-    },
-    {
-      label: "Professionals",
-      value: professionalCount,
-      icon: Users,
-      color: "bg-purple-500",
-    },
-    {
-      label: "Events",
-      value: eventCount,
-      icon: Calendar,
-      color: "bg-green-500",
-    },
+    { label: "Published Companies", value: companyCount, note: companyDraftCount > 0 ? `+${companyDraftCount} in draft` : "Your live companies", topBorder: "border-t-status-info" },
+    { label: "Professionals", value: professionalCount, note: "Your submitted profiles", topBorder: "border-t-brand-gold" },
+    { label: "Events", value: eventCount, note: "Your submitted events", topBorder: "border-t-status-success" },
   ];
-
-  const visitorData = [
-    { name: "Direct", value: 400 },
-    { name: "Organic", value: 300 },
-    { name: "Referral", value: 200 },
-    { name: "Social", value: 150 },
-  ];
-
-  const leadsData = [
-    { name: "Jan", leads: 45, visits: 240 },
-    { name: "Feb", leads: 52, visits: 280 },
-    { name: "Mar", leads: 38, visits: 200 },
-    { name: "Apr", leads: 61, visits: 320 },
-    { name: "May", leads: 55, visits: 290 },
-    { name: "Jun", leads: 67, visits: 350 },
-  ];
-
-  const COLORS = ["#3b82f6", "#a855f7", "#10b981", "#f59e0b"];
 
   const { user } = useUserAuth();
   const userDetails = user?.userData;
 
   const getCategory = useCallback(async () => {
-    const fetchData = await fetch(
-      ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates1}/user-templates/${userDetails.email} `
-    );
+    const url = COMPANY_API
+      ? `${COMPANY_API}/dashboard-cards?viewType=user&userId=${encodeURIComponent(userDetails.email)}`
+      : `${LAMBDA.adminUserTemplates1}/user-templates/${userDetails.email} `;
+    const fetchData = await fetch(url, { headers: COMPANY_API ? authHeader() : {} });
     const resData = await fetchData.json();
-    setCompanyCount(resData.count);
+    if (COMPANY_API) {
+      // "Companies" on this dashboard should mean live/published companies, not
+      // every draft — a company only counts as published once reviewStatus is
+      // "approved"; everything else (ai_completed, active, etc.) is still a draft.
+      const cards: any[] = resData.cards || [];
+      const published = cards.filter(c => c?.reviewStatus?.toLowerCase() === 'approved').length;
+      setCompanyCount(published);
+      setCompanyDraftCount(cards.length - published);
+    } else {
+      setCompanyCount(resData.count ?? 0);
+      setCompanyDraftCount(0);
+    }
   }, [userDetails.email]);
 
   const getProfessionalCount = useCallback(() => {
+    const url = PROFESSIONAL_API
+      ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${encodeURIComponent(userDetails.email)}`
+      : `${LAMBDA.adminUserTemplates3}/user-templates/${userDetails.email} `;
     axios
-      .get(
-        ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates3}/user-templates/${userDetails.email} `
-      )
+      .get(url, { headers: PROFESSIONAL_API ? authHeader() : {} })
       .then((res) => {
-        setProfessionalCount(res.data.count);
+        setProfessionalCount(PROFESSIONAL_API ? (res.data.totalCount ?? 0) : res.data.count);
       })
       .catch(() => {});
   }, [userDetails.email]);
 
   const getEventCount = useCallback(() => {
+    const url = EVENTS_API
+      ? `${EVENTS_API}/events-dashboard?viewType=user&userId=${encodeURIComponent(userDetails.email)}`
+      : `${LAMBDA.adminUserTemplates2}/user-templates/${userDetails.email} `;
     axios
-      .get(
-        ADMIN_API ? `${ADMIN_API}/user-templates/${userDetails.email} ` : `${LAMBDA.adminUserTemplates2}/user-templates/${userDetails.email} `
-      )
+      .get(url, { headers: EVENTS_API ? authHeader() : {} })
       .then((res) => {
-        setEventCount(res.data.count);
+        setEventCount(EVENTS_API ? (res.data.totalCount ?? 0) : res.data.count);
       })
       .catch(() => {});
   }, [userDetails.email]);
@@ -143,9 +112,21 @@ const AdminDashboard: React.FC = () => {
     getProfessionalCount();
     getEventCount();
     if (userDetails?.email) {
-      axios.get(AUTH_API ? `${AUTH_API}/profile?userId=${userDetails.email}` : `${LAMBDA.profile}/profile?userId=${userDetails.email}`)
-        .then(r => setTokenBalance(r.data?.profile?.tokenBalance ?? 0))
-        .catch(() => setTokenBalance(0));
+      axios.get(
+        AUTH_API ? `${AUTH_API}/profile?userId=${userDetails.email}` : `${LAMBDA.profile}/profile?userId=${userDetails.email}`,
+        { headers: AUTH_API ? authHeader() : {} }
+      )
+        .then(r => {
+          if (!PAYMENT_API) setTokenBalance((AUTH_API ? r.data?.tokenBalance : r.data?.profile?.tokenBalance) ?? 0);
+          setPackageType(((AUTH_API ? r.data?.packageType : r.data?.profile?.packageType) || "").toLowerCase());
+        })
+        .catch(() => { if (!PAYMENT_API) setTokenBalance(0); });
+
+      if (PAYMENT_API) {
+        axios.get(`${PAYMENT_API}/wallet?userId=${userDetails.email}`)
+          .then(r => setTokenBalance(r.data?.tokenBalance ?? 0))
+          .catch(() => setTokenBalance(0));
+      }
     }
   }, [getCategory, getProfessionalCount, getEventCount, userDetails?.email]);
 
@@ -154,7 +135,8 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        AUTH_API ? `${AUTH_API}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0` : `${LAMBDA.profile}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`
+        LEADS_API ? `${LEADS_API}/leads?userId=${userDetails?.email}&mode=all&limit=7&offset=0` : `${LAMBDA.profile}/leads?userId=${userDetails?.email}&mode=all&filter=unviewed&limit=7&offset=0`,
+        { headers: LEADS_API ? authHeader() : {} }
       );
 
       if (!response.ok) {
@@ -180,7 +162,8 @@ const AdminDashboard: React.FC = () => {
     try {
       setProfessionalLoading(true);
       const response = await fetch(
-        LEADS_API ? `${LEADS_API}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7` : `${LAMBDA.profLeadsGet}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`
+        LEADS_API ? `${LEADS_API}/professional-leads?userId=${userDetails?.email}&limit=7` : `${LAMBDA.profLeadsGet}/get-leads?userId=${userDetails?.email}&filter=unviewed&limit=7`,
+        { headers: LEADS_API ? authHeader() : {} }
       );
 
       if (!response.ok) {
@@ -208,7 +191,8 @@ const AdminDashboard: React.FC = () => {
     try {
       setEventLoading(true);
       const response = await fetch(
-        AUTH_API ? `${AUTH_API}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0` : `${LAMBDA.profile}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0`
+        LEADS_API ? `${LEADS_API}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0` : `${LAMBDA.profile}/event-leads?userId=${userDetails.email}&mode=all&limit=7&offset=0`,
+        { headers: LEADS_API ? authHeader() : {} }
       );
 
       if (!response.ok) {
@@ -241,8 +225,8 @@ const AdminDashboard: React.FC = () => {
 
   const getStatusColor = (viewed: boolean) => {
     return viewed
-      ? "bg-green-100 text-green-800"
-      : "bg-gray-100 text-gray-600";
+      ? "bg-status-success/15 text-status-success"
+      : "bg-ink-light text-ink-paragraph";
   };
 
   const formatDate = (dateString: string) => {
@@ -258,403 +242,159 @@ const AdminDashboard: React.FC = () => {
     return viewed ? "Viewed" : "Unviewed";
   };
 
+  const PACKAGE_INFO: Record<string, { label: string; price: string }> = {
+    reach: { label: "Reach Package", price: "₹25,000/yr" },
+    scale: { label: "Brand Package", price: "₹75,000/yr" },
+    brand: { label: "Expand Package", price: "₹1,50,000/yr" },
+  };
+  const pkg = PACKAGE_INFO[packageType];
+
   return (
-    <div className="min-h-full bg-gray-100 p-6 md:p-8">
+    <div className="min-h-full bg-surface-main p-6 md:p-8">
       {/* Header */}
-      <div className="mb-8">
-        <p className="text-xs font-bold tracking-widest text-yellow-500 uppercase mb-1">Dashboard</p>
-        <h1 className="text-2xl font-extrabold text-gray-900 mb-1">
-          Welcome back, {userDetails?.fullName?.split(" ")[0] || "there"} 👋
+      <div className="mb-[3px]">
+        <h1 className="text-[20px] font-extrabold text-ink">
+          Welcome back, {userDetails?.fullName?.split(" ")[0] || "there"}
         </h1>
-        <p className="text-sm text-gray-500">Here's your business overview.</p>
       </div>
+      <p className="text-[12.5px] text-ink-caption mb-[22px]">Here's your business overview.</p>
 
       {/* Search Bar */}
-      <div className="mb-8">
+      <div className="mb-[22px]">
         <div className="relative max-w-lg">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-caption w-4 h-4" />
           <input
             type="text"
             placeholder="Search by company name, location, or sector..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-6 py-2.5 bg-white border border-gray-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 transition-all"
+            className="w-full pl-11 pr-6 py-2.5 bg-surface-card border border-ink-light rounded-lg text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow transition-all"
           />
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
-        {stats.map((stat, idx) => {
-          const Icon = stat.icon;
-          return (
-            <div key={idx} className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-1">{stat.label}</p>
-                  <p className="text-3xl font-extrabold text-gray-900">{stat.value}</p>
-                </div>
-                <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center">
-                  <Icon size={22} className="text-black" />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-        {/* Token balance card */}
-        <a href="/user-recharge" className="bg-gray-900 border border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow block">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white/50 text-xs font-semibold uppercase tracking-wide mb-1">Token Balance</p>
-              <p className="text-3xl font-extrabold text-yellow-400">
-                {tokenBalance === null ? "…" : tokenBalance.toLocaleString()}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-yellow-400/15 rounded-xl flex items-center justify-center">
-              <Coins size={22} className="text-yellow-400" />
-            </div>
+      {/* KPI Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 mb-[22px]">
+        {stats.map((stat, idx) => (
+          <div key={idx} className={`bg-surface-card border border-ink-light border-t-[3px] ${stat.topBorder} rounded-md p-4`}>
+            <p className="text-ink-caption text-[10px] font-bold uppercase tracking-[.5px] mb-1.5">{stat.label}</p>
+            <p className="text-[28px] font-extrabold text-ink leading-none">{stat.value}</p>
+            <p className="text-[11px] text-ink-caption mt-1">{stat.note}</p>
           </div>
+        ))}
+        {/* Token balance card */}
+        <a href="/user-recharge" className="bg-ink rounded-md p-4 block relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-brand-yellow" />
+          <p className="text-white/50 text-[10px] font-bold uppercase tracking-[.5px] mb-1.5">Token Balance</p>
+          <p className="text-[28px] font-extrabold text-brand-yellow leading-none">
+            {tokenBalance === null ? "…" : tokenBalance.toLocaleString()}
+          </p>
+          <p className="text-[11px] text-white/40 mt-1 flex items-center gap-1"><Coins size={11} /> Buy more →</p>
         </a>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-        {/* Pie Chart */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-sm font-bold text-gray-900 mb-4">
-            Visitors by Source
-          </h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={visitorData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, value }) => `${name}: ${value}`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {visitorData.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+      {/* Package banner — real data, same as My Package page */}
+      {pkg && (
+        <div className="bg-ink rounded-lg p-5 mb-[22px] flex items-center gap-5 relative overflow-hidden">
+          <div className="absolute top-0 left-0 bottom-0 w-1 bg-brand-yellow" />
+          <Award size={36} className="text-brand-yellow flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-white font-extrabold text-lg mb-0.5">{pkg.label} — Active</p>
+            <p className="text-white/55 text-[12.5px] leading-relaxed">Your active DroneTv.in partnership package.</p>
+          </div>
+          <div className="text-right flex-shrink-0">
+            <p className="text-brand-yellow font-extrabold text-xl">{pkg.price}</p>
+          </div>
         </div>
+      )}
 
-        {/* Bar Chart - Leads */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-sm font-bold text-gray-900 mb-4">
-            Leads & Visits by Month
-          </h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={leadsData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-              <XAxis dataKey="name" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  color: "#111827",
-                }}
-              />
-              <Legend />
-              <Bar
-                dataKey="leads"
-                fill="#3b82f6"
-                name="Leads"
-                radius={[8, 8, 0, 0]}
-              />
-              <Bar
-                dataKey="visits"
-                fill="#10b981"
-                name="Visits"
-                radius={[8, 8, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Line Chart - Trends */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">
-          Lead & Visit Trends
-        </h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={leadsData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-            <XAxis dataKey="name" stroke="#9ca3af" />
-            <YAxis stroke="#9ca3af" />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#1e293b",
-                border: "none",
-                borderRadius: "8px",
-                color: "#fff",
-              }}
-            />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="leads"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={{ fill: "#3b82f6" }}
-              name="Leads"
-            />
-            <Line
-              type="monotone"
-              dataKey="visits"
-              stroke="#10b981"
-              strokeWidth={2}
-              dot={{ fill: "#10b981" }}
-              name="Visits"
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Recent Companies Leads List */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">
-          Recent Companies Leads ({recentLeads.length})
-        </h2>
-
-        {loading && (
-          <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">Loading leads...</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-4">
-            <p className="text-red-400">Error: {error}</p>
-          </div>
-        )}
-
-        {!loading && !error && (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Category
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Subject
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentLeads.map((lead) => (
-                  <tr
-                    key={lead.leadId}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="py-3 px-4 text-gray-900 text-sm">
-                      {lead.firstName} {lead.lastName}
-                    </td>
-                    <td className="py-3 px-4 text-gray-500 text-sm">
-                      {lead.category}
-                    </td>
-                    <td className="py-3 px-4 text-gray-500 text-sm">{lead.subject}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                          lead.viewed
-                        )}`}
-                      >
-                        {getStatusText(lead.viewed)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-gray-400 text-sm">
-                      {formatDate(lead.submittedAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {!loading && !error && recentLeads.length === 0 && (
-          <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">No leads found</p>
-          </div>
-        )}
-      </div>
-
-      {/* Recent Professional Leads List */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">
-          Recent Professional Leads ({recentProfessional.length})
-        </h2>
-
-        {professionalLoading && (
-          <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">Loading professional leads...</p>
-          </div>
-        )}
-
-        {professionalError && (
-          <div className="text-center py-4">
-            <p className="text-red-400">Error: {professionalError}</p>
-          </div>
-        )}
-
-        {!professionalLoading && !professionalError && (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Phone
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Subject
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentProfessional.map((lead) => (
-                  <tr
-                    key={lead.leadId}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.firstName} </td>
-                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.phone}</td>
-                    <td className="py-3 px-4 text-gray-500 text-sm">{lead.subject}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                          lead.viewed
-                        )}`}
-                      >
-                        {getStatusText(lead.viewed)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-gray-400 text-sm">
-                      {formatDate(lead.submittedAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {!professionalLoading &&
-          !professionalError &&
-          recentProfessional.length === 0 && (
-            <div className="text-center py-4">
-              <p className="text-gray-400 text-sm">No professional leads found</p>
-            </div>
-          )}
-      </div>
-
-      {/* Recent Events Leads List */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">
-          Recent Event Leads ({recentEvent.length})
-        </h2>
-
-        {eventLoading && (
-          <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">Loading event leads...</p>
-          </div>
-        )}
-
-        {eventError && (
-          <div className="text-center py-4">
-            <p className="text-red-400">Error: {eventError}</p>
-          </div>
-        )}
-
-        {!eventLoading && !eventError && (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Phone
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Subject
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-500 font-semibold text-xs uppercase tracking-wide">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentEvent.map((lead) => (
-                  <tr
-                    key={lead.leadId}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.firstName} </td>
-                    <td className="py-3 px-4 text-gray-900 text-sm">{lead.phone}</td>
-                    <td className="py-3 px-4 text-gray-500 text-sm">{lead.subject}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                          lead.viewed
-                        )}`}
-                      >
-                        {getStatusText(lead.viewed)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-gray-400 text-sm">
-                      {formatDate(lead.submittedAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {!eventLoading && !eventError && recentEvent.length === 0 && (
-          <div className="text-center py-4">
-            <p className="text-gray-400 text-sm">No event leads found</p>
-          </div>
-        )}
+      {/* Recent Leads — card style */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <LeadListSection
+          title="Recent Companies Leads"
+          leads={recentLeads}
+          loading={loading}
+          error={error}
+          emptyText="No leads found"
+          subtitleField="category"
+          getStatusColor={getStatusColor}
+          getStatusText={getStatusText}
+          formatDate={formatDate}
+        />
+        <LeadListSection
+          title="Recent Professional Leads"
+          leads={recentProfessional}
+          loading={professionalLoading}
+          error={professionalError}
+          emptyText="No professional leads found"
+          subtitleField="phone"
+          getStatusColor={getStatusColor}
+          getStatusText={getStatusText}
+          formatDate={formatDate}
+        />
+        <LeadListSection
+          title="Recent Event Leads"
+          leads={recentEvent}
+          loading={eventLoading}
+          error={eventError}
+          emptyText="No event leads found"
+          subtitleField="phone"
+          getStatusColor={getStatusColor}
+          getStatusText={getStatusText}
+          formatDate={formatDate}
+        />
       </div>
     </div>
   );
 };
+
+// Card-list presentation for a "recent leads" section — same lead data/fields
+// as before, just styled to match the DroneTv design system's card language
+// instead of a plain HTML table.
+interface LeadListSectionProps {
+  title: string;
+  leads: Lead[];
+  loading: boolean;
+  error: string | null;
+  emptyText: string;
+  subtitleField: "category" | "phone";
+  getStatusColor: (viewed: boolean) => string;
+  getStatusText: (viewed: boolean) => string;
+  formatDate: (d: string) => string;
+}
+
+const LeadListSection: React.FC<LeadListSectionProps> = ({
+  title, leads, loading, error, emptyText, subtitleField, getStatusColor, getStatusText, formatDate,
+}) => (
+  <div className="bg-surface-card border border-ink-light rounded-md overflow-hidden">
+    <div className="px-4 py-2.5 border-b border-ink-light flex items-center justify-between">
+      <span className="text-[12.5px] font-bold text-ink">{title}</span>
+      <span className="text-[11px] text-ink-caption font-semibold">{leads.length}</span>
+    </div>
+    <div className="p-3 space-y-3 max-h-[420px] overflow-y-auto">
+      {loading && <p className="text-ink-caption text-xs text-center py-4">Loading...</p>}
+      {error && <p className="text-status-error text-xs text-center py-4">Error: {error}</p>}
+      {!loading && !error && leads.length === 0 && (
+        <p className="text-ink-caption text-xs text-center py-4">{emptyText}</p>
+      )}
+      {!loading && !error && leads.map((lead) => (
+        <div key={lead.leadId} className="pb-3 border-b border-ink-light last:border-0 last:pb-0">
+          <p className="text-[13px] font-bold text-ink truncate">{lead.firstName} {lead.lastName}</p>
+          <p className="text-[11.5px] text-ink-caption truncate mt-0.5">
+            {subtitleField === "category" ? lead.category : lead.phone}
+          </p>
+          {lead.subject && <p className="text-[11.5px] text-ink-paragraph mt-1 line-clamp-2">{lead.subject}</p>}
+          <div className="flex items-center justify-between mt-1.5">
+            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${getStatusColor(lead.viewed)}`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-current" />
+              {getStatusText(lead.viewed)}
+            </span>
+            <span className="text-[10px] text-ink-caption">{formatDate(lead.submittedAt)}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 export default AdminDashboard;

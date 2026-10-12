@@ -32,7 +32,7 @@ const Navigation: React.FC<NavigationProps> = ({ navigationLinks, companyLogo, c
 
   return (
     <nav className={`fixed top-[60px] left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-        ? 'bg-black/95 backdrop-blur-md shadow-lg py-3'
+        ? 'bg-ink/95 backdrop-blur-md shadow-lg py-3'
         : 'bg-transparent py-6'
       }`}>
       <div className="container mx-auto px-4">
@@ -43,10 +43,10 @@ const Navigation: React.FC<NavigationProps> = ({ navigationLinks, companyLogo, c
               <img
                 src={companyLogo}
                 alt="Company Logo"
-                className="h-8 w-8 object-contain rounded-full bg-white shadow"
+                className="h-8 w-8 object-contain rounded-full bg-surface-card shadow"
               />
             )}
-            <span className={isScrolled ? 'text-[#FFD400]' : 'text-white'}>
+            <span className={isScrolled ? 'text-[#F8C400]' : 'text-white'}>
               {companyName || "Company"}
             </span>
           </div>
@@ -57,19 +57,19 @@ const Navigation: React.FC<NavigationProps> = ({ navigationLinks, companyLogo, c
                 key={item.label}
                 onClick={() => scrollToSection(item.link)}
                 className={`relative font-medium transition-colors duration-300 group ${isScrolled
-                    ? 'text-white hover:text-[#FFD400]'
-                    : 'text-white hover:text-[#FFD400]'
+                    ? 'text-white hover:text-[#F8C400]'
+                    : 'text-white hover:text-[#F8C400]'
                   }`}
               >
                 {item.label}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0000] transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC2626] transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
           </div>
 
           {/* CTA Button */}
           <div className="hidden lg:block">
-            <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+            <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
               Get Quote
             </button>
           </div>
@@ -85,17 +85,17 @@ const Navigation: React.FC<NavigationProps> = ({ navigationLinks, companyLogo, c
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 py-4 bg-black/95 backdrop-blur-md rounded-lg">
+          <div className="lg:hidden mt-4 py-4 bg-ink/95 backdrop-blur-md rounded-lg">
             {(navigationLinks || []).map((item) => (
               <button
                 key={item.label}
                 onClick={() => scrollToSection(item.link)}
-                className="block w-full text-left px-4 py-3 text-white hover:text-[#FFD400] hover:bg-white/10 transition-colors"
+                className="block w-full text-left px-4 py-3 text-white hover:text-[#F8C400] hover:bg-white/10 transition-colors"
               >
                 {item.label}
               </button>
             ))}
-            <button className="w-full mt-4 mx-4 bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-3 rounded-full font-semibold transition-colors">
+            <button className="w-full mt-4 mx-4 bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-3 rounded-full font-semibold transition-colors">
               Get Quote
             </button>
           </div>

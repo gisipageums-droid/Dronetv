@@ -107,14 +107,14 @@ const createDefaultData = (): ScheduleData => {
 const defaultData: ScheduleData = createDefaultData();
 
 const typeOptions = [
-  { value: 'keynote', label: 'Keynote', color: 'bg-amber-500' },
-  { value: 'workshop', label: 'Workshop', color: 'bg-yellow-500' },
-  { value: 'panel', label: 'Panel', color: 'bg-orange-500' },
-  { value: 'session', label: 'Session', color: 'bg-amber-400' },
-  { value: 'networking', label: 'Networking', color: 'bg-yellow-400' },
-  { value: 'break', label: 'Break', color: 'bg-gray-400' },
-  { value: 'registration', label: 'Registration', color: 'bg-gray-400' },
-  { value: 'closing', label: 'Closing', color: 'bg-amber-600' },
+  { value: 'keynote', label: 'Keynote', color: 'bg-brand-gold' },
+  { value: 'workshop', label: 'Workshop', color: 'bg-brand-gold' },
+  { value: 'panel', label: 'Panel', color: 'bg-status-warning' },
+  { value: 'session', label: 'Session', color: 'bg-brand-yellow' },
+  { value: 'networking', label: 'Networking', color: 'bg-brand-yellow' },
+  { value: 'break', label: 'Break', color: 'bg-ink-caption' },
+  { value: 'registration', label: 'Registration', color: 'bg-ink-caption' },
+  { value: 'closing', label: 'Closing', color: 'bg-brand-gold' },
 ];
 
 export function ScheduleSection({ scheduleData }: ScheduleProps) {
@@ -145,20 +145,20 @@ export function ScheduleSection({ scheduleData }: ScheduleProps) {
   // Helper function to get type color
   const getTypeColor = (type: string) => {
     const typeOption = typeOptions.find(option => option.value === type);
-    return typeOption ? typeOption.color : 'bg-gray-400';
+    return typeOption ? typeOption.color : 'bg-ink-caption';
   };
 
   return (
-    <section id="schedule" className="py-16 sm:py-20 md:py-24 bg-yellow-100">
+    <section id="schedule" className="py-16 sm:py-20 md:py-24 bg-brand-yellow-soft">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-block mb-4 px-4 py-2 bg-white rounded-full shadow-sm border border-amber-200">
-              <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+            <div className="inline-block mb-4 px-4 py-2 bg-surface-card rounded-full shadow-sm border border-brand-yellow-soft">
+              <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
             </div>
-            <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+            <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+            <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
               {displayData.description}
             </p>
           </div>
@@ -176,8 +176,8 @@ export function ScheduleSection({ scheduleData }: ScheduleProps) {
                       onClick={() => setActiveDay(day)}
                       className={`px-6 sm:px-8 py-3 sm:py-4 rounded-xl transition-all duration-300 text-sm sm:text-base min-w-[120px] ${
                         activeDay === day
-                          ? 'bg-yellow-400 text-gray-900 shadow-lg scale-105'
-                          : 'bg-white text-gray-600 hover:bg-yellow-50 border border-gray-200'
+                          ? 'bg-brand-yellow text-ink shadow-lg scale-105'
+                          : 'bg-surface-card text-ink-paragraph hover:bg-surface-main border border-ink-light'
                       }`}
                     >
                       <div className="font-semibold">{dayData.label}</div>
@@ -194,12 +194,12 @@ export function ScheduleSection({ scheduleData }: ScheduleProps) {
             {displayData.days[activeDay]?.items.map((item, index) => (
               <div
                 key={item.id}
-                className="group bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-transparent hover:border-amber-500"
+                className="group bg-surface-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-transparent hover:border-brand-gold"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4 sm:gap-6">
                   <div className="lg:w-44 flex-shrink-0">
-                    <div className="flex items-center gap-2 text-gray-900 text-sm sm:text-base">
-                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 flex-shrink-0" />
+                    <div className="flex items-center gap-2 text-ink text-sm sm:text-base">
+                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold flex-shrink-0" />
                       <span>{item.time}</span>
                     </div>
                   </div>
@@ -211,19 +211,19 @@ export function ScheduleSection({ scheduleData }: ScheduleProps) {
                       </span>
                     </div>
                     
-                    <h3 className="text-gray-900 mb-3 group-hover:text-amber-600 transition-colors text-base sm:text-lg md:text-xl">
+                    <h3 className="text-ink mb-3 group-hover:text-brand-yellow transition-colors text-base sm:text-lg md:text-xl">
                       {item.title}
                     </h3>
                     {item.description && (
-                      <p className="text-gray-600 text-sm mb-3">{item.description}</p>
+                      <p className="text-ink-paragraph text-sm mb-3">{item.description}</p>
                     )}
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 text-gray-600 text-sm sm:text-base">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 text-ink-paragraph text-sm sm:text-base">
                       <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                        <MapPin className="w-4 h-4 text-brand-gold flex-shrink-0" />
                         <span>{item.location}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                        <User className="w-4 h-4 text-brand-gold flex-shrink-0" />
                         <span>{item.speaker}</span>
                       </div>
                     </div>
@@ -237,11 +237,11 @@ export function ScheduleSection({ scheduleData }: ScheduleProps) {
           {(!displayData.days[activeDay]?.items || displayData.days[activeDay].items.length === 0) && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Clock className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                  <Clock className="w-8 h-8 text-ink-caption" />
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Schedule Items</h4>
-                <p className="text-gray-600">Add schedule items to showcase your event agenda.</p>
+                <h4 className="text-lg font-semibold text-ink mb-2">No Schedule Items</h4>
+                <p className="text-ink-paragraph">Add schedule items to showcase your event agenda.</p>
               </div>
             </div>
           )}

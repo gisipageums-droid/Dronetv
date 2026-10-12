@@ -100,29 +100,29 @@
 //   };
 
 //   return (
-//     <section id="portfolio" className="py-20 bg-white dark:bg-gray-900">
+//     <section id="portfolio" className="py-20 bg-surface-card dark:bg-gray-900">
 //       <div className="container mx-auto px-4">
 //         <div className="text-center mb-16">
-//           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4">
-//             My <span className="text-[#FF0000]">Portfolio</span>
+//           <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
+//             My <span className="text-[#DC2626]">Portfolio</span>
 //           </h2>
-//           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-//           <p data-aos="fade-up" data-aos-delay="400" className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+//           <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
+//           <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph dark:text-gray-400 max-w-2xl mx-auto">
 //             Explore my recent projects showcasing creativity, technical expertise, and innovative solutions.
 //           </p>
 //         </div>
 
 
 //         <div data-aos="fade-up" data-aos-delay="600" className="flex justify-center mb-12">
-//           <div className="flex flex-wrap gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+//           <div className="flex flex-wrap gap-2 p-2 bg-ink-light dark:bg-gray-800 rounded-full">
 //             {categories.map((category) => (
 //               <button
 //                 key={category}
 //                 onClick={() => setActiveFilter(category)}
 //                 className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
 //                   activeFilter === category
-//                     ? 'bg-[#FF0000] text-white shadow-lg transform scale-105'
-//                     : 'text-gray-700 dark:text-gray-300 hover:text-[#FF0000] hover:bg-white dark:hover:bg-gray-700'
+//                     ? 'bg-[#DC2626] text-white shadow-lg transform scale-105'
+//                     : 'text-ink-paragraph dark:text-gray-300 hover:text-[#DC2626] hover:bg-surface-card dark:hover:bg-gray-700'
 //                 }`}
 //               >
 //                 {category}
@@ -146,24 +146,24 @@
 //               />
               
         
-//               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+//               <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
 //                 <div className="absolute bottom-0 left-0 right-0 p-6">
 //                   <div className="mb-2">
-//                     <span className="text-xs font-bold text-[#FFD400] bg-[#FFD400]/20 px-2 py-1 rounded-full">
+//                     <span className="text-xs font-bold text-[#F8C400] bg-[#F8C400]/20 px-2 py-1 rounded-full">
 //                       {project.category}
 //                     </span>
 //                   </div>
 //                   <h3 className="text-white font-bold text-lg mb-2">{project.title}</h3>
-//                   <p className="text-gray-300 text-sm mb-4 line-clamp-2">{project.description}</p>
+//                   <p className="text-ink-light text-sm mb-4 line-clamp-2">{project.description}</p>
                   
 //                   <div className="flex gap-2">
 //                     <button 
 //                       onClick={() => setSelectedProject(project)}
-//                       className="w-10 h-10 bg-[#FF0000] rounded-full flex items-center justify-center text-white hover:bg-[#FF0000]/80 transition-colors"
+//                       className="w-10 h-10 bg-[#DC2626] rounded-full flex items-center justify-center text-white hover:bg-[#DC2626]/80 transition-colors"
 //                     >
 //                       <Eye size={16} />
 //                     </button>
-//                     <button className="w-10 h-10 bg-[#FFD400] rounded-full flex items-center justify-center text-black hover:bg-[#FFD400]/80 transition-colors">
+//                     <button className="w-10 h-10 bg-[#F8C400] rounded-full flex items-center justify-center text-ink hover:bg-[#F8C400]/80 transition-colors">
 //                       <ExternalLink size={16} />
 //                     </button>
 //                   </div>
@@ -175,8 +175,8 @@
 
       
 //         {selectedProject && (
-//           <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-//             <div className="bg-white dark:bg-gray-900 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+//           <div className="fixed inset-0 bg-ink/90 flex items-center justify-center z-50 p-4">
+//             <div className="bg-surface-card dark:bg-gray-900 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
 //               <div className="relative">
 //                 <img 
 //                   src={selectedProject.image} 
@@ -185,7 +185,7 @@
 //                 />
 //                 <button 
 //                   onClick={() => setSelectedProject(null)}
-//                   className="absolute top-6 right-6 w-12 h-12 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+//                   className="absolute top-6 right-6 w-12 h-12 bg-ink/50 rounded-full flex items-center justify-center text-white hover:bg-ink-charcoal/70 transition-colors"
 //                 >
 //                   <X size={20} />
 //                 </button>
@@ -193,26 +193,26 @@
               
 //               <div className="p-8">
 //                 <div className="flex items-center gap-2 mb-4">
-//                   <span className="text-sm font-bold text-[#FF0000] bg-[#FF0000]/10 px-3 py-1 rounded-full">
+//                   <span className="text-sm font-bold text-[#DC2626] bg-[#DC2626]/10 px-3 py-1 rounded-full">
 //                     {selectedProject.category}
 //                   </span>
 //                 </div>
                 
-//                 <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
+//                 <h2 className="text-3xl font-bold text-ink dark:text-white mb-4">
 //                   {selectedProject.title}
 //                 </h2>
                 
-//                 <p className="text-gray-600 dark:text-gray-400 mb-6 text-lg leading-relaxed">
+//                 <p className="text-ink-paragraph dark:text-gray-400 mb-6 text-lg leading-relaxed">
 //                   {selectedProject.description}
 //                 </p>
                 
 //                 <div className="mb-8">
-//                   <h3 className="text-lg font-semibold text-black dark:text-white mb-3">Technologies Used:</h3>
+//                   <h3 className="text-lg font-semibold text-ink dark:text-white mb-3">Technologies Used:</h3>
 //                   <div className="flex flex-wrap gap-2">
 //                     {selectedProject.technologies.map((tech: string, techIndex: number) => (
 //                       <span 
 //                         key={techIndex}
-//                         className="bg-[#FFD400]/20 text-black dark:text-white px-3 py-1 rounded-full text-sm font-medium"
+//                         className="bg-[#F8C400]/20 text-ink dark:text-white px-3 py-1 rounded-full text-sm font-medium"
 //                       >
 //                         {tech}
 //                       </span>
@@ -221,10 +221,10 @@
 //                 </div>
                 
 //                 <div className="flex gap-4">
-//                   <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-8 py-3 rounded-full font-semibold transition-colors">
+//                   <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-8 py-3 rounded-full font-semibold transition-colors">
 //                     View Live Project
 //                   </button>
-//                   <button className="border-2 border-[#FF0000] text-[#FF0000] hover:bg-[#FF0000] hover:text-white px-8 py-3 rounded-full font-semibold transition-colors">
+//                   <button className="border-2 border-[#DC2626] text-[#DC2626] hover:bg-[#DC2626] hover:text-white px-8 py-3 rounded-full font-semibold transition-colors">
 //                     View Code
 //                   </button>
 //                 </div>
@@ -251,15 +251,15 @@ interface PortfolioProps {
 
 const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
   return (
-    <section id="portfolio" className="py-20 bg-white dark:bg-gray-900">
+    <section id="portfolio" className="py-20 bg-surface-card dark:bg-gray-900">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-black dark:text-white mb-4">
-            Project <span className="text-[#FF0000]">Gallery</span>
+          <h2 data-aos="fade-up" className="text-4xl md:text-5xl font-bold text-ink dark:text-white mb-4">
+            Project <span className="text-[#DC2626]">Gallery</span>
           </h2>
-          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#FFD400] mx-auto mb-6"></div>
-          <p data-aos="fade-up" data-aos-delay="400" className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <div data-aos="fade-up" data-aos-delay="200" className="w-24 h-1 bg-[#F8C400] mx-auto mb-6"></div>
+          <p data-aos="fade-up" data-aos-delay="400" className="text-ink-paragraph dark:text-gray-400 max-w-2xl mx-auto">
             {projects.length > 0 
               ? "A collection of my recent projects and work."
               : "No projects to display at the moment."}
@@ -280,14 +280,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
                 alt={project.title}
                 className="w-full h-64 object-cover"
               />
-              <div className="p-4 bg-white dark:bg-gray-800">
-                <h3 className="text-xl font-semibold text-black dark:text-white">
+              <div className="p-4 bg-surface-card dark:bg-gray-800">
+                <h3 className="text-xl font-semibold text-ink dark:text-white">
                   {project.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mt-2">
+                <p className="text-ink-paragraph dark:text-gray-400 mt-2">
                   {project.description}
                 </p>
-                <span className="inline-block mt-3 px-3 py-1 bg-[#FFD400] text-black rounded-full text-sm">
+                <span className="inline-block mt-3 px-3 py-1 bg-[#F8C400] text-ink rounded-full text-sm">
                   {project.category}
                 </span>
               </div>

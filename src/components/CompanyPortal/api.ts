@@ -125,4 +125,30 @@ export async function fetchLogoFromWebsite(url: string, userId: string): Promise
   return res.json();
 }
 
+// Fixes-doc #2 / Deployment Map 2.5 - claiming a bulk-imported, not-yet-
+// claimed profile. agreementAccepted is required the first time (the
+// backend 400s without it) - idempotent afterward, so a repeat call on an
+// already-claimed company is still safe with no argument.
+export async function claimCompany(publishedId: string, agreementAccepted = false): Promise<{ ok: boolean; detail?: string }> {
+  const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/claim` : `${LAMBDA.company}/${publishedId}/claim`;
+  try {
+    const res = await fetch(url, { method: "POST", headers: authHeaders(), body: JSON.stringify({ agreementAccepted }) });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      return { ok: false, detail: data.detail };
+    }
+    return { ok: true };
+  } catch {
+    return { ok: false };
+  }
+}
+
+// Fixes-doc #19 - vendor-set availability, factored into RFQ quote
+// comparisons the buyer sees.
+export async function setCapacityStatus(publishedId: string, capacityStatus: "AVAILABLE" | "LIMITED" | "UNAVAILABLE"): Promise<void> {
+  const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/capacity` : `${LAMBDA.company}/${publishedId}/capacity`;
+  const res = await fetch(url, { method: "PUT", headers: authHeaders(), body: JSON.stringify({ capacityStatus }) });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+}
+
 export { COMPANY_API, LEADS_API, AUTH_API, PAYMENT_API, MEDIA_API, LAMBDA };

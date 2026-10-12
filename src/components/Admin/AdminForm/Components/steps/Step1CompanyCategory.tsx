@@ -2055,16 +2055,16 @@ export default function Step1CompanyCategory({
       <div className="space-y-6">
         {/* Company Category */}
         <div>
-          <h2 className="mb-2 text-lg font-bold text-slate-900">Company Category</h2>
-          <p className="mb-4 text-sm text-slate-600">Select your company's main business category (you can select multiple)</p>
+          <h2 className="mb-2 text-lg font-bold text-ink">Company Category</h2>
+          <p className="mb-4 text-sm text-ink-paragraph">Select your company's main business category (you can select multiple)</p>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {categoryOptions.map(({ value, description }) => (
               <label
                 key={value}
                 className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${formData.companyCategory.includes(value)
-                  ? 'border-amber-500 bg-yellow-50 shadow-md'
-                  : 'border-amber-300 hover:border-amber-400'
+                  ? 'border-brand-gold bg-surface-main shadow-md'
+                  : 'border-brand-yellow-soft hover:border-brand-yellow'
                   }`}
               >
                 <input
@@ -2079,11 +2079,11 @@ export default function Step1CompanyCategory({
                   }}
                   className="sr-only"
                 />
-                <h3 className={`text-lg font-bold mb-2 ${formData.companyCategory.includes(value) ? 'text-amber-900' : 'text-gray-700'
+                <h3 className={`text-lg font-bold mb-2 ${formData.companyCategory.includes(value) ? 'text-brand-gold' : 'text-ink-paragraph'
                   }`}>
                   {value}
                 </h3>
-                <p className={`text-xs text-center ${formData.companyCategory.includes(value) ? 'text-amber-700' : 'text-gray-500'
+                <p className={`text-xs text-center ${formData.companyCategory.includes(value) ? 'text-brand-gold' : 'text-ink-caption'
                   }`}>
                   {description}
                 </p>
@@ -2093,7 +2093,7 @@ export default function Step1CompanyCategory({
 
           {formData.companyCategory.length === 0 && (
             <div className="py-4 text-center">
-              <p className="text-gray-500">Please select at least one category to continue</p>
+              <p className="text-ink-caption">Please select at least one category to continue</p>
             </div>
           )}
         </div>
@@ -2101,8 +2101,8 @@ export default function Step1CompanyCategory({
 
         {/* Company Basic Details */}
         <div>
-          <h2 className="mb-2 text-lg font-bold text-slate-900">Company Basic Details</h2>
-          <p className="mb-4 text-sm text-slate-600">Tell us about your company's basic information</p>
+          <h2 className="mb-2 text-lg font-bold text-ink">Company Basic Details</h2>
+          <p className="mb-4 text-sm text-ink-paragraph">Tell us about your company's basic information</p>
 
           <div className="space-y-4">
             {/* Company Information */}

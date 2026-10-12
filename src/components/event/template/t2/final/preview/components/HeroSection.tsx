@@ -81,11 +81,11 @@ export function HeroSection({ heroData }: HeroProps) {
   const displayData = data;
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-yellow-50 pt-[4rem]">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-surface-main pt-[4rem]">
       {/* Animated Background Shapes */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute top-20 left-10 w-64 h-64 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70"
+          className="absolute top-20 left-10 w-64 h-64 bg-brand-yellow-soft rounded-full mix-blend-multiply filter blur-3xl opacity-70"
           animate={{
             x: [0, 100, 0],
             y: [0, 50, 0],
@@ -97,7 +97,7 @@ export function HeroSection({ heroData }: HeroProps) {
           }}
         />
         <motion.div
-          className="absolute top-40 right-10 w-72 h-72 bg-amber-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70"
+          className="absolute top-40 right-10 w-72 h-72 bg-brand-yellow-soft rounded-full mix-blend-multiply filter blur-3xl opacity-70"
           animate={{
             x: [0, -100, 0],
             y: [0, 100, 0],
@@ -109,7 +109,7 @@ export function HeroSection({ heroData }: HeroProps) {
           }}
         />
         <motion.div
-          className="absolute -bottom-20 left-1/2 w-96 h-96 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-60"
+          className="absolute -bottom-20 left-1/2 w-96 h-96 bg-brand-yellow rounded-full mix-blend-multiply filter blur-3xl opacity-60"
           animate={{
             x: [0, 50, 0],
             y: [0, -50, 0],
@@ -127,7 +127,7 @@ export function HeroSection({ heroData }: HeroProps) {
         {[...Array(15)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-amber-500 rounded-full"
+            className="absolute w-2 h-2 bg-brand-gold rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -152,19 +152,19 @@ export function HeroSection({ heroData }: HeroProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="inline-block mb-6 px-6 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-amber-200 shadow-sm"
+            className="inline-block mb-6 px-6 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-brand-yellow-soft shadow-sm"
           >
-            <span className="text-amber-700">{displayData.subtitle}</span>
+            <span className="text-brand-gold">{displayData.subtitle}</span>
           </motion.div>
           
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-gray-900 mb-6 leading-tight"
+            className="text-ink mb-6 leading-tight"
           >
             <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl">{displayData.titlePart1}</span>
-            <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl mt-2 bg-amber-600 bg-clip-text text-transparent">
+            <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl mt-2 bg-brand-gold bg-clip-text text-transparent">
               {displayData.titlePart2}
             </span>
           </motion.div>
@@ -173,7 +173,7 @@ export function HeroSection({ heroData }: HeroProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto px-4"
+            className="text-lg sm:text-xl md:text-2xl text-ink-paragraph mb-12 max-w-3xl mx-auto px-4"
           >
             {displayData.description}
           </motion.div>
@@ -186,7 +186,7 @@ export function HeroSection({ heroData }: HeroProps) {
           >
             <Button
               size="lg"
-              className="bg-yellow-400 hover:from-yellow-500 hover:to-amber-600 text-gray-900 px-8 py-6 text-base sm:text-lg shadow-lg"
+              className="bg-brand-yellow hover:from-brand-gold hover:to-brand-gold text-ink px-8 py-6 text-base sm:text-lg shadow-lg"
               onClick={() => { window.location.hash = '#contact'; }}
             >
               {displayData.primaryButton}
@@ -194,7 +194,7 @@ export function HeroSection({ heroData }: HeroProps) {
             <Button
               variant="outline"
               size="lg"
-              className="border-gray-300 text-gray-900 px-8 py-6 text-base sm:text-lg shadow-lg"
+              className="border-ink-light text-ink px-8 py-6 text-base sm:text-lg shadow-lg"
               onClick={() => { window.location.hash = '#events'; }}
             >
               {displayData.secondaryButton}
@@ -208,20 +208,20 @@ export function HeroSection({ heroData }: HeroProps) {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto px-4 mb-4"
           >
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-amber-200 hover:scale-105 transition-transform duration-300">
-              <Calendar className="w-8 h-8 text-amber-600 mx-auto mb-3" />
-              <p className="text-gray-600 mb-1 text-sm">Date</p>
-              <p className="text-gray-900">{displayData.eventInfo.date}</p>
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-brand-yellow-soft hover:scale-105 transition-transform duration-300">
+              <Calendar className="w-8 h-8 text-brand-gold mx-auto mb-3" />
+              <p className="text-ink-paragraph mb-1 text-sm">Date</p>
+              <p className="text-ink">{displayData.eventInfo.date}</p>
             </div>
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-amber-200 hover:scale-105 transition-transform duration-300">
-              <MapPin className="w-8 h-8 text-amber-600 mx-auto mb-3" />
-              <p className="text-gray-600 mb-1 text-sm">Location</p>
-              <p className="text-gray-900">{displayData.eventInfo.location}</p>
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-brand-yellow-soft hover:scale-105 transition-transform duration-300">
+              <MapPin className="w-8 h-8 text-brand-gold mx-auto mb-3" />
+              <p className="text-ink-paragraph mb-1 text-sm">Location</p>
+              <p className="text-ink">{displayData.eventInfo.location}</p>
             </div>
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-amber-200 hover:scale-105 transition-transform duration-300 sm:col-span-2 md:col-span-1">
-              <Users className="w-8 h-8 text-amber-600 mx-auto mb-3" />
-              <p className="text-gray-600 mb-1 text-sm">Attendees</p>
-              <p className="text-gray-900">{displayData.eventInfo.attendees}</p>
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-brand-yellow-soft hover:scale-105 transition-transform duration-300 sm:col-span-2 md:col-span-1">
+              <Users className="w-8 h-8 text-brand-gold mx-auto mb-3" />
+              <p className="text-ink-paragraph mb-1 text-sm">Attendees</p>
+              <p className="text-ink">{displayData.eventInfo.attendees}</p>
             </div>
           </motion.div>
         </div>

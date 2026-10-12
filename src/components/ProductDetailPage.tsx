@@ -6,6 +6,7 @@ import axios from "axios";
 import { Star, Plane, Truck, ShieldCheck } from "lucide-react";
 import LoadingScreen from "./loadingscreen";
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
+import { slugify } from '../lib/slugify';
 
 type ProductFeature = {
   icon?: React.ReactNode;
@@ -22,7 +23,12 @@ type ProductAPIItem = {
   title?: string;
   category?: string;
   pricing?: string;
+  rating?: number;
+  reviewCount?: number;
+  reviews?: { name: string; rating: number; comment: string }[];
 };
+
+type ProductReview = { name: string; rating: number; comment: string };
 
 type Product = {
   id: string;
@@ -33,6 +39,7 @@ type Product = {
   discount?: number | null;
   rating?: number;
   reviewCount?: number;
+  reviews?: ProductReview[];
   inStock?: boolean;
   images: string[];
   features: ProductFeature[];
@@ -113,8 +120,14 @@ export default function ProductDetailPage() {
           price: parsedPrice,
           originalPrice: parsedPrice ? Math.round((parsedPrice || 0) * 1.2) : null,
           discount: parsedPrice ? 20 : null,
-          rating: 4.5,
-          reviewCount: 120,
+          // Real when present - previously hardcoded 4.5/120 on every
+          // product regardless of what it actually was, which is why the
+          // stars/count never appeared anywhere in the UI below (dead data,
+          // never rendered). Now only shown when the product actually has
+          // it, see renderStars()/the Customer Reviews section.
+          rating: typeof p.rating === 'number' ? p.rating : undefined,
+          reviewCount: typeof p.reviewCount === 'number' ? p.reviewCount : undefined,
+          reviews: Array.isArray(p.reviews) ? p.reviews : undefined,
           inStock: true,
           images: p.image ? [p.image] : ["/images/product1.png"],
           features: (p.features || []).map((f) => ({ icon: <Plane className="w-4 h-4" />, text: f })),
@@ -148,10 +161,10 @@ export default function ProductDetailPage() {
   if (error)
     return (
       <div className="min-h-screen flex items-center justify-center  p-6">
-        <div className="bg-white rounded-2xl p-8 shadow-md w-full max-w-xl text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="mb-6 text-gray-700">{error}</p>
-          <button onClick={() => window.location.reload()} className="px-5 py-3 bg-black text-white rounded-lg font-semibold">
+        <div className="bg-surface-card rounded-2xl p-8 shadow-md w-full max-w-xl text-center">
+          <h2 className="text-2xl font-bold text-status-error mb-4">Error</h2>
+          <p className="mb-6 text-ink-paragraph">{error}</p>
+          <button onClick={() => window.location.reload()} className="px-5 py-3 bg-ink text-white rounded-lg font-semibold">
             Try again
           </button>
         </div>
@@ -160,7 +173,7 @@ export default function ProductDetailPage() {
 
   if (!product)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-surface-main">
         <p className="text-lg font-semibold">Product not found.</p>
       </div>
     );
@@ -177,18 +190,18 @@ export default function ProductDetailPage() {
 
   const renderStars = (rating = 0) =>
     Array.from({ length: 5 }).map((_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "text-yellow-500" : "text-gray-300"}`} />
+      <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "text-brand-gold" : "text-ink-light"}`} fill={i < Math.floor(rating) ? "currentColor" : "none"} />
     ));
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {/* LEFT: Images + Thumbnails */}
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow overflow-hidden">
+            <div className="bg-surface-card rounded-2xl shadow overflow-hidden">
               <div
-                className="relative w-full  cursor-zoom-in bg-white"
+                className="relative w-full  cursor-zoom-in bg-surface-card"
                 onMouseEnter={() => setShowZoom(true)}
                 onMouseLeave={() => setShowZoom(false)}
                 onMouseMove={handleImageHover}
@@ -215,7 +228,7 @@ export default function ProductDetailPage() {
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === idx ? "border-black shadow-lg" : "border-gray-200 hover:border-gray-300"
+                  className={`flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === idx ? "border-ink shadow-lg" : "border-ink-light hover:border-ink-light"
                     }`}
                 >
                   <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" />
@@ -230,16 +243,25 @@ export default function ProductDetailPage() {
 
           {/* RIGHT: Info */}
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl shadow">
+            <div className="bg-surface-card p-6 rounded-2xl shadow">
               <div className="flex items-start justify-between gap-6">
                 <div className="flex-1">
-                  <h1 className="text-3xl font-extrabold text-black">{product.name}</h1>
+                  <h1 className="text-3xl font-extrabold text-ink">{product.name}</h1>
                   {companyName && (
-                    <p className="mt-2 text-lg font-semibold text-gray-800">
-                      <span className="text-black">{companyName}</span>
+                    <p className="mt-2 text-lg font-semibold text-ink-charcoal">
+                      <span className="text-ink">{companyName}</span>
                     </p>
                   )}
-                  <p className="mt-2 text-gray-600 text-justify">{product.shortDescription}</p>
+                  {typeof product.rating === 'number' && (
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <div className="flex">{renderStars(product.rating)}</div>
+                      <span className="text-sm font-bold text-ink">{product.rating.toFixed(1)}</span>
+                      {typeof product.reviewCount === 'number' && (
+                        <span className="text-sm text-ink-paragraph">({product.reviewCount} reviews)</span>
+                      )}
+                    </div>
+                  )}
+                  <p className="mt-2 text-ink-paragraph text-justify">{product.shortDescription}</p>
                 </div>
               </div>
 
@@ -247,18 +269,18 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Tabs */}
-            <div className="bg-white rounded-2xl shadow overflow-hidden">
+            <div className="bg-surface-card rounded-2xl shadow overflow-hidden">
               <div className="border-b">
                 <nav className="flex" aria-label="Product tabs">
                   <button
                     onClick={() => setActiveTab("features")}
-                    className={`px-6 py-4 font-semibold w-full text-left ${activeTab === "features" ? "text-black bg-yellow-50 border-b-2 border-black" : "text-gray-600 hover:bg-gray-50"}`}
+                    className={`px-6 py-4 font-semibold w-full text-left ${activeTab === "features" ? "text-ink bg-surface-main border-b-2 border-ink" : "text-ink-paragraph hover:bg-ink-offwhite"}`}
                   >
                     Key Features
                   </button>
                   <button
                     onClick={() => setActiveTab("specifications")}
-                    className={`px-6 py-4 font-semibold w-full text-left ${activeTab === "specifications" ? "text-black bg-yellow-50 border-b-2 border-black" : "text-gray-600 hover:bg-gray-50"}`}
+                    className={`px-6 py-4 font-semibold w-full text-left ${activeTab === "specifications" ? "text-ink bg-surface-main border-b-2 border-ink" : "text-ink-paragraph hover:bg-ink-offwhite"}`}
                   >
                     Specifications
                   </button>
@@ -267,16 +289,16 @@ export default function ProductDetailPage() {
 
               <div className="p-6">
                 {activeTab === "features" && (
-                  <div className="prose max-w-none text-gray-700">
-                    <h3 className="text-2xl font-bold text-black mb-4">Key Features</h3>
+                  <div className="prose max-w-none text-ink-paragraph">
+                    <h3 className="text-2xl font-bold text-ink mb-4">Key Features</h3>
 
                     {/* Show features as a clean list with icons */}
                     {product.features.length === 0 && <p className="text-ink-caption text-sm">The supplier has not listed key features for this product yet.</p>}
                     <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {product.features.map((f, i) => (
-                        <li key={i} className="flex gap-3 items-start p-3 bg-yellow-50 rounded-xl">
-                          <div className="mt-1 text-black/80">{f.icon ?? <Plane className="w-5 h-5" />}</div>
-                          <div className="text-gray-700">{f.text}</div>
+                        <li key={i} className="flex gap-3 items-start p-3 bg-surface-main rounded-xl">
+                          <div className="mt-1 text-ink/80">{f.icon ?? <Plane className="w-5 h-5" />}</div>
+                          <div className="text-ink-paragraph">{f.text}</div>
                         </li>
                       ))}
                     </ul>
@@ -288,12 +310,12 @@ export default function ProductDetailPage() {
 
                 {activeTab === "specifications" && (
                   <div>
-                    <h3 className="text-2xl font-bold text-black mb-4">Technical Specifications</h3>
+                    <h3 className="text-2xl font-bold text-ink mb-4">Technical Specifications</h3>
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 ">
                       {Object.entries(product.specifications).map(([k, v]) => (
-                        <div key={k} className="p-4 bg-yellow-50 rounded-xl flex justify-between items-start text-[12px] gap-3">
-                          <div className="font-semibold text-black">{k}</div>
-                          <div className="text-gray-700">{v}</div>
+                        <div key={k} className="p-4 bg-surface-main rounded-xl flex justify-between items-start text-[12px] gap-3">
+                          <div className="font-semibold text-ink">{k}</div>
+                          <div className="text-ink-paragraph">{v}</div>
                         </div>
                       ))}
                     </div>
@@ -306,15 +328,33 @@ export default function ProductDetailPage() {
 
           </div>
         </div>
-        <div className=" p-4 rounded-2xl shadow shadow-black mt-[5px] bg-white ">
+        <div className=" p-4 rounded-2xl shadow shadow-ink mt-[5px] bg-surface-card ">
           <h4 className="font-semibold mb-3">Description</h4>
           <ul className="grid grid-cols-1 text-justify">
             <li>{product.detailedDescription || product.description}</li>
           </ul>
         </div>
+
+        {product.reviews && product.reviews.length > 0 && (
+          <div className="p-6 rounded-2xl shadow shadow-ink mt-[5px] bg-surface-card">
+            <h4 className="text-2xl font-bold text-ink mb-4">Customer Reviews</h4>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {product.reviews.map((r, i) => (
+                <div key={i} className="p-4 bg-surface-main rounded-xl">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-semibold text-ink">{r.name}</span>
+                    <div className="flex">{renderStars(r.rating)}</div>
+                  </div>
+                  <p className="text-sm text-ink-paragraph text-justify">{r.comment}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="mt-8 flex justify-center">
-          <Link to={template === "template-1" ? `/company/${companyName}#contact` : `/companies/${companyName}#contact`}>
-            <button className="px-6 py-2.5 bg-[#1a1a1a] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
+          <Link to={template === "template-1" ? `/company/${slugify(companyName)}#contact` : `/companies/${slugify(companyName)}#contact`}>
+            <button className="px-6 py-2.5 bg-[#111111] text-white text-sm font-semibold rounded-lg hover:bg-[#2a2a2a] transition-all duration-200 shadow-md">
               Contact us
             </button>
           </Link>

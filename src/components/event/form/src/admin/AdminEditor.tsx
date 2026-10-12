@@ -504,13 +504,13 @@ const deleteSkill = (stepIndex: number, path: number[]) => {
         />
         {skill.draft ? (
           <>
-            <button onClick={() => confirmSkill(stepIndex, path)} className="px-1 bg-green-400 rounded">✔</button>
-            <button onClick={() => deleteSkill(stepIndex, path)} className="px-1 bg-red-400 rounded">✖</button>
+            <button onClick={() => confirmSkill(stepIndex, path)} className="px-1 bg-status-success rounded">✔</button>
+            <button onClick={() => deleteSkill(stepIndex, path)} className="px-1 bg-status-error rounded">✖</button>
           </>
         ) : (
-          <button onClick={() => deleteSkill(stepIndex, path)} className="px-1 bg-red-400 rounded">✖</button>
+          <button onClick={() => deleteSkill(stepIndex, path)} className="px-1 bg-status-error rounded">✖</button>
         )}
-        <button onClick={() => addSkill(stepIndex, path)} className="px-1 bg-blue-400 rounded">＋</button>
+        <button onClick={() => addSkill(stepIndex, path)} className="px-1 bg-status-info rounded">＋</button>
       </div>
       {skill.subcategories && skill.subcategories.map((sk, idx) => renderSkill(sk, stepIndex, [...path, idx]))}
     </div>
@@ -518,12 +518,12 @@ const deleteSkill = (stepIndex: number, path: number[]) => {
 
   // ===== RENDER =====
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white w-4/5 max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-6 space-y-6">
+    <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-surface-card w-4/5 max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-6 space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center border-b pb-2">
-          <h2 className="text-2xl font-bold text-yellow-700">Admin Editor</h2>
-          <button onClick={onClose} className="text-gray-600 hover:text-black text-lg">✕</button>
+          <h2 className="text-2xl font-bold text-brand-gold">Admin Editor</h2>
+          <button onClick={onClose} className="text-ink-paragraph hover:text-ink text-lg">✕</button>
         </div>
 
         {loading ? (
@@ -549,15 +549,15 @@ const deleteSkill = (stepIndex: number, path: number[]) => {
                           />
                           {f.draft ? (
                             <>
-                              <button onClick={() => confirmField(stepIndex, section, idx)} className="px-1 bg-green-400 rounded">✔</button>
-                              <button onClick={() => deleteField(stepIndex, section, idx)} className="px-1 bg-red-400 rounded">✖</button>
+                              <button onClick={() => confirmField(stepIndex, section, idx)} className="px-1 bg-status-success rounded">✔</button>
+                              <button onClick={() => deleteField(stepIndex, section, idx)} className="px-1 bg-status-error rounded">✖</button>
                             </>
                           ) : (
-                            <button onClick={() => deleteField(stepIndex, section, idx)} className="px-1 bg-red-400 rounded">✖</button>
+                            <button onClick={() => deleteField(stepIndex, section, idx)} className="px-1 bg-status-error rounded">✖</button>
                           )}
                         </div>
                       ))}
-                      <button onClick={() => addField(stepIndex, section)} className="px-2 py-1 bg-blue-400 text-white rounded mt-1">＋ Add Field</button>
+                      <button onClick={() => addField(stepIndex, section)} className="px-2 py-1 bg-status-info text-white rounded mt-1">＋ Add Field</button>
                     </div>
                   ) : null
                 )}
@@ -577,13 +577,13 @@ const deleteSkill = (stepIndex: number, path: number[]) => {
                           />
                           {cat.draft ? (
                             <>
-                              <button onClick={() => confirmCategory(stepIndex, cIdx)} className="px-1 bg-green-400 rounded">✔</button>
-                              <button onClick={() => deleteCategory(stepIndex, cIdx)} className="px-1 bg-red-400 rounded">✖</button>
+                              <button onClick={() => confirmCategory(stepIndex, cIdx)} className="px-1 bg-status-success rounded">✔</button>
+                              <button onClick={() => deleteCategory(stepIndex, cIdx)} className="px-1 bg-status-error rounded">✖</button>
                             </>
                           ) : (
-                            <button onClick={() => deleteCategory(stepIndex, cIdx)} className="px-1 bg-red-400 rounded">✖</button>
+                            <button onClick={() => deleteCategory(stepIndex, cIdx)} className="px-1 bg-status-error rounded">✖</button>
                           )}
-                          <button onClick={() => addSubcategory(stepIndex, cIdx)} className="px-1 bg-blue-400 rounded">＋</button>
+                          <button onClick={() => addSubcategory(stepIndex, cIdx)} className="px-1 bg-status-info rounded">＋</button>
                         </div>
                         {cat.subcategories.map((sub, sIdx) => (
                           <div key={sub.id} className="pl-4 flex items-center space-x-2">
@@ -599,17 +599,17 @@ const deleteSkill = (stepIndex: number, path: number[]) => {
                             />
                             {sub.draft ? (
                               <>
-                                <button onClick={() => confirmSubcategory(stepIndex, cIdx, sIdx)} className="px-1 bg-green-400 rounded">✔</button>
-                                <button onClick={() => deleteSubcategory(stepIndex, cIdx, sIdx)} className="px-1 bg-red-400 rounded">✖</button>
+                                <button onClick={() => confirmSubcategory(stepIndex, cIdx, sIdx)} className="px-1 bg-status-success rounded">✔</button>
+                                <button onClick={() => deleteSubcategory(stepIndex, cIdx, sIdx)} className="px-1 bg-status-error rounded">✖</button>
                               </>
                             ) : (
-                              <button onClick={() => deleteSubcategory(stepIndex, cIdx, sIdx)} className="px-1 bg-red-400 rounded">✖</button>
+                              <button onClick={() => deleteSubcategory(stepIndex, cIdx, sIdx)} className="px-1 bg-status-error rounded">✖</button>
                             )}
                           </div>
                         ))}
                       </div>
                     ))}
-                    <button onClick={() => addCategory(stepIndex)} className="px-2 py-1 bg-blue-400 text-white rounded mt-1">＋ Add Category</button>
+                    <button onClick={() => addCategory(stepIndex)} className="px-2 py-1 bg-status-info text-white rounded mt-1">＋ Add Category</button>
                   </div>
                 )}
 
@@ -627,7 +627,7 @@ const deleteSkill = (stepIndex: number, path: number[]) => {
   <button
     type="button"
     onClick={() => addSkill(stepIndex, [])}
-    className="mt-3 px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600"
+    className="mt-3 px-4 py-2 bg-status-info text-white rounded hover:bg-status-info"
   >
     ➕ Add Parent Skill
   </button>
@@ -644,14 +644,14 @@ const deleteSkill = (stepIndex: number, path: number[]) => {
         <div className="flex justify-end gap-2 mt-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-200 rounded"
+            className="px-4 py-2 bg-ink-light rounded"
             disabled={saving}
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 bg-yellow-400 rounded font-medium"
+            className="px-4 py-2 bg-brand-yellow rounded font-medium"
             disabled={saving}
           >
             {saving ? "Saving..." : "Save Changes"}

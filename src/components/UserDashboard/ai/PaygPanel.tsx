@@ -9,7 +9,7 @@ import {
 import { paygApi } from "./echoleadsApi";
 
 const NOT_CONNECTED = (
-  <div className="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+  <div className="flex flex-col items-center justify-center h-full py-20 text-ink-caption">
     <p className="text-sm font-medium">Not connected</p>
     <p className="text-xs mt-1">Go to Authentication tab first.</p>
   </div>
@@ -19,8 +19,8 @@ const TABS = ["Configured Call", "Simple Call"] as const;
 type Tab = (typeof TABS)[number];
 
 const inputCls =
-  "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400";
-const labelCls = "block text-xs font-semibold text-gray-600 mb-1";
+  "w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow";
+const labelCls = "block text-xs font-semibold text-ink-paragraph mb-1";
 
 interface ConfiguredForm {
   phone_number: string;
@@ -106,7 +106,7 @@ function ConfiguredCallTab() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <label className={labelCls}>Phone Number * <span className="font-normal text-gray-400">(E.164 e.g. +14155551234)</span></label>
+        <label className={labelCls}>Phone Number * <span className="font-normal text-ink-caption">(E.164 e.g. +14155551234)</span></label>
         <input
           value={form.phone_number}
           onChange={(e) => set("phone_number", e.target.value)}
@@ -133,27 +133,27 @@ function ConfiguredCallTab() {
             onChange={(e) => set("agent_speaks_first", e.target.checked)}
             className="sr-only peer"
           />
-          <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-amber-400 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5" />
+          <div className="w-10 h-5 bg-ink-light rounded-full peer peer-checked:bg-brand-yellow transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-surface-card after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5" />
         </label>
-        <span className="text-sm text-gray-700 font-medium">Agent speaks first</span>
+        <span className="text-sm text-ink-paragraph font-medium">Agent speaks first</span>
       </div>
 
       {/* Provider Settings collapsible */}
-      <div className="border border-gray-200 rounded-xl overflow-hidden">
+      <div className="border border-ink-light rounded-xl overflow-hidden">
         <button
           type="button"
           onClick={() => setShowProviders((v) => !v)}
-          className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-ink-paragraph bg-ink-offwhite hover:bg-ink-light transition-colors"
         >
           Provider Settings
-          <ChevronDown size={16} className={`text-gray-400 transition-transform ${showProviders ? "rotate-180" : ""}`} />
+          <ChevronDown size={16} className={`text-ink-caption transition-transform ${showProviders ? "rotate-180" : ""}`} />
         </button>
 
         {showProviders && (
           <div className="p-4 space-y-4">
             {/* STT */}
             <div>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Speech-to-Text (STT)</p>
+              <p className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Speech-to-Text (STT)</p>
               <div className="grid grid-cols-3 gap-2">
                 <div>
                   <label className={labelCls}>Provider</label>
@@ -172,7 +172,7 @@ function ConfiguredCallTab() {
 
             {/* LLM */}
             <div>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Language Model (LLM)</p>
+              <p className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Language Model (LLM)</p>
               <div className="grid grid-cols-3 gap-2">
                 <div>
                   <label className={labelCls}>Provider</label>
@@ -191,7 +191,7 @@ function ConfiguredCallTab() {
 
             {/* TTS */}
             <div>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Text-to-Speech (TTS)</p>
+              <p className="text-xs font-bold text-ink-caption uppercase tracking-wide mb-2">Text-to-Speech (TTS)</p>
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className={labelCls}>Provider</label>
@@ -216,7 +216,7 @@ function ConfiguredCallTab() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="flex items-center gap-2 p-3 bg-status-error/10 border border-status-error/25 rounded-lg text-sm text-status-error">
           <AlertTriangle size={15} className="shrink-0" />
           {error}
         </div>
@@ -225,18 +225,18 @@ function ConfiguredCallTab() {
       <button
         onClick={makeCall}
         disabled={loading}
-        className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors disabled:opacity-60 self-start"
+        className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors disabled:opacity-60 self-start"
       >
         {loading ? <Loader2 size={15} className="animate-spin" /> : <CreditCard size={15} />}
         Make Call
       </button>
 
       {callId && (
-        <div className="flex items-start gap-2 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800">
-          <CheckCircle2 size={16} className="text-green-600 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2 p-4 bg-status-success/10 border border-status-success/25 rounded-xl text-sm text-status-success">
+          <CheckCircle2 size={16} className="text-status-success shrink-0 mt-0.5" />
           <div>
             <p className="font-semibold">Call initiated!</p>
-            <p className="text-xs mt-0.5 font-mono text-green-700">Call ID: {callId}</p>
+            <p className="text-xs mt-0.5 font-mono text-status-success">Call ID: {callId}</p>
           </div>
         </div>
       )}
@@ -305,7 +305,7 @@ function SimpleCallTab() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <label className={labelCls}>Phone Number * <span className="font-normal text-gray-400">(E.164)</span></label>
+        <label className={labelCls}>Phone Number * <span className="font-normal text-ink-caption">(E.164)</span></label>
         <input
           value={form.phone_number}
           onChange={(e) => set("phone_number", e.target.value)}
@@ -336,7 +336,7 @@ function SimpleCallTab() {
       </div>
 
       <div>
-        <label className={labelCls}>Greeting <span className="font-normal text-gray-400">(optional)</span></label>
+        <label className={labelCls}>Greeting <span className="font-normal text-ink-caption">(optional)</span></label>
         <input
           value={form.greeting}
           onChange={(e) => set("greeting", e.target.value)}
@@ -346,7 +346,7 @@ function SimpleCallTab() {
       </div>
 
       <div>
-        <label className={labelCls}>Instructions <span className="font-normal text-gray-400">(optional)</span></label>
+        <label className={labelCls}>Instructions <span className="font-normal text-ink-caption">(optional)</span></label>
         <textarea
           value={form.instructions}
           onChange={(e) => set("instructions", e.target.value)}
@@ -357,7 +357,7 @@ function SimpleCallTab() {
       </div>
 
       <div>
-        <label className={labelCls}>OpenAI API Key <span className="font-normal text-gray-400">(optional)</span></label>
+        <label className={labelCls}>OpenAI API Key <span className="font-normal text-ink-caption">(optional)</span></label>
         <input
           type="password"
           value={form.openai_api_key}
@@ -368,7 +368,7 @@ function SimpleCallTab() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="flex items-center gap-2 p-3 bg-status-error/10 border border-status-error/25 rounded-lg text-sm text-status-error">
           <AlertTriangle size={15} className="shrink-0" />
           {error}
         </div>
@@ -377,18 +377,18 @@ function SimpleCallTab() {
       <button
         onClick={makeCall}
         disabled={loading}
-        className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors disabled:opacity-60 self-start"
+        className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors disabled:opacity-60 self-start"
       >
         {loading ? <Loader2 size={15} className="animate-spin" /> : <CreditCard size={15} />}
         Make Call
       </button>
 
       {callId && (
-        <div className="flex items-start gap-2 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800">
-          <CheckCircle2 size={16} className="text-green-600 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2 p-4 bg-status-success/10 border border-status-success/25 rounded-xl text-sm text-status-success">
+          <CheckCircle2 size={16} className="text-status-success shrink-0 mt-0.5" />
           <div>
             <p className="font-semibold">Call initiated!</p>
-            <p className="text-xs mt-0.5 font-mono text-green-700">Call ID: {callId}</p>
+            <p className="text-xs mt-0.5 font-mono text-status-success">Call ID: {callId}</p>
           </div>
         </div>
       )}
@@ -405,25 +405,25 @@ const PaygPanel: React.FC = () => {
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-2 mb-5">
-        <div className="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center">
-          <CreditCard size={20} className="text-amber-700" />
+        <div className="w-9 h-9 bg-brand-yellow-soft rounded-xl flex items-center justify-center">
+          <CreditCard size={20} className="text-brand-gold" />
         </div>
         <div>
-          <h1 className="text-lg font-bold text-gray-900">Pay As You Go</h1>
-          <p className="text-xs text-gray-500">Initiate calls with custom providers</p>
+          <h1 className="text-lg font-bold text-ink">Pay As You Go</h1>
+          <p className="text-xs text-ink-caption">Initiate calls with custom providers</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 mb-5 flex gap-1">
+      <div className="border-b border-ink-light mb-5 flex gap-1">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-2.5 text-sm font-medium transition-colors -mb-px ${
               tab === t
-                ? "border-b-2 border-amber-500 text-amber-700 bg-amber-50"
-                : "text-gray-500 hover:text-gray-700"
+                ? "border-b-2 border-brand-gold text-brand-gold bg-surface-main"
+                : "text-ink-caption hover:text-ink-paragraph"
             }`}
           >
             {t}

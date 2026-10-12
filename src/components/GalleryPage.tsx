@@ -259,7 +259,7 @@ const GalleryPage = () => {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero title={<>Photo <span>Gallery</span> · {allImages.length || '0'} Photos · {categories.length - 1} Categories</>} />
 
@@ -267,27 +267,28 @@ const GalleryPage = () => {
 .gl-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
 .gl-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
 .gl-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
-.gl-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.gl-sidebar-title{font-size:13px;font-weight:800;color:#111111;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .gl-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
 .gl-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .gl-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
 .gl-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
-.gl-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.gl-chip.active{background:#111111;color:#F8C400;border-color:#111111}
 .gl-chips{display:flex;gap:5px;flex-wrap:wrap}
 .gl-main{min-width:0}
 .gl-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.gl-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.gl-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#111111;font-family:inherit}
 .gl-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
 .gl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.gl-grid > *{min-width:0}
 .gl-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
 .gl-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
-.gl-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.gl-page-btn.active{background:#111111;color:#F8C400;border-color:#111111}
 .gl-filter-toggle{display:none}
 @media(max-width:960px){
   .gl-layout{grid-template-columns:1fr}
   .gl-sidebar{position:static;display:none}
   .gl-sidebar.open{display:block}
-  .gl-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+  .gl-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#111111;color:#F8C400;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
 }
 @media(max-width:600px){.gl-wrap{padding:12px 14px}.gl-grid{grid-template-columns:repeat(2,1fr)}}
 `}</style>
@@ -320,7 +321,7 @@ const GalleryPage = () => {
             </div>
 
             <button onClick={() => setShowAddImageModal(true)}
-              style={{width:'100%',padding:'8px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
+              style={{width:'100%',padding:'8px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#111111',color:'#F8C400',border:'none',cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
               <Plus size={13} /> Add Photo
             </button>
           </aside>
@@ -351,7 +352,7 @@ const GalleryPage = () => {
                     const globalIndex = indexOfFirstImage + index;
                     return (
                       <div key={image.id} className="group cursor-pointer" onClick={() => openLightbox(image, globalIndex)}>
-                        <div className="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                        <div className="relative bg-surface-card rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
                           <img
                             src={image.src}
                             alt={image.title}
@@ -359,8 +360,8 @@ const GalleryPage = () => {
                             loading="lazy"
                             onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Not+Found'; }}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-400" />
-                          <div className="absolute top-2 right-2 bg-black/70 text-yellow-400 px-2 py-0.5 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300">{image.category}</div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-400" />
+                          <div className="absolute top-2 right-2 bg-ink/70 text-brand-yellow px-2 py-0.5 rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300">{image.category}</div>
                           <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-400 p-3">
                             <h3 className="text-white font-semibold text-xs mb-1 line-clamp-1">{image.title}</h3>
                             <p className="text-white/70 text-xs line-clamp-1">{image.description}</p>
@@ -394,36 +395,36 @@ const GalleryPage = () => {
 
       {/* Add Image Modal */}
       {showAddImageModal && (
-        <div className="fixed inset-0 bg-black/60 z-[10000000] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-ink/60 z-[10000000] flex items-center justify-center p-4">
+          <div className="bg-surface-card rounded-2xl p-5 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-5">
-              <h2 className="text-lg font-bold text-gray-900">Add New Photo</h2>
-              <button onClick={closeAddImageModal} className="text-gray-400 hover:text-gray-700 transition-colors">
+              <h2 className="text-lg font-bold text-ink">Add New Photo</h2>
+              <button onClick={closeAddImageModal} className="text-ink-caption hover:text-ink-paragraph transition-colors">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Image *</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-5 text-center">
+                <label className="block text-sm font-semibold text-ink-paragraph mb-2">Upload Image *</label>
+                <div className="border-2 border-dashed border-ink-light rounded-xl p-5 text-center">
                   {formData.imagePreview ? (
                     <div className="relative">
                       <img src={formData.imagePreview} alt="Preview" className="max-w-full max-h-40 mx-auto rounded-lg" />
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, image: null, imagePreview: null })}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                        className="absolute top-2 right-2 bg-status-error text-white rounded-full p-1 hover:bg-status-error"
                       >
                         <X className="h-3 w-3" />
                       </button>
                     </div>
                   ) : (
                     <div>
-                      <Upload className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                      <p className="text-sm text-gray-400 mb-3">Click to upload (Max 10MB)</p>
+                      <Upload className="h-10 w-10 text-ink-light mx-auto mb-3" />
+                      <p className="text-sm text-ink-caption mb-3">Click to upload (Max 10MB)</p>
                       <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="imageUpload" />
-                      <label htmlFor="imageUpload" className="bg-yellow-400 text-black px-4 py-2 rounded-lg cursor-pointer hover:bg-yellow-300 transition-colors text-sm font-semibold">
+                      <label htmlFor="imageUpload" className="bg-brand-yellow text-ink px-4 py-2 rounded-lg cursor-pointer hover:bg-brand-yellow-soft transition-colors text-sm font-semibold">
                         Choose File
                       </label>
                     </div>
@@ -432,19 +433,19 @@ const GalleryPage = () => {
               </div>
 
               <div>
-                <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-1.5">Title *</label>
+                <label htmlFor="title" className="block text-sm font-semibold text-ink-paragraph mb-1.5">Title *</label>
                 <input
                   type="text" id="title" name="title" value={formData.title} onChange={handleInputChange}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-sm"
+                  className="w-full px-3 py-2.5 border border-ink-light rounded-xl focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow text-sm"
                   placeholder="Enter image title" required
                 />
               </div>
 
               <div>
-                <label htmlFor="category" className="block text-sm font-semibold text-gray-700 mb-1.5">Category</label>
+                <label htmlFor="category" className="block text-sm font-semibold text-ink-paragraph mb-1.5">Category</label>
                 <select
                   id="category" name="category" value={formData.category} onChange={handleInputChange}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-sm bg-white"
+                  className="w-full px-3 py-2.5 border border-ink-light rounded-xl focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow text-sm bg-surface-card"
                 >
                   {categories.filter(cat => cat !== 'All').map(category => (
                     <option key={category} value={category}>{category}</option>
@@ -453,55 +454,55 @@ const GalleryPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Date</label>
-                <input type="text" value={getCurrentDate()} disabled className="w-full px-3 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-400 text-sm" />
+                <label className="block text-sm font-semibold text-ink-paragraph mb-1.5">Date</label>
+                <input type="text" value={getCurrentDate()} disabled className="w-full px-3 py-2.5 border border-ink-light rounded-xl bg-ink-offwhite text-ink-caption text-sm" />
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-1.5">Description *</label>
+                <label htmlFor="description" className="block text-sm font-semibold text-ink-paragraph mb-1.5">Description *</label>
                 <textarea
                   id="description" name="description" value={formData.description} onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-sm resize-none"
+                  className="w-full px-3 py-2.5 border border-ink-light rounded-xl focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow text-sm resize-none"
                   placeholder="Enter image description" required
                 />
               </div>
 
               <div>
-                <label htmlFor="location" className="block text-sm font-semibold text-gray-700 mb-1.5">Location</label>
+                <label htmlFor="location" className="block text-sm font-semibold text-ink-paragraph mb-1.5">Location</label>
                 <input
                   type="text" id="location" name="location" value={formData.location} onChange={handleInputChange}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-sm"
+                  className="w-full px-3 py-2.5 border border-ink-light rounded-xl focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow text-sm"
                   placeholder="Enter location"
                 />
               </div>
 
               <div>
-                <label htmlFor="attendees" className="block text-sm font-semibold text-gray-700 mb-1.5">Attendees</label>
+                <label htmlFor="attendees" className="block text-sm font-semibold text-ink-paragraph mb-1.5">Attendees</label>
                 <input
                   type="text" id="attendees" name="attendees" value={formData.attendees} onChange={handleInputChange}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-sm"
+                  className="w-full px-3 py-2.5 border border-ink-light rounded-xl focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow text-sm"
                   placeholder="e.g., 100+, 50 people"
                 />
               </div>
 
               <div>
-                <label htmlFor="tags" className="block text-sm font-semibold text-gray-700 mb-1.5">Tags</label>
+                <label htmlFor="tags" className="block text-sm font-semibold text-ink-paragraph mb-1.5">Tags</label>
                 <div className="relative">
-                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-caption" />
                   <input
                     type="text" id="tags" name="tags" value={formData.tags} onChange={handleInputChange}
-                    className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-sm"
+                    className="w-full pl-9 pr-3 py-2.5 border border-ink-light rounded-xl focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow text-sm"
                     placeholder="Tags separated by commas"
                   />
                 </div>
               </div>
 
               <div className="flex gap-3 justify-end pt-2">
-                <button type="button" onClick={closeAddImageModal} className="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium">
+                <button type="button" onClick={closeAddImageModal} className="px-5 py-2.5 border border-ink-light rounded-xl text-ink-paragraph hover:bg-ink-offwhite transition-colors text-sm font-medium">
                   Cancel
                 </button>
-                <button type="submit" className="px-5 py-2.5 bg-black text-yellow-400 rounded-xl hover:bg-gray-900 transition-colors font-semibold text-sm">
+                <button type="submit" className="px-5 py-2.5 bg-ink text-brand-yellow rounded-xl hover:bg-ink-charcoal transition-colors font-semibold text-sm">
                   Add Photo
                 </button>
               </div>
@@ -512,9 +513,9 @@ const GalleryPage = () => {
 
       {/* Lightbox */}
       {selectedImage && (
-        <div className="fixed inset-0 bg-black/95 z-[99999999] flex flex-col">
+        <div className="fixed inset-0 bg-ink/95 z-[99999999] flex flex-col">
           <div className="flex items-center justify-between px-4 py-3 flex-shrink-0">
-            <div className="bg-black/50 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
+            <div className="bg-ink/50 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
               {lightboxIndex + 1} / {filteredImages.length}
             </div>
             <button onClick={closeLightbox} className="bg-white/20 hover:bg-white/30 text-white rounded-full p-2 sm:p-3 transition-all">
@@ -548,7 +549,7 @@ const GalleryPage = () => {
             />
           </div>
 
-          <div className="flex-shrink-0 bg-gradient-to-t from-black/95 to-transparent px-4 pt-3 pb-5 sm:px-6 sm:pt-4 sm:pb-6">
+          <div className="flex-shrink-0 bg-gradient-to-t from-ink/95 to-transparent px-4 pt-3 pb-5 sm:px-6 sm:pt-4 sm:pb-6">
             <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
               <div className="flex-1 min-w-0">
                 <h3 className="text-white text-base sm:text-xl font-bold mb-1">{selectedImage.title}</h3>
@@ -561,7 +562,7 @@ const GalleryPage = () => {
                 {selectedImage.tags && selectedImage.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 sm:gap-2 mt-2">
                     {selectedImage.tags.map((tag, index) => (
-                      <span key={index} className="bg-yellow-400/20 text-yellow-400 px-2 py-1 rounded-full text-xs font-medium">#{tag}</span>
+                      <span key={index} className="bg-brand-yellow/20 text-brand-yellow px-2 py-1 rounded-full text-xs font-medium">#{tag}</span>
                     ))}
                   </div>
                 )}
@@ -569,7 +570,7 @@ const GalleryPage = () => {
               <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                 <button
                   onClick={() => setIsLiked(!isLiked)}
-                  className={`p-2 sm:p-3 rounded-full transition-all ${isLiked ? 'bg-red-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}
+                  className={`p-2 sm:p-3 rounded-full transition-all ${isLiked ? 'bg-status-error text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}
                 >
                   <Heart className={`h-4 sm:h-5 w-4 sm:w-5 ${isLiked ? 'fill-current' : ''}`} />
                 </button>

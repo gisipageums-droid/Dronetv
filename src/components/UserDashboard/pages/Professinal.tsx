@@ -5,14 +5,17 @@ import {
   MapPin,
   Plus,
   Search,
+  Trash2,
   Users,
 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/context";
 import { toast } from "react-toastify";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
 import { PROFESSIONAL_API, AUTH_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -84,11 +87,13 @@ interface ProfessinalCardProps {
     professionalId: string,
     templateSelection: string
   ) => Promise<void>;
+  onDelete: (professional: IProfessional) => void;
 }
 
 // =================== Professinal card ==============================
 const Card: React.FC<ProfessinalCardProps> = ({
   onEdit,
+  onDelete,
   professional,
 }) => {
   const placeholderImg =
@@ -116,42 +121,43 @@ const Card: React.FC<ProfessinalCardProps> = ({
     switch (statusLower) {
       case "active":
         return {
-          bg: "bg-yellow-200",
-          text: "text-yellow-900",
+          bg: "bg-brand-yellow-soft",
+          text: "text-brand-gold",
           label: "Under Review",
         };
       case "approved":
         return {
-          bg: "bg-green-100",
-          text: "text-green-800",
+          bg: "bg-status-success/15",
+          text: "text-status-success",
           label: "Published",
         };
       case "rejected":
         return {
-          bg: "bg-red-100",
-          text: "text-red-800",
+          bg: "bg-status-error/15",
+          text: "text-status-error",
           label: "Rejected",
         };
       default:
         return {
-          bg: "bg-yellow-100",
-          text: "text-yellow-900",
-          label: "Published",
+          bg: "bg-brand-yellow-soft",
+          text: "text-brand-gold",
+          label: "Draft",
         };
     }
   };
 
   const statusStyle = getStatusBadge(professional?.reviewStatus || "default");
+  const isPublished = professional?.reviewStatus?.toLowerCase() === "approved";
 
   return (
-    <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-yellow-400 group">
+    <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 hover:shadow-xl hover:border-brand-yellow group">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             {/* Company Image */}
-            <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110">
-              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-yellow-600">
+            <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-surface-main p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-brand-yellow-soft transition-all duration-300 group-hover:scale-110">
+              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-brand-gold">
                 {professional.previewImage ? (
                   <img
                     src={placeholderImg}
@@ -166,11 +172,11 @@ const Card: React.FC<ProfessinalCardProps> = ({
 
             {/* Company Info */}
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
+              <h3 className="text-lg font-bold text-ink line-clamp-2">
                 {professional?.fullName || "Unnamed Company"}
               </h3>
-              <div className="flex items-center text-gray-600 mt-1">
-                <MapPin className="w-4 h-4 mr-1 text-yellow-500" />
+              <div className="flex items-center text-ink-paragraph mt-1">
+                <MapPin className="w-4 h-4 mr-1 text-brand-gold" />
                 <span className="text-sm">
                   {professional?.location || "Location not specified"}
                 </span>
@@ -198,7 +204,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
             ).map((sector, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full border border-yellow-200"
+                className="px-3 py-1 bg-brand-yellow-soft text-brand-gold text-xs font-medium rounded-full border border-brand-yellow-soft"
               >
                 {sector}
               </span>
@@ -208,13 +214,13 @@ const Card: React.FC<ProfessinalCardProps> = ({
 
         {/* Date and Actions */}
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
-            <span className="font-semibold text-yellow-700 text-sm">
+          <div className="flex items-center gap-2 bg-surface-main rounded-lg px-4 py-2 border border-brand-yellow-soft">
+            <span className="font-semibold text-brand-gold text-sm">
               {professional?.publishedDate
                 ? formatDate(professional?.publishedDate)
                 : "Date not available"}
             </span>
-            <span className="text-xs text-yellow-600">Published</span>
+            <span className="text-xs text-brand-gold">Published</span>
           </div>
 
           {/* Action Buttons */}
@@ -231,7 +237,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
                     professional.templateSelection
                   );
               }}
-              className="flex-1 px-3 py-2 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-500 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-500"
+              className="flex-1 px-3 py-2 bg-brand-yellow text-ink rounded-lg hover:bg-brand-gold transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-gold"
             >
               <Edit className="w-4 h-4" />
               Edit
@@ -241,26 +247,40 @@ const Card: React.FC<ProfessinalCardProps> = ({
             </button>
           </div>
 
-          <button
-            onClick={() =>
-              navigate(
-                `/user-professional/leads/${encodeURIComponent(
-                  professional?.fullName || "Professional"
-                )}/${professional.professionalId}`
-              )
-            }
-            className="flex-1 px-3 py-2 bg-green-100 text-green-900 rounded-lg hover:bg-green-200 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-green-400"
-          >
-            <Users className="w-4 h-4" />
-            Leads
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() =>
+                navigate(
+                  `/user-professional/leads/${encodeURIComponent(
+                    professional?.fullName || "Professional"
+                  )}/${professional.professionalId}`
+                )
+              }
+              className="flex-1 px-3 py-2 bg-status-success/15 text-status-success rounded-lg hover:bg-status-success/25 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-status-success"
+            >
+              <Users className="w-4 h-4" />
+              Leads
+            </button>
+            {!isPublished && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(professional);
+                }}
+                title="Delete this draft"
+                className="px-3 py-2 bg-status-error/10 text-status-error rounded-lg hover:bg-status-error/20 transition-colors text-sm font-semibold flex items-center justify-center"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
            {/* <button
             onClick={() =>
               navigate(
                 `/professional/form/${professional.userId}/${professional.professionalId}`
               )
             }
-            className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
+            className="flex-1 px-3 py-2 bg-brand-yellow-soft text-brand-gold rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-yellow"
           >
             <Edit className="w-4 h-4" />
             Edit form
@@ -272,7 +292,7 @@ const Card: React.FC<ProfessinalCardProps> = ({
                 `/professional/form/${professional.userId}/${professional.professionalId}`
               )
             }
-            className="flex-1 px-3 py-2 bg-yellow-200 text-yellow-900 rounded-lg hover:bg-yellow-300 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-400"
+            className="flex-1 px-3 py-2 bg-brand-yellow-soft text-brand-gold rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-yellow"
           >
             <Edit className="w-4 h-4" />
             Edit Form
@@ -280,8 +300,8 @@ const Card: React.FC<ProfessinalCardProps> = ({
         </div>
 
         {/* Published ID */}
-        {/* <div className="mt-4 pt-4 border-t border-yellow-200">
-          <div className="text-xs text-gray-500">
+        {/* <div className="mt-4 pt-4 border-t border-brand-yellow-soft">
+          <div className="text-xs text-ink-caption">
             ID: {professional?.professionalId || "No ID"}
           </div>
         </div> */}
@@ -295,6 +315,12 @@ const Professinal: React.FC = () => {
   const { user }: { user: User | null } = useUserAuth();
   const [professionals, setProfessionals] =
     useState<IProfessionalApiResponse | null>(null);
+  // Plan limits and the "X / Y" banner should only count profiles that are
+  // actually live, not every unpublished draft.
+  const publishedProfessionals = useMemo(
+    () => (professionals?.cards ?? []).filter(p => p.reviewStatus?.toLowerCase() === "approved"),
+    [professionals]
+  );
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [totalTokensEarned, setTotalTokensEarned] = useState<number>(0);
@@ -320,7 +346,8 @@ const Professinal: React.FC = () => {
       setLoading(true);
 
       const res = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}`
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}` : `${LAMBDA.professional}/professional-dashboard-cards?viewType=user&userId=${user.userData.email}`,
+        { headers: authHeader() }
       );
 
       if (!res.ok) throw new Error("Failed to fetch companies");
@@ -387,11 +414,26 @@ const Professinal: React.FC = () => {
     }
   };
 
+  const handleDeleteProfessional = async (professional: IProfessional) => {
+    if (!window.confirm(`Delete "${professional.fullName || "this profile"}"? This draft will be permanently removed and cannot be recovered.`)) return;
+    try {
+      await axios.post(
+        PROFESSIONAL_API ? `${PROFESSIONAL_API}/delete-prof-tem` : `${LAMBDA.profDelete}/delete-prof-tem`,
+        { professionalId: professional.professionalId },
+        { headers: { 'Content-Type': 'application/json', ...(PROFESSIONAL_API ? authHeader() : {}) } }
+      );
+      toast.success('Draft deleted');
+      setProfessionals(prev => prev ? { ...prev, cards: prev.cards.filter(p => p.professionalId !== professional.professionalId) } : prev);
+    } catch {
+      toast.error('Failed to delete. Please try again.');
+    }
+  };
+
   useEffect(() => {
     const userId = user?.userData?.email || "";
     if (!userId) return;
     fetchProfessionals();
-    fetch(`${PROFILE_API}?userId=${userId}`)
+    fetch(`${PROFILE_API}?userId=${userId}`, { headers: authHeader() })
       .then(r => r.json())
       .then(d => {
         const p = d?.profile ?? {};
@@ -402,85 +444,86 @@ const Professinal: React.FC = () => {
   }, [user, fetchProfessionals]);
 
   const filteredProfessionals = useMemo(() => {
+    const term = searchTerm.toLowerCase();
     return professionals?.cards.filter(
       (p) =>
-        p.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.categories.some((c) =>
-          c.toLowerCase().includes(searchTerm.toLowerCase())
+        (p.fullName ?? "").toLowerCase().includes(term) ||
+        (p.location ?? "").toLowerCase().includes(term) ||
+        (p.categories ?? []).some((c) =>
+          (c ?? "").toLowerCase().includes(term)
         )
     );
   }, [professionals, searchTerm]);
 
   // Skeleton Loading
   const SkeletonCard: React.FC = () => (
-    <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 group animate-pulse p-6">
+    <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 group animate-pulse p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-yellow-100 p-2 flex items-center justify-center" />
+          <div className="w-16 h-16 rounded-xl bg-brand-yellow-soft p-2 flex items-center justify-center" />
           <div className="flex-1">
-            <div className="h-5 bg-yellow-100 rounded w-3/4 mb-2" />
-            <div className="h-3 bg-yellow-100 rounded w-1/2" />
+            <div className="h-5 bg-brand-yellow-soft rounded w-3/4 mb-2" />
+            <div className="h-3 bg-brand-yellow-soft rounded w-1/2" />
           </div>
         </div>
 
-        <div className="w-24 h-7 bg-yellow-100 rounded-full" />
+        <div className="w-24 h-7 bg-brand-yellow-soft rounded-full" />
       </div>
 
       {/* Sectors */}
       <div className="mb-6">
         <div className="flex flex-wrap gap-2">
-          <div className="h-6 bg-yellow-100 rounded-full w-20" />
-          <div className="h-6 bg-yellow-100 rounded-full w-16" />
-          <div className="h-6 bg-yellow-100 rounded-full w-24" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-20" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-16" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-24" />
         </div>
       </div>
 
       {/* Date and Actions */}
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
-          <div className="h-4 bg-yellow-100 rounded w-32" />
-          <div className="h-3 bg-yellow-100 rounded w-16 ml-auto" />
+        <div className="flex items-center gap-2 bg-surface-main rounded-lg px-4 py-2 border border-brand-yellow-soft">
+          <div className="h-4 bg-brand-yellow-soft rounded w-32" />
+          <div className="h-3 bg-brand-yellow-soft rounded w-16 ml-auto" />
         </div>
 
         <div className="flex gap-2 justify-between">
-          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
-          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
-          <div className="flex-1 h-10 bg-yellow-100 rounded-lg" />
+          <div className="flex-1 h-10 bg-brand-yellow-soft rounded-lg" />
+          <div className="flex-1 h-10 bg-brand-yellow-soft rounded-lg" />
+          <div className="flex-1 h-10 bg-brand-yellow-soft rounded-lg" />
         </div>
 
-        <div className="h-10 bg-yellow-100 rounded-lg mt-2" />
+        <div className="h-10 bg-brand-yellow-soft rounded-lg mt-2" />
       </div>
 
       {/* Published ID */}
-      <div className="mt-4 pt-4 border-t border-yellow-200">
-        <div className="h-3 bg-yellow-100 rounded w-1/3" />
+      <div className="mt-4 pt-4 border-t border-brand-yellow-soft">
+        <div className="h-3 bg-brand-yellow-soft rounded w-1/3" />
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-amber-50 p-4 md:p-8">
+    <div className="min-h-screen bg-surface-main p-4 md:p-8">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between mb-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-ink mb-1 flex items-center gap-2">
             <Users className="w-6 h-6 shrink-0" />
             Professional Directory
           </h1>
-          <p className="text-gray-600 mb-2">
+          <p className="text-ink-paragraph mb-2">
             Browse and manage professional submissions
           </p>
-          <ListingLimitBanner count={professionals?.cards?.length ?? 0} type="professional" label="Professionals" />
+          <ListingLimitBanner count={publishedProfessionals.length} type="professional" label="Professionals" />
         </div>
 
         {(() => {
           const limit = getProfessionalLimit(totalTokensEarned);
-          const atLimit = profileLoaded && isFinite(limit) && (professionals?.cards?.length ?? 0) >= limit;
+          const atLimit = profileLoaded && isFinite(limit) && publishedProfessionals.length >= limit;
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}
-              className="bg-gray-100 text-sm font-medium text-gray-500 flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 border border-gray-300 cursor-not-allowed self-start sm:self-auto"
+              className="bg-ink-light text-sm font-medium text-ink-caption flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 border border-ink-light cursor-not-allowed self-start sm:self-auto"
               title={`Plan limit reached. Upgrade to add more.`}
             >
               <Plus className="w-5 h-5" />
@@ -492,7 +535,7 @@ const Professinal: React.FC = () => {
                 try { localStorage.removeItem("professionalFormDraft"); } catch { /* ignore */ }
                 navigate("/professional/select");
               }}
-              className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 hover:bg-yellow-600 hover:scale-110 transition-all duration-200 self-start sm:self-auto"
+              className="bg-brand-gold text-sm font-medium text-white flex items-center gap-2 px-4 py-3 rounded-lg shrink-0 hover:bg-brand-gold hover:scale-110 transition-all duration-200 self-start sm:self-auto"
             >
               <Plus className="w-5 h-5" />
               Add New Professional
@@ -503,14 +546,14 @@ const Professinal: React.FC = () => {
 
       <div className="mb-6 relative">
         <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
-          <Search className="h-5 w-5 text-yellow-500" />
+          <Search className="h-5 w-5 text-brand-gold" />
         </div>
         <input
           type="text"
           placeholder="Search by professional name, location, or sector..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-6 py-3 bg-white border-2 border-yellow-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+          className="w-full pl-12 pr-6 py-3 bg-surface-card border-2 border-brand-yellow-soft rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-brand-yellow"
         />
       </div>
 
@@ -530,12 +573,13 @@ const Professinal: React.FC = () => {
               professional={professional}
               onPreview={handlePreview}
               onEdit={handleEdit}
+              onDelete={handleDeleteProfessional}
             />
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 text-gray-500">
-          <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
+        <div className="text-center py-20 text-ink-caption">
+          <Search className="w-16 h-16 text-brand-yellow-soft mx-auto mb-4" />
           {searchTerm
             ? `No professionals found matching “${searchTerm}”`
             : 'No professional profiles found. Click Add New Professional to create one.'

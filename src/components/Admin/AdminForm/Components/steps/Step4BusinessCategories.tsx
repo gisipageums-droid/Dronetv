@@ -191,24 +191,24 @@ const EditModal: React.FC<{
     const effectiveSelected = selectedItem || firstNonEmpty;
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/60">
-        <div className="bg-white w-[600px] max-w-[95vw] rounded-2xl shadow-2xl p-6 border border-gray-200">
+      <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-ink/60">
+        <div className="bg-surface-card w-[600px] max-w-[95vw] rounded-2xl shadow-2xl p-6 border border-ink-light">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-              <p className="mt-1 text-sm text-gray-600">Manage your business categories</p>
+              <h2 className="text-xl font-bold text-ink">{title}</h2>
+              <p className="mt-1 text-sm text-ink-paragraph">Manage your business categories</p>
             </div>
             <div className="flex items-center gap-2">
               {showBack && onBack && (
                 <button
                   onClick={onBack}
-                  className="px-4 py-2 text-sm transition-colors border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 text-sm transition-colors border border-ink-light rounded-lg hover:bg-ink-offwhite"
                 >
                   ← Back
                 </button>
               )}
               <button
-                className="inline-flex items-center justify-center w-8 h-8 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="inline-flex items-center justify-center w-8 h-8 transition-colors border border-ink-light rounded-lg hover:bg-ink-offwhite"
                 onClick={onClose}
                 aria-label="Close"
               >
@@ -224,8 +224,8 @@ const EditModal: React.FC<{
             className="grid grid-cols-2 gap-2 pr-1 overflow-auto max-h-60"
           >
             {localItems.length === 0 && (
-              <div className="py-8 text-center text-gray-500">
-                <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="py-8 text-center text-ink-caption">
+                <svg className="w-12 h-12 mx-auto mb-3 text-ink-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <p className="text-sm">No options yet. Use "Add option" to get started.</p>
@@ -234,7 +234,7 @@ const EditModal: React.FC<{
             {localItems.map((item, idx) => (
               <div
                 key={idx}
-                className={`flex gap-2 items-center p-2 rounded-md border transition-colors hover:border-gray-300 ${selectedIdx === idx ? 'border-blue-400 ring-1 ring-blue-300' : 'border-gray-200'}`}
+                className={`flex gap-2 items-center p-2 rounded-md border transition-colors hover:border-ink-light ${selectedIdx === idx ? 'border-status-info ring-1 ring-status-info/40' : 'border-ink-light'}`}
                 onClick={() => {
                   if (onOpenChild && editingIdx !== idx) setSelectedIdx(idx);
                 }}
@@ -249,7 +249,7 @@ const EditModal: React.FC<{
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       placeholder="Type option…"
-                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-400"
+                      className="flex-1 px-2 py-1 text-sm border border-ink-light rounded focus:outline-none focus:ring-1 focus:ring-status-info focus:border-status-info"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') saveEdit();
                         if (e.key === 'Escape') cancelEdit();
@@ -257,13 +257,13 @@ const EditModal: React.FC<{
                       autoFocus
                     />
                     <button
-                      className="px-2 py-1 text-xs text-white transition-colors bg-green-500 rounded-md hover:bg-green-600"
+                      className="px-2 py-1 text-xs text-white transition-colors bg-status-success rounded-md hover:bg-status-success"
                       onClick={saveEdit}
                     >
                       Save
                     </button>
                     <button
-                      className="px-2 py-1 text-xs text-white transition-colors bg-gray-500 rounded-md hover:bg-gray-600"
+                      className="px-2 py-1 text-xs text-white transition-colors bg-ink-caption rounded-md hover:bg-ink-paragraph"
                       onClick={cancelEdit}
                     >
                       Cancel
@@ -274,7 +274,7 @@ const EditModal: React.FC<{
                     {item && item.trim() ? (
                       <span>{item}</span>
                     ) : (
-                      <span className="text-slate-400">(empty)</span>
+                      <span className="text-ink-caption">(empty)</span>
                     )}
                   </div>
                 )}
@@ -282,7 +282,7 @@ const EditModal: React.FC<{
                 {editingIdx !== idx && (
                   <div className="flex gap-1">
                     <button
-                      className="p-1.5 text-white bg-blue-500 rounded-md transition-colors hover:bg-blue-600"
+                      className="p-1.5 text-white bg-status-info rounded-md transition-colors hover:bg-status-info"
                       onClick={() => startEdit(idx)}
                       aria-label="Edit"
                       title="Edit"
@@ -290,7 +290,7 @@ const EditModal: React.FC<{
                       <Edit3 size={16} />
                     </button>
                     <button
-                      className="p-1.5 text-white bg-red-500 rounded-md transition-colors hover:bg-red-600"
+                      className="p-1.5 text-white bg-status-error rounded-md transition-colors hover:bg-status-error"
                       onClick={() => removeRow(idx)}
                       aria-label="Remove"
                       title="Remove"
@@ -305,7 +305,7 @@ const EditModal: React.FC<{
 
           <div className="flex items-center gap-2 mt-3">
             <button
-              className="flex gap-1.5 items-center px-3 py-1.5 text-sm rounded-md border border-gray-300 transition-colors hover:bg-gray-50"
+              className="flex gap-1.5 items-center px-3 py-1.5 text-sm rounded-md border border-ink-light transition-colors hover:bg-ink-offwhite"
               onClick={addRow}
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -313,15 +313,15 @@ const EditModal: React.FC<{
               </svg>
               Add option
             </button>
-            <div className="ml-2 text-xs text-gray-500">
+            <div className="ml-2 text-xs text-ink-caption">
               Changes update live (type to push updates)
             </div>
           </div>
 
-          <div className="flex justify-between gap-2 pt-3 mt-4 border-t border-gray-200">
+          <div className="flex justify-between gap-2 pt-3 mt-4 border-t border-ink-light">
             {onOpenChild && (
               <button
-                className="flex gap-1.5 items-center px-3 py-1.5 text-sm rounded-md border border-gray-300 transition-colors hover:bg-gray-50"
+                className="flex gap-1.5 items-center px-3 py-1.5 text-sm rounded-md border border-ink-light transition-colors hover:bg-ink-offwhite"
                 onClick={() => effectiveSelected && onOpenChild(effectiveSelected)}
                 disabled={!effectiveSelected}
                 title={
@@ -336,13 +336,13 @@ const EditModal: React.FC<{
 
             <div className="flex gap-2">
               <button
-                className="px-3 py-1.5 text-sm rounded-md border border-gray-300 transition-colors hover:bg-gray-50"
+                className="px-3 py-1.5 text-sm rounded-md border border-ink-light transition-colors hover:bg-ink-offwhite"
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
-                className="px-3 py-1.5 text-sm text-white bg-blue-600 rounded-md transition-colors hover:bg-blue-700"
+                className="px-3 py-1.5 text-sm text-white bg-status-info rounded-md transition-colors hover:bg-status-info"
                 onClick={handleSave}
               >
                 Save Changes
@@ -999,11 +999,11 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
   const getCategoryColor = (category: string) => {
     if (category.toLowerCase().includes("drone")) {
       return {
-        bg: "bg-blue-50",
-        border: "border-blue-200",
-        text: "text-blue-900",
-        selected: "bg-blue-100 border-blue-500 text-blue-900",
-        completed: "bg-green-100 border-green-500 text-green-900",
+        bg: "bg-status-info/10",
+        border: "border-status-info/25",
+        text: "text-status-info",
+        selected: "bg-status-info/15 border-status-info text-status-info",
+        completed: "bg-status-success/15 border-status-success text-status-success",
       } as const;
     } else if (
       category.toLowerCase().includes("ai") ||
@@ -1014,19 +1014,19 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
       category.toLowerCase().includes("machine learning")
     ) {
       return {
-        bg: "bg-purple-50",
-        border: "border-purple-200",
-        text: "text-purple-900",
-        selected: "bg-purple-100 border-purple-500 text-purple-900",
-        completed: "bg-green-100 border-green-500 text-green-900",
+        bg: "bg-brand-gold/10",
+        border: "border-brand-gold/25",
+        text: "text-brand-gold",
+        selected: "bg-brand-gold/15 border-brand-gold text-brand-gold",
+        completed: "bg-status-success/15 border-status-success text-status-success",
       } as const;
     }
     return {
-      bg: "bg-green-50",
-      border: "border-green-200",
-      text: "text-green-900",
-      selected: "bg-green-100 border-green-500 text-green-900",
-      completed: "bg-green-100 border-green-500 text-green-900",
+      bg: "bg-status-success/10",
+      border: "border-status-success/25",
+      text: "text-status-success",
+      selected: "bg-status-success/15 border-status-success text-status-success",
+      completed: "bg-status-success/15 border-status-success text-status-success",
     } as const;
   };
 
@@ -1628,7 +1628,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
     // Prevent runaway recursion
     if (level > 10) {
       return (
-        <div className="ml-6 text-xs text-red-500">
+        <div className="ml-6 text-xs text-status-error">
           (Max depth reached – possible circular reference)
         </div>
       );
@@ -1639,7 +1639,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
         {/* Vertical connector line for all levels except root */}
         {level > 1 && (
           <div
-            className="absolute top-0 w-px h-full -translate-x-1/2 left-2 bg-slate-300"
+            className="absolute top-0 w-px h-full -translate-x-1/2 left-2 bg-ink-light"
             style={{ height: 'calc(100% - 0.5rem)' }}
           />
         )}
@@ -1654,18 +1654,18 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
             return (
               <div key={`${parent}::${child}`} className="relative flex flex-col">
                 {/* Horizontal connector line */}
-                <div className="absolute w-2 h-px -translate-x-1/2 left-2 top-3 bg-slate-300" />
+                <div className="absolute w-2 h-px -translate-x-1/2 left-2 top-3 bg-ink-light" />
 
                 <div className="flex items-start gap-2 pl-4">
                   {/* Tree node connector */}
                   <div className="relative flex-shrink-0 mt-2.5">
                     {/* Vertical line continuation for non-last items */}
                     {!isLast && (
-                      <div className="absolute w-px h-6 -translate-x-1/2 top-3 left-1/2 bg-slate-300" />
+                      <div className="absolute w-px h-6 -translate-x-1/2 top-3 left-1/2 bg-ink-light" />
                     )}
 
                     {/* Circular node indicator */}
-                    <div className="relative z-10 w-2 h-2 border rounded-full bg-slate-400 border-slate-600" />
+                    <div className="relative z-10 w-2 h-2 border rounded-full bg-ink-caption border-ink-paragraph" />
                   </div>
 
                   {/* Content */}
@@ -1674,8 +1674,8 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                       {/* Checkbox */}
                       <label
                         className={`inline-flex items-center px-2 py-1 rounded border cursor-pointer transition-all hover:shadow-sm ${isChecked
-                          ? "text-green-800 bg-green-50 border-green-300"
-                          : "bg-white hover:bg-slate-50 border-slate-300"
+                          ? "text-status-success bg-status-success/10 border-status-success/40"
+                          : "bg-surface-card hover:bg-ink-offwhite border-ink-light"
                           }`}
                         onClick={(e) => {
                           if (e.target === e.currentTarget) {
@@ -1690,7 +1690,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                           className="sr-only"
                         />
                         {/* removed checkbox indicator */}
-                        <span className="text-xs text-slate-700">{child}</span>
+                        <span className="text-xs text-ink-paragraph">{child}</span>
                       </label>
 
 
@@ -1752,12 +1752,12 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
     >
       <div className="space-y-6">
         {/* Main Business Categories */}
-        <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div className="p-6 bg-surface-card border border-ink-light rounded-lg shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="w-full">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="flex items-center gap-2 text-xl font-bold text-gray-900">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h3 className="flex items-center gap-2 text-xl font-bold text-ink">
+                  <svg className="w-5 h-5 text-status-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                   Main Business Categories 
@@ -1765,7 +1765,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 <div className="flex gap-1 sm:gap-2">
                   <button
                     onClick={openEditMain}
-                    className="inline-flex items-center gap-1 text-xs border rounded-lg hover:bg-white"
+                    className="inline-flex items-center gap-1 text-xs border rounded-lg hover:bg-surface-card"
                     style={{
                       padding: '3.5px 4px',
                       margin: '0px 2px 2px 0px',
@@ -1780,7 +1780,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                   </button>
                 </div>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-ink-paragraph">
                 Select your primary business categories (multiple selection allowed).
                 Click on a category to expand and see subcategories.
               </p>
@@ -1802,24 +1802,24 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 if (status === "completed") {
                   if (isExpanded) {
                     categoryStyle =
-                      "bg-blue-100 border-blue-500 shadow-sm ring-2 ring-blue-300";
-                    textStyle = "text-blue-800";
+                      "bg-status-info/15 border-status-info shadow-sm ring-2 ring-status-info/40";
+                    textStyle = "text-status-info";
                   } else {
-                    categoryStyle = "bg-green-100 border-green-500 shadow-sm";
-                    textStyle = "text-green-800";
+                    categoryStyle = "bg-status-success/15 border-status-success shadow-sm";
+                    textStyle = "text-status-success";
                   }
                   showCheckbox = true;
                 } else if (status === "expanded") {
                   categoryStyle =
-                    "bg-blue-100 border-blue-500 shadow-sm ring-2 ring-blue-300";
-                  textStyle = "text-blue-800";
+                    "bg-status-info/15 border-status-info shadow-sm ring-2 ring-status-info/40";
+                  textStyle = "text-status-info";
                 } else if (isSelected) {
-                  categoryStyle = "bg-yellow-100 border-yellow-500 shadow-sm";
-                  textStyle = "text-yellow-800";
+                  categoryStyle = "bg-brand-yellow-soft border-brand-gold shadow-sm";
+                  textStyle = "text-brand-gold";
                 } else {
                   categoryStyle =
-                    "bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm";
-                  textStyle = "text-gray-700";
+                    "bg-surface-card border-ink-light hover:border-ink-light hover:shadow-sm";
+                  textStyle = "text-ink-paragraph";
                 }
 
                 return (
@@ -1844,7 +1844,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                       }
                     >
                       {showCheckbox && (
-                        <div className="flex items-center justify-center flex-shrink-0 w-4 h-4 bg-green-500 border-2 border-green-500 rounded">
+                        <div className="flex items-center justify-center flex-shrink-0 w-4 h-4 bg-status-success border-2 border-status-success rounded">
                           <svg
                             className="w-2.5 h-2.5 text-white"
                             fill="currentColor"
@@ -1862,7 +1862,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                         {category}
                       </span>
                       {isExpanded && (
-                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-status-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       )}
@@ -1876,7 +1876,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                             e.stopPropagation();
                             // Add edit functionality here
                           }}
-                          className="flex items-center justify-center w-6 h-6 text-white transition-colors bg-blue-500 rounded-full hover:bg-blue-600"
+                          className="flex items-center justify-center w-6 h-6 text-white transition-colors bg-status-info rounded-full hover:bg-status-info"
                           title="Edit category"
                         >
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1890,7 +1890,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                               handleDeleteMainCategory(category);
                             }
                           }}
-                          className="flex items-center justify-center w-6 h-6 text-white transition-colors bg-red-500 rounded-full hover:bg-red-600"
+                          className="flex items-center justify-center w-6 h-6 text-white transition-colors bg-status-error rounded-full hover:bg-status-error"
                           title="Delete category"
                         >
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1905,8 +1905,8 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
             </div>
 
             {mainCategories.length === 0 && (
-              <div className="py-8 text-center text-gray-500">
-                <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="py-8 text-center text-ink-caption">
+                <svg className="w-12 h-12 mx-auto mb-3 text-ink-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <p className="text-sm">No categories yet. Click "Edit Categories" to add your first category.</p>
@@ -1930,7 +1930,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
 
                 <button
                   onClick={() => openSubModal(expandedMainCategory, "main")}
-                  className="inline-flex items-center gap-1 text-xs border rounded-lg hover:bg-white"
+                  className="inline-flex items-center gap-1 text-xs border rounded-lg hover:bg-surface-card"
                   title="Edit subcategories for this main category"
                   style={{
                     padding: '3.5px 4px',
@@ -1962,26 +1962,26 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                     if (subStatus === "completed") {
                       if (isSubExpanded) {
                         subCategoryStyle =
-                          "bg-blue-100 border-blue-500 shadow-sm ring-2 ring-blue-300";
-                        subTextStyle = "text-blue-800";
+                          "bg-status-info/15 border-status-info shadow-sm ring-2 ring-status-info/40";
+                        subTextStyle = "text-status-info";
                       } else {
                         subCategoryStyle =
-                          "bg-green-100 border-green-500 shadow-sm";
-                        subTextStyle = "text-green-800";
+                          "bg-status-success/15 border-status-success shadow-sm";
+                        subTextStyle = "text-status-success";
                       }
                       showSubCheckbox = true;
                     } else if (subStatus === "expanded") {
                       subCategoryStyle =
-                        "bg-blue-100 border-blue-500 shadow-sm ring-2 ring-blue-300";
-                      subTextStyle = "text-blue-800";
+                        "bg-status-info/15 border-status-info shadow-sm ring-2 ring-status-info/40";
+                      subTextStyle = "text-status-info";
                     } else if (isSubSelected) {
                       subCategoryStyle =
-                        "bg-orange-100 border-orange-500 shadow-sm";
-                      subTextStyle = "text-orange-800";
+                        "bg-status-warning/15 border-status-warning shadow-sm";
+                      subTextStyle = "text-status-warning";
                     } else {
                       subCategoryStyle =
-                        "bg-white hover:bg-slate-50 border border-slate-200";
-                      subTextStyle = "text-slate-700";
+                        "bg-surface-card hover:bg-ink-offwhite border border-ink-light";
+                      subTextStyle = "text-ink-paragraph";
                     }
 
                     return (
@@ -2012,7 +2012,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                         >
                           <div className="flex items-start">
                             {showSubCheckbox && (
-                              <div className="w-2 h-2 rounded border border-green-500 bg-green-500 flex items-center justify-center mr-1 mt-0.5 flex-shrink-0">
+                              <div className="w-2 h-2 rounded border border-status-success bg-status-success flex items-center justify-center mr-1 mt-0.5 flex-shrink-0">
                                 <svg
                                   className="w-1 h-1 text-white"
                                   fill="currentColor"
@@ -2042,9 +2042,9 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
               {/* Sub-subcategories shown inline when a subcategory is expanded (checkbox list) */}
               {expandedSubcategory &&
                 (subSubcategories[expandedSubcategory] || []).length > 0 && (
-                  <div className="p-3 mb-2 bg-white border rounded-md border-slate-200">
+                  <div className="p-3 mb-2 bg-surface-card border rounded-md border-ink-light">
                     <div className="flex items-center justify-between mb-2">
-                      <h5 className="text-xs font-medium text-slate-800">
+                      <h5 className="text-xs font-medium text-ink-charcoal">
                         {expandedSubcategory} - Details
                       </h5>
 
@@ -2053,7 +2053,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                         onClick={async () => {
                           await openSubSubModal(expandedSubcategory, "sub");
                         }}
-                        className="inline-flex items-center gap-1 text-xs border rounded-lg border-slate-300 hover:bg-slate-50"
+                        className="inline-flex items-center gap-1 text-xs border rounded-lg border-ink-light hover:bg-ink-offwhite"
                         style={{
                           padding: '3.5px 4px',
                           margin: '0px 2px 2px 0px',
@@ -2082,8 +2082,8 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                               <div className="flex items-center">
                                 <label
                                   className={`inline-flex items-center rounded border cursor-pointer transition-all hover:shadow-sm text-xs ${isChecked
-                                    ? "text-green-800 bg-green-50 border-green-300"
-                                    : "bg-white hover:bg-slate-50 border-slate-300"
+                                    ? "text-status-success bg-status-success/10 border-status-success/40"
+                                    : "bg-surface-card hover:bg-ink-offwhite border-ink-light"
                                     }`}
                                   style={{
                                     padding: '3.5px 4px',
@@ -2112,7 +2112,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                                     className="sr-only"
                                   />
                                   {/* removed checkbox indicator */}
-                                  <span className="text-xs text-slate-700">
+                                  <span className="text-xs text-ink-paragraph">
                                     {subSub}
                                   </span>
                                 </label>
@@ -2150,7 +2150,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                 {formData.otherMainCategories &&
                   formData.otherMainCategories.trim() && (
                     <div className="mt-2">
-                      <h5 className="mb-2 text-xs font-semibold text-slate-700">
+                      <h5 className="mb-2 text-xs font-semibold text-ink-paragraph">
                         Added Items:
                       </h5>
                       <div className="flex flex-wrap">
@@ -2162,7 +2162,7 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
                             return (
                               <span
                                 key={`${item}-${idx}`}
-                                className="inline-block px-2 py-0.5 mr-1 mb-1 bg-blue-100 text-blue-800 rounded border border-blue-200 text-xs font-medium"
+                                className="inline-block px-2 py-0.5 mr-1 mb-1 bg-status-info/15 text-status-info rounded border border-status-info/25 text-xs font-medium"
                               >
                                 {item}
                               </span>
@@ -2178,13 +2178,13 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
       </div>
 
       {/* Geography of Operations */}
-      <div className="p-3 rounded-lg bg-slate-50">
+      <div className="p-3 rounded-lg bg-ink-offwhite">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-slate-900">
+          <h3 className="text-base font-bold text-ink">
             Geography of Operations
           </h3>
           <button
-            className="inline-flex items-center gap-1 text-xs border rounded-lg hover:bg-white"
+            className="inline-flex items-center gap-1 text-xs border rounded-lg hover:bg-surface-card"
             onClick={() => setEditingGeography(true)}
             title="Edit coverage options"
             style={{
@@ -2309,11 +2309,11 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
       </div>
 
       {/* Summary */}
-      <div className="p-3 rounded-lg bg-slate-100">
-        <h4 className="mb-2 text-sm font-semibold text-slate-800">
+      <div className="p-3 rounded-lg bg-ink-light">
+        <h4 className="mb-2 text-sm font-semibold text-ink-charcoal">
           Selection Summary
         </h4>
-        <div className="space-y-1 text-sm text-slate-600">
+        <div className="space-y-1 text-sm text-ink-paragraph">
           <p>
             <strong>Selected Main Categories:</strong>{" "}
             {selectedMainCategories.length}
@@ -2336,15 +2336,15 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
           </p>
         </div>
 
-        <div className="pt-3 mt-3 border-t border-slate-300">
-          <h5 className="mb-2 text-sm font-semibold text-slate-700">
+        <div className="pt-3 mt-3 border-t border-ink-light">
+          <h5 className="mb-2 text-sm font-semibold text-ink-paragraph">
             Status Legend:
           </h5>
           <div className="flex flex-wrap gap-4 text-xs">
             <div className="flex items-center">
-              <div className="flex items-center justify-center w-3 h-3 mr-2 bg-green-100 border border-green-500 rounded">
+              <div className="flex items-center justify-center w-3 h-3 mr-2 bg-status-success/15 border border-status-success rounded">
                 <svg
-                  className="w-2 h-2 text-green-600"
+                  className="w-2 h-2 text-status-success"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -2358,15 +2358,15 @@ const Step4BusinessCategories: React.FC<StepProps> = ({
               <span className="text-xs">Complete</span>
             </div>
             <div className="flex items-center">
-              <div className="w-3 h-3 mr-2 bg-yellow-100 border border-yellow-500 rounded"></div>
+              <div className="w-3 h-3 mr-2 bg-brand-yellow-soft border border-brand-gold rounded"></div>
               <span className="text-xs">Selected</span>
             </div>
             <div className="flex items-center">
-              <div className="w-3 h-3 mr-2 bg-blue-100 border border-blue-500 rounded"></div>
+              <div className="w-3 h-3 mr-2 bg-status-info/15 border border-status-info rounded"></div>
               <span className="text-xs">Expanded</span>
             </div>
             <div className="flex items-center">
-              <div className="w-3 h-3 mr-2 bg-white border rounded border-slate-300"></div>
+              <div className="w-3 h-3 mr-2 bg-surface-card border rounded border-ink-light"></div>
               <span className="text-xs">Available</span>
             </div>
           </div>

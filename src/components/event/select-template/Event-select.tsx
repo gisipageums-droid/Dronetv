@@ -74,11 +74,11 @@ const EventSelect: React.FC = () => {
     };
 
     return (
-        <div className="w-full max-w-2xl bg-white my-8 mx-auto px-4 py-8">
+        <div className="w-full max-w-2xl bg-surface-card my-8 mx-auto px-4 py-8">
             {/* Back Button */}
             <button
                 onClick={() => navigate(-1)}
-                className="flex items-center gap-2 text-gray-600 hover:text-yellow-600 transition-colors mb-8 text-sm font-medium"
+                className="flex items-center gap-2 text-ink-paragraph hover:text-brand-yellow transition-colors mb-8 text-sm font-medium"
             >
                 <FiArrowLeft className="w-4 h-4" />
                 Back
@@ -91,10 +91,10 @@ const EventSelect: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
             >
-                <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-brand-yellow to-brand-gold bg-clip-text text-transparent">
                     Choose Your Event Template
                 </h1>
-                <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                <p className="text-ink-paragraph text-lg max-w-2xl mx-auto">
                     Pick a professionally designed template to launch your event page in minutes.
                 </p>
             </motion.div>
@@ -106,8 +106,8 @@ const EventSelect: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
             >
-                <h2 className="text-lg font-semibold text-gray-900 mb-1">What are you creating?</h2>
-                <p className="text-sm text-gray-500 mb-4">Choose a category — this decides where your listing shows up (Events, Expos, Conferences or Workshops).</p>
+                <h2 className="text-lg font-semibold text-ink mb-1">What are you creating?</h2>
+                <p className="text-sm text-ink-caption mb-4">Choose a category — this decides where your listing shows up (Events, Expos, Conferences or Workshops).</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     {EVENT_TYPES.map((t) => (
                         <button
@@ -115,15 +115,15 @@ const EventSelect: React.FC = () => {
                             type="button"
                             onClick={() => setEventType(t.id)}
                             className={`text-left p-4 rounded-xl border-2 transition-all duration-200 ${eventType === t.id
-                                ? "border-yellow-400 bg-yellow-50 shadow-md"
-                                : "border-gray-200 hover:border-yellow-300"
+                                ? "border-brand-yellow bg-surface-main shadow-md"
+                                : "border-ink-light hover:border-brand-yellow-soft"
                                 }`}
                         >
                             <div className="flex items-center justify-between mb-1">
-                                <span className="font-semibold text-gray-900">{t.label}</span>
-                                {eventType === t.id && <FiCheck className="w-4 h-4 text-yellow-600" />}
+                                <span className="font-semibold text-ink">{t.label}</span>
+                                {eventType === t.id && <FiCheck className="w-4 h-4 text-brand-gold" />}
                             </div>
-                            <p className="text-xs text-gray-500">{t.description}</p>
+                            <p className="text-xs text-ink-caption">{t.description}</p>
                         </button>
                     ))}
                 </div>
@@ -132,7 +132,7 @@ const EventSelect: React.FC = () => {
             {/* Grid (single card) */}
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity ${!eventType ? "opacity-50 pointer-events-none" : ""}`}>
                 {!eventType && (
-                    <p className="col-span-full text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 -mt-2 mb-2">
+                    <p className="col-span-full text-sm text-brand-gold bg-surface-main border border-brand-yellow-soft rounded-lg px-4 py-2 -mt-2 mb-2">
                         Pick a category above to continue.
                     </p>
                 )}
@@ -151,14 +151,14 @@ const EventSelect: React.FC = () => {
                             onMouseLeave={() => setHoveredTemplate(null)}
                             onClick={() => handleSelect(tpl.id)}
                             className={`relative flex flex-col group border-2 rounded-xl p-4 sm:p-6 cursor-pointer transition-all duration-300 w-full min-w-0 ${isActive
-                                ? "border-yellow-400 bg-yellow-50/50 shadow-lg"
-                                : "border-gray-200 hover:border-yellow-300 hover:shadow-xl"
+                                ? "border-brand-yellow bg-surface-main/50 shadow-lg"
+                                : "border-ink-light hover:border-brand-yellow-soft hover:shadow-xl"
                                 }`}
                         >
                             {/* Popular Badge */}
                             {tpl.tags.includes("Popular") && (
                                 <div className="absolute top-4 right-4 z-10">
-                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-brand-yellow-soft text-brand-gold">
                                         <FiStar className="w-3 h-3 mr-1 fill-current" />
                                         Popular
                                     </span>
@@ -166,7 +166,7 @@ const EventSelect: React.FC = () => {
                             )}
 
                             {/* Image */}
-                            <div className="relative h-56 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg mb-6 overflow-hidden">
+                            <div className="relative h-56 bg-gradient-to-br from-ink-offwhite to-ink-light rounded-lg mb-6 overflow-hidden">
                                 {tpl.imgpath ? (
                                     <img
                                         src={tpl.imgpath}
@@ -175,10 +175,10 @@ const EventSelect: React.FC = () => {
                                     />
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                                        <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                                            <FiExternalLink className="w-8 h-8 text-yellow-500" />
+                                        <div className="w-16 h-16 bg-brand-yellow-soft rounded-full flex items-center justify-center mb-4">
+                                            <FiExternalLink className="w-8 h-8 text-brand-gold" />
                                         </div>
-                                        <span className="text-gray-400 text-center text-sm">
+                                        <span className="text-ink-caption text-center text-sm">
                                             Preview coming soon
                                         </span>
                                     </div>
@@ -190,7 +190,7 @@ const EventSelect: React.FC = () => {
                                         <motion.div
                                             initial={{ opacity: 0, scale: 0.8 }}
                                             animate={{ opacity: 1, scale: 1 }}
-                                            className="text-gray-900 text-sm font-medium"
+                                            className="text-ink text-sm font-medium"
                                         >
                                             Click to select
                                         </motion.div>
@@ -201,18 +201,18 @@ const EventSelect: React.FC = () => {
                             {/* Info */}
                             <div className="flex-1">
                                 <div className="flex justify-between items-start mb-3">
-                                    <h3 className="text-xl font-semibold text-gray-900 group-hover:text-yellow-600 transition-colors">
+                                    <h3 className="text-xl font-semibold text-ink group-hover:text-brand-yellow transition-colors">
                                         {tpl.name}
                                     </h3>
                                     {tpl.rating && (
-                                        <div className="flex items-center text-sm text-gray-600">
-                                            <FiStar className="w-4 h-4 text-yellow-400 fill-current mr-1" />
+                                        <div className="flex items-center text-sm text-ink-paragraph">
+                                            <FiStar className="w-4 h-4 text-brand-yellow fill-current mr-1" />
                                             {tpl.rating}
                                         </div>
                                     )}
                                 </div>
 
-                                <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+                                <p className="text-ink-paragraph mb-4 text-sm leading-relaxed">
                                     {tpl.description}
                                 </p>
 
@@ -220,12 +220,12 @@ const EventSelect: React.FC = () => {
                                     {tpl.features.map((feat, idx) => (
                                         <motion.li
                                             key={idx}
-                                            className="flex items-center text-gray-700 text-sm"
+                                            className="flex items-center text-ink-paragraph text-sm"
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: idx * 0.05 }}
                                         >
-                                            <FiCheck className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" />
+                                            <FiCheck className="w-4 h-4 mr-2 text-status-success flex-shrink-0" />
                                             <span>{feat}</span>
                                         </motion.li>
                                     ))}
@@ -239,8 +239,8 @@ const EventSelect: React.FC = () => {
                                     whileTap={{ scale: 0.98 }}
                                     type="button"
                                     className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 flex-1 ${isActive
-                                        ? "bg-yellow-500 text-black shadow-md"
-                                        : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                                        ? "bg-brand-gold text-ink shadow-md"
+                                        : "bg-brand-yellow-soft text-brand-gold hover:bg-brand-yellow-soft"
                                         }`}
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -259,8 +259,8 @@ const EventSelect: React.FC = () => {
                                     whileTap={{ scale: 0.98 }}
                                     type="button"
                                     className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium border transition-all duration-200 flex-1 ${isActive
-                                        ? "border-yellow-400 text-yellow-600"
-                                        : "border-gray-300 text-gray-600 hover:border-yellow-300 hover:text-yellow-600"
+                                        ? "border-brand-yellow text-brand-gold"
+                                        : "border-ink-light text-ink-paragraph hover:border-brand-yellow-soft hover:text-brand-yellow"
                                         }`}
                                     onClick={(e) => handlePreview(tpl.path, e)}
                                     disabled={!tpl.imgpath}
@@ -275,7 +275,7 @@ const EventSelect: React.FC = () => {
                                 <motion.div
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
-                                    className="absolute top-3 left-3 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center"
+                                    className="absolute top-3 left-3 w-6 h-6 bg-brand-yellow rounded-full flex items-center justify-center"
                                 >
                                     <FiCheck className="w-4 h-4 text-white" />
                                 </motion.div>
@@ -287,12 +287,12 @@ const EventSelect: React.FC = () => {
 
             {/* Footer */}
             <motion.div
-                className="text-center mt-12 p-6 bg-gray-50 rounded-xl border border-gray-200"
+                className="text-center mt-12 p-6 bg-ink-offwhite rounded-xl border border-ink-light"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
             >
-                <p className="text-gray-600 mb-2">
+                <p className="text-ink-paragraph mb-2">
                     💡 Can't decide? This template is fully customizable after selection!
                 </p>
             </motion.div>

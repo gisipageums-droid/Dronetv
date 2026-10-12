@@ -113,8 +113,8 @@ const PortfolioTemplate2: React.FC = () => {
     rotatingTitles: "Founder & CEO|Business Strategist|Drone Technology Expert|Innovation Leader",
     tagline: "Driving Innovation in Drone Technology | GIS | AI | IT Solutions",
     location: "Singapore & Hyderabad, India",
-    primaryColor: "#FFD400",
-    accentColor: "#FF0000",
+    primaryColor: "#F8C400",
+    accentColor: "#DC2626",
     button1Text: "View Portfolio",
     button1Link: "#portfolio",
     button2Text: "Get In Touch",
@@ -474,7 +474,7 @@ const PortfolioTemplate2: React.FC = () => {
 
   return (
     <div className={darkMode ? 'dark' : ''}>
-      <div className="bg-white dark:bg-gray-900 transition-colors duration-300">
+      <div className="bg-surface-card dark:bg-gray-900 transition-colors duration-300">
         <Navigation darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
 
         <HeroSection

@@ -134,6 +134,44 @@ function PortalProfileSection({ publishedId }: { publishedId?: string }) {
   );
 }
 
+// The signup form only ever collects one free-text address line, not
+// separate city/state inputs - those raw fields are empty for every
+// company, not just this one. Derive them from the address instead of
+// showing "Not provided" for data the company actually did give.
+// Matches the same list/approach as CompaniesPage.tsx's extractState() -
+// real typed-in addresses are often one unpunctuated run ("...Hyderabad
+// Hyderabad Telangana 500032 India"), so the old "last comma segment"
+// guess returned that whole messy chunk as the "state" instead of the
+// real state name, which then also didn't match the public site's clean
+// state filter chips.
+const INDIAN_STATES = [
+  "Andaman and Nicobar Islands", "Dadra and Nagar Haveli and Daman and Diu",
+  "Jammu and Kashmir", "Arunachal Pradesh", "Himachal Pradesh", "Madhya Pradesh",
+  "Andhra Pradesh", "Uttar Pradesh", "Uttarakhand", "Chhattisgarh",
+  "West Bengal", "Maharashtra", "Puducherry", "Tamil Nadu", "Telangana",
+  "Meghalaya", "Rajasthan", "Karnataka", "Jharkhand", "Nagaland", "Chandigarh",
+  "Lakshadweep", "Mizoram", "Manipur", "Haryana", "Gujarat", "Tripura",
+  "Sikkim", "Punjab", "Odisha", "Kerala", "Ladakh", "Assam", "Bihar",
+  "Delhi", "Goa",
+].sort((a, b) => b.length - a.length);
+
+function deriveFromAddress(address: string | undefined, which: "city" | "state"): string {
+  const text = address || "";
+  const matchedState = INDIAN_STATES.find((s) => new RegExp(`\\b${s.replace(/ /g, "\\s+")}\\b`, "i").test(text));
+  const parts = text.split(",").map((p) => p.trim()).filter(Boolean);
+  const meaningful = parts.filter((p) => p && !/^\d+$/.test(p) && p.toLowerCase() !== "india");
+  if (which === "state") {
+    if (matchedState) return matchedState;
+    return meaningful[meaningful.length - 1] || "";
+  }
+  // city: skip whichever segment the matched state name is embedded in
+  for (let i = meaningful.length - 1; i >= 0; i--) {
+    if (matchedState && meaningful[i].toLowerCase().includes(matchedState.toLowerCase())) continue;
+    if (meaningful[i].split(/\s+/).length <= 4 && meaningful[i].length < 30) return meaningful[i];
+  }
+  return meaningful[meaningful.length - 2] || "";
+}
+
 function genPassword(): string {
   const sets = ["ABCDEFGHJKLMNPQRSTUVWXYZ", "abcdefghijkmnpqrstuvwxyz", "23456789", "!@#$%*"];
   return Array.from({ length: 12 }, (_, i) => {
@@ -460,13 +498,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm text-ink-paragraph">Company Name</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.formData.rawData.companyName || "Not provided"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Industry</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.formData.rawData.mainCategories &&
                         Array.isArray(data.formData.rawData.mainCategories)
                         ? data.formData.rawData.mainCategories.join(", ")
@@ -479,7 +517,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
 
                   <div>
                     <p className="text-sm text-ink-paragraph">Established Year</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.formData.rawData.yearEstablished
                         ? new Date(
                           data.formData.rawData.yearEstablished
@@ -489,13 +527,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Website</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.formData.rawData.websiteUrl || "None"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Legal Name</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.formData.rawData.legalName ||
                         data.formData.rawData.companyName ||
                         "Not provided"}
@@ -503,12 +541,37 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Nature of Business</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.formData.rawData.natureOfBusiness || "Not provided"}
                     </p>
                   </div>
                 </div>
               </div>
+
+              {/* Registration details from the new registration form */}
+              {data.formData.rawData.company && (() => {
+                const co = data.formData.rawData.company;
+                const consent = co.consents || {};
+                const row = (label: string, value: any) => (
+                  <div>
+                    <p className="text-sm text-ink-paragraph">{label}</p>
+                    <p className="font-medium break-words">{value || "Not provided"}</p>
+                  </div>
+                );
+                return (
+                  <div className="bg-ink-offwhite p-4 rounded-lg">
+                    <h4 className="font-semibold text-lg text-ink-charcoal mb-3">Registration Details</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {row("GST check", co.gst_verified ? "Verified by DroneTV" : "Not verified - check the GST number")}
+                      {row("Primary sector", co.primary_sector)}
+                      {row("Business support category", co.business_support_category === "Other Business Services" ? `Other: ${co.business_support_other}` : co.business_support_category)}
+                      {row("Business entity type", co.business_entity_type)}
+                      {row("Registered state / pincode", [co.registered_state, co.registered_pincode].filter(Boolean).join(" - "))}
+                      {row("Declarations accepted", consent.accepted_at ? `${new Date(consent.accepted_at).toLocaleString()} (version ${consent.declaration_version}, IP ${consent.ip || "unknown"})` : "")}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Identity & Tax Information */}
               <div className="bg-brand-gold/10 p-4 rounded-lg">
@@ -550,19 +613,19 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Business Field</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.businessField || "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">CIN Number</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.cin || "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Udyam Registration</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.udyamRegistrationNumber ||
                           "Not provided"}
                       </p>
@@ -601,7 +664,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">GST Address</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.gstAddress ||
                           data.formData.rawData.communicationAddress ||
                           "Not provided"}
@@ -609,14 +672,14 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Billing GST Details</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.billingGstDetails ||
                           "Same as above"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Billing Address</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.billingAddress ||
                           "Same as registered address"}
                       </p>
@@ -639,25 +702,25 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
                       <p className="text-sm text-ink-paragraph">Name</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.directorName || "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Email</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.directorEmail || "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Phone</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.directorPhone || "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Designation</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.directorName
                           ? "Director"
                           : "Not specified"}
@@ -674,25 +737,25 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
                       <p className="text-sm text-ink-paragraph">Name</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.altContactName || "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Email</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.altContactEmail || "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Phone</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.altContactPhone || "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">WhatsApp</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.whatsappNumber || "Not provided"}
                       </p>
                     </div>
@@ -707,7 +770,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     <div>
                       <p className="text-sm text-ink-paragraph">Street</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.officeAddress ||
                           data.formData.rawData.directorAddress ||
                           "Not provided"}
@@ -715,19 +778,23 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">City</p>
-                      <p className="font-medium">
-                        {data.formData.rawData.city || "Not provided"}
+                      <p className="font-medium break-words">
+                        {data.formData.rawData.city ||
+                          deriveFromAddress(data.formData.rawData.officeAddress || data.formData.rawData.communicationAddress, "city") ||
+                          "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">State</p>
-                      <p className="font-medium">
-                        {data.formData.rawData.state || "Not provided"}
+                      <p className="font-medium break-words">
+                        {data.formData.rawData.state ||
+                          deriveFromAddress(data.formData.rawData.officeAddress || data.formData.rawData.communicationAddress, "state") ||
+                          "Not provided"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Pincode</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.postalCode ||
                           data.formData.rawData.pinCode ||
                           "Not provided"}
@@ -735,7 +802,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     </div>
                     <div>
                       <p className="text-sm text-ink-paragraph">Country</p>
-                      <p className="font-medium">
+                      <p className="font-medium break-words">
                         {data.formData.rawData.country || "Not provided"}
                       </p>
                     </div>
@@ -748,7 +815,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                     <h5 className="font-medium text-ink-paragraph mb-2">
                       Communication Address
                     </h5>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.formData.rawData.communicationAddress}
                     </p>
                   </div>
@@ -772,7 +839,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                           Open Link
                         </a>
                       ) : (
-                        <p className="font-medium">Not provided</p>
+                        <p className="font-medium break-words">Not provided</p>
                       )}
                     </div>
                     <div>
@@ -787,7 +854,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                           Open Link
                         </a>
                       ) : (
-                        <p className="font-medium">Not provided</p>
+                        <p className="font-medium break-words">Not provided</p>
                       )}
                     </div>
                     <div>
@@ -802,7 +869,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                           Open Link
                         </a>
                       ) : (
-                        <p className="font-medium">Not provided</p>
+                        <p className="font-medium break-words">Not provided</p>
                       )}
                     </div>
                     <div>
@@ -817,7 +884,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                           Open Link
                         </a>
                       ) : (
-                        <p className="font-medium">Not provided</p>
+                        <p className="font-medium break-words">Not provided</p>
                       )}
                     </div>
                     <div>
@@ -832,7 +899,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                           Open Link
                         </a>
                       ) : (
-                        <p className="font-medium">Not provided</p>
+                        <p className="font-medium break-words">Not provided</p>
                       )}
                     </div>
                   </div>
@@ -847,7 +914,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-ink-paragraph">Primary Services</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {Array.isArray(data.formData?.rawData?.services)
                         ? data.formData.rawData.services
                           .map((s: any) => s?.title || "")
@@ -858,7 +925,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Products</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {Array.isArray(data.formData?.rawData?.products)
                         ? data.formData.rawData.products
                           .map((p: any) => p?.title || "")
@@ -869,7 +936,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Sectors Served</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.formData?.rawData?.sectorsServed
                         ? Object.entries(
                           data.formData.rawData
@@ -887,7 +954,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Specializations</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {Array.isArray(data.formData?.rawData?.mainCategories)
                         ? data.formData.rawData.mainCategories.join(", ")
                         : Array.isArray(data.formData?.rawData?.companyCategory)
@@ -897,7 +964,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Geography of Operations</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {Array.isArray(data.formData?.rawData?.geographyOfOperations)
                         ? data.formData.rawData.geographyOfOperations.join(", ")
                         : "Not specified"}
@@ -905,7 +972,7 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Promotion Formats</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {Array.isArray(data.formData?.rawData?.promoFormats)
                         ? data.formData.rawData.promoFormats.join(", ")
                         : "Not specified"}
@@ -1069,13 +1136,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Template Used</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.metadata?.templateUsed || "Not specified"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Submitted At</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.metadata?.originalSubmittedAt
                         ? new Date(
                           parseInt(data.metadata.originalSubmittedAt)
@@ -1085,13 +1152,13 @@ const CredentialsModal: React.FC<CredentialsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Data Source</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.metadata?.dataSource || "Unknown"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-ink-paragraph">Published Status</p>
-                    <p className="font-medium">
+                    <p className="font-medium break-words">
                       {data.metadata?.publishedStatus || "Unknown"}
                     </p>
                   </div>

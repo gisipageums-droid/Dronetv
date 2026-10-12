@@ -179,9 +179,9 @@ export function Footer({ footerData }: FooterProps) {
     // Loading state
     if (isLoading) {
         return (
-            <footer ref={footerRef} className="py-12 bg-amber-50 border-t border-amber-200">
+            <footer ref={footerRef} className="py-12 bg-surface-main border-t border-brand-yellow-soft">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-                    <div className="w-8 h-8 animate-spin mx-auto text-yellow-500">
+                    <div className="w-8 h-8 animate-spin mx-auto text-brand-gold">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                             <path d="M12 18V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -193,14 +193,14 @@ export function Footer({ footerData }: FooterProps) {
                             <path d="M16.24 7.76L19.07 4.93" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                         </svg>
                     </div>
-                    <p className="text-gray-600 mt-4">Loading footer data...</p>
+                    <p className="text-ink-paragraph mt-4">Loading footer data...</p>
                 </div>
             </footer>
         );
     }
 
     return (
-        <footer ref={footerRef} className="bg-amber-50 border-t border-amber-200">
+        <footer ref={footerRef} className="bg-surface-main border-t border-brand-yellow-soft">
             <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
                 <div className="max-w-6xl mx-auto">
                     {/* Main Footer Content */}
@@ -214,13 +214,13 @@ export function Footer({ footerData }: FooterProps) {
                             className="lg:col-span-1"
                         >
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
+                                <div className="w-10 h-10 bg-brand-yellow rounded-lg flex items-center justify-center">
                                     <span className="text-white font-semibold text-lg uppercase">{data.logoText.charAt(0)}</span>
                                 </div>
-                                <span className="text-gray-900 text-xl font-semibold">{data.logoText}</span>
+                                <span className="text-ink text-xl font-semibold">{data.logoText}</span>
                             </div>
 
-                            <p className="text-gray-600 text-sm mb-4">
+                            <p className="text-ink-paragraph text-sm mb-4">
                                 {data.description}
                             </p>
                         </motion.div>
@@ -233,13 +233,13 @@ export function Footer({ footerData }: FooterProps) {
                             viewport={{ once: true }}
                             className="lg:col-span-1 ml-40"
                         >
-                            <h3 className="text-gray-900 font-semibold text-lg mb-4">Quick Links</h3>
+                            <h3 className="text-ink font-semibold text-lg mb-4">Quick Links</h3>
                             <ul className="space-y-3">
                                 {defaultFooterData.quickLinks.map((link) => (
                                     <li key={link.id}>
                                         <a
                                             href={link.href}
-                                            className="text-gray-600 hover:text-yellow-600 transition-colors text-sm"
+                                            className="text-ink-paragraph hover:text-brand-yellow transition-colors text-sm"
                                         >
                                             {link.label}
                                         </a>
@@ -256,13 +256,13 @@ export function Footer({ footerData }: FooterProps) {
                             viewport={{ once: true }}
                             className="lg:col-span-1 ml-40"
                         >
-                            <h3 className="text-gray-900 font-semibold text-lg mb-4">More Links</h3>
+                            <h3 className="text-ink font-semibold text-lg mb-4">More Links</h3>
                             <ul className="space-y-3">
                                 {defaultFooterData.moreLinks.map((link) => (
                                     <li key={link.id}>
                                         <a
                                             href={link.href}
-                                            className="text-gray-600 hover:text-yellow-600 transition-colors text-sm"
+                                            className="text-ink-paragraph hover:text-brand-yellow transition-colors text-sm"
                                         >
                                             {link.label}
                                         </a>

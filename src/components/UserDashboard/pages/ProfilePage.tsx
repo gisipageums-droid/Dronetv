@@ -6,19 +6,21 @@ import { toast } from 'react-toastify';
 import { useRazorpay } from 'react-razorpay';
 import { X, Lock, Search } from 'lucide-react';
 import { AUTH_API, PAYMENT_API, LAMBDA } from '../../../lib/apiConfig';
+import { authHeader } from '../../../lib/authService';
 
+// Matches payment service's real TransactionOut schema — this table only
+// ever records token-purchase orders (no running balance, no debit rows),
+// so every entry is inherently a credit; "status" (pending/success/failed)
+// is what should drive the color, not a credit/debit type that doesn't exist.
 interface Transaction {
-  transactionId: string;
-  type: string;
-  amount: number;
-  category: string;
+  id: string;
+  date: string;
   description: string;
-  publishedId: string;
-  companyName: string;
-  balanceBefore: number;
-  balanceAfter: number;
-  timestamp: string;
-  referenceId: string;
+  amount: number;
+  status: string;
+  tokenCount: number;
+  service?: string;
+  currency?: string;
 }
 
 interface UserDetails {
@@ -48,6 +50,17 @@ const ProfilePage: React.FC = () => {
 
   async function getTokenData() {
     try {
+      // Real wallet balance lives in the payment service, same source the
+      // dashboard sidebar reads — the auth service's /profile record isn't
+      // kept in sync with token purchases/spend, so it always read 0 here.
+      if (PAYMENT_API) {
+        const response = await fetch(`${PAYMENT_API}/wallet?userId=${stored?.email}`, { headers: authHeader() });
+        if (response.ok) {
+          const data = await response.json();
+          setTotalTokens(data?.tokenBalance ?? 0);
+        }
+        return;
+      }
       const response = await fetch(AUTH_API ? `${AUTH_API}/profile?userId=${stored?.email}` : `${LAMBDA.profile}/profile?userId=${stored?.email}`, {
         headers: {
           Authorization: `Bearer ${user?.token}`
@@ -56,8 +69,7 @@ const ProfilePage: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setTotalTokens(data || 0);
-      } else {
+        setTotalTokens(data?.profile?.tokenBalance ?? 0);
       }
     } catch (error) {
     }
@@ -66,10 +78,16 @@ const ProfilePage: React.FC = () => {
   const [recentToken, setRecentToken] = useState<any>(null);
   async function getRecentToken() {
     try {
-      const response = await fetch(AUTH_API ? `${AUTH_API}/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5` : `${LAMBDA.profile}/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5`);
+      const response = PAYMENT_API
+        ? await fetch(`${PAYMENT_API}/transactions/${stored?.email}`, { headers: authHeader() })
+        : await fetch(`${LAMBDA.profile}/transactions/recent?userId=${stored?.email}&publishedId=all&limit=5`);
       if (response.ok) {
         const data = await response.json();
-        setRecentToken(data);
+        if (PAYMENT_API) {
+          setRecentToken({ ...data, transactions: (data.transactions || []).slice(0, 5) });
+        } else {
+          setRecentToken(data);
+        }
       } else {
       }
     } catch (error) {
@@ -90,10 +108,27 @@ const ProfilePage: React.FC = () => {
 
   async function getAllToken() {
     try {
-      const response = await fetch(AUTH_API ? `${AUTH_API}/transactions/all?userId=${stored?.email}&publishedId=all` : `${LAMBDA.profile}/transactions/all?userId=${stored?.email}&publishedId=all`);
+      const response = PAYMENT_API
+        ? await fetch(`${PAYMENT_API}/transactions/${stored?.email}`, { headers: authHeader() })
+        : await fetch(`${LAMBDA.profile}/transactions/all?userId=${stored?.email}&publishedId=all`);
       if (response.ok) {
         const data = await response.json();
-        setAllTokenData(data);
+        if (PAYMENT_API) {
+          const txns = data.transactions || [];
+          setAllTokenData({
+            success: data.success,
+            transactions: txns,
+            totalCount: txns.length,
+            currentPage: 1,
+            totalPages: 1,
+            hasMore: false,
+            offset: 0,
+            limit: txns.length,
+            spendingByCompany: {},
+          });
+        } else {
+          setAllTokenData(data);
+        }
       }
     } catch (error) {
     }
@@ -127,13 +162,24 @@ const ProfilePage: React.FC = () => {
         phone: userDetails.phone
       };
 
-      const response = await fetch(AUTH_API ? `${AUTH_API}/leads/update-profile` : `${LAMBDA.profile}/leads/update-profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData)
-      });
+      const response = AUTH_API
+        ? await fetch(`${AUTH_API}/me`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', ...authHeader() },
+            body: JSON.stringify({
+              fullName: userDetails.fullName,
+              city: userDetails.city,
+              state: userDetails.state,
+              phone: userDetails.phone,
+            }),
+          })
+        : await fetch(`${LAMBDA.profile}/leads/update-profile`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData)
+          });
 
       if (response.ok) {
         localStorage.setItem("userDetails", JSON.stringify(userDetails));
@@ -158,23 +204,35 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const createRazorpayOrder = async (amount: number, tokenCount: number) => {
+  const createRazorpayOrder = async (bonusPackageId: string, amount: number, tokenCount: number) => {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/place-order` : `${LAMBDA.tokenGateway}/place-order`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+      const body = PAYMENT_API
+        ? {
+            userId: userDetails.email,
+            bonusPackageId,
+            email: userDetails.email || '',
+            name: userDetails.fullName || '',
+            phone: userDetails.phone || '',
+            currency: 'INR',
+          }
+        : {
             userId: userDetails.email,
             amount: amount,
             tokenCount: tokenCount,
             currency: 'INR'
-          }),
+          };
+
+      const response = await fetch(
+        PAYMENT_API ? `${PAYMENT_API}/place-order` : `${LAMBDA.tokenGateway}/place-order`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeader(),
+          },
+          body: JSON.stringify(body),
         }
       );
 
@@ -196,17 +254,25 @@ const ProfilePage: React.FC = () => {
   const handlePaymentSuccess = async (response: any, transactionId: string) => {
     try {
       const confirmResponse = await fetch(
-        PAYMENT_API ? `${PAYMENT_API}/drontv-token-buy-payment-gateway/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`,
+        PAYMENT_API ? `${PAYMENT_API}/confirm-order` : `${LAMBDA.tokenGateway}/confirm-order`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...authHeader(),
           },
-          body: JSON.stringify({
-            payment_id: response.razorpay_payment_id,
-            order_id: response.razorpay_order_id,
-            transactionId: transactionId
-          }),
+          body: JSON.stringify(PAYMENT_API
+            ? {
+                payment_id: response.razorpay_payment_id,
+                order_id: response.razorpay_order_id,
+                signature: response.razorpay_signature,
+                transactionId: transactionId
+              }
+            : {
+                payment_id: response.razorpay_payment_id,
+                order_id: response.razorpay_order_id,
+                transactionId: transactionId
+              }),
         }
       );
 
@@ -228,9 +294,9 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const openRazorpayCheckout = async (amount: number, tokenCount: number) => {
+  const openRazorpayCheckout = async (bonusPackageId: string, amount: number, tokenCount: number) => {
     try {
-      const orderData = await createRazorpayOrder(amount, tokenCount);
+      const orderData = await createRazorpayOrder(bonusPackageId, amount, tokenCount);
 
       const options = {
         key: orderData.key || import.meta.env.VITE_RAZORPAY_KEY,
@@ -265,10 +331,10 @@ const ProfilePage: React.FC = () => {
   };
 
   const tokenPackages = [
-    { tokens: 100, price: 100, bonus: 0 },
-    { tokens: 550, price: 500, bonus: 50 },
-    { tokens: 1200, price: 1000, bonus: 200 },
-    { tokens: 2500, price: 2000, bonus: 500 }
+    { id: 'pkg100', tokens: 100, price: 100, bonus: 0 },
+    { id: 'pkg550', tokens: 550, price: 500, bonus: 50 },
+    { id: 'pkg1200', tokens: 1200, price: 1000, bonus: 200 },
+    { id: 'pkg2500', tokens: 2500, price: 2000, bonus: 500 }
   ];
 
   const formatDate = (timestamp: string) => {
@@ -291,31 +357,31 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-amber-50 p-4 md:p-6">
+    <div className="min-h-screen bg-surface-main p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-amber-900 mb-8">Your Profile</h1>
+        <h1 className="text-3xl font-bold text-brand-gold mb-8">Your Profile</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - User Details */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-amber-200">
-            <h2 className="text-xl font-semibold text-amber-900 mb-6">Account Details</h2>
+          <div className="bg-surface-card rounded-2xl shadow-lg p-6 border border-brand-yellow-soft">
+            <h2 className="text-xl font-semibold text-brand-gold mb-6">Account Details</h2>
 
             <div className="space-y-5">
               {["fullName", "city", "state", "phone"].map((key) => (
                 <div key={key}>
-                  <label className="block text-sm font-medium text-amber-700 mb-1 capitalize">
+                  <label className="block text-sm font-medium text-brand-gold mb-1 capitalize">
                     {key === "phone" ? "Phone Number" : key}
                   </label>
                   {isEditing ? (
                     <input
                       type="text"
                       name={key}
-                      value={(userDetails as any)[key] || ''}
+                      value={(userDetails as any)?.[key] || ''}
                       onChange={handleChange}
-                      className="w-full border border-amber-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-900 bg-white"
+                      className="w-full border border-brand-yellow-soft rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-gold text-ink bg-surface-card"
                     />
                   ) : (
-                    <p className="text-amber-900 font-medium">{(userDetails as any)[key] || 'Not provided'}</p>
+                    <p className="text-brand-gold font-medium">{(userDetails as any)?.[key] || 'Not provided'}</p>
                   )}
                 </div>
               ))}
@@ -323,9 +389,9 @@ const ProfilePage: React.FC = () => {
               <div className="pt-4">
                 <button
                   onClick={() => navigate('/forgot-password')}
-                  className="text-amber-600 hover:text-amber-800 font-medium flex items-center"
+                  className="text-brand-gold hover:text-brand-yellow font-medium flex items-center"
                 >
-                  <Lock size={15} className="mr-2 text-amber-600" />
+                  <Lock size={15} className="mr-2 text-brand-gold" />
                   Reset Password
                 </button>
               </div>
@@ -336,13 +402,13 @@ const ProfilePage: React.FC = () => {
                 <div className="flex space-x-4">
                   <button
                     onClick={handleSave}
-                    className="w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 px-4 rounded-xl transition duration-300 shadow-md"
+                    className="w-full bg-brand-gold hover:bg-brand-gold text-white font-medium py-3 px-4 rounded-xl transition duration-300 shadow-md"
                   >
                     Save Changes
                   </button>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="w-full bg-amber-200 hover:bg-amber-300 text-amber-800 font-medium py-3 px-4 rounded-xl transition duration-300"
+                    className="w-full bg-brand-yellow-soft hover:bg-brand-yellow-soft text-brand-gold font-medium py-3 px-4 rounded-xl transition duration-300"
                   >
                     Cancel
                   </button>
@@ -350,7 +416,7 @@ const ProfilePage: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 px-4 rounded-xl transition duration-300 shadow-md"
+                  className="w-full bg-brand-gold hover:bg-brand-gold text-white font-medium py-3 px-4 rounded-xl transition duration-300 shadow-md"
                 >
                   Edit Profile
                 </button>
@@ -359,8 +425,8 @@ const ProfilePage: React.FC = () => {
           </div>
 
           {/* Right Column - Transactions */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-amber-200">
-            <h2 className="text-xl font-semibold text-amber-900 mb-6">Token Balance</h2>
+          <div className="bg-surface-card rounded-2xl shadow-lg p-6 border border-brand-yellow-soft">
+            <h2 className="text-xl font-semibold text-brand-gold mb-6">Token Balance</h2>
 
             <div className="flex flex-col items-center mb-8">
               <div className="p-3 mb-4">
@@ -370,14 +436,14 @@ const ProfilePage: React.FC = () => {
                   alt="token"
                 />
               </div>
-              <h3 className="text-lg font-medium text-amber-800">Total Tokens</h3>
-              <p className="text-3xl font-bold text-amber-700 mt-1">
-                {totalTokens?.profile?.tokenBalance || 0}
+              <h3 className="text-lg font-medium text-brand-gold">Total Tokens</h3>
+              <p className="text-3xl font-bold text-brand-gold mt-1">
+                {totalTokens ?? 0}
               </p>
 
               <Link to="/user-recharge">
                 <button
-                  className="mt-4 bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-6 rounded-lg transition duration-300 shadow-md"
+                  className="mt-4 bg-brand-gold hover:bg-brand-gold text-white font-medium py-2 px-6 rounded-lg transition duration-300 shadow-md"
                 >
                   Buy More Tokens
                 </button>
@@ -385,31 +451,30 @@ const ProfilePage: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              <h3 className="font-medium text-amber-800">Recent Activity</h3>
+              <h3 className="font-medium text-brand-gold">Recent Activity</h3>
 
               {recentToken && recentToken.transactions && recentToken.transactions.length > 0 ?
                 recentToken.transactions.map((transaction: Transaction) => (
-                  <div key={transaction.transactionId} className="flex justify-between items-center p-4 bg-amber-50 rounded-lg border border-amber-200">
+                  <div key={transaction.id} className="flex justify-between items-center p-4 bg-surface-main rounded-lg border border-brand-yellow-soft">
                     <div>
-                      <p className={`font-medium ${transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
-                        {transaction.type === 'credit' ? '+' : '-'}{transaction.amount} tokens
+                      <p className={`font-medium ${transaction.status === 'success' ? 'text-status-success' : transaction.status === 'failed' || transaction.status === 'cancelled' ? 'text-status-error' : 'text-brand-gold'}`}>
+                        +{transaction.tokenCount} tokens
                       </p>
-                      <p className="text-sm text-amber-700">{transaction.description}</p>
-                      <p className="text-xs text-amber-500">{transaction.category}</p>
+                      <p className="text-sm text-brand-gold">{transaction.description}</p>
+                      <p className="text-xs text-brand-gold capitalize">{transaction.status}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-amber-800">{formatDate(transaction.timestamp)}</p>
-                      <p className="text-xs text-amber-600">{formatTime(transaction.timestamp)}</p>
-                      <p className="text-xs text-amber-500">Balance: {transaction.balanceAfter}</p>
+                      <p className="text-sm font-medium text-brand-gold">{formatDate(transaction.date)}</p>
+                      <p className="text-xs text-brand-gold">{formatTime(transaction.date)}</p>
                     </div>
                   </div>
                 )) : (
-                  <p className="text-sm text-amber-600">No recent transactions found.</p>
+                  <p className="text-sm text-brand-gold">No recent transactions found.</p>
                 )}
 
               <button
                 onClick={() => setShowAllTransactions(true)}
-                className="w-full mt-4 py-2.5 text-amber-600 hover:text-amber-800 font-medium rounded-lg transition duration-300"
+                className="w-full mt-4 py-2.5 text-brand-gold hover:text-brand-yellow font-medium rounded-lg transition duration-300"
               >
                 See More Transactions
               </button>
@@ -419,38 +484,38 @@ const ProfilePage: React.FC = () => {
       </div>
 
       {showTokenPurchase && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md border border-amber-200">
-            <div className="p-6 border-b border-amber-200">
+        <div className="fixed inset-0 bg-ink bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
+          <div className="bg-surface-card rounded-2xl shadow-xl w-full max-w-md border border-brand-yellow-soft">
+            <div className="p-6 border-b border-brand-yellow-soft">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-amber-900">Buy Tokens</h3>
+                <h3 className="text-xl font-semibold text-brand-gold">Buy Tokens</h3>
                 <button
                   onClick={() => setShowTokenPurchase(false)}
-                  className="p-1.5 rounded-lg text-amber-500 hover:text-amber-700 hover:bg-amber-100 transition-colors"
+                  className="p-1.5 rounded-lg text-brand-gold hover:text-brand-yellow hover:bg-brand-yellow-soft transition-colors"
                 >
                   <X size={20} />
                 </button>
               </div>
-              <p className="text-amber-700">Choose a token package</p>
+              <p className="text-brand-gold">Choose a token package</p>
             </div>
 
             <div className="p-6">
               <div className="grid grid-cols-1 gap-4">
                 {tokenPackages.map((pkg, index) => (
-                  <div key={index} className="border border-amber-200 rounded-lg p-4 hover:border-amber-400 transition duration-300">
+                  <div key={index} className="border border-brand-yellow-soft rounded-lg p-4 hover:border-brand-yellow transition duration-300">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h4 className="font-semibold text-amber-900">{pkg.tokens} Tokens</h4>
+                        <h4 className="font-semibold text-brand-gold">{pkg.tokens} Tokens</h4>
                         {pkg.bonus > 0 && (
-                          <p className="text-green-600 text-sm">+ {pkg.bonus} bonus tokens</p>
+                          <p className="text-status-success text-sm">+ {pkg.bonus} bonus tokens</p>
                         )}
                       </div>
-                      <span className="text-lg font-bold text-amber-700">₹{pkg.price}</span>
+                      <span className="text-lg font-bold text-brand-gold">₹{pkg.price}</span>
                     </div>
                     <button
-                      onClick={() => openRazorpayCheckout(pkg.price, pkg.tokens + pkg.bonus)}
+                      onClick={() => openRazorpayCheckout(pkg.id, pkg.price, pkg.tokens + pkg.bonus)}
                       disabled={loading}
-                      className="w-full bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-4 rounded-lg transition duration-300 disabled:opacity-50"
+                      className="w-full bg-brand-gold hover:bg-brand-gold text-white font-medium py-2 px-4 rounded-lg transition duration-300 disabled:opacity-50"
                     >
                       {loading ? 'Processing...' : 'Buy Now'}
                     </button>
@@ -459,8 +524,8 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-6 border-t border-amber-200 bg-amber-50">
-              <div className="text-sm text-amber-700">
+            <div className="p-6 border-t border-brand-yellow-soft bg-surface-main">
+              <div className="text-sm text-brand-gold">
                 <p>💳 Secure payment powered by Razorpay</p>
                 <p className="mt-1">⚡ Tokens will be added instantly after payment</p>
               </div>
@@ -470,14 +535,14 @@ const ProfilePage: React.FC = () => {
       )}
 
       {showAllTransactions && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden border border-amber-200">
-            <div className="p-6 border-b border-amber-200 flex-shrink-0">
+        <div className="fixed inset-0 bg-ink bg-opacity-50 flex items-center justify-center p-4 z-[10000000]">
+          <div className="bg-surface-card rounded-2xl shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden border border-brand-yellow-soft">
+            <div className="p-6 border-b border-brand-yellow-soft flex-shrink-0">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-amber-900">All Transactions</h3>
+                <h3 className="text-xl font-semibold text-brand-gold">All Transactions</h3>
                 <button
                   onClick={() => setShowAllTransactions(false)}
-                  className="p-1.5 rounded-lg text-amber-500 hover:text-amber-700 hover:bg-amber-100 transition-colors"
+                  className="p-1.5 rounded-lg text-brand-gold hover:text-brand-yellow hover:bg-brand-yellow-soft transition-colors"
                 >
                   <X size={20} />
                 </button>
@@ -488,18 +553,18 @@ const ProfilePage: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Search transactions..."
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-gray-900"
+                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-brand-yellow-soft focus:outline-none focus:ring-2 focus:ring-brand-gold bg-surface-card text-ink"
                     value={transactionSearch}
                     onChange={(e) => setTransactionSearch(e.target.value)}
                   />
                   <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <Search size={14} className="text-amber-500" />
+                    <Search size={14} className="text-brand-gold" />
                   </div>
                 </div>
                 <div className="relative">
                   <input
                     type="date"
-                    className="w-full py-2 px-4 rounded-lg border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-gray-900"
+                    className="w-full py-2 px-4 rounded-lg border border-brand-yellow-soft focus:outline-none focus:ring-2 focus:ring-brand-gold bg-surface-card text-ink"
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value)}
                   />
@@ -507,7 +572,7 @@ const ProfilePage: React.FC = () => {
               </div>
 
               {AllTokenData && (
-                <div className="flex justify-between items-center text-sm text-amber-700 mb-2">
+                <div className="flex justify-between items-center text-sm text-brand-gold mb-2">
                   <span>Total Transactions: {AllTokenData.totalCount}</span>
                   {AllTokenData.spendingByCompany && Object.keys(AllTokenData.spendingByCompany).length > 0 && (
                     <span>
@@ -521,14 +586,13 @@ const ProfilePage: React.FC = () => {
             <div className="overflow-y-auto flex-1">
               {AllTokenData && AllTokenData.transactions && AllTokenData.transactions.length > 0 ? (
                 <table className="w-full">
-                  <thead className="bg-amber-50 text-left sticky top-0">
+                  <thead className="bg-surface-main text-left sticky top-0">
                     <tr>
-                      <th className="py-3 px-4 text-sm font-semibold text-amber-800">Type</th>
-                      <th className="py-3 px-4 text-sm font-semibold text-amber-800">Amount</th>
-                      <th className="py-3 px-4 text-sm font-semibold text-amber-800">Description</th>
-                      <th className="py-3 px-4 text-sm font-semibold text-amber-800">Category</th>
-                      <th className="py-3 px-4 text-sm font-semibold text-amber-800">Date & Time</th>
-                      <th className="py-3 px-4 text-sm font-semibold text-amber-800">Balance</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Status</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Tokens</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Description</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Amount</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-brand-gold">Date & Time</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -536,54 +600,55 @@ const ProfilePage: React.FC = () => {
                       .filter(transaction => {
                         const matchesSearch =
                           transaction.description.toLowerCase().includes(transactionSearch.toLowerCase()) ||
-                          transaction.category.toLowerCase().includes(transactionSearch.toLowerCase()) ||
-                          transaction.amount.toString().includes(transactionSearch) ||
-                          transaction.type.toLowerCase().includes(transactionSearch.toLowerCase());
+                          (transaction.service || '').toLowerCase().includes(transactionSearch.toLowerCase()) ||
+                          transaction.tokenCount.toString().includes(transactionSearch) ||
+                          transaction.status.toLowerCase().includes(transactionSearch.toLowerCase());
 
                         if (!dateFilter) return matchesSearch;
 
-                        const transactionDate = new Date(transaction.timestamp).toISOString().split('T')[0];
+                        const transactionDate = new Date(transaction.date).toISOString().split('T')[0];
                         return matchesSearch && transactionDate === dateFilter;
                       })
                       .map((transaction) => (
-                        <tr key={transaction.transactionId} className="border-b border-amber-100 hover:bg-amber-50">
+                        <tr key={transaction.id} className="border-b border-brand-yellow-soft hover:bg-surface-main">
                           <td className="py-4 px-4">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${transaction.type === 'credit'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${transaction.status === 'success'
+                              ? 'bg-status-success/15 text-status-success'
+                              : transaction.status === 'failed' || transaction.status === 'cancelled'
+                              ? 'bg-status-error/15 text-status-error'
+                              : 'bg-brand-yellow-soft text-brand-gold'
                               }`}>
-                              {transaction.type}
+                              {transaction.status}
                             </span>
                           </td>
-                          <td className={`py-4 px-4 font-medium ${transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
+                          <td className={`py-4 px-4 font-medium ${transaction.status === 'success' ? 'text-status-success' : transaction.status === 'failed' || transaction.status === 'cancelled' ? 'text-status-error' : 'text-brand-gold'
                             }`}>
-                            {transaction.type === 'credit' ? '+' : '-'}{transaction.amount}
+                            +{transaction.tokenCount}
                           </td>
-                          <td className="py-4 px-4 text-amber-800 text-sm">{transaction.description}</td>
-                          <td className="py-4 px-4 text-amber-700 text-sm">{transaction.category}</td>
+                          <td className="py-4 px-4 text-brand-gold text-sm">{transaction.description}</td>
+                          <td className="py-4 px-4 text-brand-gold text-sm">₹{transaction.amount}</td>
                           <td className="py-4 px-4">
-                            <div className="text-amber-800 text-sm">{formatDate(transaction.timestamp)}</div>
-                            <div className="text-amber-600 text-xs">{formatTime(transaction.timestamp)}</div>
+                            <div className="text-brand-gold text-sm">{formatDate(transaction.date)}</div>
+                            <div className="text-brand-gold text-xs">{formatTime(transaction.date)}</div>
                           </td>
-                          <td className="py-4 px-4 text-amber-800 font-medium text-sm">{transaction.balanceAfter}</td>
                         </tr>
                       ))}
                   </tbody>
                 </table>
               ) : (
-                <div className="text-center py-8 text-amber-700">
+                <div className="text-center py-8 text-brand-gold">
                   {AllTokenData ? 'No transactions found matching your filters' : 'Loading transactions...'}
                 </div>
               )}
             </div>
 
             {AllTokenData && AllTokenData.totalPages > 1 && (
-              <div className="p-4 border-t border-amber-200 bg-amber-50 flex-shrink-0">
-                <div className="flex justify-between items-center text-sm text-amber-700">
+              <div className="p-4 border-t border-brand-yellow-soft bg-surface-main flex-shrink-0">
+                <div className="flex justify-between items-center text-sm text-brand-gold">
                   <span>Page {AllTokenData.currentPage} of {AllTokenData.totalPages}</span>
                   <span>Showing {AllTokenData.transactions.length} of {AllTokenData.totalCount} transactions</span>
                   {AllTokenData.hasMore && (
-                    <button className="text-amber-600 hover:text-amber-800 font-medium">
+                    <button className="text-brand-gold hover:text-brand-yellow font-medium">
                       Load More
                     </button>
                   )}
@@ -591,10 +656,10 @@ const ProfilePage: React.FC = () => {
               </div>
             )}
 
-            <div className="p-6 flex justify-end border-t border-amber-200 flex-shrink-0">
+            <div className="p-6 flex justify-end border-t border-brand-yellow-soft flex-shrink-0">
               <button
                 onClick={() => setShowAllTransactions(false)}
-                className="cursor-pointer px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition duration-300 shadow-md"
+                className="cursor-pointer px-5 py-2.5 bg-brand-gold hover:bg-brand-gold text-white font-medium rounded-lg transition duration-300 shadow-md"
               >
                 Close
               </button>

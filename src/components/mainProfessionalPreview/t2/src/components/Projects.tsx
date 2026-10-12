@@ -91,24 +91,24 @@ export function Projects({ projectData }: ProjectsProps) {
       <section id="projects" className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="h-8 bg-gray-300 rounded w-1/3 mx-auto mb-4"></div>
-            <div className="h-4 bg-gray-300 rounded w-2/3 mx-auto"></div>
+            <div className="h-8 bg-ink-light rounded w-1/3 mx-auto mb-4"></div>
+            <div className="h-4 bg-ink-light rounded w-2/3 mx-auto"></div>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(6)].map((_, index) => (
               <div key={index} className="animate-pulse bg-card rounded-2xl overflow-hidden shadow-lg border border-border">
-                <div className="w-full h-48 bg-gray-300"></div>
+                <div className="w-full h-48 bg-ink-light"></div>
                 <div className="p-6">
-                  <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
-                  <div className="h-4 bg-gray-300 rounded w-5/6 mb-4"></div>
+                  <div className="h-6 bg-ink-light rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-ink-light rounded w-full mb-2"></div>
+                  <div className="h-4 bg-ink-light rounded w-5/6 mb-4"></div>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    <div className="w-16 h-6 bg-gray-300 rounded-full"></div>
-                    <div className="w-20 h-6 bg-gray-300 rounded-full"></div>
+                    <div className="w-16 h-6 bg-ink-light rounded-full"></div>
+                    <div className="w-20 h-6 bg-ink-light rounded-full"></div>
                   </div>
                   <div className="flex space-x-3">
-                    <div className="h-10 bg-gray-300 rounded flex-1"></div>
-                    <div className="h-10 bg-gray-300 rounded flex-1"></div>
+                    <div className="h-10 bg-ink-light rounded flex-1"></div>
+                    <div className="h-10 bg-ink-light rounded flex-1"></div>
                   </div>
                 </div>
               </div>
@@ -136,7 +136,7 @@ export function Projects({ projectData }: ProjectsProps) {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
-              className="text-lg text-yellow-500 mb-2"
+              className="text-lg text-brand-gold mb-2"
             >
               {data.subtitle}
             </motion.p>
@@ -150,7 +150,7 @@ export function Projects({ projectData }: ProjectsProps) {
           >
             {data.heading || "Featured Projects"}
             {data.heading && !data.heading.includes("Projects") && (
-              <span className="text-yellow-500"> Projects</span>
+              <span className="text-brand-gold"> Projects</span>
             )}
           </motion.h2>
           {data.description && (
@@ -180,8 +180,8 @@ export function Projects({ projectData }: ProjectsProps) {
                 key={category}
                 onClick={() => setActiveCategory(category)}
                 className={`px-6 py-2 rounded-full transition-all duration-300 ${activeCategory === category
-                  ? 'bg-yellow-400 text-gray-900 shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-brand-yellow text-ink shadow-lg'
+                  : 'bg-ink-light text-ink-paragraph hover:bg-ink-light'
                   }`}
               >
                 {category}
@@ -215,14 +215,14 @@ export function Projects({ projectData }: ProjectsProps) {
                       className="w-full h-48 object-cover"
                     />
                   </motion.div>
-                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-ink bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                     <div className="opacity-0 hover:opacity-100 transition-all duration-300 flex space-x-4">
                       {project.liveUrl !== '#' && (
                         <motion.a
                           href={project.liveUrl}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.95 }}
-                          className="bg-yellow-400 text-gray-900 p-2 rounded-full"
+                          className="bg-brand-yellow text-ink p-2 rounded-full"
                         >
                           <ExternalLink size={20} />
                         </motion.a>
@@ -232,7 +232,7 @@ export function Projects({ projectData }: ProjectsProps) {
                           href={project.githubUrl}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.95 }}
-                          className="bg-white text-gray-900 p-2 rounded-full"
+                          className="bg-surface-card text-ink p-2 rounded-full"
                         >
                           <Github size={20} />
                         </motion.a>
@@ -255,7 +255,7 @@ export function Projects({ projectData }: ProjectsProps) {
                       {project.technologies.map((tech, tagIndex) => (
                         <span
                           key={tagIndex}
-                          className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm"
+                          className="px-3 py-1 bg-brand-yellow-soft text-brand-gold rounded-full text-sm"
                         >
                           {tech}
                         </span>
@@ -265,7 +265,7 @@ export function Projects({ projectData }: ProjectsProps) {
 
                   {/* Project Meta */}
                   <div className="flex justify-between items-center mb-4 text-sm text-muted-foreground">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full">{project.category}</span>
+                    <span className="bg-ink-light px-3 py-1 rounded-full">{project.category}</span>
                     <span>{project.date}</span>
                   </div>
 

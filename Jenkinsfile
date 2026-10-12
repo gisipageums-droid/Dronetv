@@ -48,4 +48,4 @@
       post {
           success { echo 'dronetv-frontend-prod deployed' }
       }
-  }  
+  }

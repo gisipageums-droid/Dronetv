@@ -54,13 +54,13 @@ export default function AdminLogin() {
         toast.success(data.message || "Admin login successful!");
         adminLogin({
           token: data.token,
-          email: info.email || loginData.email,
-          name: info.fullName || info.userName || "Admin User",
+          email: info.email || data.email || loginData.email,
+          name: info.fullName || info.userName || data.fullName || "Admin User",
           adminData: {
             ...info,
             city: info.city,
             role: info.role,
-            isAdmin: info.isAdmin,
+            isAdmin: info.isAdmin ?? data.isAdmin,
             state: info.state,
             userName: info.fullName || info.userName,
           },
@@ -91,7 +91,7 @@ export default function AdminLogin() {
         }}
       >
         {/* Yellow top strip */}
-        <div className="h-1 w-full bg-yellow-400" />
+        <div className="h-1 w-full bg-brand-yellow" />
 
         <div className="p-8">
           {/* Logo inside card */}
@@ -120,7 +120,7 @@ export default function AdminLogin() {
                 placeholder="admin@dronetv.in"
                 required
                 autoComplete="email"
-                onFocus={e => (e.currentTarget.style.borderColor = "#facc15")}
+                onFocus={e => (e.currentTarget.style.borderColor = "#F8C400")}
                 onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
               />
             </div>
@@ -143,14 +143,14 @@ export default function AdminLogin() {
                   placeholder="Enter your password"
                   required
                   autoComplete="current-password"
-                  onFocus={e => { (e.currentTarget.parentElement as HTMLElement).style.borderColor = "#facc15"; }}
+                  onFocus={e => { (e.currentTarget.parentElement as HTMLElement).style.borderColor = "#F8C400"; }}
                   onBlur={e => { (e.currentTarget.parentElement as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)"; }}
                 />
                 <button
                   type="button"
                   tabIndex={-1}
                   onClick={() => setShowPassword(p => !p)}
-                  className="px-3 text-white/25 hover:text-yellow-400 transition-colors"
+                  className="px-3 text-white/25 hover:text-brand-yellow transition-colors"
                 >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
@@ -160,7 +160,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 font-bold text-black bg-yellow-400 rounded-xl hover:bg-yellow-300 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm mt-2"
+              className="w-full py-3 font-bold text-ink bg-brand-yellow rounded-xl hover:bg-brand-yellow-soft active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm mt-2"
               style={{ boxShadow: "0 4px 20px rgba(250,204,21,0.25)" }}
             >
               {isLoading ? (

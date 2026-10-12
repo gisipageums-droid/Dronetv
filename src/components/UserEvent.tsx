@@ -69,22 +69,22 @@ interface ErrorMessageProps {
 // Header Component
 const Header: React.FC = () => {
     return (
-        <div className='h-[40vh] md:h-[60vh] bg-blue-50 flex items-center justify-center px-4 sm:px-6'>
+        <div className='h-[40vh] md:h-[60vh] bg-status-info/10 flex items-center justify-center px-4 sm:px-6'>
             {/* ===== Always Visible Popup ===== */}
             <div className="fixed right-12 top-28 z-10 animate-bounce">
-                <div className="px-5 py-8 text-center bg-white rounded-xl border border-blue-300 shadow-lg">
-                    <h2 className="text-base font-semibold text-blue-900 md:text-lg">
+                <div className="px-5 py-8 text-center bg-surface-card rounded-xl border border-status-info/40 shadow-lg">
+                    <h2 className="text-base font-semibold text-status-info md:text-lg">
                         🎉 Free Trial
                     </h2>
-                    <p className="mt-1 text-lg font-semibold text-blue-700">
+                    <p className="mt-1 text-lg font-semibold text-status-info">
                         You have{" "}
-                        <span className="font-bold text-blue-600">90</span> free trial days
+                        <span className="font-bold text-status-info">90</span> free trial days
                         remaining.
                     </p>
-                    <p className="pl-6 mt-4 text-sm text-left text-blue-700">
-                        ✅ Create <span className="font-bold text-blue-600">unlimited events</span>.
+                    <p className="pl-6 mt-4 text-sm text-left text-status-info">
+                        ✅ Create <span className="font-bold text-status-info">unlimited events</span>.
                     </p>
-                    <p className="pl-6 mt-1 text-sm text-left text-blue-700">
+                    <p className="pl-6 mt-1 text-sm text-left text-status-info">
                         ✅ <span className="font-bold">Edit and customize</span> events at any time.
                     </p>
                 </div>
@@ -92,36 +92,36 @@ const Header: React.FC = () => {
 
             <div className='relative w-full max-w-3xl text-center'>
                 {/* Geometric Elements */}
-                <div className='absolute -top-10 -left-10 w-20 h-20 rounded-full border border-blue-200 opacity-40 md:-top-20 md:-left-20 md:w-40 md:h-40'></div>
-                <div className='absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-blue-200 opacity-30 rounded-2xl'></div>
+                <div className='absolute -top-10 -left-10 w-20 h-20 rounded-full border border-status-info/25 opacity-40 md:-top-20 md:-left-20 md:w-40 md:h-40'></div>
+                <div className='absolute -bottom-8 -right-1 w-16 h-16 md:-bottom-16 md:-right-[-5.9rem] md:w-32 md:h-32 bg-status-info/25 opacity-30 rounded-2xl'></div>
 
                 <div className='relative z-10'>
                     <div className='flex gap-2 justify-center items-center mb-4 md:gap-4 md:mb-8'>
-                        <div className='w-2 h-2 bg-blue-400 rounded-full md:w-3 md:h-3'></div>
-                        <div className='w-4 h-4 border-2 border-blue-400 md:w-6 md:h-6'></div>
-                        <div className='w-3 h-3 bg-blue-600 rotate-45 md:w-4 md:h-4'></div>
+                        <div className='w-2 h-2 bg-status-info rounded-full md:w-3 md:h-3'></div>
+                        <div className='w-4 h-4 border-2 border-status-info md:w-6 md:h-6'></div>
+                        <div className='w-3 h-3 bg-status-info rotate-45 md:w-4 md:h-4'></div>
                     </div>
 
-                    <h1 className='mb-4 text-3xl font-light text-blue-900 md:text-5xl md:mb-6'>
+                    <h1 className='mb-4 text-3xl font-light text-status-info md:text-5xl md:mb-6'>
                         My Events
-                        <span className='block mt-1 text-xl font-extralight text-blue-600 md:text-3xl md:mt-2'>
+                        <span className='block mt-1 text-xl font-extralight text-status-info md:text-3xl md:mt-2'>
                             Dashboard
                         </span>
                     </h1>
 
-                    <p className='mx-auto mb-6 max-w-xl text-base font-light text-blue-700 md:text-lg md:mb-10'>
+                    <p className='mx-auto mb-6 max-w-xl text-base font-light text-status-info md:text-lg md:mb-10'>
                         Manage your events, track attendance, and update event details.
                     </p>
 
                     <div className='flex flex-col gap-4 justify-center items-center sm:flex-row'>
                         <button
                             onClick={() => alert('Navigate to event creation')}
-                            className='px-6 py-3 w-full text-sm font-semibold text-black bg-gradient-to-r from-blue-400 to-blue-500 rounded-lg shadow-lg transition-all duration-300 transform md:px-8 md:py-4 hover:from-blue-500 hover:to-blue-600 hover:shadow-xl hover:-translate-y-1 sm:w-auto md:text-base'
+                            className='px-6 py-3 w-full text-sm font-semibold text-ink bg-gradient-to-r from-status-info to-status-info rounded-lg shadow-lg transition-all duration-300 transform md:px-8 md:py-4 hover:from-status-info hover:to-status-info hover:shadow-xl hover:-translate-y-1 sm:w-auto md:text-base'
                         >
                             + Create New Event
                         </button>
-                        <div className='hidden w-px h-8 bg-blue-300 md:h-12 sm:block'></div>
-                        <button className='mt-2 text-sm text-blue-700 transition-colors duration-300 hover:text-blue-900 md:text-base sm:mt-0'>
+                        <div className='hidden w-px h-8 bg-status-info/40 md:h-12 sm:block'></div>
+                        <button className='mt-2 text-sm text-status-info transition-colors duration-300 hover:text-status-info md:text-base sm:mt-0'>
                             View Analytics
                         </button>
                     </div>
@@ -139,10 +139,10 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
         <div className='relative'>
             <button
                 onClick={() => setOpen(!open)}
-                className='flex justify-between items-center px-4 py-3 w-full text-sm text-gray-700 bg-gray-50 rounded-lg border border-gray-200 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-300'
+                className='flex justify-between items-center px-4 py-3 w-full text-sm text-ink-paragraph bg-ink-offwhite rounded-lg border border-ink-light transition-colors hover:bg-ink-light focus:outline-none focus:ring-1 focus:ring-ink-light'
             >
                 <span
-                    className={value === options[0] ? "text-gray-500" : "text-gray-900"}
+                    className={value === options[0] ? "text-ink-caption" : "text-ink"}
                 >
                     {value || placeholder}
                 </span>
@@ -152,7 +152,7 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
             </button>
 
             {open && (
-                <div className='absolute z-10 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-sm'>
+                <div className='absolute z-10 mt-1 w-full bg-surface-card rounded-lg border border-ink-light shadow-sm'>
                     {options.map((option: string, idx: number) => (
                         <button
                             key={idx}
@@ -161,8 +161,8 @@ const MinimalisticDropdown: React.FC<DropdownProps> = ({ value, onChange, option
                                 setOpen(false);
                             }}
                             className={`block w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg ${value === option
-                                ? "bg-gray-50 text-gray-900 font-medium"
-                                : "text-gray-700 hover:bg-gray-50"
+                                ? "bg-ink-offwhite text-ink font-medium"
+                                : "text-ink-paragraph hover:bg-ink-offwhite"
                                 }`}
                         >
                             {option}
@@ -194,7 +194,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     ];
 
     return (
-        <div className={`bg-blue-50 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-gray-100 
+        <div className={`bg-status-info/10 p-4 md:p-8 h-fit md:sticky md:top-0 border-r border-ink-light 
       ${isMobileSidebarOpen ? 'overflow-y-auto fixed inset-0 z-50 w-full' : 'hidden md:block md:w-80'}`}
         >
             {isMobileSidebarOpen && (
@@ -209,26 +209,26 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div className='space-y-6 md:space-y-8'>
                 {/* Search Section */}
                 <div className='space-y-3'>
-                    <label className='block text-sm font-medium text-gray-900'>
+                    <label className='block text-sm font-medium text-ink'>
                         Search
                     </label>
                     <div className='relative'>
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                          <Search className="h-4 w-4 text-gray-400" />
+                          <Search className="h-4 w-4 text-ink-caption" />
                         </div>
                         <input
                             type='text'
                             placeholder='Search events...'
                             value={searchTerm}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
-                            className='py-3 pr-4 pl-10 w-full text-sm bg-gray-50 rounded-lg border border-gray-200 transition-colors focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300'
+                            className='py-3 pr-4 pl-10 w-full text-sm bg-ink-offwhite rounded-lg border border-ink-light transition-colors focus:outline-none focus:ring-1 focus:ring-ink-light focus:border-ink-light'
                         />
                     </div>
                 </div>
 
                 {/* Category Filter */}
                 <div className='space-y-3'>
-                    <label className='block text-sm font-medium text-gray-900'>
+                    <label className='block text-sm font-medium text-ink'>
                         Category
                     </label>
                     <MinimalisticDropdown
@@ -241,7 +241,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                 {/* Sort Filter */}
                 <div className='space-y-3'>
-                    <label className='block text-sm font-medium text-gray-900'>
+                    <label className='block text-sm font-medium text-ink'>
                         Sort by
                     </label>
                     <MinimalisticDropdown
@@ -259,20 +259,20 @@ const Sidebar: React.FC<SidebarProps> = ({
                         onCategoryChange("All Categories");
                         onSortChange("Sort by Name");
                     }}
-                    className='text-sm text-gray-500 underline transition-colors hover:text-gray-700 underline-offset-2'
+                    className='text-sm text-ink-caption underline transition-colors hover:text-ink-paragraph underline-offset-2'
                 >
                     Clear all filters
                 </button>
 
                 {/* Divider */}
-                <div className='border-t border-gray-100'></div>
+                <div className='border-t border-ink-light'></div>
 
                 {/* CTA Section */}
                 <div className='space-y-3'>
-                    <p className='text-sm text-gray-600'>Ready to create?</p>
+                    <p className='text-sm text-ink-paragraph'>Ready to create?</p>
                     <button
                         onClick={() => alert('Navigate to event creation')}
-                        className='px-4 py-3 w-full text-sm font-medium text-white bg-gray-900 rounded-lg transition-colors hover:bg-gray-800'
+                        className='px-4 py-3 w-full text-sm font-medium text-white bg-ink rounded-lg transition-colors hover:bg-ink-charcoal'
                     >
                         Create New Event
                     </button>
@@ -309,26 +309,26 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
         switch (statusLower) {
             case 'active':
                 return {
-                    bg: 'bg-blue-100',
-                    text: 'text-blue-800',
+                    bg: 'bg-status-info/15',
+                    text: 'text-status-info',
                     label: 'Active'
                 };
             case 'approved':
                 return {
-                    bg: 'bg-green-100',
-                    text: 'text-green-800',
+                    bg: 'bg-status-success/15',
+                    text: 'text-status-success',
                     label: 'Published'
                 };
             case 'rejected':
                 return {
-                    bg: 'bg-red-100',
-                    text: 'text-red-800',
+                    bg: 'bg-status-error/15',
+                    text: 'text-status-error',
                     label: 'Rejected'
                 };
             default:
                 return {
-                    bg: 'bg-blue-100',
-                    text: 'text-blue-800',
+                    bg: 'bg-status-info/15',
+                    text: 'text-status-info',
                     label: 'Published'
                 };
         }
@@ -337,11 +337,11 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
     const statusStyle = getStatusBadge(event.reviewStatus);
 
     return (
-        <div className='overflow-hidden w-full h-full bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl border-l-8 border-blue-300 shadow-lg transition-all duration-300 hover:shadow-xl group'>
+        <div className='overflow-hidden w-full h-full bg-gradient-to-br from-status-info/10 to-status-info/15 rounded-2xl border-l-8 border-status-info/40 shadow-lg transition-all duration-300 hover:shadow-xl group'>
             <div className='p-4 md:p-6 lg:p-8'>
                 <div className='flex justify-between items-center mb-4 md:mb-6'>
                     <div className='flex gap-3 items-center md:gap-4'>
-                        <div className='flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-white rounded-xl shadow-md transition-all duration-500 md:w-14 md:h-14 lg:w-16 lg:h-16 md:p-2 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-indigo-50 group-hover:rotate-3 group-hover:scale-110'>
+                        <div className='flex overflow-hidden justify-center items-center p-1 w-12 h-12 bg-surface-card rounded-xl shadow-md transition-all duration-500 md:w-14 md:h-14 lg:w-16 lg:h-16 md:p-2 group-hover:shadow-lg group-hover:bg-gradient-to-br group-hover:from-status-info/10 group-hover:to-status-info/10 group-hover:rotate-3 group-hover:scale-110'>
                             <img
                                 src={event.previewImage || placeholderImg}
                                 alt={`${event.eventName} preview`}
@@ -353,10 +353,10 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
                             />
                         </div>
                         <div className="max-w-[calc(100%-60px)] md:max-w-none">
-                            <h3 className='text-lg font-bold text-gray-900 md:text-xl line-clamp-2'>
+                            <h3 className='text-lg font-bold text-ink md:text-xl line-clamp-2'>
                                 {event.eventName || 'Unnamed Event'}
                             </h3>
-                            <div className='flex items-center mt-1 text-gray-600'>
+                            <div className='flex items-center mt-1 text-ink-paragraph'>
                                 <MapPin className='mr-1 w-3 h-3' />
                                 <span className='text-xs md:text-sm'>{event.location || 'Location not specified'}</span>
                             </div>
@@ -376,7 +376,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
                         {(event.categories && event.categories.length > 0 ? event.categories : ['General']).map((category: string, index: number) => (
                             <span
                                 key={index}
-                                className='px-2 py-1 text-xs font-medium text-indigo-800 bg-indigo-100 rounded-full md:px-3 md:py-1'
+                                className='px-2 py-1 text-xs font-medium text-status-info bg-status-info/15 rounded-full md:px-3 md:py-1'
                             >
                                 {category}
                             </span>
@@ -385,13 +385,13 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
                 </div>
 
                 {/* Event Details */}
-                <div className='flex gap-4 mb-4 text-sm text-gray-600'>
+                <div className='flex gap-4 mb-4 text-sm text-ink-paragraph'>
                     <div className='flex gap-1 items-center'>
                         <Users className='w-4 h-4' />
                         <span>{event.attendees || 0} attendees</span>
                     </div>
                     <div className='flex gap-1 items-center'>
-                        <Star className='w-4 h-4 text-yellow-500' />
+                        <Star className='w-4 h-4 text-brand-gold' />
                         <span>{event.rating || 0}/5</span>
                     </div>
                 </div>
@@ -399,9 +399,9 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
                 {/* Date and Actions Row */}
                 <div className='flex flex-col gap-3'>
                     <div className='flex gap-3 items-center md:gap-6'>
-                        <div className='flex gap-2 items-center px-3 py-1 bg-gray-50 rounded-lg md:px-4 md:py-2'>
-                            <Calendar className='w-3 h-3 text-blue-600' />
-                            <span className='text-xs font-bold text-blue-600 md:text-sm'>
+                        <div className='flex gap-2 items-center px-3 py-1 bg-ink-offwhite rounded-lg md:px-4 md:py-2'>
+                            <Calendar className='w-3 h-3 text-status-info' />
+                            <span className='text-xs font-bold text-status-info md:text-sm'>
                                 {event.eventDate ? formatDate(event.eventDate) : 'Date not available'}
                             </span>
                         </div>
@@ -414,7 +414,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
                                 e.stopPropagation();
                                 alert(`Edit Data for: ${event.eventName}`);
                             }}
-                            className="flex gap-2 items-center px-3 py-2 text-xs font-medium text-indigo-700 bg-indigo-100 rounded-lg transition-colors md:px-4 md:py-2 hover:bg-indigo-200 md:text-sm"
+                            className="flex gap-2 items-center px-3 py-2 text-xs font-medium text-status-info bg-status-info/15 rounded-lg transition-colors md:px-4 md:py-2 hover:bg-status-info/25 md:text-sm"
                         >
                             <Edit className="w-3 h-3 md:w-4 md:h-4" />
                             Edit Data
@@ -425,7 +425,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
                                 e.stopPropagation();
                                 onPreview(event.publishedId);
                             }}
-                            className='flex gap-2 items-center px-3 py-2 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg transition-colors md:px-4 md:py-2 hover:bg-blue-200 md:text-sm'
+                            className='flex gap-2 items-center px-3 py-2 text-xs font-medium text-status-info bg-status-info/15 rounded-lg transition-colors md:px-4 md:py-2 hover:bg-status-info/25 md:text-sm'
                         >
                             <Eye className='w-3 h-3 md:w-4 md:h-4' />
                             Preview
@@ -435,7 +435,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
                                 e.stopPropagation();
                                 onEdit(event.publishedId);
                             }}
-                            className='flex gap-2 items-center px-3 py-2 text-xs font-medium text-green-700 bg-green-100 rounded-lg transition-colors md:px-4 md:py-2 hover:bg-green-200 md:text-sm'
+                            className='flex gap-2 items-center px-3 py-2 text-xs font-medium text-status-success bg-status-success/15 rounded-lg transition-colors md:px-4 md:py-2 hover:bg-status-success/25 md:text-sm'
                         >
                             <Edit className='w-3 h-3 md:w-4 md:h-4' />
                             Edit
@@ -444,8 +444,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
                 </div>
 
                 {/* Published ID (small text at bottom) */}
-                <div className='pt-3 mt-3 border-t border-gray-100 md:mt-4 md:pt-4'>
-                    <div className='flex justify-between items-center text-xs text-gray-400'>
+                <div className='pt-3 mt-3 border-t border-ink-light md:mt-4 md:pt-4'>
+                    <div className='flex justify-between items-center text-xs text-ink-caption'>
                         <span className="mr-2 truncate">ID: {event.publishedId || 'No ID'}</span>
                     </div>
                 </div>
@@ -457,8 +457,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit, onPreview }) => {
 // Loading Component
 const LoadingSpinner: React.FC = () => (
     <div className='flex justify-center items-center py-16'>
-        <div className='w-12 h-12 rounded-full border-b-2 border-blue-600 animate-spin'></div>
-        <span className='ml-4 text-gray-600'>Loading events...</span>
+        <div className='w-12 h-12 rounded-full border-b-2 border-status-info animate-spin'></div>
+        <span className='ml-4 text-ink-paragraph'>Loading events...</span>
     </div>
 );
 
@@ -466,11 +466,11 @@ const LoadingSpinner: React.FC = () => (
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => (
     <div className='py-16 text-center'>
         <div className='mb-4 text-6xl'>⚠</div>
-        <p className='mb-2 text-xl text-red-600'>Error loading events</p>
-        <p className='mb-4 text-gray-500'>{error}</p>
+        <p className='mb-2 text-xl text-status-error'>Error loading events</p>
+        <p className='mb-4 text-ink-caption'>{error}</p>
         <button
             onClick={onRetry}
-            className='px-6 py-3 font-semibold text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600'
+            className='px-6 py-3 font-semibold text-white bg-status-error rounded-lg transition-colors hover:bg-status-error'
         >
             Try Again
         </button>
@@ -497,23 +497,23 @@ const MainContent: React.FC<MainContentProps> = ({
 }) => {
     if (loading)
         return (
-            <div className='flex-1 px-4 py-8 bg-blue-50 md:px-8'>
+            <div className='flex-1 px-4 py-8 bg-status-info/10 md:px-8'>
                 <LoadingSpinner />
             </div>
         );
     if (error)
         return (
-            <div className='flex-1 px-4 py-8 bg-blue-50 md:px-8'>
+            <div className='flex-1 px-4 py-8 bg-status-info/10 md:px-8'>
                 <ErrorMessage error={error} onRetry={onRetry} />
             </div>
         );
 
     return (
-        <div className='flex-1 px-4 py-8 bg-blue-50 md:px-8'>
+        <div className='flex-1 px-4 py-8 bg-status-info/10 md:px-8'>
             {/* Mobile filter button */}
             <button
                 onClick={onOpenMobileSidebar}
-                className="flex gap-2 items-center px-4 py-2 mb-6 bg-white rounded-lg border border-gray-200 shadow-sm md:hidden"
+                className="flex gap-2 items-center px-4 py-2 mb-6 bg-surface-card rounded-lg border border-ink-light shadow-sm md:hidden"
             >
                 <Menu className="w-4 h-4" />
                 <span>Filters</span>
@@ -521,15 +521,15 @@ const MainContent: React.FC<MainContentProps> = ({
 
             {/* Results Header */}
             <div className='flex flex-wrap gap-3 justify-between items-center mb-6 md:mb-8 md:gap-4'>
-                <h2 className='text-xl font-bold text-black md:text-2xl'>
+                <h2 className='text-xl font-bold text-ink md:text-2xl'>
                     My Events ({totalCount || events.length})
                 </h2>
                 <div className='flex gap-2 items-center md:gap-4'>
-                    <span className='text-sm font-medium text-black md:text-base'>
+                    <span className='text-sm font-medium text-ink md:text-base'>
                         Page {currentPage} of {totalPages}
                     </span>
                     {hasMore && (
-                        <span className='px-2 py-1 text-xs text-gray-600 bg-blue-100 rounded-full md:text-sm md:px-3 md:py-1'>
+                        <span className='px-2 py-1 text-xs text-ink-paragraph bg-status-info/15 rounded-full md:text-sm md:px-3 md:py-1'>
                             More available
                         </span>
                     )}
@@ -556,11 +556,11 @@ const MainContent: React.FC<MainContentProps> = ({
                         // Empty State with Filters Applied
                         <div className='py-12 text-center md:py-16'>
                             <div className='mb-4 text-6xl'>🔍</div>
-                            <p className='mb-2 text-xl text-gray-700'>No events match your filters</p>
-                            <p className='mb-6 text-gray-500'>Try adjusting your search criteria or clear all filters</p>
+                            <p className='mb-2 text-xl text-ink-paragraph'>No events match your filters</p>
+                            <p className='mb-6 text-ink-caption'>Try adjusting your search criteria or clear all filters</p>
                             <button
                                 onClick={onClearFilters}
-                                className='px-6 py-3 font-semibold text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600'
+                                className='px-6 py-3 font-semibold text-white bg-status-info rounded-lg transition-colors hover:bg-status-info'
                             >
                                 Clear All Filters
                             </button>
@@ -569,11 +569,11 @@ const MainContent: React.FC<MainContentProps> = ({
                         // Empty State - No events at all
                         <div className='py-12 text-center md:py-16'>
                             <div className='mb-4 text-6xl'>🎪</div>
-                            <p className='mb-2 text-xl text-gray-700'>No events found</p>
-                            <p className='mb-6 text-gray-500'>You haven't created any events yet.</p>
+                            <p className='mb-2 text-xl text-ink-paragraph'>No events found</p>
+                            <p className='mb-6 text-ink-caption'>You haven't created any events yet.</p>
                             <button
                                 onClick={() => alert('Navigate to event creation')}
-                                className='px-6 py-3 font-semibold text-black bg-blue-500 rounded-lg transition-colors hover:bg-blue-600'
+                                className='px-6 py-3 font-semibold text-ink bg-status-info rounded-lg transition-colors hover:bg-status-info'
                             >
                                 Create Your First Event
                             </button>
@@ -756,11 +756,11 @@ const UserEvent: React.FC = () => {
     const totalPages = Math.max(1, Math.ceil(sortedEvents.length / 12));
 
     return (
-        <div className='min-h-screen bg-blue-100'>
+        <div className='min-h-screen bg-status-info/15'>
             <Header />
 
             {/* Main Layout Container */}
-            <div className='flex flex-col min-h-screen bg-gray-50 md:flex-row'>
+            <div className='flex flex-col min-h-screen bg-ink-offwhite md:flex-row'>
                 {/* Left Sidebar */}
                 <Sidebar
                     searchTerm={searchTerm}

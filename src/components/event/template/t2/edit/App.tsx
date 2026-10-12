@@ -14,6 +14,7 @@ import { ContactSection } from './components/ContactSection';
 import Publish from './components/Publish';
 import { Footer } from './components/FooterSection';
 import { EVENTS_API, LAMBDA } from '../../../../../lib/apiConfig';
+import { authHeader } from '../../../../../lib/authService';
 
 // Define types for the component states
 interface ComponentStates {
@@ -132,13 +133,18 @@ export default function Edit_event_t2() {
             }
           );
         } else {
-          // Replace with your actual API for non-AIgen case
+          // Admin editing an already-published event: draftId here is
+          // actually the eventId. The self-hosted backend never implements
+          // /event-content — that path is a leftover from the old Lambda
+          // API. Use the real admin-capable endpoint instead, which
+          // requires a Bearer token.
           response = await fetch(
-            EVENTS_API ? `${EVENTS_API}/event-content/${draftId}/${userId}` : `${LAMBDA.eventTemplateContent}/${draftId}/${userId}`,
+            EVENTS_API ? `${EVENTS_API}/event/${draftId}` : `${LAMBDA.eventTemplateContent}/${draftId}/${userId}`,
             {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
+                ...(EVENTS_API ? authHeader() : {}),
               },
             }
           );
@@ -148,7 +154,13 @@ export default function Edit_event_t2() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
+        const raw = await response.json();
+        // /event/{eventId} returns a flat record with templateContent,
+        // not the {data: {..., content}} shape /events (AIgen) returns —
+        // normalize so the rest of this function can treat them the same.
+        const data = EVENTS_API && isAIgen !== "AIgen"
+          ? { data: { ...raw, content: raw.templateContent } }
+          : raw;
 
         // Set both AIGenData and finalTemplate similar to EventTemplate1.tsx
         setFinalTemplate(data.data);
@@ -205,21 +217,21 @@ export default function Edit_event_t2() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-surface-main flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-status-info"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-main flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Error Loading Page</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-ink-paragraph mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            className="bg-status-info text-white px-4 py-2 rounded-lg"
           >
             Try Again
           </button>
@@ -230,10 +242,10 @@ export default function Edit_event_t2() {
 
   if (!AIGenData || !AIGenData.content) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-main flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">No Data Found</h2>
-          <p className="text-gray-600">
+          <p className="text-ink-paragraph">
             The requested event page could not be loaded.
           </p>
         </div>
@@ -242,7 +254,7 @@ export default function Edit_event_t2() {
   }
 
   return (
-    <div className="min-h-screen bg-white transition-colors duration-300">
+    <div className="min-h-screen bg-surface-main transition-colors duration-300">
       {/* Navigation */}
       <Navigation
         activeSection={activeSection}
@@ -325,7 +337,7 @@ export default function Edit_event_t2() {
       {contentLoaded ? (
         <Publish />
       ) : (
-        <div className="fixed bottom-20 right-10 z-50 bg-gray-400 text-white font-semibold py-3 px-6 rounded-full shadow-lg cursor-not-allowed" title="Waiting for the event's existing content to load before publishing is enabled">
+        <div className="fixed bottom-20 right-10 z-50 bg-ink-caption text-white font-semibold py-3 px-6 rounded-full shadow-lg cursor-not-allowed" title="Waiting for the event's existing content to load before publishing is enabled">
           Loading content…
         </div>
       )}

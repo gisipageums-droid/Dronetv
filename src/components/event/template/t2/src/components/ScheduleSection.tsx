@@ -134,28 +134,28 @@ export function ScheduleSection() {
 
   const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      keynote: 'bg-amber-500',
-      workshop: 'bg-yellow-500',
-      panel: 'bg-orange-500',
-      session: 'bg-amber-400',
-      networking: 'bg-yellow-400',
-      break: 'bg-gray-400',
-      registration: 'bg-gray-400',
-      closing: 'bg-amber-600',
+      keynote: 'bg-brand-gold',
+      workshop: 'bg-brand-gold',
+      panel: 'bg-status-warning',
+      session: 'bg-brand-yellow',
+      networking: 'bg-brand-yellow',
+      break: 'bg-ink-caption',
+      registration: 'bg-ink-caption',
+      closing: 'bg-brand-gold',
     };
-    return colors[type] || 'bg-gray-400';
+    return colors[type] || 'bg-ink-caption';
   };
 
   return (
-    <section id="schedule" className="py-16 sm:py-20 md:py-24 bg-yellow-100">
+    <section id="schedule" className="py-16 sm:py-20 md:py-24 bg-brand-yellow-soft">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-block mb-4 px-4 py-2 bg-white rounded-full shadow-sm border border-amber-200">
-              <span className="text-red-700 text-xl font-semibold">Event Schedule</span>
+            <div className="inline-block mb-4 px-4 py-2 bg-surface-card rounded-full shadow-sm border border-brand-yellow-soft">
+              <span className="text-status-error text-xl font-semibold">Event Schedule</span>
             </div>
-            <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">Three Days of Excellence</h2>
-            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+            <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">Three Days of Excellence</h2>
+            <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
               Carefully curated sessions designed to maximize your learning and networking opportunities.
             </p>
           </div>
@@ -168,8 +168,8 @@ export function ScheduleSection() {
                 onClick={() => setActiveDay(day)}
                 className={`px-6 sm:px-8 py-3 sm:py-4 rounded-xl transition-all duration-300 text-sm sm:text-base ${
                   activeDay === day
-                    ? 'bg-yellow-400 text-gray-900 shadow-lg scale-105'
-                    : 'bg-white text-gray-600 hover:bg-yellow-50 border border-gray-200'
+                    ? 'bg-brand-yellow text-ink shadow-lg scale-105'
+                    : 'bg-surface-card text-ink-paragraph hover:bg-surface-main border border-ink-light'
                 }`}
               >
                 Day {day}
@@ -183,12 +183,12 @@ export function ScheduleSection() {
             {schedule[activeDay as keyof typeof schedule].map((item, index) => (
               <div
                 key={index}
-                className="group bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-transparent hover:border-amber-500"
+                className="group bg-surface-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-transparent hover:border-brand-gold"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4 sm:gap-6">
                   <div className="lg:w-44 flex-shrink-0">
-                    <div className="flex items-center gap-2 text-gray-900 text-sm sm:text-base">
-                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 flex-shrink-0" />
+                    <div className="flex items-center gap-2 text-ink text-sm sm:text-base">
+                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold flex-shrink-0" />
                       <span>{item.time}</span>
                     </div>
                   </div>
@@ -198,16 +198,16 @@ export function ScheduleSection() {
                         {item.type}
                       </span>
                     </div>
-                    <h3 className="text-gray-900 mb-3 group-hover:text-amber-600 transition-colors text-base sm:text-lg md:text-xl">
+                    <h3 className="text-ink mb-3 group-hover:text-brand-yellow transition-colors text-base sm:text-lg md:text-xl">
                       {item.title}
                     </h3>
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 text-gray-600 text-sm sm:text-base">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 text-ink-paragraph text-sm sm:text-base">
                       <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                        <MapPin className="w-4 h-4 text-brand-gold flex-shrink-0" />
                         <span>{item.location}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                        <User className="w-4 h-4 text-brand-gold flex-shrink-0" />
                         <span>{item.speaker}</span>
                       </div>
                     </div>

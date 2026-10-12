@@ -11,7 +11,24 @@ import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import { CheckCircle, X } from "lucide-react";
 import { COMPANY_API, PROFESSIONAL_API, EVENTS_API, LAMBDA } from '../../lib/apiConfig';
-import { validateToken, getMe, clearSession } from '../../lib/authService';
+import { validateToken, getMe, clearSession, authHeader } from '../../lib/authService';
+
+function applyAxiosAuthHeader(token: string | null) {
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common['Authorization'];
+  }
+}
+applyAxiosAuthHeader(localStorage.getItem('token'));
+
+axios.interceptors.request.use((config) => {
+  if (!config.headers.has('Authorization')) {
+    const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+    if (token) config.headers.set('Authorization', `Bearer ${token}`);
+  }
+  return config;
+});
 
 axios.interceptors.request.use((config) => {
   if (!config.headers.has('Authorization')) {
@@ -109,6 +126,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
     localStorage.setItem("user", JSON.stringify(userToStore));
     if (userData.token) {
       localStorage.setItem("token", userData.token);
+      applyAxiosAuthHeader(userData.token);
     }
     setUser(userToStore);
   };
@@ -181,6 +199,7 @@ export const UserAuthProvider: React.FC<UserAuthProviderProps> = ({
 
   const logout = () => {
     clearSession();
+    applyAxiosAuthHeader(null);
     setUser(null);
     setAdmin(null);
   };
@@ -288,33 +307,33 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
   function navigatemodel() {
     return (
       <motion.div
-        className="fixed top-0 left-0 w-full h-full backdrop-blur-md bg-black/70 flex items-center justify-center z-[999999]"
+        className="fixed top-0 left-0 w-full h-full backdrop-blur-md bg-ink/70 flex items-center justify-center z-[999999]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+          className="bg-surface-card rounded-xl shadow-2xl max-w-md w-full p-6"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <CheckCircle className="text-green-600" size={24} />
-              <h3 className="text-xl font-semibold text-gray-900">
+              <CheckCircle className="text-status-success" size={24} />
+              <h3 className="text-xl font-semibold text-ink">
                 Successfully Published!
               </h3>
             </div>
             <button
               onClick={() => setNavModel(false)}
-              className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+              className="p-1 rounded-full hover:bg-ink-light transition-colors"
             >
-              <X size={20} className="text-gray-500" />
+              <X size={20} className="text-ink-caption" />
             </button>
           </div>
           <div className="mb-6">
-            <p className="text-gray-600">
+            <p className="text-ink-paragraph">
               Your company listing is now live! Your login credentials have been sent to your registered email address. You can log in to manage your listing anytime.
             </p>
           </div>
@@ -323,7 +342,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
               onClick={() => { setNavModel(false); navigate("/listed-companies"); }}
-              className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 text-ink-paragraph font-medium rounded-lg border border-ink-light bg-surface-card hover:bg-ink-light transition-colors"
             >
               View Companies
             </motion.button>
@@ -331,7 +350,7 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
               onClick={() => { setNavModel(false); navigate("/login"); }}
-              className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
+              className="px-4 py-2 bg-status-info text-white font-medium rounded-lg hover:bg-status-info transition-colors shadow-md"
             >
               Log In
             </motion.button>
@@ -356,11 +375,13 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(
-        `${API}/${userId}/${draftId}?template=${templateSelection}`
+        `${API}/${userId}/${draftId}?template=${templateSelection}`,
+        { headers: { ...authHeader() } }
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errBody = await response.json().catch(() => null);
+        throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
@@ -516,34 +537,46 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
 
     try {
       const response = await fetch(
-        PROFESSIONAL_API ? `${PROFESSIONAL_API}/publish` : `${LAMBDA.profPublish}/`,
+        `${PROFESSIONAL_API}/${AIGenData.userId}/${AIGenData.professionalId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            ...authHeader(),
           },
-          body: JSON.stringify(finalTemplate),
+          body: JSON.stringify({ templateContent: finalTemplate.content }),
         }
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errBody = await response.json().catch(() => null);
+        throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      toast.success(
-        "Your template is successfully published and now it is under review"
-      );
-
+      // Admin edited the profile from the admin dashboard - keep it live by
+      // re-approving, otherwise the edit can drop it back to "under review".
       if (isAdminLogin) {
-        navigate("/admin/professional/dashboard");
-        setNavModel(false);
-      } else if (isLogin) {
-        navigate("/user-professionals");
-        setNavModel(false);
-      } else {
-        setNavModel(true);
+        try {
+          await fetch(
+            `${PROFESSIONAL_API}/professional-tem-validation`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json", ...authHeader() },
+              body: JSON.stringify({
+                professionalId: AIGenData.professionalId,
+                userId: AIGenData.userId,
+                action: "approve",
+              }),
+            }
+          );
+        } catch {
+          /* best effort - the content save already succeeded */
+        }
       }
+
+      toast.success("Your listing is now live!");
+      navigate(isAdminLogin ? "/admin/professional/dashboard" : "/professionals");
+      setNavModel(false);
       setAIGenData({});
     } catch (error) {
       console.error("Upload failed:", error);
@@ -568,48 +601,88 @@ export const TemplateProvider: React.FC<TemplateProviderProps> = ({
         ''
       ).trim();
 
-      // The publish Lambda requires eventId/userId (and the rest of the draft
-      // metadata) nested INSIDE `content`, with the actual edited template
-      // itself nested a level deeper as `content.content` — not as top-level
-      // sibling fields. See dronetv-events-update-functionality-2 source.
-      // Older drafts saved before an eventId was persisted don't have one —
-      // fall back to draftId, which is always present and equally unique.
-      const data: any = {
-        content: {
-          ...AIGenData,
-          eventId: AIGenData.eventId || AIGenData.draftId,
-          content: finalTemplate,
-          ...(eventName ? { eventName } : {}),
-        },
-      };
+      if (EVENTS_API && AIGenData.eventId) {
+        // Editing an already-published event (admin re-edit): the
+        // self-hosted backend has no /publish endpoint — that path is a
+        // leftover from the old Lambda API which never got ported here.
+        // Save via the real update endpoint instead.
+        // The backend stores formData (hero banner image, etc.) in its own
+        // column, separate from templateContent - it does not extract it
+        // out of templateContent automatically, so it must be sent as its
+        // own top-level field or an image re-upload silently never lands.
+        const response = await fetch(`${EVENTS_API}/event/${AIGenData.eventId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", ...authHeader() },
+          body: JSON.stringify({
+            templateContent: finalTemplate,
+            formData: finalTemplate?.formData || AIGenData.formData,
+            ...(eventName ? { eventName } : {}),
+            ...(finalTemplate?.formData?.heroBanner?.mediaUrl
+              ? { heroBannerImage: finalTemplate.formData.heroBanner.mediaUrl }
+              : {}),
+          }),
+        });
 
-      const response = await fetch(
-        EVENTS_API ? `${EVENTS_API}/publish` : `${LAMBDA.eventsPublish}/events-publish/event-publish`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
+        if (!response.ok) {
+          const errBody = await response.json().catch(() => null);
+          throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      // If admin is publishing, auto-approve so event stays visible in public list
-      if (isAdminLogin && AIGenData.eventId) {
-        try {
-          await fetch(
-            EVENTS_API ? `${EVENTS_API}/event/${AIGenData.eventId}` : `${LAMBDA.eventsAdmin}/event/${AIGenData.eventId}`,
-            {
+        // If admin is publishing, auto-approve so event stays visible in public list
+        if (isAdminLogin) {
+          try {
+            await fetch(`${EVENTS_API}/admin/review`, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ eventId: AIGenData.eventId, action: "approve", userId: AIGenData.userId }),
-            }
-          );
-        } catch { /* best effort */ }
+              headers: { "Content-Type": "application/json", ...authHeader() },
+              body: JSON.stringify({ eventId: AIGenData.eventId, action: "approve" }),
+            });
+          } catch { /* best effort */ }
+        }
+      } else {
+        // The publish Lambda requires eventId/userId (and the rest of the draft
+        // metadata) nested INSIDE `content`, with the actual edited template
+        // itself nested a level deeper as `content.content` — not as top-level
+        // sibling fields. See dronetv-events-update-functionality-2 source.
+        // Older drafts saved before an eventId was persisted don't have one —
+        // fall back to draftId, which is always present and equally unique.
+        const data: any = {
+          content: {
+            ...AIGenData,
+            eventId: AIGenData.eventId || AIGenData.draftId,
+            content: finalTemplate,
+            ...(eventName ? { eventName } : {}),
+          },
+        };
+
+        const response = await fetch(
+          EVENTS_API ? `${EVENTS_API}/publish` : `${LAMBDA.eventsPublish}/events-publish/event-publish`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }
+        );
+
+        if (!response.ok) {
+          const errBody = await response.json().catch(() => null);
+          throw new Error(errBody?.detail || errBody?.message || `HTTP error! status: ${response.status}`);
+        }
+
+        // If admin is publishing, auto-approve so event stays visible in public list
+        if (isAdminLogin && AIGenData.eventId) {
+          try {
+            await fetch(
+              `${LAMBDA.eventsAdmin}/event/${AIGenData.eventId}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ eventId: AIGenData.eventId, action: "approve", userId: AIGenData.userId }),
+              }
+            );
+          } catch { /* best effort */ }
+        }
       }
 
       toast.success(

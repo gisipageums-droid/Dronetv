@@ -34,6 +34,10 @@ export default function FleetTab({ profile, save }: TabProps) {
 
   return (
     <div>
+      {/* Verification and Listing Policy, Section 2 - equipment is
+          self-declared, reviewed by DroneTV on a best-effort basis only,
+          not independently verified the way identity/DGCA credentials are. */}
+      <div className="text-[11px] text-white/30 mb-3">As stated by vendor - not independently verified by DroneTV.</div>
       <div className="flex items-center justify-between mb-5">
         <div className="flex gap-6 px-4 py-3.5 bg-ink border border-white/10 rounded-lg flex-1">
           <div><span className="text-xl font-extrabold text-brand-gold">{fleet.length}</span> <span className="text-xs text-white/40 ml-1">Total Drones</span></div>

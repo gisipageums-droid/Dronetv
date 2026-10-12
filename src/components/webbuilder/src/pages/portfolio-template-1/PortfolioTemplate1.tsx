@@ -111,8 +111,8 @@ const PortfolioTemplate1: React.FC = () => {
     rotatingTitles: "DGCA RPAS Instructor|Aerospace Educator|Drone Pilot Trainer|Flight Mechanics Expert",
     tagline: "Empowering India's drone workforce with certified training, real-world simulations, and aerospace expertise. Based at India Drone Academy, Hyderabad.",
     location: "Hyderabad, Telangana",
-    primaryColor: "#FFD400",
-    accentColor: "#FF0000",
+    primaryColor: "#F8C400",
+    accentColor: "#DC2626",
     button1Text: "Download CV",
     button1Link: "#",
     button2Text: "Contact Me",
@@ -386,7 +386,7 @@ const PortfolioTemplate1: React.FC = () => {
   
   return (
     <div className={`${darkMode ? 'dark' : ''}`}>
-      <div className="bg-white dark:bg-gray-900 transition-colors duration-300">
+      <div className="bg-surface-card dark:bg-gray-900 transition-colors duration-300">
         <Navigation darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         
         <HeroSection />

@@ -41,21 +41,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
       ) : (
         <div 
-          className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600"
+          className="absolute inset-0 bg-gradient-to-br from-status-info via-brand-gold to-status-error"
         />
       )}
 
       {/* Dynamic gradient overlay */}
       <div 
-        className="absolute inset-0 bg-gradient-to-br from-black/80 via-gray-900/60 to-black/90 opacity-80"
+        className="absolute inset-0 bg-gradient-to-br from-ink/80 via-ink/60 to-ink/90 opacity-80"
       />
 
       {/* Animated particles background */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-yellow-400 rounded-full"></div>
-        <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-blue-400 rounded-full"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
-        <div className="absolute top-2/3 right-1/3 w-1 h-1 bg-green-400 rounded-full"></div>
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-brand-yellow rounded-full"></div>
+        <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-status-info rounded-full"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-brand-gold rounded-full"></div>
+        <div className="absolute top-2/3 right-1/3 w-1 h-1 bg-status-success rounded-full"></div>
       </div>
 
       {/* Content Container */}
@@ -71,11 +71,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     }}
   >
     <div className="relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-full blur-lg opacity-40"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-yellow via-status-warning to-brand-yellow rounded-full blur-lg opacity-40"></div>
       <img
         src={companyLogo}
         alt="Company Logo"
-        className="relative h-16 w-16 md:h-20 md:w-20 bg-white shadow-2xl object-contain border-4 border-yellow-400 transition-transform duration-300 hover:scale-110 hover:rotate-12" // <-- no rounded-full!
+        className="relative h-16 w-16 md:h-20 md:w-20 bg-surface-card shadow-2xl object-contain border-4 border-brand-yellow transition-transform duration-300 hover:scale-110 hover:rotate-12" // <-- no rounded-full!
       />
     </div>
   </div>
@@ -101,7 +101,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
         {/* Subheadline with fade-in effect */}
         <p
-          className="text-lg md:text-2xl text-gray-100 mb-8 max-w-4xl mx-auto font-light leading-relaxed opacity-0 transform translate-y-12 transition-all duration-1000 ease-out"
+          className="text-lg md:text-2xl text-ink-light mb-8 max-w-4xl mx-auto font-light leading-relaxed opacity-0 transform translate-y-12 transition-all duration-1000 ease-out"
           style={{
             animationDelay: '0.8s',
             textShadow: '0 2px 12px rgba(0,0,0,0.8)',
@@ -127,14 +127,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               }}
             >
               <span className="relative z-10">{primaryCTA.text}</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-orange-300 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-yellow-soft to-status-warning/40 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
             </a>
           )}
           
           {secondaryCTA?.link && secondaryCTA?.text && (
             <a
               href={secondaryCTA.link}
-              className="group relative overflow-hidden border-2 border-white text-white hover:text-black px-8 py-3 rounded-full font-bold text-base md:text-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 backdrop-blur-sm opacity-0 translate-y-12"
+              className="group relative overflow-hidden border-2 border-white text-white hover:text-ink px-8 py-3 rounded-full font-bold text-base md:text-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 backdrop-blur-sm opacity-0 translate-y-12"
               style={{
                 background: 'rgba(255, 255, 255, 0.1)',
                 boxShadow: '0 8px 32px rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0,0,0,0.2)',
@@ -144,7 +144,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               }}
             >
               <span className="relative z-10">{secondaryCTA.text}</span>
-              <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="absolute inset-0 bg-surface-card transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
             </a>
           )}
         </div>
@@ -159,7 +159,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <div 
             className="w-6 h-10 border-2 border-white rounded-full flex justify-center opacity-60 animate-bounce"
           >
-            <div className="w-1 h-3 bg-white rounded-full mt-2"></div>
+            <div className="w-1 h-3 bg-surface-card rounded-full mt-2"></div>
           </div>
         </div>
       </div>

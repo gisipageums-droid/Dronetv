@@ -166,20 +166,20 @@ function App() {
   return (
     <div className="min-h-screen bg-[#F4F5F7]">
       <div className="mb-4">
-        <h1 className="text-xl font-extrabold text-gray-900">Packages & Revenue</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Manage token plans, pricing, and transaction history.</p>
+        <h1 className="text-xl font-extrabold text-ink">Packages & Revenue</h1>
+        <p className="text-sm text-ink-caption mt-0.5">Manage token plans, pricing, and transaction history.</p>
       </div>
 
       {/* Sub-tabs */}
-      <div className="flex gap-0 border-b-2 border-gray-200 mb-6 overflow-x-auto">
+      <div className="flex gap-0 border-b-2 border-ink-light mb-6 overflow-x-auto">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => switchTab(tab.id)}
             className={`px-4 py-2 text-sm font-semibold whitespace-nowrap border-b-[3px] -mb-[2px] transition-all ${
               activePage === tab.id
-                ? "text-gray-900 border-yellow-400"
-                : "text-gray-500 border-transparent hover:text-gray-700"
+                ? "text-ink border-brand-yellow"
+                : "text-ink-caption border-transparent hover:text-ink-paragraph"
             }`}
           >
             {tab.label}

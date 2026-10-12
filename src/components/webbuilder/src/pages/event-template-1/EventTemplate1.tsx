@@ -25,7 +25,7 @@
     }, []);
 
     return (
-      <div className="bg-white">
+      <div className="bg-surface-card">
         <Navigation />
         <HeroSection />
         <AboutSection />

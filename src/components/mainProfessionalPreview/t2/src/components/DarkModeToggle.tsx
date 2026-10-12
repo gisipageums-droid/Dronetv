@@ -28,7 +28,7 @@ export function DarkModeToggle({ onToggle }: DarkModeToggleProps) {
   return (
     <motion.button
       onClick={toggleDarkMode}
-      className="relative w-12 h-6 bg-muted rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+      className="relative w-12 h-6 bg-muted rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:ring-offset-2"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
@@ -40,14 +40,14 @@ export function DarkModeToggle({ onToggle }: DarkModeToggleProps) {
         {isDark ? (
           <Moon className="w-3 h-3 text-foreground" />
         ) : (
-          <Sun className="w-3 h-3 text-yellow-500" />
+          <Sun className="w-3 h-3 text-brand-gold" />
         )}
       </motion.div>
 
       {/* Background icons */}
       <div className="absolute inset-0 flex items-center justify-between px-1.5 pointer-events-none">
         <Sun
-          className={`w-3 h-3 transition-opacity duration-300 text-yellow-500 ${
+          className={`w-3 h-3 transition-opacity duration-300 text-brand-gold ${
             isDark ? 'opacity-30' : 'opacity-60'
           }`}
         />

@@ -37,20 +37,20 @@ export default function AlternativeContact({
 
     return (
         <>
-            <div className="p-3 bg-amber-100 rounded-lg border border-amber-200">
+            <div className="p-3 bg-brand-yellow-soft rounded-lg border border-brand-yellow-soft">
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="flex items-center text-sm font-bold text-amber-900">
+                    <h3 className="flex items-center text-sm font-bold text-brand-gold">
                         <Phone className="mr-2 w-5 h-5" />
                         Alternative Contact
                     </h3>
                     <div className="flex space-x-2">
-                        <button onClick={() => setShowAltContactModal(true)} className="p-1 rounded hover:bg-amber-200" title="Add New Field">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button onClick={() => setShowAltContactModal(true)} className="p-1 rounded hover:bg-brand-yellow-soft" title="Add New Field">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                         </button>
-                        <button onClick={openEditAltContactModal} className="p-1 rounded hover:bg-amber-200" title="Edit Alternative Contact">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button onClick={openEditAltContactModal} className="p-1 rounded hover:bg-brand-yellow-soft" title="Edit Alternative Contact">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.586a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                         </button>
@@ -77,7 +77,7 @@ export default function AlternativeContact({
                                     />
                                     <button
                                         onClick={() => deleteAltContactCoreField(key)}
-                                        className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700"
+                                        className="absolute top-0 right-0 p-1 text-status-error hover:text-status-error"
                                         title="Remove field"
                                     >
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +103,7 @@ export default function AlternativeContact({
                                     <div className="flex absolute top-0 right-0 space-x-1">
                                         <button
                                             onClick={() => removeAltContactCustomField(field.id)}
-                                            className="p-1 text-red-500 rounded hover:text-red-700 hover:bg-red-50"
+                                            className="p-1 text-status-error rounded hover:text-status-error hover:bg-status-error/10"
                                             title="Delete Field"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,13 +119,13 @@ export default function AlternativeContact({
             </div>
 
             {showAltContactModal && (
-                <div className="flex fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
-                    <div className="p-6 mx-4 w-full max-w-md max-h-[300px] overflow-auto bg-white rounded-lg shadow-xl">
-                        <h3 className="mb-4 text-lg font-bold text-gray-900">Add Alternative Contact Field</h3>
+                <div className="flex fixed inset-0 z-50 justify-center items-center bg-ink bg-opacity-50">
+                    <div className="p-6 mx-4 w-full max-w-md max-h-[300px] overflow-auto bg-surface-card rounded-lg shadow-xl">
+                        <h3 className="mb-4 text-lg font-bold text-ink">Add Alternative Contact Field</h3>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block mb-1 text-sm font-medium text-gray-700">
+                                <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                     Name
                                 </label>
                                 <input
@@ -133,12 +133,12 @@ export default function AlternativeContact({
                                     value={newAltContactFieldLabel}
                                     onChange={(e) => setNewAltContactFieldLabel(e.target.value)}
                                     placeholder="e.g., Department"
-                                    className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                    className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                 />
                             </div>
 
                             <div>
-                                <label className="block mb-1 text-sm font-medium text-gray-700">
+                                <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                     Placeholder Text
                                 </label>
                                 <input
@@ -146,7 +146,7 @@ export default function AlternativeContact({
                                     value={newAltContactFieldPlaceholder}
                                     onChange={(e) => setNewAltContactFieldPlaceholder(e.target.value)}
                                     placeholder="e.g., Enter department name"
-                                    className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                    className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                 />
                             </div>
 
@@ -156,9 +156,9 @@ export default function AlternativeContact({
                                     id="newAltContactFieldRequired"
                                     checked={newAltContactFieldRequired}
                                     onChange={(e) => setNewAltContactFieldRequired(e.target.checked)}
-                                    className="w-4 h-4 text-amber-600 bg-gray-100 rounded border-gray-300 focus:ring-amber-500 focus:ring-2"
+                                    className="w-4 h-4 text-brand-gold bg-ink-light rounded border-ink-light focus:ring-brand-gold focus:ring-2"
                                 />
-                                <label htmlFor="newAltContactFieldRequired" className="ml-2 text-sm font-medium text-gray-700">
+                                <label htmlFor="newAltContactFieldRequired" className="ml-2 text-sm font-medium text-ink-paragraph">
                                     Required Field
                                 </label>
                             </div>
@@ -167,13 +167,13 @@ export default function AlternativeContact({
                         <div className="flex justify-end mt-6 space-x-3">
                             <button
                                 onClick={() => setShowAltContactModal(false)}
-                                className="px-4 py-2 text-gray-600 rounded-md border border-gray-300 hover:bg-gray-50"
+                                className="px-4 py-2 text-ink-paragraph rounded-md border border-ink-light hover:bg-ink-offwhite"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={addAltContactCustomField}
-                                className="px-4 py-2 text-white bg-amber-500 rounded-md hover:bg-amber-600"
+                                className="px-4 py-2 text-white bg-brand-gold rounded-md hover:bg-brand-gold"
                             >
                                 Add Field
                             </button>
@@ -183,9 +183,9 @@ export default function AlternativeContact({
             )}
 
             {showEditAltContactModal && (
-                <div className="flex fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
-                    <div className="p-6 mx-4 w-full max-w-2xl max-h-[300px] overflow-auto bg-white rounded-lg shadow-xl">
-                        <h3 className="mb-4 text-lg font-bold text-gray-900">Edit Alternative Contact</h3>
+                <div className="flex fixed inset-0 z-50 justify-center items-center bg-ink bg-opacity-50">
+                    <div className="p-6 mx-4 w-full max-w-2xl max-h-[300px] overflow-auto bg-surface-card rounded-lg shadow-xl">
+                        <h3 className="mb-4 text-lg font-bold text-ink">Edit Alternative Contact</h3>
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -194,7 +194,7 @@ export default function AlternativeContact({
                                     ...Object.keys(editingAltContactPlaceholders || {})
                                 ])).map((key) => (
                                     <div key={key} className={`${key === 'contactEmail' || key === 'altContactEmail' ? 'md:col-span-2' : ''}`}>
-                                        <label className="block mb-1 text-sm font-medium text-gray-700">
+                                        <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                             Name
                                         </label>
                                         <input
@@ -202,9 +202,9 @@ export default function AlternativeContact({
                                             value={String((editingAltContactLabels as any)[key] ?? '')}
                                             onChange={(e) => setEditingAltContactLabels((prev: any) => ({ ...prev, [key]: e.target.value }))}
                                             placeholder={`e.g., ${key}`}
-                                            className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                            className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                         />
-                                        <label className="block mt-2 mb-1 text-sm font-medium text-gray-700">
+                                        <label className="block mt-2 mb-1 text-sm font-medium text-ink-paragraph">
                                             Placeholder Text
                                         </label>
                                         <input
@@ -212,20 +212,20 @@ export default function AlternativeContact({
                                             value={String((editingAltContactPlaceholders as any)[key] ?? '')}
                                             onChange={(e) => setEditingAltContactPlaceholders((prev: any) => ({ ...prev, [key]: e.target.value }))}
                                             placeholder=""
-                                            className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                            className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                         />
                                     </div>
                                 ))}
                             </div>
                             {editingAltContactCustomFields.length > 0 && (
                                 <div className="mt-4">
-                                    <h4 className="mb-3 text-sm font-semibold text-gray-700">Custom Fields</h4>
+                                    <h4 className="mb-3 text-sm font-semibold text-ink-paragraph">Custom Fields</h4>
                                     <div className="space-y-4">
                                         {editingAltContactCustomFields.map((field: any) => (
-                                            <div key={field.id} className="p-3 rounded-lg border border-gray-200">
+                                            <div key={field.id} className="p-3 rounded-lg border border-ink-light">
                                                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                                                     <div>
-                                                        <label className="block mb-1 text-sm font-medium text-gray-700">
+                                                        <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                                             Field Label
                                                         </label>
                                                         <input
@@ -233,11 +233,11 @@ export default function AlternativeContact({
                                                             value={field.label}
                                                             onChange={(e) => updateEditingAltContactCustomFieldLabel(field.id, e.target.value)}
                                                             placeholder="Enter field label"
-                                                            className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                                            className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="block mb-1 text-sm font-medium text-gray-700">
+                                                        <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                                             Placeholder Text
                                                         </label>
                                                         <input
@@ -245,7 +245,7 @@ export default function AlternativeContact({
                                                             value={field.placeholder}
                                                             onChange={(e) => updateEditingAltContactCustomFieldPlaceholder(field.id, e.target.value)}
                                                             placeholder="Enter placeholder text"
-                                                            className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                                            className="px-3 py-2 w-full rounded-md border border-ink-light focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                                         />
                                                     </div>
                                                 </div>
@@ -259,15 +259,15 @@ export default function AlternativeContact({
                                                                     f.id === field.id ? { ...f, required: e.target.checked } : f
                                                                 ));
                                                             }}
-                                                            className="w-4 h-4 text-amber-600 bg-gray-100 rounded border-gray-300 focus:ring-amber-500 focus:ring-2"
+                                                            className="w-4 h-4 text-brand-gold bg-ink-light rounded border-ink-light focus:ring-brand-gold focus:ring-2"
                                                         />
-                                                        <label className="ml-2 text-sm font-medium text-gray-700">
+                                                        <label className="ml-2 text-sm font-medium text-ink-paragraph">
                                                             Required Field
                                                         </label>
                                                     </div>
                                                     <button
                                                         onClick={() => removeEditingAltContactCustomField(field.id)}
-                                                        className="p-1 text-red-500 rounded hover:text-red-700 hover:bg-red-50"
+                                                        className="p-1 text-status-error rounded hover:text-status-error hover:bg-status-error/10"
                                                         title="Delete field"
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -285,13 +285,13 @@ export default function AlternativeContact({
                         <div className="flex justify-end mt-6 space-x-3">
                             <button
                                 onClick={() => setShowEditAltContactModal(false)}
-                                className="px-4 py-2 text-gray-600 rounded-md border border-gray-300 hover:bg-gray-50"
+                                className="px-4 py-2 text-ink-paragraph rounded-md border border-ink-light hover:bg-ink-offwhite"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={saveAltContactChanges}
-                                className="px-4 py-2 text-white bg-amber-500 rounded-md hover:bg-amber-600"
+                                className="px-4 py-2 text-white bg-brand-gold rounded-md hover:bg-brand-gold"
                             >
                                 Save Changes
                             </button>

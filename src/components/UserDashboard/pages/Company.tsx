@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase, Users, Mail, Phone, Send } from "lucide-react";
+import { Search, MapPin, Building2, Edit, Eye, Plus, Upload, CheckCircle, X, AlertCircle, Loader2, RefreshCw, ExternalLink, Shield, Settings, Briefcase, Users, Mail, Phone, Send, Trash2 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTemplate, useUserAuth } from "../../context/context";
 import { fetchAdminContent, fetchMyContent, createContent, MediaItem } from "../../../lib/mediaApi";
@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import ListingLimitBanner from "../components/common/ListingLimitBanner";
 import { COMPANY_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
+import { authHeader } from "../../../lib/authService";
 
 const SUREPASS_PROXY = import.meta.env.VITE_SUREPASS_PROXY_URL;
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
@@ -38,6 +39,7 @@ interface CompanyCardProps {
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
   onPublish: (company: Company) => void;
+  onDelete: (company: Company) => void;
   isDetailsUpdated?: boolean;
 }
 
@@ -82,7 +84,7 @@ interface PublishedDetailsResponse {
 }
 
 // =================== Company card ==============================
-const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublish, isDetailsUpdated }) => {
+const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublish, onDelete, isDetailsUpdated }) => {
   const placeholderImg =
     company.previewImage || company?.companyName?.charAt(0) || "C";
   const navigate = useNavigate();
@@ -106,13 +108,13 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
     const statusLower = status?.toLowerCase();
     switch (statusLower) {
       case "active":
-        return { bg: "bg-yellow-200", text: "text-yellow-900", label: "Under Review" };
+        return { bg: "bg-brand-yellow-soft", text: "text-brand-gold", label: "Under Review" };
       case "approved":
-        return { bg: "bg-green-100", text: "text-green-800", label: "Published" };
+        return { bg: "bg-status-success/15", text: "text-status-success", label: "Published" };
       case "rejected":
-        return { bg: "bg-red-100", text: "text-red-800", label: "Rejected" };
+        return { bg: "bg-status-error/15", text: "text-status-error", label: "Rejected" };
       default:
-        return { bg: "bg-yellow-100", text: "text-yellow-900", label: "Published" };
+        return { bg: "bg-brand-yellow-soft", text: "text-brand-gold", label: "Draft" };
     }
   };
 
@@ -120,13 +122,13 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
   const isPublished = company?.reviewStatus?.toLowerCase() === "approved";
 
   return (
-    <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-yellow-400 group">
+    <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 hover:shadow-xl hover:border-brand-yellow group">
       <div className="p-6">
         {/* Header */}
         <div className="grid grid-cols-1 items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-yellow-50 p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-yellow-100 transition-all duration-300 group-hover:scale-110">
-              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-yellow-600">
+            <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md bg-surface-main p-2 flex items-center justify-center group-hover:shadow-lg group-hover:bg-brand-yellow-soft transition-all duration-300 group-hover:scale-110">
+              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-brand-gold">
                 {company.previewImage ? (
                   <img
                     src={placeholderImg}
@@ -139,11 +141,11 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
               </div>
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
+              <h3 className="text-lg font-bold text-ink line-clamp-2">
                 {company?.companyName || "Unnamed Company"}
               </h3>
-              <div className="flex items-center text-gray-600 mt-1">
-                <MapPin className="w-4 h-4 mr-1 text-yellow-500" />
+              <div className="flex items-center text-ink-paragraph mt-1">
+                <MapPin className="w-4 h-4 mr-1 text-brand-gold" />
                 <span className="text-sm">{company?.location || "Location not specified"}</span>
               </div>
             </div>
@@ -161,7 +163,7 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
         <div className="mb-6">
           <div className="flex flex-wrap gap-2">
             {(company?.sectors && company?.sectors.length > 0 ? company.sectors : ["General"]).map((sector, index) => (
-              <span key={index} className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full border border-yellow-200">
+              <span key={index} className="px-3 py-1 bg-brand-yellow-soft text-brand-gold text-xs font-medium rounded-full border border-brand-yellow-soft">
                 {sector}
               </span>
             ))}
@@ -170,11 +172,11 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
 
         {/* Date and Actions */}
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2 bg-yellow-50 rounded-lg px-4 py-2 border border-yellow-200">
-            <span className="font-semibold text-yellow-700 text-sm">
+          <div className="flex items-center gap-2 bg-surface-main rounded-lg px-4 py-2 border border-brand-yellow-soft">
+            <span className="font-semibold text-brand-gold text-sm">
               {company?.createdAt ? formatDate(company?.createdAt) : "Date not available"}
             </span>
-            <span className="text-xs text-yellow-600">Submitted</span>
+            <span className="text-xs text-brand-gold">Submitted</span>
           </div>
 
           {/* Action Buttons */}
@@ -184,7 +186,7 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
                 e.stopPropagation();
                 if (company?.publishedId) onEdit(company.publishedId);
               }}
-              className="flex-1 px-3 py-2 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-500 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-yellow-500"
+              className="flex-1 px-3 py-2 bg-brand-yellow text-ink rounded-lg hover:bg-brand-gold transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-gold"
             >
               <Edit className="w-4 h-4" />
               Edit |
@@ -199,25 +201,37 @@ const Card: React.FC<CompanyCardProps> = ({ company, onEdit, onPreview, onPublis
                 e.stopPropagation();
                 navigate("/user-website?tab=details");
               }}
-              className="w-full px-3 py-2 bg-amber-100 text-amber-800 rounded-lg hover:bg-amber-200 transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-amber-300"
+              className="w-full px-3 py-2 bg-brand-yellow-soft text-brand-gold rounded-lg hover:bg-brand-yellow-soft transition-colors text-sm font-semibold flex items-center justify-center gap-2 border border-brand-yellow-soft"
             >
               <Settings className="w-4 h-4" />
               Update Details
             </button>
           )}
 
-          {/* Publish Button — only shown if not yet approved */}
+          {/* Publish / Delete — only shown for drafts, not yet approved */}
           {!isPublished && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onPublish(company);
-              }}
-              className="w-full px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-semibold flex items-center justify-center gap-2"
-            >
-              <Upload className="w-4 h-4" />
-              Publish Live
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPublish(company);
+                }}
+                className="flex-1 px-3 py-2 bg-status-info text-white rounded-lg hover:bg-status-info transition-colors text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Publish Live
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(company);
+                }}
+                title="Delete this draft"
+                className="px-3 py-2 bg-status-error/10 text-status-error rounded-lg hover:bg-status-error/20 transition-colors text-sm font-semibold flex items-center justify-center"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
           )}
 
         </div>
@@ -241,7 +255,7 @@ const MyPostedJobs: React.FC<{ onPostJob: () => void; refreshKey?: number }> = (
     if (!userId) { setJobs([]); return; }
     const controller = new AbortController();
     fetchMyContent(controller.signal, 'job')
-      .then(all => setJobs(all.filter(j => j.author === userId && !j.title.startsWith('[Application]'))))
+      .then(all => setJobs(all.filter(j => !j.title.startsWith('[Application]'))))
       .catch(() => {});
     return () => controller.abort();
   }, [userId, refreshKey]);
@@ -251,44 +265,44 @@ const MyPostedJobs: React.FC<{ onPostJob: () => void; refreshKey?: number }> = (
   return (
     <div className="mt-10">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <Briefcase className="w-5 h-5 text-yellow-500" /> My Posted Jobs
+        <h2 className="text-xl font-bold text-ink flex items-center gap-2">
+          <Briefcase className="w-5 h-5 text-brand-gold" /> My Posted Jobs
         </h2>
         <button
           onClick={onPostJob}
-          className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm"
+          className="inline-flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm"
         >
           <Plus size={16} /> Post a Job
         </button>
       </div>
       {jobs.length === 0 ? (
-        <div className="bg-white rounded-xl border border-dashed border-gray-200 p-6 text-center">
-          <Briefcase className="w-8 h-8 text-gray-200 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">No jobs posted yet.</p>
+        <div className="bg-surface-card rounded-xl border border-dashed border-ink-light p-6 text-center">
+          <Briefcase className="w-8 h-8 text-ink-light mx-auto mb-2" />
+          <p className="text-sm text-ink-caption">No jobs posted yet.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {jobs.map(j => (
-            <div key={j.contentId} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center justify-between gap-3">
+            <div key={j.contentId} className="bg-surface-card rounded-xl border border-ink-light p-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Briefcase className="w-4 h-4 text-yellow-600" />
+                <div className="w-9 h-9 bg-surface-main rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Briefcase className="w-4 h-4 text-brand-gold" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{j.title}</p>
-                  <p className="text-xs text-gray-400">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')}</p>
+                  <p className="text-sm font-semibold text-ink">{j.title}</p>
+                  <p className="text-xs text-ink-caption">Submitted {new Date(j.createdAt).toLocaleDateString('en-IN')}</p>
                 </div>
               </div>
               {j.isPublished
-                ? <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
-                : <span className="text-xs bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
+                ? <span className="text-xs bg-status-success/15 text-status-success font-bold px-2 py-0.5 rounded flex-shrink-0">Live</span>
+                : <span className="text-xs bg-brand-yellow-soft text-brand-gold font-bold px-2 py-0.5 rounded flex-shrink-0">Pending</span>
               }
             </div>
           ))}
         </div>
       )}
-      <p className="text-xs text-gray-400 mt-3">
-        Jobs go live on the <Link to="/professionals/job-board" className="text-yellow-600 underline">Job Board</Link> after admin approval.
+      <p className="text-xs text-ink-caption mt-3">
+        Jobs go live on the <Link to="/professionals/job-board" className="text-brand-gold underline">Job Board</Link> after admin approval.
       </p>
     </div>
   );
@@ -319,10 +333,10 @@ const JobApplicationsReceived: React.FC<{ companyNames: string[] }> = ({ company
 
   if (loading) return (
     <div className="mt-10">
-      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <Users className="w-5 h-5 text-blue-500" /> Job Applications Received
+      <h2 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+        <Users className="w-5 h-5 text-status-info" /> Job Applications Received
       </h2>
-      <div className="text-sm text-gray-400 py-4">Loading applications...</div>
+      <div className="text-sm text-ink-caption py-4">Loading applications...</div>
     </div>
   );
 
@@ -330,19 +344,19 @@ const JobApplicationsReceived: React.FC<{ companyNames: string[] }> = ({ company
 
   return (
     <div className="mt-10">
-      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <Users className="w-5 h-5 text-blue-500" /> Job Applications Received
+      <h2 className="text-xl font-bold text-ink mb-4 flex items-center gap-2">
+        <Users className="w-5 h-5 text-status-info" /> Job Applications Received
         {applications.length > 0 && (
-          <span className="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">{applications.length}</span>
+          <span className="text-xs bg-status-info/15 text-status-info font-bold px-2 py-0.5 rounded-full">{applications.length}</span>
         )}
       </h2>
 
       {applications.length === 0 ? (
-        <div className="bg-white rounded-xl border border-dashed border-gray-200 p-6 text-center">
-          <Users className="w-8 h-8 text-gray-200 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">No applications yet for your job listings.</p>
-          <p className="text-xs text-gray-400 mt-1">
-            Applications received via <Link to="/professionals/job-board" className="text-blue-500 underline">Job Board</Link> will appear here.
+        <div className="bg-surface-card rounded-xl border border-dashed border-ink-light p-6 text-center">
+          <Users className="w-8 h-8 text-ink-light mx-auto mb-2" />
+          <p className="text-sm text-ink-caption">No applications yet for your job listings.</p>
+          <p className="text-xs text-ink-caption mt-1">
+            Applications received via <Link to="/professionals/job-board" className="text-status-info underline">Job Board</Link> will appear here.
           </p>
         </div>
       ) : (
@@ -351,53 +365,53 @@ const JobApplicationsReceived: React.FC<{ companyNames: string[] }> = ({ company
             const jobTitle = app.title.replace('[Application] ', '');
             const isOpen = expanded === app.contentId;
             return (
-              <div key={app.contentId} className="bg-white rounded-xl border border-blue-100 shadow-sm overflow-hidden">
+              <div key={app.contentId} className="bg-surface-card rounded-xl border border-status-info/15 shadow-sm overflow-hidden">
                 <button
                   onClick={() => setExpanded(isOpen ? null : app.contentId)}
-                  className="w-full flex items-center justify-between p-4 text-left hover:bg-blue-50/40 transition-colors"
+                  className="w-full flex items-center justify-between p-4 text-left hover:bg-status-info/40 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Users className="w-4 h-4 text-blue-500" />
+                    <div className="w-9 h-9 bg-status-info/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Users className="w-4 h-4 text-status-info" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{app.company || 'Applicant'}</p>
-                      <p className="text-xs text-gray-400">Applied for: <span className="font-medium text-gray-600">{jobTitle}</span> · {new Date(app.createdAt).toLocaleDateString('en-IN')}</p>
+                      <p className="text-sm font-semibold text-ink">{app.company || 'Applicant'}</p>
+                      <p className="text-xs text-ink-caption">Applied for: <span className="font-medium text-ink-paragraph">{jobTitle}</span> · {new Date(app.createdAt).toLocaleDateString('en-IN')}</p>
                     </div>
                   </div>
-                  <span className="text-xs text-blue-500 font-semibold flex-shrink-0">{isOpen ? 'Hide ▲' : 'View ▼'}</span>
+                  <span className="text-xs text-status-info font-semibold flex-shrink-0">{isOpen ? 'Hide ▲' : 'View ▼'}</span>
                 </button>
 
                 {isOpen && (
-                  <div className="px-4 pb-4 border-t border-blue-50 pt-3 space-y-2">
+                  <div className="px-4 pb-4 border-t border-status-info/10 pt-3 space-y-2">
                     {app.source && (
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <Mail className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                        <a href={`mailto:${app.source}`} className="text-blue-600 hover:underline">{app.source}</a>
+                      <div className="flex items-center gap-2 text-sm text-ink-paragraph">
+                        <Mail className="w-4 h-4 text-status-info flex-shrink-0" />
+                        <a href={`mailto:${app.source}`} className="text-status-info hover:underline">{app.source}</a>
                       </div>
                     )}
                     {app.author && (
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <Phone className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                        <a href={`tel:${app.author}`} className="text-blue-600 hover:underline">{app.author}</a>
+                      <div className="flex items-center gap-2 text-sm text-ink-paragraph">
+                        <Phone className="w-4 h-4 text-status-info flex-shrink-0" />
+                        <a href={`tel:${app.author}`} className="text-status-info hover:underline">{app.author}</a>
                       </div>
                     )}
                     {app.description && (
-                      <div className="bg-gray-50 rounded-lg p-3 mt-2">
-                        <p className="text-xs font-semibold text-gray-500 mb-1">Message</p>
-                        <p className="text-sm text-gray-700">{app.description}</p>
+                      <div className="bg-ink-offwhite rounded-lg p-3 mt-2">
+                        <p className="text-xs font-semibold text-ink-caption mb-1">Message</p>
+                        <p className="text-sm text-ink-paragraph">{app.description}</p>
                       </div>
                     )}
                     <div className="flex gap-2 pt-1">
                       {app.source && (
                         <a href={`mailto:${app.source}?subject=Re: ${jobTitle} Application`}
-                          className="text-xs font-bold bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-colors">
+                          className="text-xs font-bold bg-status-info text-white px-3 py-1.5 rounded-lg hover:bg-status-info transition-colors">
                           Reply via Email
                         </a>
                       )}
                       {app.author && (
                         <a href={`tel:${app.author}`}
-                          className="text-xs font-bold border border-blue-200 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors">
+                          className="text-xs font-bold border border-status-info/25 text-status-info px-3 py-1.5 rounded-lg hover:bg-status-info/10 transition-colors">
                           Call Applicant
                         </a>
                       )}
@@ -417,6 +431,13 @@ const JobApplicationsReceived: React.FC<{ companyNames: string[] }> = ({ company
 const CompanyPage: React.FC = () => {
   const { user } = useUserAuth();
   const [companies, setCompanies] = useState<Company[]>([]);
+  // Plan limits and the "X / Y" banner should only count companies that are
+  // actually live — an unpublished draft (ai_completed, active, etc.) isn't
+  // a real listing yet and shouldn't count against the user's package.
+  const publishedCompanies = useMemo(
+    () => companies.filter(c => c.reviewStatus?.toLowerCase() === "approved"),
+    [companies]
+  );
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const { setFinaleDataReview, setFinalTemplate } = useTemplate();
@@ -447,9 +468,9 @@ const CompanyPage: React.FC = () => {
   const fetchCompanies = async (userId: string) => {
     try {
       setLoading(true);
-      const res = await fetch(
-        COMPANY_API ? `${COMPANY_API}/dashboard-cards?userId=${userId}` : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?userId=${userId}`
-      );
+      const res = COMPANY_API
+        ? await fetch(`${COMPANY_API}/dashboard-cards?userId=${userId}`, { headers: authHeader() })
+        : await fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards?userId=${userId}`);
       if (!res.ok) throw new Error("Failed to fetch companies");
       const data = await res.json();
       const cards = (data.cards || []).map((c: any) => ({
@@ -467,13 +488,22 @@ const CompanyPage: React.FC = () => {
       setCompanies(cards);
       setLoading(false); // Show cards immediately, update name in background
 
-      // Fetch template company names in parallel from the public preview Lambda
+      // Fetch template company names in parallel from the public preview Lambda.
+      // Only for cards whose name is already a known placeholder - editing the
+      // template builder never syncs the real name back to the companies row,
+      // so this re-fetch is genuinely needed for those, but firing it for every
+      // company on every load (most of which already have a real name) was
+      // pure waste.
       const previewBase = COMPANY_API
         ? `${COMPANY_API}/template`
         : `${LAMBDA.companyPreviewLoad}/template`;
 
+      const needsEnrichment = cards.filter((c) =>
+        PLACEHOLDER_NAMES.has(c.companyName.toLowerCase().trim())
+      );
+
       const updates = await Promise.allSettled(
-        cards.map(async (c) => {
+        needsEnrichment.map(async (c) => {
           const urlSlug = (data.cards || []).find((raw: any) => raw.publishedId === c.publishedId)?.urlSlug;
           if (!urlSlug) return null;
           const r = await fetch(`${previewBase}?companyName=${encodeURIComponent(urlSlug)}`);
@@ -516,10 +546,13 @@ const CompanyPage: React.FC = () => {
     userId: string,
     cb: (data: PublishedDetailsResponse) => void
   ) => {
-    const res = await fetch(
-      COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${publishedId}` : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`,
-      { headers: { "Content-Type": "application/json", "X-User-Id": userId } }
-    );
+    const res = COMPANY_API
+      ? await fetch(`${COMPANY_API}/dashboard-cards/published-details/${publishedId}`, {
+          headers: { "Content-Type": "application/json", "X-User-Id": userId, ...authHeader() },
+        })
+      : await fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${publishedId}`, {
+          headers: { "Content-Type": "application/json", "X-User-Id": userId },
+        });
     if (!res.ok) {
       const messages: Record<number, string> = {
         401: "User not authenticated.",
@@ -565,12 +598,39 @@ const CompanyPage: React.FC = () => {
 
   // ---- Aadhaar / Publish flow ----
 
+  // Tries our own backend's DigiLocker proxy first, falls back to the legacy
+  // Lambda proxy if it fails outright (e.g. a revoked Surepass token) - same
+  // pattern as the GST/CIN verifySurepass helper in Step1CompanyCategory.
+  const digilockerInit = async () => {
+    if (COMPANY_API) {
+      try {
+        const ownRes = await axios.post(`${COMPANY_API}/verify/digilocker-init`, {});
+        if (ownRes.data?.success && ownRes.data?.data?.url) return ownRes;
+      } catch {
+        // fall through to the Lambda proxy below
+      }
+    }
+    return axios.post(SUREPASS_PROXY, { action: 'digilocker-init' });
+  };
+
+  const digilockerPoll = async (clientId: string) => {
+    if (COMPANY_API) {
+      try {
+        const ownRes = await axios.get(`${COMPANY_API}/verify/digilocker-poll/${clientId}`);
+        if (ownRes.data?.success) return ownRes;
+      } catch {
+        // fall through to the Lambda proxy below
+      }
+    }
+    return axios.post(SUREPASS_PROXY, { action: 'digilocker-poll', client_id: clientId });
+  };
+
   const initDigiBoost = async () => {
     setDigiStatus('loading');
     setDigiUrl('');
     setDigiClientId('');
     try {
-      const res = await axios.post(SUREPASS_PROXY, { action: 'digilocker-init' });
+      const res = await digilockerInit();
       if (!res.data?.success || !res.data?.data?.url) throw new Error('Init failed');
       setDigiUrl(res.data.data.url);
       setDigiClientId(res.data.data.client_id);
@@ -587,7 +647,7 @@ const CompanyPage: React.FC = () => {
     pollRef.current = setInterval(async () => {
       attempts++;
       try {
-        const res = await axios.post(SUREPASS_PROXY, { action: 'digilocker-poll', client_id: clientId });
+        const res = await digilockerPoll(clientId);
         if (res.data?.success) {
           clearInterval(pollRef.current!);
           popupRef.current?.close();
@@ -600,7 +660,7 @@ const CompanyPage: React.FC = () => {
       if (popupRef.current?.closed) {
         clearInterval(pollRef.current!);
         try {
-          const finalRes = await axios.post(SUREPASS_PROXY, { action: 'digilocker-poll', client_id: clientId });
+          const finalRes = await digilockerPoll(clientId);
           if (finalRes.data?.success) {
             setDigiStatus('verified');
             toast.success('Aadhaar verified successfully!');
@@ -641,6 +701,21 @@ const CompanyPage: React.FC = () => {
     setDigiStatus('idle');
   };
 
+  const handleDeleteCompany = async (company: Company) => {
+    if (!window.confirm(`Delete "${company.companyName}"? This draft will be permanently removed and cannot be recovered.`)) return;
+    try {
+      await axios.post(
+        COMPANY_API ? `${COMPANY_API}/admin/templates/delete` : 'https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/delete',
+        { publishedId: company.publishedId },
+        { headers: { 'Content-Type': 'application/json', ...(COMPANY_API ? authHeader() : {}) } }
+      );
+      toast.success('Draft deleted');
+      setCompanies(prev => prev.filter(c => c.publishedId !== company.publishedId));
+    } catch {
+      toast.error('Failed to delete. Please try again.');
+    }
+  };
+
   const handleConfirmPublish = async () => {
     if (!publishingCompany || digiStatus !== 'verified') return;
     setIsPublishing(true);
@@ -649,7 +724,7 @@ const CompanyPage: React.FC = () => {
       await axios.post(
         COMPANY_API ? `${COMPANY_API}/admin/templates/review` : 'https://twd6yfrd25.execute-api.ap-south-1.amazonaws.com/prod/admin/templates/review',
         { publishedId: publishingCompany.publishedId, action: 'approve' },
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers: { 'Content-Type': 'application/json', ...(COMPANY_API ? authHeader() : {}) } }
       );
       // Best-effort: sync company status in profile Lambda so leads work
       fetch(COMPANY_API ? `${COMPANY_API}/leads/company-activate` : `${LAMBDA.profile}/leads/company-activate`, {
@@ -722,9 +797,13 @@ const CompanyPage: React.FC = () => {
         return;
       }
       // Server-side check
-      fetch(
-        COMPANY_API ? `${COMPANY_API}/dashboard-cards/published-details/${c.publishedId}` : `https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${c.publishedId}`,
-        { headers: { "Content-Type": "application/json", "X-User-Id": userId } }
+      (COMPANY_API
+        ? fetch(`${COMPANY_API}/dashboard-cards/published-details/${c.publishedId}`, {
+            headers: { "Content-Type": "application/json", "X-User-Id": userId, ...authHeader() },
+          })
+        : fetch(`https://v1lqhhm1ma.execute-api.ap-south-1.amazonaws.com/prod/dashboard-cards/published-details/${c.publishedId}`, {
+            headers: { "Content-Type": "application/json", "X-User-Id": userId },
+          })
       )
         .then((r) => r.json())
         .then((data) => {
@@ -737,8 +816,11 @@ const CompanyPage: React.FC = () => {
     });
   }, [companies, user]);
 
+  // Company Directory only ever shows companies that are actually live —
+  // unpublished/incomplete drafts aren't real listings and have no place
+  // here now that duplicate-draft creation is prevented at the source.
   const filteredCompanies = useMemo(() => {
-    return companies.filter(
+    return publishedCompanies.filter(
       (company) =>
         company.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         company.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -746,53 +828,53 @@ const CompanyPage: React.FC = () => {
           sector.toLowerCase().includes(searchTerm.toLowerCase())
         )
     );
-  }, [searchTerm, companies]);
+  }, [searchTerm, publishedCompanies]);
 
   const SkeletonCard: React.FC = () => (
-    <div className="overflow-hidden w-full h-full bg-white rounded-2xl border border-yellow-200 shadow-lg transition-all duration-300 group animate-pulse p-6">
+    <div className="overflow-hidden w-full h-full bg-surface-card rounded-2xl border border-brand-yellow-soft shadow-lg transition-all duration-300 group animate-pulse p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-yellow-100 p-2 flex items-center justify-center" />
+          <div className="w-16 h-16 rounded-xl bg-brand-yellow-soft p-2 flex items-center justify-center" />
           <div className="flex-1">
-            <div className="h-5 bg-yellow-100 rounded w-3/4 mb-2" />
-            <div className="h-3 bg-yellow-100 rounded w-1/2" />
+            <div className="h-5 bg-brand-yellow-soft rounded w-3/4 mb-2" />
+            <div className="h-3 bg-brand-yellow-soft rounded w-1/2" />
           </div>
         </div>
-        <div className="w-24 h-7 bg-yellow-100 rounded-full" />
+        <div className="w-24 h-7 bg-brand-yellow-soft rounded-full" />
       </div>
       <div className="mb-6">
         <div className="flex flex-wrap gap-2">
-          <div className="h-6 bg-yellow-100 rounded-full w-20" />
-          <div className="h-6 bg-yellow-100 rounded-full w-16" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-20" />
+          <div className="h-6 bg-brand-yellow-soft rounded-full w-16" />
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <div className="h-10 bg-yellow-100 rounded-lg" />
-        <div className="h-10 bg-yellow-100 rounded-lg" />
-        <div className="h-10 bg-yellow-100 rounded-lg" />
+        <div className="h-10 bg-brand-yellow-soft rounded-lg" />
+        <div className="h-10 bg-brand-yellow-soft rounded-lg" />
+        <div className="h-10 bg-brand-yellow-soft rounded-lg" />
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-amber-50 p-8">
+    <div className="min-h-screen bg-surface-main p-8">
       <div className="flex items-center gap-4 justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <h1 className="text-3xl font-bold text-ink mb-2 flex items-center gap-2">
             <Building2 className="w-6 h-6" />
             Company Directory
           </h1>
-          <p className="text-gray-600 mb-3">Browse and manage company submissions</p>
-          <ListingLimitBanner count={companies.length} type="company" label="Companies" />
+          <p className="text-ink-paragraph mb-3">Browse and manage company submissions</p>
+          <ListingLimitBanner count={publishedCompanies.length} type="company" label="Companies" />
         </div>
         {(() => {
           const limit = getCompanyLimit(totalTokensEarned);
-          const atLimit = profileLoaded && isFinite(limit) && companies.length >= limit;
+          const atLimit = profileLoaded && isFinite(limit) && publishedCompanies.length >= limit;
           return atLimit ? (
             <button
               onClick={() => navigate("/user-recharge")}
-              className="bg-gray-100 text-sm font-medium text-gray-500 flex items-center gap-2 px-4 py-4 rounded-lg align-top border border-gray-300 cursor-not-allowed"
-              title={`Plan limit reached (${companies.length}/${limit}). Upgrade to add more.`}
+              className="bg-ink-light text-sm font-medium text-ink-caption flex items-center gap-2 px-4 py-4 rounded-lg align-top border border-ink-light cursor-not-allowed"
+              title={`Plan limit reached (${publishedCompanies.length}/${limit}). Upgrade to add more.`}
             >
               <Plus className="w-5 h-5" />
               Limit Reached — Upgrade
@@ -800,7 +882,7 @@ const CompanyPage: React.FC = () => {
           ) : (
             <button
               onClick={() => navigate("/form")}
-              className="bg-yellow-500 text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-yellow-600 hover:scale-110 transition-all duration-200"
+              className="bg-brand-gold text-sm font-medium text-white flex items-center gap-2 px-4 py-4 rounded-lg align-top hover:bg-brand-gold hover:scale-110 transition-all duration-200"
             >
               <Plus className="w-5 h-5" />
               Add New Company
@@ -811,14 +893,14 @@ const CompanyPage: React.FC = () => {
 
       <div className="mb-8 relative">
         <div className="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
-          <Search className="h-5 w-5 text-yellow-500" />
+          <Search className="h-5 w-5 text-brand-gold" />
         </div>
         <input
           type="text"
           placeholder="Search by company name, location, or sector..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-6 py-3 bg-white border-2 border-yellow-200 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+          className="w-full pl-12 pr-6 py-3 bg-surface-card border-2 border-brand-yellow-soft rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-brand-yellow"
         />
       </div>
 
@@ -835,13 +917,14 @@ const CompanyPage: React.FC = () => {
               onPreview={handlePreview}
               onEdit={handleEdit}
               onPublish={handleOpenPublishModal}
+              onDelete={handleDeleteCompany}
               isDetailsUpdated={detailsUpdatedIds.has(company.publishedId)}
             />
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 text-gray-500">
-          <Search className="w-16 h-16 text-yellow-300 mx-auto mb-4" />
+        <div className="text-center py-20 text-ink-caption">
+          <Search className="w-16 h-16 text-brand-yellow-soft mx-auto mb-4" />
           No companies found matching "{searchTerm}"
         </div>
       )}
@@ -851,96 +934,96 @@ const CompanyPage: React.FC = () => {
 
       {/* Post Job Modal */}
       {postJobModal && (
-        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setPostJobModal(false)}>
-          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm" onClick={() => setPostJobModal(false)}>
+          <div className="bg-surface-card rounded-xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
-                <Briefcase className="text-yellow-500" size={22} />
-                <h3 className="text-xl font-semibold text-gray-900">Post a Job</h3>
+                <Briefcase className="text-brand-gold" size={22} />
+                <h3 className="text-xl font-semibold text-ink">Post a Job</h3>
               </div>
-              <button onClick={() => setPostJobModal(false)} className="p-1 rounded-full hover:bg-gray-100"><X size={20} className="text-gray-500" /></button>
+              <button onClick={() => setPostJobModal(false)} className="p-1 rounded-full hover:bg-ink-light"><X size={20} className="text-ink-caption" /></button>
             </div>
 
             {postSubmitted ? (
               <div className="text-center py-8">
-                <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
-                <h4 className="text-lg font-bold text-gray-900 mb-2">Job Submitted!</h4>
-                <p className="text-sm text-gray-500 mb-6">Your job listing is under review. It will go live on the Job Board after admin approval.</p>
+                <CheckCircle className="w-14 h-14 text-status-success mx-auto mb-4" />
+                <h4 className="text-lg font-bold text-ink mb-2">Job Submitted!</h4>
+                <p className="text-sm text-ink-caption mb-6">Your job listing is under review. It will go live on the Job Board after admin approval.</p>
                 <button onClick={() => { setPostJobModal(false); setPostSubmitted(false); setPostJobForm(EMPTY_POST); }}
-                  className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg transition-colors">
+                  className="px-6 py-2.5 bg-brand-yellow hover:bg-brand-gold text-white font-semibold rounded-lg transition-colors">
                   Done
                 </button>
               </div>
             ) : (
               <form onSubmit={handlePostJob} className="space-y-4">
                 <div>
-                  <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Title *</label>
+                  <label className="text-xs font-semibold text-ink-paragraph mb-1 block">Job Title *</label>
                   <input required value={postJobForm.title} onChange={e => setPostJobForm(p => ({ ...p, title: e.target.value }))}
-                    placeholder="e.g. Drone Pilot – Agriculture" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                    placeholder="e.g. Drone Pilot – Agriculture" className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-gray-700 mb-1 block">Company Name *</label>
+                  <label className="text-xs font-semibold text-ink-paragraph mb-1 block">Company Name *</label>
                   {companies.length > 0 ? (
                     <select required value={postJobForm.company} onChange={e => setPostJobForm(p => ({ ...p, company: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                      className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow">
                       <option value="">Select your company</option>
                       {companies.map(c => <option key={c.publishedId} value={c.companyName}>{c.companyName}</option>)}
                     </select>
                   ) : (
                     <input required value={postJobForm.company} onChange={e => setPostJobForm(p => ({ ...p, company: e.target.value }))}
-                      placeholder="Your company name" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                      placeholder="Your company name" className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                   )}
-                  <p className="text-[11px] text-gray-400 mt-1">Must match your registered company exactly so applications reach your dashboard.</p>
+                  <p className="text-[11px] text-ink-caption mt-1">Must match your registered company exactly so applications reach your dashboard.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Location</label>
+                    <label className="text-xs font-semibold text-ink-paragraph mb-1 block">Location</label>
                     <input value={postJobForm.location} onChange={e => setPostJobForm(p => ({ ...p, location: e.target.value }))}
-                      placeholder="e.g. Hyderabad" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                      placeholder="e.g. Hyderabad" className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Salary</label>
+                    <label className="text-xs font-semibold text-ink-paragraph mb-1 block">Salary</label>
                     <input value={postJobForm.salary} onChange={e => setPostJobForm(p => ({ ...p, salary: e.target.value }))}
-                      placeholder="e.g. ₹30,000–40,000/mo" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                      placeholder="e.g. ₹30,000–40,000/mo" className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Category</label>
+                    <label className="text-xs font-semibold text-ink-paragraph mb-1 block">Category</label>
                     <select value={postJobForm.category} onChange={e => setPostJobForm(p => ({ ...p, category: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                      className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow">
                       <option value="">Select category</option>
                       {JOB_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Type</label>
+                    <label className="text-xs font-semibold text-ink-paragraph mb-1 block">Job Type</label>
                     <select value={postJobForm.jobType} onChange={e => setPostJobForm(p => ({ ...p, jobType: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                      className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow">
                       {['Full-Time', 'Part-Time', 'Contract', 'Internship'].map(t => <option key={t}>{t}</option>)}
                     </select>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Description</label>
+                  <label className="text-xs font-semibold text-ink-paragraph mb-1 block">Job Description</label>
                   <textarea rows={4} value={postJobForm.description} onChange={e => setPostJobForm(p => ({ ...p, description: e.target.value }))}
-                    placeholder="Describe the role, requirements, responsibilities..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none" />
+                    placeholder="Describe the role, requirements, responsibilities..." className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow resize-none" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Job Image URL</label>
+                    <label className="text-xs font-semibold text-ink-paragraph mb-1 block">Job Image URL</label>
                     <input value={postJobForm.imageUrl} onChange={e => setPostJobForm(p => ({ ...p, imageUrl: e.target.value }))}
-                      placeholder="https://..." className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                      placeholder="https://..." className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-gray-700 mb-1 block">Application Deadline</label>
+                    <label className="text-xs font-semibold text-ink-paragraph mb-1 block">Application Deadline</label>
                     <input type="date" value={postJobForm.applicationDeadline} onChange={e => setPostJobForm(p => ({ ...p, applicationDeadline: e.target.value }))}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                      className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm text-ink bg-surface-card focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                   </div>
                 </div>
                 <div className="flex gap-3 justify-end pt-2">
-                  <button type="button" onClick={() => setPostJobModal(false)} className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors">Cancel</button>
-                  <button type="submit" disabled={postSubmitting} className="flex items-center gap-2 px-5 py-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded-lg transition-colors disabled:opacity-60">
+                  <button type="button" onClick={() => setPostJobModal(false)} className="px-4 py-2 text-ink-paragraph font-medium rounded-lg border border-ink-light bg-surface-card hover:bg-ink-offwhite transition-colors">Cancel</button>
+                  <button type="submit" disabled={postSubmitting} className="flex items-center gap-2 px-5 py-2 bg-brand-yellow hover:bg-brand-gold text-white font-semibold rounded-lg transition-colors disabled:opacity-60">
                     {postSubmitting ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : <><Send size={16} /> Submit Job</>}
                   </button>
                 </div>
@@ -953,40 +1036,40 @@ const CompanyPage: React.FC = () => {
       {/* Aadhaar / Publish Modal */}
       {publishingCompany && (
         <div
-          className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-[10000000] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm"
           onClick={handleClosePublishModal}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6"
+            className="bg-surface-card rounded-xl shadow-2xl max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Shield className="text-indigo-600" size={24} />
-                <h3 className="text-xl font-semibold text-gray-900">Verify & Publish</h3>
+                <Shield className="text-status-info" size={24} />
+                <h3 className="text-xl font-semibold text-ink">Verify & Publish</h3>
               </div>
-              <button onClick={handleClosePublishModal} className="p-1 rounded-full hover:bg-gray-100">
-                <X size={20} className="text-gray-500" />
+              <button onClick={handleClosePublishModal} className="p-1 rounded-full hover:bg-ink-light">
+                <X size={20} className="text-ink-caption" />
               </button>
             </div>
 
-            <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg mb-4">
-              <AlertCircle size={18} className="text-blue-600 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-blue-800">
+            <div className="flex items-start gap-3 p-3 bg-status-info/10 rounded-lg mb-4">
+              <AlertCircle size={18} className="text-status-info mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-status-info">
                 Verify your Aadhaar via DigiLocker to publish <strong>{publishingCompany.companyName}</strong> live on DroneTv.
               </p>
             </div>
 
             {/* Verification Section */}
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 mb-5">
-              <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                <Shield size={16} className="text-indigo-500" />
+            <div className="border border-ink-light rounded-lg p-4 bg-ink-offwhite mb-5">
+              <h4 className="text-sm font-semibold text-ink-charcoal mb-3 flex items-center gap-2">
+                <Shield size={16} className="text-status-info" />
                 Aadhaar Verification
               </h4>
 
               {digiStatus === 'loading' && (
-                <div className="flex items-center gap-2 text-indigo-600 text-sm">
+                <div className="flex items-center gap-2 text-status-info text-sm">
                   <Loader2 size={16} className="animate-spin" />
                   Initializing secure verification...
                 </div>
@@ -994,10 +1077,10 @@ const CompanyPage: React.FC = () => {
 
               {digiStatus === 'error' && (
                 <div>
-                  <p className="text-xs text-red-600 mb-2">Initialization failed. Please retry.</p>
+                  <p className="text-xs text-status-error mb-2">Initialization failed. Please retry.</p>
                   <button
                     onClick={initDigiBoost}
-                    className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                    className="flex items-center gap-1 text-xs text-status-info hover:text-status-info font-medium"
                   >
                     <RefreshCw size={12} /> Retry
                   </button>
@@ -1006,10 +1089,10 @@ const CompanyPage: React.FC = () => {
 
               {digiStatus === 'ready' && (
                 <div>
-                  <p className="text-xs text-gray-500 mb-3">Click the button below to open DigiLocker verification in a new window.</p>
+                  <p className="text-xs text-ink-caption mb-3">Click the button below to open DigiLocker verification in a new window.</p>
                   <button
                     onClick={handleOpenDigiLocker}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-status-info text-white text-sm font-semibold rounded-lg hover:bg-status-info transition-colors"
                   >
                     <ExternalLink size={15} />
                     Verify via DigiLocker
@@ -1018,12 +1101,12 @@ const CompanyPage: React.FC = () => {
               )}
 
               {digiStatus === 'polling' && (
-                <div className="flex items-center gap-2 text-indigo-600 text-sm">
+                <div className="flex items-center gap-2 text-status-info text-sm">
                   <Loader2 size={16} className="animate-spin" />
                   Waiting for DigiLocker verification...
                   <button
                     onClick={() => { if (pollRef.current) clearInterval(pollRef.current); setDigiStatus('ready'); }}
-                    className="ml-auto text-xs text-gray-500 hover:text-gray-700"
+                    className="ml-auto text-xs text-ink-caption hover:text-ink-paragraph"
                   >
                     Cancel
                   </button>
@@ -1031,9 +1114,9 @@ const CompanyPage: React.FC = () => {
               )}
 
               {digiStatus === 'verified' && (
-                <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded-lg">
-                  <CheckCircle size={18} className="text-green-600" />
-                  <span className="text-sm font-medium text-green-700">Aadhaar Verified Successfully</span>
+                <div className="flex items-center gap-2 p-2 bg-status-success/10 border border-status-success/25 rounded-lg">
+                  <CheckCircle size={18} className="text-status-success" />
+                  <span className="text-sm font-medium text-status-success">Aadhaar Verified Successfully</span>
                 </div>
               )}
             </div>
@@ -1042,7 +1125,7 @@ const CompanyPage: React.FC = () => {
             <div className="flex gap-3 justify-end">
               <button
                 onClick={handleClosePublishModal}
-                className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 text-ink-paragraph font-medium rounded-lg border border-ink-light bg-surface-card hover:bg-ink-light transition-colors"
               >
                 Cancel
               </button>
@@ -1051,8 +1134,8 @@ const CompanyPage: React.FC = () => {
                 disabled={digiStatus !== 'verified' || isPublishing}
                 className={`px-4 py-2 font-medium rounded-lg transition-colors shadow-md flex items-center gap-2 ${
                   digiStatus === 'verified' && !isPublishing
-                    ? 'bg-green-600 text-white hover:bg-green-700 cursor-pointer'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    ? 'bg-status-success text-white hover:bg-status-success cursor-pointer'
+                    : 'bg-ink-light text-ink-caption cursor-not-allowed'
                 }`}
               >
                 {isPublishing ? <><Loader2 size={16} className="animate-spin" /> Publishing...</> : 'Confirm & Publish'}

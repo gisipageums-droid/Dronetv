@@ -25,14 +25,14 @@ function Toast({ toasts, dismiss }: { toasts: ToastMsg[]; dismiss: (id: number) 
           key={t.id}
           className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium pointer-events-auto transition-all ${
             t.type === "success"
-              ? "bg-green-50 text-green-800 border border-green-200"
-              : "bg-red-50 text-red-800 border border-red-200"
+              ? "bg-status-success/10 text-status-success border border-status-success/25"
+              : "bg-status-error/10 text-status-error border border-status-error/25"
           }`}
         >
           {t.type === "success" ? (
-            <CheckCircle2 size={16} className="text-green-600 shrink-0" />
+            <CheckCircle2 size={16} className="text-status-success shrink-0" />
           ) : (
-            <AlertTriangle size={16} className="text-red-500 shrink-0" />
+            <AlertTriangle size={16} className="text-status-error shrink-0" />
           )}
           <span>{t.text}</span>
           <button onClick={() => dismiss(t.id)} className="ml-2 opacity-50 hover:opacity-100">
@@ -50,10 +50,10 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-        isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+        isActive ? "bg-status-success/15 text-status-success" : "bg-ink-light text-ink-caption"
       }`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-500" : "bg-gray-400"}`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-status-success" : "bg-ink-caption"}`} />
       {status || "Unknown"}
     </span>
   );
@@ -75,17 +75,17 @@ function AiBotToggle({
       disabled={loading}
       className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all disabled:opacity-50 ${
         enabled
-          ? "bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100"
-          : "bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100"
+          ? "bg-surface-main border-brand-yellow-soft text-brand-gold hover:bg-brand-yellow-soft"
+          : "bg-ink-offwhite border-ink-light text-ink-caption hover:bg-ink-light"
       }`}
       title={enabled ? "Disable AI Bot" : "Enable AI Bot"}
     >
       {loading ? (
         <Loader2 size={14} className="animate-spin" />
       ) : enabled ? (
-        <ToggleRight size={18} className="text-amber-500" />
+        <ToggleRight size={18} className="text-brand-gold" />
       ) : (
-        <ToggleLeft size={18} className="text-gray-400" />
+        <ToggleLeft size={18} className="text-ink-caption" />
       )}
       AI Bot {enabled ? "On" : "Off"}
     </button>
@@ -135,87 +135,87 @@ function EditAgentModal({ agent, onClose, onSaved, addToast }: EditModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <h2 className="text-base font-bold text-gray-900">Edit Agent</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-4">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-ink-light">
+          <h2 className="text-base font-bold text-ink">Edit Agent</h2>
+          <button onClick={onClose} className="text-ink-caption hover:text-ink-paragraph transition-colors">
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Name</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Name</label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setStr("name", e.target.value)}
               placeholder="Agent name"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Agent Status</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Agent Status</label>
             <input
               type="text"
               value={form.agent_status}
               onChange={(e) => setStr("agent_status", e.target.value)}
               placeholder="e.g. active"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">First Message</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">First Message</label>
             <input
               type="text"
               value={form.firstMessage}
               onChange={(e) => setStr("firstMessage", e.target.value)}
               placeholder="Opening message"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Prompt</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Prompt</label>
             <textarea
               value={form.prompt}
               onChange={(e) => setStr("prompt", e.target.value)}
               rows={4}
               placeholder="System prompt / instructions"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow resize-none"
             />
           </div>
 
           <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-700 select-none">
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-ink-paragraph select-none">
               <input
                 type="checkbox"
                 checked={form.summary_capturing}
                 onChange={(e) => setBool("summary_capturing", e.target.checked)}
-                className="rounded accent-amber-400"
+                className="rounded accent-brand-yellow"
               />
               Summary Capturing
             </label>
-            <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-700 select-none">
+            <label className="flex items-center gap-2 cursor-pointer text-sm text-ink-paragraph select-none">
               <input
                 type="checkbox"
                 checked={form.sentiment_detection}
                 onChange={(e) => setBool("sentiment_detection", e.target.checked)}
-                className="rounded accent-amber-400"
+                className="rounded accent-brand-yellow"
               />
               Sentiment Detection
             </label>
           </div>
         </form>
 
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-ink-light">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-ink-paragraph hover:text-ink-charcoal transition-colors"
           >
             Cancel
           </button>
@@ -223,7 +223,7 @@ function EditAgentModal({ agent, onClose, onSaved, addToast }: EditModalProps) {
             type="button"
             onClick={(e) => handleSubmit(e as unknown as React.FormEvent)}
             disabled={saving}
-            className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
           >
             {saving ? <Loader2 size={15} className="animate-spin" /> : <Pencil size={15} />}
             Save Changes
@@ -274,56 +274,56 @@ function CreateAgentModal({ onClose, onCreated, addToast }: CreateModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <h2 className="text-base font-bold text-gray-900">Create WA Agent</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-4">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-ink-light">
+          <h2 className="text-base font-bold text-ink">Create WA Agent</h2>
+          <button onClick={onClose} className="text-ink-caption hover:text-ink-paragraph transition-colors">
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Name *</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Name *</label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => set("name", e.target.value)}
               placeholder="Agent name"
               required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">First Message</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">First Message</label>
             <input
               type="text"
               value={form.firstMessage}
               onChange={(e) => set("firstMessage", e.target.value)}
               placeholder="Opening message"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Prompt</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Prompt</label>
             <textarea
               value={form.prompt}
               onChange={(e) => set("prompt", e.target.value)}
               rows={4}
               placeholder="System instructions"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow resize-none"
             />
           </div>
         </form>
 
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-ink-light">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-ink-paragraph hover:text-ink-charcoal transition-colors"
           >
             Cancel
           </button>
@@ -331,7 +331,7 @@ function CreateAgentModal({ onClose, onCreated, addToast }: CreateModalProps) {
             type="button"
             onClick={(e) => handleSubmit(e as unknown as React.FormEvent)}
             disabled={saving}
-            className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
           >
             {saving ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
             Create Agent
@@ -346,7 +346,7 @@ function CreateAgentModal({ onClose, onCreated, addToast }: CreateModalProps) {
 export default function WaAgentsPanel() {
   if (!localStorage.getItem("echoleads_api_key")) {
     return (
-      <div className="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+      <div className="flex flex-col items-center justify-center h-full py-20 text-ink-caption">
         <p className="text-sm font-medium">Not connected</p>
         <p className="text-xs mt-1">Go to Authentication tab first.</p>
       </div>
@@ -452,12 +452,12 @@ export default function WaAgentsPanel() {
             onKeyDown={(e) => e.key === "Enter" && handleLoad()}
             placeholder="Agent ID"
             min={1}
-            className="w-32 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+            className="w-32 border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
           />
           <button
             onClick={handleLoad}
             disabled={loadingAgent || !agentIdInput}
-            className="flex items-center gap-2 px-4 py-2 border border-amber-300 text-amber-700 text-sm font-semibold rounded-lg hover:bg-amber-50 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 border border-brand-yellow-soft text-brand-gold text-sm font-semibold rounded-lg hover:bg-surface-main disabled:opacity-50 transition-colors"
           >
             {loadingAgent ? <Loader2 size={15} className="animate-spin" /> : <Bot size={15} />}
             Load
@@ -465,7 +465,7 @@ export default function WaAgentsPanel() {
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors shrink-0"
+          className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors shrink-0"
         >
           <Plus size={16} />
           Create Agent
@@ -475,14 +475,14 @@ export default function WaAgentsPanel() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 pb-6">
         {loadError && (
-          <div className="flex items-center gap-2 p-3 mb-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+          <div className="flex items-center gap-2 p-3 mb-4 bg-status-error/10 border border-status-error/25 rounded-xl text-sm text-status-error">
             <AlertTriangle size={15} className="shrink-0" />
             {loadError}
           </div>
         )}
 
         {!agent && !loadingAgent && !loadError && (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-20 text-ink-caption">
             <Bot size={36} className="mb-3 opacity-30" />
             <p className="text-sm font-medium">No agent loaded</p>
             <p className="text-xs mt-1">Enter a numeric agent ID above and click Load.</p>
@@ -490,23 +490,23 @@ export default function WaAgentsPanel() {
         )}
 
         {loadingAgent && (
-          <div className="flex items-center justify-center py-20 text-gray-400">
+          <div className="flex items-center justify-center py-20 text-ink-caption">
             <Loader2 size={24} className="animate-spin" />
           </div>
         )}
 
         {agent && !loadingAgent && (
           <div className="max-w-xl">
-            <div className="bg-white border border-gray-100 rounded-xl p-5 hover:border-amber-200 hover:shadow-sm transition-all">
+            <div className="bg-surface-card border border-ink-light rounded-xl p-5 hover:border-brand-yellow-soft hover:shadow-sm transition-all">
               {/* Header */}
               <div className="flex items-start justify-between gap-3 mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                    <Bot size={22} className="text-amber-600" />
+                  <div className="w-11 h-11 bg-brand-yellow-soft rounded-xl flex items-center justify-center shrink-0">
+                    <Bot size={22} className="text-brand-gold" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-900">{agent.name}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">#{agent.id} · {formatDate(agent.created_at)}</p>
+                    <p className="text-sm font-bold text-ink">{agent.name}</p>
+                    <p className="text-xs text-ink-caption mt-0.5">#{agent.id} · {formatDate(agent.created_at)}</p>
                   </div>
                 </div>
                 <StatusBadge status={agent.agent_status} />
@@ -524,24 +524,24 @@ export default function WaAgentsPanel() {
               {/* Info Grid */}
               <div className="grid grid-cols-2 gap-3 mb-4 text-xs">
                 {agent.meta_config?.whatsapp_number && (
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-gray-400 mb-1">WhatsApp Number</p>
-                    <p className="font-semibold text-gray-800">{agent.meta_config.whatsapp_number}</p>
+                  <div className="bg-ink-offwhite rounded-lg p-3">
+                    <p className="text-ink-caption mb-1">WhatsApp Number</p>
+                    <p className="font-semibold text-ink-charcoal">{agent.meta_config.whatsapp_number}</p>
                   </div>
                 )}
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-gray-400 mb-1">Credits Used</p>
-                  <p className="font-semibold text-gray-800">
+                <div className="bg-ink-offwhite rounded-lg p-3">
+                  <p className="text-ink-caption mb-1">Credits Used</p>
+                  <p className="font-semibold text-ink-charcoal">
                     {agent.credits ?? "—"} / {agent.total_credits ?? "—"}
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-gray-400 mb-1">Total Chats</p>
-                  <p className="font-semibold text-gray-800">{agent.total_chats ?? 0}</p>
+                <div className="bg-ink-offwhite rounded-lg p-3">
+                  <p className="text-ink-caption mb-1">Total Chats</p>
+                  <p className="font-semibold text-ink-charcoal">{agent.total_chats ?? 0}</p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-gray-400 mb-1">Features</p>
-                  <p className="font-semibold text-gray-800 text-[11px] leading-relaxed">
+                <div className="bg-ink-offwhite rounded-lg p-3">
+                  <p className="text-ink-caption mb-1">Features</p>
+                  <p className="font-semibold text-ink-charcoal text-[11px] leading-relaxed">
                     {[
                       agent.summary_capturing && "Summary",
                       agent.sentiment_detection && "Sentiment",
@@ -553,17 +553,17 @@ export default function WaAgentsPanel() {
               </div>
 
               {agent.firstMessage && (
-                <div className="mb-4 p-3 bg-amber-50 border border-amber-100 rounded-lg">
-                  <p className="text-xs text-amber-600 font-semibold mb-1">First Message</p>
-                  <p className="text-xs text-gray-700 leading-relaxed">{agent.firstMessage}</p>
+                <div className="mb-4 p-3 bg-surface-main border border-brand-yellow-soft rounded-lg">
+                  <p className="text-xs text-brand-gold font-semibold mb-1">First Message</p>
+                  <p className="text-xs text-ink-paragraph leading-relaxed">{agent.firstMessage}</p>
                 </div>
               )}
 
               {/* Actions */}
-              <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+              <div className="flex items-center gap-2 pt-4 border-t border-ink-light">
                 <button
                   onClick={() => setShowEdit(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 text-xs font-semibold rounded-lg transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-ink-offwhite hover:bg-surface-main text-ink-paragraph hover:text-brand-yellow text-xs font-semibold rounded-lg transition-colors"
                 >
                   <Pencil size={12} />
                   Edit
@@ -574,7 +574,7 @@ export default function WaAgentsPanel() {
                 <button
                   onClick={handleDelete}
                   disabled={deleting}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-red-500 hover:bg-red-50 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-status-error hover:bg-status-error/10 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
                 >
                   {deleting ? (
                     <Loader2 size={13} className="animate-spin" />

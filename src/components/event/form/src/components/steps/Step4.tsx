@@ -63,7 +63,7 @@
 // // //             type="button"
 // // //             onClick={() => addArrayItem(key, {})}
 // // //             className={`flex items-center px-3 py-1 text-white text-sm rounded-md ${
-// // //               key === "projects" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"
+// // //               key === "projects" ? "bg-status-info hover:bg-status-info" : "bg-status-success hover:bg-status-success"
 // // //             }`}
 // // //           >
 // // //             <Plus className="w-4 h-4 mr-2" />
@@ -74,7 +74,7 @@
 // // //         {/* Items List */}
 // // //         <div className="space-y-2">
 // // //           {items.map((item, idx) => (
-// // //             <div key={idx} className="bg-white p-3 rounded-md border shadow-sm">
+// // //             <div key={idx} className="bg-surface-card p-3 rounded-md border shadow-sm">
 // // //               {section.fields.map((f: any) => {
 // // //                 const errKey = `${key}-${idx}-${f.id}`;
 // // //                 const errorMsg = errors[errKey];
@@ -88,8 +88,8 @@
 // // //                         onChange={(e) =>
 // // //                           handleChange(key, idx, f.id, e.target.value)
 // // //                         }
-// // //                         className={`border p-2 w-full rounded focus:ring-2 focus:ring-yellow-400 ${
-// // //                           errorMsg ? "border-red-500" : ""
+// // //                         className={`border p-2 w-full rounded focus:ring-2 focus:ring-brand-yellow ${
+// // //                           errorMsg ? "border-status-error" : ""
 // // //                         }`}
 // // //                         rows={2}
 // // //                         maxLength={1000}
@@ -101,16 +101,16 @@
 // // //                         onChange={(e) =>
 // // //                           handleChange(key, idx, f.id, e.target.value)
 // // //                         }
-// // //                         className="border p-2 w-full rounded focus:ring-2 focus:ring-yellow-400"
+// // //                         className="border p-2 w-full rounded focus:ring-2 focus:ring-brand-yellow"
 // // //                       />
 // // //                     )}
 // // //                     {f.type === "textarea" && (
-// // //                       <div className="text-xs text-slate-500 mt-1">
+// // //                       <div className="text-xs text-ink-caption mt-1">
 // // //                         {(item[f.id] || "").length}/1000 characters
 // // //                       </div>
 // // //                     )}
 // // //                     {errorMsg && (
-// // //                       <div className="text-xs text-red-600 mt-1">{errorMsg}</div>
+// // //                       <div className="text-xs text-status-error mt-1">{errorMsg}</div>
 // // //                     )}
 // // //                   </div>
 // // //                 );
@@ -119,7 +119,7 @@
 // // //               <button
 // // //                 type="button"
 // // //                 onClick={() => removeArrayItem(key, idx)}
-// // //                 className="p-1 text-red-600 hover:bg-red-50 rounded-md flex items-center gap-1"
+// // //                 className="p-1 text-status-error hover:bg-status-error/10 rounded-md flex items-center gap-1"
 // // //               >
 // // //                 <Minus className="w-4 h-4" /> Remove
 // // //               </button>
@@ -214,20 +214,20 @@
 // //     }));
 // //   };
 
-// //   const baseInputClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
-// //   const baseTextareaClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full min-h-[80px] resize-vertical";
+// //   const baseInputClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full";
+// //   const baseTextareaClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full min-h-[80px] resize-vertical";
 
 // //   // Render speakers section
 // //   const renderSpeakers = () => {
 // //     return (
-// //       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+// //       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 // //         <div className="flex justify-between items-center">
 // //           <div>
-// //             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+// //             <h3 className="text-lg font-semibold text-ink flex items-center">
 // //               <User className="w-5 h-5 mr-2" />
 // //               Speakers
 // //             </h3>
-// //             <p className="text-sm text-slate-600 mt-1">
+// //             <p className="text-sm text-ink-paragraph mt-1">
 // //               Add speakers, panelists, and presenters for your event
 // //             </p>
 // //           </div>
@@ -240,7 +240,7 @@
 // //               day: "",
 // //               sequence: speakers.length + 1
 // //             })}
-// //             className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center"
+// //             className="bg-brand-gold hover:bg-brand-gold text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center"
 // //           >
 // //             <Plus className="w-4 h-4 mr-2" />
 // //             Add Speaker
@@ -248,23 +248,23 @@
 // //         </div>
 
 // //         {speakers.length === 0 ? (
-// //           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-// //             <User className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+// //           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+// //             <User className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 // //             <p className="font-medium">No speakers added yet</p>
 // //             <p className="text-sm mt-1">Add your event speakers to get started</p>
 // //           </div>
 // //         ) : (
 // //           <div className="space-y-4">
 // //             {speakers.map((speaker: Speaker, index: number) => (
-// //               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+// //               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 // //                 <div className="flex justify-between items-center">
-// //                   <h4 className="font-semibold text-slate-800">
+// //                   <h4 className="font-semibold text-ink-charcoal">
 // //                     Speaker {index + 1}
 // //                   </h4>
 // //                   <button
 // //                     type="button"
 // //                     onClick={() => removeArrayItem("speakers", index)}
-// //                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+// //                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 // //                   >
 // //                     <Minus className="w-4 h-4 mr-1" />
 // //                     Remove
@@ -273,7 +273,7 @@
                 
 // //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Name *
 // //                     </label>
 // //                     <input
@@ -285,12 +285,12 @@
 // //                       required
 // //                     />
 // //                     {errors[`speakers-${index}-name`] && (
-// //                       <div className="text-xs text-red-600 mt-1">{errors[`speakers-${index}-name`]}</div>
+// //                       <div className="text-xs text-status-error mt-1">{errors[`speakers-${index}-name`]}</div>
 // //                     )}
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Designation
 // //                     </label>
 // //                     <input
@@ -303,7 +303,7 @@
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Organization
 // //                     </label>
 // //                     <input
@@ -316,7 +316,7 @@
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Day
 // //                     </label>
 // //                     <input
@@ -329,7 +329,7 @@
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Sequence
 // //                     </label>
 // //                     <input
@@ -353,14 +353,14 @@
 // //   // Render themes section
 // //   const renderThemes = () => {
 // //     return (
-// //       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+// //       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 // //         <div className="flex justify-between items-center">
 // //           <div>
-// //             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+// //             <h3 className="text-lg font-semibold text-ink flex items-center">
 // //               <Palette className="w-5 h-5 mr-2" />
 // //               Event Themes
 // //             </h3>
-// //             <p className="text-sm text-slate-600 mt-1">
+// //             <p className="text-sm text-ink-paragraph mt-1">
 // //               Define the main themes or topics for each day of your event
 // //             </p>
 // //           </div>
@@ -371,7 +371,7 @@
 // //               themeTitle: "",
 // //               details: ""
 // //             })}
-// //             className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center"
+// //             className="bg-brand-gold hover:bg-brand-gold text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center"
 // //           >
 // //             <Plus className="w-4 h-4 mr-2" />
 // //             Add Theme
@@ -379,23 +379,23 @@
 // //         </div>
 
 // //         {themes.length === 0 ? (
-// //           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-// //             <Palette className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+// //           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+// //             <Palette className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 // //             <p className="font-medium">No themes added yet</p>
 // //             <p className="text-sm mt-1">Add daily themes to structure your event</p>
 // //           </div>
 // //         ) : (
 // //           <div className="space-y-4">
 // //             {themes.map((theme: Theme, index: number) => (
-// //               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+// //               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 // //                 <div className="flex justify-between items-center">
-// //                   <h4 className="font-semibold text-slate-800">
+// //                   <h4 className="font-semibold text-ink-charcoal">
 // //                     Theme {index + 1}
 // //                   </h4>
 // //                   <button
 // //                     type="button"
 // //                     onClick={() => removeArrayItem("themes", index)}
-// //                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+// //                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 // //                   >
 // //                     <Minus className="w-4 h-4 mr-1" />
 // //                     Remove
@@ -404,7 +404,7 @@
                 
 // //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Day
 // //                     </label>
 // //                     <input
@@ -417,7 +417,7 @@
 // //                   </div>
                   
 // //                   <div className="md:col-span-2">
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Theme Title *
 // //                     </label>
 // //                     <input
@@ -429,12 +429,12 @@
 // //                       required
 // //                     />
 // //                     {errors[`themes-${index}-themeTitle`] && (
-// //                       <div className="text-xs text-red-600 mt-1">{errors[`themes-${index}-themeTitle`]}</div>
+// //                       <div className="text-xs text-status-error mt-1">{errors[`themes-${index}-themeTitle`]}</div>
 // //                     )}
 // //                   </div>
                   
 // //                   <div className="md:col-span-2">
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Theme Details
 // //                     </label>
 // //                     <textarea
@@ -457,21 +457,21 @@
 // //   // Render partners section
 // //   const renderPartners = () => {
 // //     return (
-// //       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+// //       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 // //         <div className="flex justify-between items-center">
 // //           <div>
-// //             <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+// //             <h3 className="text-lg font-semibold text-ink flex items-center">
 // //               <Users className="w-5 h-5 mr-2" />
 // //               Partners & Sponsors
 // //             </h3>
-// //             <p className="text-sm text-slate-600 mt-1">
+// //             <p className="text-sm text-ink-paragraph mt-1">
 // //               List your event partners, sponsors, and collaborators
 // //             </p>
 // //           </div>
 // //           <button
 // //             type="button"
 // //             onClick={() => addArrayItem("partners", { partnerName: "" })}
-// //             className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center"
+// //             className="bg-brand-gold hover:bg-brand-gold text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center"
 // //           >
 // //             <Plus className="w-4 h-4 mr-2" />
 // //             Add Partner
@@ -479,15 +479,15 @@
 // //         </div>
 
 // //         {partners.length === 0 ? (
-// //           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-// //             <Users className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+// //           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+// //             <Users className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 // //             <p className="font-medium">No partners added yet</p>
 // //             <p className="text-sm mt-1">Add your event partners and sponsors</p>
 // //           </div>
 // //         ) : (
 // //           <div className="space-y-3">
 // //             {partners.map((partner: Partner, index: number) => (
-// //               <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-lg border border-amber-200">
+// //               <div key={index} className="flex items-center gap-3 p-4 bg-surface-card rounded-lg border border-brand-yellow-soft">
 // //                 <div className="flex-1">
 // //                   <input
 // //                     type="text"
@@ -498,13 +498,13 @@
 // //                     required
 // //                   />
 // //                   {errors[`partners-${index}-partnerName`] && (
-// //                     <div className="text-xs text-red-600 mt-1">{errors[`partners-${index}-partnerName`]}</div>
+// //                     <div className="text-xs text-status-error mt-1">{errors[`partners-${index}-partnerName`]}</div>
 // //                   )}
 // //                 </div>
 // //                 <button
 // //                   type="button"
 // //                   onClick={() => removeArrayItem("partners", index)}
-// //                   className="text-red-500 hover:text-red-700 p-2 transition"
+// //                   className="text-status-error hover:text-status-error p-2 transition"
 // //                   title="Remove partner"
 // //                 >
 // //                   <Minus className="w-4 h-4" />
@@ -519,7 +519,7 @@
 
 // //   return (
 // //     <div className="space-y-8">
-// //       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+// //       <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
 // //         {step.title}
 // //       </h2>
 
@@ -529,24 +529,24 @@
 
 // //       {/* Summary Preview */}
 // //       {(speakers.length > 0 || themes.length > 0 || partners.length > 0) && (
-// //         <div className="p-6 bg-amber-50 rounded-xl border border-amber-200">
-// //           <h3 className="font-semibold text-amber-900 mb-4">Event Overview</h3>
+// //         <div className="p-6 bg-surface-main rounded-xl border border-brand-yellow-soft">
+// //           <h3 className="font-semibold text-brand-gold mb-4">Event Overview</h3>
           
 // //           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
 // //             {speakers.length > 0 && (
 // //               <div>
-// //                 <h4 className="font-medium text-amber-800 mb-2">Speakers ({speakers.length})</h4>
+// //                 <h4 className="font-medium text-brand-gold mb-2">Speakers ({speakers.length})</h4>
 // //                 <div className="space-y-1">
 // //                   {speakers.slice(0, 3).map((speaker: Speaker, index: number) => (
-// //                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+// //                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 // //                       <div className="font-medium">{speaker.name || "Unnamed Speaker"}</div>
 // //                       {speaker.designation && (
-// //                         <div className="text-xs text-slate-600">{speaker.designation}</div>
+// //                         <div className="text-xs text-ink-paragraph">{speaker.designation}</div>
 // //                       )}
 // //                     </div>
 // //                   ))}
 // //                   {speakers.length > 3 && (
-// //                     <div className="text-xs text-slate-500">+{speakers.length - 3} more speakers</div>
+// //                     <div className="text-xs text-ink-caption">+{speakers.length - 3} more speakers</div>
 // //                   )}
 // //                 </div>
 // //               </div>
@@ -554,18 +554,18 @@
             
 // //             {themes.length > 0 && (
 // //               <div>
-// //                 <h4 className="font-medium text-amber-800 mb-2">Themes ({themes.length})</h4>
+// //                 <h4 className="font-medium text-brand-gold mb-2">Themes ({themes.length})</h4>
 // //                 <div className="space-y-1">
 // //                   {themes.slice(0, 3).map((theme: Theme, index: number) => (
-// //                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+// //                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 // //                       <div className="font-medium">{theme.themeTitle || "Untitled Theme"}</div>
 // //                       {theme.day && (
-// //                         <div className="text-xs text-slate-600">{theme.day}</div>
+// //                         <div className="text-xs text-ink-paragraph">{theme.day}</div>
 // //                       )}
 // //                     </div>
 // //                   ))}
 // //                   {themes.length > 3 && (
-// //                     <div className="text-xs text-slate-500">+{themes.length - 3} more themes</div>
+// //                     <div className="text-xs text-ink-caption">+{themes.length - 3} more themes</div>
 // //                   )}
 // //                 </div>
 // //               </div>
@@ -573,15 +573,15 @@
             
 // //             {partners.length > 0 && (
 // //               <div>
-// //                 <h4 className="font-medium text-amber-800 mb-2">Partners ({partners.length})</h4>
+// //                 <h4 className="font-medium text-brand-gold mb-2">Partners ({partners.length})</h4>
 // //                 <div className="space-y-1">
 // //                   {partners.slice(0, 5).map((partner: Partner, index: number) => (
-// //                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+// //                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 // //                       <div className="font-medium">{partner.partnerName || "Unnamed Partner"}</div>
 // //                     </div>
 // //                   ))}
 // //                   {partners.length > 5 && (
-// //                     <div className="text-xs text-slate-500">+{partners.length - 5} more partners</div>
+// //                     <div className="text-xs text-ink-caption">+{partners.length - 5} more partners</div>
 // //                   )}
 // //                 </div>
 // //               </div>
@@ -673,8 +673,8 @@
 // //     }));
 // //   };
 
-// //   const baseInputClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
-// //   const baseTextareaClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full min-h-[80px] resize-vertical";
+// //   const baseInputClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full";
+// //   const baseTextareaClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full min-h-[80px] resize-vertical";
 
 // //   // Helper function to render limited input
 // //   const renderLimitedInput = (value: string, onChange: (value: string) => void, charLimit: number, placeholder: string, required = false) => {
@@ -697,7 +697,7 @@
 // //         />
 // //         {charLimit && (
 // //           <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${
-// //             charsRemaining < 10 ? 'text-red-500' : 'text-slate-500'
+// //             charsRemaining < 10 ? 'text-status-error' : 'text-ink-caption'
 // //           }`}>
 // //             {charsRemaining}
 // //           </div>
@@ -726,7 +726,7 @@
 // //         />
 // //         {charLimit && (
 // //           <div className={`absolute bottom-3 right-3 text-xs ${
-// //             charsRemaining < 20 ? 'text-red-500' : 'text-slate-500'
+// //             charsRemaining < 20 ? 'text-status-error' : 'text-ink-caption'
 // //           }`}>
 // //             {charsRemaining}
 // //           </div>
@@ -738,35 +738,35 @@
 // //   // Render speakers section
 // //   const renderSpeakers = () => {
 // //     return (
-// //       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+// //       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 // //         <div>
-// //           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+// //           <h3 className="text-lg font-semibold text-ink flex items-center">
 // //             <User className="w-5 h-5 mr-2" />
 // //             Speakers
 // //           </h3>
-// //           <p className="text-sm text-slate-600 mt-1">
+// //           <p className="text-sm text-ink-paragraph mt-1">
 // //             Add speakers, panelists, and presenters for your event
 // //           </p>
 // //         </div>
 
 // //         {speakers.length === 0 ? (
-// //           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-// //             <User className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+// //           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+// //             <User className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 // //             <p className="font-medium">No speakers added yet</p>
 // //             <p className="text-sm mt-1">Add your event speakers to get started</p>
 // //           </div>
 // //         ) : (
 // //           <div className="space-y-4">
 // //             {speakers.map((speaker: Speaker, index: number) => (
-// //               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+// //               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 // //                 <div className="flex justify-between items-center">
-// //                   <h4 className="font-semibold text-slate-800">
+// //                   <h4 className="font-semibold text-ink-charcoal">
 // //                     Speaker {index + 1}
 // //                   </h4>
 // //                   <button
 // //                     type="button"
 // //                     onClick={() => removeArrayItem("speakers", index)}
-// //                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+// //                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 // //                   >
 // //                     <Minus className="w-4 h-4 mr-1" />
 // //                     Remove
@@ -775,7 +775,7 @@
                 
 // //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Name *
 // //                     </label>
 // //                     <input
@@ -787,12 +787,12 @@
 // //                       required
 // //                     />
 // //                     {errors[`speakers-${index}-name`] && (
-// //                       <div className="text-xs text-red-600 mt-1">{errors[`speakers-${index}-name`]}</div>
+// //                       <div className="text-xs text-status-error mt-1">{errors[`speakers-${index}-name`]}</div>
 // //                     )}
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Designation
 // //                     </label>
 // //                     <input
@@ -805,7 +805,7 @@
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Organization
 // //                     </label>
 // //                     <input
@@ -818,7 +818,7 @@
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Day
 // //                     </label>
 // //                     <input
@@ -831,7 +831,7 @@
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Sequence
 // //                     </label>
 // //                     <input
@@ -860,7 +860,7 @@
 // //               day: "",
 // //               sequence: speakers.length + 1
 // //             })}
-// //             className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+// //             className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
 // //           >
 // //             <Plus className="w-4 h-4" />
 // //             Add Speaker
@@ -873,35 +873,35 @@
 // //   // Render themes section
 // //   const renderThemes = () => {
 // //     return (
-// //       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+// //       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 // //         <div>
-// //           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+// //           <h3 className="text-lg font-semibold text-ink flex items-center">
 // //             <Palette className="w-5 h-5 mr-2" />
 // //             Event Themes
 // //           </h3>
-// //           <p className="text-sm text-slate-600 mt-1">
+// //           <p className="text-sm text-ink-paragraph mt-1">
 // //             Define the main themes or topics for each day of your event
 // //           </p>
 // //         </div>
 
 // //         {themes.length === 0 ? (
-// //           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-// //             <Palette className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+// //           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+// //             <Palette className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 // //             <p className="font-medium">No themes added yet</p>
 // //             <p className="text-sm mt-1">Add daily themes to structure your event</p>
 // //           </div>
 // //         ) : (
 // //           <div className="space-y-4">
 // //             {themes.map((theme: Theme, index: number) => (
-// //               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+// //               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 // //                 <div className="flex justify-between items-center">
-// //                   <h4 className="font-semibold text-slate-800">
+// //                   <h4 className="font-semibold text-ink-charcoal">
 // //                     Theme {index + 1}
 // //                   </h4>
 // //                   <button
 // //                     type="button"
 // //                     onClick={() => removeArrayItem("themes", index)}
-// //                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+// //                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 // //                   >
 // //                     <Minus className="w-4 h-4 mr-1" />
 // //                     Remove
@@ -910,7 +910,7 @@
                 
 // //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Day
 // //                     </label>
 // //                     <input
@@ -923,9 +923,9 @@
 // //                   </div>
                   
 // //                   <div className="md:col-span-2">
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Theme Title *
-// //                       <span className="text-slate-500 text-xs font-normal ml-2">
+// //                       <span className="text-ink-caption text-xs font-normal ml-2">
 // //                         (max {characterLimits.themeTitle} characters)
 // //                       </span>
 // //                     </label>
@@ -937,14 +937,14 @@
 // //                       true
 // //                     )}
 // //                     {errors[`themes-${index}-themeTitle`] && (
-// //                       <div className="text-xs text-red-600 mt-1">{errors[`themes-${index}-themeTitle`]}</div>
+// //                       <div className="text-xs text-status-error mt-1">{errors[`themes-${index}-themeTitle`]}</div>
 // //                     )}
 // //                   </div>
                   
 // //                   <div className="md:col-span-2">
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Theme Details
-// //                       <span className="text-slate-500 text-xs font-normal ml-2">
+// //                       <span className="text-ink-caption text-xs font-normal ml-2">
 // //                         (max {characterLimits.themeDetails} characters)
 // //                       </span>
 // //                     </label>
@@ -970,7 +970,7 @@
 // //               themeTitle: "",
 // //               details: ""
 // //             })}
-// //             className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+// //             className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
 // //           >
 // //             <Plus className="w-4 h-4" />
 // //             Add Theme
@@ -983,27 +983,27 @@
 // //   // Render partners section
 // //   const renderPartners = () => {
 // //     return (
-// //       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+// //       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 // //         <div>
-// //           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+// //           <h3 className="text-lg font-semibold text-ink flex items-center">
 // //             <Users className="w-5 h-5 mr-2" />
 // //             Partners & Sponsors
 // //           </h3>
-// //           <p className="text-sm text-slate-600 mt-1">
+// //           <p className="text-sm text-ink-paragraph mt-1">
 // //             List your event partners, sponsors, and collaborators
 // //           </p>
 // //         </div>
 
 // //         {partners.length === 0 ? (
-// //           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-// //             <Users className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+// //           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+// //             <Users className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 // //             <p className="font-medium">No partners added yet</p>
 // //             <p className="text-sm mt-1">Add your event partners and sponsors</p>
 // //           </div>
 // //         ) : (
 // //           <div className="space-y-3">
 // //             {partners.map((partner: Partner, index: number) => (
-// //               <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-lg border border-amber-200">
+// //               <div key={index} className="flex items-center gap-3 p-4 bg-surface-card rounded-lg border border-brand-yellow-soft">
 // //                 <div className="flex-1">
 // //                   <input
 // //                     type="text"
@@ -1014,13 +1014,13 @@
 // //                     required
 // //                   />
 // //                   {errors[`partners-${index}-partnerName`] && (
-// //                     <div className="text-xs text-red-600 mt-1">{errors[`partners-${index}-partnerName`]}</div>
+// //                     <div className="text-xs text-status-error mt-1">{errors[`partners-${index}-partnerName`]}</div>
 // //                   )}
 // //                 </div>
 // //                 <button
 // //                   type="button"
 // //                   onClick={() => removeArrayItem("partners", index)}
-// //                   className="text-red-500 hover:text-red-700 p-2 transition"
+// //                   className="text-status-error hover:text-status-error p-2 transition"
 // //                   title="Remove partner"
 // //                 >
 // //                   <Minus className="w-4 h-4" />
@@ -1035,7 +1035,7 @@
 // //           <button
 // //             type="button"
 // //             onClick={() => addArrayItem("partners", { partnerName: "" })}
-// //             className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+// //             className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
 // //           >
 // //             <Plus className="w-4 h-4" />
 // //             Add Partner
@@ -1047,7 +1047,7 @@
 
 // //   return (
 // //     <div className="space-y-8">
-// //       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+// //       <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
 // //         {step.title}
 // //       </h2>
 
@@ -1057,24 +1057,24 @@
 
 // //       {/* Summary Preview */}
 // //       {(speakers.length > 0 || themes.length > 0 || partners.length > 0) && (
-// //         <div className="p-6 bg-amber-50 rounded-xl border border-amber-200">
-// //           <h3 className="font-semibold text-amber-900 mb-4">Event Overview</h3>
+// //         <div className="p-6 bg-surface-main rounded-xl border border-brand-yellow-soft">
+// //           <h3 className="font-semibold text-brand-gold mb-4">Event Overview</h3>
           
 // //           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
 // //             {speakers.length > 0 && (
 // //               <div>
-// //                 <h4 className="font-medium text-amber-800 mb-2">Speakers ({speakers.length})</h4>
+// //                 <h4 className="font-medium text-brand-gold mb-2">Speakers ({speakers.length})</h4>
 // //                 <div className="space-y-1">
 // //                   {speakers.slice(0, 3).map((speaker: Speaker, index: number) => (
-// //                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+// //                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 // //                       <div className="font-medium">{speaker.name || "Unnamed Speaker"}</div>
 // //                       {speaker.designation && (
-// //                         <div className="text-xs text-slate-600">{speaker.designation}</div>
+// //                         <div className="text-xs text-ink-paragraph">{speaker.designation}</div>
 // //                       )}
 // //                     </div>
 // //                   ))}
 // //                   {speakers.length > 3 && (
-// //                     <div className="text-xs text-slate-500">+{speakers.length - 3} more speakers</div>
+// //                     <div className="text-xs text-ink-caption">+{speakers.length - 3} more speakers</div>
 // //                   )}
 // //                 </div>
 // //               </div>
@@ -1082,18 +1082,18 @@
             
 // //             {themes.length > 0 && (
 // //               <div>
-// //                 <h4 className="font-medium text-amber-800 mb-2">Themes ({themes.length})</h4>
+// //                 <h4 className="font-medium text-brand-gold mb-2">Themes ({themes.length})</h4>
 // //                 <div className="space-y-1">
 // //                   {themes.slice(0, 3).map((theme: Theme, index: number) => (
-// //                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+// //                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 // //                       <div className="font-medium">{theme.themeTitle || "Untitled Theme"}</div>
 // //                       {theme.day && (
-// //                         <div className="text-xs text-slate-600">{theme.day}</div>
+// //                         <div className="text-xs text-ink-paragraph">{theme.day}</div>
 // //                       )}
 // //                     </div>
 // //                   ))}
 // //                   {themes.length > 3 && (
-// //                     <div className="text-xs text-slate-500">+{themes.length - 3} more themes</div>
+// //                     <div className="text-xs text-ink-caption">+{themes.length - 3} more themes</div>
 // //                   )}
 // //                 </div>
 // //               </div>
@@ -1101,15 +1101,15 @@
             
 // //             {partners.length > 0 && (
 // //               <div>
-// //                 <h4 className="font-medium text-amber-800 mb-2">Partners ({partners.length})</h4>
+// //                 <h4 className="font-medium text-brand-gold mb-2">Partners ({partners.length})</h4>
 // //                 <div className="space-y-1">
 // //                   {partners.slice(0, 5).map((partner: Partner, index: number) => (
-// //                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+// //                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 // //                       <div className="font-medium">{partner.partnerName || "Unnamed Partner"}</div>
 // //                     </div>
 // //                   ))}
 // //                   {partners.length > 5 && (
-// //                     <div className="text-xs text-slate-500">+{partners.length - 5} more partners</div>
+// //                     <div className="text-xs text-ink-caption">+{partners.length - 5} more partners</div>
 // //                   )}
 // //                 </div>
 // //               </div>
@@ -1313,8 +1313,8 @@
 // //     updateField("partners", updatedPartners);
 // //   };
 
-// //   const baseInputClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
-// //   const baseTextareaClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full min-h-[80px] resize-vertical";
+// //   const baseInputClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full";
+// //   const baseTextareaClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full min-h-[80px] resize-vertical";
 
 // //   // Helper function to render limited input
 // //   const renderLimitedInput = (value: string, onChange: (value: string) => void, charLimit: number, placeholder: string, required = false) => {
@@ -1337,7 +1337,7 @@
 // //         />
 // //         {charLimit && (
 // //           <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${
-// //             charsRemaining < 10 ? 'text-red-500' : 'text-slate-500'
+// //             charsRemaining < 10 ? 'text-status-error' : 'text-ink-caption'
 // //           }`}>
 // //             {charsRemaining}
 // //           </div>
@@ -1366,7 +1366,7 @@
 // //         />
 // //         {charLimit && (
 // //           <div className={`absolute bottom-3 right-3 text-xs ${
-// //             charsRemaining < 20 ? 'text-red-500' : 'text-slate-500'
+// //             charsRemaining < 20 ? 'text-status-error' : 'text-ink-caption'
 // //           }`}>
 // //             {charsRemaining}
 // //           </div>
@@ -1378,35 +1378,35 @@
 // //   // Render speakers section
 // //   const renderSpeakers = () => {
 // //     return (
-// //       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+// //       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 // //         <div>
-// //           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+// //           <h3 className="text-lg font-semibold text-ink flex items-center">
 // //             <User className="w-5 h-5 mr-2" />
 // //             Speakers
 // //           </h3>
-// //           <p className="text-sm text-slate-600 mt-1">
+// //           <p className="text-sm text-ink-paragraph mt-1">
 // //             Add speakers, panelists, and presenters for your event
 // //           </p>
 // //         </div>
 
 // //         {speakers.length === 0 ? (
-// //           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-// //             <User className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+// //           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+// //             <User className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 // //             <p className="font-medium">No speakers added yet</p>
 // //             <p className="text-sm mt-1">Add your event speakers to get started</p>
 // //           </div>
 // //         ) : (
 // //           <div className="space-y-4">
 // //             {speakers.map((speaker: Speaker, index: number) => (
-// //               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+// //               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 // //                 <div className="flex justify-between items-center">
-// //                   <h4 className="font-semibold text-slate-800">
+// //                   <h4 className="font-semibold text-ink-charcoal">
 // //                     Speaker {index + 1}
 // //                   </h4>
 // //                   <button
 // //                     type="button"
 // //                     onClick={() => removeArrayItem("speakers", index)}
-// //                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+// //                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 // //                   >
 // //                     <Minus className="w-4 h-4 mr-1" />
 // //                     Remove
@@ -1415,7 +1415,7 @@
                 
 // //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Name *
 // //                     </label>
 // //                     <input
@@ -1427,12 +1427,12 @@
 // //                       required
 // //                     />
 // //                     {errors[`speakers-${index}-name`] && (
-// //                       <div className="text-xs text-red-600 mt-1">{errors[`speakers-${index}-name`]}</div>
+// //                       <div className="text-xs text-status-error mt-1">{errors[`speakers-${index}-name`]}</div>
 // //                     )}
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Designation
 // //                     </label>
 // //                     <input
@@ -1445,7 +1445,7 @@
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Organization
 // //                     </label>
 // //                     <input
@@ -1458,7 +1458,7 @@
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Day
 // //                     </label>
 // //                     <input
@@ -1471,7 +1471,7 @@
 // //                   </div>
                   
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Sequence
 // //                     </label>
 // //                     <input
@@ -1500,7 +1500,7 @@
 // //               day: "",
 // //               sequence: speakers.length + 1
 // //             })}
-// //             className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+// //             className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
 // //           >
 // //             <Plus className="w-4 h-4" />
 // //             Add Speaker
@@ -1513,35 +1513,35 @@
 // //   // Render themes section
 // //   const renderThemes = () => {
 // //     return (
-// //       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+// //       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 // //         <div>
-// //           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+// //           <h3 className="text-lg font-semibold text-ink flex items-center">
 // //             <Palette className="w-5 h-5 mr-2" />
 // //             Event Themes
 // //           </h3>
-// //           <p className="text-sm text-slate-600 mt-1">
+// //           <p className="text-sm text-ink-paragraph mt-1">
 // //             Define the main themes or topics for each day of your event
 // //           </p>
 // //         </div>
 
 // //         {themes.length === 0 ? (
-// //           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-// //             <Palette className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+// //           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+// //             <Palette className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 // //             <p className="font-medium">No themes added yet</p>
 // //             <p className="text-sm mt-1">Add daily themes to structure your event</p>
 // //           </div>
 // //         ) : (
 // //           <div className="space-y-4">
 // //             {themes.map((theme: Theme, index: number) => (
-// //               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+// //               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 // //                 <div className="flex justify-between items-center">
-// //                   <h4 className="font-semibold text-slate-800">
+// //                   <h4 className="font-semibold text-ink-charcoal">
 // //                     Theme {index + 1}
 // //                   </h4>
 // //                   <button
 // //                     type="button"
 // //                     onClick={() => removeArrayItem("themes", index)}
-// //                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+// //                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 // //                   >
 // //                     <Minus className="w-4 h-4 mr-1" />
 // //                     Remove
@@ -1550,7 +1550,7 @@
                 
 // //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 // //                   <div>
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Day
 // //                     </label>
 // //                     <input
@@ -1563,9 +1563,9 @@
 // //                   </div>
                   
 // //                   <div className="md:col-span-2">
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Theme Title *
-// //                       <span className="text-slate-500 text-xs font-normal ml-2">
+// //                       <span className="text-ink-caption text-xs font-normal ml-2">
 // //                         (max {characterLimits.themeTitle} characters)
 // //                       </span>
 // //                     </label>
@@ -1577,14 +1577,14 @@
 // //                       true
 // //                     )}
 // //                     {errors[`themes-${index}-themeTitle`] && (
-// //                       <div className="text-xs text-red-600 mt-1">{errors[`themes-${index}-themeTitle`]}</div>
+// //                       <div className="text-xs text-status-error mt-1">{errors[`themes-${index}-themeTitle`]}</div>
 // //                     )}
 // //                   </div>
                   
 // //                   <div className="md:col-span-2">
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Theme Details
-// //                       <span className="text-slate-500 text-xs font-normal ml-2">
+// //                       <span className="text-ink-caption text-xs font-normal ml-2">
 // //                         (max {characterLimits.themeDetails} characters)
 // //                       </span>
 // //                     </label>
@@ -1610,7 +1610,7 @@
 // //               themeTitle: "",
 // //               details: ""
 // //             })}
-// //             className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+// //             className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
 // //           >
 // //             <Plus className="w-4 h-4" />
 // //             Add Theme
@@ -1623,35 +1623,35 @@
 // //   // Render partners section
 // //   const renderPartners = () => {
 // //     return (
-// //       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+// //       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 // //         <div>
-// //           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+// //           <h3 className="text-lg font-semibold text-ink flex items-center">
 // //             <Users className="w-5 h-5 mr-2" />
 // //             Partners & Sponsors
 // //           </h3>
-// //           <p className="text-sm text-slate-600 mt-1">
+// //           <p className="text-sm text-ink-paragraph mt-1">
 // //             List your event partners, sponsors, and collaborators
 // //           </p>
 // //         </div>
 
 // //         {partners.length === 0 ? (
-// //           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-// //             <Users className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+// //           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+// //             <Users className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 // //             <p className="font-medium">No partners added yet</p>
 // //             <p className="text-sm mt-1">Add your event partners and sponsors</p>
 // //           </div>
 // //         ) : (
 // //           <div className="space-y-6">
 // //             {partners.map((partner: Partner, index: number) => (
-// //               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+// //               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 // //                 <div className="flex justify-between items-center">
-// //                   <h4 className="font-semibold text-slate-800">
+// //                   <h4 className="font-semibold text-ink-charcoal">
 // //                     Partner {index + 1}
 // //                   </h4>
 // //                   <button
 // //                     type="button"
 // //                     onClick={() => removeArrayItem("partners", index)}
-// //                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+// //                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 // //                   >
 // //                     <Minus className="w-4 h-4 mr-1" />
 // //                     Remove
@@ -1660,7 +1660,7 @@
                 
 // //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 // //                   <div className="md:col-span-2">
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Partner Name *
 // //                     </label>
 // //                     <input
@@ -1672,12 +1672,12 @@
 // //                       required
 // //                     />
 // //                     {errors[`partners-${index}-partnerName`] && (
-// //                       <div className="text-xs text-red-600 mt-1">{errors[`partners-${index}-partnerName`]}</div>
+// //                       <div className="text-xs text-status-error mt-1">{errors[`partners-${index}-partnerName`]}</div>
 // //                     )}
 // //                   </div>
                   
 // //                   <div className="md:col-span-2">
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Organization
 // //                     </label>
 // //                     <input
@@ -1691,7 +1691,7 @@
 
 // //                   {/* Image Upload Section */}
 // //                   <div className="md:col-span-2">
-// //                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+// //                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 // //                       Partner Logo
 // //                     </label>
                     
@@ -1701,20 +1701,20 @@
 // //                           <img 
 // //                             src={partner.logo} 
 // //                             alt="Partner logo" 
-// //                             className="w-20 h-20 object-contain border border-amber-200 rounded-lg"
+// //                             className="w-20 h-20 object-contain border border-brand-yellow-soft rounded-lg"
 // //                           />
 // //                           <button
 // //                             type="button"
 // //                             onClick={() => removeLogo(index)}
-// //                             className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+// //                             className="absolute -top-2 -right-2 bg-status-error text-white rounded-full p-1 hover:bg-status-error transition"
 // //                           >
 // //                             <X className="w-3 h-3" />
 // //                           </button>
 // //                         </div>
-// //                         <span className="text-sm text-slate-600">Logo uploaded</span>
+// //                         <span className="text-sm text-ink-paragraph">Logo uploaded</span>
 // //                       </div>
 // //                     ) : (
-// //                       <div className="border-2 border-dashed border-amber-300 rounded-lg p-6 text-center">
+// //                       <div className="border-2 border-dashed border-brand-yellow-soft rounded-lg p-6 text-center">
 // //                         <input
 // //                           type="file"
 // //                           id={`partner-logo-${index}`}
@@ -1726,11 +1726,11 @@
 // //                           htmlFor={`partner-logo-${index}`}
 // //                           className="cursor-pointer flex flex-col items-center gap-2"
 // //                         >
-// //                           <Upload className="w-8 h-8 text-amber-500" />
-// //                           <span className="text-sm font-medium text-amber-700">
+// //                           <Upload className="w-8 h-8 text-brand-gold" />
+// //                           <span className="text-sm font-medium text-brand-gold">
 // //                             {uploading[index] ? 'Uploading...' : 'Upload Logo'}
 // //                           </span>
-// //                           <span className="text-xs text-slate-500">
+// //                           <span className="text-xs text-ink-caption">
 // //                             Click to upload logo (Max 5MB)
 // //                           </span>
 // //                         </label>
@@ -1738,8 +1738,8 @@
 // //                     )}
                     
 // //                     {uploading[index] && (
-// //                       <div className="text-sm text-amber-600 mt-2 flex items-center gap-2">
-// //                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-amber-500 border-t-transparent"></div>
+// //                       <div className="text-sm text-brand-gold mt-2 flex items-center gap-2">
+// //                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-brand-gold border-t-transparent"></div>
 // //                         Uploading logo...
 // //                       </div>
 // //                     )}
@@ -1759,7 +1759,7 @@
 // //               organization: "",
 // //               logo: undefined 
 // //             })}
-// //             className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+// //             className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
 // //           >
 // //             <Plus className="w-4 h-4" />
 // //             Add Partner
@@ -1771,7 +1771,7 @@
 
 // //   return (
 // //     <div className="space-y-8">
-// //       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+// //       <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
 // //         {step.title}
 // //       </h2>
 
@@ -1781,24 +1781,24 @@
 
 // //       {/* Summary Preview */}
 // //       {(speakers.length > 0 || themes.length > 0 || partners.length > 0) && (
-// //         <div className="p-6 bg-amber-50 rounded-xl border border-amber-200">
-// //           <h3 className="font-semibold text-amber-900 mb-4">Event Overview</h3>
+// //         <div className="p-6 bg-surface-main rounded-xl border border-brand-yellow-soft">
+// //           <h3 className="font-semibold text-brand-gold mb-4">Event Overview</h3>
           
 // //           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
 // //             {speakers.length > 0 && (
 // //               <div>
-// //                 <h4 className="font-medium text-amber-800 mb-2">Speakers ({speakers.length})</h4>
+// //                 <h4 className="font-medium text-brand-gold mb-2">Speakers ({speakers.length})</h4>
 // //                 <div className="space-y-1">
 // //                   {speakers.slice(0, 3).map((speaker: Speaker, index: number) => (
-// //                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+// //                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 // //                       <div className="font-medium">{speaker.name || "Unnamed Speaker"}</div>
 // //                       {speaker.designation && (
-// //                         <div className="text-xs text-slate-600">{speaker.designation}</div>
+// //                         <div className="text-xs text-ink-paragraph">{speaker.designation}</div>
 // //                       )}
 // //                     </div>
 // //                   ))}
 // //                   {speakers.length > 3 && (
-// //                     <div className="text-xs text-slate-500">+{speakers.length - 3} more speakers</div>
+// //                     <div className="text-xs text-ink-caption">+{speakers.length - 3} more speakers</div>
 // //                   )}
 // //                 </div>
 // //               </div>
@@ -1806,18 +1806,18 @@
             
 // //             {themes.length > 0 && (
 // //               <div>
-// //                 <h4 className="font-medium text-amber-800 mb-2">Themes ({themes.length})</h4>
+// //                 <h4 className="font-medium text-brand-gold mb-2">Themes ({themes.length})</h4>
 // //                 <div className="space-y-1">
 // //                   {themes.slice(0, 3).map((theme: Theme, index: number) => (
-// //                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+// //                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 // //                       <div className="font-medium">{theme.themeTitle || "Untitled Theme"}</div>
 // //                       {theme.day && (
-// //                         <div className="text-xs text-slate-600">{theme.day}</div>
+// //                         <div className="text-xs text-ink-paragraph">{theme.day}</div>
 // //                       )}
 // //                     </div>
 // //                   ))}
 // //                   {themes.length > 3 && (
-// //                     <div className="text-xs text-slate-500">+{themes.length - 3} more themes</div>
+// //                     <div className="text-xs text-ink-caption">+{themes.length - 3} more themes</div>
 // //                   )}
 // //                 </div>
 // //               </div>
@@ -1825,10 +1825,10 @@
             
 // //             {partners.length > 0 && (
 // //               <div>
-// //                 <h4 className="font-medium text-amber-800 mb-2">Partners ({partners.length})</h4>
+// //                 <h4 className="font-medium text-brand-gold mb-2">Partners ({partners.length})</h4>
 // //                 <div className="space-y-1">
 // //                   {partners.slice(0, 5).map((partner: Partner, index: number) => (
-// //                     <div key={index} className="bg-white p-2 rounded border border-amber-100 flex items-center gap-2">
+// //                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft flex items-center gap-2">
 // //                       {partner.logo && (
 // //                         <img 
 // //                           src={partner.logo} 
@@ -1840,7 +1840,7 @@
 // //                     </div>
 // //                   ))}
 // //                   {partners.length > 5 && (
-// //                     <div className="text-xs text-slate-500">+{partners.length - 5} more partners</div>
+// //                     <div className="text-xs text-ink-caption">+{partners.length - 5} more partners</div>
 // //                   )}
 // //                 </div>
 // //               </div>
@@ -1913,19 +1913,19 @@
 
 //   return (
 //     <div className="space-y-1">
-//       <label className="block mb-1 font-medium text-slate-800 text-sm">
+//       <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //         {label} {required && "*"}
 //       </label>
-//       <div className="flex items-stretch border border-gray-300 rounded-lg hover:border-amber-400 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500 transition-colors">
+//       <div className="flex items-stretch border border-ink-light rounded-lg hover:border-brand-yellow focus-within:border-brand-gold focus-within:ring-2 focus-within:ring-brand-gold transition-colors">
 //         {/* Title Dropdown */}
 //         <div className="relative flex-shrink-0 group">
 //           <select
 //             value={titleValue || ''}
 //             onChange={(e) => onTitleChange(e.target.value)}
-//             className="h-10 pl-3 pr-8 text-sm bg-white border-0 rounded-l-lg focus:outline-none focus:ring-0 appearance-none text-gray-700 hover:bg-gray-50 transition-colors"
+//             className="h-10 pl-3 pr-8 text-sm bg-surface-card border-0 rounded-l-lg focus:outline-none focus:ring-0 appearance-none text-ink-paragraph hover:bg-ink-offwhite transition-colors"
 //             style={{ minWidth: '80px' }}
 //           >
-//             <option value="" className="text-gray-400">Title</option>
+//             <option value="" className="text-ink-caption">Title</option>
 //             {genderOptions.map((option) => (
 //               <option key={option.value} value={option.value}>
 //                 {option.label}
@@ -1933,10 +1933,10 @@
 //             ))}
 //           </select>
 //           <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-//             <ChevronDown className="w-4 h-4 text-gray-400" />
+//             <ChevronDown className="w-4 h-4 text-ink-caption" />
 //           </div>
 //           {/* Vertical divider - FULL HEIGHT */}
-//           <div className="absolute right-0 top-0 bottom-0 w-px bg-gray-300 group-hover:bg-gray-400 transition-colors"></div>
+//           <div className="absolute right-0 top-0 bottom-0 w-px bg-ink-light group-hover:bg-ink-caption transition-colors"></div>
 //         </div>
         
 //         {/* Name Input */}
@@ -1947,12 +1947,12 @@
 //             onChange={(e) => onNameChange(e.target.value)}
 //             required={required}
 //             placeholder={namePlaceholder}
-//             className="w-full h-10 px-3 text-sm border-0 rounded-r-lg focus:outline-none focus:ring-0 text-gray-700 placeholder-gray-400 bg-white"
+//             className="w-full h-10 px-3 text-sm border-0 rounded-r-lg focus:outline-none focus:ring-0 text-ink-paragraph placeholder-ink-caption bg-surface-card"
 //           />
 //         </div>
 //       </div>
 //       {error && (
-//         <div className="text-xs text-red-600 mt-1">{error}</div>
+//         <div className="text-xs text-status-error mt-1">{error}</div>
 //       )}
 //     </div>
 //   );
@@ -2119,8 +2119,8 @@
 //     updateField("partners", updatedPartners);
 //   };
 
-//   const baseInputClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
-//   const baseTextareaClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full min-h-[80px] resize-vertical";
+//   const baseInputClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full";
+//   const baseTextareaClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full min-h-[80px] resize-vertical";
 
 //   // Helper function to render limited input
 //   const renderLimitedInput = (value: string, onChange: (value: string) => void, charLimit: number, placeholder: string, required = false) => {
@@ -2143,7 +2143,7 @@
 //         />
 //         {charLimit && (
 //           <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${
-//             charsRemaining < 10 ? 'text-red-500' : 'text-slate-500'
+//             charsRemaining < 10 ? 'text-status-error' : 'text-ink-caption'
 //           }`}>
 //             {charsRemaining}
 //           </div>
@@ -2172,7 +2172,7 @@
 //         />
 //         {charLimit && (
 //           <div className={`absolute bottom-3 right-3 text-xs ${
-//             charsRemaining < 20 ? 'text-red-500' : 'text-slate-500'
+//             charsRemaining < 20 ? 'text-status-error' : 'text-ink-caption'
 //           }`}>
 //             {charsRemaining}
 //           </div>
@@ -2184,35 +2184,35 @@
 //   // Render speakers section
 //   const renderSpeakers = () => {
 //     return (
-//       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+//       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 //         <div>
-//           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+//           <h3 className="text-lg font-semibold text-ink flex items-center">
 //             <User className="w-5 h-5 mr-2" />
 //             Speakers
 //           </h3>
-//           <p className="text-sm text-slate-600 mt-1">
+//           <p className="text-sm text-ink-paragraph mt-1">
 //             Add speakers, panelists, and presenters for your event
 //           </p>
 //         </div>
 
 //         {speakers.length === 0 ? (
-//           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-//             <User className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+//           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+//             <User className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 //             <p className="font-medium">No speakers added yet</p>
 //             <p className="text-sm mt-1">Add your event speakers to get started</p>
 //           </div>
 //         ) : (
 //           <div className="space-y-4">
 //             {speakers.map((speaker: Speaker, index: number) => (
-//               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+//               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 //                 <div className="flex justify-between items-center">
-//                   <h4 className="font-semibold text-slate-800">
+//                   <h4 className="font-semibold text-ink-charcoal">
 //                     Speaker {index + 1}
 //                   </h4>
 //                   <button
 //                     type="button"
 //                     onClick={() => removeArrayItem("speakers", index)}
-//                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+//                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 //                   >
 //                     <Minus className="w-4 h-4 mr-1" />
 //                     Remove
@@ -2235,7 +2235,7 @@
 //                   </div>
                   
 //                   <div>
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Designation
 //                     </label>
 //                     <input
@@ -2248,7 +2248,7 @@
 //                   </div>
                   
 //                   <div>
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Organization
 //                     </label>
 //                     <input
@@ -2261,7 +2261,7 @@
 //                   </div>
                   
 //                   <div>
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Day
 //                     </label>
 //                     <input
@@ -2274,7 +2274,7 @@
 //                   </div>
                   
 //                   <div>
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Sequence
 //                     </label>
 //                     <input
@@ -2304,7 +2304,7 @@
 //               sequence: speakers.length + 1,
 //               title: "" // Added title field
 //             })}
-//             className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+//             className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
 //           >
 //             <Plus className="w-4 h-4" />
 //             Add Speaker
@@ -2317,35 +2317,35 @@
 //   // Render themes section
 //   const renderThemes = () => {
 //     return (
-//       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+//       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 //         <div>
-//           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+//           <h3 className="text-lg font-semibold text-ink flex items-center">
 //             <Palette className="w-5 h-5 mr-2" />
 //             Event Themes
 //           </h3>
-//           <p className="text-sm text-slate-600 mt-1">
+//           <p className="text-sm text-ink-paragraph mt-1">
 //             Define the main themes or topics for each day of your event
 //           </p>
 //         </div>
 
 //         {themes.length === 0 ? (
-//           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-//             <Palette className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+//           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+//             <Palette className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 //             <p className="font-medium">No themes added yet</p>
 //             <p className="text-sm mt-1">Add daily themes to structure your event</p>
 //           </div>
 //         ) : (
 //           <div className="space-y-4">
 //             {themes.map((theme: Theme, index: number) => (
-//               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+//               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 //                 <div className="flex justify-between items-center">
-//                   <h4 className="font-semibold text-slate-800">
+//                   <h4 className="font-semibold text-ink-charcoal">
 //                     Theme {index + 1}
 //                   </h4>
 //                   <button
 //                     type="button"
 //                     onClick={() => removeArrayItem("themes", index)}
-//                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+//                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 //                   >
 //                     <Minus className="w-4 h-4 mr-1" />
 //                     Remove
@@ -2354,7 +2354,7 @@
                 
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 //                   <div>
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Day
 //                     </label>
 //                     <input
@@ -2367,9 +2367,9 @@
 //                   </div>
                   
 //                   <div className="md:col-span-2">
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Theme Title *
-//                       <span className="text-slate-500 text-xs font-normal ml-2">
+//                       <span className="text-ink-caption text-xs font-normal ml-2">
 //                         (max {characterLimits.themeTitle} characters)
 //                       </span>
 //                     </label>
@@ -2381,14 +2381,14 @@
 //                       true
 //                     )}
 //                     {errors[`themes-${index}-themeTitle`] && (
-//                       <div className="text-xs text-red-600 mt-1">{errors[`themes-${index}-themeTitle`]}</div>
+//                       <div className="text-xs text-status-error mt-1">{errors[`themes-${index}-themeTitle`]}</div>
 //                     )}
 //                   </div>
                   
 //                   <div className="md:col-span-2">
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Theme Details
-//                       <span className="text-slate-500 text-xs font-normal ml-2">
+//                       <span className="text-ink-caption text-xs font-normal ml-2">
 //                         (max {characterLimits.themeDetails} characters)
 //                       </span>
 //                     </label>
@@ -2414,7 +2414,7 @@
 //               themeTitle: "",
 //               details: ""
 //             })}
-//             className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+//             className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
 //           >
 //             <Plus className="w-4 h-4" />
 //             Add Theme
@@ -2427,35 +2427,35 @@
 //   // Render partners section
 //   const renderPartners = () => {
 //     return (
-//       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+//       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 //         <div>
-//           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+//           <h3 className="text-lg font-semibold text-ink flex items-center">
 //             <Users className="w-5 h-5 mr-2" />
 //             Partners & Sponsors
 //           </h3>
-//           <p className="text-sm text-slate-600 mt-1">
+//           <p className="text-sm text-ink-paragraph mt-1">
 //             List your event partners, sponsors, and collaborators
 //           </p>
 //         </div>
 
 //         {partners.length === 0 ? (
-//           <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-//             <Users className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+//           <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+//             <Users className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
 //             <p className="font-medium">No partners added yet</p>
 //             <p className="text-sm mt-1">Add your event partners and sponsors</p>
 //           </div>
 //         ) : (
 //           <div className="space-y-6">
 //             {partners.map((partner: Partner, index: number) => (
-//               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+//               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 //                 <div className="flex justify-between items-center">
-//                   <h4 className="font-semibold text-slate-800">
+//                   <h4 className="font-semibold text-ink-charcoal">
 //                     Partner {index + 1}
 //                   </h4>
 //                   <button
 //                     type="button"
 //                     onClick={() => removeArrayItem("partners", index)}
-//                     className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+//                     className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
 //                   >
 //                     <Minus className="w-4 h-4 mr-1" />
 //                     Remove
@@ -2464,7 +2464,7 @@
                 
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 //                   <div className="md:col-span-2">
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Partner Name *
 //                     </label>
 //                     <input
@@ -2476,12 +2476,12 @@
 //                       required
 //                     />
 //                     {errors[`partners-${index}-partnerName`] && (
-//                       <div className="text-xs text-red-600 mt-1">{errors[`partners-${index}-partnerName`]}</div>
+//                       <div className="text-xs text-status-error mt-1">{errors[`partners-${index}-partnerName`]}</div>
 //                     )}
 //                   </div>
                   
 //                   <div className="md:col-span-2">
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Organization
 //                     </label>
 //                     <input
@@ -2495,7 +2495,7 @@
 
 //                   {/* Image Upload Section */}
 //                   <div className="md:col-span-2">
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Partner Logo
 //                     </label>
                     
@@ -2505,20 +2505,20 @@
 //                           <img 
 //                             src={partner.logo} 
 //                             alt="Partner logo" 
-//                             className="w-20 h-20 object-contain border border-amber-200 rounded-lg"
+//                             className="w-20 h-20 object-contain border border-brand-yellow-soft rounded-lg"
 //                           />
 //                           <button
 //                             type="button"
 //                             onClick={() => removeLogo(index)}
-//                             className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+//                             className="absolute -top-2 -right-2 bg-status-error text-white rounded-full p-1 hover:bg-status-error transition"
 //                           >
 //                             <X className="w-3 h-3" />
 //                           </button>
 //                         </div>
-//                         <span className="text-sm text-slate-600">Logo uploaded</span>
+//                         <span className="text-sm text-ink-paragraph">Logo uploaded</span>
 //                       </div>
 //                     ) : (
-//                       <div className="border-2 border-dashed border-amber-300 rounded-lg p-6 text-center">
+//                       <div className="border-2 border-dashed border-brand-yellow-soft rounded-lg p-6 text-center">
 //                         <input
 //                           type="file"
 //                           id={`partner-logo-${index}`}
@@ -2530,11 +2530,11 @@
 //                           htmlFor={`partner-logo-${index}`}
 //                           className="cursor-pointer flex flex-col items-center gap-2"
 //                         >
-//                           <Upload className="w-8 h-8 text-amber-500" />
-//                           <span className="text-sm font-medium text-amber-700">
+//                           <Upload className="w-8 h-8 text-brand-gold" />
+//                           <span className="text-sm font-medium text-brand-gold">
 //                             {uploading[index] ? 'Uploading...' : 'Upload Logo'}
 //                           </span>
-//                           <span className="text-xs text-slate-500">
+//                           <span className="text-xs text-ink-caption">
 //                             Click to upload logo (Max 5MB)
 //                           </span>
 //                         </label>
@@ -2542,8 +2542,8 @@
 //                     )}
                     
 //                     {uploading[index] && (
-//                       <div className="text-sm text-amber-600 mt-2 flex items-center gap-2">
-//                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-amber-500 border-t-transparent"></div>
+//                       <div className="text-sm text-brand-gold mt-2 flex items-center gap-2">
+//                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-brand-gold border-t-transparent"></div>
 //                         Uploading logo...
 //                       </div>
 //                     )}
@@ -2563,7 +2563,7 @@
 //               organization: "",
 //               logo: undefined 
 //             })}
-//             className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+//             className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
 //           >
 //             <Plus className="w-4 h-4" />
 //             Add Partner
@@ -2575,7 +2575,7 @@
 
 //   return (
 //     <div className="space-y-8">
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+//       <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
 //         {step.title}
 //       </h2>
 
@@ -2585,26 +2585,26 @@
 
 //       {/* Summary Preview */}
 //       {(speakers.length > 0 || themes.length > 0 || partners.length > 0) && (
-//         <div className="p-6 bg-amber-50 rounded-xl border border-amber-200">
-//           <h3 className="font-semibold text-amber-900 mb-4">Event Overview</h3>
+//         <div className="p-6 bg-surface-main rounded-xl border border-brand-yellow-soft">
+//           <h3 className="font-semibold text-brand-gold mb-4">Event Overview</h3>
           
 //           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
 //             {speakers.length > 0 && (
 //               <div>
-//                 <h4 className="font-medium text-amber-800 mb-2">Speakers ({speakers.length})</h4>
+//                 <h4 className="font-medium text-brand-gold mb-2">Speakers ({speakers.length})</h4>
 //                 <div className="space-y-1">
 //                   {speakers.slice(0, 3).map((speaker: Speaker, index: number) => (
-//                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+//                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 //                       <div className="font-medium">
 //                         {speaker.title ? `${speaker.title} ` : ''}{speaker.name || "Unnamed Speaker"}
 //                       </div>
 //                       {speaker.designation && (
-//                         <div className="text-xs text-slate-600">{speaker.designation}</div>
+//                         <div className="text-xs text-ink-paragraph">{speaker.designation}</div>
 //                       )}
 //                     </div>
 //                   ))}
 //                   {speakers.length > 3 && (
-//                     <div className="text-xs text-slate-500">+{speakers.length - 3} more speakers</div>
+//                     <div className="text-xs text-ink-caption">+{speakers.length - 3} more speakers</div>
 //                   )}
 //                 </div>
 //               </div>
@@ -2612,18 +2612,18 @@
             
 //             {themes.length > 0 && (
 //               <div>
-//                 <h4 className="font-medium text-amber-800 mb-2">Themes ({themes.length})</h4>
+//                 <h4 className="font-medium text-brand-gold mb-2">Themes ({themes.length})</h4>
 //                 <div className="space-y-1">
 //                   {themes.slice(0, 3).map((theme: Theme, index: number) => (
-//                     <div key={index} className="bg-white p-2 rounded border border-amber-100">
+//                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
 //                       <div className="font-medium">{theme.themeTitle || "Untitled Theme"}</div>
 //                       {theme.day && (
-//                         <div className="text-xs text-slate-600">{theme.day}</div>
+//                         <div className="text-xs text-ink-paragraph">{theme.day}</div>
 //                       )}
 //                     </div>
 //                   ))}
 //                   {themes.length > 3 && (
-//                     <div className="text-xs text-slate-500">+{themes.length - 3} more themes</div>
+//                     <div className="text-xs text-ink-caption">+{themes.length - 3} more themes</div>
 //                   )}
 //                 </div>
 //               </div>
@@ -2631,10 +2631,10 @@
             
 //             {partners.length > 0 && (
 //               <div>
-//                 <h4 className="font-medium text-amber-800 mb-2">Partners ({partners.length})</h4>
+//                 <h4 className="font-medium text-brand-gold mb-2">Partners ({partners.length})</h4>
 //                 <div className="space-y-1">
 //                   {partners.slice(0, 5).map((partner: Partner, index: number) => (
-//                     <div key={index} className="bg-white p-2 rounded border border-amber-100 flex items-center gap-2">
+//                     <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft flex items-center gap-2">
 //                       {partner.logo && (
 //                         <img 
 //                           src={partner.logo} 
@@ -2646,7 +2646,7 @@
 //                     </div>
 //                   ))}
 //                   {partners.length > 5 && (
-//                     <div className="text-xs text-slate-500">+{partners.length - 5} more partners</div>
+//                     <div className="text-xs text-ink-caption">+{partners.length - 5} more partners</div>
 //                   )}
 //                 </div>
 //               </div>
@@ -2723,16 +2723,16 @@ const NameWithPrefix: React.FC<NameWithPrefixProps> = ({
 
   return (
     <div className="space-y-1">
-      <label className="block mb-1 font-medium text-slate-800 text-sm">
+      <label className="block mb-1 font-medium text-ink-charcoal text-sm">
         {label} {required && "*"}
       </label>
-      <div className="flex items-stretch border border-gray-300 rounded-lg hover:border-amber-400 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500 transition-colors">
+      <div className="flex items-stretch border border-ink-light rounded-lg hover:border-brand-yellow focus-within:border-brand-gold focus-within:ring-2 focus-within:ring-brand-gold transition-colors">
         {/* Prefix Dropdown */}
         <div className="relative flex-shrink-0 group">
           <select
             value={actualValue}
             onChange={(e) => onPrefixChange(e.target.value)}
-            className="h-10 pl-3 pr-8 text-sm bg-white border-0 rounded-l-lg focus:outline-none focus:ring-0 appearance-none text-gray-700 hover:bg-gray-50 transition-colors"
+            className="h-10 pl-3 pr-8 text-sm bg-surface-card border-0 rounded-l-lg focus:outline-none focus:ring-0 appearance-none text-ink-paragraph hover:bg-ink-offwhite transition-colors"
             style={{ minWidth: '80px' }}
           >
             {/* Remove the empty option and make "Mr" the default */}
@@ -2743,10 +2743,10 @@ const NameWithPrefix: React.FC<NameWithPrefixProps> = ({
             ))}
           </select>
           <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-            <ChevronDown className="w-4 h-4 text-gray-400" />
+            <ChevronDown className="w-4 h-4 text-ink-caption" />
           </div>
           {/* Vertical divider - FULL HEIGHT */}
-          <div className="absolute right-0 top-0 bottom-0 w-px bg-gray-300 group-hover:bg-gray-400 transition-colors"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-px bg-ink-light group-hover:bg-ink-caption transition-colors"></div>
         </div>
         
         {/* Name Input */}
@@ -2757,12 +2757,12 @@ const NameWithPrefix: React.FC<NameWithPrefixProps> = ({
             onChange={(e) => onNameChange(e.target.value)}
             required={required}
             placeholder={namePlaceholder}
-            className="w-full h-10 px-3 text-sm border-0 rounded-r-lg focus:outline-none focus:ring-0 text-gray-700 placeholder-gray-400 bg-white"
+            className="w-full h-10 px-3 text-sm border-0 rounded-r-lg focus:outline-none focus:ring-0 text-ink-paragraph placeholder-ink-caption bg-surface-card"
           />
         </div>
       </div>
       {error && (
-        <div className="text-xs text-red-600 mt-1">{error}</div>
+        <div className="text-xs text-status-error mt-1">{error}</div>
       )}
     </div>
   );
@@ -2921,8 +2921,8 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
     updateField("partners", updatedPartners);
   };
 
-  const baseInputClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
-  const baseTextareaClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full min-h-[80px] resize-vertical";
+  const baseInputClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full";
+  const baseTextareaClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full min-h-[80px] resize-vertical";
 
   // Helper function to render limited input
   const renderLimitedInput = (value: string, onChange: (value: string) => void, charLimit: number, placeholder: string, required = false) => {
@@ -2945,7 +2945,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
         />
         {charLimit && (
           <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-xs ${
-            charsRemaining < 10 ? 'text-red-500' : 'text-slate-500'
+            charsRemaining < 10 ? 'text-status-error' : 'text-ink-caption'
           }`}>
             {charsRemaining}
           </div>
@@ -2974,7 +2974,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
         />
         {charLimit && (
           <div className={`absolute bottom-3 right-3 text-xs ${
-            charsRemaining < 20 ? 'text-red-500' : 'text-slate-500'
+            charsRemaining < 20 ? 'text-status-error' : 'text-ink-caption'
           }`}>
             {charsRemaining}
           </div>
@@ -2986,35 +2986,35 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
   // Render speakers section
   const renderSpeakers = () => {
     return (
-      <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+      <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+          <h3 className="text-lg font-semibold text-ink flex items-center">
             <User className="w-5 h-5 mr-2" />
             Speakers
           </h3>
-          <p className="text-sm text-slate-600 mt-1">
+          <p className="text-sm text-ink-paragraph mt-1">
             Add speakers, panelists, and presenters for your event
           </p>
         </div>
 
         {speakers.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-            <User className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+          <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+            <User className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
             <p className="font-medium">No speakers added yet</p>
             <p className="text-sm mt-1">Add your event speakers to get started</p>
           </div>
         ) : (
           <div className="space-y-4">
             {speakers.map((speaker: Speaker, index: number) => (
-              <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+              <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
                 <div className="flex justify-between items-center">
-                  <h4 className="font-semibold text-slate-800">
+                  <h4 className="font-semibold text-ink-charcoal">
                     Speaker {index + 1}
                   </h4>
                   <button
                     type="button"
                     onClick={() => removeArrayItem("speakers", index)}
-                    className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+                    className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
                   >
                     <Minus className="w-4 h-4 mr-1" />
                     Remove
@@ -3037,7 +3037,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                   </div>
                   
                   <div>
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Designation
                     </label>
                     <input
@@ -3050,7 +3050,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                   </div>
                   
                   <div>
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Organization
                     </label>
                     <input
@@ -3063,7 +3063,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                   </div>
                   
                   <div>
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Day
                     </label>
                     <input
@@ -3076,7 +3076,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                   </div>
                   
                   <div>
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Sequence
                     </label>
                     <input
@@ -3106,7 +3106,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
               sequence: speakers.length + 1,
               prefix: "Mr" // Default to "Mr" when adding new speaker
             })}
-            className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+            className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Speaker
@@ -3119,35 +3119,35 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
   // Render themes section
   const renderThemes = () => {
     return (
-      <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+      <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+          <h3 className="text-lg font-semibold text-ink flex items-center">
             <Palette className="w-5 h-5 mr-2" />
             Event Themes
           </h3>
-          <p className="text-sm text-slate-600 mt-1">
+          <p className="text-sm text-ink-paragraph mt-1">
             Define the main themes or topics for each day of your event
           </p>
         </div>
 
         {themes.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-            <Palette className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+          <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+            <Palette className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
             <p className="font-medium">No themes added yet</p>
             <p className="text-sm mt-1">Add daily themes to structure your event</p>
           </div>
         ) : (
           <div className="space-y-4">
             {themes.map((theme: Theme, index: number) => (
-              <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+              <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
                 <div className="flex justify-between items-center">
-                  <h4 className="font-semibold text-slate-800">
+                  <h4 className="font-semibold text-ink-charcoal">
                     Theme {index + 1}
                   </h4>
                   <button
                     type="button"
                     onClick={() => removeArrayItem("themes", index)}
-                    className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+                    className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
                   >
                     <Minus className="w-4 h-4 mr-1" />
                     Remove
@@ -3156,7 +3156,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Day
                     </label>
                     <input
@@ -3169,9 +3169,9 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                   </div>
                   
                   <div className="md:col-span-2">
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Theme Title *
-                      <span className="text-slate-500 text-xs font-normal ml-2">
+                      <span className="text-ink-caption text-xs font-normal ml-2">
                         (max {characterLimits.themeTitle} characters)
                       </span>
                     </label>
@@ -3183,14 +3183,14 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                       true
                     )}
                     {errors[`themes-${index}-themeTitle`] && (
-                      <div className="text-xs text-red-600 mt-1">{errors[`themes-${index}-themeTitle`]}</div>
+                      <div className="text-xs text-status-error mt-1">{errors[`themes-${index}-themeTitle`]}</div>
                     )}
                   </div>
                   
                   <div className="md:col-span-2">
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Theme Details
-                      <span className="text-slate-500 text-xs font-normal ml-2">
+                      <span className="text-ink-caption text-xs font-normal ml-2">
                         (max {characterLimits.themeDetails} characters)
                       </span>
                     </label>
@@ -3216,7 +3216,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
               themeTitle: "",
               details: ""
             })}
-            className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+            className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Theme
@@ -3229,35 +3229,35 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
   // Render partners section
   const renderPartners = () => {
     return (
-      <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+      <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+          <h3 className="text-lg font-semibold text-ink flex items-center">
             <Users className="w-5 h-5 mr-2" />
             Partners & Sponsors
           </h3>
-          <p className="text-sm text-slate-600 mt-1">
+          <p className="text-sm text-ink-paragraph mt-1">
             List your event partners, sponsors, and collaborators
           </p>
         </div>
 
         {partners.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-amber-200">
-            <Users className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+          <div className="text-center py-8 text-ink-caption bg-surface-card rounded-lg border-2 border-dashed border-brand-yellow-soft">
+            <Users className="w-12 h-12 mx-auto mb-3 text-ink-caption" />
             <p className="font-medium">No partners added yet</p>
             <p className="text-sm mt-1">Add your event partners and sponsors</p>
           </div>
         ) : (
           <div className="space-y-6">
             {partners.map((partner: Partner, index: number) => (
-              <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+              <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
                 <div className="flex justify-between items-center">
-                  <h4 className="font-semibold text-slate-800">
+                  <h4 className="font-semibold text-ink-charcoal">
                     Partner {index + 1}
                   </h4>
                   <button
                     type="button"
                     onClick={() => removeArrayItem("partners", index)}
-                    className="text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center"
+                    className="text-status-error hover:text-status-error text-sm font-medium transition flex items-center"
                   >
                     <Minus className="w-4 h-4 mr-1" />
                     Remove
@@ -3266,7 +3266,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Partner Name *
                     </label>
                     <input
@@ -3278,12 +3278,12 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                       required
                     />
                     {errors[`partners-${index}-partnerName`] && (
-                      <div className="text-xs text-red-600 mt-1">{errors[`partners-${index}-partnerName`]}</div>
+                      <div className="text-xs text-status-error mt-1">{errors[`partners-${index}-partnerName`]}</div>
                     )}
                   </div>
                   
                   <div className="md:col-span-2">
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Organization
                     </label>
                     <input
@@ -3297,7 +3297,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
 
                   {/* Image Upload Section */}
                   <div className="md:col-span-2">
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Partner Logo
                     </label>
                     
@@ -3307,20 +3307,20 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                           <img 
                             src={partner.logo} 
                             alt="Partner logo" 
-                            className="w-20 h-20 object-contain border border-amber-200 rounded-lg"
+                            className="w-20 h-20 object-contain border border-brand-yellow-soft rounded-lg"
                           />
                           <button
                             type="button"
                             onClick={() => removeLogo(index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                            className="absolute -top-2 -right-2 bg-status-error text-white rounded-full p-1 hover:bg-status-error transition"
                           >
                             <X className="w-3 h-3" />
                           </button>
                         </div>
-                        <span className="text-sm text-slate-600">Logo uploaded</span>
+                        <span className="text-sm text-ink-paragraph">Logo uploaded</span>
                       </div>
                     ) : (
-                      <div className="border-2 border-dashed border-amber-300 rounded-lg p-6 text-center">
+                      <div className="border-2 border-dashed border-brand-yellow-soft rounded-lg p-6 text-center">
                         <input
                           type="file"
                           id={`partner-logo-${index}`}
@@ -3332,11 +3332,11 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                           htmlFor={`partner-logo-${index}`}
                           className="cursor-pointer flex flex-col items-center gap-2"
                         >
-                          <Upload className="w-8 h-8 text-amber-500" />
-                          <span className="text-sm font-medium text-amber-700">
+                          <Upload className="w-8 h-8 text-brand-gold" />
+                          <span className="text-sm font-medium text-brand-gold">
                             {uploading[index] ? 'Uploading...' : 'Upload Logo'}
                           </span>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-ink-caption">
                             Click to upload logo (Max 5MB)
                           </span>
                         </label>
@@ -3344,8 +3344,8 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                     )}
                     
                     {uploading[index] && (
-                      <div className="text-sm text-amber-600 mt-2 flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-amber-500 border-t-transparent"></div>
+                      <div className="text-sm text-brand-gold mt-2 flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-brand-gold border-t-transparent"></div>
                         Uploading logo...
                       </div>
                     )}
@@ -3365,7 +3365,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
               organization: "",
               logo: undefined 
             })}
-            className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+            className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Partner
@@ -3377,7 +3377,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+      <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
         {step.title}
       </h2>
 
@@ -3387,26 +3387,26 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
 
       {/* Summary Preview */}
       {(speakers.length > 0 || themes.length > 0 || partners.length > 0) && (
-        <div className="p-6 bg-amber-50 rounded-xl border border-amber-200">
-          <h3 className="font-semibold text-amber-900 mb-4">Event Overview</h3>
+        <div className="p-6 bg-surface-main rounded-xl border border-brand-yellow-soft">
+          <h3 className="font-semibold text-brand-gold mb-4">Event Overview</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
             {speakers.length > 0 && (
               <div>
-                <h4 className="font-medium text-amber-800 mb-2">Speakers ({speakers.length})</h4>
+                <h4 className="font-medium text-brand-gold mb-2">Speakers ({speakers.length})</h4>
                 <div className="space-y-1">
                   {speakers.slice(0, 3).map((speaker: Speaker, index: number) => (
-                    <div key={index} className="bg-white p-2 rounded border border-amber-100">
+                    <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
                       <div className="font-medium">
                         {(speaker.prefix || "Mr") + " " + (speaker.name || "Unnamed Speaker")}
                       </div>
                       {speaker.designation && (
-                        <div className="text-xs text-slate-600">{speaker.designation}</div>
+                        <div className="text-xs text-ink-paragraph">{speaker.designation}</div>
                       )}
                     </div>
                   ))}
                   {speakers.length > 3 && (
-                    <div className="text-xs text-slate-500">+{speakers.length - 3} more speakers</div>
+                    <div className="text-xs text-ink-caption">+{speakers.length - 3} more speakers</div>
                   )}
                 </div>
               </div>
@@ -3414,18 +3414,18 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
             
             {themes.length > 0 && (
               <div>
-                <h4 className="font-medium text-amber-800 mb-2">Themes ({themes.length})</h4>
+                <h4 className="font-medium text-brand-gold mb-2">Themes ({themes.length})</h4>
                 <div className="space-y-1">
                   {themes.slice(0, 3).map((theme: Theme, index: number) => (
-                    <div key={index} className="bg-white p-2 rounded border border-amber-100">
+                    <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft">
                       <div className="font-medium">{theme.themeTitle || "Untitled Theme"}</div>
                       {theme.day && (
-                        <div className="text-xs text-slate-600">{theme.day}</div>
+                        <div className="text-xs text-ink-paragraph">{theme.day}</div>
                       )}
                     </div>
                   ))}
                   {themes.length > 3 && (
-                    <div className="text-xs text-slate-500">+{themes.length - 3} more themes</div>
+                    <div className="text-xs text-ink-caption">+{themes.length - 3} more themes</div>
                   )}
                 </div>
               </div>
@@ -3433,10 +3433,10 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
             
             {partners.length > 0 && (
               <div>
-                <h4 className="font-medium text-amber-800 mb-2">Partners ({partners.length})</h4>
+                <h4 className="font-medium text-brand-gold mb-2">Partners ({partners.length})</h4>
                 <div className="space-y-1">
                   {partners.slice(0, 5).map((partner: Partner, index: number) => (
-                    <div key={index} className="bg-white p-2 rounded border border-amber-100 flex items-center gap-2">
+                    <div key={index} className="bg-surface-card p-2 rounded border border-brand-yellow-soft flex items-center gap-2">
                       {partner.logo && (
                         <img 
                           src={partner.logo} 
@@ -3448,7 +3448,7 @@ export const Step4 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                     </div>
                   ))}
                   {partners.length > 5 && (
-                    <div className="text-xs text-slate-500">+{partners.length - 5} more partners</div>
+                    <div className="text-xs text-ink-caption">+{partners.length - 5} more partners</div>
                   )}
                 </div>
               </div>

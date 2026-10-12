@@ -100,9 +100,9 @@ export function Skills({ skillsData }: SkillsProps) {
   // Loading state
   if ((isLoading && !dataLoaded) || (!dataLoaded && data.skills.length === 0)) {
     return (
-      <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+      <section ref={skillsRef} id="skills" className="py-20 bg-surface-main dark:bg-yellow-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
           <p className="text-muted-foreground mt-4">Loading skills data...</p>
         </div>
       </section>
@@ -110,7 +110,7 @@ export function Skills({ skillsData }: SkillsProps) {
   }
 
   return (
-    <section ref={skillsRef} id="skills" className="py-20 bg-yellow-50 dark:bg-yellow-900/20">
+    <section ref={skillsRef} id="skills" className="py-20 bg-surface-main dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -119,10 +119,10 @@ export function Skills({ skillsData }: SkillsProps) {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-ink dark:text-white mb-4">
             {data.header.title}
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-center">
+          <p className="text-lg text-ink-paragraph dark:text-gray-300 max-w-2xl mx-auto text-center">
             {data.header.subtitle}
           </p>
         </motion.div>
@@ -140,35 +140,35 @@ export function Skills({ skillsData }: SkillsProps) {
                 scale: 1.02,
                 transition: { duration: 0.3 }
               }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700"
+              className="bg-surface-card dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-ink-light dark:border-gray-700"
             >
               {/* Icon Display - Using static images with cycling */}
               <motion.div
-                className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mb-4 overflow-hidden"
+                className="w-16 h-16 bg-brand-yellow rounded-full flex items-center justify-center mb-4 overflow-hidden"
               >
                 {renderSkillIcon(index)}
               </motion.div>
 
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-xl font-semibold text-ink dark:text-white mb-2">
                 {skill.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-justify">
+              <p className="text-ink-paragraph dark:text-gray-300 mb-4 leading-relaxed text-justify">
                 {skill.description}
               </p>
 
               {/* Progress Bar */}
               <div className="relative">
-                <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
+                <div className="flex justify-between text-sm text-ink-paragraph dark:text-gray-400 mb-2">
                   <span className="font-medium">Proficiency</span>
                   <span className="font-semibold">{skill.level}%</span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-ink-light dark:bg-gray-700 rounded-full h-3 overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: `${skill.level}%` }}
                     transition={{ duration: 1, delay: index * 0.1, ease: "easeOut" }}
                     viewport={{ once: true }}
-                    className="bg-yellow-400 h-3 rounded-full shadow-inner"
+                    className="bg-brand-yellow h-3 rounded-full shadow-inner"
                   />
                 </div>
               </div>

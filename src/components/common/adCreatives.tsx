@@ -33,44 +33,48 @@ export function getAdsFor(zone: string, pathname: string): MediaItem[] {
 // carries ad placements so the same few creatives rotate consistently instead
 // of every page inventing its own.
 export const DroneAdCreative = () => (
-  <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-black flex flex-col items-center justify-center text-center p-4 gap-1">
+  <div className="w-full h-full bg-surface-darksection flex flex-col items-center justify-center text-center p-4 gap-1">
     <span className="text-4xl">🚁</span>
-    <span className="text-yellow-400 font-extrabold text-sm">DroneTech Pro Series</span>
+    <span className="text-brand-yellow font-extrabold text-sm">DroneTech Pro Series</span>
     <span className="text-white/60 text-[11px]">Precision UAVs for Agriculture &amp; Survey</span>
-    <span className="mt-1 bg-yellow-400 text-black text-[10px] font-bold px-2 py-0.5 rounded-full">Shop Now →</span>
+    <span className="mt-1 bg-brand-yellow text-ink text-[10px] font-bold px-2 py-0.5 rounded-full">Shop Now →</span>
   </div>
 );
 
+// Premium/special-highlight card — Gold Gradient is one of the three approved
+// gradients (DESIGN_SYSTEM.md section 13), used here since this is exactly
+// that kind of promotional highlight card.
 export const ExpoAdCreative = () => (
-  <div className="w-full h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 flex items-center justify-center gap-3 px-4">
+  <div className="w-full h-full bg-gradient-to-r from-brand-yellow to-brand-gold flex items-center justify-center gap-3 px-4">
     <span className="text-2xl flex-shrink-0">🏛️</span>
     <div className="text-center min-w-0">
-      <span className="block text-black font-extrabold text-sm truncate">Drone Expo 2026 — Bengaluru</span>
-      <span className="block text-black/70 text-[11px] truncate">Register now — Early Bird Pricing Ends Soon</span>
+      <span className="block text-ink font-extrabold text-sm truncate">Drone Expo 2026 — Bengaluru</span>
+      <span className="block text-ink/70 text-[11px] truncate">Register now — Early Bird Pricing Ends Soon</span>
     </div>
-    <span className="bg-black text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">Register →</span>
+    <span className="bg-ink text-brand-yellow text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">Register →</span>
   </div>
 );
 
 // Thin horizontal banner — fits short strip zones (~64-100px tall)
 export const TrainingAdCreative = () => (
-  <div className="w-full h-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 flex items-center justify-center gap-3 px-4">
+  <div className="w-full h-full bg-surface-darksection flex items-center justify-center gap-3 px-4">
     <span className="text-2xl flex-shrink-0">🎓</span>
     <div className="text-center min-w-0">
       <span className="block text-white font-extrabold text-sm truncate">DGCA RPTO Certification — Enroll Today</span>
       <span className="block text-white/70 text-[11px] truncate">5-day Small Category course · Job placement support</span>
     </div>
-    <span className="bg-yellow-400 text-black text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">Enroll →</span>
+    <span className="bg-brand-yellow text-ink text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">Enroll →</span>
   </div>
 );
 
-// Tall vertical creative — fits a 300x600 premium sidebar slot
+// Tall vertical creative — fits a 300x600 premium sidebar slot. Gold Gradient
+// (approved, section 13) applied vertically.
 export const PartnerAdCreative = () => (
-  <div className="w-full h-full bg-gradient-to-b from-amber-500 via-yellow-400 to-amber-500 flex flex-col items-center justify-center text-center p-5 gap-2">
+  <div className="w-full h-full bg-gradient-to-b from-brand-yellow to-brand-gold flex flex-col items-center justify-center text-center p-5 gap-2">
     <span className="text-5xl">🤝</span>
-    <span className="text-black font-extrabold text-base leading-snug">Partner With DroneTv.in</span>
-    <span className="text-black/70 text-xs leading-relaxed">Reach 39,890+ certified drone pilots and 500+ verified companies across India</span>
-    <span className="mt-2 bg-black text-yellow-400 text-xs font-bold px-4 py-2 rounded-full">Get Started →</span>
+    <span className="text-ink font-extrabold text-base leading-snug">Partner With DroneTv.in</span>
+    <span className="text-ink/70 text-xs leading-relaxed">Reach 39,890+ certified drone pilots and 500+ verified companies across India</span>
+    <span className="mt-2 bg-ink text-brand-yellow text-xs font-bold px-4 py-2 rounded-full">Get Started →</span>
   </div>
 );
 
@@ -83,6 +87,10 @@ export function withInlineAds<T>(arr: T[], render: (item: T, i: number) => React
   const out: ReactNode[] = [];
   arr.forEach((item, i) => {
     out.push(render(item, i));
+    // Only insert an inline ad break when the admin has actually published
+    // one for this zone - no filler creative otherwise, so drafting/
+    // unpublishing every ad genuinely clears the feed instead of leaving a
+    // house placeholder that looks like an ad that won't come down.
     if (realAds.length > 0 && (i + 1) % 3 === 0 && i !== arr.length - 1) {
       const realAd = realAds[Math.floor(i / 3) % realAds.length];
       out.push(
@@ -102,12 +110,14 @@ export function AdSidebarRail() {
   const { pathname } = useLocation();
   const heights = [250, 600, 250];
   const realAds = getAdsFor('sidebar', pathname).slice(0, 3);
+  // Render only real published sidebar ads - no dummy slots when the admin
+  // has none, so the rail simply isn't there rather than showing filler.
   if (realAds.length === 0) return null;
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-[300px] lg:flex-shrink-0 gap-4">
       {realAds.map((realAd, i) => (
         <div key={i}>
-          <span className="text-center text-[10px] font-semibold text-gray-400 uppercase tracking-widest block mb-1">Advertisement</span>
+          <span className="text-center text-[10px] font-semibold text-ink-caption uppercase tracking-widest block mb-1">Advertisement</span>
           <AdSlot image={realAd.imageUrl} href={realAd.externalLink} alt={realAd.title} width={300} height={heights[i] ?? 250} />
         </div>
       ))}
@@ -120,9 +130,11 @@ export function AdSidebarRail() {
 export function SponsorBadge() {
   const { pathname } = useLocation();
   const realAd = getAdsFor('sponsor-badge', pathname)[0];
+  // Only show the badge when there's an actual sponsor - a permanent
+  // "Sponsored" tag with no advertiser behind it just looks broken.
   if (!realAd) return null;
   return (
-    <span className="absolute -top-2 -right-1 bg-white text-red-600 border border-red-600 text-[8px] font-bold px-1 rounded leading-tight">
+    <span className="absolute -top-2 -right-1 bg-badge-premium text-badge-premium-text border border-badge-premium-text text-[8px] font-bold px-1 rounded leading-tight">
       {`Sponsored by ${realAd.company || realAd.title}`}
     </span>
   );

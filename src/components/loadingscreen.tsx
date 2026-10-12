@@ -10,14 +10,14 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   loadingText = "Loading..."
 }) => {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 z-[9999] overflow-hidden">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-brand-yellow via-brand-gold to-brand-gold z-[9999] overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-30">
         {/* Floating particles */}
         {[...Array(12)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 bg-red-500 rounded-full animate-float"
+            className="absolute w-2 h-2 bg-status-error rounded-full animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -29,20 +29,20 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         
         {/* Pulse rings */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="w-64 h-64 border-4 border-red-500 rounded-full animate-ping-slow opacity-20"></div>
-          <div className="w-80 h-80 border-4 border-red-400 rounded-full animate-ping-slower opacity-15"></div>
+          <div className="w-64 h-64 border-4 border-status-error rounded-full animate-ping-slow opacity-20"></div>
+          <div className="w-80 h-80 border-4 border-status-error rounded-full animate-ping-slower opacity-15"></div>
         </div>
       </div>
 
       {/* Enhanced Logo Container */}
       <div className="relative w-40 h-40 flex items-center justify-center mb-8">
         {/* Outer rotating ring */}
-        <div className="absolute inset-0 border-4 border-transparent border-t-red-500 border-r-red-500 rounded-full animate-spin-slow"></div>
-        <div className="absolute inset-4 border-4 border-transparent border-b-yellow-300 border-l-yellow-300 rounded-full animate-spin-slow-reverse"></div>
+        <div className="absolute inset-0 border-4 border-transparent border-t-status-error border-r-status-error rounded-full animate-spin-slow"></div>
+        <div className="absolute inset-4 border-4 border-transparent border-b-brand-yellow-soft border-l-brand-yellow-soft rounded-full animate-spin-slow-reverse"></div>
         
         {/* Logo with enhanced animation */}
         <div className="relative w-24 h-24 flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-yellow-400 rounded-full blur-lg opacity-70 animate-pulse-slow"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-status-error to-brand-yellow rounded-full blur-lg opacity-70 animate-pulse-slow"></div>
           <img
             src={logoSrc}
             alt="Loading..."
@@ -76,7 +76,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="w-4 h-4 bg-gradient-to-br from-red-500 to-red-600 rounded-full animate-bounce-slow shadow-lg"
+              className="w-4 h-4 bg-gradient-to-br from-status-error to-status-error rounded-full animate-bounce-slow shadow-lg"
               style={{ animationDelay: `${i * 0.2}s` }}
             />
           ))}
@@ -85,8 +85,8 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
 
       {/* Enhanced Progress bar */}
       <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-80">
-        <div className="w-full h-2 bg-black/20 rounded-full overflow-hidden shadow-inner">
-          <div className="h-full bg-gradient-to-r from-red-500 via-yellow-400 to-red-500 rounded-full animate-shimmer bg-[length:200%_100%]"></div>
+        <div className="w-full h-2 bg-ink/20 rounded-full overflow-hidden shadow-inner">
+          <div className="h-full bg-gradient-to-r from-status-error via-brand-yellow to-status-error rounded-full animate-shimmer bg-[length:200%_100%]"></div>
         </div>
         <div className="text-center mt-2 text-white/80 text-sm font-medium tracking-wide">
           Preparing your experience...

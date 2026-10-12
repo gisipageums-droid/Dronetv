@@ -26,7 +26,7 @@ export default function ServicesProductsTab({ publishedId, userId, draftId, temp
     const url = COMPANY_API
       ? `${COMPANY_API}/draft/${userId}/${draftId}?template=${template}`
       : `${LAMBDA.companyDraft}/api/draft/${userId}/${draftId}?template=${template}`;
-    fetch(url)
+    fetch(url, { headers: authHeaders() })
       .then(r => r.json())
       .then(data => {
         const cats: string[] = data?.formData?.companyCategory;

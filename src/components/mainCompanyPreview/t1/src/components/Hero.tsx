@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { useEffect, useState, useRef } from "react";
+import { Award } from "lucide-react";
 const HeroBackground = "/images/hero/HeroBackground.jpg";
 
 // Sample images (replace with your actual imports)
@@ -32,8 +33,9 @@ const imageVariants = {
 export default function EditableHero({
   heroData,
   onStateChange,
+  badgeStatus,
 
-}) {
+}: any) {
   const [isLoading, setIsLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -143,6 +145,15 @@ export default function EditableHero({
                 {heroState.subheading}
               </span>
             </motion.h1>
+
+            {badgeStatus === "SILVER" && (
+              <span
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-white text-xs font-bold uppercase tracking-wide"
+                title="Silver - Profile verified by DroneTV team"
+              >
+                <Award size={13} /> Silver &middot; Profile verified by DroneTV
+              </span>
+            )}
 
             <motion.p
               className="text-base sm:text-md lg:text-md text-ink-light max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0 leading-relaxed"

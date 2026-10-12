@@ -65,12 +65,12 @@ function parseMarkdown(text: string): string {
     .replace(/\*([^*\n]+)\*/g, "<b>$1</b>")
     .replace(/_([^_\n]+)_/g, "<i>$1</i>")
     .replace(/~([^~\n]+)~/g, "<s>$1</s>")
-    .replace(/`([^`\n]+)`/g, "<code class='text-xs bg-gray-100 px-1 rounded'>$1</code>")
+    .replace(/`([^`\n]+)`/g, "<code class='text-xs bg-ink-light px-1 rounded'>$1</code>")
     .replace(/\n/g, "<br>");
 }
 
 function applyVars(text: string, samples: Record<string, string>): string {
-  return text.replace(/\{\{(\d+)\}\}/g, (_, n) => samples[n] ? `<span class="bg-amber-100 text-amber-800 rounded px-0.5">${samples[n]}</span>` : `{{${n}}}`);
+  return text.replace(/\{\{(\d+)\}\}/g, (_, n) => samples[n] ? `<span class="bg-brand-yellow-soft text-brand-gold rounded px-0.5">${samples[n]}</span>` : `{{${n}}}`);
 }
 
 // ── Toast ──────────────────────────────────────────────────────
@@ -79,9 +79,9 @@ function Toast({ toasts, dismiss }: { toasts: ToastMsg[]; dismiss: (id: number) 
     <div className="fixed top-5 right-5 z-[200] flex flex-col gap-2 pointer-events-none">
       {toasts.map(t => (
         <div key={t.id} className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium pointer-events-auto ${
-          t.type === "success" ? "bg-green-50 text-green-800 border border-green-200" : "bg-red-50 text-red-800 border border-red-200"
+          t.type === "success" ? "bg-status-success/10 text-status-success border border-status-success/25" : "bg-status-error/10 text-status-error border border-status-error/25"
         }`}>
-          {t.type === "success" ? <CheckCircle2 size={16} className="text-green-600 shrink-0" /> : <AlertTriangle size={16} className="text-red-500 shrink-0" />}
+          {t.type === "success" ? <CheckCircle2 size={16} className="text-status-success shrink-0" /> : <AlertTriangle size={16} className="text-status-error shrink-0" />}
           <span>{t.text}</span>
           <button onClick={() => dismiss(t.id)} className="ml-2 opacity-50 hover:opacity-100"><X size={14} /></button>
         </div>
@@ -93,21 +93,21 @@ function Toast({ toasts, dismiss }: { toasts: ToastMsg[]; dismiss: (id: number) 
 // ── Category Badge ─────────────────────────────────────────────
 function CategoryBadge({ category }: { category: string }) {
   const cfg: Record<string, string> = {
-    MARKETING: "bg-amber-100 text-amber-700",
-    UTILITY: "bg-blue-100 text-blue-700",
-    AUTHENTICATION: "bg-green-100 text-green-700",
+    MARKETING: "bg-brand-yellow-soft text-brand-gold",
+    UTILITY: "bg-status-info/15 text-status-info",
+    AUTHENTICATION: "bg-status-success/15 text-status-success",
   };
-  return <span className={`inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${cfg[category?.toUpperCase()] ?? "bg-gray-100 text-gray-500"}`}>{category || "—"}</span>;
+  return <span className={`inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${cfg[category?.toUpperCase()] ?? "bg-ink-light text-ink-caption"}`}>{category || "—"}</span>;
 }
 
 function StatusBadge({ status }: { status?: string }) {
   if (!status) return null;
   const cfg: Record<string, string> = {
-    APPROVED: "bg-green-100 text-green-700",
-    PENDING:  "bg-amber-100 text-amber-700",
-    REJECTED: "bg-red-100 text-red-700",
+    APPROVED: "bg-status-success/15 text-status-success",
+    PENDING:  "bg-brand-yellow-soft text-brand-gold",
+    REJECTED: "bg-status-error/15 text-status-error",
   };
-  return <span className={`inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${cfg[status?.toUpperCase()] ?? "bg-gray-100 text-gray-500"}`}>{status}</span>;
+  return <span className={`inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${cfg[status?.toUpperCase()] ?? "bg-ink-light text-ink-caption"}`}>{status}</span>;
 }
 
 // ── Preview Panel ──────────────────────────────────────────────
@@ -117,34 +117,34 @@ function TemplatePreview({ form }: { form: TForm }) {
 
   return (
     <div className="sticky top-5">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Template Preview</p>
+      <p className="text-xs font-semibold text-ink-caption uppercase tracking-wider mb-3">Template Preview</p>
       <div className="bg-[#e5ddd5] rounded-2xl p-4">
-        <p className="text-[10px] text-center text-gray-500 mb-3 font-medium">Chat Background</p>
-        <div className="bg-white rounded-xl rounded-tl-none shadow-sm overflow-hidden max-w-full">
+        <p className="text-[10px] text-center text-ink-caption mb-3 font-medium">Chat Background</p>
+        <div className="bg-surface-card rounded-xl rounded-tl-none shadow-sm overflow-hidden max-w-full">
           {form.header && (
             <div className="px-3 pt-3 pb-1">
-              <p className="text-sm font-semibold text-gray-900" dangerouslySetInnerHTML={{ __html: headerHtml }} />
+              <p className="text-sm font-semibold text-ink" dangerouslySetInnerHTML={{ __html: headerHtml }} />
             </div>
           )}
           {form.body && (
             <div className="px-3 py-2">
-              <p className="text-sm text-gray-800 leading-relaxed" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+              <p className="text-sm text-ink-charcoal leading-relaxed" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
             </div>
           )}
           {form.footer && (
             <div className="px-3 pb-3">
-              <p className="text-xs text-gray-400">{form.footer}</p>
+              <p className="text-xs text-ink-caption">{form.footer}</p>
             </div>
           )}
           {!form.header && !form.body && !form.footer && (
-            <div className="px-3 py-4 text-xs text-gray-400 italic">Your message will appear here…</div>
+            <div className="px-3 py-4 text-xs text-ink-caption italic">Your message will appear here…</div>
           )}
           {form.buttons.length > 0 && (
-            <div className="border-t border-gray-100">
+            <div className="border-t border-ink-light">
               {form.buttons.map((btn, i) => (
-                <div key={i} className="py-2 text-center text-sm font-medium text-blue-500 border-t border-gray-100 first:border-t-0">
+                <div key={i} className="py-2 text-center text-sm font-medium text-status-info border-t border-ink-light first:border-t-0">
                   {btn.type === "URL" || btn.type === "DYNAMIC_URL" ? "🔗 " : btn.type === "PHONE_NUMBER" ? "📞 " : btn.type === "COPY_CODE" ? "📋 " : "↩ "}
-                  {btn.text || <span className="italic text-gray-400 text-xs">{BUTTON_TYPES.find(t => t.value === btn.type)?.label}</span>}
+                  {btn.text || <span className="italic text-ink-caption text-xs">{BUTTON_TYPES.find(t => t.value === btn.type)?.label}</span>}
                 </div>
               ))}
             </div>
@@ -221,26 +221,26 @@ function CreateForm({ initial, metaConfigs, onBack, onSaved, addToast }: CreateF
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 shrink-0">
-        <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 font-medium transition-colors">
+      <div className="flex items-center gap-3 px-6 py-4 border-b border-ink-light shrink-0">
+        <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-ink-caption hover:text-ink-charcoal font-medium transition-colors">
           <ArrowLeft size={16} /> Back
         </button>
-        <span className="text-gray-300">/</span>
-        <h2 className="text-base font-bold text-gray-900">{isEdit ? "Edit Template" : "Template Configuration"}</h2>
+        <span className="text-ink-light">/</span>
+        <h2 className="text-base font-bold text-ink">{isEdit ? "Edit Template" : "Template Configuration"}</h2>
       </div>
 
       {/* Two-column body */}
       <div className="flex-1 overflow-hidden flex">
 
         {/* LEFT: Form */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 border-r border-gray-100">
+        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 border-r border-ink-light">
 
           {/* WhatsApp Number */}
           {metaConfigs.length > 0 && (
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Select WhatsApp Number</label>
+              <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Select WhatsApp Number</label>
               <select value={form.phone_number_id} onChange={e => set("phone_number_id", e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white">
+                className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card">
                 {metaConfigs.map(mc => (
                   <option key={mc.id} value={mc.phone_number_id}>{mc.phone_number_id}</option>
                 ))}
@@ -250,26 +250,26 @@ function CreateForm({ initial, metaConfigs, onBack, onSaved, addToast }: CreateF
 
           {/* Name */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Template Name *</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Template Name *</label>
             <input value={form.name}
               onChange={e => set("name", e.target.value.toLowerCase().replace(/\s+/g, "_"))}
               placeholder="e.g. order_confirmation"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
           </div>
 
           {/* Language + Category */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Template Language *</label>
+              <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Template Language *</label>
               <select value={form.language} onChange={e => set("language", e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white">
+                className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card">
                 {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Category *</label>
+              <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Category *</label>
               <select value={form.category} onChange={e => set("category", e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white">
+                className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card">
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
@@ -277,25 +277,25 @@ function CreateForm({ initial, metaConfigs, onBack, onSaved, addToast }: CreateF
 
           {/* Use For */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Use For (Optional)</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Use For (Optional)</label>
             <select value={form.use_for} onChange={e => set("use_for", e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white">
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card">
               <option value="">Select…</option>
               {USE_FOR_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
             </select>
           </div>
 
           {/* Formatting Help */}
-          <div className="rounded-lg border border-gray-200 overflow-hidden">
+          <div className="rounded-lg border border-ink-light overflow-hidden">
             <button type="button" onClick={() => setShowHelp(v => !v)}
-              className="w-full flex items-center justify-between px-4 py-3 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
-              <span className="flex items-center gap-2"><Info size={14} className="text-amber-500" />Template Formatting Help</span>
+              className="w-full flex items-center justify-between px-4 py-3 text-xs font-semibold text-ink-paragraph hover:bg-ink-offwhite transition-colors">
+              <span className="flex items-center gap-2"><Info size={14} className="text-brand-gold" />Template Formatting Help</span>
               {showHelp ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
             {showHelp && (
-              <div className="px-4 pb-3 pt-2 text-xs text-gray-500 border-t border-gray-100 space-y-1">
-                <p>Use <code className="bg-gray-100 px-1 rounded">*bold*</code>, <code className="bg-gray-100 px-1 rounded">_italic_</code>, <code className="bg-gray-100 px-1 rounded">~strikethrough~</code>, <code className="bg-gray-100 px-1 rounded">`code`</code>, and <code className="bg-gray-100 px-1 rounded">{"{{1}}"}</code> for variables</p>
-                <a href="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates" target="_blank" rel="noreferrer" className="text-amber-600 hover:underline">Learn more</a>
+              <div className="px-4 pb-3 pt-2 text-xs text-ink-caption border-t border-ink-light space-y-1">
+                <p>Use <code className="bg-ink-light px-1 rounded">*bold*</code>, <code className="bg-ink-light px-1 rounded">_italic_</code>, <code className="bg-ink-light px-1 rounded">~strikethrough~</code>, <code className="bg-ink-light px-1 rounded">`code`</code>, and <code className="bg-ink-light px-1 rounded">{"{{1}}"}</code> for variables</p>
+                <a href="https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates" target="_blank" rel="noreferrer" className="text-brand-gold hover:underline">Learn more</a>
               </div>
             )}
           </div>
@@ -303,26 +303,26 @@ function CreateForm({ initial, metaConfigs, onBack, onSaved, addToast }: CreateF
           {/* Header */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-semibold text-gray-600">Header (Optional)</label>
-              <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded font-medium">Text</span>
+              <label className="text-xs font-semibold text-ink-paragraph">Header (Optional)</label>
+              <span className="text-xs text-ink-caption bg-ink-light px-2 py-0.5 rounded font-medium">Text</span>
             </div>
             <input value={form.header} onChange={e => set("header", e.target.value)}
               placeholder="*hello welcome*"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
             <button type="button" onClick={() => set("header", form.header + `{{${nextVar(form.header + form.body)}}}`)}
-              className="mt-1.5 text-xs text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-1">
+              className="mt-1.5 text-xs text-brand-gold hover:text-brand-yellow font-semibold flex items-center gap-1">
               <Plus size={11} /> Add Variable
             </button>
           </div>
 
           {/* Body */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Body *</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Body *</label>
             <textarea value={form.body} onChange={e => set("body", e.target.value)} rows={5}
               placeholder="Enter the text for your message in the language you've selected."
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none" />
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow resize-none" />
             <button type="button" onClick={() => set("body", form.body + `{{${nextVar(form.header + form.body)}}}`)}
-              className="mt-1.5 text-xs text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-1">
+              className="mt-1.5 text-xs text-brand-gold hover:text-brand-yellow font-semibold flex items-center gap-1">
               <Plus size={11} /> Add Variable
             </button>
           </div>
@@ -330,15 +330,15 @@ function CreateForm({ initial, metaConfigs, onBack, onSaved, addToast }: CreateF
           {/* Sample Variables */}
           {allVars.length > 0 && (
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-2">Sample Text for Variables *</label>
+              <label className="block text-xs font-semibold text-ink-paragraph mb-2">Sample Text for Variables *</label>
               <div className="space-y-2">
                 {allVars.map(n => (
                   <div key={n}>
-                    <label className="block text-xs text-gray-500 mb-1">Variable {`{{${n}}}`} *</label>
+                    <label className="block text-xs text-ink-caption mb-1">Variable {`{{${n}}}`} *</label>
                     <input value={form.samples[n] ?? ""}
                       onChange={e => set("samples", { ...form.samples, [n]: e.target.value })}
                       placeholder={`Sample value for {{${n}}} (Required)`}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                      className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                   </div>
                 ))}
               </div>
@@ -347,58 +347,58 @@ function CreateForm({ initial, metaConfigs, onBack, onSaved, addToast }: CreateF
 
           {/* Footer */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Footer (Optional)</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Footer (Optional)</label>
             <input value={form.footer} onChange={e => set("footer", e.target.value)}
               placeholder="Add a short line of text to the bottom of your message template."
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
           </div>
 
           {/* Buttons */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-gray-600">Buttons (Optional)</label>
+              <label className="text-xs font-semibold text-ink-paragraph">Buttons (Optional)</label>
               <button type="button"
                 onClick={() => set("buttons", [...form.buttons, { type: "QUICK_REPLY", text: "" }])}
-                className="text-xs text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-1">
+                className="text-xs text-brand-gold hover:text-brand-yellow font-semibold flex items-center gap-1">
                 <Plus size={11} /> Add Button
               </button>
             </div>
-            <p className="text-xs text-gray-400 mb-3">Create buttons that let customers respond to your message or take action.</p>
+            <p className="text-xs text-ink-caption mb-3">Create buttons that let customers respond to your message or take action.</p>
             {form.buttons.length > 0 && (
               <div className="space-y-3">
                 {form.buttons.map((btn, i) => (
-                  <div key={i} className="p-3 border border-gray-200 rounded-xl bg-gray-50 space-y-2">
+                  <div key={i} className="p-3 border border-ink-light rounded-xl bg-ink-offwhite space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-gray-500">{i + 1}</span>
+                      <span className="text-xs font-bold text-ink-caption">{i + 1}</span>
                       <button type="button" onClick={() => set("buttons", form.buttons.filter((_, idx) => idx !== i))}
-                        className="text-gray-400 hover:text-red-500 transition-colors"><X size={14} /></button>
+                        className="text-ink-caption hover:text-status-error transition-colors"><X size={14} /></button>
                     </div>
                     <select value={btn.type}
                       onChange={e => { const next = [...form.buttons]; next[i] = { ...next[i], type: e.target.value }; set("buttons", next); }}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white">
+                      className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow bg-surface-card">
                       {BUTTON_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                     </select>
                     <input value={btn.text}
                       onChange={e => { const next = [...form.buttons]; next[i] = { ...next[i], text: e.target.value }; set("buttons", next); }}
                       placeholder="Button Text"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                      className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                     {(btn.type === "URL" || btn.type === "DYNAMIC_URL") && (
                       <input value={btn.url ?? ""}
                         onChange={e => { const next = [...form.buttons]; next[i] = { ...next[i], url: e.target.value }; set("buttons", next); }}
                         placeholder="https://example.com"
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                        className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                     )}
                     {btn.type === "PHONE_NUMBER" && (
                       <input value={btn.phone ?? ""}
                         onChange={e => { const next = [...form.buttons]; next[i] = { ...next[i], phone: e.target.value }; set("buttons", next); }}
                         placeholder="+1234567890"
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                        className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                     )}
                     {btn.type === "COPY_CODE" && (
                       <input value={btn.code ?? ""}
                         onChange={e => { const next = [...form.buttons]; next[i] = { ...next[i], code: e.target.value }; set("buttons", next); }}
                         placeholder="Coupon code"
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                        className="w-full border border-ink-light rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
                     )}
                   </div>
                 ))}
@@ -409,11 +409,11 @@ function CreateForm({ initial, metaConfigs, onBack, onSaved, addToast }: CreateF
           {/* Actions */}
           <div className="flex gap-3 pt-2 pb-8">
             <button type="button" onClick={onBack}
-              className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-800 border border-gray-200 rounded-lg transition-colors">
+              className="px-5 py-2.5 text-sm font-medium text-ink-paragraph hover:text-ink-charcoal border border-ink-light rounded-lg transition-colors">
               Cancel
             </button>
             <button type="button" onClick={submit} disabled={saving}
-              className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-6 py-2.5 disabled:opacity-50 transition-colors">
+              className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-6 py-2.5 disabled:opacity-50 transition-colors">
               {saving ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
               {isEdit ? "Save Changes" : "Create Template"}
             </button>
@@ -421,7 +421,7 @@ function CreateForm({ initial, metaConfigs, onBack, onSaved, addToast }: CreateF
         </div>
 
         {/* RIGHT: Preview */}
-        <div className="w-72 shrink-0 px-5 py-5 hidden lg:block overflow-y-auto bg-gray-50/50">
+        <div className="w-72 shrink-0 px-5 py-5 hidden lg:block overflow-y-auto bg-ink-offwhite/50">
           <TemplatePreview form={form} />
         </div>
       </div>
@@ -433,7 +433,7 @@ function CreateForm({ initial, metaConfigs, onBack, onSaved, addToast }: CreateF
 export default function WaTemplatesPanel() {
   if (!localStorage.getItem("echoleads_api_key")) {
     return (
-      <div className="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+      <div className="flex flex-col items-center justify-center h-full py-20 text-ink-caption">
         <p className="text-sm font-medium">Not connected</p>
         <p className="text-xs mt-1">Go to Authentication tab first.</p>
       </div>
@@ -529,23 +529,23 @@ export default function WaTemplatesPanel() {
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between px-6 pt-5 pb-4">
         <div className="flex items-center gap-2 flex-1 max-w-sm">
           <div className="relative flex-1">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-caption pointer-events-none" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search templates…"
-              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              className="w-full pl-9 pr-3 py-2 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
           </div>
           <button onClick={load} title="Refresh"
-            className="p-2 rounded-lg border border-gray-200 text-gray-400 hover:text-amber-500 hover:border-amber-200 transition-colors">
+            className="p-2 rounded-lg border border-ink-light text-ink-caption hover:text-brand-yellow hover:border-brand-yellow-soft transition-colors">
             <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
           </button>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <button onClick={handleSync} disabled={syncing}
-            className="flex items-center gap-2 px-4 py-2 border border-amber-300 text-amber-700 text-sm font-semibold rounded-lg hover:bg-amber-50 disabled:opacity-50 transition-colors">
+            className="flex items-center gap-2 px-4 py-2 border border-brand-yellow-soft text-brand-gold text-sm font-semibold rounded-lg hover:bg-surface-main disabled:opacity-50 transition-colors">
             {syncing ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}
             Sync from Meta
           </button>
           <button onClick={openCreate}
-            className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors">
+            className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors">
             <Plus size={16} /> New Template
           </button>
         </div>
@@ -554,11 +554,11 @@ export default function WaTemplatesPanel() {
       {/* List */}
       <div className="flex-1 overflow-y-auto px-6 pb-6">
         {loading ? (
-          <div className="flex items-center justify-center py-20 text-gray-400">
+          <div className="flex items-center justify-center py-20 text-ink-caption">
             <Loader2 size={24} className="animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-20 text-ink-caption">
             <LayoutTemplate size={36} className="mb-3 opacity-30" />
             <p className="text-sm font-medium">{search ? "No templates match your search" : "No templates yet"}</p>
             <p className="text-xs mt-1">{search ? "Try a different name." : "Sync from Meta or create a new template."}</p>
@@ -566,11 +566,11 @@ export default function WaTemplatesPanel() {
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map(t => (
-              <div key={t.id} className="bg-white border border-gray-100 rounded-xl p-4 hover:border-amber-200 hover:shadow-sm transition-all">
+              <div key={t.id} className="bg-surface-card border border-ink-light rounded-xl p-4 hover:border-brand-yellow-soft hover:shadow-sm transition-all">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{t.name}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-sm font-semibold text-ink truncate">{t.name}</p>
+                    <p className="text-xs text-ink-caption mt-0.5">
                       {t.created_at ? new Date(t.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
                     </p>
                   </div>
@@ -578,21 +578,21 @@ export default function WaTemplatesPanel() {
                 </div>
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <CategoryBadge category={t.category} />
-                  <span className="text-xs text-gray-400 font-medium">{t.language}</span>
+                  <span className="text-xs text-ink-caption font-medium">{t.language}</span>
                 </div>
                 {t.body && (
-                  <p className="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+                  <p className="text-xs text-ink-caption line-clamp-2 mb-3 leading-relaxed">
                     {t.body.length > 80 ? t.body.slice(0, 80) + "…" : t.body}
                   </p>
                 )}
-                <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-2 pt-3 border-t border-ink-light">
                   <button onClick={() => openEdit(t)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 text-xs font-semibold rounded-lg transition-colors">
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-ink-offwhite hover:bg-surface-main text-ink-paragraph hover:text-brand-yellow text-xs font-semibold rounded-lg transition-colors">
                     <Pencil size={12} /> Edit
                   </button>
                   <div className="flex-1" />
                   <button onClick={() => handleDelete(t.id)} disabled={deletingId === t.id}
-                    className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50">
+                    className="p-1.5 text-ink-caption hover:text-status-error rounded-lg hover:bg-status-error/10 transition-colors disabled:opacity-50">
                     {deletingId === t.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                   </button>
                 </div>

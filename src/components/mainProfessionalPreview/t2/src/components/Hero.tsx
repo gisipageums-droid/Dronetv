@@ -5,23 +5,23 @@ export function Hero({ heroData }) {
   // If no heroData provided, return loading state
   if (!heroData) {
     return (
-      <section id="home" className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20">
+      <section id="home" className="min-h-screen flex items-center bg-gradient-to-br from-background to-surface-main dark:from-background dark:to-yellow-900/20 pt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Loading state */}
             <div className="space-y-8">
               <div className="animate-pulse space-y-4">
-                <div className="h-12 bg-gray-300 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-300 rounded"></div>
-                <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+                <div className="h-12 bg-ink-light rounded w-3/4"></div>
+                <div className="h-4 bg-ink-light rounded"></div>
+                <div className="h-4 bg-ink-light rounded w-5/6"></div>
                 <div className="flex gap-4 mt-6">
-                  <div className="h-12 bg-gray-300 rounded w-32"></div>
-                  <div className="h-12 bg-gray-300 rounded w-32"></div>
+                  <div className="h-12 bg-ink-light rounded w-32"></div>
+                  <div className="h-12 bg-ink-light rounded w-32"></div>
                 </div>
               </div>
             </div>
             <div className="animate-pulse">
-              <div className="bg-gray-300 rounded-3xl w-full h-96"></div>
+              <div className="bg-ink-light rounded-3xl w-full h-96"></div>
             </div>
           </div>
         </div>
@@ -30,14 +30,14 @@ export function Hero({ heroData }) {
   }
 
   return (
-    <section id="home" className="min-h-screen flex items-center bg-gradient-to-br from-background to-yellow-50 dark:from-background dark:to-yellow-900/20 pt-20">
+    <section id="home" className="min-h-screen flex items-center bg-gradient-to-br from-background to-surface-main dark:from-background dark:to-yellow-900/20 pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight">
               {"Hi, I'm"}{' '}
-              <span className="text-yellow-500">{heroData.name}</span>
+              <span className="text-brand-gold">{heroData.name}</span>
             </h1>
 
             <p className="text-xl text-justify text-muted-foreground leading-relaxed">
@@ -51,8 +51,8 @@ export function Hero({ heroData }) {
                   href={button.href}
                   className={`inline-flex items-center justify-center px-6 py-3 rounded-lg transition-colors ${
                     button.variant === 'primary' 
-                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                      : 'bg-transparent text-blue-600 border border-blue-600 hover:bg-blue-50'
+                      ? 'bg-status-info text-white hover:bg-status-info' 
+                      : 'bg-transparent text-status-info border border-status-info hover:bg-status-info/10'
                   }`}
                 >
                   {button.text}
@@ -74,7 +74,7 @@ export function Hero({ heroData }) {
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               <motion.div 
-                className="absolute inset-0 bg-yellow-400 rounded-3xl transform rotate-6"
+                className="absolute inset-0 bg-brand-yellow rounded-3xl transform rotate-6"
                 whileHover={{ rotate: 8, scale: 1.02 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               ></motion.div>

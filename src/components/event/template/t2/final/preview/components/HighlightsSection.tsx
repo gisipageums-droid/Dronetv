@@ -81,20 +81,20 @@ export function HighlightsSection({ highlightsData }: HighlightsProps) {
   const displayData = data;
 
   return (
-    <section id="highlights" className="py-16 sm:py-20 md:py-24 bg-amber-50 relative overflow-hidden">
+    <section id="highlights" className="py-16 sm:py-20 md:py-24 bg-surface-main relative overflow-hidden">
       {/* Decorative Background */}
-      <div className="absolute top-0 left-0 w-64 sm:w-96 h-64 sm:h-96 bg-yellow-300/30 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-amber-300/30 rounded-full blur-3xl" />
+      <div className="absolute top-0 left-0 w-64 sm:w-96 h-64 sm:h-96 bg-brand-yellow-soft/30 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-brand-yellow-soft/30 rounded-full blur-3xl" />
       
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-block mb-4 px-4 py-2 bg-white rounded-full border border-amber-200 shadow-sm">
-              <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+            <div className="inline-block mb-4 px-4 py-2 bg-surface-card rounded-full border border-brand-yellow-soft shadow-sm">
+              <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
             </div>
-            <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+            <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+            <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
               {displayData.description}
             </p>
           </div>
@@ -112,14 +112,14 @@ export function HighlightsSection({ highlightsData }: HighlightsProps) {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
                   whileHover={{ y: -10 }}
-                  className="group relative bg-white p-6 sm:p-8 rounded-2xl border-2 border-amber-200 hover:border-amber-400 transition-all duration-300 overflow-hidden hover:shadow-xl"
+                  className="group relative bg-surface-card p-6 sm:p-8 rounded-2xl border-2 border-brand-yellow-soft hover:border-brand-yellow transition-all duration-300 overflow-hidden hover:shadow-xl"
                 >
                   <div className="relative z-10">
-                    <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-12 bg-brand-yellow rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
-                    <div className="text-amber-600 mb-2 text-3xl sm:text-4xl">{stat.value}</div>
-                    <h3 className="text-gray-900 mb-2 text-lg sm:text-xl">{stat.label}</h3>
+                    <div className="text-brand-gold mb-2 text-3xl sm:text-4xl">{stat.value}</div>
+                    <h3 className="text-ink mb-2 text-lg sm:text-xl">{stat.label}</h3>
                   </div>
                 </motion.div>
               );
@@ -130,11 +130,11 @@ export function HighlightsSection({ highlightsData }: HighlightsProps) {
           {displayData.stats.length === 0 && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-ink-caption" />
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Stats Added</h4>
-                <p className="text-gray-600">Add stats to showcase your event highlights.</p>
+                <h4 className="text-lg font-semibold text-ink mb-2">No Stats Added</h4>
+                <p className="text-ink-paragraph">Add stats to showcase your event highlights.</p>
               </div>
             </div>
           )}

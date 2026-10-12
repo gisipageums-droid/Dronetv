@@ -106,20 +106,20 @@ export default function SocialMediaInformation({
 
     return (
         <>
-            <div className="p-3 border rounded-lg bg-amber-200 border-amber-200">
+            <div className="p-3 border rounded-lg bg-brand-yellow-soft border-brand-yellow-soft">
                 <div className="flex items-center justify-between mb-2">
-                    <h3 className="flex items-center text-sm font-bold text-amber-900">
+                    <h3 className="flex items-center text-sm font-bold text-brand-gold">
                         <Globe className="w-5 h-5 mr-2" />
                         Social Media Links (Optional)
                     </h3>
                     <div className="flex space-x-2">
-                        <button onClick={() => setShowSocialMediaModal(true)} className="p-1 rounded hover:bg-amber-300" title="Add New Field">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button onClick={() => setShowSocialMediaModal(true)} className="p-1 rounded hover:bg-brand-yellow-soft" title="Add New Field">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                         </button>
-                        <button onClick={openEditSocialMediaModal} className="p-1 rounded hover:bg-amber-300" title="Edit Social Media Information">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button onClick={openEditSocialMediaModal} className="p-1 rounded hover:bg-brand-yellow-soft" title="Edit Social Media Information">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.586a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                         </button>
@@ -140,7 +140,7 @@ export default function SocialMediaInformation({
                                 />
                                 <button
                                     onClick={() => hideSocialMediaField('linkedin')}
-                                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700"
+                                    className="absolute top-0 right-0 p-1 text-status-error hover:text-status-error"
                                     title="Remove field"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -162,7 +162,7 @@ export default function SocialMediaInformation({
                                 />
                                 <button
                                     onClick={() => hideSocialMediaField('facebook')}
-                                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700"
+                                    className="absolute top-0 right-0 p-1 text-status-error hover:text-status-error"
                                     title="Remove field"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +186,7 @@ export default function SocialMediaInformation({
                                 />
                                 <button
                                     onClick={() => hideSocialMediaField('instagram')}
-                                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700"
+                                    className="absolute top-0 right-0 p-1 text-status-error hover:text-status-error"
                                     title="Remove field"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +208,7 @@ export default function SocialMediaInformation({
                                 />
                                 <button
                                     onClick={() => hideSocialMediaField('twitter')}
-                                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700"
+                                    className="absolute top-0 right-0 p-1 text-status-error hover:text-status-error"
                                     title="Remove field"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,7 +232,7 @@ export default function SocialMediaInformation({
                                 />
                                 <button
                                     onClick={() => hideSocialMediaField('youtube')}
-                                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700"
+                                    className="absolute top-0 right-0 p-1 text-status-error hover:text-status-error"
                                     title="Remove field"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -252,7 +252,7 @@ export default function SocialMediaInformation({
                                 />
                                 <button
                                     onClick={() => hideSocialMediaField('supportEmail')}
-                                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700"
+                                    className="absolute top-0 right-0 p-1 text-status-error hover:text-status-error"
                                     title="Remove field"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,7 +274,7 @@ export default function SocialMediaInformation({
                                 />
                                 <button
                                     onClick={() => hideSocialMediaField('supportContactNumber')}
-                                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700"
+                                    className="absolute top-0 right-0 p-1 text-status-error hover:text-status-error"
                                     title="Remove field"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -294,7 +294,7 @@ export default function SocialMediaInformation({
                                 />
                                 <button
                                     onClick={() => hideSocialMediaField('whatsappNumber')}
-                                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700"
+                                    className="absolute top-0 right-0 p-1 text-status-error hover:text-status-error"
                                     title="Remove field"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -320,7 +320,7 @@ export default function SocialMediaInformation({
                                     <div className="absolute top-0 right-0 flex space-x-1">
                                         <button
                                             onClick={() => removeSocialMediaCustomField(field.id)}
-                                            className="p-1 text-red-500 rounded hover:text-red-700 hover:bg-red-50"
+                                            className="p-1 text-status-error rounded hover:text-status-error hover:bg-status-error/10"
                                             title="Delete Field"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -337,9 +337,9 @@ export default function SocialMediaInformation({
 
             {/* Rest of the modal code remains the same */}
             {showEditSocialMediaModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="p-6 mx-4 w-full max-w-4xl max-h-[80vh] overflow-auto bg-white rounded-lg shadow-xl">
-                        <h3 className="mb-4 text-lg font-bold text-gray-900">Edit Social Media Information</h3>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink bg-opacity-50">
+                    <div className="p-6 mx-4 w-full max-w-4xl max-h-[80vh] overflow-auto bg-surface-card rounded-lg shadow-xl">
+                        <h3 className="mb-4 text-lg font-bold text-ink">Edit Social Media Information</h3>
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -348,7 +348,7 @@ export default function SocialMediaInformation({
                                     ...Object.keys(editingSocialMediaPlaceholders || {})
                                 ])).map((key) => (
                                     <div key={key} className={`${key === 'supportEmail' || key === 'supportContactNumber' || key === 'whatsappNumber' ? 'md:col-span-2' : ''}`}>
-                                        <label className="block mb-1 text-sm font-medium text-gray-700">
+                                        <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                             Field Label
                                         </label>
                                         <input
@@ -356,9 +356,9 @@ export default function SocialMediaInformation({
                                             value={String((editingSocialMediaLabels as any)[key] ?? '')}
                                             onChange={(e) => setEditingSocialMediaLabels((prev: any) => ({ ...prev, [key]: e.target.value }))}
                                             placeholder={`e.g., ${key}`}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                            className="w-full px-3 py-2 border border-ink-light rounded-md focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                         />
-                                        <label className="block mt-2 mb-1 text-sm font-medium text-gray-700">
+                                        <label className="block mt-2 mb-1 text-sm font-medium text-ink-paragraph">
                                             Placeholder Text
                                         </label>
                                         <input
@@ -366,7 +366,7 @@ export default function SocialMediaInformation({
                                             value={String((editingSocialMediaPlaceholders as any)[key] ?? '')}
                                             onChange={(e) => setEditingSocialMediaPlaceholders((prev: any) => ({ ...prev, [key]: e.target.value }))}
                                             placeholder=""
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                            className="w-full px-3 py-2 border border-ink-light rounded-md focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                         />
                                     </div>
                                 ))}
@@ -375,13 +375,13 @@ export default function SocialMediaInformation({
 
                         {editingSocialMediaCustomFields.length > 0 && (
                             <div className="mt-4">
-                                <h4 className="mb-3 text-sm font-semibold text-gray-700">Custom Fields</h4>
+                                <h4 className="mb-3 text-sm font-semibold text-ink-paragraph">Custom Fields</h4>
                                 <div className="space-y-4">
                                     {editingSocialMediaCustomFields.map((field: any) => (
-                                        <div key={field.id} className="p-3 border border-gray-200 rounded-lg">
+                                        <div key={field.id} className="p-3 border border-ink-light rounded-lg">
                                             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                                                 <div>
-                                                    <label className="block mb-1 text-sm font-medium text-gray-700">
+                                                    <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                                         Field Label
                                                     </label>
                                                     <input
@@ -389,11 +389,11 @@ export default function SocialMediaInformation({
                                                         value={field.label}
                                                         onChange={(e) => updateEditingSocialMediaCustomFieldLabel(field.id, e.target.value)}
                                                         placeholder="Enter field label"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block mb-1 text-sm font-medium text-gray-700">
+                                                    <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                                         Placeholder Text
                                                     </label>
                                                     <input
@@ -401,7 +401,7 @@ export default function SocialMediaInformation({
                                                         value={field.placeholder}
                                                         onChange={(e) => updateEditingSocialMediaCustomFieldPlaceholder(field.id, e.target.value)}
                                                         placeholder="Enter placeholder text"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                                        className="w-full px-3 py-2 border border-ink-light rounded-md focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                                     />
                                                 </div>
                                             </div>
@@ -415,15 +415,15 @@ export default function SocialMediaInformation({
                                                                 f.id === field.id ? { ...f, required: e.target.checked } : f
                                                             ));
                                                         }}
-                                                        className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-amber-600 focus:ring-amber-500 focus:ring-2"
+                                                        className="w-4 h-4 bg-ink-light border-ink-light rounded text-brand-gold focus:ring-brand-gold focus:ring-2"
                                                     />
-                                                    <label className="ml-2 text-sm font-medium text-gray-700">
+                                                    <label className="ml-2 text-sm font-medium text-ink-paragraph">
                                                         Required Field
                                                     </label>
                                                 </div>
                                                 <button
                                                     onClick={() => removeEditingSocialMediaCustomField(field.id)}
-                                                    className="p-1 text-red-500 rounded hover:text-red-700 hover:bg-red-50"
+                                                    className="p-1 text-status-error rounded hover:text-status-error hover:bg-status-error/10"
                                                     title="Delete field"
                                                 >
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -440,13 +440,13 @@ export default function SocialMediaInformation({
                         <div className="flex justify-end mt-6 space-x-3">
                             <button
                                 onClick={() => setShowEditSocialMediaModal(false)}
-                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                                className="px-4 py-2 text-ink-paragraph border border-ink-light rounded-md hover:bg-ink-offwhite"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={saveSocialMediaChanges}
-                                className="px-4 py-2 text-white rounded-md bg-amber-500 hover:bg-amber-600"
+                                className="px-4 py-2 text-white rounded-md bg-brand-gold hover:bg-brand-gold"
                             >
                                 Save Changes
                             </button>
@@ -456,13 +456,13 @@ export default function SocialMediaInformation({
             )}
 
             {showSocialMediaModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="p-6 mx-4 w-full max-w-md max-h-[300px] overflow-auto bg-white rounded-lg shadow-xl">
-                        <h3 className="mb-4 text-lg font-bold text-gray-900">Add Social Media Field</h3>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink bg-opacity-50">
+                    <div className="p-6 mx-4 w-full max-w-md max-h-[300px] overflow-auto bg-surface-card rounded-lg shadow-xl">
+                        <h3 className="mb-4 text-lg font-bold text-ink">Add Social Media Field</h3>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block mb-1 text-sm font-medium text-gray-700">
+                                <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                     Name
                                 </label>
                                 <input
@@ -470,12 +470,12 @@ export default function SocialMediaInformation({
                                     value={newSocialMediaFieldLabel}
                                     onChange={(e) => setNewSocialMediaFieldLabel(e.target.value)}
                                     placeholder="e.g., TikTok"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                 />
                             </div>
 
                             <div>
-                                <label className="block mb-1 text-sm font-medium text-gray-700">
+                                <label className="block mb-1 text-sm font-medium text-ink-paragraph">
                                     Placeholder Text
                                 </label>
                                 <input
@@ -483,7 +483,7 @@ export default function SocialMediaInformation({
                                     value={newSocialMediaFieldPlaceholder}
                                     onChange={(e) => setNewSocialMediaFieldPlaceholder(e.target.value)}
                                     placeholder="e.g., https://tiktok.com/@yourcompany"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                    className="w-full px-3 py-2 border border-ink-light rounded-md focus:outline-none focus:ring-2 focus:ring-brand-gold"
                                 />
                             </div>
 
@@ -493,9 +493,9 @@ export default function SocialMediaInformation({
                                     id="newSocialMediaFieldRequired"
                                     checked={newSocialMediaFieldRequired}
                                     onChange={(e) => setNewSocialMediaFieldRequired(e.target.checked)}
-                                    className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-amber-600 focus:ring-amber-500 focus:ring-2"
+                                    className="w-4 h-4 bg-ink-light border-ink-light rounded text-brand-gold focus:ring-brand-gold focus:ring-2"
                                 />
-                                <label htmlFor="newSocialMediaFieldRequired" className="ml-2 text-sm font-medium text-gray-700">
+                                <label htmlFor="newSocialMediaFieldRequired" className="ml-2 text-sm font-medium text-ink-paragraph">
                                     Required Field
                                 </label>
                             </div>
@@ -504,13 +504,13 @@ export default function SocialMediaInformation({
                         <div className="flex justify-end mt-6 space-x-3">
                             <button
                                 onClick={() => setShowSocialMediaModal(false)}
-                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                                className="px-4 py-2 text-ink-paragraph border border-ink-light rounded-md hover:bg-ink-offwhite"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={addSocialMediaCustomField}
-                                className="px-4 py-2 text-white rounded-md bg-amber-500 hover:bg-amber-600"
+                                className="px-4 py-2 text-white rounded-md bg-brand-gold hover:bg-brand-gold"
                             >
                                 Add Field
                             </button>

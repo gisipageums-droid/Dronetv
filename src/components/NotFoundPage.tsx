@@ -4,21 +4,21 @@ import { useNavigate } from 'react-router-dom';
 const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center text-white px-4">
+    <div className="min-h-screen bg-ink flex flex-col items-center justify-center text-white px-4">
       <div className="text-center max-w-md">
         <div className="text-6xl mb-4">🚧</div>
         <h1 className="text-3xl font-bold mb-2">Coming Soon</h1>
-        <p className="text-gray-400 mb-8">This page isn't ready yet, or the link you followed has moved. Check back soon, or head back to explore the rest of the platform.</p>
+        <p className="text-ink-caption mb-8">This page isn't ready yet, or the link you followed has moved. Check back soon, or head back to explore the rest of the platform.</p>
         <div className="flex gap-4 justify-center">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-semibold transition-colors"
+            className="px-6 py-3 bg-ink-charcoal hover:bg-ink-paragraph text-white rounded-xl font-semibold transition-colors"
           >
             Go Back
           </button>
           <button
             onClick={() => navigate('/')}
-            className="px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-black rounded-xl font-semibold transition-colors"
+            className="px-6 py-3 bg-brand-yellow hover:bg-brand-gold text-ink rounded-xl font-semibold transition-colors"
           >
             Home
           </button>

@@ -26,14 +26,14 @@ function Toast({ toasts, dismiss }: { toasts: ToastMsg[]; dismiss: (id: number) 
           key={t.id}
           className={`flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-sm font-medium pointer-events-auto transition-all ${
             t.type === "success"
-              ? "bg-green-50 text-green-800 border border-green-200"
-              : "bg-red-50 text-red-800 border border-red-200"
+              ? "bg-status-success/10 text-status-success border border-status-success/25"
+              : "bg-status-error/10 text-status-error border border-status-error/25"
           }`}
         >
           {t.type === "success" ? (
-            <CheckCircle2 size={16} className="text-green-600 shrink-0" />
+            <CheckCircle2 size={16} className="text-status-success shrink-0" />
           ) : (
-            <AlertTriangle size={16} className="text-red-500 shrink-0" />
+            <AlertTriangle size={16} className="text-status-error shrink-0" />
           )}
           <span>{t.text}</span>
           <button onClick={() => dismiss(t.id)} className="ml-2 opacity-50 hover:opacity-100">
@@ -47,14 +47,14 @@ function Toast({ toasts, dismiss }: { toasts: ToastMsg[]; dismiss: (id: number) 
 
 // ---------- Status Badge ----------
 const STATUS_MAP: Record<number, { label: string; bg: string; dot: string }> = {
-  1: { label: "Draft", bg: "bg-gray-100 text-gray-500", dot: "bg-gray-400" },
-  2: { label: "Running", bg: "bg-green-100 text-green-700", dot: "bg-green-500" },
-  3: { label: "Completed", bg: "bg-blue-100 text-blue-700", dot: "bg-blue-500" },
-  4: { label: "Failed", bg: "bg-red-100 text-red-700", dot: "bg-red-500" },
+  1: { label: "Draft", bg: "bg-ink-light text-ink-caption", dot: "bg-ink-caption" },
+  2: { label: "Running", bg: "bg-status-success/15 text-status-success", dot: "bg-status-success" },
+  3: { label: "Completed", bg: "bg-status-info/15 text-status-info", dot: "bg-status-info" },
+  4: { label: "Failed", bg: "bg-status-error/15 text-status-error", dot: "bg-status-error" },
 };
 
 function StatusBadge({ status }: { status: number }) {
-  const s = STATUS_MAP[status] ?? { label: String(status), bg: "bg-gray-100 text-gray-500", dot: "bg-gray-400" };
+  const s = STATUS_MAP[status] ?? { label: String(status), bg: "bg-ink-light text-ink-caption", dot: "bg-ink-caption" };
   return (
     <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full ${s.bg}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
@@ -112,62 +112,62 @@ function CreateCampaignModal({ onClose, onCreated, addToast }: CreateModalProps)
   }
 
   return (
-    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <h2 className="text-base font-bold text-gray-900">New Campaign</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+    <div className="fixed inset-0 z-[10000000] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-4">
+      <div className="bg-surface-card rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-ink-light">
+          <h2 className="text-base font-bold text-ink">New Campaign</h2>
+          <button onClick={onClose} className="text-ink-caption hover:text-ink-paragraph transition-colors">
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Title *</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Title *</label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => set("title", e.target.value)}
               placeholder="e.g. Diwali Promo"
               required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Template ID</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Template ID</label>
             <input
               type="number"
               value={form.whatsapp_templates_id}
               onChange={(e) => set("whatsapp_templates_id", e.target.value)}
               placeholder="WhatsApp template ID"
               min={1}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Contact Group ID</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Contact Group ID</label>
             <input
               type="number"
               value={form.contact_group}
               onChange={(e) => set("contact_group", e.target.value)}
               placeholder="Contact group ID"
               min={1}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Send Option</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Send Option</label>
             <div className="flex gap-3">
               {(["instant", "schedule"] as const).map((opt) => (
                 <label
                   key={opt}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border cursor-pointer text-sm font-medium transition-colors ${
                     form.send_option === opt
-                      ? "border-amber-400 bg-amber-50 text-amber-700"
-                      : "border-gray-200 text-gray-600 hover:border-amber-200"
+                      ? "border-brand-yellow bg-surface-main text-brand-gold"
+                      : "border-ink-light text-ink-paragraph hover:border-brand-yellow-soft"
                   }`}
                 >
                   <input
@@ -176,7 +176,7 @@ function CreateCampaignModal({ onClose, onCreated, addToast }: CreateModalProps)
                     value={opt}
                     checked={form.send_option === opt}
                     onChange={() => set("send_option", opt)}
-                    className="accent-amber-400"
+                    className="accent-brand-yellow"
                   />
                   {opt.charAt(0).toUpperCase() + opt.slice(1)}
                 </label>
@@ -185,22 +185,22 @@ function CreateCampaignModal({ onClose, onCreated, addToast }: CreateModalProps)
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">Template Language</label>
+            <label className="block text-xs font-semibold text-ink-paragraph mb-1.5">Template Language</label>
             <input
               type="text"
               value={form.template_language}
               onChange={(e) => set("template_language", e.target.value)}
               placeholder="en_US"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full border border-ink-light rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
         </form>
 
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-ink-light">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-ink-paragraph hover:text-ink-charcoal transition-colors"
           >
             Cancel
           </button>
@@ -208,7 +208,7 @@ function CreateCampaignModal({ onClose, onCreated, addToast }: CreateModalProps)
             type="button"
             onClick={(e) => handleSubmit(e as unknown as React.FormEvent)}
             disabled={saving}
-            className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 disabled:opacity-50 transition-colors"
           >
             {saving ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
             Create Campaign
@@ -230,7 +230,7 @@ interface Pagination {
 export default function WaCampaignsPanel() {
   if (!localStorage.getItem("echoleads_api_key")) {
     return (
-      <div className="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+      <div className="flex flex-col items-center justify-center h-full py-20 text-ink-caption">
         <p className="text-sm font-medium">Not connected</p>
         <p className="text-xs mt-1">Go to Authentication tab first.</p>
       </div>
@@ -323,26 +323,26 @@ export default function WaCampaignsPanel() {
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between px-6 pt-5 pb-4">
         <div className="flex items-center gap-2 flex-1 max-w-sm">
           <div className="relative flex-1">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-caption pointer-events-none" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search campaigns…"
-              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full pl-9 pr-3 py-2 border border-ink-light rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
           <button
             onClick={load}
             title="Refresh"
-            className="p-2 rounded-lg border border-gray-200 text-gray-400 hover:text-amber-500 hover:border-amber-200 transition-colors"
+            className="p-2 rounded-lg border border-ink-light text-ink-caption hover:text-brand-yellow hover:border-brand-yellow-soft transition-colors"
           >
             <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
           </button>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors shrink-0"
+          className="flex items-center gap-2 bg-brand-yellow hover:bg-brand-gold text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors shrink-0"
         >
           <Plus size={16} />
           New Campaign
@@ -352,11 +352,11 @@ export default function WaCampaignsPanel() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 pb-6">
         {loading ? (
-          <div className="flex items-center justify-center py-20 text-gray-400">
+          <div className="flex items-center justify-center py-20 text-ink-caption">
             <Loader2 size={24} className="animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-20 text-ink-caption">
             <Megaphone size={36} className="mb-3 opacity-30" />
             <p className="text-sm font-medium">
               {search ? "No campaigns match your search" : "No WA campaigns yet"}
@@ -370,26 +370,26 @@ export default function WaCampaignsPanel() {
             {filtered.map((c) => (
               <div
                 key={c.id}
-                className={`bg-white border rounded-xl p-4 hover:border-amber-200 hover:shadow-sm transition-all ${
-                  c.is_archived ? "opacity-60" : "border-gray-100"
+                className={`bg-surface-card border rounded-xl p-4 hover:border-brand-yellow-soft hover:shadow-sm transition-all ${
+                  c.is_archived ? "opacity-60" : "border-ink-light"
                 }`}
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-gray-900 truncate">{c.title}</p>
+                      <p className="text-sm font-semibold text-ink truncate">{c.title}</p>
                       {c.is_archived && (
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 shrink-0">
+                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-ink-light text-ink-caption shrink-0">
                           Archived
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-gray-400 mt-0.5">{formatDate(c.created_at)}</p>
+                    <p className="text-xs text-ink-caption mt-0.5">{formatDate(c.created_at)}</p>
                   </div>
                   <StatusBadge status={c.status} />
                 </div>
 
-                <div className="flex items-center gap-3 mb-3 text-xs text-gray-500">
+                <div className="flex items-center gap-3 mb-3 text-xs text-ink-caption">
                   {c.template_name && (
                     <span className="truncate max-w-[120px]" title={c.template_name}>
                       {c.template_name}
@@ -400,11 +400,11 @@ export default function WaCampaignsPanel() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 pt-3 border-t border-gray-100 flex-wrap">
+                <div className="flex items-center gap-2 pt-3 border-t border-ink-light flex-wrap">
                   <button
                     onClick={() => handleArchiveToggle(c.id)}
                     disabled={archivingId === c.id}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-amber-50 text-gray-600 hover:text-amber-700 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-ink-offwhite hover:bg-surface-main text-ink-paragraph hover:text-brand-yellow text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
                   >
                     {archivingId === c.id ? (
                       <Loader2 size={12} className="animate-spin" />
@@ -418,7 +418,7 @@ export default function WaCampaignsPanel() {
                     <button
                       onClick={() => handleRescheduleFailed(c.id)}
                       disabled={reschedulingId === c.id}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-status-error/10 hover:bg-status-error/15 text-status-error text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
                     >
                       {reschedulingId === c.id ? (
                         <Loader2 size={12} className="animate-spin" />
@@ -437,22 +437,22 @@ export default function WaCampaignsPanel() {
 
       {/* Pagination */}
       {pagination.total_pages > 1 && (
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 shrink-0">
-          <span className="text-xs text-gray-400">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-ink-light shrink-0">
+          <span className="text-xs text-ink-caption">
             Page {pagination.current_page} of {pagination.total_pages} — {pagination.total_campaigns} campaigns
           </span>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={pagination.current_page === 1}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 disabled:opacity-30 transition-colors"
+              className="p-1.5 rounded-lg text-ink-caption hover:text-brand-yellow hover:bg-surface-main disabled:opacity-30 transition-colors"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={() => setPage((p) => Math.min(pagination.total_pages, p + 1))}
               disabled={pagination.current_page === pagination.total_pages}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 disabled:opacity-30 transition-colors"
+              className="p-1.5 rounded-lg text-ink-caption hover:text-brand-yellow hover:bg-surface-main disabled:opacity-30 transition-colors"
             >
               <ChevronRight size={16} />
             </button>

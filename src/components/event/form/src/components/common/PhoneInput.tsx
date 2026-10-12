@@ -186,14 +186,14 @@ export const PhoneInput = ({
     }
   }, [isDropdownOpen]);
 
-  const baseClasses = "border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm";
+  const baseClasses = "border border-brand-yellow-soft rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm";
 
   if (loading) {
     return (
       <div className={`${baseClasses} p-2 ${className}`}>
         <div className="flex items-center">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-amber-400 mr-2"></div>
-          <span className="text-gray-500">Loading countries...</span>
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-yellow mr-2"></div>
+          <span className="text-ink-caption">Loading countries...</span>
         </div>
       </div>
     );
@@ -216,7 +216,7 @@ export const PhoneInput = ({
           required={required}
           className={`${baseClasses} w-full px-3 py-2 ${className}`}
         />
-        <span className="text-amber-600 text-xs mt-1 block">
+        <span className="text-brand-gold text-xs mt-1 block">
           Country code list unavailable — please include your country code (e.g. +91) in the number above.
         </span>
       </div>
@@ -230,7 +230,7 @@ export const PhoneInput = ({
         <button
           type="button"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center px-3 py-2 border-r border-amber-300 hover:bg-amber-50 focus:outline-none"
+          className="flex items-center px-3 py-2 border-r border-brand-yellow-soft hover:bg-surface-main focus:outline-none"
         >
           {selectedCountry ? (
             <>
@@ -244,7 +244,7 @@ export const PhoneInput = ({
               </span>
             </>
           ) : (
-            <span className="text-gray-500 text-sm">Select</span>
+            <span className="text-ink-caption text-sm">Select</span>
           )}
           <svg 
             className={`ml-1 h-4 w-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
@@ -269,16 +269,16 @@ export const PhoneInput = ({
 
       {/* Country Dropdown */}
       {isDropdownOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-amber-300 rounded-lg shadow-lg max-h-60 overflow-hidden">
+        <div className="absolute z-50 w-full mt-1 bg-surface-card border border-brand-yellow-soft rounded-lg shadow-lg max-h-60 overflow-hidden">
           {/* Search Input */}
-          <div className="p-2 border-b border-gray-200">
+          <div className="p-2 border-b border-ink-light">
             <input
               ref={searchInputRef}
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search countries..."
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full px-3 py-2 text-sm border border-ink-light rounded focus:outline-none focus:ring-2 focus:ring-brand-yellow"
             />
           </div>
 
@@ -290,7 +290,7 @@ export const PhoneInput = ({
                   key={country.cca2}
                   type="button"
                   onClick={() => handleCountrySelect(country)}
-                  className="w-full px-3 py-2 text-left hover:bg-amber-50 focus:bg-amber-50 focus:outline-none flex items-center"
+                  className="w-full px-3 py-2 text-left hover:bg-surface-main focus:bg-surface-main focus:outline-none flex items-center"
                 >
                   <img 
                     src={country.flags.png} 
@@ -298,13 +298,13 @@ export const PhoneInput = ({
                     className="w-5 h-3 mr-3 object-cover rounded"
                   />
                   <span className="flex-1 text-sm">{country.name.common}</span>
-                  <span className="text-sm font-medium text-gray-600 ml-2">
+                  <span className="text-sm font-medium text-ink-paragraph ml-2">
                     {getCountryCode(country)}
                   </span>
                 </button>
               ))
             ) : (
-              <div className="px-3 py-2 text-sm text-gray-500">
+              <div className="px-3 py-2 text-sm text-ink-caption">
                 No countries found
               </div>
             )}

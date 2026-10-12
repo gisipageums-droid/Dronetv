@@ -209,24 +209,24 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
   // Loading state
   if ((isLoading && !dataLoaded) || (!dataLoaded && displayData.events.length === 0)) {
     return (
-      <section ref={eventsRef} id="events" className="py-20 bg-white">
+      <section ref={eventsRef} id="events" className="py-20 bg-surface-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-yellow-500" />
-          <p className="text-gray-600 mt-4">Loading events data...</p>
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-brand-gold" />
+          <p className="text-ink-paragraph mt-4">Loading events data...</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section ref={eventsRef} id="events" className="py-20 bg-white">
+    <section ref={eventsRef} id="events" className="py-20 bg-surface-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Edit Controls */}
         <div className='text-right mb-8'>
           {!isEditing ? (
             <button
               onClick={handleEdit}
-              className="inline-flex items-center justify-center h-8 px-3 text-sm bg-red-500 hover:bg-red-600 text-white rounded-md font-medium transition-colors shadow-md"
+              className="inline-flex items-center justify-center h-8 px-3 text-sm bg-status-error hover:bg-status-error text-white rounded-md font-medium transition-colors shadow-md"
             >
               <Edit2 className='w-4 h-4 mr-2' />
               Edit Events
@@ -236,7 +236,7 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="inline-flex items-center justify-center h-8 px-3 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md font-medium transition-colors shadow-md disabled:opacity-50"
+                className="inline-flex items-center justify-center h-8 px-3 text-sm bg-status-success hover:bg-status-success text-white rounded-md font-medium transition-colors shadow-md disabled:opacity-50"
               >
                 {isSaving ? (
                   <Loader2 className='w-4 h-4 mr-2 animate-spin' />
@@ -248,14 +248,14 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
               <button
                 onClick={handleCancel}
                 disabled={isSaving}
-                className="inline-flex items-center justify-center h-8 px-3 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors shadow-md disabled:opacity-50"
+                className="inline-flex items-center justify-center h-8 px-3 text-sm bg-status-error hover:bg-status-error text-white rounded-md font-medium transition-colors shadow-md disabled:opacity-50"
               >
                 <X className='w-4 h-4 mr-2' />
                 Cancel
               </button>
               <button
                 onClick={addEvent}
-                className="inline-flex items-center justify-center h-8 px-3 text-sm bg-blue-50 hover:bg-blue-100 text-blue-700 border border-gray-300 rounded-md font-medium transition-colors shadow-md"
+                className="inline-flex items-center justify-center h-8 px-3 text-sm bg-status-info/10 hover:bg-status-info/15 text-status-info border border-ink-light rounded-md font-medium transition-colors shadow-md"
               >
                 <Plus className='w-4 h-4 mr-2' />
                 Add Event
@@ -274,16 +274,16 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
         >
           {isEditing ? (
             <>
-              <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
+              <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
                 <div className="relative">
                   <input
                     type="text"
                     value={displayData.subtitle}
                     onChange={(e) => updateHeader('subtitle', e.target.value)}
-                    className="text-red-700 text-xl font-semibold text-center bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full max-w-md"
+                    className="text-status-error text-xl font-semibold text-center bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full max-w-md"
                     maxLength={TEXT_LIMITS.HEADER_SUBTITLE}
                   />
-                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                     {displayData.subtitle.length}/{TEXT_LIMITS.HEADER_SUBTITLE}
                   </div>
                 </div>
@@ -293,10 +293,10 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
                   type="text"
                   value={displayData.heading}
                   onChange={(e) => updateHeader('heading', e.target.value)}
-                  className="text-gray-900 text-3xl sm:text-4xl md:text-5xl text-center bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full max-w-2xl mx-auto"
+                  className="text-ink text-3xl sm:text-4xl md:text-5xl text-center bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full max-w-2xl mx-auto"
                   maxLength={TEXT_LIMITS.HEADER_TITLE}
                 />
-                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                   {displayData.heading.length}/{TEXT_LIMITS.HEADER_TITLE}
                 </div>
               </div>
@@ -304,22 +304,22 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
                 <textarea
                   value={displayData.description}
                   onChange={(e) => updateHeader('description', e.target.value)}
-                  className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                  className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
                   rows={2}
                   maxLength={TEXT_LIMITS.HEADER_DESCRIPTION}
                 />
-                <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                   {displayData.description.length}/{TEXT_LIMITS.HEADER_DESCRIPTION}
                 </div>
               </div>
             </>
           ) : (
             <>
-              <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
-                <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+              <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
+                <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
               </div>
-              <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-              <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+              <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+              <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
                 {displayData.description}
               </p>
             </>
@@ -339,13 +339,13 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -10 }}
-                className="group bg-yellow-50 rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-amber-200 hover:border-amber-400 relative"
+                className="group bg-surface-main rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-brand-yellow-soft hover:border-brand-yellow relative"
               >
                 {/* Edit Controls Overlay */}
                 {isEditing && (
                   <button
                     onClick={() => removeEvent(index)}
-                    className="absolute top-2 right-2 z-10 bg-red-500 hover:bg-red-600 text-white p-1 rounded-md"
+                    className="absolute top-2 right-2 z-10 bg-status-error hover:bg-status-error text-white p-1 rounded-md"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
@@ -362,10 +362,10 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
                             type="text"
                             value={event.title}
                             onChange={(e) => updateEvent(index, 'title', e.target.value)}
-                            className="text-gray-900 text-xl sm:text-2xl font-semibold bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                            className="text-ink text-xl sm:text-2xl font-semibold bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
                             maxLength={TEXT_LIMITS.EVENT_TITLE}
                           />
-                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                             {event.title.length}/{TEXT_LIMITS.EVENT_TITLE}
                           </div>
                         </div>
@@ -376,11 +376,11 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
                         <textarea
                           value={event.description}
                           onChange={(e) => updateEvent(index, 'description', e.target.value)}
-                          className="text-gray-600 text-sm sm:text-base bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-2 w-full"
+                          className="text-ink-paragraph text-sm sm:text-base bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-2 w-full"
                           rows={3}
                           maxLength={TEXT_LIMITS.EVENT_DESCRIPTION}
                         />
-                        <div className="absolute right-2 bottom-2 text-xs text-gray-500">
+                        <div className="absolute right-2 bottom-2 text-xs text-ink-caption">
                           {event.description.length}/{TEXT_LIMITS.EVENT_DESCRIPTION}
                         </div>
                       </div>
@@ -388,31 +388,31 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
                       {/* Event Details */}
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <Clock className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                          <Clock className="w-5 h-5 text-brand-gold flex-shrink-0" />
                           <div className="relative flex-1">
                             <input
                               type="text"
                               value={event.time}
                               onChange={(e) => updateEvent(index, 'time', e.target.value)}
-                              className="text-gray-600 text-sm sm:text-base bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+                              className="text-ink-paragraph text-sm sm:text-base bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 w-full"
                               maxLength={TEXT_LIMITS.EVENT_TIME}
                             />
-                            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                               {event.time.length}/{TEXT_LIMITS.EVENT_TIME}
                             </div>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <MapPin className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                          <MapPin className="w-5 h-5 text-brand-gold flex-shrink-0" />
                           <div className="relative flex-1">
                             <input
                               type="text"
                               value={event.location}
                               onChange={(e) => updateEvent(index, 'location', e.target.value)}
-                              className="text-gray-600 text-sm sm:text-base bg-white/80 border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full"
+                              className="text-ink-paragraph text-sm sm:text-base bg-white/80 border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 w-full"
                               maxLength={TEXT_LIMITS.EVENT_LOCATION}
                             />
-                            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+                            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
                               {event.location.length}/{TEXT_LIMITS.EVENT_LOCATION}
                             </div>
                           </div>
@@ -424,20 +424,20 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
                       {/* View Mode */}
                       <div className="flex items-center gap-4 mb-4">
 
-                        <h3 className="text-gray-900 group-hover:text-amber-600 transition-colors text-xl sm:text-2xl">
+                        <h3 className="text-ink group-hover:text-brand-yellow transition-colors text-xl sm:text-2xl">
                           {event.title}
                         </h3>
                       </div>
 
-                      <p className="text-gray-600 mb-6 text-sm sm:text-base">{event.description}</p>
+                      <p className="text-ink-paragraph mb-6 text-sm sm:text-base">{event.description}</p>
 
                       <div className="space-y-3 mb-6">
-                        <div className="flex items-center gap-3 text-gray-600 text-sm sm:text-base">
-                          <Clock className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                        <div className="flex items-center gap-3 text-ink-paragraph text-sm sm:text-base">
+                          <Clock className="w-5 h-5 text-brand-gold flex-shrink-0" />
                           <span>{event.time}</span>
                         </div>
-                        <div className="flex items-center gap-3 text-gray-600 text-sm sm:text-base">
-                          <MapPin className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                        <div className="flex items-center gap-3 text-ink-paragraph text-sm sm:text-base">
+                          <MapPin className="w-5 h-5 text-brand-gold flex-shrink-0" />
                           <span>{event.location}</span>
                         </div>
                       </div>
@@ -455,13 +455,13 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="group bg-gray-50 rounded-2xl sm:rounded-3xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition-all duration-300 min-h-[300px]"
+              className="group bg-ink-offwhite rounded-2xl sm:rounded-3xl border-2 border-dashed border-ink-light flex flex-col items-center justify-center cursor-pointer hover:border-status-info transition-all duration-300 min-h-[300px]"
               onClick={addEvent}
             >
               <div className="text-center p-6">
-                <Plus className="w-12 h-12 text-gray-400 group-hover:text-blue-400 mx-auto mb-4" />
-                <p className="text-gray-500 group-hover:text-blue-400 font-semibold">Add New Event</p>
-                <p className="text-gray-400 text-sm mt-2">Click to add a new event</p>
+                <Plus className="w-12 h-12 text-ink-caption group-hover:text-status-info mx-auto mb-4" />
+                <p className="text-ink-caption group-hover:text-status-info font-semibold">Add New Event</p>
+                <p className="text-ink-caption text-sm mt-2">Click to add a new event</p>
               </div>
             </motion.div>
           )}
@@ -477,14 +477,14 @@ export function EventsSection({ eventsData, onStateChange, userId, eventId, temp
             className="text-center py-12"
           >
             <div className="max-w-md mx-auto">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                <Calendar className="w-8 h-8 text-gray-400" />
+              <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                <Calendar className="w-8 h-8 text-ink-caption" />
               </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">No Events Added</h4>
-              <p className="text-gray-600 mb-6">Add events to showcase your conference schedule.</p>
+              <h4 className="text-lg font-semibold text-ink mb-2">No Events Added</h4>
+              <p className="text-ink-paragraph mb-6">Add events to showcase your conference schedule.</p>
               <button
                 onClick={handleEdit}
-                className="inline-flex items-center justify-center h-10 px-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md font-medium transition-colors"
+                className="inline-flex items-center justify-center h-10 px-4 bg-brand-gold hover:bg-brand-gold text-white rounded-md font-medium transition-colors"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Events

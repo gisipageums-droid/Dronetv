@@ -26,14 +26,14 @@
 // //   };
 
 // //   // Predefined colors for containers
-// //   const containerColors = ["bg-yellow-50 border-2 border-yellow-300 border-blue-200", "bg-yellow-50 border-2 border-yellow-300 border-green-200"];
+// //   const containerColors = ["bg-surface-main border-2 border-brand-yellow-soft border-status-info/25", "bg-surface-main border-2 border-brand-yellow-soft border-status-success/25"];
 
 // //   return (
 // //     <div className="space-y-6">
-// //       <h2 className="text-2xl font-semibold text-gray-800">{step.title}</h2>
+// //       <h2 className="text-2xl font-semibold text-ink-charcoal">{step.title}</h2>
 
 // //       {noCategoriesSelected && (
-// //         <p className="text-red-500">{step.note || "User must first select categories in Step 1"}</p>
+// //         <p className="text-status-error">{step.note || "User must first select categories in Step 1"}</p>
 // //       )}
 
 // //       {!noCategoriesSelected &&
@@ -51,7 +51,7 @@
 // //               key={catName}
 // //               className={`border ${colorClass} p-4 rounded-lg shadow-sm space-y-2`}
 // //             >
-// //               <h3 className="font-semibold text-gray-700">{catName}</h3>
+// //               <h3 className="font-semibold text-ink-paragraph">{catName}</h3>
 // //               <MultiSelect
 // //                 options={subcategoryOptions}
 // //                 selected={selectedForCategory}
@@ -124,40 +124,40 @@
 //   //   setStepValid?.(true);
 //   // }, [highlights, ctaButtons, setStepValid]);
 
-//   const baseInputClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
+//   const baseInputClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full";
 
 //   return (
 //     <div className="space-y-8">
-//       <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+//       <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
 //         {step.title}
 //       </h2>
 
 //       {/* Highlights Section */}
-//       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+//       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 //         <div className="flex justify-between items-center">
-//           <h3 className="text-lg font-semibold text-slate-900">Event Highlights</h3>
+//           <h3 className="text-lg font-semibold text-ink">Event Highlights</h3>
 //           <button
 //             type="button"
 //             onClick={addHighlight}
-//             className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+//             className="bg-brand-gold hover:bg-brand-gold text-white px-4 py-2 rounded-lg text-sm font-medium transition"
 //           >
 //             Add Highlight
 //           </button>
 //         </div>
         
-//         <p className="text-sm text-slate-600 mb-4">
+//         <p className="text-sm text-ink-paragraph mb-4">
 //           Add key highlights or features of your event that will attract attendees
 //         </p>
 
 //         {highlights.length === 0 ? (
-//           <div className="text-center py-8 text-slate-500">
+//           <div className="text-center py-8 text-ink-caption">
 //             <p>No highlights added yet.</p>
 //             <p className="text-sm">Click "Add Highlight" to get started.</p>
 //           </div>
 //         ) : (
 //           <div className="space-y-4">
 //             {highlights.map((highlight: any, index: number) => (
-//               <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-lg border border-amber-200">
+//               <div key={index} className="flex items-center gap-3 p-4 bg-surface-card rounded-lg border border-brand-yellow-soft">
 //                 <div className="flex-1">
 //                   <input
 //                     type="text"
@@ -170,7 +170,7 @@
 //                 <button
 //                   type="button"
 //                   onClick={() => removeHighlight(index)}
-//                   className="text-red-500 hover:text-red-700 p-2 transition"
+//                   className="text-status-error hover:text-status-error p-2 transition"
 //                   title="Remove highlight"
 //                 >
 //                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,37 +184,37 @@
 //       </div>
 
 //       {/* CTA Buttons Section */}
-//       <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+//       <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
 //         <div className="flex justify-between items-center">
-//           <h3 className="text-lg font-semibold text-slate-900">Call-to-Action Buttons</h3>
+//           <h3 className="text-lg font-semibold text-ink">Call-to-Action Buttons</h3>
 //           <button
 //             type="button"
 //             onClick={addCTAButton}
-//             className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+//             className="bg-brand-gold hover:bg-brand-gold text-white px-4 py-2 rounded-lg text-sm font-medium transition"
 //           >
 //             Add CTA Button
 //           </button>
 //         </div>
         
-//         <p className="text-sm text-slate-600 mb-4">
+//         <p className="text-sm text-ink-paragraph mb-4">
 //           Add buttons that will help attendees take action (Register, Learn More, etc.)
 //         </p>
 
 //         {ctaButtons.length === 0 ? (
-//           <div className="text-center py-8 text-slate-500">
+//           <div className="text-center py-8 text-ink-caption">
 //             <p>No CTA buttons added yet.</p>
 //             <p className="text-sm">Click "Add CTA Button" to get started.</p>
 //           </div>
 //         ) : (
 //           <div className="space-y-6">
 //             {ctaButtons.map((cta: CTAButton, index: number) => (
-//               <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+//               <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
 //                 <div className="flex justify-between items-center">
-//                   <h4 className="font-medium text-slate-800">CTA Button {index + 1}</h4>
+//                   <h4 className="font-medium text-ink-charcoal">CTA Button {index + 1}</h4>
 //                   <button
 //                     type="button"
 //                     onClick={() => removeCTAButton(index)}
-//                     className="text-red-500 hover:text-red-700 text-sm font-medium transition"
+//                     className="text-status-error hover:text-status-error text-sm font-medium transition"
 //                   >
 //                     Remove
 //                   </button>
@@ -222,7 +222,7 @@
                 
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 //                   <div>
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Button Label *
 //                     </label>
 //                     <input
@@ -236,7 +236,7 @@
 //                   </div>
                   
 //                   <div>
-//                     <label className="block mb-1 font-medium text-slate-800 text-sm">
+//                     <label className="block mb-1 font-medium text-ink-charcoal text-sm">
 //                       Link URL
 //                     </label>
 //                     <input
@@ -250,15 +250,15 @@
 //                 </div>
 
 //                 {/* Preview */}
-//                 <div className="pt-4 border-t border-amber-100">
-//                   <label className="block mb-2 font-medium text-slate-800 text-sm">Preview:</label>
+//                 <div className="pt-4 border-t border-brand-yellow-soft">
+//                   <label className="block mb-2 font-medium text-ink-charcoal text-sm">Preview:</label>
 //                   <div className="flex flex-wrap gap-2">
 //                     <button
 //                       type="button"
 //                       className={`px-6 py-2 rounded-lg font-medium text-sm transition ${
 //                         cta.label 
-//                           ? 'bg-amber-500 hover:bg-amber-600 text-white' 
-//                           : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+//                           ? 'bg-brand-gold hover:bg-brand-gold text-white' 
+//                           : 'bg-ink-light text-ink-caption cursor-not-allowed'
 //                       }`}
 //                       disabled={!cta.label}
 //                     >
@@ -273,9 +273,9 @@
 //       </div>
 
 //       {/* Helper Information */}
-//       <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-//         <h4 className="font-semibold text-blue-900 mb-2">💡 Tips for this section:</h4>
-//         <ul className="text-sm text-blue-800 space-y-1">
+//       <div className="p-4 bg-status-info/10 rounded-lg border border-status-info/25">
+//         <h4 className="font-semibold text-status-info mb-2">💡 Tips for this section:</h4>
+//         <ul className="text-sm text-status-info space-y-1">
 //           <li>• Highlights should be concise and compelling</li>
 //           <li>• CTA buttons should have clear, action-oriented labels</li>
 //           <li>• Include registration links, website URLs, or contact pages</li>
@@ -341,32 +341,32 @@ export const Step2 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
     updateField("ctaButtons", newCTAs);
   };
 
-  const baseInputClasses = "border border-amber-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm w-full";
+  const baseInputClasses = "border border-brand-yellow-soft rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition text-sm w-full";
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-amber-900 border-b border-amber-300 pb-2 mb-6">
+      <h2 className="text-2xl font-bold text-brand-gold border-b border-brand-yellow-soft pb-2 mb-6">
         {step.title}
       </h2>
 
       {/* Highlights Section */}
-      <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+      <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">Event Highlights</h3>
-          <p className="text-sm text-slate-600 mt-1">
+          <h3 className="text-lg font-semibold text-ink">Event Highlights</h3>
+          <p className="text-sm text-ink-paragraph mt-1">
             Add key highlights or features of your event that will attract attendees
           </p>
         </div>
 
         {highlights.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 border-2 border-dashed border-amber-200 rounded-lg">
+          <div className="text-center py-8 text-ink-caption border-2 border-dashed border-brand-yellow-soft rounded-lg">
             <p>No highlights added yet.</p>
             <p className="text-sm mt-1">Click "Add Highlight" to get started.</p>
           </div>
         ) : (
           <div className="space-y-4">
             {highlights.map((highlight: any, index: number) => (
-              <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-lg border border-amber-200">
+              <div key={index} className="flex items-center gap-3 p-4 bg-surface-card rounded-lg border border-brand-yellow-soft">
                 <div className="flex-1">
                   <input
                     type="text"
@@ -379,7 +379,7 @@ export const Step2 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                 <button
                   type="button"
                   onClick={() => removeHighlight(index)}
-                  className="text-red-500 hover:text-red-700 p-2 transition"
+                  className="text-status-error hover:text-status-error p-2 transition"
                   title="Remove highlight"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -396,7 +396,7 @@ export const Step2 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
           <button
             type="button"
             onClick={addHighlight}
-            className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+            className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -407,29 +407,29 @@ export const Step2 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
       </div>
 
       {/* CTA Buttons Section */}
-      <div className="space-y-6 p-6 bg-yellow-50 rounded-xl shadow-md">
+      <div className="space-y-6 p-6 bg-surface-main rounded-xl shadow-md">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">Call-to-Action Buttons</h3>
-          <p className="text-sm text-slate-600 mt-1">
+          <h3 className="text-lg font-semibold text-ink">Call-to-Action Buttons</h3>
+          <p className="text-sm text-ink-paragraph mt-1">
             Add buttons that will help attendees take action (Register, Learn More, etc.)
           </p>
         </div>
 
         {ctaButtons.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 border-2 border-dashed border-amber-200 rounded-lg">
+          <div className="text-center py-8 text-ink-caption border-2 border-dashed border-brand-yellow-soft rounded-lg">
             <p>No CTA buttons added yet.</p>
             <p className="text-sm mt-1">Click "Add CTA Button" to get started.</p>
           </div>
         ) : (
           <div className="space-y-6">
             {ctaButtons.map((cta: CTAButton, index: number) => (
-              <div key={index} className="p-6 bg-white rounded-lg border border-amber-200 space-y-4">
+              <div key={index} className="p-6 bg-surface-card rounded-lg border border-brand-yellow-soft space-y-4">
                 <div className="flex justify-between items-center">
-                  <h4 className="font-medium text-slate-800">CTA Button {index + 1}</h4>
+                  <h4 className="font-medium text-ink-charcoal">CTA Button {index + 1}</h4>
                   <button
                     type="button"
                     onClick={() => removeCTAButton(index)}
-                    className="text-red-500 hover:text-red-700 text-sm font-medium transition"
+                    className="text-status-error hover:text-status-error text-sm font-medium transition"
                   >
                     Remove
                   </button>
@@ -437,7 +437,7 @@ export const Step2 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Button Label *
                     </label>
                     <input
@@ -451,7 +451,7 @@ export const Step2 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                   </div>
                   
                   <div>
-                    <label className="block mb-1 font-medium text-slate-800 text-sm">
+                    <label className="block mb-1 font-medium text-ink-charcoal text-sm">
                       Link URL
                     </label>
                     <input
@@ -465,15 +465,15 @@ export const Step2 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
                 </div>
 
                 {/* Preview */}
-                <div className="pt-4 border-t border-amber-100">
-                  <label className="block mb-2 font-medium text-slate-800 text-sm">Preview:</label>
+                <div className="pt-4 border-t border-brand-yellow-soft">
+                  <label className="block mb-2 font-medium text-ink-charcoal text-sm">Preview:</label>
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
                       className={`px-6 py-2 rounded-lg font-medium text-sm transition ${
                         cta.label 
-                          ? 'bg-amber-500 hover:bg-amber-600 text-white' 
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          ? 'bg-brand-gold hover:bg-brand-gold text-white' 
+                          : 'bg-ink-light text-ink-caption cursor-not-allowed'
                       }`}
                       disabled={!cta.label}
                     >
@@ -491,7 +491,7 @@ export const Step2 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
           <button
             type="button"
             onClick={addCTAButton}
-            className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
+            className="bg-brand-gold hover:bg-brand-gold text-white px-6 py-3 rounded-lg text-sm font-medium transition flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -502,9 +502,9 @@ export const Step2 = ({ step, setStepValid }: { step: any; setStepValid?: (valid
       </div>
 
       {/* Helper Information */}
-      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <h4 className="font-semibold text-blue-900 mb-2">💡 Tips for this section:</h4>
-        <ul className="text-sm text-blue-800 space-y-1">
+      <div className="p-4 bg-status-info/10 rounded-lg border border-status-info/25">
+        <h4 className="font-semibold text-status-info mb-2">💡 Tips for this section:</h4>
+        <ul className="text-sm text-status-info space-y-1">
           <li>• Highlights should be concise and compelling</li>
           <li>• CTA buttons should have clear, action-oriented labels</li>
           <li>• Include registration links, website URLs, or contact pages</li>

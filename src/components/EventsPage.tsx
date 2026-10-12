@@ -66,18 +66,18 @@ const EventCountdown = ({ eventDate, eventTime }: { eventDate: string; eventTime
   }, [eventDate, eventTime]);
 
   if (countdown.isEventExpired) {
-    return <div className="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded">Event Ended</div>;
+    return <div className="text-xs font-bold text-status-error bg-status-error/15 px-2 py-1 rounded">Event Ended</div>;
   }
   if (countdown.isEventStarted) {
     return (
-      <div className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded flex items-center gap-1 animate-pulse">
-        <div className="w-2 h-2 bg-green-600 rounded-full animate-ping" />
+      <div className="text-xs font-bold text-status-success bg-status-success/15 px-2 py-1 rounded flex items-center gap-1 animate-pulse">
+        <div className="w-2 h-2 bg-status-success rounded-full animate-ping" />
         Live Now
       </div>
     );
   }
   return (
-    <div className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded flex items-center gap-1">
+    <div className="text-xs font-bold text-brand-gold bg-brand-yellow-soft px-2 py-1 rounded flex items-center gap-1">
       <Clock className="h-3 w-3" />
       {countdown.days > 0 ? `${countdown.days}d ` : ""}{countdown.hours}h {countdown.minutes}m {countdown.seconds}s
     </div>
@@ -199,35 +199,35 @@ const EventsPage = () => {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case "Conference": return "bg-black";
-      case "Summit": return "bg-gray-900";
-      case "Workshop": return "bg-gray-800";
-      case "Expo": return "bg-gray-700";
-      case "Webinar": return "bg-gray-600";
-      default: return "bg-gray-800";
+      case "Conference": return "bg-ink";
+      case "Summit": return "bg-ink";
+      case "Workshop": return "bg-ink-charcoal";
+      case "Expo": return "bg-ink-paragraph";
+      case "Webinar": return "bg-ink-paragraph";
+      default: return "bg-ink-charcoal";
     }
   };
 
   if (loading) {
     return (
-      <div className="pt-[104px] min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="pt-[104px] min-h-screen bg-surface-main flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black mx-auto" />
-          <p className="mt-4 text-gray-500 text-sm">Loading events...</p>
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-ink mx-auto" />
+          <p className="mt-4 text-ink-caption text-sm">Loading events...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero
         title={<>Events <span>Calendar</span> · {allEvents.length || '0'} Events</>}
         action={
           <button
             onClick={() => navigate(isLogin ? "/event/select" : "/login")}
-            className="px-3 py-1.5 text-xs font-semibold text-black bg-yellow-400 rounded-lg hover:bg-yellow-300 transition flex-shrink-0"
+            className="px-3 py-1.5 text-xs font-semibold text-ink bg-brand-yellow rounded-lg hover:bg-brand-yellow-soft transition flex-shrink-0"
           >
             List your Event
           </button>
@@ -238,29 +238,30 @@ const EventsPage = () => {
 .ev-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
 .ev-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
 .ev-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
-.ev-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.ev-sidebar-title{font-size:13px;font-weight:800;color:#111111;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .ev-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
 .ev-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .ev-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
 .ev-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
-.ev-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.ev-chip.active{background:#111111;color:#F8C400;border-color:#111111}
 .ev-chips{display:flex;gap:5px;flex-wrap:wrap}
 .ev-main{min-width:0}
 .ev-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.ev-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.ev-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#111111;font-family:inherit}
 .ev-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
 .ev-sort{padding:6px 10px;border:1.5px solid #E5E5E5;border-radius:8px;font-size:12.5px;color:#444;background:#fff;cursor:pointer;font-family:inherit}
 .ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px}
+.ev-grid > *{min-width:0}
 .ev-empty{padding:64px 0;text-align:center}
 .ev-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
 .ev-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
-.ev-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.ev-page-btn.active{background:#111111;color:#F8C400;border-color:#111111}
 .ev-filter-toggle{display:none}
 @media(max-width:960px){
   .ev-layout{grid-template-columns:1fr}
   .ev-sidebar{position:static;display:none}
   .ev-sidebar.open{display:block}
-  .ev-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+  .ev-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#111111;color:#F8C400;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
 }
 @media(max-width:600px){
   .ev-wrap{padding:12px 14px}
@@ -317,7 +318,7 @@ const EventsPage = () => {
             {(selectedType !== 'All' || searchQuery || sortBy !== 'upcoming') && (
               <button
                 onClick={() => { setSelectedType('All'); setSearchQuery(''); setSortBy('upcoming'); setCurrentPage(1); }}
-                style={{width:'100%',padding:'7px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit'}}
+                style={{width:'100%',padding:'7px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#111111',color:'#F8C400',border:'none',cursor:'pointer',fontFamily:'inherit'}}
               >
                 Clear All Filters
               </button>
@@ -350,16 +351,16 @@ const EventsPage = () => {
                   <div
                     key={event.id}
                     onClick={() => handleCardClick(event)}
-                    className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
+                    className="group bg-surface-card rounded-xl border border-ink-light shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
                   >
                     <div className="relative overflow-hidden rounded-t-xl">
                       <img src={event.image} alt={event.name} className="w-full h-40 object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className={`absolute top-3 right-3 ${getTypeColor(event.type)} text-white px-2 py-1 rounded-full text-xs font-bold`}>{event.type}</div>
                     </div>
                     <div className="p-4">
-                      <h3 className="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2">{event.name}</h3>
-                      {event.description && <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{event.description}</p>}
-                      <div className="space-y-1 text-xs text-gray-500">
+                      <h3 className="text-sm font-bold text-ink leading-snug mb-2 line-clamp-2">{event.name}</h3>
+                      {event.description && <p className="text-xs text-ink-caption leading-relaxed mb-3 line-clamp-2">{event.description}</p>}
+                      <div className="space-y-1 text-xs text-ink-caption">
                         {event.date && <div className="flex items-center gap-1.5"><Calendar className="h-3 w-3 flex-shrink-0" />{event.date}</div>}
                         {event.location && <div className="flex items-center gap-1.5"><MapPin className="h-3 w-3 flex-shrink-0" />{event.location}</div>}
                         {event.attendees && event.attendees !== "Not specified" && <div className="flex items-center gap-1.5"><Users className="h-3 w-3 flex-shrink-0" />{event.attendees}</div>}

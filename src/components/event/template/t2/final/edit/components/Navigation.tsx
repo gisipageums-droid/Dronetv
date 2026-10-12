@@ -26,8 +26,8 @@ const CustomButton = ({
 }) => {
   const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   const variants = {
-    outline: "border border-gray-300 bg-transparent hover:bg-gray-50",
-    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-ink-light bg-transparent hover:bg-ink-offwhite",
+    default: "bg-status-info text-white hover:bg-status-info",
   };
   const sizes = {
     sm: "h-8 px-3 text-sm",
@@ -107,12 +107,12 @@ const EditableText = ({
         type="text"
         value={value}
         onChange={handleChange}
-        className={`bg-white/80 backdrop-blur-sm border-2 border-dashed border-blue-300 rounded focus:border-blue-500 focus:outline-none p-1 w-full ${className}`}
+        className={`bg-white/80 backdrop-blur-sm border-2 border-dashed border-status-info/40 rounded focus:border-status-info focus:outline-none p-1 w-full ${className}`}
         placeholder={placeholder}
         maxLength={charLimit}
       />
       {charLimit && (
-        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-500">
+        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-ink-caption">
           {value.length}/{charLimit}
         </div>
       )}
@@ -217,7 +217,7 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
     <>
       <nav
         className={`fixed top-[4rem] left-0 right-0 z-[50] transition-all duration-300 ${
-          isScrolled ? 'bg-white shadow-md py-3' : 'bg-white/95 backdrop-blur-md py-4'
+          isScrolled ? 'bg-surface-card shadow-md py-3' : 'bg-white/95 backdrop-blur-md py-4'
         }`}
       >
         {/* Updated container to match Header.tsx */}
@@ -226,7 +226,7 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
           <div className="grid grid-cols-3 items-center">
             {/* Logo Section - Left */}
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-amber-500 rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 bg-brand-gold rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm font-bold">
                   {getLogoLetter()}
                 </span>
@@ -235,12 +235,12 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
                 <EditableText
                   value={displayData.logoText}
                   onChange={(value) => updateField('logoText', value)}
-                  className="text-gray-900 text-lg"
+                  className="text-ink text-lg"
                   placeholder="Logo text"
                   charLimit={TEXT_LIMITS.LOGO_TEXT}
                 />
               ) : (
-                <span className="text-gray-900 text-lg">{displayData.logoText}</span>
+                <span className="text-ink text-lg">{displayData.logoText}</span>
               )}
             </div>
 
@@ -251,12 +251,12 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
                   <button
                     onClick={() => scrollToSection(item.href.substring(1))}
                     className={`transition-colors duration-200 relative group text-sm ${
-                      activeSection === item.href.substring(1) ? 'text-amber-600' : 'text-gray-600 hover:text-amber-600'
+                      activeSection === item.href.substring(1) ? 'text-brand-gold' : 'text-ink-paragraph hover:text-brand-yellow'
                     }`}
                   >
                     {item.label}
                     <span
-                      className={`absolute -bottom-1 left-0 w-full h-0.5 bg-amber-500 transition-transform duration-200 ${
+                      className={`absolute -bottom-1 left-0 w-full h-0.5 bg-brand-gold transition-transform duration-200 ${
                         activeSection === item.href.substring(1) ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                       }`}
                     />
@@ -272,7 +272,7 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
                 <CustomButton
                   onClick={handleEdit}
                   size="sm"
-                  className="bg-red-500 hover:bg-red-600 shadow-md text-white"
+                  className="bg-status-error hover:bg-status-error shadow-md text-white"
                 >
                   <Edit2 className="w-4 h-4 mr-2" />
                   Edit
@@ -282,7 +282,7 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
                   <CustomButton
                     onClick={handleSave}
                     size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                    className="bg-status-success hover:bg-status-success text-white shadow-md"
                     disabled={isSaving}
                   >
                     {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
@@ -291,7 +291,7 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
                   <CustomButton
                     onClick={handleCancel}
                     size="sm"
-                    className="bg-red-500 hover:bg-red-600 text-white shadow-md"
+                    className="bg-status-error hover:bg-status-error text-white shadow-md"
                     disabled={isSaving}
                   >
                     <X className="w-4 h-4 mr-2" />
@@ -303,7 +303,7 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-2 text-gray-900"
+                className="lg:hidden p-2 text-ink"
               >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
@@ -314,13 +314,13 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
 
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-ink/50 z-40 lg:hidden transition-opacity duration-300 ${
           isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsMobileMenuOpen(false)}
       >
         <div
-          className={`fixed right-0 top-0 bottom-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ${
+          className={`fixed right-0 top-0 bottom-0 w-64 bg-surface-card shadow-xl transform transition-transform duration-300 ${
             isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -328,20 +328,20 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
           <div className="p-6">
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="absolute top-6 right-6 text-gray-900"
+              className="absolute top-6 right-6 text-ink"
             >
               <X size={24} />
             </button>
             
             {/* Edit Controls in Mobile Menu */}
             {isEditing && (
-              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">Editing Logo</p>
+              <div className="mb-4 p-3 bg-ink-offwhite rounded-lg">
+                <p className="text-sm text-ink-paragraph mb-2">Editing Logo</p>
                 <div className="flex gap-2">
                   <CustomButton
                     onClick={handleSave}
                     size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                    className="bg-status-success hover:bg-status-success text-white text-xs"
                     disabled={isSaving}
                   >
                     {isSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
@@ -350,7 +350,7 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
                   <CustomButton
                     onClick={handleCancel}
                     size="sm"
-                    className="bg-red-500 hover:bg-red-600 text-white text-xs"
+                    className="bg-status-error hover:bg-status-error text-white text-xs"
                     disabled={isSaving}
                   >
                     <X className="w-3 h-3" />
@@ -366,7 +366,7 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
                   <button
                     onClick={() => scrollToSection(item.href.substring(1))}
                     className={`text-left py-2 transition-colors duration-200 text-sm w-full ${
-                      activeSection === item.href.substring(1) ? 'text-amber-600' : 'text-gray-600 hover:text-amber-600'
+                      activeSection === item.href.substring(1) ? 'text-brand-gold' : 'text-ink-paragraph hover:text-brand-yellow'
                     }`}
                   >
                     {item.label}
@@ -376,7 +376,7 @@ export function Navigation({ activeSection, navigationData, onStateChange }: Nav
               {displayData.ctaButton && (
                 <CustomButton
                   onClick={() => scrollToSection(displayData.ctaButton!.href.substring(1))}
-                  className="bg-amber-500 hover:bg-amber-600 text-white mt-4 w-full"
+                  className="bg-brand-gold hover:bg-brand-gold text-white mt-4 w-full"
                 >
                   {displayData.ctaButton.text}
                 </CustomButton>

@@ -46,7 +46,7 @@ const defaultSpeakersData: SpeakersData = {
       "topic": "Session topic",
       "company": "EXACT company",
       "id": "1",
-      "color": "from-yellow-400 to-amber-500"
+      "color": "from-brand-yellow to-brand-gold"
     }
   ]
 };
@@ -66,7 +66,7 @@ export function SpeakersSection({ speakersData }: SpeakersProps) {
         topic: speaker.topic || 'Speaking Topic',
         bio: speaker.bio || 'Professional bio',
         image: speaker.image,
-        color: speaker.color || 'from-yellow-400 to-amber-500',
+        color: speaker.color || 'from-brand-yellow to-brand-gold',
         socialLinks: speaker.socialLinks || {
           linkedin: '',
           twitter: '',
@@ -92,16 +92,16 @@ export function SpeakersSection({ speakersData }: SpeakersProps) {
   const displayData = data;
 
   return (
-    <section id="speakers" className="py-16 sm:py-20 md:py-24 bg-white">
+    <section id="speakers" className="py-16 sm:py-20 md:py-24 bg-surface-card">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
-              <span className="text-red-700 text-xl font-semibold">{displayData.subtitle}</span>
+            <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
+              <span className="text-status-error text-xl font-semibold">{displayData.subtitle}</span>
             </div>
-            <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
-            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+            <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">{displayData.heading}</h2>
+            <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
               {displayData.description}
             </p>
           </div>
@@ -116,10 +116,10 @@ export function SpeakersSection({ speakersData }: SpeakersProps) {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -10 }}
-                className="group relative bg-white rounded-2xl overflow-hidden border-2 border-gray-100 hover:border-amber-300 hover:shadow-2xl transition-all duration-300"
+                className="group relative bg-surface-card rounded-2xl overflow-hidden border-2 border-ink-light hover:border-brand-yellow-soft hover:shadow-2xl transition-all duration-300"
               >
                 {/* Speaker Header */}
-                <div className={`relative h-40 bg-yellow-200 flex items-center justify-center ${speaker.color}`}>
+                <div className={`relative h-40 bg-brand-yellow-soft flex items-center justify-center ${speaker.color}`}>
                   {speaker.image ? (
                     <img
                       src={speaker.image}
@@ -127,26 +127,26 @@ export function SpeakersSection({ speakersData }: SpeakersProps) {
                       className="w-20 h-20 rounded-full object-cover shadow-lg group-hover:scale-110 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <User className="w-10 h-10 text-gray-700" />
+                    <div className="w-20 h-20 bg-surface-card rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <User className="w-10 h-10 text-ink-paragraph" />
                     </div>
                   )}
                 </div>
 
                 {/* Speaker Content */}
                 <div className="p-6">
-                  <h3 className="text-gray-900 mb-2 text-lg sm:text-xl group-hover:text-amber-600 transition-colors">
+                  <h3 className="text-ink mb-2 text-lg sm:text-xl group-hover:text-brand-yellow transition-colors">
                     {speaker.name}
                   </h3>
-                  <p className="text-amber-600 mb-1 text-sm sm:text-base">{speaker.role}</p>
-                  <p className="text-gray-600 mb-4 text-sm">{speaker.company}</p>
-                  <div className="pt-4 border-t border-gray-100">
-                    <p className="text-gray-700 text-sm sm:text-base mb-2">
-                      <span className="text-gray-500">Topic: </span>
+                  <p className="text-brand-gold mb-1 text-sm sm:text-base">{speaker.role}</p>
+                  <p className="text-ink-paragraph mb-4 text-sm">{speaker.company}</p>
+                  <div className="pt-4 border-t border-ink-light">
+                    <p className="text-ink-paragraph text-sm sm:text-base mb-2">
+                      <span className="text-ink-caption">Topic: </span>
                       {speaker.topic}
                     </p>
                     {speaker.bio && (
-                      <p className="text-gray-600 text-sm mt-2">{speaker.bio}</p>
+                      <p className="text-ink-paragraph text-sm mt-2">{speaker.bio}</p>
                     )}
                   </div>
                 </div>
@@ -158,11 +158,11 @@ export function SpeakersSection({ speakersData }: SpeakersProps) {
           {displayData.speakers.length === 0 && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-ink-light rounded-full flex items-center justify-center">
+                  <User className="w-8 h-8 text-ink-caption" />
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Speakers Added</h4>
-                <p className="text-gray-600">Add speakers to showcase your event presenters.</p>
+                <h4 className="text-lg font-semibold text-ink mb-2">No Speakers Added</h4>
+                <p className="text-ink-paragraph">Add speakers to showcase your event presenters.</p>
               </div>
             </div>
           )}

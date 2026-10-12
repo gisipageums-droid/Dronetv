@@ -1543,15 +1543,17 @@ const GSTVerificationSection: React.FC<{
           <div className="p-4 space-y-3">
             {/* Company Name */}
             <div className="space-y-1">
-              <div className="flex items-center text-xs text-ink-caption font-medium">
-                Company Name (Trade Name)
+              <div className="flex items-center justify-between text-xs text-ink-caption font-medium">
+                <span>Company Name (Trade Name)</span>
+                <span>{(verifiedData?.companyName || "").length}/60</span>
               </div>
               <input
                 type="text"
                 value={verifiedData?.companyName || ""}
-                onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), companyName: e.target.value })}
+                onChange={(e) => handleVerifiedDataChange({ ...(verifiedData || {}), companyName: e.target.value.slice(0, 60) })}
                 placeholder="Enter company name"
                 disabled={isVerified}
+                maxLength={60}
                 className="w-full h-10 px-3 text-sm border border-ink-light rounded bg-surface-card text-ink-paragraph focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold disabled:bg-ink-offwhite disabled:text-ink-caption"
               />
             </div>
@@ -2230,6 +2232,12 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
   const [autoFillStep, setAutoFillStep] = useState<'idle' | 'scraping' | 'processing' | 'done' | 'error'>('idle');
   const [autoFillTaskId, setAutoFillTaskId] = useState<string | null>(null);
   const [autoFillCompanyId, setAutoFillCompanyId] = useState<string | null>(null);
+  // A real multi-page browser crawl kicked off alongside the fast
+  // synchronous guess above - runs fully in the background (the fast path
+  // already fills the logo/basic fields immediately) and enriches
+  // services/about/etc. with real per-section content once it finishes.
+  const [crawlJobId, setCrawlJobId] = useState<string | null>(null);
+  const [crawlCompanyName, setCrawlCompanyName] = useState<string>('Company');
 
   const handleVerifyPAN = () => {
     setVerifyingPan(true);
@@ -2574,6 +2582,10 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
           applyAutoFillData(res.data?.generatedData || {});
           setAutoFillStep('done');
           toast.success('Website analysed! Matching fields have been pre-filled.');
+          if (res.data?.crawlJobId) {
+            setCrawlCompanyName(res.data?.generatedData?.companyName || formData.companyName || 'Company');
+            setCrawlJobId(res.data.crawlJobId);
+          }
         } else {
           throw new Error(res.data?.message || 'Autofill failed');
         }
@@ -2650,6 +2662,77 @@ const Step1CompanyCategory: React.FC<Step1CompanyCategoryProps> = ({
 
     if (Object.keys(updates).length > 0) updateFormData(updates);
   };
+
+  // Applies the richer, real per-section content from the background
+  // multi-page crawl (map_crawl_to_template_content's shape - real
+  // service/product cards with their own descriptions and images, not
+  // just the fast single-page guess's bare title strings). Same
+  // don't-overwrite-what's-already-set rule as applyAutoFillData.
+  const applyRichCrawlData = (content: any) => {
+    if (!content) return;
+    const updates: Record<string, any> = {};
+
+    const logo = content.header?.logoSrc || content.company?.logo;
+    if (logo && !formData.companyLogoUrl) updates.companyLogoUrl = logo;
+
+    const aboutText = [content.about?.description1, content.about?.description2]
+      .filter(Boolean)
+      .join(' ');
+    if (aboutText && !formData.natureOfBusiness) updates.natureOfBusiness = aboutText;
+
+    const richServices = content.services?.services;
+    if (Array.isArray(richServices) && richServices.length > 0 && (!formData.services || formData.services.length === 0)) {
+      updates.services = richServices.slice(0, 6).map((s: any) => ({
+        icon: 'camera',
+        title: s.title || 'Service',
+        description: s.description || '',
+      }));
+    }
+
+    if (Object.keys(updates).length > 0) {
+      updateFormData(updates);
+      toast.success('Found more details from the site - filled in a few more fields.');
+    }
+  };
+
+  // Polls the background crawl kicked off alongside the fast autofill.
+  // Silent on failure/timeout - the fast synchronous fields already
+  // applied above are the guaranteed result, this is a best-effort bonus.
+  useEffect(() => {
+    if (!crawlJobId) return;
+    let attempts = 0;
+    const MAX_ATTEMPTS = 24; // ~2 minutes at 5s each - a real multi-page crawl
+
+    const poll = async () => {
+      try {
+        const res = await axios.get(`${COMPANY_API}/autofill-crawl-status/${crawlJobId}`, {
+          params: { companyName: crawlCompanyName },
+        });
+        const status = res.data?.status;
+        if (status === 'success') {
+          applyRichCrawlData(res.data?.content);
+          clearInterval(timer);
+          setCrawlJobId(null);
+          return;
+        }
+        if (status === 'failed') {
+          clearInterval(timer);
+          setCrawlJobId(null);
+          return;
+        }
+      } catch {
+        // transient - keep polling until MAX_ATTEMPTS
+      }
+      attempts++;
+      if (attempts >= MAX_ATTEMPTS) {
+        clearInterval(timer);
+        setCrawlJobId(null);
+      }
+    };
+
+    const timer = setInterval(poll, 5000);
+    return () => clearInterval(timer);
+  }, [crawlJobId]);
 
   useEffect(() => {
     if (!autoFillTaskId || autoFillStep !== 'processing') return;

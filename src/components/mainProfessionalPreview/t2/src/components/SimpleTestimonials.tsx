@@ -7,11 +7,11 @@ export function SimpleTestimonials({ testimonialData }) {
   // If no testimonialData provided, return loading state
   if (!testimonialData) {
     return (
-      <section className="py-20 bg-white dark:bg-yellow-900/20">
+      <section className="py-20 bg-surface-card dark:bg-yellow-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="h-8 bg-gray-300 rounded w-1/3 mx-auto mb-4"></div>
-            <div className="h-4 bg-gray-300 rounded w-2/3 mx-auto"></div>
+            <div className="h-8 bg-ink-light rounded w-1/3 mx-auto mb-4"></div>
+            <div className="h-4 bg-ink-light rounded w-2/3 mx-auto"></div>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(3)].map((_, index) => (
@@ -19,22 +19,22 @@ export function SimpleTestimonials({ testimonialData }) {
                 key={index}
                 className="animate-pulse bg-card rounded-2xl p-6 shadow-lg min-h-[400px] flex flex-col"
               >
-                <div className="w-12 h-12 bg-gray-300 rounded-full mb-4"></div>
+                <div className="w-12 h-12 bg-ink-light rounded-full mb-4"></div>
                 <div className="flex space-x-1 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-5 h-5 bg-gray-300 rounded"></div>
+                    <div key={i} className="w-5 h-5 bg-ink-light rounded"></div>
                   ))}
                 </div>
                 <div className="space-y-2 mb-6 flex-1">
-                  <div className="h-4 bg-gray-300 rounded"></div>
-                  <div className="h-4 bg-gray-300 rounded w-5/6"></div>
-                  <div className="h-4 bg-gray-300 rounded w-4/6"></div>
+                  <div className="h-4 bg-ink-light rounded"></div>
+                  <div className="h-4 bg-ink-light rounded w-5/6"></div>
+                  <div className="h-4 bg-ink-light rounded w-4/6"></div>
                 </div>
                 <div className="flex items-center space-x-4 mt-auto pt-4">
-                  <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+                  <div className="w-12 h-12 bg-ink-light rounded-full"></div>
                   <div className="space-y-2">
-                    <div className="h-4 bg-gray-300 rounded w-24"></div>
-                    <div className="h-3 bg-gray-300 rounded w-32"></div>
+                    <div className="h-4 bg-ink-light rounded w-24"></div>
+                    <div className="h-3 bg-ink-light rounded w-32"></div>
                   </div>
                 </div>
               </div>
@@ -68,7 +68,7 @@ export function SimpleTestimonials({ testimonialData }) {
   const testimonials = processTestimonialsData();
 
   return (
-    <section className="py-20 bg-white text-justify dark:bg-yellow-900/20">
+    <section className="py-20 bg-surface-card text-justify dark:bg-yellow-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header - Fully Dynamic */}
         <motion.div
@@ -107,8 +107,8 @@ export function SimpleTestimonials({ testimonialData }) {
                 className="bg-card border-2 border-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col min-h-[400px]"
               >
                 {/* Quote Icon */}
-                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mb-4">
-                  <Quote className="w-6 h-6 text-gray-900" />
+                <div className="w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center mb-4">
+                  <Quote className="w-6 h-6 text-ink" />
                 </div>
 
                 {/* Stars - Dynamic Rating */}
@@ -116,7 +116,7 @@ export function SimpleTestimonials({ testimonialData }) {
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star
                       key={i}
-                      className="w-5 h-5 text-yellow-400 fill-current"
+                      className="w-5 h-5 text-brand-yellow fill-current"
                     />
                   ))}
                 </div>
@@ -129,9 +129,9 @@ export function SimpleTestimonials({ testimonialData }) {
                 </div>
 
                 {/* Client Info - Fixed at bottom */}
-                <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-gray-200">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center flex-shrink-0">
-                    <div className="text-gray-900 text-lg w-full h-full rounded-full border border-gray-400 overflow-hidden">
+                <div className="flex items-center space-x-4 mt-auto pt-4 border-t border-ink-light">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-yellow to-brand-gold flex items-center justify-center flex-shrink-0">
+                    <div className="text-ink text-lg w-full h-full rounded-full border border-ink-caption overflow-hidden">
                       <img
                         src={`${testimonial.gender === "male" ? maleAvatar : femaleAvatar}`}
                         alt={testimonial.name}

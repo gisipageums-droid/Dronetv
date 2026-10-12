@@ -34,15 +34,15 @@ const Navigation: React.FC = () => {
   return (
     <nav className={`fixed top-[60px] left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? 'bg-black/95 backdrop-blur-md shadow-2xl py-3' 
+        ? 'bg-ink/95 backdrop-blur-md shadow-2xl py-3' 
         : 'bg-transparent py-6'
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="text-2xl font-bold">
-            <span className="text-[#FFD400]">Drone</span>
-            <span className="text-[#FF0000]">Flight</span>
+            <span className="text-[#F8C400]">Drone</span>
+            <span className="text-[#DC2626]">Flight</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -51,17 +51,17 @@ const Navigation: React.FC = () => {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="relative font-medium text-white hover:text-[#FFD400] transition-colors duration-300 group"
+                className="relative font-medium text-white hover:text-[#F8C400] transition-colors duration-300 group"
               >
                 {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FF0000] transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#DC2626] transition-all duration-300 group-hover:w-full"></span>
               </button>
             ))}
           </div>
 
           {/* CTA Button */}
           <div className="hidden lg:block">
-            <button className="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+            <button className="bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
               Get Quote
             </button>
           </div>
@@ -77,17 +77,17 @@ const Navigation: React.FC = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 py-4 bg-black/95 backdrop-blur-md rounded-lg border border-gray-800">
+          <div className="lg:hidden mt-4 py-4 bg-ink/95 backdrop-blur-md rounded-lg border border-ink-charcoal">
             {navItems.map((item) => (
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="block w-full text-left px-4 py-3 text-white hover:text-[#FFD400] hover:bg-white/5 transition-colors"
+                className="block w-full text-left px-4 py-3 text-white hover:text-[#F8C400] hover:bg-white/5 transition-colors"
               >
                 {item.name}
               </button>
             ))}
-            <button className="w-full mt-4 mx-4 bg-[#FF0000] hover:bg-[#FF0000]/90 text-white px-6 py-3 rounded-full font-semibold transition-colors">
+            <button className="w-full mt-4 mx-4 bg-[#DC2626] hover:bg-[#DC2626]/90 text-white px-6 py-3 rounded-full font-semibold transition-colors">
               Get Quote
             </button>
           </div>

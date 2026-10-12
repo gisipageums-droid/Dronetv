@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
+import { Award } from "lucide-react";
 
-export default function Hero({ heroData }) {
+export default function Hero({ heroData, badgeStatus }: { heroData: any; badgeStatus?: string }) {
   // Use heroData directly without any fallbacks
   const heroState = heroData || {};
 
@@ -97,6 +98,14 @@ export default function Hero({ heroData }) {
                 <h1 className="text-4xl md:text-6xl text-foreground leading-tight text-left">
                   {heroState.heading}
                 </h1>
+                {badgeStatus === "SILVER" && (
+                  <span
+                    className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-bold uppercase tracking-wide"
+                    title="Silver - Profile verified by DroneTV team"
+                  >
+                    <Award size={13} /> Silver &middot; Profile verified by DroneTV
+                  </span>
+                )}
               </motion.div>
 
               {/* Description */}

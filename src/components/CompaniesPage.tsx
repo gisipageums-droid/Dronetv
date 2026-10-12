@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, BadgeCheck, MapPin, ChevronRight, SlidersHorizontal, X } from 'lucide-react';
+import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, SlidersHorizontal, X, Award, Crown, Share2, Heart, BarChart2, Star, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
 import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
@@ -47,6 +47,9 @@ export interface Company {
 export const TIER_STYLE: Record<string, { label: string; packageLabel: string; ribbonBg: string; ribbonColor: string; bannerBg: string; bannerColor: string; verifiedListing: boolean; highlightBg: string; dark?: boolean }> = {
   silver: { label: 'SILVER', packageLabel: 'Reach Package', ribbonBg: 'linear-gradient(135deg,#E8E8E8,#9A9A9A)', ribbonColor: '#ffffff', bannerBg: 'linear-gradient(135deg,#8a8a8a,#4a4a4a)', bannerColor: '#ffffff', verifiedListing: false, highlightBg: '#F0F0F0' },
   gold: { label: 'GOLD BRAND', packageLabel: 'Package', ribbonBg: 'linear-gradient(135deg,#FFE38A,#C99400)', ribbonColor: '#7A5B00', bannerBg: 'linear-gradient(135deg,#E8B400,#8a6400)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: '#FFF3C4' },
+  // Platinum renders on a dark card (see .pc-card-dark) per the approved
+  // design - highlightBg switches to a translucent white overlay so the
+  // callout/highlight chips still read on that dark background.
   platinum: { label: 'PLATINUM', packageLabel: 'Expand Package', ribbonBg: 'linear-gradient(135deg,#CBD5E1,#64748B)', ribbonColor: '#F8C400', bannerBg: 'linear-gradient(135deg,#1e293b,#0F172A)', bannerColor: '#ffffff', verifiedListing: true, highlightBg: 'rgba(255,255,255,.08)', dark: true },
 };
 
@@ -134,17 +137,17 @@ export function getInitials(name: string): string {
   return name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
 }
 
-const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#22C55E', ai: '#6B2FB5', all: '#444' };
-const IND_LABELS: Record<string, string> = { all: 'All', drone: '🚁 Drone', gis: '🗺️ GIS', ai: '🤖 AI' };
+export const IND_COLORS: Record<string, string> = { drone: '#0B5CB5', gis: '#22C55E', ai: '#6B2FB5', all: '#444' };
+export const IND_LABELS: Record<string, string> = { all: 'All', drone: '🚁 Drone', gis: '🗺️ GIS', ai: '🤖 AI' };
 const AV_COLORS = ['#0B5CB5','#22C55E','#DC2626','#6B2FB5','#c05800','#1a5a9a','#3a6a1a','#9a3a1a'];
 
-function avColor(name: string): string {
+export function avColor(name: string): string {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
   return AV_COLORS[h % AV_COLORS.length];
 }
 
-const CSS = `
+export const CSS = `
 .co-page { background: #FFF8D6; font-family: 'Poppins', sans-serif; min-height: 100vh; padding-top: 60px; }
 .co-hero { background: #111111; color: #fff; border-bottom: 2px solid #F8C400; }
 .co-hero-i { max-width: 1280px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
@@ -185,19 +188,24 @@ const CSS = `
 .co-mobile-overlay { display: none; }
 
 /* Card */
-.co-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; }
+.co-card { container-type: inline-size; background: #fff; border: 1px solid #E5E5E5; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); display: flex; flex-direction: column; transition: box-shadow .17s, transform .17s; cursor: pointer; position: relative; }
+/* Fixes-doc #2 - a pre-listed, not-yet-claimed company must never look the
+   same as a real, self-confirmed listing. Unmissable by design: full-width,
+   high-contrast, above everything else on the card. */
+.unclaimed-banner { background: #FEF3C7; color: #92400E; font-size: 10.5px; font-weight: 800; text-align: center; padding: 5px 8px; letter-spacing: .2px; }
+.co-card-save { position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.9); border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
 .co-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.14); transform: translateY(-2px); }
 .co-card-top { padding: 13px 13px 0; display: flex; gap: 10px; align-items: flex-start; }
 .co-avatar { width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0; overflow: hidden; }
 .co-avatar img { width: 44px; height: 44px; border-radius: 9px; object-fit: cover; }
-.co-card-name { font-size: 13px; font-weight: 700; color: #111111; line-height: 1.3; }
-.co-card-loc { display: flex; align-items: flex-start; gap: 3px; font-size: 11px; color: #777; margin-top: 2px; min-width: 0; }
-.co-card-loc svg { flex-shrink: 0; margin-top: 2px; }
-.co-card-loc-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1; min-width: 0; word-break: break-word; }
-.co-card-desc { font-size: 12px; color: #777; line-height: 1.6; padding: 0 13px; margin-bottom: 9px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.co-card-name { font-size: clamp(10.5px, 3.6cqw, 12px); font-weight: 700; color: #111111; line-height: 1.3; word-break: break-word; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.co-card-loc { display: flex; align-items: center; gap: 3px; font-size: clamp(9px, 2.7cqw, 10px); color: #888; margin-top: 2px; min-width: 0; }
+.co-card-loc svg { flex-shrink: 0; }
+.co-card-loc-text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; flex: 1; min-width: 0; }
+.co-card-desc { font-size: clamp(10.5px, 3.2cqw, 12px); color: #777; line-height: 1.6; padding: 0 13px; margin-bottom: 9px; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .co-card-foot { padding: 9px 13px; border-top: 1px solid #E5E5E5; background: #FAFAFA; display: flex; gap: 6px; }
-.co-btn-out { flex: 1; background: #fff; color: #111111; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; }
-.co-btn-red { flex: 1; background: #DC2626; color: #fff; padding: 6px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; }
+.co-btn-out { flex: 1; background: #fff; color: #111111; border: 1.5px solid #E5E5E5; padding: 6px 8px; border-radius: 7px; font-size: clamp(10px, 3cqw, 11.5px); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px; font-family: 'Poppins',sans-serif; white-space: nowrap; }
+.co-btn-red { flex: 1; background: #DC2626; color: #fff; padding: 6px 8px; border-radius: 7px; font-size: clamp(10px, 3cqw, 11.5px); font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins',sans-serif; white-space: nowrap; }
 
 @media (max-width: 960px) {
   .co-layout { grid-template-columns: 1fr; }
@@ -214,6 +222,125 @@ const CSS = `
   .co-tabs-i { padding: 0 14px; }
   .co-tab { padding: 8px 12px; font-size: 12px; }
 }
+
+/* Premium (Silver / Gold / Platinum) verified-company spotlight card -
+   full-width, matches the supplied mockups. Spans every column of .co-grid. */
+.pc-card { container-type: inline-size; background: #fff; border: 1px solid #E5E5E5; border-radius: 14px; box-shadow: 0 3px 14px rgba(0,0,0,.07); padding: 14px; position: relative; cursor: pointer; transition: box-shadow .17s; display: flex; flex-direction: column; }
+.pc-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,.12); }
+.pc-top { display: flex; gap: 12px; align-items: flex-start; padding-right: 52px; }
+.pc-logo { width: 64px; height: 64px; border: 1px solid #E0E0E0; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; text-align: center; font-size: 9px; color: #999; font-weight: 700; overflow: hidden; line-height: 1.3; }
+.pc-logo img { width: 100%; height: 100%; object-fit: contain; }
+.pc-id { flex: 1; min-width: 50px; }
+.pc-name { font-size: clamp(12px, 4.3cqw, 15.5px); font-weight: 800; color: #111111; line-height: 1.25; word-break: break-word; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-tagline { font-size: clamp(10px, 3cqw, 11.5px); color: #8a8a8a; margin-top: 2px; }
+.pc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.pc-tag { font-size: clamp(8px, 2.3cqw, 9px); font-weight: 800; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; background: #F0F0F0; color: #444; white-space: nowrap; }
+.pc-tag-verified { background: #DFF5E4; color: #1DA34C; }
+.pc-tag-premium { background: #F8C400; color: #1A1A1A; }
+.pc-badge-wrap { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; z-index: 3; }
+.pc-ribbon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+.pc-icons { display: flex; gap: 4px; }
+.pc-icon-btn { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.pc-icon-btn svg { width: 11px; height: 11px; }
+.pc-desc-row { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.pc-desc { flex: 1 1 100%; font-size: clamp(11px, 3.3cqw, 12.5px); color: #333333; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-callout { flex: 1 1 100%; background: #FFF3C4; border-radius: 9px; padding: 9px 12px; display: flex; gap: 8px; align-items: center; }
+.pc-callout-icon { width: 28px; height: 28px; border-radius: 7px; background: #F8C400; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pc-callout-text { font-size: clamp(10px, 2.9cqw, 11.5px); font-weight: 700; color: #333333; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pc-photos { position: relative; margin-top: 12px; padding: 0 20px; }
+.pc-photos-track { display: flex; gap: 8px; }
+.pc-photo-tile { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.pc-photo { border-radius: 8px; overflow: hidden; height: 60px; background: #EFEFEF; }
+.pc-photo img { width: 100%; height: 100%; object-fit: cover; }
+.pc-photo-cap { text-align: center; font-size: 10px; font-weight: 600; color: #333333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pc-carousel-btn { position: absolute; top: 19px; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,.95); border: 1px solid #E0E0E0; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; padding: 0; }
+.pc-carousel-prev { left: -6px; }
+.pc-carousel-next { right: -6px; }
+.pc-carousel-dots { display: flex; justify-content: center; gap: 4px; margin-top: 6px; }
+.pc-dot { width: 5px; height: 5px; border-radius: 50%; background: #DDDDDD; }
+.pc-dot-active { background: #999999; }
+.pc-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 7px; margin-top: 12px; }
+.pc-hl-chip { display: flex; gap: 6px; align-items: center; border-radius: 8px; padding: 7px 10px; font-size: 10.5px; font-weight: 700; color: #333333; }
+.pc-stats { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #F0F0F0; }
+.pc-stat { display: flex; gap: 6px; align-items: center; background: #F5F5F5; border-radius: 8px; padding: 7px 12px; flex: 0 0 auto; }
+.pc-stat-n { font-size: clamp(11px, 3.3cqw, 13px); font-weight: 800; color: #111111; line-height: 1.2; }
+.pc-stat-l { font-size: clamp(8px, 2.3cqw, 9.5px); color: #888888; white-space: nowrap; }
+.pc-cta { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.pc-btn-outline { flex: 1 1 0; max-width: 45%; padding: 8px; border-radius: 7px; border: 1.5px solid #E0E0E0; background: #fff; font-size: clamp(10px, 2.9cqw, 12px); font-weight: 700; color: #111111; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.pc-btn-solid { flex: 1.3 1 0; padding: 8px; border-radius: 7px; border: none; background: #DC2626; color: #fff; font-size: clamp(10px, 2.9cqw, 12px); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.pc-quote { margin: 12px -14px -14px; padding: 10px 14px; background: #FFF8DC; text-align: center; font-style: italic; font-size: clamp(10.5px, 3cqw, 12px); color: #6B5900; border-radius: 0 0 14px 14px; }
+
+/* Platinum's dark card, per the approved design (the other 3 tiers stay
+   on the light card - only Platinum switches the whole surface). */
+.pc-card-dark { background: #0F172A; border-color: #1e293b; }
+.pc-card-dark .pc-name, .pc-card-dark .pc-desc, .pc-card-dark .pc-callout-text, .pc-card-dark .pc-hl-chip, .pc-card-dark .pc-stat-n { color: #ffffff; }
+.pc-card-dark .pc-tagline { color: #94a3b8; }
+.pc-card-dark .pc-stat-l { color: #94a3b8; }
+.pc-card-dark .pc-logo { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.15); }
+.pc-card-dark .pc-tag:not(.pc-tag-verified):not(.pc-tag-premium) { background: rgba(255,255,255,.08); color: #cbd5e1; }
+.pc-card-dark .pc-stat { background: rgba(255,255,255,.07); }
+.pc-card-dark .pc-photo, .pc-card-dark .pc-carousel-btn { background: rgba(255,255,255,.08); }
+.pc-card-dark .pc-carousel-btn { border-color: rgba(255,255,255,.2); }
+.pc-card-dark .pc-carousel-btn svg { color: #fff; }
+.pc-card-dark .pc-photo-cap { color: #cbd5e1; }
+.pc-card-dark .pc-btn-outline { background: transparent; border-color: rgba(255,255,255,.25); color: #ffffff; }
+.pc-card-dark .pc-icon-btn { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.2); }
+.pc-card-dark .pc-icon-btn svg { color: #fff; }
+.pc-card-dark .pc-quote { background: rgba(255,255,255,.06); color: #fbbf24; }
+.pc-card-dark .pc-dot { background: rgba(255,255,255,.25); }
+.pc-card-dark .pc-dot-active { background: #ffffff; }
+@media (max-width: 640px) {
+  .pc-top { padding-right: 44px; }
+  .pc-logo { width: 52px; height: 52px; font-size: 8px; }
+  .pc-badge-wrap { top: 8px; right: 8px; }
+  .pc-ribbon { width: 26px; height: 26px; }
+  .pc-photo { height: 46px; }
+}
+
+/* Share preview - the full branded card, shown when Share is tapped so
+   what gets shared matches what the company owner was shown as the target
+   design, independent of how compact the browsing grid card is. */
+.spm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+.spm-modal { background: #FFF8D6; border-radius: 18px; max-width: 520px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.spm-close { position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.9); border: 1px solid #E5E5E5; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; }
+.spm-card { background: #fff; border-radius: 16px; margin: 16px; padding: 20px; position: relative; }
+.spm-top { display: flex; gap: 14px; align-items: flex-start; }
+.spm-logo { width: 76px; height: 76px; border: 1px solid #E0E0E0; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #FAFAFA; overflow: hidden; font-weight: 900; font-size: 18px; color: #fff; }
+.spm-logo img { width: 100%; height: 100%; object-fit: contain; }
+.spm-id { flex: 1; min-width: 0; }
+.spm-name { font-size: 19px; font-weight: 800; color: #111111; line-height: 1.25; }
+.spm-tagline { font-size: 12.5px; color: #8a8a8a; margin-top: 3px; }
+.spm-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.spm-badge { flex-shrink: 0; display: flex; align-items: center; }
+.spm-ribbon { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,.25); z-index: 1; }
+.spm-banner { padding: 7px 14px; border-radius: 0 9px 9px 9px; min-width: 110px; margin-left: -8px; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+.spm-banner-tier { font-size: 13px; font-weight: 800; letter-spacing: .2px; }
+.spm-banner-pkg { font-size: 9px; font-weight: 700; opacity: .85; text-transform: uppercase; }
+.spm-verified-pill { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 5px; background: rgba(0,0,0,.25); color: #fff; margin-top: 3px; display: inline-flex; align-items: center; gap: 4px; }
+.spm-desc-row { display: flex; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
+.spm-desc { flex: 2; min-width: 200px; font-size: 13px; color: #333333; line-height: 1.65; }
+.spm-callout { flex: 1; min-width: 180px; background: #FFF3C4; border-radius: 10px; padding: 11px 13px; display: flex; gap: 9px; align-items: center; }
+.spm-callout-icon { width: 32px; height: 32px; border-radius: 8px; background: #F8C400; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.spm-callout-text { font-size: 12px; font-weight: 700; color: #333333; line-height: 1.4; }
+.spm-photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-top: 16px; }
+.spm-photo { border-radius: 10px; overflow: hidden; height: 90px; background: #EFEFEF; }
+.spm-photo img { width: 100%; height: 100%; object-fit: cover; }
+.spm-photo-cap { text-align: center; font-size: 11px; font-weight: 600; color: #333333; margin-top: 5px; }
+.spm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #F0F0F0; }
+.spm-stat { text-align: center; background: #F5F5F5; border-radius: 9px; padding: 9px 8px; }
+.spm-stat-n { font-size: 14px; font-weight: 800; color: #111111; }
+.spm-stat-l { font-size: 9.5px; color: #888888; }
+.spm-cta { display: flex; gap: 8px; margin-top: 16px; }
+.spm-btn-outline { flex: 1; padding: 10px; border-radius: 8px; border: 1.5px solid #E0E0E0; background: #fff; font-size: 12.5px; font-weight: 700; color: #111111; cursor: pointer; }
+.spm-btn-solid { flex: 1; padding: 10px; border-radius: 8px; border: none; background: #DC2626; color: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.spm-quote { margin-top: 16px; padding: 12px 16px; background: #FFF8DC; text-align: center; font-style: italic; font-size: 12.5px; color: #6B5900; border-radius: 10px; }
+.spm-actions { display: flex; gap: 8px; padding: 0 16px 16px; }
+.spm-action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 9px; border: 1px solid rgba(0,0,0,.12); background: #fff; font-size: 12.5px; font-weight: 700; color: #111111; cursor: pointer; }
+@media (max-width: 480px) {
+  .spm-card { margin: 12px; padding: 14px; }
+  .spm-logo { width: 60px; height: 60px; }
+  .spm-name { font-size: 16px; }
+}
 `;
 
 export const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infrastructure', 'Aerial Media', 'Training'];
@@ -222,22 +349,62 @@ export const ALL_SECTORS = ['Agriculture', 'Survey & Mapping', 'Defence', 'Infra
 // non-numeric, non-"India" comma segment, not simply the last segment
 // (which is frequently the pincode itself, e.g. "Nellore, Andhra Pradesh,
 // 524002" was showing "524002" as the state filter chip).
-export function extractState(location: string | undefined): string {
+// Full street addresses ("3rd Floor, A Wing, Aurobindo Galaxy, Plot No. 1,
+// Part of Sy. No. 83/1, TSIIC, Raidurg, NA Rangareddi Hyderabad Telangana
+// 500081 India") blow out the compact card's height - show just city/state
+// instead of the whole thing.
+export function shortLocation(location: string | undefined): string {
+  const state = extractState(location);
   const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
+  const meaningful = parts.filter(p => p && !/^\d+$/.test(p) && p.toLowerCase() !== 'india');
+  if (state) {
+    // Best-effort city: skip whichever segment the state name was actually
+    // found inside (usually the garbled tail with no internal commas) and
+    // pick the nearest segment that still looks like a real locality name,
+    // not another multi-word run-on chunk.
+    let city = '';
+    for (let i = meaningful.length - 1; i >= 0; i--) {
+      if (meaningful[i].toLowerCase().includes(state.toLowerCase())) continue;
+      if (meaningful[i].split(/\s+/).length <= 4 && meaningful[i].length < 30) { city = meaningful[i]; break; }
+    }
+    return city ? `${city}, ${state}` : state;
+  }
+  return meaningful.slice(-2).join(', ') || location || '';
+}
+
+// The comma-split heuristic below assumed a clean "City, State, Pincode,
+// Country" address - real typed-in addresses are often one unpunctuated
+// run ("...Hyderabad Hyderabad Telangana 500032 India"), which made the
+// "last segment" come out as that whole messy chunk instead of the real
+// state, so the company never matched the clean state filter chips.
+// Matching a known Indian state/UT name directly out of the raw text is
+// far more reliable than trusting comma placement. Longest names first so
+// "Uttar Pradesh" matches before the "Uttar" in "Uttarakhand" would.
+const INDIAN_STATES = [
+  'Andaman and Nicobar Islands', 'Dadra and Nagar Haveli and Daman and Diu',
+  'Jammu and Kashmir', 'Arunachal Pradesh', 'Himachal Pradesh', 'Madhya Pradesh',
+  'Andhra Pradesh', 'Uttar Pradesh', 'Uttarakhand', 'Chhattisgarh',
+  'West Bengal', 'Maharashtra', 'Puducherry', 'Tamil Nadu', 'Telangana',
+  'Meghalaya', 'Rajasthan', 'Karnataka', 'Jharkhand', 'Nagaland', 'Chandigarh',
+  'Lakshadweep', 'Mizoram', 'Manipur', 'Haryana', 'Gujarat', 'Tripura',
+  'Sikkim', 'Punjab', 'Odisha', 'Kerala', 'Ladakh', 'Assam', 'Bihar',
+  'Delhi', 'Goa',
+].sort((a, b) => b.length - a.length);
+
+export function extractState(location: string | undefined): string {
+  const text = location || '';
+  for (const state of INDIAN_STATES) {
+    if (new RegExp(`\\b${state.replace(/ /g, '\\s+')}\\b`, 'i').test(text)) return state;
+  }
+  // Fall back to the old last-comma-segment guess for anything that isn't
+  // a recognizable Indian state (e.g. a foreign address, if that ever
+  // shows up), so this never regresses to blank for those.
+  const parts = text.split(',').map(p => p.trim()).filter(Boolean);
   for (let i = parts.length - 1; i >= 0; i--) {
     const p = parts[i];
     if (p && !/^\d+$/.test(p) && p.toLowerCase() !== 'india') return p;
   }
   return '';
-}
-
-// City + state only, for the compact card location line - a full address
-// is too long for that space.
-export function shortLocation(location: string | undefined): string {
-  const state = extractState(location);
-  const parts = (location || '').split(',').map(p => p.trim()).filter(Boolean);
-  const city = parts.find(p => p !== state && !/^\d+$/.test(p) && p.toLowerCase() !== 'india');
-  return [city, state].filter(Boolean).join(', ') || (location || '');
 }
 
 const CompaniesPage: React.FC = () => {
@@ -254,6 +421,7 @@ const CompaniesPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { saved: savedCompanies, toggle: toggleSaved } = useSavedCompanies();
   const perPage = 12;
   const navigate = useNavigate();
 
@@ -528,7 +696,30 @@ const CompaniesPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="co-grid">
-                  {withInlineAds(current, (c, i) => <CompanyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} />)}
+                  {withInlineAds(current, (c, i) => {
+                    const tier = getTier(c);
+                    const id = c.publishedId || c.companyId || c.companyName;
+                    return tier ? (
+                      <PremiumCompanyCard
+                        key={`${c.companyName}-${i}`}
+                        company={c}
+                        tier={tier}
+                        onClick={() => handleCardClick(c)}
+                        onEnquire={() => handleEnquireClick(c)}
+                        saved={savedCompanies.has(id)}
+                        onToggleSave={() => toggleSaved(id)}
+                      />
+                    ) : (
+                      <CompanyCard
+                        key={`${c.companyName}-${i}`}
+                        company={c}
+                        onClick={() => handleCardClick(c)}
+                        onEnquire={() => handleEnquireClick(c)}
+                        saved={savedCompanies.has(c.publishedId || c.companyId || c.companyName)}
+                        onToggleSave={() => toggleSaved(c.publishedId || c.companyId || c.companyName)}
+                      />
+                    );
+                  })}
                 </div>
               )}
 
@@ -560,22 +751,44 @@ const CompaniesPage: React.FC = () => {
   );
 };
 
-const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void }> = ({ company, onClick, onEnquire }) => {
+export const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
   const ind = getIndustry(company);
   const indColor = IND_COLORS[ind] || '#444';
-  // Verified badge = paid/confirmed verification (badgeStatus), not plain
-  // admin listing-approval (reviewStatus) - any approved company is
-  // publicly listed, but the checkmark is earned separately, via payment.
-  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE';
+  // Verified badge = paid/confirmed verification (badgeStatus, set only by
+  // the Silver-badge workflow after fee payment), NOT plain admin listing-
+  // approval (reviewStatus) - those are two different things: any approved
+  // company is publicly listed, but the checkmark is earned separately.
+  // Verification Policy Section 4 - a badge is suspended (not shown as
+  // verified) once a required credential expires, even though badgeStatus
+  // itself is left untouched in the DB (audit trail stays intact).
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
+  const silver = company.badgeStatus === 'SILVER';
   const bg = avColor(company.companyName);
   const [imgErr, setImgErr] = useState(false);
+  const [optedOut, setOptedOut] = useState(false);
   const detectedSectors = getSectors(company);
 
   return (
     <div className="co-card" onClick={onClick}>
+      {company.bulkImported && company.isClaimed === false && (
+        <div className="unclaimed-banner">
+          {optedOut ? 'Opt-out requested — DroneTV will review' : (
+            <>Unclaimed — not yet confirmed by this company{' · '}
+              <button onClick={e => { e.stopPropagation(); requestOptOut(company.publishedId, () => setOptedOut(true)); }}
+                style={{ textDecoration: 'underline', fontWeight: 800 }}>Not us?</button>
+            </>
+          )}
+        </div>
+      )}
       <div style={{ height: 4, background: indColor }} />
 
-      <div className="co-card-top">
+      {onToggleSave && (
+        <button className="co-card-save" onClick={e => { e.stopPropagation(); onToggleSave(); }} title="Save">
+          <Heart size={12} color={saved ? '#DC2626' : '#999'} fill={saved ? '#DC2626' : 'none'} />
+        </button>
+      )}
+
+      <div className="co-card-top" style={{ paddingRight: 34 }}>
         <div className="co-avatar" style={{ background: bg }}>
           {company.previewImage && !imgErr ? (
             <img src={company.previewImage} alt="" onError={() => setImgErr(true)} />
@@ -585,33 +798,424 @@ const CompanyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: 
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <span className="co-card-name">{company.companyName}</span>
             {verified && <BadgeCheck size={14} style={{ color: '#22C55E', flexShrink: 0 }} />}
+            {silver && (
+              <Award
+                size={14}
+                style={{ color: '#8A8A8A', flexShrink: 0 }}
+                aria-label="Silver - Profile verified by DroneTV team"
+                title="Silver - Profile verified by DroneTV team"
+              />
+            )}
           </div>
           {company.location && (
-            <div className="co-card-loc"><MapPin size={10} /><span className="co-card-loc-text">{company.location}</span></div>
+            <div className="co-card-loc"><MapPin size={10} /><span className="co-card-loc-text">{shortLocation(company.location)}</span></div>
           )}
         </div>
       </div>
 
       <div style={{ padding: '7px 13px', display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
         {verified && <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#e8f5ec', color: '#22C55E', textTransform: 'uppercase' as const }}>Verified</span>}
+        {silver && <span title="Silver - Profile verified by DroneTV team" style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#EFEFEF', color: '#6B6B6B', textTransform: 'uppercase' as const }}>Silver</span>}
         {ind !== 'all' && <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 7, background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor, textTransform: 'uppercase' as const }}>{ind.toUpperCase()}</span>}
         {detectedSectors.slice(0, 1).map(s => (
           <span key={s} style={{ fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 7, background: '#F8F8F8', color: '#555', border: '1px solid #E5E5E5' }}>{s}</span>
         ))}
+        {/* Compact card stays uncluttered for the overwhelming-majority
+            Marketplace default; the one case worth a chip here is the rare,
+            high-signal Managed listing - full explicit labelling of both
+            states lives on the richer .pc-card below. */}
+        {company.deliveryTier === 'MANAGED' && (
+          <span title="Fulfilled directly by DroneTV's own group companies" style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#DBEAFE', color: '#1D4ED8' }}>DroneTV Managed</span>
+        )}
+        {/* Fix #1 Section B - same RPTO/suspended signal as the premium
+            card, brought to the compact card too (documentation-score gap
+            pattern repeats here - this card, not the rare premium one, is
+            what most real listings actually use). */}
+        {company.rptoStatus === 'DGCA_APPROVED_RPTO' && (
+          <span title="Self-declared DGCA RPTO Authorization on file" style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#DCFCE7', color: '#15803D' }}>DGCA-Approved RPTO</span>
+        )}
+        {company.credentialsExpired && (
+          <span title="A required credential has expired - verification suspended until renewed" style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 7, background: '#FEE2E2', color: '#B91C1C' }}>Verification Suspended</span>
+        )}
       </div>
 
       <p className="co-card-desc">{company.companyDescription || company.aboutDescription || 'No description available.'}</p>
 
-      {((Number(company.servicesCount) || 0) > 0 || (Number(company.productsCount) || 0) > 0) && (
+      {((Number(company.servicesCount) || 0) > 0 || (Number(company.productsCount) || 0) > 0 || (company.documentation?.score ?? 0) > 0) && (
         <div style={{ padding: '0 13px 9px', display: 'flex', gap: 5, flexWrap: 'wrap' }}>
           {(Number(company.productsCount) || 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>📦 {company.productsCount} products</span>}
           {(Number(company.servicesCount) || 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>🔧 {company.servicesCount} services</span>}
+          {/* Master Checklist Section 1 - this compact card, not the richer
+              badged-tier one, is what the overwhelming majority of real
+              listings actually use, so the indicator has to live here too
+              to be genuinely public, not just on the rare Silver+ card. */}
+          {(company.documentation?.score ?? 0) > 0 && <span style={{ fontSize: 10.5, color: '#444', background: '#F8F8F8', padding: '2px 7px', borderRadius: 5 }}>📋 {company.documentation!.score}% documented</span>}
         </div>
       )}
 
       <div className="co-card-foot">
         <button className="co-btn-out" onClick={e => { e.stopPropagation(); onClick(); }}>View Profile <ChevronRight size={11} /></button>
         <button className="co-btn-red" onClick={e => { e.stopPropagation(); onEnquire(); }}>Enquire</button>
+      </div>
+    </div>
+  );
+};
+
+const PremiumCompanyCard: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE; onClick: () => void; onEnquire: () => void; saved: boolean; onToggleSave: () => void }> = ({ company, tier, onClick, onEnquire, saved, onToggleSave }) => {
+  const style = TIER_STYLE[tier];
+  const ind = getIndustry(company);
+  const indColor = IND_COLORS[ind] || '#444';
+  // Verified badge = paid/confirmed verification (badgeStatus, set only by
+  // the Silver-badge workflow after fee payment), NOT plain admin listing-
+  // approval (reviewStatus) - those are two different things: any approved
+  // company is publicly listed, but the checkmark is earned separately.
+  // Verification Policy Section 4 - a badge is suspended (not shown as
+  // verified) once a required credential expires, even though badgeStatus
+  // itself is left untouched in the DB (audit trail stays intact).
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
+  const bg = avColor(company.companyName);
+  const [imgErr, setImgErr] = useState(false);
+  const [photoIdx, setPhotoIdx] = useState(0);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [optedOut, setOptedOut] = useState(false);
+  const detectedSectors = getSectors(company);
+  const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
+  const sinceYear = company.yearsInBusiness ? (String(company.yearsInBusiness).match(/\d{4}/) || [null])[0] : null;
+  // "Survey | Mapping | GIS | Data Analytics"-style specialty line under the
+  // name - real detected sectors, not fabricated, falls back to location.
+  // "Since <year>" rides on the same line instead of its own row so it
+  // doesn't waste a whole strip of card height for one small fact.
+  const specialty = [
+    detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : shortLocation(company.location),
+    sinceYear ? `Since ${sinceYear}` : null,
+  ].filter(Boolean).join(' • ');
+
+  const photos = (company.galleryImages && company.galleryImages.length > 0)
+    ? company.galleryImages
+    : [company.previewImage, company.heroImage].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).map(url => ({ url: url as string, label: null }));
+  const visiblePhotos = photos.slice(photoIdx, photoIdx + 2);
+
+  // Text-only highlight chips (e.g. "Expert Team", "Global Presence") only
+  // render from a real hero.stats entry that has a label but no numeric
+  // value - never fabricated placeholder highlights.
+  const highlights = (company.heroStats || []).filter(s => s.label && !s.value).slice(0, 6);
+  const numericStats = (company.heroStats && company.heroStats.some(s => s.value))
+    ? company.heroStats.filter(s => s.value).slice(0, 5).map(s => ({ n: s.value as string, l: s.label || '' }))
+    : [
+        (Number(company.productsCount) || 0) > 0 ? { n: String(company.productsCount), l: 'Products' } : null,
+        (Number(company.servicesCount) || 0) > 0 ? { n: String(company.servicesCount), l: 'Services' } : null,
+        company.teamSize ? { n: String(company.teamSize), l: 'Team Size' } : null,
+        // Master Checklist Section 1 - "profile completeness indicator
+        // visible on the profile", made public here (was portal/RFQ-only
+        // before). Only shown once real - a company with nothing filled in
+        // yet gets no stat at all, never a fabricated "0%".
+        (company.documentation?.score ?? 0) > 0 ? { n: `${company.documentation.score}%`, l: 'Documented' } : null,
+      ].filter(Boolean) as { n: string; l: string }[];
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShareOpen(true);
+  };
+
+  return (
+    <div className={`pc-card${style.dark ? ' pc-card-dark' : ''}`} onClick={onClick}>
+      {company.bulkImported && company.isClaimed === false && (
+        <div className="unclaimed-banner" style={{ margin: '-14px -14px 12px', borderRadius: '13px 13px 0 0' }}>
+          {optedOut ? 'Opt-out requested — DroneTV will review' : (
+            <>Unclaimed — not yet confirmed by this company{' · '}
+              <button onClick={e => { e.stopPropagation(); requestOptOut(company.publishedId, () => setOptedOut(true)); }}
+                style={{ textDecoration: 'underline', fontWeight: 800 }}>Not us?</button>
+            </>
+          )}
+        </div>
+      )}
+      <div className="pc-top">
+        <div className="pc-logo" style={{ background: company.headerLogo || company.previewImage ? undefined : bg, color: '#fff' }}>
+          {(company.headerLogo || company.previewImage) && !imgErr ? (
+            <img src={company.headerLogo || company.previewImage} alt="" onError={() => setImgErr(true)} />
+          ) : getInitials(company.companyName)}
+        </div>
+        <div className="pc-id">
+          <div className="pc-name">{company.companyName}</div>
+          {specialty && <div className="pc-tagline">{specialty}</div>}
+          <div className="pc-tags">
+            {verified && <span className="pc-tag pc-tag-verified">Verified</span>}
+            {ind !== 'all' && <span className="pc-tag" style={{ background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor }}>{ind.toUpperCase()}</span>}
+            {detectedSectors.slice(0, 2).map(s => <span key={s} className="pc-tag">{s}</span>)}
+            {tier !== 'silver' && <span className="pc-tag pc-tag-premium">Premium</span>}
+            {/* ToS Section 5 / Master Checklist Section 3 - every listing
+                must visibly state which of the two tiers it is, before a
+                customer can book. */}
+            {company.deliveryTier === 'MANAGED' ? (
+              <span className="pc-tag" style={{ background: '#DBEAFE', color: '#1D4ED8' }} title="Fulfilled directly by DroneTV's own group companies">DroneTV Managed</span>
+            ) : (
+              <span className="pc-tag" title="Independent vendor - DroneTV is a facilitator only">Marketplace Listing</span>
+            )}
+            {/* Fix #1 Section B - DGCA-Approved RPTO vs plain training
+                provider, self-declared, only shown when actually claimed. */}
+            {company.rptoStatus === 'DGCA_APPROVED_RPTO' && (
+              <span className="pc-tag" style={{ background: '#DCFCE7', color: '#15803D' }} title="Self-declared DGCA RPTO Authorization on file">DGCA-Approved RPTO</span>
+            )}
+            {company.credentialsExpired && (
+              <span className="pc-tag" style={{ background: '#FEE2E2', color: '#B91C1C' }} title="A required credential has expired - verification suspended until renewed">Verification Suspended</span>
+            )}
+          </div>
+        </div>
+
+        <div className="pc-badge-wrap">
+          <div className="pc-icons">
+            <button className="pc-icon-btn" onClick={handleShare} title="Share"><Share2 size={11} color="#555" /></button>
+            <button className="pc-icon-btn" onClick={e => { e.stopPropagation(); onToggleSave(); }} title="Save">
+              <Heart size={11} color={saved ? '#DC2626' : '#555'} fill={saved ? '#DC2626' : 'none'} />
+            </button>
+          </div>
+          <div
+            className="pc-ribbon"
+            style={{ background: style.ribbonBg }}
+            title={`${style.label} - Profile verified by DroneTV team`}
+          >
+            {tier === 'silver' ? <Award size={22} color={style.ribbonColor} /> : <Crown size={22} color={style.ribbonColor} />}
+          </div>
+        </div>
+      </div>
+
+      <div className="pc-desc-row">
+        <p className="pc-desc">{description}</p>
+        {realTagline(company) && (
+          <div className="pc-callout" style={{ background: style.highlightBg }}>
+            <div className="pc-callout-icon" style={{ background: tier === 'silver' ? '#D9D9D9' : '#F8C400' }}>
+              <BarChart2 size={17} color={tier === 'silver' ? '#555' : '#7A5B00'} />
+            </div>
+            <div className="pc-callout-text">{realTagline(company)}</div>
+          </div>
+        )}
+      </div>
+
+      {photos.length > 0 && (
+        <div className="pc-photos">
+          <div className="pc-photos-track">
+            {visiblePhotos.map((p, i) => (
+              <div key={photoIdx + i} className="pc-photo-tile">
+                <div className="pc-photo"><img src={p.url} alt={p.label || ''} /></div>
+                {p.label && <div className="pc-photo-cap">{p.label}</div>}
+              </div>
+            ))}
+          </div>
+          {photos.length > 2 && (
+            <>
+              <button
+                className="pc-carousel-btn pc-carousel-prev"
+                onClick={e => { e.stopPropagation(); setPhotoIdx(i => (i === 0 ? Math.max(0, photos.length - 2) : Math.max(0, i - 2))); }}
+              ><ChevronLeft size={13} /></button>
+              <button
+                className="pc-carousel-btn pc-carousel-next"
+                onClick={e => { e.stopPropagation(); setPhotoIdx(i => (i + 2 >= photos.length ? 0 : i + 2)); }}
+              ><ChevronRight size={13} /></button>
+              <div className="pc-carousel-dots">
+                {Array.from({ length: Math.ceil(photos.length / 2) }).map((_, d) => (
+                  <span key={d} className={`pc-dot${Math.floor(photoIdx / 2) === d ? ' pc-dot-active' : ''}`} />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {highlights.length > 0 && (
+        <div className="pc-highlights">
+          {highlights.map((h, i) => (
+            <div key={i} className="pc-hl-chip" style={{ background: style.highlightBg }}>
+              <Star size={14} color={tier === 'silver' ? '#777' : '#92700A'} /> {h.label}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {numericStats.length > 0 && (
+        <div className="pc-stats">
+          {numericStats.map((s, i) => (
+            <div key={i} className="pc-stat">
+              <div>
+                <div className="pc-stat-n">{s.n}</div>
+                <div className="pc-stat-l">{s.l}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="pc-cta">
+        <button className="pc-btn-outline" onClick={e => { e.stopPropagation(); onClick(); }}>View {tier === 'silver' ? 'Profile' : 'Company Profile'} <ChevronRight size={13} /></button>
+        <button className="pc-btn-solid" onClick={e => { e.stopPropagation(); onEnquire(); }}>Enquire Now</button>
+      </div>
+
+      {company.quote && <div className="pc-quote">&ldquo;{company.quote}&rdquo;</div>}
+
+      {shareOpen && (
+        <ShareCardModal
+          company={company}
+          tier={tier}
+          onClose={() => setShareOpen(false)}
+          onViewProfile={onClick}
+          onEnquire={onEnquire}
+        />
+      )}
+    </div>
+  );
+};
+
+const ShareCardModal: React.FC<{ company: Company; tier: keyof typeof TIER_STYLE; onClose: () => void; onViewProfile: () => void; onEnquire: () => void }> = ({ company, tier, onClose, onViewProfile, onEnquire }) => {
+  const style = TIER_STYLE[tier];
+  const ind = getIndustry(company);
+  const indColor = IND_COLORS[ind] || '#444';
+  // Verified badge = paid/confirmed verification (badgeStatus, set only by
+  // the Silver-badge workflow after fee payment), NOT plain admin listing-
+  // approval (reviewStatus) - those are two different things: any approved
+  // company is publicly listed, but the checkmark is earned separately.
+  // Verification Policy Section 4 - a badge is suspended (not shown as
+  // verified) once a required credential expires, even though badgeStatus
+  // itself is left untouched in the DB (audit trail stays intact).
+  const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
+  const bg = avColor(company.companyName);
+  const [imgErr, setImgErr] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const detectedSectors = getSectors(company);
+  const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
+  const sinceYear = company.yearsInBusiness ? (String(company.yearsInBusiness).match(/\d{4}/) || [null])[0] : null;
+  const specialty = [
+    detectedSectors.length > 0 ? detectedSectors.slice(0, 4).join(' | ') : shortLocation(company.location),
+    sinceYear ? `Since ${sinceYear}` : null,
+  ].filter(Boolean).join(' • ');
+  const photos = (company.galleryImages && company.galleryImages.length > 0)
+    ? company.galleryImages
+    : [company.previewImage, company.heroImage].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).map(url => ({ url: url as string, label: null }));
+  const highlights = (company.heroStats || []).filter(s => s.label && !s.value).slice(0, 6);
+  const numericStats = (company.heroStats && company.heroStats.some(s => s.value))
+    ? company.heroStats.filter(s => s.value).slice(0, 5).map(s => ({ n: s.value as string, l: s.label || '' }))
+    : [
+        (Number(company.productsCount) || 0) > 0 ? { n: String(company.productsCount), l: 'Products' } : null,
+        (Number(company.servicesCount) || 0) > 0 ? { n: String(company.servicesCount), l: 'Services' } : null,
+        company.teamSize ? { n: String(company.teamSize), l: 'Team Size' } : null,
+        // Master Checklist Section 1 - "profile completeness indicator
+        // visible on the profile", made public here (was portal/RFQ-only
+        // before). Only shown once real - a company with nothing filled in
+        // yet gets no stat at all, never a fabricated "0%".
+        (company.documentation?.score ?? 0) > 0 ? { n: `${company.documentation.score}%`, l: 'Documented' } : null,
+      ].filter(Boolean) as { n: string; l: string }[];
+
+  // Points at the crawler-aware preview endpoint (not the direct SPA route)
+  // so WhatsApp/Instagram/etc. unfurl a real card - logo, name, tagline -
+  // instead of the site's generic static preview. A real visitor clicking
+  // this link gets redirected straight into the app by that same endpoint.
+  // Uses the readable slug, not the raw publishedId - a UUID in a shared
+  // link looks broken/untrustworthy; the backend resolves either one.
+  const shareUrl = `${window.location.origin}/s/${company.urlSlug || company.publishedId}`;
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(shareUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {});
+  };
+  const handleNativeShare = () => {
+    if (navigator.share) navigator.share({ title: company.companyName, url: shareUrl }).catch(() => {});
+    else handleCopy();
+  };
+
+  return (
+    <div className="spm-overlay" onClick={onClose}>
+      <div className="spm-modal" onClick={e => e.stopPropagation()}>
+        <button className="spm-close" onClick={onClose} title="Close"><X size={16} /></button>
+
+        <div className="spm-card">
+          <div className="spm-top">
+            <div className="spm-logo" style={{ background: company.headerLogo || company.previewImage ? undefined : bg }}>
+              {(company.headerLogo || company.previewImage) && !imgErr ? (
+                <img src={company.headerLogo || company.previewImage} alt="" onError={() => setImgErr(true)} />
+              ) : getInitials(company.companyName)}
+            </div>
+            <div className="spm-id">
+              <div className="spm-name">{company.companyName}</div>
+              {specialty && <div className="spm-tagline">{specialty}</div>}
+              <div className="spm-tags">
+                {verified && <span className="pc-tag pc-tag-verified">Verified</span>}
+                {ind !== 'all' && <span className="pc-tag" style={{ background: ind === 'drone' ? '#E7F0FB' : ind === 'gis' ? '#e8f5ec' : '#EFE7FB', color: indColor }}>{ind.toUpperCase()}</span>}
+                {detectedSectors.slice(0, 2).map(s => <span key={s} className="pc-tag">{s}</span>)}
+                {tier !== 'silver' && <span className="pc-tag pc-tag-premium">Premium</span>}
+              </div>
+            </div>
+            <div className="spm-badge">
+              <div className="spm-ribbon" style={{ background: style.ribbonBg }}>
+                {tier === 'silver' ? <Award size={24} color={style.ribbonColor} /> : <Crown size={24} color={style.ribbonColor} />}
+              </div>
+              <div className="spm-banner" style={{ background: style.bannerBg, color: style.bannerColor }}>
+                <div className="spm-banner-tier">{style.label}</div>
+                <div className="spm-banner-pkg">{style.packageLabel}</div>
+                {style.verifiedListing && <div className="spm-verified-pill">Verified Listing</div>}
+              </div>
+            </div>
+          </div>
+
+          <div className="spm-desc-row">
+            <p className="spm-desc">{description}</p>
+            {realTagline(company) && (
+              <div className="spm-callout" style={{ background: style.highlightBg }}>
+                <div className="spm-callout-icon" style={{ background: tier === 'silver' ? '#D9D9D9' : '#F8C400' }}>
+                  <BarChart2 size={16} color={tier === 'silver' ? '#555' : '#7A5B00'} />
+                </div>
+                <div className="spm-callout-text">{realTagline(company)}</div>
+              </div>
+            )}
+          </div>
+
+          {photos.length > 0 && (
+            <div className="spm-photos">
+              {photos.slice(0, 4).map((p, i) => (
+                <div key={i}>
+                  <div className="spm-photo"><img src={p.url} alt={p.label || ''} /></div>
+                  {p.label && <div className="spm-photo-cap">{p.label}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {highlights.length > 0 && (
+            <div className="pc-highlights" style={{ marginTop: 16 }}>
+              {highlights.map((h, i) => (
+                <div key={i} className="pc-hl-chip" style={{ background: style.highlightBg }}>
+                  <Star size={14} color={tier === 'silver' ? '#777' : '#92700A'} /> {h.label}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {numericStats.length > 0 && (
+            <div className="spm-stats">
+              {numericStats.map((s, i) => (
+                <div key={i} className="spm-stat">
+                  <div className="spm-stat-n">{s.n}</div>
+                  <div className="spm-stat-l">{s.l}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="spm-cta">
+            <button className="spm-btn-outline" onClick={onViewProfile}>View Profile</button>
+            <button className="spm-btn-solid" onClick={onEnquire}>Enquire Now</button>
+          </div>
+
+          {company.quote && <div className="spm-quote">&ldquo;{company.quote}&rdquo;</div>}
+        </div>
+
+        <div className="spm-actions">
+          <button className="spm-action-btn" onClick={handleCopy}>
+            <Copy size={14} /> {copied ? 'Copied!' : 'Copy Link'}
+          </button>
+          <button className="spm-action-btn" onClick={handleNativeShare}>
+            <Share2 size={14} /> Share
+          </button>
+        </div>
       </div>
     </div>
   );

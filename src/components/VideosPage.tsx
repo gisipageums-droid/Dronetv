@@ -363,13 +363,13 @@ const VideosPage = () => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'AI': return 'bg-red-600';
-      case 'GIS': return 'bg-black';
-      case 'Drone': return 'bg-gray-800';
-      case 'Events': return 'bg-red-800';
-      case 'Reviews': return 'bg-gray-900';
-      case 'Agritech': return 'bg-green-800';
-      default: return 'bg-gray-700';
+      case 'AI': return 'bg-status-error';
+      case 'GIS': return 'bg-ink';
+      case 'Drone': return 'bg-ink-charcoal';
+      case 'Events': return 'bg-status-error';
+      case 'Reviews': return 'bg-ink';
+      case 'Agritech': return 'bg-status-success';
+      default: return 'bg-ink-paragraph';
     }
   };
 
@@ -379,19 +379,19 @@ const VideosPage = () => {
   };
 
   return (
-    <div className="pt-[104px] min-h-screen bg-gray-50">
+    <div className="pt-[104px] min-h-screen bg-surface-main">
       {/* Hero */}
       <CompactHero title={<>Video <span>Library</span> · {allVideos.length} Videos</>} />
 
       {/* Add Video Modal */}
       {showAddVideoForm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[10000000] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-black">Add New Video</h2>
+        <div className="fixed inset-0 bg-ink/50 backdrop-blur-sm z-[10000000] flex items-center justify-center p-4">
+          <div className="bg-surface-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-ink-light flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-ink">Add New Video</h2>
               <button
                 onClick={() => setShowAddVideoForm(false)}
-                className="text-gray-500 hover:text-black transition-colors"
+                className="text-ink-caption hover:text-ink transition-colors"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -400,12 +400,12 @@ const VideosPage = () => {
             <form onSubmit={handleSubmitVideo} className="p-6 space-y-6">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Title *</label>
+                <label className="block text-sm font-medium text-ink mb-2">Title *</label>
                 <input
                   type="text"
                   value={newVideo.title}
                   onChange={(e) => setNewVideo(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors"
+                  className="w-full px-4 py-3 border-2 border-ink-light rounded-xl focus:outline-none focus:border-ink transition-colors"
                   placeholder="Enter video title"
                   required
                 />
@@ -413,12 +413,12 @@ const VideosPage = () => {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Description *</label>
+                <label className="block text-sm font-medium text-ink mb-2">Description *</label>
                 <textarea
                   value={newVideo.description}
                   onChange={(e) => setNewVideo(prev => ({ ...prev, description: e.target.value }))}
                   rows={4}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors"
+                  className="w-full px-4 py-3 border-2 border-ink-light rounded-xl focus:outline-none focus:border-ink transition-colors"
                   placeholder="Enter video description"
                   required
                 />
@@ -426,27 +426,27 @@ const VideosPage = () => {
 
               {/* Video URL */}
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Video URL *</label>
+                <label className="block text-sm font-medium text-ink mb-2">Video URL *</label>
                 <input
                   type="url"
                   value={newVideo.videoUrl}
                   onChange={(e) => setNewVideo(prev => ({ ...prev, videoUrl: e.target.value }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors"
+                  className="w-full px-4 py-3 border-2 border-ink-light rounded-xl focus:outline-none focus:border-ink transition-colors"
                   placeholder="Enter YouTube URL (any format)"
                   required
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-ink-caption mt-1">
                   Supports YouTube URLs like: youtube.com/watch?v=... or youtu.be/... or youtube.com/embed/...
                 </p>
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Category</label>
+                <label className="block text-sm font-medium text-ink mb-2">Category</label>
                 <select
                   value={newVideo.category}
                   onChange={(e) => setNewVideo(prev => ({ ...prev, category: e.target.value }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors"
+                  className="w-full px-4 py-3 border-2 border-ink-light rounded-xl focus:outline-none focus:border-ink transition-colors"
                 >
                   {categories.filter(cat => cat !== 'All').map(category => (
                     <option key={category} value={category}>{category}</option>
@@ -461,16 +461,16 @@ const VideosPage = () => {
                   id="featured"
                   checked={newVideo.featured}
                   onChange={(e) => setNewVideo(prev => ({ ...prev, featured: e.target.checked }))}
-                  className="h-5 w-5 text-black focus:ring-black border-gray-300 rounded"
+                  className="h-5 w-5 text-ink focus:ring-ink border-ink-light rounded"
                 />
-                <label htmlFor="featured" className="text-sm font-medium text-black">
+                <label htmlFor="featured" className="text-sm font-medium text-ink">
                   Featured Video (will appear in the featured section)
                 </label>
               </div>
 
               {/* Auto-generated Date Info */}
-              <div className="bg-gray-50 p-4 rounded-xl">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="bg-ink-offwhite p-4 rounded-xl">
+                <div className="flex items-center gap-2 text-sm text-ink-paragraph">
                   <Calendar className="h-4 w-4" />
                   <span>Date will be automatically generated: {new Date().toLocaleDateString()}</span>
                 </div>
@@ -481,13 +481,13 @@ const VideosPage = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddVideoForm(false)}
-                  className="flex-1 px-6 py-3 border-2 border-gray-200 text-black rounded-xl hover:border-gray-300 transition-colors"
+                  className="flex-1 px-6 py-3 border-2 border-ink-light text-ink rounded-xl hover:border-ink-light transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors font-medium"
+                  className="flex-1 px-6 py-3 bg-ink text-white rounded-xl hover:bg-ink-charcoal transition-colors font-medium"
                 >
                   Add Video
                 </button>
@@ -501,27 +501,28 @@ const VideosPage = () => {
 .vd-wrap{max-width:1280px;margin:0 auto;padding:20px 22px}
 .vd-layout{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start}
 .vd-sidebar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);position:sticky;top:120px}
-.vd-sidebar-title{font-size:13px;font-weight:800;color:#0A0A0A;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.vd-sidebar-title{font-size:13px;font-weight:800;color:#111111;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .vd-filter-grp{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F0F0F0}
 .vd-filter-grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .vd-fl-label{font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
 .vd-chip{padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;border:1.5px solid #E5E5E5;background:#fff;color:#333;font-family:inherit}
-.vd-chip.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.vd-chip.active{background:#111111;color:#F8C400;border-color:#111111}
 .vd-chips{display:flex;gap:5px;flex-wrap:wrap}
 .vd-main{min-width:0}
 .vd-search-bar{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.vd-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#1A1A1A;font-family:inherit}
+.vd-search-bar input{border:none;background:none;font-size:13px;width:100%;outline:none;color:#111111;font-family:inherit}
 .vd-resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:7px}
 .vd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:13px}
+.vd-grid > *{min-width:0}
 .vd-pages{display:flex;justify-content:center;margin-top:28px;gap:6px;flex-wrap:wrap}
 .vd-page-btn{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E5E5E5;background:#fff;color:#444;font-family:inherit}
-.vd-page-btn.active{background:#0A0A0A;color:#F5C518;border-color:#0A0A0A}
+.vd-page-btn.active{background:#111111;color:#F8C400;border-color:#111111}
 .vd-filter-toggle{display:none}
 @media(max-width:960px){
   .vd-layout{grid-template-columns:1fr}
   .vd-sidebar{position:static;display:none}
   .vd-sidebar.open{display:block}
-  .vd-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#0A0A0A;color:#F5C518;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+  .vd-filter-toggle{display:flex;align-items:center;gap:6px;padding:7px 12px;background:#111111;color:#F8C400;border:none;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
 }
 @media(max-width:600px){.vd-wrap{padding:12px 14px}.vd-grid{grid-template-columns:1fr}}
 `}</style>
@@ -554,7 +555,7 @@ const VideosPage = () => {
             </div>
 
             <button onClick={() => setShowAddVideoForm(true)}
-              style={{width:'100%',padding:'8px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#0A0A0A',color:'#F5C518',border:'none',cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
+              style={{width:'100%',padding:'8px',borderRadius:'8px',fontSize:'12px',fontWeight:700,background:'#111111',color:'#F8C400',border:'none',cursor:'pointer',fontFamily:'inherit',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
               <Plus size={13} /> Add Video
             </button>
           </aside>
@@ -567,20 +568,20 @@ const VideosPage = () => {
 
             {/* Featured Videos */}
             {filteredFeaturedVideos.length > 0 && (
-              <div className="bg-white border border-gray-200 rounded-xl mb-4 p-4">
-                <h2 style={{fontSize:'13px',fontWeight:800,color:'#0A0A0A',marginBottom:12,display:'flex',alignItems:'center',gap:6}}>
-                  <Star size={14} color="#F5C518" fill="#F5C518" /> Featured Videos ({filteredFeaturedVideos.length})
+              <div className="bg-surface-card border border-ink-light rounded-xl mb-4 p-4">
+                <h2 style={{fontSize:'13px',fontWeight:800,color:'#111111',marginBottom:12,display:'flex',alignItems:'center',gap:6}}>
+                  <Star size={14} color="#F8C400" fill="#F8C400" /> Featured Videos ({filteredFeaturedVideos.length})
                 </h2>
                 <div className="vd-grid">
                   {filteredFeaturedVideos.map(video => (
-                    <div key={video.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div key={video.id} className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-hidden">
                       <div className="relative overflow-hidden">
                         <iframe src={convertToEmbedUrl(video.videoUrl)} title={video.title} className="w-full h-40 rounded-t-xl" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-                        <div className="absolute top-2 left-2 bg-yellow-400 text-black px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1"><Star size={10} fill="currentColor" />Featured</div>
+                        <div className="absolute top-2 left-2 bg-brand-yellow text-ink px-2 py-0.5 rounded text-xs font-bold flex items-center gap-1"><Star size={10} fill="currentColor" />Featured</div>
                       </div>
                       <div className="p-3">
-                        <h3 className="text-xs font-bold text-gray-900 mb-1 line-clamp-2">{video.title}</h3>
-                        <p className="text-xs text-gray-500 line-clamp-2">{video.description}</p>
+                        <h3 className="text-xs font-bold text-ink mb-1 line-clamp-2">{video.title}</h3>
+                        <p className="text-xs text-ink-caption line-clamp-2">{video.description}</p>
                       </div>
                     </div>
                   ))}
@@ -604,13 +605,13 @@ const VideosPage = () => {
             ) : (
               <div className="vd-grid">
                 {currentVideos.map(video => (
-                  <div key={video.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div key={video.id} className="bg-surface-card rounded-xl border border-ink-light shadow-sm overflow-hidden">
                     <div className="p-2">
                       <iframe src={convertToEmbedUrl(video.videoUrl)} title={video.title} className="w-full h-40 rounded-lg" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
                     </div>
                     <div className="px-3 pb-3">
-                      <h3 className="text-xs font-bold text-gray-900 mb-1 line-clamp-2">{video.title}</h3>
-                      <p className="text-xs text-gray-500 line-clamp-2">{video.description}</p>
+                      <h3 className="text-xs font-bold text-ink mb-1 line-clamp-2">{video.title}</h3>
+                      <p className="text-xs text-ink-caption line-clamp-2">{video.description}</p>
                     </div>
                   </div>
                 ))}

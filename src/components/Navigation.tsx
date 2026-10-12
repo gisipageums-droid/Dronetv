@@ -189,7 +189,14 @@ const Navigation = () => {
     return null;
   })();
 
-  const subNav = currentSection ? subNavMap[currentSection] : null;
+  // Media and Professionals pages do not show the dark sub menu bar.
+  const hideSubNav = currentSection === "media" || currentSection === "professionals";
+  const subNav = currentSection && !hideSubNav ? subNavMap[currentSection] : null;
+
+  useEffect(() => {
+    document.body.classList.toggle("no-subnav", hideSubNav);
+    return () => document.body.classList.remove("no-subnav");
+  }, [hideSubNav]);
 
   const plainNavItems = [
     { name: "Home", path: "/" },

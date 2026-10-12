@@ -27,6 +27,9 @@ const AboutPage = lazy(() => import("./components/AboutPage"));
 const PartnerPage = lazy(() => import("./components/PartnerPage"));
 const ContactPage = lazy(() => import("./components/ContactPage"));
 const FAQPage = lazy(() => import("./components/FAQPage"));
+const BookCallPage = lazy(() => import("./components/BookCallPage"));
+const BookingManagePage = lazy(() => import("./components/BookingManagePage"));
+const BookingIcsRedirect = lazy(() => import("./components/BookingIcsRedirect"));
 const DroneDoctorConsultPage = lazy(() => import("./components/DroneDoctorConsultPage"));
 const DoctorBookingPage = lazy(() => import("./components/DoctorBookingPage"));
 const DoctorIcsRedirect = lazy(() => import("./components/DoctorIcsRedirect"));
@@ -41,12 +44,14 @@ const DoctorReports = lazy(() => import("./components/DoctorPortal/DoctorReports
 const DoctorSettings = lazy(() => import("./components/DoctorPortal/DoctorSettings"));
 const DoctorSupport = lazy(() => import("./components/DoctorPortal/DoctorSupport"));
 const AdminDoctorConsults = lazy(() => import("./components/Admin/appointments/AdminDoctorConsults"));
+const AdminAppointments = lazy(() => import("./components/Admin/appointments/AdminAppointments"));
 const SearchPage = lazy(() => import("./components/SearchPage"));
 const LegalIndexPage = lazy(() => import("./components/legal/LegalIndexPage"));
 const PolicyPage = lazy(() => import("./components/legal/PolicyPage"));
 const ProductDetailPage = lazy(() => import("./components/ProductDetailPage"));
 const ProfessionalsPage = lazy(() => import("./components/ProfessionalsPage"));
 const ProfessionalsPageV2 = lazy(() => import("./components/ProfessionalsPageV2"));
+const ProfessionalDirectory = lazy(() => import("./components/ProfessionalDirectory"));
 const ServicesPage = lazy(() => import("./components/ServicesPage"));
 const ServicesPageV2 = lazy(() => import("./components/ServicesPageV2"));
 const ServiceDetailPage = lazy(() => import("./components/ServiceDetailPage"));
@@ -60,6 +65,7 @@ import OurPartners from "./components/Ourpartners";
 const Select = lazy(() => import("./components/company/src/components/select-template/Select"));
 const Template2 = lazy(() => import("./components/company/src/components/template/t2/src/main"));
 const Form = lazy(() => import("./components/company/src/components/form/src/main"));
+const CompanyRegistrationForm = lazy(() => import("./components/company/src/components/form/CompanyRegistrationForm"));
 const EditTemp2 = lazy(() => import("./components/company/src/components/template/t2/edit/src/main"));
 const EditTemp1 = lazy(() => import("./components/company/src/components/template/t1/edit/src/main"));
 const Template1 = lazy(() => import("./components/company/src/components/template/t1/src/main"));
@@ -75,16 +81,15 @@ const Logout = lazy(() => import("./components/Logout"));
 const ResetPassword = lazy(() => import("./components/ResetPassword"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 const AdminProtectedRoute = lazy(() => import("./components/adminProtectedRoute"));
-const BookCallPage = lazy(() => import("./components/BookCallPage"));
-const BookingManagePage = lazy(() => import("./components/BookingManagePage"));
-const BookingIcsRedirect = lazy(() => import("./components/BookingIcsRedirect"));
-const AdminAppointments = lazy(() => import("./components/Admin/appointments/AdminAppointments"));
+const CompanyRedirectGuard = lazy(() => import("./components/CompanyRedirectGuard"));
+const ProfessionalRedirectGuard = lazy(() => import("./components/ProfessionalRedirectGuard"));
 import AiProtectedRoute from "./components/AiProtectedRoute";
 const RoleGuard = lazy(() => import("./components/RoleGuard"));
 const AdminDashboard = lazy(() => import("./components/Admin/CompaniesDashboard/AdminDashboard"));
 const MainCompPreviewT1 = lazy(() => import("./components/mainCompanyPreview/t1/src/App"));
 const MainCompPreviewT2 = lazy(() => import("./components/mainCompanyPreview/t2/src/App"));
 const ProfessionalForm = lazy(() => import("./components/Professional/form/src/App"));
+const ProfessionalProfileForm = lazy(() => import("./components/Professional/form/ProfessionalProfileForm"));
 const EventsForm = lazy(() => import("./components/event/form/src/App"));
 const ProfessionalTemplateSelector = lazy(() => import("./components/Professional/Select-Template/select"));
 const ProTemp2 = lazy(() => import("./components/Professional/Template/T-2/src/App"));
@@ -98,6 +103,46 @@ const EventAdminDashboard = lazy(() => import("./components/Admin/eventAdmin/Eve
 const UserEvent = lazy(() => import("./components/UserEvent"));
 const AdminProfessional = lazy(() => import("./components/Admin/professionalAdmin/AdminProfessionalDashboard"));
 const AdminUsersDashboard = lazy(() => import("./components/Admin/userAdmin/AdminUsersDashboard"));
+const StaffManagement = lazy(() => import("./components/Admin/staffAdmin/StaffManagement"));
+const AdminHeroImages = lazy(() => import("./components/Admin/heroImagesAdmin/AdminHeroImages"));
+const PrelistedCompanies = lazy(() => import("./components/Admin/verification/PrelistedCompanies"));
+const ProfessionalVerification = lazy(() => import("./components/Admin/professionalAdmin/ProfessionalVerification"));
+const RfqListings = lazy(() => import("./components/Admin/RfqListings"));
+const RfqDisputes = lazy(() => import("./components/Admin/RfqDisputes"));
+const RfqReviewModeration = lazy(() => import("./components/Admin/RfqReviewModeration"));
+const AdminBulkImport = lazy(() => import("./components/Admin/AdminBulkImport"));
+const ComplianceRegister = lazy(() => import("./components/Admin/ComplianceRegister"));
+const PrelistedCompanyReview = lazy(() => import("./components/Admin/verification/PrelistedCompanyReview"));
+const CompanyPortalLayout = lazy(() => import("./components/CompanyPortal/CompanyPortalLayout"));
+const RfqPortalLayout = lazy(() => import("./components/RfqPortalLayout"));
+const CompanyPortalDashboard = lazy(() => import("./components/CompanyPortal/pages/Dashboard"));
+const CompanyPortalMyCompanies = lazy(() => import("./components/CompanyPortal/pages/MyCompanies"));
+const CompanyPortalProfile = lazy(() => import("./components/CompanyPortal/pages/profile/CompanyProfilePage"));
+const CompanyPortalListings = lazy(() => import("./components/CompanyPortal/pages/Listings"));
+const CompanyPortalLeads = lazy(() => import("./components/CompanyPortal/pages/Leads"));
+const CompanyPortalJobListings = lazy(() => import("./components/CompanyPortal/pages/JobListings"));
+const CompanyPortalContent = lazy(() => import("./components/CompanyPortal/pages/Content"));
+const CompanyPortalRfqInbox = lazy(() => import("./components/CompanyPortal/pages/RfqInbox"));
+const CompanyPortalRfqRespond = lazy(() => import("./components/CompanyPortal/pages/RfqRespond"));
+const CompanyPortalMyQuotes = lazy(() => import("./components/CompanyPortal/pages/MyQuotes"));
+const CompanyPortalMyProjects = lazy(() => import("./components/CompanyPortal/pages/MyProjects"));
+const CompanyPortalMagazine = lazy(() => import("./components/CompanyPortal/pages/Magazine"));
+const CompanyPortalPress = lazy(() => import("./components/CompanyPortal/pages/Press"));
+const CompanyPortalAnalytics = lazy(() => import("./components/CompanyPortal/pages/Analytics"));
+const CompanyPortalPackage = lazy(() => import("./components/CompanyPortal/pages/Package"));
+const CompanyPortalInvoices = lazy(() => import("./components/CompanyPortal/pages/Invoices"));
+const CompanyPortalSettings = lazy(() => import("./components/CompanyPortal/pages/Settings"));
+const ProfessionalPortalLayout = lazy(() => import("./components/ProfessionalPortal/ProfessionalPortalLayout"));
+const ProfessionalPortalDashboard = lazy(() => import("./components/ProfessionalPortal/pages/Dashboard"));
+const ProfessionalPortalEditProfile = lazy(() => import("./components/ProfessionalPortal/pages/EditProfile"));
+const ProfessionalPortalCertifications = lazy(() => import("./components/ProfessionalPortal/pages/Certifications"));
+const ProfessionalPortalPortfolio = lazy(() => import("./components/ProfessionalPortal/pages/Portfolio"));
+const ProfessionalPortalSkills = lazy(() => import("./components/ProfessionalPortal/pages/Skills"));
+const ProfessionalPortalJobBoard = lazy(() => import("./components/ProfessionalPortal/pages/JobBoard"));
+const ProfessionalPortalApplications = lazy(() => import("./components/ProfessionalPortal/pages/Applications"));
+const ProfessionalPortalCommunity = lazy(() => import("./components/ProfessionalPortal/pages/Community"));
+const ProfessionalPortalEvents = lazy(() => import("./components/ProfessionalPortal/pages/Events"));
+const ProfessionalPortalSettings = lazy(() => import("./components/ProfessionalPortal/pages/Settings"));
 const AdminCompanyEdit = lazy(() => import("./components/Admin/userAdmin/AdminCompanyEdit"));
 const UserProfessional = lazy(() => import("./components/profissionalDirectory"));
 
@@ -126,35 +171,6 @@ const CompanyLeads = lazy(() => import("./components/UserDashboard/components/co
 const CompanyLeadsPage = lazy(() => import("./components/UserDashboard/pages/CompanyLeadsPage"));
 const UserDashboardLayout = lazy(() => import("./components/UserDashboard/components/layout/Layout"));
 const ProfessionalLeads = lazy(() => import("./components/UserDashboard/components/common/ProfessionalLeads"));
-const CompanyRedirectGuard = lazy(() => import("./components/CompanyRedirectGuard"));
-const ProfessionalRedirectGuard = lazy(() => import("./components/ProfessionalRedirectGuard"));
-const StaffManagement = lazy(() => import("./components/Admin/staffAdmin/StaffManagement"));
-const ProfessionalPortalLayout = lazy(() => import("./components/ProfessionalPortal/ProfessionalPortalLayout"));
-const ProfessionalPortalDashboard = lazy(() => import("./components/ProfessionalPortal/pages/Dashboard"));
-const ProfessionalPortalEditProfile = lazy(() => import("./components/ProfessionalPortal/pages/EditProfile"));
-const ProfessionalPortalCertifications = lazy(() => import("./components/ProfessionalPortal/pages/Certifications"));
-const ProfessionalPortalPortfolio = lazy(() => import("./components/ProfessionalPortal/pages/Portfolio"));
-const ProfessionalPortalSkills = lazy(() => import("./components/ProfessionalPortal/pages/Skills"));
-const ProfessionalPortalJobBoard = lazy(() => import("./components/ProfessionalPortal/pages/JobBoard"));
-const ProfessionalPortalApplications = lazy(() => import("./components/ProfessionalPortal/pages/Applications"));
-const ProfessionalPortalCommunity = lazy(() => import("./components/ProfessionalPortal/pages/Community"));
-const ProfessionalPortalEvents = lazy(() => import("./components/ProfessionalPortal/pages/Events"));
-const ProfessionalPortalSettings = lazy(() => import("./components/ProfessionalPortal/pages/Settings"));
-const CompanyPortalLayout = lazy(() => import("./components/CompanyPortal/CompanyPortalLayout"));
-const CompanyPortalDashboard = lazy(() => import("./components/CompanyPortal/pages/Dashboard"));
-const CompanyPortalMyCompanies = lazy(() => import("./components/CompanyPortal/pages/MyCompanies"));
-const AdminHeroImages = lazy(() => import("./components/Admin/heroImagesAdmin/AdminHeroImages"));
-const CompanyPortalProfile = lazy(() => import("./components/CompanyPortal/pages/profile/CompanyProfilePage"));
-const CompanyPortalListings = lazy(() => import("./components/CompanyPortal/pages/Listings"));
-const CompanyPortalLeads = lazy(() => import("./components/CompanyPortal/pages/Leads"));
-const CompanyPortalJobListings = lazy(() => import("./components/CompanyPortal/pages/JobListings"));
-const CompanyPortalContent = lazy(() => import("./components/CompanyPortal/pages/Content"));
-const CompanyPortalMagazine = lazy(() => import("./components/CompanyPortal/pages/Magazine"));
-const CompanyPortalPress = lazy(() => import("./components/CompanyPortal/pages/Press"));
-const CompanyPortalAnalytics = lazy(() => import("./components/CompanyPortal/pages/Analytics"));
-const CompanyPortalPackage = lazy(() => import("./components/CompanyPortal/pages/Package"));
-const CompanyPortalInvoices = lazy(() => import("./components/CompanyPortal/pages/Invoices"));
-const CompanyPortalSettings = lazy(() => import("./components/CompanyPortal/pages/Settings"));
 const AdminCompanyForm = lazy(() => import("./components/AdminCompanyForm"));
 const FinalT1 = lazy(() => import("./components/mainProfessionalPreview/t1/src/App"));
 import Event_T1 from "./components/event/template/t1/src/EventTemplate1"
@@ -173,6 +189,9 @@ const MediaHub = lazy(() => import("./components/UserDashboard/pages/MediaHub"))
 const MyContentManager = lazy(() => import("./components/UserDashboard/pages/MyContentManager"));
 const Addons = lazy(() => import("./components/UserDashboard/pages/Addons"));
 const UserPosts = lazy(() => import("./components/UserDashboard/pages/UserPosts"));
+const RfqList = lazy(() => import("./components/UserDashboard/pages/RfqList"));
+const RfqNew = lazy(() => import("./components/UserDashboard/pages/RfqNew"));
+const RfqDetail = lazy(() => import("./components/UserDashboard/pages/RfqDetail"));
 const BidKeywords = lazy(() => import("./components/UserDashboard/pages/BidKeywords"));
 const PagePlacements = lazy(() => import("./components/UserDashboard/pages/PagePlacements"));
 const MyPackage = lazy(() => import("./components/UserDashboard/pages/MyPackage"));
@@ -182,8 +201,6 @@ const AdminLogin = lazy(() => import("./components/Admin/adminLogin/AdminLogin")
 const AdminMediaDashboard = lazy(() => import("./components/Admin/mediaAdmin/AdminMediaDashboard"));
 const AdminJobBoardDashboard = lazy(() => import("./components/Admin/jobBoardAdmin/AdminJobBoardDashboard"));
 const AdminLayout = lazy(() => import("./components/Admin/AdminLayout"));
-const PrelistedCompanies = lazy(() => import("./components/Admin/verification/PrelistedCompanies"));
-const PrelistedCompanyReview = lazy(() => import("./components/Admin/verification/PrelistedCompanyReview"));
 const AdminTokenEconomy = lazy(() => import("./components/Admin/AdminTokenEconomy"));
 const AdminInvoicesPage = lazy(() => import("./pages/admin/AdminInvoicesPage"));
 const AdminSettingsPage = lazy(() => import("./pages/admin/AdminSettingsPage"));
@@ -197,15 +214,15 @@ const MagazinePage = lazy(() => import("./pages/media/Magazine"));
 const VideoSpotlightPage = lazy(() => import("./pages/media/VideoSpotlight"));
 const ImpactStoriesPage = lazy(() => import("./pages/media/ImpactStories"));
 const MarketIntelligencePage = lazy(() => import("./pages/media/MarketIntelligence"));
+const NewsPulsePageV2 = lazy(() => import("./pages/media/NewsPulseV2"));
+const MagazinePageV2 = lazy(() => import("./pages/media/MagazineV2"));
+const VideoSpotlightPageV2 = lazy(() => import("./pages/media/VideoSpotlightV2"));
+const ImpactStoriesPageV2 = lazy(() => import("./pages/media/ImpactStoriesV2"));
+const MarketIntelligencePageV2 = lazy(() => import("./pages/media/MarketIntelligenceV2"));
 const TechTrendsPage = lazy(() => import("./pages/media/TechTrends"));
 const TechTrendsPageV2 = lazy(() => import("./pages/media/TechTrendsV2"));
 const IndustryReportsPage = lazy(() => import("./pages/media/IndustryReports"));
 const IndustryReportsPageV2 = lazy(() => import("./pages/media/IndustryReportsV2"));
-const ImpactStoriesPageV2 = lazy(() => import("./pages/media/ImpactStoriesV2"));
-const MagazinePageV2 = lazy(() => import("./pages/media/MagazineV2"));
-const MarketIntelligencePageV2 = lazy(() => import("./pages/media/MarketIntelligenceV2"));
-const NewsPulsePageV2 = lazy(() => import("./pages/media/NewsPulseV2"));
-const VideoSpotlightPageV2 = lazy(() => import("./pages/media/VideoSpotlightV2"));
 const MediaHubPage = lazy(() => import("./pages/media/MediaHub"));
 const MediaDetailPage = lazy(() => import("./pages/media/MediaDetailPage"));
 
@@ -222,14 +239,11 @@ const PilotDirectoryPage = lazy(() => import("./pages/professionals/PilotDirecto
 const PilotDirectoryPageV2 = lazy(() => import("./pages/professionals/PilotDirectoryV2"));
 const CertificationsPage = lazy(() => import("./pages/professionals/Certifications"));
 const PortfolioPage = lazy(() => import("./pages/professionals/Portfolio"));
-const CommunityPage = lazy(() => import("./pages/professionals/Community"));
-
 // Partnerships pages
 const PartnerBenefitsPage = lazy(() => import("./pages/partnerships/PartnerBenefits"));
 const PromotionalPackagesPageV2 = lazy(() => import("./pages/partnerships/PromotionalPackagesV2"));
 const BecomePartnerPage = lazy(() => import("./pages/partnerships/BecomePartner"));
-
-
+// Partnerships pages
 const PageLoadingFallback = () => (
   <div className="min-h-[40vh] w-full flex items-center justify-center">
     <div className="h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
@@ -295,25 +309,51 @@ const AppContent = () => {
               routes (approved), old pages kept mounted at -v1 as a
               rollback path, not linked from nav. */}
           <Route path="/media" element={<MediaHubPage />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
           <Route path="/media/news-pulse" element={<NewsPulsePageV2 />} />
+          <Route path="/media/news-pulse-v2" element={<NewsPulsePageV2 />} />
           <Route path="/media/news-pulse-v1" element={<NewsPulsePage />} />
           <Route path="/media/news/:contentId" element={<MediaDetailPage contentType="news" backPath="/media/news-pulse" backLabel="News" externalLinkLabel="Read Original Source" />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
           <Route path="/media/magazine" element={<MagazinePageV2 />} />
+          <Route path="/media/magazine-v2" element={<MagazinePageV2 />} />
           <Route path="/media/magazine-v1" element={<MagazinePage />} />
           <Route path="/media/magazine/:contentId" element={<MediaDetailPage contentType="magazine" backPath="/media/magazine" backLabel="Magazine" externalLinkLabel="View Full Article" />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
           <Route path="/media/video-spotlight" element={<VideoSpotlightPageV2 />} />
+          <Route path="/media/video-spotlight-v2" element={<VideoSpotlightPageV2 />} />
           <Route path="/media/video-spotlight-v1" element={<VideoSpotlightPage />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
           <Route path="/media/impact-stories" element={<ImpactStoriesPageV2 />} />
+          <Route path="/media/impact-stories-v2" element={<ImpactStoriesPageV2 />} />
           <Route path="/media/impact-stories-v1" element={<ImpactStoriesPage />} />
           <Route path="/media/impact-stories/:contentId" element={<MediaDetailPage contentType="impact-story" backPath="/media/impact-stories" backLabel="Impact Stories" externalLinkLabel="Read Full Story" />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
           <Route path="/media/market-intelligence" element={<MarketIntelligencePageV2 />} />
+          <Route path="/media/market-intelligence-v2" element={<MarketIntelligencePageV2 />} />
           <Route path="/media/market-intelligence-v1" element={<MarketIntelligencePage />} />
           <Route path="/media/market-intelligence/:contentId" element={<MediaDetailPage contentType="market-intelligence" backPath="/media/market-intelligence" backLabel="Market Intelligence" externalLinkLabel="View Original Source" />} />
+          {/* Tailwind redesign shifted to the real route (approved), old
+              page kept mounted at -v1 as a rollback path, not linked from
+              nav. */}
           <Route path="/media/tech-trends" element={<TechTrendsPageV2 />} />
+          <Route path="/media/tech-trends-v2" element={<TechTrendsPageV2 />} />
           <Route path="/media/tech-trends-v1" element={<TechTrendsPage />} />
           <Route path="/media/press-releases" element={<Navigate to="/media" replace />} />
+          <Route path="/media/press-releases-v2" element={<Navigate to="/media" replace />} />
           <Route path="/media/press-releases-v1" element={<Navigate to="/media" replace />} />
           <Route path="/media/industry-reports" element={<IndustryReportsPageV2 />} />
+          <Route path="/media/industry-reports-v2" element={<IndustryReportsPageV2 />} />
           <Route path="/media/industry-reports-v1" element={<IndustryReportsPage />} />
           {/* Brand new page (no prior version existed) */}
           <Route path="/media/drone-doctor" element={<Navigate to="/book-a-call" replace />} />
@@ -322,9 +362,14 @@ const AppContent = () => {
           {/* Gallery hub replaces the flat photo grid as the /gallery landing
               page; the flat grid stays live, unchanged, at /media/gallery
               (which the hub's own "View Gallery" buttons deep-link into via
-              ?category=) and at /gallery-v1 as a rollback. */}
+              ?category=) and at /gallery-v1 as a rollback. The new real-card
+              gallery (/gallery, elsewhere in this file) already supersedes
+              both - /media/gallery and /gallery-v1 are kept only as the
+              deliberate old-design rollback paths, not touched here. */}
           <Route path="/media/gallery" element={<GalleryPage />} />
           <Route path="/gallery-v1" element={<GalleryPage />} />
+          <Route path="/gallery-v2" element={<GalleryPageV2 />} />
+          <Route path="/media/gallery-v2" element={<GalleryPageV2 />} />
 
           {/* Events sub-routes — must be before dynamic /event/:name */}
           <Route path="/events/calendar" element={<Navigate to="/events" replace />} />
@@ -338,6 +383,7 @@ const AppContent = () => {
           {/* Partnerships routes - Tailwind redesign shifted to the real
               route (approved), old page kept at -v1 as a rollback. */}
           <Route path="/partnerships" element={<Navigate to="/" replace />} />
+          <Route path="/partnerships-v2" element={<Navigate to="/" replace />} />
           <Route path="/partnerships-v1" element={<Navigate to="/" replace />} />
           <Route path="/partnerships/drone-manufacturers" element={<Navigate to="/" replace />} />
           <Route path="/partnerships/ai-tech" element={<Navigate to="/" replace />} />
@@ -346,22 +392,31 @@ const AppContent = () => {
           <Route path="/partnerships/industry-players" element={<Navigate to="/" replace />} />
           <Route path="/partnerships/benefits" element={<PartnerBenefitsPage />} />
           <Route path="/advertising-plans" element={<PromotionalPackagesPageV2 />} />
+          <Route path="/advertising-plans-v2" element={<PromotionalPackagesPageV2 />} />
           <Route path="/advertising-plans-v1" element={<PartnerBenefitsPage />} />
           <Route path="/partnerships/become-a-partner" element={<BecomePartnerPage />} />
 
           {/* Tailwind redesign is now live at the real routes (approved) -
               old pages kept mounted at -v1 as a rollback path, not linked
-              from any nav. */}
+              from any nav. ProfessionalDirectory (dev) is a newer component
+              with no "approved" marker - not swapped onto the live
+              /professionals route here, kept unused/available for a
+              deliberate follow-up decision instead. */}
           <Route path="/professionals" element={<ProfessionalsPageV2 />} />
+          <Route path="/professionals-v2" element={<ProfessionalsPageV2 />} />
           <Route path="/professionals-v1" element={<ProfessionalsPage />} />
           <Route path="/listed-companies" element={<CompaniesPageV2 />} />
+          <Route path="/companies-v2" element={<CompaniesPageV2 />} />
           <Route path="/listed-companies-v1" element={<CompaniesPage />} />
 
           <Route path="/products" element={<ProductsPageV2 />} />
+          <Route path="/products-v2" element={<ProductsPageV2 />} />
           <Route path="/products-v1" element={<ProductsPage />} />
           <Route path="/services" element={<ServicesPageV2 />} />
+          <Route path="/services-v2" element={<ServicesPageV2 />} />
           <Route path="/services-v1" element={<ServicesPage />} />
           <Route path="/events" element={<EventsPageV2 />} />
+          <Route path="/events-v2" element={<EventsPageV2 />} />
           <Route path="/events-v1" element={<EventsPage />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -410,7 +465,8 @@ const AppContent = () => {
           <Route path="/companies" element={<Select />} />
           <Route path="/template/t1" element={<Template1 />} />
           <Route path="/template/t2" element={<Template2 />} />
-          <Route path="/form" element={<Form />} />
+          <Route path="/form" element={<CompanyRegistrationForm />} />
+          <Route path="/form-v1" element={<Form />} />
           <Route path="/form/:publicId/:userId/:draftId" element={<Form />} />
           {/* AI get not found */}
           <Route path="/form/notfound" element={<NotFound />} />
@@ -506,8 +562,10 @@ const AppContent = () => {
           <Route path="/companies/:urlSlug" element={<MainCompPreviewT2 />} />
 
           {/* professionals route */}
-          <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalForm />} />
-          <Route path="/professional/form" element={<ProfessionalForm />} />
+          <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalProfileForm />} />
+          <Route path="/professional/form" element={<ProfessionalProfileForm />} />
+          <Route path="/professional/form-v1" element={<ProfessionalForm />} />
+          <Route path="/professional/form-v1/:userId/:professionalId" element={<ProfessionalForm />} />
           <Route path="/events/form" element={<EventsForm />} />
           <Route
             path="/professional/select"
@@ -517,8 +575,10 @@ const AppContent = () => {
           <Route path="/professional/t1" element={<ProTemp1 />} />
           {/* Professionals sub-routes — must be before dynamic /:urlSlug? */}
           <Route path="/professionals/job-board" element={<JobBoardPageV2 />} />
+          <Route path="/professionals/job-board-v2" element={<JobBoardPageV2 />} />
           <Route path="/professionals/job-board-v1" element={<JobBoardPage />} />
           <Route path="/professionals/pilot-directory" element={<PilotDirectoryPageV2 />} />
+          <Route path="/professionals/pilot-directory-v2" element={<PilotDirectoryPageV2 />} />
           <Route path="/professionals/pilot-directory-v1" element={<PilotDirectoryPage />} />
           <Route path="/professionals/certifications" element={<CertificationsPage />} />
           {/* This is the platform's own "About" content (company entity,
@@ -529,7 +589,6 @@ const AppContent = () => {
           <Route path="/aboutus/portfolio" element={<PortfolioPage />} />
           <Route path="/professionals/training" element={<Navigate to="/professionals" replace />} />
           <Route path="/professionals/networking" element={<Navigate to="/professionals" replace />} />
-          <Route path="/professionals/community" element={<CommunityPage />} />
           <Route path="/professionals/career-path" element={<Navigate to="/professionals" replace />} />
           <Route path="/professionals/:urlSlug?" element={<MainProTemp2 />} />
           <Route path="/professional/:urlSlug?" element={<FinalT1 />} />
@@ -549,7 +608,13 @@ const AppContent = () => {
           <Route path="/admin/hero-images" element={<AdminProtectedRoute><AdminLayout><AdminHeroImages /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/verification/prelisted" element={<AdminProtectedRoute><AdminLayout><PrelistedCompanies /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/verification/prelisted/:publishedId" element={<AdminProtectedRoute><AdminLayout><PrelistedCompanyReview /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/rfq/all" element={<AdminProtectedRoute><AdminLayout><RfqListings /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/rfq/disputes" element={<AdminProtectedRoute><AdminLayout><RfqDisputes /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/rfq/reviews" element={<AdminProtectedRoute><AdminLayout><RfqReviewModeration /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/company/bulk-import" element={<AdminProtectedRoute><AdminLayout><AdminBulkImport /></AdminLayout></AdminProtectedRoute>} />
+          <Route path="/admin/compliance-register" element={<AdminProtectedRoute><AdminLayout><ComplianceRegister /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/companies/details/:publishedId/:userId" element={<AdminProtectedRoute><AdminCompanyEdit /></AdminProtectedRoute>} />
+          <Route path="/admin/professional/verification" element={<AdminProtectedRoute><AdminLayout><ProfessionalVerification /></AdminLayout></AdminProtectedRoute>} />
           <Route path="/admin/professional/dashboard" element={<AdminProtectedRoute><AdminLayout><AdminProfessional /></AdminLayout></AdminProtectedRoute>} />
           <Route
             path="/user/professionals/preview/2/:professionalId/:userId"
@@ -712,6 +777,10 @@ const AppContent = () => {
           <Route path="/company-portal/leads" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalLeads /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/jobs" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalJobListings /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/content" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalContent /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/rfq" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalRfqInbox /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/rfq/:rfqId" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalRfqRespond /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/quotes" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMyQuotes /></CompanyPortalLayout></ProtectedRoute>} />
+          <Route path="/company-portal/projects" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMyProjects /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/magazine" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalMagazine /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/press" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalPress /></CompanyPortalLayout></ProtectedRoute>} />
           <Route path="/company-portal/analytics" element={<ProtectedRoute><CompanyPortalLayout><CompanyPortalAnalytics /></CompanyPortalLayout></ProtectedRoute>} />
@@ -815,6 +884,23 @@ const AppContent = () => {
                 </CompanyRedirectGuard>
               </ProtectedRoute>
             }
+          />
+
+          {/* RFQ - post/compare/award is a shared buyer action, not gated
+              behind CompanyRedirectGuard like the rest of this dashboard,
+              since a company account can post a requirement too (e.g. hiring
+              another vendor) per the "one account, every role" design. */}
+          <Route
+            path="/user-rfq"
+            element={<ProtectedRoute><RfqPortalLayout><RfqList /></RfqPortalLayout></ProtectedRoute>}
+          />
+          <Route
+            path="/user-rfq/new"
+            element={<ProtectedRoute><RfqPortalLayout><RfqNew /></RfqPortalLayout></ProtectedRoute>}
+          />
+          <Route
+            path="/user-rfq/:rfqId"
+            element={<ProtectedRoute><RfqPortalLayout><RfqDetail /></RfqPortalLayout></ProtectedRoute>}
           />
 
           <Route

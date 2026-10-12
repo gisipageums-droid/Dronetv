@@ -44,15 +44,15 @@ export function GallerySection() {
   };
 
   return (
-    <section id="gallery" className="py-16 sm:py-20 md:py-24 bg-white">
+    <section id="gallery" className="py-16 sm:py-20 md:py-24 bg-surface-card">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-block mb-4 px-4 py-2 bg-yellow-100 rounded-full">
-              <span className="text-red-700 text-xl font-semibold">Event Gallery</span>
+            <div className="inline-block mb-4 px-4 py-2 bg-brand-yellow-soft rounded-full">
+              <span className="text-status-error text-xl font-semibold">Event Gallery</span>
             </div>
-            <h2 className="text-gray-900 mb-4 text-3xl sm:text-4xl md:text-5xl">Moments That Matter</h2>
-            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto px-4">
+            <h2 className="text-ink mb-4 text-3xl sm:text-4xl md:text-5xl">Moments That Matter</h2>
+            <p className="text-ink-paragraph text-base sm:text-lg max-w-2xl mx-auto px-4">
               Relive the best moments from our previous events and get a glimpse of what awaits you.
             </p>
           </div>
@@ -70,7 +70,7 @@ export function GallerySection() {
                   alt={image.caption}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-ink/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                     <p className="text-white text-sm sm:text-base">{image.caption}</p>
                   </div>
@@ -82,7 +82,7 @@ export function GallerySection() {
           {/* Lightbox */}
           {selectedImage !== null && (
             <div
-              className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+              className="fixed inset-0 bg-ink/95 z-50 flex items-center justify-center p-4"
               onClick={() => setSelectedImage(null)}
             >
               <button

@@ -912,9 +912,9 @@ const Step5ProductsServices: React.FC<StepProps> = ({
         <div className="relative space-y-6">
           {/* Services Section */}
           {formData.showServicesSection !== false && (
-            <div className="p-3 bg-blue-50 rounded-lg">
+            <div className="p-3 bg-status-info/10 rounded-lg">
               <div className="flex justify-between items-center">
-                <h3 className="flex items-center mb-2 text-sm font-bold text-blue-900">
+                <h3 className="flex items-center mb-2 text-sm font-bold text-status-info">
                   <Wrench className="mr-2 w-5 h-5" />
                   {(formData.servicesHeading || 'Services').trim() || 'Services'}
                 </h3>
@@ -922,14 +922,14 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={openServicesTitleModal}
-                    className="inline-flex gap-1 items-center px-2 py-1 text-xs rounded-lg border hover:bg-white"
+                    className="inline-flex gap-1 items-center px-2 py-1 text-xs rounded-lg border hover:bg-surface-card"
                   >
                     Edit me
                   </button>
                   <button
                     type="button"
                     onClick={deleteServicesSection}
-                    className="p-1 text-red-600 rounded-md border hover:bg-red-50"
+                    className="p-1 text-status-error rounded-md border hover:bg-status-error/10"
                     title="Delete services section"
                   >
                     <Minus className="w-4 h-4" />
@@ -949,19 +949,19 @@ const Step5ProductsServices: React.FC<StepProps> = ({
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <h4 className="text-sm font-semibold text-blue-800">
+                  <h4 className="text-sm font-semibold text-status-info">
                     List your main services:
                   </h4>
                   <button
                     type="button"
                     onClick={addService}
-                    className="flex items-center px-3 py-1 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                    className="flex items-center px-3 py-1 text-sm text-white bg-status-info rounded-md hover:bg-status-info"
                   >
                     <Plus className="mr-2 w-4 h-4" /> Add Service
                   </button>
                 </div>
                 {formData.services.map((service, index) => (
-                  <div key={index} className="p-2 bg-white rounded-md border">
+                  <div key={index} className="p-2 bg-surface-card rounded-md border">
                     <div className="flex gap-2 items-center mb-2">
                       <div className="flex-1">
                         <FormInput
@@ -974,7 +974,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       <button
                         type="button"
                         onClick={() => openServiceItemModal(index)}
-                        className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                        className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                         title="Edit item"
                       >
                         Edit
@@ -982,7 +982,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       <button
                         type="button"
                         onClick={() => deleteServiceItem(index)}
-                        className="p-1 text-red-600 rounded-md hover:bg-red-50"
+                        className="p-1 text-status-error rounded-md hover:bg-status-error/10"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -1006,9 +1006,9 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
           {/* Products Section */}
           {formData.showProductsSection !== false && (
-            <div className="p-3 bg-green-50 rounded-lg">
+            <div className="p-3 bg-status-success/10 rounded-lg">
               <div className="flex justify-between items-center">
-                <h3 className="flex items-center mb-2 text-sm font-bold text-green-900">
+                <h3 className="flex items-center mb-2 text-sm font-bold text-status-success">
                   <Package className="mr-2 w-5 h-5" />
                   {(formData.productsHeading || 'Products').trim() || 'Products'}
                 </h3>
@@ -1021,7 +1021,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       setProductsPlaceholderDraft(formData.productsPlaceholder || "");
                       setIsProductsTitleModalOpen(true);
                     }}
-                    className="inline-flex gap-1 items-center px-2 py-1 text-xs rounded-lg border hover:bg-white"
+                    className="inline-flex gap-1 items-center px-2 py-1 text-xs rounded-lg border hover:bg-surface-card"
                   >
                     Edit me
                   </button>
@@ -1037,7 +1037,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                         productsPlaceholder: '',
                       });
                     }}
-                    className="p-1 text-red-600 rounded-md border hover:bg-red-50"
+                    className="p-1 text-status-error rounded-md border hover:bg-status-error/10"
                     title="Delete products section"
                   >
                     <Minus className="w-4 h-4" />
@@ -1055,19 +1055,19 @@ const Step5ProductsServices: React.FC<StepProps> = ({
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <h4 className="text-sm font-semibold text-green-800">
+                  <h4 className="text-sm font-semibold text-status-success">
                     List your main products:
                   </h4>
                   <button
                     type="button"
                     onClick={addProduct}
-                    className="flex items-center px-3 py-1 text-sm text-white bg-green-600 rounded-md hover:bg-green-700"
+                    className="flex items-center px-3 py-1 text-sm text-white bg-status-success rounded-md hover:bg-status-success"
                   >
                     <Plus className="mr-2 w-4 h-4" /> Add Product
                   </button>
                 </div>
                 {formData.products.map((product, index) => (
-                  <div key={index} className="p-2 bg-white rounded-md border">
+                  <div key={index} className="p-2 bg-surface-card rounded-md border">
                     <div className="flex gap-2 items-center mb-2">
                       <div className="flex-1">
                         <FormInput
@@ -1087,7 +1087,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                           setProductDescPlaceholderDraft(p?.descriptionPlaceholder || 'Brief description of this product...');
                           setIsProductItemModalOpen(true);
                         }}
-                        className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                        className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                         title="Edit item"
                       >
                         Edit
@@ -1095,7 +1095,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       <button
                         type="button"
                         onClick={() => removeProduct(index)}
-                        className="p-1 text-red-600 rounded-md hover:bg-red-50"
+                        className="p-1 text-status-error rounded-md hover:bg-status-error/10"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -1118,8 +1118,8 @@ const Step5ProductsServices: React.FC<StepProps> = ({
           )}
 
           {/* Add New Custom Section */}
-          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <h3 className="mb-3 text-lg font-semibold text-gray-800">Add New Custom Section</h3>
+          <div className="p-4 bg-ink-offwhite rounded-lg border border-ink-light">
+            <h3 className="mb-3 text-lg font-semibold text-ink-charcoal">Add New Custom Section</h3>
             <div className="space-y-3">
               <div className="flex gap-2">
                 <div className="flex-1">
@@ -1134,7 +1134,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   type="button"
                   onClick={handleAddNewSection}
                   disabled={!newSectionTitle.trim()}
-                  className="flex items-center px-4 py-2 mt-6 text-sm text-white bg-purple-600 rounded-md transition-colors hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  className="flex items-center px-4 py-2 mt-6 text-sm text-white bg-brand-gold rounded-md transition-colors hover:bg-brand-gold disabled:bg-ink-light disabled:cursor-not-allowed"
                 >
                   <Plus className="mr-1 w-4 h-4" /> Add Section
                 </button>
@@ -1148,15 +1148,15 @@ const Step5ProductsServices: React.FC<StepProps> = ({
           {customSections.map((section) => (
             <div
               key={section.id}
-              className="p-3 space-y-3 bg-purple-50 rounded-lg border border-purple-200"
+              className="p-3 space-y-3 bg-brand-gold/10 rounded-lg border border-brand-gold/25"
             >
               {/* Header: Title + Edit button */}
               <div className="flex justify-between items-start mb-2">
-                <h3 className="flex gap-2 items-center text-sm font-bold text-purple-900">
+                <h3 className="flex gap-2 items-center text-sm font-bold text-brand-gold">
                   {section.icon === 'grid' ? (
-                    <Grid className="w-5 h-5 text-purple-600" />
+                    <Grid className="w-5 h-5 text-brand-gold" />
                   ) : (
-                    <span className="w-5 h-5 bg-purple-300 rounded-full" />
+                    <span className="w-5 h-5 bg-brand-gold/40 rounded-full" />
                   )}
                   {(section.heading || 'Custom Section')}
                 </h3>
@@ -1164,14 +1164,14 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => openCustomSectionEditModal(section.id)}
-                    className="inline-flex gap-1 items-center px-2 py-1 text-xs rounded-lg border hover:bg-white"
+                    className="inline-flex gap-1 items-center px-2 py-1 text-xs rounded-lg border hover:bg-surface-card"
                   >
                     Edit me
                   </button>
                   <button
                     type="button"
                     onClick={() => removeCustomSection(section.id)}
-                    className="p-1 text-red-600 rounded-md border hover:bg-red-50"
+                    className="p-1 text-status-error rounded-md border hover:bg-status-error/10"
                     title="Remove section"
                   >
                     <Minus className="w-4 h-4" />
@@ -1196,13 +1196,13 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
               {/* List heading + Add Item button (right-aligned) */}
               <div className="flex justify-between items-center mb-2">
-                <h4 className="text-sm font-semibold text-purple-800">
+                <h4 className="text-sm font-semibold text-brand-gold">
                   List your main {section.heading || "custom"} section:
                 </h4>
                 <button
                   type="button"
                   onClick={() => addCustomItem(section.id)}
-                  className="flex items-center px-3 py-1 text-sm text-white bg-purple-600 rounded-md hover:bg-purple-700"
+                  className="flex items-center px-3 py-1 text-sm text-white bg-brand-gold rounded-md hover:bg-brand-gold"
                 >
                   <Plus className="mr-2 w-4 h-4" /> Add Item
                 </button>
@@ -1215,7 +1215,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   return (
                     <div
                       key={idx}
-                      className="flex flex-col gap-2 p-2 bg-white rounded-md border"
+                      className="flex flex-col gap-2 p-2 bg-surface-card rounded-md border"
                     >
                       <div className="flex gap-2 items-center">
                         {/* Item Title */}
@@ -1234,7 +1234,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                         <button
                           type="button"
                           onClick={() => openItemEditModal(section.id, idx)}
-                          className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                          className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                           title="Edit item"
                         >
                           Edit
@@ -1243,7 +1243,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                         <button
                           type="button"
                           onClick={() => removeCustomItem(section.id, idx)}
-                          className="p-1 text-red-600 rounded-md hover:bg-red-50"
+                          className="p-1 text-status-error rounded-md hover:bg-status-error/10"
                         >
                           <Minus className="w-4 h-4" />
                         </button>
@@ -1272,13 +1272,13 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 bg-purple-900 bg-opacity-30 backdrop-blur-sm">
-          <div className="p-5 mt-8 w-full max-w-3xl bg-white rounded-lg border border-purple-100 shadow-lg animate-fade-in">
+        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 bg-brand-gold bg-opacity-30 backdrop-blur-sm">
+          <div className="p-5 mt-8 w-full max-w-3xl bg-surface-card rounded-lg border border-brand-gold/15 shadow-lg animate-fade-in">
             <div className="flex justify-between items-center mb-5">
-              <h2 className="text-xl font-semibold text-purple-800">Custom Sections</h2>
+              <h2 className="text-xl font-semibold text-brand-gold">Custom Sections</h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded-full transition-colors"
+                className="p-1.5 text-brand-gold hover:text-brand-yellow hover:bg-brand-gold/10 rounded-full transition-colors"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
@@ -1289,7 +1289,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
               {customSections.map((section) => (
                 <div
                   key={section.id}
-                  className="p-4 bg-purple-50 rounded-md border border-purple-200"
+                  className="p-4 bg-brand-gold/10 rounded-md border border-brand-gold/25"
                 >
                   <div className="flex gap-2 justify-between items-start mb-3">
                     <div className="flex-grow">
@@ -1304,7 +1304,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     </div>
                     <button
                       onClick={() => removeCustomSection(section.id)}
-                      className="p-1.5 text-purple-500 hover:text-purple-700 hover:bg-purple-100 rounded-md transition-colors mt-1"
+                      className="p-1.5 text-brand-gold hover:text-brand-yellow hover:bg-brand-gold/15 rounded-md transition-colors mt-1"
                       title="Remove section"
                     >
                       <Minus className="w-4 h-4" />
@@ -1315,7 +1315,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     {section.items.map((item, idx) => (
                       <div
                         key={idx}
-                        className="p-3 bg-white rounded-md border border-purple-100"
+                        className="p-3 bg-surface-card rounded-md border border-brand-gold/15"
                       >
                         <div className="flex gap-2 mb-2">
                           <div className="flex-grow">
@@ -1330,7 +1330,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                           </div>
                           <button
                             onClick={() => removeCustomItem(section.id, idx)}
-                            className="p-1.5 text-purple-500 hover:text-purple-700 hover:bg-purple-100 rounded-md transition-colors self-start"
+                            className="p-1.5 text-brand-gold hover:text-brand-yellow hover:bg-brand-gold/15 rounded-md transition-colors self-start"
                             title="Remove item"
                           >
                             <Minus className="w-4 h-4" />
@@ -1357,7 +1357,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
                   <button
                     onClick={() => addCustomItem(section.id)}
-                    className="flex items-center px-3 py-1.5 text-sm text-purple-700 hover:text-purple-900 hover:bg-purple-100 rounded-md transition-colors border border-purple-200"
+                    className="flex items-center px-3 py-1.5 text-sm text-brand-gold hover:text-brand-yellow hover:bg-brand-gold/15 rounded-md transition-colors border border-brand-gold/25"
                   >
                     <Plus className="w-4 h-4 mr-1.5" /> Add Item
                   </button>
@@ -1366,22 +1366,22 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
               <button
                 onClick={() => addCustomSection()}
-                className="flex items-center justify-center w-full px-4 py-2.5 text-sm text-white bg-purple-600 hover:bg-purple-700 rounded-md transition-colors shadow-sm"
+                className="flex items-center justify-center w-full px-4 py-2.5 text-sm text-white bg-brand-gold hover:bg-brand-gold rounded-md transition-colors shadow-sm"
               >
                 <Plus className="w-4 h-4 mr-1.5" /> Add New Section
               </button>
             </div>
 
-            <div className="flex gap-2 justify-end pt-4 mt-6 border-t border-purple-100">
+            <div className="flex gap-2 justify-end pt-4 mt-6 border-t border-brand-gold/15">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 text-sm text-purple-700 rounded-md border border-purple-200 transition-colors hover:text-purple-900 hover:bg-purple-50"
+                className="px-4 py-2 text-sm text-brand-gold rounded-md border border-brand-gold/25 transition-colors hover:text-brand-yellow hover:bg-brand-gold/10"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveModal}
-                className="px-4 py-2 text-sm text-white bg-purple-600 rounded-md shadow-sm transition-colors hover:bg-purple-700"
+                className="px-4 py-2 text-sm text-white bg-brand-gold rounded-md shadow-sm transition-colors hover:bg-brand-gold"
               >
                 Save
               </button>
@@ -1392,13 +1392,13 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
       {/* Service Item Edit Modal */}
       {isServiceItemModalOpen && (
-        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-black/30">
-          <div className="p-5 mt-12 w-full max-w-xl bg-white rounded-lg border border-blue-100 shadow-lg">
+        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-ink/30">
+          <div className="p-5 mt-12 w-full max-w-xl bg-surface-card rounded-lg border border-status-info/15 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="flex items-center text-lg font-semibold text-blue-800">Edit service item</h2>
+              <h2 className="flex items-center text-lg font-semibold text-status-info">Edit service item</h2>
               <button
                 onClick={cancelServiceItemModal}
-                className="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-full"
+                className="p-1.5 text-status-info hover:text-status-info hover:bg-status-info/10 rounded-full"
                 aria-label="Close service item modal"
               >
                 <X className="w-5 h-5" />
@@ -1419,7 +1419,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => { }}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit placeholder"
                   >
                     Edit
@@ -1428,7 +1428,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     type="button"
                     onClick={updateServiceItemOnServer}
                     disabled={isSavingServiceItem}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingServiceItem ? 'text-white bg-blue-300 cursor-not-allowed' : 'text-white bg-blue-600 hover:bg-blue-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingServiceItem ? 'text-white bg-status-info/40 cursor-not-allowed' : 'text-white bg-status-info hover:bg-status-info'}`}
                     title="Save placeholder"
                   >
                     {isSavingServiceItem ? 'Saving…' : 'Save'}
@@ -1450,7 +1450,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => { }}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit description label"
                   >
                     Edit
@@ -1459,7 +1459,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     type="button"
                     onClick={updateServiceItemOnServer}
                     disabled={isSavingServiceItem}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingServiceItem ? 'text-white bg-blue-300 cursor-not-allowed' : 'text-white bg-blue-600 hover:bg-blue-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingServiceItem ? 'text-white bg-status-info/40 cursor-not-allowed' : 'text-white bg-status-info hover:bg-status-info'}`}
                     title="Save description label"
                   >
                     {isSavingServiceItem ? 'Saving…' : 'Save'}
@@ -1481,7 +1481,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => { }}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit description placeholder"
                   >
                     Edit
@@ -1490,7 +1490,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     type="button"
                     onClick={updateServiceItemOnServer}
                     disabled={isSavingServiceItem}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingServiceItem ? 'text-white bg-blue-300 cursor-not-allowed' : 'text-white bg-blue-600 hover:bg-blue-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingServiceItem ? 'text-white bg-status-info/40 cursor-not-allowed' : 'text-white bg-status-info hover:bg-status-info'}`}
                     title="Save description placeholder"
                   >
                     {isSavingServiceItem ? 'Saving…' : 'Save'}
@@ -1499,11 +1499,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
               </div>
             </div>
 
-            <div className="flex gap-2 justify-end pt-3 border-t border-blue-100">
+            <div className="flex gap-2 justify-end pt-3 border-t border-status-info/15">
               <button
                 type="button"
                 onClick={cancelServiceItemModal}
-                className="px-4 py-2 text-sm text-blue-700 rounded-md border border-blue-200 hover:bg-blue-50"
+                className="px-4 py-2 text-sm text-status-info rounded-md border border-status-info/25 hover:bg-status-info/10"
               >
                 Cancel
               </button>
@@ -1511,7 +1511,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                 type="button"
                 onClick={updateServiceItemOnServer}
                 disabled={isSavingServiceItem}
-                className={`px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700`}
+                className={`px-4 py-2 text-sm text-white bg-status-info rounded-md hover:bg-status-info`}
               >
                 {isSavingServiceItem ? 'Saving…' : 'Save Changes'}
               </button>
@@ -1522,22 +1522,22 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
       {/* Services Title Edit Modal */}
       {isServicesTitleModalOpen && (
-        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-black/30">
-          <div className="p-5 mt-12 w-full max-w-xl bg-white rounded-lg border border-blue-100 shadow-lg">
+        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-ink/30">
+          <div className="p-5 mt-12 w-full max-w-xl bg-surface-card rounded-lg border border-status-info/15 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="flex items-center text-lg font-semibold text-blue-800">
+              <h2 className="flex items-center text-lg font-semibold text-status-info">
                 <Wrench className="mr-2 w-5 h-5" /> Edit services section
               </h2>
               <button
                 onClick={cancelServicesTitleEdit}
-                className="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-full"
+                className="p-1.5 text-status-info hover:text-status-info hover:bg-status-info/10 rounded-full"
                 aria-label="Close services title modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <h3 className="flex items-center mb-2 text-sm font-bold text-blue-900">
+            <h3 className="flex items-center mb-2 text-sm font-bold text-status-info">
               <Wrench className="mr-2 w-5 h-5" />
               {(formData.servicesHeading || 'Services').trim() || 'Services'}
             </h3>
@@ -1557,7 +1557,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => focusField('services-heading-input')}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit heading"
                   >
                     Edit
@@ -1569,7 +1569,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       saveServicesMeta();
                     }}
                     disabled={isSavingServicesSection}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingServicesSection ? 'text-white bg-blue-300 cursor-not-allowed' : 'text-white bg-blue-600 hover:bg-blue-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingServicesSection ? 'text-white bg-status-info/40 cursor-not-allowed' : 'text-white bg-status-info hover:bg-status-info'}`}
                     title="Save heading"
                   >
                     {isSavingServicesSection ? 'Saving…' : 'Save'}
@@ -1593,7 +1593,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => focusField('services-label-input')}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit label"
                   >
                     Edit
@@ -1605,7 +1605,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       saveServicesMeta();
                     }}
                     disabled={isSavingServicesSection}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingServicesSection ? 'text-white bg-blue-300 cursor-not-allowed' : 'text-white bg-blue-600 hover:bg-blue-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingServicesSection ? 'text-white bg-status-info/40 cursor-not-allowed' : 'text-white bg-status-info hover:bg-status-info'}`}
                     title="Save label"
                   >
                     {isSavingServicesSection ? 'Saving…' : 'Save'}
@@ -1629,7 +1629,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => focusField('services-placeholder-input')}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit placeholder"
                   >
                     Edit
@@ -1641,7 +1641,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       saveServicesMeta();
                     }}
                     disabled={isSavingServicesSection}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingServicesSection ? 'text-white bg-blue-300 cursor-not-allowed' : 'text-white bg-blue-600 hover:bg-blue-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingServicesSection ? 'text-white bg-status-info/40 cursor-not-allowed' : 'text-white bg-status-info hover:bg-status-info'}`}
                     title="Save placeholder"
                   >
                     {isSavingServicesSection ? 'Saving…' : 'Save'}
@@ -1650,11 +1650,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
               </div>
             </div>
 
-            <div className="flex gap-2 justify-end pt-3 border-t border-blue-100">
+            <div className="flex gap-2 justify-end pt-3 border-t border-status-info/15">
               <button
                 type="button"
                 onClick={cancelServicesTitleEdit}
-                className="px-4 py-2 text-sm text-blue-700 rounded-md border border-blue-200 hover:bg-blue-50"
+                className="px-4 py-2 text-sm text-status-info rounded-md border border-status-info/25 hover:bg-status-info/10"
               >
                 Cancel
               </button>
@@ -1668,7 +1668,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   });
                   saveServicesMeta();
                 }}
-                className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                className="px-4 py-2 text-sm text-white bg-status-info rounded-md hover:bg-status-info"
               >
                 Save Changes
               </button>
@@ -1679,22 +1679,22 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
       {/* Products Title Edit Modal */}
       {isProductsTitleModalOpen && (
-        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-black/30">
-          <div className="p-5 mt-12 w-full max-w-xl bg-white rounded-lg border border-green-100 shadow-lg">
+        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-ink/30">
+          <div className="p-5 mt-12 w-full max-w-xl bg-surface-card rounded-lg border border-status-success/15 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="flex items-center text-lg font-semibold text-green-800">
+              <h2 className="flex items-center text-lg font-semibold text-status-success">
                 <Package className="mr-2 w-5 h-5" /> Edit products section
               </h2>
               <button
                 onClick={() => setIsProductsTitleModalOpen(false)}
-                className="p-1.5 text-green-500 hover:text-green-700 hover:bg-green-50 rounded-full"
+                className="p-1.5 text-status-success hover:text-status-success hover:bg-status-success/10 rounded-full"
                 aria-label="Close products title modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <h3 className="flex items-center mb-2 text-sm font-bold text-green-900">
+            <h3 className="flex items-center mb-2 text-sm font-bold text-status-success">
               <Package className="mr-2 w-5 h-5" />
               {(formData.productsHeading || 'Products').trim() || 'Products'}
             </h3>
@@ -1714,7 +1714,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => focusField('products-heading-input')}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit heading"
                   >
                     Edit
@@ -1726,7 +1726,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       saveProductsMeta();
                     }}
                     disabled={isSavingProductsSection}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductsSection ? 'text-white bg-green-300 cursor-not-allowed' : 'text-white bg-green-600 hover:bg-green-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductsSection ? 'text-white bg-status-success/40 cursor-not-allowed' : 'text-white bg-status-success hover:bg-status-success'}`}
                     title="Save heading"
                   >
                     {isSavingProductsSection ? 'Saving…' : 'Save'}
@@ -1749,7 +1749,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => focusField('products-label-input')}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit label"
                   >
                     Edit
@@ -1761,7 +1761,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       saveProductsMeta();
                     }}
                     disabled={isSavingProductsSection}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductsSection ? 'text-white bg-green-300 cursor-not-allowed' : 'text-white bg-green-600 hover:bg-green-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductsSection ? 'text-white bg-status-success/40 cursor-not-allowed' : 'text-white bg-status-success hover:bg-status-success'}`}
                     title="Save label"
                   >
                     {isSavingProductsSection ? 'Saving…' : 'Save'}
@@ -1784,7 +1784,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => focusField('products-placeholder-input')}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit placeholder"
                   >
                     Edit
@@ -1796,7 +1796,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                       saveProductsMeta();
                     }}
                     disabled={isSavingProductsSection}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductsSection ? 'text-white bg-green-300 cursor-not-allowed' : 'text-white bg-green-600 hover:bg-green-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductsSection ? 'text-white bg-status-success/40 cursor-not-allowed' : 'text-white bg-status-success hover:bg-status-success'}`}
                     title="Save placeholder"
                   >
                     {isSavingProductsSection ? 'Saving…' : 'Save'}
@@ -1805,11 +1805,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
               </div>
             </div>
 
-            <div className="flex gap-2 justify-end pt-3 border-t border-green-100">
+            <div className="flex gap-2 justify-end pt-3 border-t border-status-success/15">
               <button
                 type="button"
                 onClick={() => setIsProductsTitleModalOpen(false)}
-                className="px-4 py-2 text-sm text-green-700 rounded-md border border-green-200 hover:bg-green-50"
+                className="px-4 py-2 text-sm text-status-success rounded-md border border-status-success/25 hover:bg-status-success/10"
               >
                 Cancel
               </button>
@@ -1824,7 +1824,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   saveProductsMeta();
                 }}
                 disabled={isSavingProductsSection}
-                className={`px-4 py-2 text-sm rounded-md ${isSavingProductsSection ? 'text-white bg-green-300 cursor-not-allowed' : 'text-white bg-green-600 hover:bg-green-700'}`}
+                className={`px-4 py-2 text-sm rounded-md ${isSavingProductsSection ? 'text-white bg-status-success/40 cursor-not-allowed' : 'text-white bg-status-success hover:bg-status-success'}`}
               >
                 {isSavingProductsSection ? 'Saving…' : 'Save Changes'}
               </button>
@@ -1835,13 +1835,13 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
       {/* Product Item Edit Modal */}
       {isProductItemModalOpen && (
-        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-black/30">
-          <div className="p-5 mt-12 w-full max-w-xl bg-white rounded-lg border border-green-100 shadow-lg">
+        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-ink/30">
+          <div className="p-5 mt-12 w-full max-w-xl bg-surface-card rounded-lg border border-status-success/15 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="flex items-center text-lg font-semibold text-green-800">Edit product item</h2>
+              <h2 className="flex items-center text-lg font-semibold text-status-success">Edit product item</h2>
               <button
                 onClick={() => setIsProductItemModalOpen(false)}
-                className="p-1.5 text-green-500 hover:text-green-700 hover:bg-green-50 rounded-full"
+                className="p-1.5 text-status-success hover:text-status-success hover:bg-status-success/10 rounded-full"
                 aria-label="Close product item modal"
               >
                 <X className="w-5 h-5" />
@@ -1862,7 +1862,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => { }}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit placeholder"
                   >
                     Edit
@@ -1871,7 +1871,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     type="button"
                     onClick={updateProductItemOnServer}
                     disabled={isSavingProductItem}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductItem ? 'text-white bg-green-300 cursor-not-allowed' : 'text-white bg-green-600 hover:bg-green-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductItem ? 'text-white bg-status-success/40 cursor-not-allowed' : 'text-white bg-status-success hover:bg-status-success'}`}
                     title="Save placeholder"
                   >
                     {isSavingProductItem ? 'Saving…' : 'Save'}
@@ -1893,7 +1893,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => { }}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit description label"
                   >
                     Edit
@@ -1902,7 +1902,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     type="button"
                     onClick={updateProductItemOnServer}
                     disabled={isSavingProductItem}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductItem ? 'text-white bg-green-300 cursor-not-allowed' : 'text-white bg-green-600 hover:bg-green-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductItem ? 'text-white bg-status-success/40 cursor-not-allowed' : 'text-white bg-status-success hover:bg-status-success'}`}
                     title="Save description label"
                   >
                     {isSavingProductItem ? 'Saving…' : 'Save'}
@@ -1924,7 +1924,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => { }}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit description placeholder"
                   >
                     Edit
@@ -1933,7 +1933,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     type="button"
                     onClick={updateProductItemOnServer}
                     disabled={isSavingProductItem}
-                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductItem ? 'text-white bg-green-300 cursor-not-allowed' : 'text-white bg-green-600 hover:bg-green-700'}`}
+                    className={`px-2 py-1 text-xs rounded-md ${isSavingProductItem ? 'text-white bg-status-success/40 cursor-not-allowed' : 'text-white bg-status-success hover:bg-status-success'}`}
                     title="Save description placeholder"
                   >
                     {isSavingProductItem ? 'Saving…' : 'Save'}
@@ -1942,11 +1942,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
               </div>
             </div>
 
-            <div className="flex gap-2 justify-end pt-3 border-t border-green-100">
+            <div className="flex gap-2 justify-end pt-3 border-t border-status-success/15">
               <button
                 type="button"
                 onClick={() => setIsProductItemModalOpen(false)}
-                className="px-4 py-2 text-sm text-green-700 rounded-md border border-green-200 hover:bg-green-50"
+                className="px-4 py-2 text-sm text-status-success rounded-md border border-status-success/25 hover:bg-status-success/10"
               >
                 Cancel
               </button>
@@ -1954,7 +1954,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                 type="button"
                 onClick={updateProductItemOnServer}
                 disabled={isSavingProductItem}
-                className={`px-4 py-2 text-sm rounded-md ${isSavingProductItem ? 'text-white bg-green-300 cursor-not-allowed' : 'text-white bg-green-600 hover:bg-green-700'}`}
+                className={`px-4 py-2 text-sm rounded-md ${isSavingProductItem ? 'text-white bg-status-success/40 cursor-not-allowed' : 'text-white bg-status-success hover:bg-status-success'}`}
               >
                 {isSavingProductItem ? 'Saving…' : 'Save Changes'}
               </button>
@@ -1965,15 +1965,15 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
       {/* Custom Section Heading Edit Modal */}
       {isCustomSectionModalOpen && (
-        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-black/30">
-          <div className="p-5 mt-12 w-full max-w-xl bg-white rounded-lg border border-purple-100 shadow-lg">
+        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-ink/30">
+          <div className="p-5 mt-12 w-full max-w-xl bg-surface-card rounded-lg border border-brand-gold/15 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="flex items-center text-lg font-semibold text-purple-800">
+              <h2 className="flex items-center text-lg font-semibold text-brand-gold">
                 <Grid className="mr-2 w-5 h-5" /> Edit custom section
               </h2>
               <button
                 onClick={cancelCustomSectionEdit}
-                className="p-1.5 text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded-full"
+                className="p-1.5 text-brand-gold hover:text-brand-yellow hover:bg-brand-gold/10 rounded-full"
                 aria-label="Close custom section modal"
               >
                 <X className="w-5 h-5" />
@@ -2010,11 +2010,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
               />
             </div>
 
-            <div className="flex gap-2 justify-end pt-3 border-t border-purple-100">
+            <div className="flex gap-2 justify-end pt-3 border-t border-brand-gold/15">
               <button
                 type="button"
                 onClick={cancelCustomSectionEdit}
-                className="px-4 py-2 text-sm text-purple-700 rounded-md border border-purple-200 hover:bg-purple-50"
+                className="px-4 py-2 text-sm text-brand-gold rounded-md border border-brand-gold/25 hover:bg-brand-gold/10"
               >
                 Cancel
               </button>
@@ -2022,13 +2022,13 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                 type="button"
                 onClick={updateCustomSectionOnServer}
                 disabled={isSavingCustomSection}
-                className={`px-4 py-2 text-sm rounded-md ${isSavingCustomSection ? 'text-white bg-purple-300 cursor-not-allowed' : 'text-white bg-purple-600 hover:bg-purple-700'}`}
+                className={`px-4 py-2 text-sm rounded-md ${isSavingCustomSection ? 'text-white bg-brand-gold/40 cursor-not-allowed' : 'text-white bg-brand-gold hover:bg-brand-gold'}`}
               >
                 {isSavingCustomSection ? 'Saving…' : 'Save Changes'}
               </button>
             </div>
             {customSectionUpdateError && (
-              <div className="mt-2 text-xs text-red-600">{customSectionUpdateError}</div>
+              <div className="mt-2 text-xs text-status-error">{customSectionUpdateError}</div>
             )}
           </div>
         </div>
@@ -2036,15 +2036,15 @@ const Step5ProductsServices: React.FC<StepProps> = ({
 
       {/* Item Edit Modal */}
       {isItemEditModalOpen && (
-        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-black/30">
-          <div className="p-5 mt-12 w-full max-w-xl bg-white rounded-lg border border-purple-100 shadow-lg">
+        <div className="flex overflow-auto fixed inset-0 z-50 justify-center items-start p-4 backdrop-blur-sm bg-ink/30">
+          <div className="p-5 mt-12 w-full max-w-xl bg-surface-card rounded-lg border border-brand-gold/15 shadow-lg">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="flex items-center text-lg font-semibold text-purple-800">
+              <h2 className="flex items-center text-lg font-semibold text-brand-gold">
                 Edit item
               </h2>
               <button
                 onClick={cancelItemEdit}
-                className="p-1.5 text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded-full"
+                className="p-1.5 text-brand-gold hover:text-brand-yellow hover:bg-brand-gold/10 rounded-full"
                 aria-label="Close item modal"
               >
                 <X className="w-5 h-5" />
@@ -2066,7 +2066,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => { }}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit placeholder"
                   >
                     Edit
@@ -2075,7 +2075,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     type="button"
                     onClick={updateCustomItemOnServer}
                     disabled={isSavingCustomItem}
-                    className={`px-2 py-1 text-xs text-white bg-purple-600 rounded-md hover:bg-purple-700`}
+                    className={`px-2 py-1 text-xs text-white bg-brand-gold rounded-md hover:bg-brand-gold`}
                     title="Save placeholder"
                   >
                     {isSavingCustomItem ? 'Saving…' : 'Save'}
@@ -2097,7 +2097,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => { }}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit description label"
                   >
                     Edit
@@ -2106,7 +2106,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     type="button"
                     onClick={updateCustomItemOnServer}
                     disabled={isSavingCustomItem}
-                    className={`px-2 py-1 text-xs text-white bg-purple-600 rounded-md hover:bg-purple-700`}
+                    className={`px-2 py-1 text-xs text-white bg-brand-gold rounded-md hover:bg-brand-gold`}
                     title="Save description label"
                   >
                     {isSavingCustomItem ? 'Saving…' : 'Save'}
@@ -2128,7 +2128,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                   <button
                     type="button"
                     onClick={() => { }}
-                    className="px-2 py-1 text-xs rounded-md border hover:bg-slate-50"
+                    className="px-2 py-1 text-xs rounded-md border hover:bg-ink-offwhite"
                     title="Edit description placeholder"
                   >
                     Edit
@@ -2137,7 +2137,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                     type="button"
                     onClick={updateCustomItemOnServer}
                     disabled={isSavingCustomItem}
-                    className={`px-2 py-1 text-xs text-white bg-purple-600 rounded-md hover:bg-purple-700`}
+                    className={`px-2 py-1 text-xs text-white bg-brand-gold rounded-md hover:bg-brand-gold`}
                     title="Save description placeholder"
                   >
                     {isSavingCustomItem ? 'Saving…' : 'Save'}
@@ -2146,11 +2146,11 @@ const Step5ProductsServices: React.FC<StepProps> = ({
               </div>
             </div>
 
-            <div className="flex gap-2 justify-end pt-3 border-t border-purple-100">
+            <div className="flex gap-2 justify-end pt-3 border-t border-brand-gold/15">
               <button
                 type="button"
                 onClick={cancelItemEdit}
-                className="px-4 py-2 text-sm text-purple-700 rounded-md border border-purple-200 hover:bg-purple-50"
+                className="px-4 py-2 text-sm text-brand-gold rounded-md border border-brand-gold/25 hover:bg-brand-gold/10"
               >
                 Cancel
               </button>
@@ -2158,7 +2158,7 @@ const Step5ProductsServices: React.FC<StepProps> = ({
                 type="button"
                 onClick={updateCustomItemOnServer}
                 disabled={isSavingCustomItem}
-                className={`px-4 py-2 text-sm rounded-md ${isSavingCustomItem ? 'text-white bg-purple-300 cursor-not-allowed' : 'text-white bg-purple-600 hover:bg-purple-700'}`}
+                className={`px-4 py-2 text-sm rounded-md ${isSavingCustomItem ? 'text-white bg-brand-gold/40 cursor-not-allowed' : 'text-white bg-brand-gold hover:bg-brand-gold'}`}
               >
                 {isSavingCustomItem ? 'Saving…' : 'Save Changes'}
               </button>

@@ -7,6 +7,8 @@ import { LEADS_API, AUTH_API, LAMBDA } from "../../../lib/apiConfig";
 import { getMyCompany, authHeaders } from "../api";
 import { PageHeader, Card, CardHeader, KpiRow, KpiCard, Badge, Btn, EmptyState } from "../ui";
 import VerifyBadgeCard from "../VerifyBadgeCard";
+import DocumentationCard from "../DocumentationCard";
+import ClaimAgreementModal from "../ClaimAgreementModal";
 
 const PROFILE_API = AUTH_API ? `${AUTH_API}/profile` : `${LAMBDA.profile}/profile`;
 
@@ -53,6 +55,24 @@ export default function Dashboard() {
     );
   }
 
+  // Deployment Map 2.5 - blocks the rest of the portal until the owner
+  // actively claims a bulk-imported profile (see ClaimAgreementModal).
+  // No-op for every company today in practice (nothing sets isClaimed=false
+  // yet - the bulk-import/outreach pipeline itself isn't built), but this
+  // is the real gate for whenever it is.
+  if (company.isClaimed === false) {
+    return (
+      <div>
+        <PageHeader title="Dashboard" sub="Welcome to your company portal" />
+        <ClaimAgreementModal
+          companyName={company.companyName}
+          publishedId={company.publishedId}
+          onClaimed={() => setCompany({ ...company, isClaimed: true })}
+        />
+      </div>
+    );
+  }
+
   const quickLinks = [
     { label: "Company Profile", path: "/company-portal/profile", icon: CheckCircle2 },
     { label: "Product Listings", path: "/company-portal/listings", icon: Package },
@@ -65,7 +85,9 @@ export default function Dashboard() {
     <div>
       <PageHeader title="Dashboard" sub={`Welcome back, ${company.companyName}`} />
 
-      <VerifyBadgeCard publishedId={company.publishedId} onVerified={() => setCompany({ ...company, verificationFeePaid: true })} />
+      <VerifyBadgeCard publishedId={company.publishedId} onVerified={() => setCompany({ ...company, badgeStatus: "SILVER" })} />
+
+      <DocumentationCard publishedId={company.publishedId} documentation={company.documentation} capacityStatus={company.capacityStatus} />
 
       <KpiRow>
         <KpiCard label="Profile Views" value={(company.profileViews ?? 0).toLocaleString("en-IN")} accent="yellow" />
@@ -115,10 +137,14 @@ export default function Dashboard() {
 
       <Card>
         <CardHeader title="Company Snapshot" />
-        <div className="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="p-4 grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div>
             <div className="text-[11px] font-bold text-white/40 uppercase tracking-wide mb-1">Status</div>
             <Badge tone={company.reviewStatus === "approved" ? "success" : "warning"}>{company.reviewStatus || "pending"}</Badge>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold text-white/40 uppercase tracking-wide mb-1">Verification</div>
+            <Badge tone={company.badgeStatus === "SILVER" ? "success" : "neutral"}>{company.badgeStatus === "SILVER" ? "Verified" : "Not verified"}</Badge>
           </div>
           <div>
             <div className="text-[11px] font-bold text-white/40 uppercase tracking-wide mb-1">Location</div>
