@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle, Upload, Images } from 'lucide-react';
+import { Plus, Trash2, Edit, Eye, EyeOff, Search, X, Check, AlertTriangle, Upload, Images, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { fetchAdminContent, createContent, updateContent, deleteContent, MediaItem, ContentType } from '../../../lib/mediaApi';
 import { ADMIN_API, COMPANY_API, LAMBDA } from '../../../lib/apiConfig';
@@ -451,6 +451,41 @@ export default function AdminMediaDashboard() {
 
   const sectionItems = items.filter(i => config.types.some(t => t.value === i.contentType));
 
+  // Manual admin ordering - only gallery/video are reorderable from this UI,
+  // though the backend sortOrder field works for any content type. Always
+  // reorders against the FULL list for that content type (not `filtered`,
+  // which can be search-narrowed) so adjacency is always correct.
+  const isReorderable = activeType === 'gallery' || activeType === 'video';
+  const [reordering, setReordering] = useState(false);
+  const moveItem = async (item: MediaItem, direction: 'up' | 'down') => {
+    if (reordering) return;
+    const typeItems = items.filter(i => i.contentType === item.contentType);
+    const idx = typeItems.findIndex(i => i.contentId === item.contentId);
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (idx === -1 || swapIdx < 0 || swapIdx >= typeItems.length) return;
+    const reordered = [...typeItems];
+    [reordered[idx], reordered[swapIdx]] = [reordered[swapIdx], reordered[idx]];
+    // Assign every item in this type a fresh sequential position. Items whose
+    // sortOrder is still null (never touched before) would otherwise sort
+    // after any item that now has a real number, even if the swap only meant
+    // to nudge it one spot - giving the whole type a real baseline the first
+    // time avoids that. Only items whose value actually changed get a PUT.
+    const toUpdate = reordered
+      .map((it, i) => ({ it, newOrder: i }))
+      .filter(({ it, newOrder }) => (it.sortOrder ?? null) !== newOrder);
+    setReordering(true);
+    try {
+      await Promise.all(toUpdate.map(({ it, newOrder }) =>
+        updateContent({ contentType: it.contentType, contentId: it.contentId, sortOrder: newOrder })
+      ));
+      await loadItems();
+    } catch {
+      toast.error('Failed to update order');
+    } finally {
+      setReordering(false);
+    }
+  };
+
   const filtered = items.filter(item => {
     const inSection = config.types.some(t => t.value === item.contentType);
     const matchType = activeType === 'all' ? inSection : item.contentType === activeType;
@@ -761,6 +796,9 @@ export default function AdminMediaDashboard() {
                   {isGallery && (
                     <th className="px-4 py-3 w-8"><input type="checkbox" aria-label="Select all photos" checked={filtered.length > 0 && filtered.every(i => selected.has(i.contentId))} onChange={e => setSelected(e.target.checked ? new Set(filtered.map(i => i.contentId)) : new Set())} className="accent-amber-500" /></th>
                   )}
+                  {isReorderable && (
+                    <th className="px-4 py-3 w-16 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Order</th>
+                  )}
                   <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Title</th>
                   <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Type</th>
                   <th className="text-left px-4 py-3 font-bold text-ink-paragraph text-xs uppercase tracking-wide">Source</th>
@@ -773,10 +811,28 @@ export default function AdminMediaDashboard() {
                 {filtered.map(item => {
                   const isApplication = item.title.startsWith('[Application]');
                   const displayTitle = isApplication ? item.title.replace('[Application] ', '') : item.title;
+                  const typePos = isReorderable ? items.filter(i => i.contentType === item.contentType).findIndex(i => i.contentId === item.contentId) : -1;
+                  const typeCount = isReorderable ? items.filter(i => i.contentType === item.contentType).length : 0;
                   return (
                   <tr key={item.contentId} className={`hover:bg-ink-offwhite transition-colors ${isApplication ? 'bg-status-info/40' : ''}`}>
                     {isGallery && (
                       <td className="px-4 py-3"><input type="checkbox" aria-label={`Select ${displayTitle}`} checked={selected.has(item.contentId)} onChange={() => toggleSelected(item.contentId)} className="accent-amber-500" /></td>
+                    )}
+                    {isReorderable && (
+                      <td className="px-4 py-3">
+                        <div className="flex flex-col gap-0.5">
+                          <button onClick={() => moveItem(item, 'up')} disabled={reordering || typePos <= 0}
+                            title="Move up" aria-label={`Move ${displayTitle} up`}
+                            className="p-1 rounded hover:bg-ink-light text-ink-caption hover:text-ink disabled:opacity-25 disabled:hover:bg-transparent transition-colors">
+                            <ArrowUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button onClick={() => moveItem(item, 'down')} disabled={reordering || typePos === -1 || typePos >= typeCount - 1}
+                            title="Move down" aria-label={`Move ${displayTitle} down`}
+                            className="p-1 rounded hover:bg-ink-light text-ink-caption hover:text-ink disabled:opacity-25 disabled:hover:bg-transparent transition-colors">
+                            <ArrowDown className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
                     )}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">

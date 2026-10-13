@@ -108,9 +108,13 @@ const GalleryPage = () => {
     const controller = new AbortController();
     fetchContent('gallery', controller.signal).then(items => {
       if (items.length > 0) {
+        // items already arrive in the backend's intended display order
+        // (admin sortOrder, or newest-first if untouched) - id must DECREASE
+        // with position so the existing `sort((a,b) => b.id - a.id)` below
+        // (descending by id) keeps that order instead of reversing it.
         const base = Date.now();
         setCmsImages(items.map((item, i) => ({
-          id: base + i,
+          id: base - i,
           src: item.imageUrl || '',
           title: item.title,
           category: item.category || 'Events',
