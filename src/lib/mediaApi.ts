@@ -28,6 +28,7 @@ export interface MediaItem {
   endDate?: string;
   packageType?: string;
   shareImageUrl?: string;
+  sortOrder?: number | null;
   views?: number;
   isPublished: boolean;
   publishedAt?: string;

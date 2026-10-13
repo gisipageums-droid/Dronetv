@@ -47,7 +47,7 @@ const VideoSpotlightV2: React.FC = () => {
   const [allVideos, setAllVideos] = useState<MediaItem[]>([]);
   const [category, setCategory] = useState('All');
   const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('newest');
+  const [sortBy, setSortBy] = useState('featured');
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(12);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -67,6 +67,10 @@ const VideoSpotlightV2: React.FC = () => {
       const q = search.toLowerCase();
       list = list.filter(v => v.title.toLowerCase().includes(q) || v.description.toLowerCase().includes(q));
     }
+    // 'featured' = the admin's own order from the dashboard, exactly as
+    // fetchContent('video') already returned it - no resort, relying on
+    // Array.prototype.sort's stable-sort guarantee to leave it untouched.
+    if (sortBy === 'featured') return [...list];
     return [...list].sort((a, b) => {
       if (sortBy === 'oldest') return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
       if (sortBy === 'popular') return (b.views ?? 0) - (a.views ?? 0);
@@ -78,7 +82,7 @@ const VideoSpotlightV2: React.FC = () => {
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [totalPages, page]);
   const first = (page - 1) * perPage;
   const visible = filtered.slice(first, first + perPage);
-  const resetFilters = () => { setCategory('All'); setSearch(''); setSortBy('newest'); setPage(1); };
+  const resetFilters = () => { setCategory('All'); setSearch(''); setSortBy('featured'); setPage(1); };
 
   if (loading) return (
     <div style={PAGE_BG} className="flex min-h-screen items-center justify-center">
@@ -125,6 +129,7 @@ const VideoSpotlightV2: React.FC = () => {
         </label>
         <span className={`${BTN} hidden shrink-0 text-xs sm:block`}>Sort by</span>
         <select value={sortBy} onChange={e => { setSortBy(e.target.value); setPage(1); }} className={`${BTN} hidden shrink-0 items-center gap-4 text-xs sm:flex`}>
+          <option value="featured">Featured</option>
           <option value="newest">Newest first</option>
           <option value="oldest">Oldest first</option>
           <option value="popular">Most viewed</option>
