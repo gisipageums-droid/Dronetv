@@ -255,10 +255,14 @@ const VideoCardV2: React.FC<{ item: MediaItem }> = ({ item }) => {
               <div className="flex h-full w-full items-center justify-center"><VideoIcon className="size-10 text-slate-500" /></div>
             )}
             {item.category && <span className="absolute left-3 top-3 rounded px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white shadow" style={{ backgroundColor: categoryColor(item.category) }}>{item.category}</span>}
-            <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${item.title}`} aria-pressed={liked} className={`absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
+            <button type="button" onClick={e => { e.stopPropagation(); setLiked(v => !v); }} aria-label={`Save ${item.title}`} aria-pressed={liked} className={`absolute right-3 top-3 z-10 grid size-9 place-items-center rounded-full bg-white shadow ${liked ? 'text-red-600' : 'text-red-500'}`}>
               <Heart className="size-4" fill={liked ? 'currentColor' : 'none'} />
             </button>
-            <button type="button" onClick={handleWatch} aria-label={`Play ${item.title}`} className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors hover:bg-black/30">
+            {/* z-0 keeps this full-bleed overlay below the Save button above
+                (same stacking context, later in DOM - without an explicit
+                z-index it would paint on top and swallow every click in the
+                Save button's area, routing taps meant for Save to Play instead). */}
+            <button type="button" onClick={handleWatch} aria-label={`Play ${item.title}`} className="absolute inset-0 z-0 flex items-center justify-center bg-black/20 transition-colors hover:bg-black/30">
               <span className="grid size-12 place-items-center rounded-full bg-yellow-400 shadow-lg"><Play className="size-5 fill-slate-900 text-slate-900" /></span>
             </button>
           </>

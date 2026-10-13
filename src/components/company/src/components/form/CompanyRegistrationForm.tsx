@@ -12,6 +12,7 @@ import { mapFormDataToAIGenData, initialFormData } from "./src/App";
 const GST_RE = /^(0[1-9]|[12][0-9]|3[0-8])[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
 const PAN_RE = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 const CIN_RE = /^[LU][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/;
+const LLPIN_RE = /^[A-Z]{3}-[0-9]{4}$/;
 const UDYAM_RE = /^UDYAM-[A-Z]{2}-[0-9]{2}-[0-9]{7}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MOBILE_RE = /^[6-9][0-9]{9}$/;
@@ -32,9 +33,12 @@ interface Values {
   primary_sector: string;
   business_support_category: string;
   business_support_other: string;
+  verification_type: "GST" | "CIN" | "LLP";
   gst_number: string;
   consent_gst_verification: boolean;
   gst_verified: boolean;
+  consent_cin_verification: boolean;
+  cin_verified: boolean;
   verify_token: string;
   trade_name: string;
   legal_name: string;
@@ -68,8 +72,8 @@ interface Values {
 }
 
 const EMPTY: Values = {
-  company_sectors: [], primary_sector: "", business_support_category: "", business_support_other: "", gst_number: "",
-  consent_gst_verification: false, gst_verified: false, verify_token: "", trade_name: "", legal_name: "", registered_address: "",
+  company_sectors: [], primary_sector: "", business_support_category: "", business_support_other: "", verification_type: "GST", gst_number: "",
+  consent_gst_verification: false, gst_verified: false, consent_cin_verification: false, cin_verified: false, verify_token: "", trade_name: "", legal_name: "", registered_address: "",
   registered_state: "", registered_pincode: "", date_of_incorporation: "", communication_address: "", same_as_registered: false,
   business_entity_type: "", pan_number: "", nature_of_business: "", nature_of_business_other: "", cin: "", udyam_number: "",
   website_url: "", company_logo: "", promotional_code: "", director_title: "Mr", director_name: "", director_address: "",
@@ -142,13 +146,14 @@ const CompanyRegistrationForm: React.FC = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [message, setMessage] = useState<{ text: string; kind: "ok" | "bad" } | null>(null);
   const [gst, setGst] = useState<{ s: "idle" | "loading" | "ok" | "bad"; msg: string }>({ s: "idle", msg: "" });
+  const [cin, setCin] = useState<{ s: "idle" | "loading" | "ok" | "bad"; msg: string }>({ s: "idle", msg: "" });
   const [panAuto, setPanAuto] = useState(true);
   const [logoBusy, setLogoBusy] = useState(false);
   const [logoNote, setLogoNote] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const locked = v.gst_verified;
+  const locked = v.verification_type === "GST" ? v.gst_verified : v.cin_verified;
 
   useEffect(() => {
     try {
@@ -221,12 +226,59 @@ const CompanyRegistrationForm: React.FC = () => {
     }
   };
 
-  const checkName = async (name: string) => {
+  const checkName = async (name: string, setStatus: typeof setGst = setGst) => {
     if (!name) return;
     try {
       const r = await axios.get(`${COMPANY_API}/drafts/check-name`, { params: { name, userId: v.director_email || undefined }, timeout: 15000 });
-      if (r.data?.available === false) setGst({ s: "bad", msg: `"${name}" is already registered with DroneTV. If this is your company, please contact support instead of registering again.` });
+      if (r.data?.available === false) setStatus({ s: "bad", msg: `"${name}" is already registered with DroneTV. If this is your company, please contact support instead of registering again.` });
     } catch { /* the server checks again on submit */ }
+  };
+
+  // ---- CIN / LLPIN ------------------------------------------------------------------------
+  // Surepass's company-details lookup covers both a company's CIN and an
+  // LLP's LLPIN via the same id_number param, so the two just differ in
+  // regex/formatting here, not in which endpoint gets called.
+  const idRe = (t: Values["verification_type"]) => (t === "LLP" ? LLPIN_RE : CIN_RE);
+
+  const onCinChange = (raw: string) => {
+    const idNum = v.verification_type === "LLP" ? raw.replace(/[^a-zA-Z0-9-]/g, "").toUpperCase() : raw.toUpperCase().replace(/\s/g, "");
+    setV(p => {
+      const next: Values = { ...p, cin: idNum };
+      if (p.cin_verified) { next.cin_verified = false; next.verify_token = ""; }
+      return next;
+    });
+    if (cin.s !== "idle") setCin({ s: "idle", msg: "" });
+    setErrors(e => ({ ...e, cin: "" }));
+  };
+
+  const verifyCin = async () => {
+    const label = v.verification_type === "LLP" ? "LLPIN (e.g. AAA-1234)" : "21 character CIN";
+    if (!idRe(v.verification_type).test(v.cin)) { setErrors(e => ({ ...e, cin: `Enter a valid ${label}.` })); return; }
+    if (!v.consent_cin_verification) { setCin({ s: "bad", msg: "Please tick the consent box to verify the CIN." }); return; }
+    setCin({ s: "loading", msg: "" });
+    try {
+      const res = await axios.post(`${COMPANY_API}/cin/verify`, { cin: v.cin }, { timeout: 60000 });
+      const d = res.data?.data || {};
+      patch({
+        trade_name: d.trade_name || v.trade_name, legal_name: d.legal_name || v.legal_name, registered_address: d.address || v.registered_address,
+        registered_state: d.state || v.registered_state, registered_pincode: d.pincode || v.registered_pincode,
+        date_of_incorporation: d.date_of_incorporation || v.date_of_incorporation,
+        business_entity_type: v.business_entity_type || (BUSINESS_ENTITY_TYPES.includes(d.business_entity_type) ? d.business_entity_type : ""),
+        director_name: v.director_name || d.signatory_name || "",
+        cin_verified: true, verify_token: res.data?.verify_token || "",
+        ...(v.same_as_registered ? { communication_address: composed(d.address || v.registered_address, d.state || v.registered_state, d.pincode || v.registered_pincode) } : {}),
+      });
+      setErrors(e => ({ ...e, cin: "", trade_name: "", legal_name: "", registered_address: "", registered_state: "", registered_pincode: "", date_of_incorporation: "", business_entity_type: "", director_name: "", communication_address: "" }));
+      let msg = "Company details fetched from the MCA portal.";
+      const contact = [res.data?.masked_phone, res.data?.masked_email].filter(Boolean).join(" and ");
+      if (contact) msg += ` Registered contact on record: ${contact}.`;
+      setCin({ s: "ok", msg });
+      checkName(d.trade_name || v.trade_name, setCin);
+    } catch (err: any) {
+      const st = err?.response?.status;
+      const detail = err?.response?.data?.detail;
+      setCin({ s: "bad", msg: st === 404 ? (typeof detail === "string" ? detail : "This CIN was not found.") : "We could not verify this CIN right now. You can try again, or fill the details yourself and our team will check them." });
+    }
   };
 
   // ---- addresses ----------------------------------------------------------------------
@@ -252,7 +304,13 @@ const CompanyRegistrationForm: React.FC = () => {
       if (!pre.data?.success) throw new Error("presign");
       await axios.put(pre.data.uploadUrl, file, { headers: { "Content-Type": file.type || "image/png" }, timeout: 120000 });
       set("company_logo", pre.data.imageUrl);
-    } catch { setErrors(e => ({ ...e, company_logo: "Upload failed. Please try again." })); }
+    } catch (err: any) {
+      // The generic message below is what the user sees, but logging the real
+      // reason (network vs a specific HTTP status from either call) is the
+      // difference between diagnosing the next report and re-guessing blind.
+      console.error("Company logo upload failed:", err?.response?.status, err?.message, err);
+      setErrors(e => ({ ...e, company_logo: "Upload failed. Please try again." }));
+    }
     finally { setLogoBusy(false); }
   };
 
@@ -293,7 +351,11 @@ const CompanyRegistrationForm: React.FC = () => {
       if (!v.business_support_category) e.business_support_category = "Please select a business support category.";
       if (v.business_support_category === "Other Business Services" && !v.business_support_other.trim()) e.business_support_other = "Please describe your service.";
     }
-    if (!GST_RE.test(v.gst_number)) e.gst_number = "Enter a valid 15 character GST number.";
+    if (v.verification_type === "GST") {
+      if (!GST_RE.test(v.gst_number)) e.gst_number = "Enter a valid 15 character GST number.";
+    } else if (!idRe(v.verification_type).test(v.cin)) {
+      e.cin = `Enter a valid ${v.verification_type === "LLP" ? "LLPIN (e.g. AAA-1234)" : "21 character CIN"}.`;
+    }
     if (!v.trade_name.trim()) e.trade_name = "Please enter the company name.";
     if (!v.legal_name.trim()) e.legal_name = "Please enter the legal name.";
     if (!v.registered_address.trim()) e.registered_address = "Please enter the registered address.";
@@ -305,7 +367,7 @@ const CompanyRegistrationForm: React.FC = () => {
     if (v.nature_of_business === "Other" && !v.nature_of_business_other.trim()) e.nature_of_business_other = "Please describe your business.";
     if (!PAN_RE.test(v.pan_number)) e.pan_number = "Enter a valid PAN number.";
     else if (GST_RE.test(v.gst_number) && v.gst_number.slice(2, 12) !== v.pan_number) e.pan_number = "PAN does not match the GST number.";
-    if (v.cin && !CIN_RE.test(v.cin)) e.cin = "Enter a valid 21 character CIN.";
+    if (v.verification_type === "GST" && v.cin && !CIN_RE.test(v.cin)) e.cin = "Enter a valid 21 character CIN.";
     if (v.udyam_number && !UDYAM_RE.test(v.udyam_number)) e.udyam_number = "Enter a valid UDYAM number.";
     if (v.date_of_incorporation) {
       const d = new Date(v.date_of_incorporation);
@@ -466,17 +528,45 @@ const CompanyRegistrationForm: React.FC = () => {
             <div className="mb-3.5 border-b border-[#f0c94a] pb-2 text-[13px] font-extrabold">Verify GST</div>
             <div className="mb-0.5 text-[13px] font-extrabold">Verify Your Company</div>
             <div className="mb-3 text-[11px] text-[#5f5430]">Automatically fill your company details using the government portal</div>
-            <Field label="Verification Type" htmlFor="vtype"><select id="vtype" className={INPUT} defaultValue="GST"><option value="GST">GST</option></select></Field>
-            <Field label="GST Number" htmlFor="gst_number" required error={err("gst_number")}>
-              <input id="gst_number" type="text" maxLength={15} autoComplete="off" value={v.gst_number} onChange={e => onGstChange(e.target.value)} placeholder="22AAAAA0000A1Z5" className={cls("gst_number")} />
+            <Field label="Verification Type" htmlFor="vtype">
+              <select id="vtype" className={INPUT} value={v.verification_type} onChange={e => {
+                const t = e.target.value as Values["verification_type"];
+                patch({ verification_type: t, gst_verified: false, cin_verified: false, verify_token: "" });
+                setGst({ s: "idle", msg: "" }); setCin({ s: "idle", msg: "" });
+                setErrors(er => ({ ...er, gst_number: "", cin: "" }));
+              }}>
+                <option value="GST">GST</option>
+                <option value="CIN">CIN</option>
+                <option value="LLP">LLP</option>
+              </select>
             </Field>
-            <div className={`${INNER} mt-0`}>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <label className="flex cursor-pointer items-center gap-2 text-xs"><input type="checkbox" checked={v.consent_gst_verification} onChange={e => set("consent_gst_verification", e.target.checked)} />I consent to GST verification</label>
-                <button type="button" className={BTN_SMALL} onClick={verifyGst} disabled={gst.s === "loading"}>{gst.s === "loading" ? "Verifying..." : "Verify"}</button>
-              </div>
-              {gst.msg && <div role="status" className={`mt-2 text-xs font-semibold leading-snug ${gst.s === "ok" ? "text-[#1b7a2f]" : "text-[#d40000]"}`}>{gst.msg}</div>}
-            </div>
+            {v.verification_type === "GST" ? (
+              <>
+                <Field label="GST Number" htmlFor="gst_number" required error={err("gst_number")}>
+                  <input id="gst_number" type="text" maxLength={15} autoComplete="off" value={v.gst_number} onChange={e => onGstChange(e.target.value)} placeholder="22AAAAA0000A1Z5" className={cls("gst_number")} />
+                </Field>
+                <div className={`${INNER} mt-0`}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <label className="flex cursor-pointer items-center gap-2 text-xs"><input type="checkbox" checked={v.consent_gst_verification} onChange={e => set("consent_gst_verification", e.target.checked)} />I consent to GST verification</label>
+                    <button type="button" className={BTN_SMALL} onClick={verifyGst} disabled={gst.s === "loading"}>{gst.s === "loading" ? "Verifying..." : "Verify"}</button>
+                  </div>
+                  {gst.msg && <div role="status" className={`mt-2 text-xs font-semibold leading-snug ${gst.s === "ok" ? "text-[#1b7a2f]" : "text-[#d40000]"}`}>{gst.msg}</div>}
+                </div>
+              </>
+            ) : (
+              <>
+                <Field label={v.verification_type === "LLP" ? "LLPIN" : "Corporate Identity Number (CIN)"} htmlFor="cin_verify" required error={err("cin")}>
+                  <input id="cin_verify" type="text" maxLength={21} autoComplete="off" value={v.cin} onChange={e => onCinChange(e.target.value)} placeholder={v.verification_type === "LLP" ? "AAA-1234" : "U72200KA2010PTC054321"} className={cls("cin")} />
+                </Field>
+                <div className={`${INNER} mt-0`}>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <label className="flex cursor-pointer items-center gap-2 text-xs"><input type="checkbox" checked={v.consent_cin_verification} onChange={e => set("consent_cin_verification", e.target.checked)} />I consent to {v.verification_type} verification</label>
+                    <button type="button" className={BTN_SMALL} onClick={verifyCin} disabled={cin.s === "loading"}>{cin.s === "loading" ? "Verifying..." : "Verify"}</button>
+                  </div>
+                  {cin.msg && <div role="status" className={`mt-2 text-xs font-semibold leading-snug ${cin.s === "ok" ? "text-[#1b7a2f]" : "text-[#d40000]"}`}>{cin.msg}</div>}
+                </div>
+              </>
+            )}
 
             <div className={INNER}>
               <div className="mb-3 border-b border-[#f0c94a] pb-2 text-xs font-extrabold">Company Details</div>
@@ -527,9 +617,14 @@ const CompanyRegistrationForm: React.FC = () => {
                 </div>
               )}
             </Field>
-            <Field label="Corporate Identity Number (CIN)" htmlFor="cin" error={err("cin")} help="For companies registered with the Registrar of Companies. Leave blank if not applicable.">
-              <input id="cin" type="text" maxLength={21} autoComplete="off" value={v.cin} onChange={e => set("cin", e.target.value.toUpperCase().replace(/\s/g, ""))} placeholder="Enter CIN" className={cls("cin")} />
-            </Field>
+            {v.verification_type === "GST" && (
+              // Only shown in GST mode - in CIN/LLP mode the Verification Type
+              // panel above is already editing this same v.cin field, so a
+              // second input here would just be a confusing duplicate.
+              <Field label="Corporate Identity Number (CIN)" htmlFor="cin" error={err("cin")} help="For companies registered with the Registrar of Companies. Leave blank if not applicable.">
+                <input id="cin" type="text" maxLength={21} autoComplete="off" value={v.cin} onChange={e => set("cin", e.target.value.toUpperCase().replace(/\s/g, ""))} placeholder="Enter CIN" className={cls("cin")} />
+              </Field>
+            )}
             <Field label="UDYAM Registration Number" htmlFor="udyam" error={err("udyam_number")} help="Format: UDYAM, state code, two digits, seven digits.">
               <input id="udyam" type="text" maxLength={19} autoComplete="off" value={v.udyam_number} onChange={e => set("udyam_number", e.target.value.toUpperCase().replace(/\s/g, ""))} placeholder="Enter UDYAM Registration Number" className={cls("udyam_number")} />
             </Field>
