@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { COMPANY_API } from "../../../../../lib/apiConfig";
+import { authHeaders } from "../../../../CompanyPortal/api";
 import { useTemplate, useUserAuth } from "../../../../context/context";
 import { compressImage } from "../../../../../lib/compressImage";
 import { SECTOR_INFO, SECTOR_LABEL, INDIA_STATES, BUSINESS_SUPPORT_CATEGORIES, type SectorKey } from "../../../../../lib/professionalOptions";
@@ -147,6 +148,13 @@ const CompanyRegistrationForm: React.FC = () => {
   const [message, setMessage] = useState<{ text: string; kind: "ok" | "bad" } | null>(null);
   const [gst, setGst] = useState<{ s: "idle" | "loading" | "ok" | "bad"; msg: string }>({ s: "idle", msg: "" });
   const [cin, setCin] = useState<{ s: "idle" | "loading" | "ok" | "bad"; msg: string }>({ s: "idle", msg: "" });
+  // GST/CIN/LLP proves who you are - only needs establishing once per
+  // person. An already-logged-in account registering a 2nd/3rd company
+  // (the "Register another company" flow) shouldn't be asked again;
+  // matches the same skip_identity_requirement check the backend makes
+  // from director_email, this is just the client-side mirror of it so the
+  // form doesn't block submission before ever reaching the server.
+  const [hasExistingCompany, setHasExistingCompany] = useState(false);
   const [panAuto, setPanAuto] = useState(true);
   const [logoBusy, setLogoBusy] = useState(false);
   const [logoNote, setLogoNote] = useState("");
@@ -161,6 +169,18 @@ const CompanyRegistrationForm: React.FC = () => {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(rest));
     } catch { /* storage unavailable */ }
   }, [v]);
+
+  useEffect(() => {
+    if (!loggedInEmail) return;
+    const controller = new AbortController();
+    axios.get(`${COMPANY_API}/dashboard-cards`, {
+      params: { viewType: "user", userId: loggedInEmail },
+      headers: authHeaders(), signal: controller.signal,
+    })
+      .then(res => setHasExistingCompany((res.data?.cards?.length || 0) > 0))
+      .catch(() => { /* default (false) just means GST/CIN stays required - the safe fallback */ });
+    return () => controller.abort();
+  }, [loggedInEmail]);
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => {
     setV(p => ({ ...p, [key]: value }));
@@ -352,8 +372,12 @@ const CompanyRegistrationForm: React.FC = () => {
       if (v.business_support_category === "Other Business Services" && !v.business_support_other.trim()) e.business_support_other = "Please describe your service.";
     }
     if (v.verification_type === "GST") {
-      if (!GST_RE.test(v.gst_number)) e.gst_number = "Enter a valid 15 character GST number.";
-    } else if (!idRe(v.verification_type).test(v.cin)) {
+      // Blank is only an error for a person's first company - GST/CIN/LLP
+      // proves who they are, not which listing this is, so it's never
+      // asked again once the account already owns one. A value, if given
+      // anyway, is still format-checked (mirrors the backend exactly).
+      if (v.gst_number ? !GST_RE.test(v.gst_number) : !hasExistingCompany) e.gst_number = "Enter a valid 15 character GST number.";
+    } else if (v.cin ? !idRe(v.verification_type).test(v.cin) : !hasExistingCompany) {
       e.cin = `Enter a valid ${v.verification_type === "LLP" ? "LLPIN (e.g. AAA-1234)" : "21 character CIN"}.`;
     }
     if (!v.trade_name.trim()) e.trade_name = "Please enter the company name.";
@@ -542,7 +566,7 @@ const CompanyRegistrationForm: React.FC = () => {
             </Field>
             {v.verification_type === "GST" ? (
               <>
-                <Field label="GST Number" htmlFor="gst_number" required error={err("gst_number")}>
+                <Field label="GST Number" htmlFor="gst_number" required={!hasExistingCompany} error={err("gst_number")} help={hasExistingCompany ? "Optional - already verified on your account." : undefined}>
                   <input id="gst_number" type="text" maxLength={15} autoComplete="off" value={v.gst_number} onChange={e => onGstChange(e.target.value)} placeholder="22AAAAA0000A1Z5" className={cls("gst_number")} />
                 </Field>
                 <div className={`${INNER} mt-0`}>
@@ -555,7 +579,7 @@ const CompanyRegistrationForm: React.FC = () => {
               </>
             ) : (
               <>
-                <Field label={v.verification_type === "LLP" ? "LLPIN" : "Corporate Identity Number (CIN)"} htmlFor="cin_verify" required error={err("cin")}>
+                <Field label={v.verification_type === "LLP" ? "LLPIN" : "Corporate Identity Number (CIN)"} htmlFor="cin_verify" required={!hasExistingCompany} error={err("cin")} help={hasExistingCompany ? "Optional - already verified on your account." : undefined}>
                   <input id="cin_verify" type="text" maxLength={21} autoComplete="off" value={v.cin} onChange={e => onCinChange(e.target.value)} placeholder={v.verification_type === "LLP" ? "AAA-1234" : "U72200KA2010PTC054321"} className={cls("cin")} />
                 </Field>
                 <div className={`${INNER} mt-0`}>
