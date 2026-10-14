@@ -12,6 +12,10 @@ import { authHeader } from "../../lib/authService";
 // polls for status rather than waiting on one long request.
 const API = `${COMPANY_API}/admin/bulk-import`;
 const POLL_MS = 3000;
+// This admin page always talks to whichever company-service it's deployed
+// with (dev or prod are separate backends/DBs) - this only decides which
+// public hostname gets stitched into each listed row's link.
+const ENV = window.location.hostname.includes("dev") ? "dev" : "prod";
 
 interface Row {
   rowNumber: number;
@@ -92,9 +96,7 @@ export default function AdminBulkImport() {
     try {
       const form = new FormData();
       form.append("file", file);
-      // Dev only, deliberately - no prod option exposed here yet, matching
-      // this whole batch of work's standing "dev only until told otherwise" rule.
-      const res = await fetch(`${API}?env=dev`, { method: "POST", headers: authHeader(), body: form });
+      const res = await fetch(`${API}?env=${ENV}`, { method: "POST", headers: authHeader(), body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Upload failed");
       toast.success(`Started - ${data.totalRows} rows queued`);
@@ -118,9 +120,12 @@ export default function AdminBulkImport() {
 
   return (
     <div className="p-4 sm:p-6 max-w-[1100px] mx-auto">
-      <h1 className="text-lg sm:text-xl font-bold text-ink mb-1">Bulk Company Import</h1>
+      <h1 className="text-lg sm:text-xl font-bold text-ink mb-1">
+        Bulk Company Import
+        <span className={`ml-2 align-middle px-2 py-0.5 rounded-full text-[10.5px] font-bold uppercase tracking-wide ${ENV === "prod" ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"}`}>{ENV}</span>
+      </h1>
       <p className="text-sm text-ink-paragraph mb-5">
-        Upload the same Excel template used by the CLI script (GSTIN/CIN verified via Surepass, listing auto-published, credentials emailed to the director). Every company created here starts <strong>unclaimed</strong> until the real owner logs in - dev only for now.
+        Upload the same Excel template used by the CLI script (GSTIN/CIN verified via Surepass, listing auto-published, credentials emailed to the director). Every company created here starts <strong>unclaimed</strong> until the real owner logs in. {ENV === "prod" ? "This runs against the live production site - double-check the file before uploading." : "This runs against the dev site."}
       </p>
 
       <div className="bg-white border border-ink-light rounded-xl p-5 mb-6">
