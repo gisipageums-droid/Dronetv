@@ -628,7 +628,7 @@ const CompanyRegistrationForm: React.FC = () => {
               </select>
             </Field>
             <Field label="PAN Number" htmlFor="pan_number" required error={err("pan_number")}>
-              <input id="pan_number" type="text" maxLength={10} autoComplete="off" readOnly={locked} value={v.pan_number} onChange={e => { setPanAuto(false); set("pan_number", e.target.value.toUpperCase().replace(/\s/g, "")); }} placeholder="Enter PAN Number (e.g., ABCDE1234F)" className={cls("pan_number", true)} />
+              <input id="pan_number" type="text" maxLength={10} autoComplete="off" value={v.pan_number} onChange={e => { setPanAuto(false); set("pan_number", e.target.value.toUpperCase().replace(/\s/g, "")); }} placeholder="Enter PAN Number (e.g., ABCDE1234F)" className={cls("pan_number")} />
             </Field>
             <Field label="Nature of Business" htmlFor="nature_of_business" required error={err("nature_of_business")}>
               <select id="nature_of_business" value={v.nature_of_business} onChange={e => { set("nature_of_business", e.target.value); if (e.target.value !== "Other") set("nature_of_business_other", ""); }} className={cls("nature_of_business")}>
