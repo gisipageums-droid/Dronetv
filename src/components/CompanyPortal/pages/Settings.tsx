@@ -15,7 +15,7 @@ interface Account {
 }
 
 export default function Settings() {
-  const { user } = useUserAuth();
+  const { user, refreshUser } = useUserAuth();
   const userId = (user as any)?.userData?.email || (user as any)?.email || "";
   const [account, setAccount] = useState<Account | null>(null);
   const [loading, setLoading] = useState(true);
@@ -78,6 +78,10 @@ export default function Settings() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      // Clears the "change your temporary password" banner immediately -
+      // without this, mustChangePassword stays stale in the stored session
+      // until the next full login.
+      refreshUser();
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || "Failed to change password");
     } finally {
