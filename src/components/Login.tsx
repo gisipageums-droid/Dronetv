@@ -13,6 +13,12 @@ interface LoginData {
   password: string;
 }
 
+interface OtpAccountOption {
+  email: string;
+  fullName: string;
+  role?: string;
+}
+
 interface SignUpData {
   email: string;
   fullName: string;
@@ -57,6 +63,16 @@ export default function Login() {
     email: "",
     password: "",
   });
+
+  // Login with OTP (WhatsApp) — self-hosted dev only for now.
+  const [loginMethod, setLoginMethod] = useState<"password" | "otp">("password");
+  const [otpStep, setOtpStep] = useState<"phone" | "code">("phone");
+  const [otpPhone, setOtpPhone] = useState<string>("");
+  const [otpCode, setOtpCode] = useState<string>("");
+  const [otpSending, setOtpSending] = useState<boolean>(false);
+  const [otpVerifying, setOtpVerifying] = useState<boolean>(false);
+  const [otpResendCooldown, setOtpResendCooldown] = useState<number>(0);
+  const [otpAccounts, setOtpAccounts] = useState<OtpAccountOption[]>([]);
   const [signUpData, setSignUpData] = useState<SignUpData>({
     email: "",
     fullName: "",
@@ -101,6 +117,60 @@ export default function Login() {
       setPasswordMatch(signUpData.password === signUpData.confirmPassword);
     }
   }, [signUpData.password, signUpData.confirmPassword]);
+
+  useEffect(() => {
+    if (otpResendCooldown <= 0) return;
+    const timer = setTimeout(() => setOtpResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [otpResendCooldown]);
+
+  const resetOtpFlow = () => {
+    setOtpStep("phone");
+    setOtpPhone("");
+    setOtpCode("");
+    setOtpAccounts([]);
+    setOtpResendCooldown(0);
+  };
+
+  const handleSendOtp = async (e?: React.SyntheticEvent) => {
+    e?.preventDefault();
+    if (!otpPhone.trim()) return;
+    setOtpSending(true);
+    try {
+      const data = await authService.requestLoginOtp(otpPhone.trim());
+      toast.success(data.message || "OTP sent");
+      setOtpStep("code");
+      setOtpResendCooldown(30);
+    } catch (error: any) {
+      toast.error(error.message || "Could not send OTP");
+    } finally {
+      setOtpSending(false);
+    }
+  };
+
+  const completeOtpLogin = async (userId?: string) => {
+    setOtpVerifying(true);
+    try {
+      const result = await authService.verifyLoginOtp(otpPhone.trim(), otpCode.trim(), userId);
+      if ("accounts" in result) {
+        setOtpAccounts(result.accounts);
+        return;
+      }
+      login(result);
+      resetOtpFlow();
+      navigate(await landingPath(result));
+    } catch (error: any) {
+      toast.error(error.message || "Invalid or expired code");
+    } finally {
+      setOtpVerifying(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otpCode.trim().length !== 4) return;
+    await completeOtpLogin();
+  };
 
   const onLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -256,6 +326,125 @@ export default function Login() {
                   className="h-[5.5rem] w-[6rem]"
                 />
               </div>
+              <div className="flex gap-4 px-1 mb-4 text-sm font-medium border-b border-ink-light">
+                <button
+                  type="button"
+                  onClick={() => setLoginMethod("password")}
+                  className={`pb-2 -mb-px border-b-2 ${
+                    loginMethod === "password"
+                      ? "border-status-info text-status-info"
+                      : "border-transparent text-ink-caption"
+                  }`}
+                >
+                  Password
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginMethod("otp");
+                    resetOtpFlow();
+                  }}
+                  className={`pb-2 -mb-px border-b-2 ${
+                    loginMethod === "otp"
+                      ? "border-status-info text-status-info"
+                      : "border-transparent text-ink-caption"
+                  }`}
+                >
+                  Login with OTP
+                </button>
+              </div>
+              {loginMethod === "otp" ? (
+                otpStep === "phone" ? (
+                  <form onSubmit={handleSendOtp}>
+                    <div className="mb-4">
+                      <label className="block mb-2 text-sm font-medium" htmlFor="otpPhone">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        id="otpPhone"
+                        name="otpPhone"
+                        value={otpPhone}
+                        onChange={(e) => setOtpPhone(e.target.value)}
+                        className="w-full p-2 border rounded border-ink-light"
+                        placeholder="Enter your registered phone number"
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={otpSending}
+                      className="w-full py-2 text-white bg-status-info rounded hover:bg-status-info disabled:opacity-60"
+                    >
+                      {otpSending ? "Sending..." : "Send OTP"}
+                    </button>
+                  </form>
+                ) : otpAccounts.length > 0 ? (
+                  <div>
+                    <p className="mb-3 text-sm text-ink-paragraph">
+                      We found more than one account for this number. Choose one:
+                    </p>
+                    {otpAccounts.map((acc) => (
+                      <button
+                        key={acc.email}
+                        type="button"
+                        disabled={otpVerifying}
+                        onClick={() => completeOtpLogin(acc.email)}
+                        className="w-full p-3 mb-2 text-left border rounded border-ink-light hover:border-status-info disabled:opacity-60"
+                      >
+                        <div className="font-medium">{acc.fullName}</div>
+                        <div className="text-xs text-ink-caption">
+                          {acc.email}
+                          {acc.role ? ` · ${acc.role}` : ""}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <form onSubmit={handleVerifyOtp}>
+                    <div className="mb-4">
+                      <label className="block mb-2 text-sm font-medium" htmlFor="otpCode">
+                        Enter the 4-digit code sent to {otpPhone}
+                      </label>
+                      <input
+                        type="text"
+                        id="otpCode"
+                        inputMode="numeric"
+                        maxLength={4}
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                        className="w-full p-2 text-center tracking-[0.5em] border rounded border-ink-light"
+                        placeholder="----"
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={otpVerifying || otpCode.length !== 4}
+                      className="w-full py-2 text-white bg-status-info rounded hover:bg-status-info disabled:opacity-60"
+                    >
+                      {otpVerifying ? "Verifying..." : "Verify & Login"}
+                    </button>
+                    <div className="flex items-center justify-between mt-3 text-sm">
+                      <button
+                        type="button"
+                        onClick={() => setOtpStep("phone")}
+                        className="text-ink-caption hover:underline"
+                      >
+                        Change number
+                      </button>
+                      <button
+                        type="button"
+                        disabled={otpResendCooldown > 0 || otpSending}
+                        onClick={handleSendOtp}
+                        className="text-status-info hover:underline disabled:text-ink-caption disabled:no-underline"
+                      >
+                        {otpResendCooldown > 0 ? `Resend in ${otpResendCooldown}s` : "Resend OTP"}
+                      </button>
+                    </div>
+                  </form>
+                )
+              ) : (
               <form onSubmit={handleLoginSubmit}>
                 <div className="mb-4">
                   <label
@@ -355,6 +544,7 @@ export default function Login() {
                   </div>
                 </div> */}
               </form>
+              )}
             </div>
           </div>
         </>
