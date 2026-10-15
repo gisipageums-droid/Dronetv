@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Building2, Package, Inbox, Film, BookOpen, Megaphone,
   BarChart2, ShieldCheck, Receipt, Settings as SettingsIcon, Menu, X,
   ExternalLink, LogOut, Coins, Target, LayoutTemplate, Briefcase, LayoutGrid,
-  ChevronDown, ClipboardList, FileCheck, Plus, Truck,
+  ChevronDown, ClipboardList, FileCheck, Plus, Truck, KeyRound,
 } from "lucide-react";
 import { useUserAuth } from "../context/context";
 import { getMyCompanies, getActivePublishedId, setActivePublishedId } from "./api";
@@ -205,6 +205,7 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
   const navigate = useNavigate();
   const { user, logout } = useUserAuth();
 
+  const mustChangePassword = Boolean((user as any)?.userData?.mustChangePassword);
   const displayName = user?.userData?.fullName || user?.userData?.companyName || user?.email || "Company";
   const initials = displayName.slice(0, 2).toUpperCase();
   const pageTitle = TITLES[location.pathname]
@@ -349,6 +350,20 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
           </div>
         </header>
 
+        {mustChangePassword && location.pathname !== "/company-portal/settings" && (
+          <div className="bg-status-warning/15 border-b border-status-warning/30 px-4 sm:px-6 py-2.5 flex items-center gap-2.5 text-xs sm:text-sm">
+            <KeyRound size={15} className="text-status-warning flex-shrink-0" />
+            <span className="text-white/80 flex-1">
+              You're still using the temporary password from your registration email. Please change it to secure your account.
+            </span>
+            <NavLink
+              to="/company-portal/settings"
+              className="flex-shrink-0 px-3 py-1.5 bg-status-warning text-ink font-semibold rounded-md hover:opacity-90"
+            >
+              Change Password
+            </NavLink>
+          </div>
+        )}
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
     </div>
