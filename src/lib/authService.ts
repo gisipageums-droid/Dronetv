@@ -247,6 +247,37 @@ export async function login(payload: {
   return mapped;
 }
 
+export interface OtpAccountOption {
+  email: string;
+  fullName: string;
+  role?: string;
+}
+
+export interface OtpAccountsChoice {
+  accounts: OtpAccountOption[];
+  message: string;
+}
+
+// Login with OTP — self-hosted only (no Lambda equivalent exists), dev-only
+// until the Meta WhatsApp Authentication template is live on prod too.
+export async function requestLoginOtp(phone: string): Promise<{ message: string }> {
+  if (!AUTH_API) throw new Error('Login with OTP is not available yet');
+  return post('/otp/request', { phone });
+}
+
+export async function verifyLoginOtp(
+  phone: string,
+  code: string,
+  userId?: string
+): Promise<LoginResponse | OtpAccountsChoice> {
+  if (!AUTH_API) throw new Error('Login with OTP is not available yet');
+  const res = await post<LoginResponse | OtpAccountsChoice>('/otp/verify', { phone, code, userId });
+  if ('accounts' in res) return res;
+  saveSession(res);
+  await applyRoleReconciliation(res);
+  return res;
+}
+
 export async function googleLogin(token: string): Promise<LoginResponse> {
   if (AUTH_API) {
     const res = await post<LoginResponse>('/google-login', { token });
