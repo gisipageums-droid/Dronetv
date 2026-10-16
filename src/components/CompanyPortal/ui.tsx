@@ -14,7 +14,7 @@ export function PageHeader({ title, sub }: { title: string; sub?: string }) {
 
 export function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-ink rounded-lg border border-white/10 ${className}`}>
+    <div className={`bg-ink rounded-lg border border-white/10 overflow-hidden ${className}`}>
       {children}
     </div>
   );
