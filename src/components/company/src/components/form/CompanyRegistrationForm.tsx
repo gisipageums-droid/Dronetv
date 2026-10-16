@@ -357,6 +357,7 @@ const CompanyRegistrationForm: React.FC = () => {
       v.company_sectors.length > 0, !hasBss || !!v.business_support_category, GST_RE.test(v.gst_number),
       !!v.trade_name.trim(), !!v.legal_name.trim(), !!v.registered_address.trim(), !!v.registered_state, PIN_RE.test(v.registered_pincode),
       !!v.communication_address.trim(), !!v.business_entity_type, PAN_RE.test(v.pan_number), natureOk, !!v.website_url.trim(),
+      !!v.company_logo,
       !!v.director_name.trim(), !!v.director_address.trim(), MOBILE_RE.test(v.director_phone), EMAIL_RE.test(v.director_email.trim()),
       EMAIL_RE.test(v.company_email.trim()), v.declaration_authorised && v.declaration_accuracy && v.consent_privacy,
     ];
@@ -398,6 +399,7 @@ const CompanyRegistrationForm: React.FC = () => {
       if (isNaN(d.getTime()) || d > new Date()) e.date_of_incorporation = "Please enter a valid date, not in the future.";
     }
     if (!v.website_url.trim() || !isHttp(v.website_url)) e.website_url = "Enter a full web address starting with https://";
+    if (!v.company_logo) e.company_logo = "Please upload your company logo.";
     if (!v.director_name.trim()) e.director_name = "Please enter the director name.";
     if (!v.director_address.trim()) e.director_address = "Please enter the director address.";
     if (!MOBILE_RE.test(v.director_phone)) e.director_phone = "Enter a valid 10 digit mobile number.";
@@ -655,7 +657,7 @@ const CompanyRegistrationForm: React.FC = () => {
             <Field label="Website URL" htmlFor="website_url" required error={err("website_url")}>
               <input id="website_url" type="url" value={v.website_url} onChange={e => set("website_url", e.target.value)} onBlur={fetchLogoFromWebsite} placeholder="https://www.yourcompany.com" className={cls("website_url")} />
             </Field>
-            <Field label="Company Logo (optional)" htmlFor="company_logo" error={err("company_logo")} help={logoBusy ? (logoNote || "Uploading...") : v.company_logo ? (logoNote || "Logo uploaded.") : logoNote || "PNG, JPG, SVG. Shown in your website header. Maximum 2 MB."}>
+            <Field label="Company Logo" htmlFor="company_logo" required error={err("company_logo")} help={logoBusy ? (logoNote || "Uploading...") : v.company_logo ? (logoNote || "Logo uploaded.") : logoNote || "PNG, JPG, SVG. Shown in your website header. Maximum 2 MB."}>
               <div className="flex items-center gap-3.5">
                 <div className="flex size-14 flex-none items-center justify-center overflow-hidden rounded-md border border-dashed border-[#c9b25a] bg-white text-[10px] text-slate-500">
                   {v.company_logo ? <img src={v.company_logo} alt="Logo preview" className="max-h-full max-w-full" /> : "Logo"}
