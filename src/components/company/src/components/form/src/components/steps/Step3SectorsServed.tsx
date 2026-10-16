@@ -16,6 +16,14 @@ const CATEGORIES = [
     value: 'GIS',
     description: 'Geospatial, mapping, GNSS & location intelligence',
   },
+  {
+    value: 'Robotics',
+    description: 'Robotics manufacturing, automation & autonomous systems',
+  },
+  {
+    value: 'Others',
+    description: 'Any other drone-adjacent technology or service',
+  },
 ];
 
 const droneSectors = [
@@ -69,11 +77,43 @@ const gisSectors = [
   'Other',
 ];
 
+const roboticsSectors = [
+  'Industrial Automation',
+  'Warehouse & Logistics Robots',
+  'Agriculture Robotics',
+  'Healthcare & Surgical Robotics',
+  'Defense & Security Robotics',
+  'Underwater & Marine Robotics',
+  'Humanoid & Service Robots',
+  'Research & Education',
+  'Manufacturing & Assembly',
+  'Inspection & Maintenance Robots',
+  'Training',
+  'Other',
+];
+
+const othersSectors = [
+  'Agriculture & Precision Farming',
+  'Construction & Infrastructure',
+  'Healthcare & Medical',
+  'Finance & Banking',
+  'Education & Research',
+  'Transportation & Logistics',
+  'Defense & Security',
+  'Environmental Monitoring',
+  'Entertainment & Media',
+  'Energy & Utilities',
+  'Training',
+  'Other',
+];
+
 const getSectorsByCategory = (category: string) => {
   switch (category) {
     case 'Drone': return droneSectors;
     case 'AI': return aiSectors;
     case 'GIS': return gisSectors;
+    case 'Robotics': return roboticsSectors;
+    case 'Others': return othersSectors;
     default: return [];
   }
 };
@@ -83,6 +123,8 @@ const getCategoryColor = (category: string) => {
     case 'Drone': return { bg: 'bg-surface-main', text: 'text-brand-gold', border: 'border-brand-yellow-soft' };
     case 'AI': return { bg: 'bg-status-info/10', text: 'text-status-info', border: 'border-status-info/25' };
     case 'GIS': return { bg: 'bg-status-success/10', text: 'text-status-success', border: 'border-status-success/25' };
+    case 'Robotics': return { bg: 'bg-status-warning/10', text: 'text-status-warning', border: 'border-status-warning/25' };
+    case 'Others': return { bg: 'bg-status-error/10', text: 'text-status-error', border: 'border-status-error/25' };
     default: return { bg: 'bg-surface-main', text: 'text-brand-gold', border: 'border-brand-yellow-soft' };
   }
 };
