@@ -160,6 +160,7 @@ const CompanyRegistrationForm: React.FC = () => {
   const [logoNote, setLogoNote] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [dupConfirm, setDupConfirm] = useState<{ msg: string } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const locked = v.verification_type === "GST" ? v.gst_verified : v.cin_verified;
 
@@ -422,10 +423,13 @@ const CompanyRegistrationForm: React.FC = () => {
     setPreviewOpen(true);
   };
 
-  const publish = async () => {
+  const publish = async (confirmDuplicate = false) => {
     setSubmitting(true);
     try {
-      const company = { ...v, director_email: v.director_email.trim(), company_email: v.company_email.trim(), website_url: v.website_url.trim() };
+      const company = {
+        ...v, director_email: v.director_email.trim(), company_email: v.company_email.trim(), website_url: v.website_url.trim(),
+        confirm_duplicate: confirmDuplicate,
+      };
       const payload = {
         userId: loggedInEmail || company.director_email,
         directorEmail: company.director_email,
@@ -456,6 +460,8 @@ const CompanyRegistrationForm: React.FC = () => {
         setErrors(detail.errors);
         setMessage({ text: "Please correct the highlighted fields and try again.", kind: "bad" });
         scrollToFirst();
+      } else if (st === 409 && detail && typeof detail === "object" && detail.duplicate) {
+        setDupConfirm({ msg: detail.message || "This company is already listed on DroneTV." });
       } else if (st === 409) {
         setMessage({ text: `${typeof detail === "string" ? detail : "This company is already listed on DroneTV"}. If it is yours, sign in and open it from your dashboard instead of registering again, or contact support.`, kind: "bad" });
       } else {
@@ -739,7 +745,20 @@ const CompanyRegistrationForm: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2.5 border-t border-[#f0c94a] px-[18px] py-3">
               <button type="button" onClick={() => setPreviewOpen(false)} disabled={submitting} className="rounded-md bg-[#eee] px-[18px] py-2.5 text-xs font-bold">Edit</button>
-              <button type="button" onClick={publish} disabled={submitting} className="rounded-md bg-[#1c1c1c] px-[22px] py-[11px] text-[13px] font-extrabold text-white disabled:opacity-60">{submitting ? "Publishing..." : "Publish"}</button>
+              <button type="button" onClick={() => publish()} disabled={submitting} className="rounded-md bg-[#1c1c1c] px-[22px] py-[11px] text-[13px] font-extrabold text-white disabled:opacity-60">{submitting ? "Publishing..." : "Publish"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {dupConfirm && (
+        <div className="fixed inset-0 z-[100000001] flex items-center justify-center bg-black/45 p-3.5" role="dialog" aria-modal="true" aria-label="Company already listed">
+          <div className="w-full max-w-[460px] overflow-hidden rounded-[10px] border border-[#f0c94a] bg-white">
+            <div className="bg-[#fbc50b] px-[18px] py-3.5 text-sm font-extrabold">Already listed</div>
+            <div className="px-[18px] py-4 text-[13px] text-[#333]">{dupConfirm.msg} Do you want to continue?</div>
+            <div className="flex justify-end gap-2.5 border-t border-[#f0c94a] px-[18px] py-3">
+              <button type="button" onClick={() => { setDupConfirm(null); setSubmitting(false); }} disabled={submitting} className="rounded-md bg-[#eee] px-[18px] py-2.5 text-xs font-bold">Cancel</button>
+              <button type="button" onClick={() => { setDupConfirm(null); publish(true); }} disabled={submitting} className="rounded-md bg-[#1c1c1c] px-[22px] py-[11px] text-[13px] font-extrabold text-white disabled:opacity-60">OK</button>
             </div>
           </div>
         </div>

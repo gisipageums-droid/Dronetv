@@ -76,6 +76,7 @@ const ProfessionalProfileForm: React.FC = () => {
   const [loadingDraft, setLoadingDraft] = useState(editing);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ text: string; kind: "ok" | "bad" } | null>(null);
+  const [dupConfirm, setDupConfirm] = useState<{ msg: string } | null>(null);
   const [templateSelection, setTemplateSelection] = useState<string>(String(location.state?.templateId ?? ""));
   const [resumeDocs, setResumeDocs] = useState<any[]>([]);
   const [media, setMedia] = useState<any[]>([]);
@@ -346,6 +347,10 @@ const ProfessionalProfileForm: React.FC = () => {
     }
     if (Object.values(busyUpload).some(Boolean)) { setMessage({ text: "Please wait for the uploads to finish.", kind: "bad" }); return; }
 
+    doSubmit(false);
+  };
+
+  const doSubmit = async (confirmDuplicate: boolean) => {
     setSubmitting(true);
     const email = accountEmail || v.email.trim().toLowerCase();
     const rawTemplate = templateSelection || "1";
@@ -357,7 +362,7 @@ const ProfessionalProfileForm: React.FC = () => {
       draftId: submissionId,
       intake: true,
       formData: {
-        profile: { ...v, mobile: v.mobile, identity_client_id: identityClientId || undefined },
+        profile: { ...v, mobile: v.mobile, identity_client_id: identityClientId || undefined, confirm_duplicate: confirmDuplicate },
         media,
         resume: resumeDocs,
         templateSelection: templateId,
@@ -380,6 +385,8 @@ const ProfessionalProfileForm: React.FC = () => {
         setErrors(detail.errors);
         setMessage({ text: "Please correct the highlighted fields and try again.", kind: "bad" });
         setTimeout(() => formRef.current?.querySelector('[role="alert"]')?.scrollIntoView({ behavior: "smooth", block: "center" }), 50);
+      } else if (err?.response?.status === 409 && detail && typeof detail === "object" && detail.duplicate) {
+        setDupConfirm({ msg: detail.message || "This professional is already listed on DroneTV." });
       } else if (err?.response?.status === 409) {
         setMessage({ text: typeof detail === "string" ? detail : "This identity check was already used for another profile.", kind: "bad" });
       } else {
@@ -719,6 +726,19 @@ const ProfessionalProfileForm: React.FC = () => {
         </form>
       </div>
       <footer className="p-[18px] text-center text-[11px] text-slate-500">Copyright 2026 DroneTV.in | India&rsquo;s Drone / Aerospace, GIS and AI Industry Network</footer>
+
+      {dupConfirm && (
+        <div className="fixed inset-0 z-[100000001] flex items-center justify-center bg-black/45 p-3.5" role="dialog" aria-modal="true" aria-label="Professional already listed">
+          <div className="w-full max-w-[460px] overflow-hidden rounded-[10px] border border-[#f0c94a] bg-white">
+            <div className="bg-[#fbc50b] px-[18px] py-3.5 text-sm font-extrabold">Already listed</div>
+            <div className="px-[18px] py-4 text-[13px] text-[#333]">{dupConfirm.msg} Do you want to continue?</div>
+            <div className="flex justify-end gap-2.5 border-t border-[#f0c94a] px-[18px] py-3">
+              <button type="button" onClick={() => { setDupConfirm(null); setSubmitting(false); }} disabled={submitting} className="rounded-md bg-[#eee] px-[18px] py-2.5 text-xs font-bold">Cancel</button>
+              <button type="button" onClick={() => { setDupConfirm(null); doSubmit(true); }} disabled={submitting} className="rounded-md bg-[#1c1c1c] px-[22px] py-[11px] text-[13px] font-extrabold text-white disabled:opacity-60">OK</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
