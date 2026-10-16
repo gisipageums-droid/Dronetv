@@ -22,7 +22,24 @@ function applyAxiosAuthHeader(token: string | null) {
 }
 applyAxiosAuthHeader(localStorage.getItem('token'));
 
+// Presigned storage URLs (MinIO/S3) carry their own signature in the query
+// string (AWSAccessKeyId/Signature or X-Amz-Signature) - sending an
+// Authorization header alongside that signature makes MinIO reject the
+// request with 400 ("only one auth mechanism allowed"), breaking every
+// direct-to-storage file upload for any visitor who happens to be logged
+// in. Never attach the app's bearer token to one of those requests.
+function isPresignedStorageUrl(url?: string): boolean {
+  if (!url) return false;
+  return /[?&](AWSAccessKeyId|X-Amz-Signature|Signature)=/.test(url);
+}
+
 axios.interceptors.request.use((config) => {
+  if (isPresignedStorageUrl(config.url)) {
+    // Strip it even if axios.defaults.headers.common already carries one -
+    // that default is merged into config before this interceptor runs.
+    config.headers.delete('Authorization');
+    return config;
+  }
   if (!config.headers.has('Authorization')) {
     const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
     if (token) config.headers.set('Authorization', `Bearer ${token}`);
