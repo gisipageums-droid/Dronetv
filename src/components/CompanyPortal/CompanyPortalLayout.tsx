@@ -245,7 +245,7 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
   };
 
   return (
-    <div className="flex fixed inset-0 pt-20 bg-ink">
+    <div className="flex fixed inset-0 pt-20 bg-ink overflow-hidden">
       {/* Desktop sidebar */}
       <aside
         className={`hidden lg:flex flex-shrink-0 h-full bg-ink flex-col transition-all duration-200 overflow-hidden ${
@@ -288,7 +288,7 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
           <button onClick={() => setMobileOpen(true)} className="lg:hidden text-white/50 p-1" title="Open menu">
             <Menu size={18} />
           </button>
-          <div className="text-sm font-bold text-white truncate">{pageTitle}</div>
+          <div className="min-w-0 text-sm font-bold text-white truncate">{pageTitle}</div>
 
           {companies.length > 1 && (
             <div className="relative">
