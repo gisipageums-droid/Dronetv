@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { COMPANY_API } from "../../../../../lib/apiConfig";
-import { authHeaders } from "../../../../CompanyPortal/api";
 import { useTemplate, useUserAuth } from "../../../../context/context";
 import { compressImage } from "../../../../../lib/compressImage";
 import { SECTOR_INFO, SECTOR_LABEL, INDIA_STATES, BUSINESS_SUPPORT_CATEGORIES, type SectorKey } from "../../../../../lib/professionalOptions";
@@ -136,6 +135,16 @@ const CompanyRegistrationForm: React.FC = () => {
   const { setDraftDetails } = useTemplate();
   const loggedInEmail = authUser?.email || authUser?.userData?.email || null;
   const templateId = String(location.state?.templateId ?? "1");
+  // Multi-company / multi-vertical model (2026-10-18): set only when this
+  // registration was started from a company's "+ Add Vertical" button
+  // (MyCompanies.tsx -> Select.tsx both forward it through). A brand-new
+  // standalone company (the plain "+ Add New Company" / "Register another
+  // company" path) always requires its own GST/CIN, even on an account that
+  // already owns other companies - only a Vertical of a confirmed parent
+  // skips it, since the server then inherits the parent's legal identity.
+  const parentCompanyId: string | null = location.state?.parentCompanyId || null;
+  const parentCompanyName: string | null = location.state?.parentCompanyName || null;
+  const isVertical = !!parentCompanyId;
 
   const [v, setV] = useState<Values>(() => {
     try {
@@ -148,13 +157,6 @@ const CompanyRegistrationForm: React.FC = () => {
   const [message, setMessage] = useState<{ text: string; kind: "ok" | "bad" } | null>(null);
   const [gst, setGst] = useState<{ s: "idle" | "loading" | "ok" | "bad"; msg: string }>({ s: "idle", msg: "" });
   const [cin, setCin] = useState<{ s: "idle" | "loading" | "ok" | "bad"; msg: string }>({ s: "idle", msg: "" });
-  // GST/CIN/LLP proves who you are - only needs establishing once per
-  // person. An already-logged-in account registering a 2nd/3rd company
-  // (the "Register another company" flow) shouldn't be asked again;
-  // matches the same skip_identity_requirement check the backend makes
-  // from director_email, this is just the client-side mirror of it so the
-  // form doesn't block submission before ever reaching the server.
-  const [hasExistingCompany, setHasExistingCompany] = useState(false);
   const [panAuto, setPanAuto] = useState(true);
   const [logoBusy, setLogoBusy] = useState(false);
   const [logoNote, setLogoNote] = useState("");
@@ -170,18 +172,6 @@ const CompanyRegistrationForm: React.FC = () => {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(rest));
     } catch { /* storage unavailable */ }
   }, [v]);
-
-  useEffect(() => {
-    if (!loggedInEmail) return;
-    const controller = new AbortController();
-    axios.get(`${COMPANY_API}/dashboard-cards`, {
-      params: { viewType: "user", userId: loggedInEmail },
-      headers: authHeaders(), signal: controller.signal,
-    })
-      .then(res => setHasExistingCompany((res.data?.cards?.length || 0) > 0))
-      .catch(() => { /* default (false) just means GST/CIN stays required - the safe fallback */ });
-    return () => controller.abort();
-  }, [loggedInEmail]);
 
   const set = <K extends keyof Values>(key: K, value: Values[K]) => {
     setV(p => ({ ...p, [key]: value }));
@@ -374,12 +364,13 @@ const CompanyRegistrationForm: React.FC = () => {
       if (v.business_support_category === "Other Business Services" && !v.business_support_other.trim()) e.business_support_other = "Please describe your service.";
     }
     if (v.verification_type === "GST") {
-      // Blank is only an error for a person's first company - GST/CIN/LLP
-      // proves who they are, not which listing this is, so it's never
-      // asked again once the account already owns one. A value, if given
-      // anyway, is still format-checked (mirrors the backend exactly).
-      if (v.gst_number ? !GST_RE.test(v.gst_number) : !hasExistingCompany) e.gst_number = "Enter a valid 15 character GST number.";
-    } else if (v.cin ? !idRe(v.verification_type).test(v.cin) : !hasExistingCompany) {
+      // Blank is only an error for a standalone company - GST/CIN/LLP
+      // proves who you are and is skipped only for a Vertical registered
+      // under an already-verified parent company (the server inherits the
+      // parent's legal identity in that case). A value, if given anyway,
+      // is still format-checked (mirrors the backend exactly).
+      if (v.gst_number ? !GST_RE.test(v.gst_number) : !isVertical) e.gst_number = "Enter a valid 15 character GST number.";
+    } else if (v.cin ? !idRe(v.verification_type).test(v.cin) : !isVertical) {
       e.cin = `Enter a valid ${v.verification_type === "LLP" ? "LLPIN (e.g. AAA-1234)" : "21 character CIN"}.`;
     }
     if (!v.trade_name.trim()) e.trade_name = "Please enter the company name.";
@@ -429,6 +420,7 @@ const CompanyRegistrationForm: React.FC = () => {
       const company = {
         ...v, director_email: v.director_email.trim(), company_email: v.company_email.trim(), website_url: v.website_url.trim(),
         confirm_duplicate: confirmDuplicate,
+        parent_company_id: parentCompanyId || "",
       };
       const payload = {
         userId: loggedInEmail || company.director_email,
@@ -511,6 +503,11 @@ const CompanyRegistrationForm: React.FC = () => {
         <div className="-mx-3.5 bg-gradient-to-b from-[#fbefb0] to-[#fff9dd] px-7 pb-[22px] pt-[18px]">
           <h1 className="text-lg font-extrabold">Company Information</h1>
           <p className="mt-[3px] text-[11px] text-[#5f5430]">Select your company category and provide basic details</p>
+          {isVertical && (
+            <div className="mt-2.5 rounded-md border border-[#1c1c1c]/15 bg-white/60 px-3 py-2 text-[11.5px] font-semibold text-[#3a3310]">
+              Adding a new vertical under <span className="font-extrabold">{parentCompanyName || "your company"}</span>. GST/CIN/LLP is inherited automatically — you won't need to re-verify it.
+            </div>
+          )}
         </div>
 
         <form ref={formRef} onSubmit={onSubmit} noValidate className="-mt-2 rounded-[10px] border border-[#f0c94a] bg-white p-3.5 shadow-[0_2px_10px_rgba(0,0,0,.05)] sm:p-[22px]">
@@ -574,7 +571,7 @@ const CompanyRegistrationForm: React.FC = () => {
             </Field>
             {v.verification_type === "GST" ? (
               <>
-                <Field label="GST Number" htmlFor="gst_number" required={!hasExistingCompany} error={err("gst_number")} help={hasExistingCompany ? "Optional - already verified on your account." : undefined}>
+                <Field label="GST Number" htmlFor="gst_number" required={!isVertical} error={err("gst_number")} help={isVertical ? `Optional - inherited from ${parentCompanyName || "the parent company"}.` : undefined}>
                   <input id="gst_number" type="text" maxLength={15} autoComplete="off" value={v.gst_number} onChange={e => onGstChange(e.target.value)} placeholder="22AAAAA0000A1Z5" className={cls("gst_number")} />
                 </Field>
                 <div className={`${INNER} mt-0`}>
@@ -587,7 +584,7 @@ const CompanyRegistrationForm: React.FC = () => {
               </>
             ) : (
               <>
-                <Field label={v.verification_type === "LLP" ? "LLPIN" : "Corporate Identity Number (CIN)"} htmlFor="cin_verify" required={!hasExistingCompany} error={err("cin")} help={hasExistingCompany ? "Optional - already verified on your account." : undefined}>
+                <Field label={v.verification_type === "LLP" ? "LLPIN" : "Corporate Identity Number (CIN)"} htmlFor="cin_verify" required={!isVertical} error={err("cin")} help={isVertical ? `Optional - inherited from ${parentCompanyName || "the parent company"}.` : undefined}>
                   <input id="cin_verify" type="text" maxLength={21} autoComplete="off" value={v.cin} onChange={e => onCinChange(e.target.value)} placeholder={v.verification_type === "LLP" ? "AAA-1234" : "U72200KA2010PTC054321"} className={cls("cin")} />
                 </Field>
                 <div className={`${INNER} mt-0`}>
