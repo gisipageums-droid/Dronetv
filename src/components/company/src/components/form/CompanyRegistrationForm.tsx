@@ -382,8 +382,11 @@ const CompanyRegistrationForm: React.FC = () => {
     if (!v.business_entity_type) e.business_entity_type = "Please select the business entity type.";
     if (!v.nature_of_business) e.nature_of_business = "Please select the nature of business.";
     if (v.nature_of_business === "Other" && !v.nature_of_business_other.trim()) e.nature_of_business_other = "Please describe your business.";
-    if (!PAN_RE.test(v.pan_number)) e.pan_number = "Enter a valid PAN number.";
-    else if (GST_RE.test(v.gst_number) && v.gst_number.slice(2, 12) !== v.pan_number) e.pan_number = "PAN does not match the GST number.";
+    // PAN is identity proof too - skipped for a Vertical exactly like
+    // GST/CIN, since it's about to be overwritten by the parent's real PAN
+    // server-side anyway (mirrors the backend's validate_company exactly).
+    if (v.pan_number ? !PAN_RE.test(v.pan_number) : !isVertical) e.pan_number = "Enter a valid PAN number.";
+    else if (v.pan_number && GST_RE.test(v.gst_number) && v.gst_number.slice(2, 12) !== v.pan_number) e.pan_number = "PAN does not match the GST number.";
     if (v.verification_type === "GST" && v.cin && !CIN_RE.test(v.cin)) e.cin = "Enter a valid 21 character CIN.";
     if (v.udyam_number && !UDYAM_RE.test(v.udyam_number)) e.udyam_number = "Enter a valid UDYAM number.";
     if (v.date_of_incorporation) {
@@ -632,7 +635,7 @@ const CompanyRegistrationForm: React.FC = () => {
                 <option value="">Select your business entity type</option>{BUSINESS_ENTITY_TYPES.map(o => <option key={o}>{o}</option>)}
               </select>
             </Field>
-            <Field label="PAN Number" htmlFor="pan_number" required error={err("pan_number")}>
+            <Field label="PAN Number" htmlFor="pan_number" required={!isVertical} error={err("pan_number")} help={isVertical ? `Optional - inherited from ${parentCompanyName || "the parent company"}.` : undefined}>
               <input id="pan_number" type="text" maxLength={10} autoComplete="off" value={v.pan_number} onChange={e => { setPanAuto(false); set("pan_number", e.target.value.toUpperCase().replace(/\s/g, "")); }} placeholder="Enter PAN Number (e.g., ABCDE1234F)" className={cls("pan_number")} />
             </Field>
             <Field label="Nature of Business" htmlFor="nature_of_business" required error={err("nature_of_business")}>
