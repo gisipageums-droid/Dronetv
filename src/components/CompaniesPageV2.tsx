@@ -28,9 +28,9 @@ const PAGE_BG: React.CSSProperties = {
 };
 
 const MEDAL_SRC: Record<string, string> = {
-  silver: '/assets/medals/silver-medal.png',
-  gold: '/assets/medals/gold-medal.png',
-  platinum: '/assets/medals/platinum-medal.png',
+  silver: '/assets/medals/silver-medal.webp',
+  gold: '/assets/medals/gold-medal.webp',
+  platinum: '/assets/medals/platinum-medal.webp',
 };
 
 // A card should never show a blank/empty photo slot. The small logo avatar
@@ -392,12 +392,12 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
       {/* Tier badge: square "Verified Company" seal artwork, transparent
           background, one file per tier. */}
       {tier ? (
-        <img src={MEDAL_SRC[tier]} alt={`${TIER_STYLE[tier].label} package`} title={TIER_STYLE[tier].label} className="absolute right-1 top-1 z-10 h-20 w-20 rounded-md object-cover object-left shadow-sm" />
+        <img src={MEDAL_SRC[tier]} alt={`${TIER_STYLE[tier].label} package`} title={TIER_STYLE[tier].label} loading="lazy" decoding="async" className="absolute right-1 top-1 z-10 h-20 w-20 rounded-md object-cover object-left shadow-sm" />
       ) : (
         <span className="absolute right-2 top-2 z-10 rounded bg-[#dff0df] px-2 py-2 text-[10px] font-extrabold">LISTED</span>
       )}
 
-      <div className="flex min-h-[78px] items-start gap-2 pr-20">
+      <div className="flex min-h-[124px] items-start gap-2 pr-20">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-yellow-400 bg-slate-50 text-lg font-extrabold text-blue-600">
           {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
         </div>
@@ -420,7 +420,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           ProductsPageV2.tsx) - there is still no review/rating system
           backing companies today, so most cards show no star yet. Nothing
           here is fabricated. */}
-      <div className="absolute right-2 top-[70px] flex items-start justify-end gap-2 text-center">
+      <div className="absolute right-2 top-[92px] flex items-start justify-end gap-2 text-center">
         <div className="flex w-7 flex-col items-center">
           <button type="button" onClick={e => { e.stopPropagation(); onToggleSave?.(); }} aria-label="Save" className={`flex size-7 items-center justify-center ${saved ? 'text-red-600' : ''}`}><Heart className="size-5" fill={saved ? 'currentColor' : 'none'} /></button>
         </div>
