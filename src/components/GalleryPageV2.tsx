@@ -308,7 +308,7 @@ const GalleryPageV2: React.FC = () => {
       <section aria-label="Gallery statistics" className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
         <div className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[150px]">
           <Camera className="size-5 shrink-0 text-yellow-400 sm:size-7" />
-          <span className="flex flex-col"><small className="text-[10px] leading-tight">Total Photos</small><strong className="text-lg leading-tight text-yellow-300">{allImages.length.toLocaleString('en-IN')}</strong></span>
+          <span className="flex flex-col"><small className="text-[10px] leading-tight">Total Photos</small><strong className="text-lg leading-tight text-yellow-300">{displayImages.length.toLocaleString('en-IN')}</strong></span>
         </div>
         <div className="flex w-[calc(33.333%-0.5rem)] shrink-0 items-center gap-2 border-r border-yellow-500/25 pr-2 sm:w-[calc(33.333%-0.7rem)] xl:w-auto xl:min-w-[150px]">
           <Tag className="size-5 shrink-0 text-yellow-400 sm:size-7" />
