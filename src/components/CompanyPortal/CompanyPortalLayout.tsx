@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Building2, Package, Inbox, Film, BookOpen, Megaphone,
   BarChart2, ShieldCheck, Receipt, Settings as SettingsIcon, Menu, X,
   ExternalLink, LogOut, Coins, Target, LayoutTemplate, Briefcase, LayoutGrid,
-  ChevronDown, ClipboardList, FileCheck, Plus, Truck, KeyRound,
+  ChevronDown, ClipboardList, FileCheck, Plus, Truck, KeyRound, GitBranch,
 } from "lucide-react";
 import { useUserAuth } from "../context/context";
 import { getMyCompanies, getActivePublishedId, setActivePublishedId } from "./api";
@@ -239,6 +239,24 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
 
   const activeCompany = companies.find((c) => c.publishedId === activeId) || companies[0];
 
+  // Multi-company / multi-vertical model: order the switcher as a tree -
+  // each top-level Company immediately followed by its own Verticals
+  // (indented), instead of one flat alphabetical/creation-order list. The
+  // underlying switch mechanics (setActivePublishedId + reload) don't care
+  // about hierarchy at all - a Vertical's publishedId switches the whole
+  // portal to it exactly like a standalone company's does.
+  const switcherList = useMemo(() => {
+    const top = companies.filter((c) => !c.parentCompanyId);
+    const out: { c: any; vertical: boolean }[] = [];
+    top.forEach((c) => {
+      out.push({ c, vertical: false });
+      companies
+        .filter((v) => v.parentCompanyId === c.publishedId)
+        .forEach((v) => out.push({ c: v, vertical: true }));
+    });
+    return out;
+  }, [companies]);
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -305,15 +323,15 @@ export default function CompanyPortalLayout({ children }: { children: React.Reac
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setSwitcherOpen(false)} />
                   <div className="absolute right-0 mt-1.5 w-64 max-h-80 overflow-y-auto bg-ink border border-white/15 rounded-lg shadow-xl z-50 py-1">
-                    {companies.map((c) => (
+                    {switcherList.map(({ c, vertical }) => (
                       <button
                         key={c.publishedId}
                         onClick={() => switchCompany(c.publishedId)}
-                        className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-white/5 ${
+                        className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-white/5 ${vertical ? "pl-7" : ""} ${
                           c.publishedId === activeId ? "text-brand-yellow" : "text-white/70"
                         }`}
                       >
-                        <Building2 size={13} className="flex-shrink-0" />
+                        {vertical ? <GitBranch size={12} className="flex-shrink-0" /> : <Building2 size={13} className="flex-shrink-0" />}
                         <span className="truncate flex-1">{c.companyName || "Untitled company"}</span>
                         {c.publishedId === activeId && <span className="text-[9px] font-bold uppercase">Active</span>}
                       </button>

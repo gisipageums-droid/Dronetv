@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   FiCheck,
   FiArrowRight,
@@ -15,6 +15,13 @@ export default function TemplateSelector() {
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
   const [hoveredTemplate, setHoveredTemplate] = useState<number | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  // Multi-company / multi-vertical model: when MyCompanies.tsx's "+ Add
+  // Vertical" button sent us here with a parent company, forward it along
+  // to /form so the registration form knows to skip GST/CIN requirement
+  // and tag the new row as a vertical of that parent.
+  const parentCompanyId: string | null = location.state?.parentCompanyId || null;
+  const parentCompanyName: string | null = location.state?.parentCompanyName || null;
 
   const templates = [
     {
@@ -53,7 +60,7 @@ export default function TemplateSelector() {
 
   const handleSelect = (id: number) => {
     setSelectedTemplate(id);
-    navigate("/form", { state: { templateId: id } });
+    navigate("/form", { state: { templateId: id, parentCompanyId, parentCompanyName } });
   };
 
 
