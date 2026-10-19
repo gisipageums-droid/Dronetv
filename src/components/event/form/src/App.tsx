@@ -1806,6 +1806,11 @@ const TokenValidationModal: React.FC<{
   );
 };
 
+// Plain numbered placeholders for the step-chip nav - the backend has no
+// per-step title/id config, only a flat field list unrelated to this wizard's
+// 6 fixed steps, so there is no real title to fetch.
+const DEFAULT_STEPS = [1, 2, 3, 4, 5, 6].map(n => ({ id: `step${n}` }));
+
 function EventsForm() {
   const { isLogin, user, isAdminLogin } = useUserAuth();
   const { current, next, prev, goTo } = useFormSteps(7); // 6 steps + summary
@@ -1879,7 +1884,10 @@ function EventsForm() {
       try {
         // Always fetch form structure
         const formStructure = await fetchFormStructure();
-        setSteps(formStructure.steps);
+        // The backend's /form endpoint returns a flat { fields } list, not the
+        // { steps } shape this 6-step wizard's chip nav expects - fall back to
+        // plain numbered steps rather than crash on steps.length of undefined.
+        setSteps(Array.isArray(formStructure?.steps) && formStructure.steps.length ? formStructure.steps : DEFAULT_STEPS);
         setFormLoader(false);
 
         if (userId && eventId) {
@@ -1917,6 +1925,7 @@ function EventsForm() {
         }
       } catch (err) {
         console.error("Failed to load form data:", err);
+        setSteps(DEFAULT_STEPS);
         setLoading(false);
         setFormLoader(false);
       }
