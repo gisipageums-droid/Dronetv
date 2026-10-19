@@ -2,8 +2,7 @@ import axios from "axios";
 import { EVENTS_API, MEDIA_API, PROFESSIONAL_API, LAMBDA } from '../../../../../lib/apiConfig';
 
 export const fetchFormStructure = async () => {
-  const res = await axios.get(EVENTS_API ? `${EVENTS_API}/` : `${LAMBDA.eventsForm}/`);
-  // const res = await axios.get(EVENTS_API ? `${EVENTS_API}` : `${LAMBDA.formStructure}`);
+  const res = await axios.get(EVENTS_API ? `${EVENTS_API}/form` : `${LAMBDA.eventsForm}/form`);
   return res.data;
 };
 
