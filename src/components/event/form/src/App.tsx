@@ -1918,6 +1918,7 @@ function EventsForm() {
       } catch (err) {
         console.error("Failed to load form data:", err);
         setLoading(false);
+        setFormLoader(false);
       }
     };
 

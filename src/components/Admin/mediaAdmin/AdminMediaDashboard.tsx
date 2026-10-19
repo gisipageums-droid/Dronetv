@@ -221,7 +221,7 @@ type FieldKey = 'category' | 'source' | 'author' | 'date' | 'readTime' | 'videoU
 const FIELD_CONFIG: Record<ContentType, FieldKey[]> = {
   'news':                ['category', 'source', 'date', 'readTime'],
   'magazine':            ['category', 'source', 'author', 'date', 'readTime'],
-  'video':               ['videoUrl', 'source', 'date'],
+  'video':               ['videoUrl', 'category', 'source', 'date'],
   'gallery':             ['category', 'location', 'date'],
   'impact-story':        ['category', 'source', 'author', 'date', 'readTime'],
   'market-intelligence': ['category', 'source', 'author', 'date', 'readTime'],
