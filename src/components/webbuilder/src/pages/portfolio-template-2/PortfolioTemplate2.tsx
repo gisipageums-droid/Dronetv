@@ -385,8 +385,8 @@ const PortfolioTemplate2: React.FC = () => {
         }
       }
     ],
-    projects_0__image: "/images/1.png",
-    projects_1__image: "/images/7.png",
+    projects_0__image: "/images/1.webp",
+    projects_1__image: "/images/7.webp",
     projects_2__image: "/images/11.png",
     projects_3__image: "/images/28.png",
     projects_4__image: "/images/36.png",
@@ -491,8 +491,8 @@ const PortfolioTemplate2: React.FC = () => {
           button2Link={staticData.button2Link}
           imagePaths={[
             '/images/dev.png',
-            '/images/1.png',
-            '/images/7.png',
+            '/images/1.webp',
+            '/images/7.webp',
             '/images/11.png',
             '/images/28.png'
           ]}

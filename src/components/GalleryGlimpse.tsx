@@ -8,42 +8,42 @@ const GalleryGlimpse = () => {
   const galleryPreview = [
     {
       id: 1,
-      src: "/images/1.png",
+      src: "/images/1.webp",
       title: "DroneWorld Conference 2024"
     },
     {
       id: 2,
-      src: "/images/2.png",
+      src: "/images/2.webp",
       title: "AI Partnership Event"
     },
     {
       id: 3,
-      src: "/images/3.png",
+      src: "/images/3.webp",
       title: "GIS Mapping Workshop"
     },
     {
       id: 4,
-      src: "/images/4.png",
+      src: "/images/4.webp",
       title: "Technology Exhibition"
     },
     {
       id: 5,
-      src: "/images/5.png",
+      src: "/images/5.webp",
       title: "Industry Panel Discussion"
     },
     {
       id: 6,
-      src: "/images/6.png",
+      src: "/images/6.webp",
       title: "Product Launch Event"
     },
     {
       id: 7,
-      src: "/images/7.png",
+      src: "/images/7.webp",
       title: "Team Building Retreat"
     },
     {
       id: 8,
-      src: "/images/8.png",
+      src: "/images/8.webp",
       title: "Partnership Signing"
     }
   ];
@@ -91,6 +91,8 @@ const GalleryGlimpse = () => {
                 <img
                   src={image.src}
                   alt={image.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-auto object-cover transition-all duration-700 group-hover:scale-110"
                 />
                 

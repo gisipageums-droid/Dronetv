@@ -399,7 +399,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
 
       <div className="flex min-h-[124px] items-start gap-2 pr-20">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-yellow-400 bg-slate-50 text-lg font-extrabold text-blue-600">
-          {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
+          {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" loading="lazy" decoding="async" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
         </div>
         <div className="min-w-0">
           <h3 className="line-clamp-2 text-xs font-extrabold leading-tight">{company.companyName}</h3>

@@ -150,6 +150,8 @@ const FeaturedCompanies: React.FC = () => {
                           <img
                             src={logoSrc}
                             alt={company.companyName}
+                            loading="lazy"
+                            decoding="async"
                             className="max-h-full max-w-full object-contain"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';

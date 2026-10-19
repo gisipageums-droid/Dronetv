@@ -32,8 +32,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   button2Link = "#",
   imagePaths = [
     '/images/dev.png',
-    '/images/1.png',
-    '/images/7.png',
+    '/images/1.webp',
+    '/images/7.webp',
     '/images/11.png',
     '/images/28.png',
     '/images/36.png',
