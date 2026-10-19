@@ -3,7 +3,7 @@ import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Heart, ChevronDo
 import ShareMenu from './common/ShareMenu';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from './loadingscreen';
-import { COMPANY_API, LAMBDA } from '../lib/apiConfig';
+import { COMPANY_API, LAMBDA, MEDIA_API } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
 import type { Company } from './CompaniesPage';
 import { usePackageTiers } from '../lib/packageTier';
@@ -64,6 +64,25 @@ const CATEGORY_PHOTOS: Record<'drone' | 'gis' | 'ai' | 'all', string[]> = {
 
 // Exact button class from main.ts's `const btn = '...'`.
 const BTN = 'rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold shadow-sm hover:border-amber-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500';
+
+// Company-uploaded photos (previewImage/gallery) come straight from the
+// originals in object storage, some of them several MB in their raw
+// uploaded size. A listing card only ever displays them a few dozen
+// pixels across, so route our own storage's images through the media
+// service's image-proxy with a small ?w= - it resizes/recompresses on the
+// way through without touching the stored original. Unsplash fallback
+// photos and local /assets paths are left alone (already small / not ours
+// to proxy).
+const OWN_IMAGE_HOST = /(minio[-.]|\.xo\.je$|^xo\.je$|dronetv-company-assets-store\.s3)/i;
+function thumb(url: string | undefined, w: number, q = 75): string | undefined {
+  if (!url || !MEDIA_API) return url;
+  try {
+    if (!OWN_IMAGE_HOST.test(new URL(url).hostname)) return url;
+  } catch {
+    return url;
+  }
+  return `${MEDIA_API}/image-proxy?url=${encodeURIComponent(url)}&w=${w}&q=${q}`;
+}
 
 const CompaniesPageV2: React.FC = () => {
   usePackageTiers();
@@ -399,7 +418,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
 
       <div className="flex min-h-[124px] items-start gap-2 pr-20">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-yellow-400 bg-slate-50 text-lg font-extrabold text-blue-600">
-          {company.previewImage && !imgErr ? <img src={company.previewImage} alt="" loading="lazy" decoding="async" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
+          {company.previewImage && !imgErr ? <img src={thumb(company.previewImage, 112)} alt="" loading="lazy" decoding="async" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
         </div>
         <div className="min-w-0">
           <h3 className="line-clamp-2 text-xs font-extrabold leading-tight">{company.companyName}</h3>
@@ -441,7 +460,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           with real themed stock photography (never an empty slot, never a
           fake gradient tile) when a company has fewer than 4 real photos. */}
       <div className="grid grid-cols-4 gap-1">
-        {realPhotos.map((p, i) => <img key={i} src={p.url} alt={`${company.companyName} ${i + 1}`} loading="lazy" className="h-12 w-full rounded border border-black object-cover" />)}
+        {realPhotos.map((p, i) => <img key={i} src={thumb(p.url, 240)} alt={`${company.companyName} ${i + 1}`} loading="lazy" decoding="async" className="h-12 w-full rounded border border-black object-cover" onError={e => { if (e.currentTarget.src !== p.url) e.currentTarget.src = p.url; }} />)}
         {Array.from({ length: missingPhotoCount }).map((_, i) => (
           <img key={`fb-${i}`} src={fallbackPhotos[i % fallbackPhotos.length]} alt="" loading="lazy" className="h-12 w-full rounded border border-black object-cover" />
         ))}
