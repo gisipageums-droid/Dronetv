@@ -175,30 +175,44 @@ const CompaniesPageV2: React.FC = () => {
     navigate(`/${seg}/${slug}#contact`);
   };
 
+  // These scan every one of the ~450+ loaded companies (several regex tests
+  // and a tier-hash call per company). Previously recomputed on every
+  // render - including every search keystroke, page click, or filter
+  // toggle - which is exactly when the component also re-renders most
+  // often. Memoized on allCompanies/listedTotal/states alone so a filter or
+  // page change no longer re-walks the full list just to redraw the same
+  // header counters and sidebar facets. Must run before the `loading` early
+  // return below - every hook in this component has to execute on every
+  // render regardless of that branch, or React throws a hooks-order error
+  // once `loading` flips from true to false.
+  const { stats, packageCounts, stateCounts, topStates, verifiedCount } = useMemo(() => {
+    const verifiedCount = allCompanies.filter(c => !!c.badgeStatus && c.badgeStatus !== 'NONE').length;
+    const droneCount = allCompanies.filter(c => getIndustry(c) === 'drone').length;
+    const gisCount = allCompanies.filter(c => getIndustry(c) === 'gis').length;
+    const aiCount = allCompanies.filter(c => getIndustry(c) === 'ai').length;
+    const roboticsCount = allCompanies.filter(c => /\brobot(?:ics)?\b/i.test(`${c.companyName || ''} ${c.companyDescription || ''}`)).length;
+    const otherCount = allCompanies.length - droneCount - gisCount - aiCount;
+    // Exact same 6-stat shape as industryBar()'s data.stats - real counts in
+    // place of the fictional 12,568/6,230/2,104/1,870/985/1,379.
+    const stats: [string, number, any][] = [
+      ['Total Companies', listedTotal || allCompanies.length, Briefcase],
+      ['Drones', droneCount, Building2],
+      ['GIS', gisCount, MapPin],
+      ['AI', aiCount, Cpu],
+      ['Robotics', roboticsCount, Bot],
+      ['Other Support Businesses', otherCount, Briefcase],
+    ];
+
+    const packageCounts: Record<string, number> = { Listed: 0, Silver: 0, Gold: 0, Platinum: 0 };
+    allCompanies.forEach(c => { const t = getTier(c); const label = t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Listed'; packageCounts[label]++; });
+    const stateCounts: Record<string, number> = {};
+    allCompanies.forEach(c => { const st = extractState(c.location); if (st) stateCounts[st] = (stateCounts[st] || 0) + 1; });
+    const topStates = [...states].sort((a, b) => (stateCounts[b] || 0) - (stateCounts[a] || 0)).slice(0, 5);
+
+    return { stats, packageCounts, stateCounts, topStates, verifiedCount };
+  }, [allCompanies, listedTotal, states]);
+
   if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Companies..." />;
-
-  const verifiedCount = allCompanies.filter(c => !!c.badgeStatus && c.badgeStatus !== 'NONE').length;
-  const droneCount = allCompanies.filter(c => getIndustry(c) === 'drone').length;
-  const gisCount = allCompanies.filter(c => getIndustry(c) === 'gis').length;
-  const aiCount = allCompanies.filter(c => getIndustry(c) === 'ai').length;
-  const roboticsCount = allCompanies.filter(c => /\brobot(?:ics)?\b/i.test(`${c.companyName || ''} ${c.companyDescription || ''}`)).length;
-  const otherCount = allCompanies.length - droneCount - gisCount - aiCount;
-  // Exact same 6-stat shape as industryBar()'s data.stats - real counts in
-  // place of the fictional 12,568/6,230/2,104/1,870/985/1,379.
-  const stats: [string, number, any][] = [
-    ['Total Companies', listedTotal || allCompanies.length, Briefcase],
-    ['Drones', droneCount, Building2],
-    ['GIS', gisCount, MapPin],
-    ['AI', aiCount, Cpu],
-    ['Robotics', roboticsCount, Bot],
-    ['Other Support Businesses', otherCount, Briefcase],
-  ];
-
-  const packageCounts: Record<string, number> = { Listed: 0, Silver: 0, Gold: 0, Platinum: 0 };
-  allCompanies.forEach(c => { const t = getTier(c); const label = t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Listed'; packageCounts[label]++; });
-  const stateCounts: Record<string, number> = {};
-  allCompanies.forEach(c => { const st = extractState(c.location); if (st) stateCounts[st] = (stateCounts[st] || 0) + 1; });
-  const topStates = [...states].sort((a, b) => (stateCounts[b] || 0) - (stateCounts[a] || 0)).slice(0, 5);
 
   // PACKAGE/LOCATION/SERVICES only - INDUSTRY dropped from here (user
   // flagged on mobile, 20260926): the CATEGORY pill row above already
