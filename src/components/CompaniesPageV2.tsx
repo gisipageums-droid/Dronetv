@@ -432,7 +432,10 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
 
       <div className="flex min-h-[124px] items-start gap-2 pr-20">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 border-yellow-400 bg-slate-50 text-lg font-extrabold text-blue-600">
-          {company.previewImage && !imgErr ? <img src={thumb(company.previewImage, 112)} alt="" loading="lazy" decoding="async" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
+          {/* Logo is tiny (a few KB) and is the one thing that makes a card
+              look "blank"/broken if it's not there yet - loaded eagerly
+              instead of lazily so it's never the thing racing the scroll. */}
+          {company.previewImage && !imgErr ? <img src={thumb(company.previewImage, 112)} alt="" decoding="async" className="size-full object-cover" onError={() => setImgErr(true)} /> : getInitials(company.companyName)}
         </div>
         <div className="min-w-0">
           <h3 className="line-clamp-2 text-xs font-extrabold leading-tight">{company.companyName}</h3>
