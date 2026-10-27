@@ -13,6 +13,7 @@
                           --build-arg VITE_BACKEND_URL_EVENTS=https://events-api.dronetv.in \
                           --build-arg VITE_BACKEND_URL_MEDIA=https://media-api.dronetv.in \
                           --build-arg VITE_BACKEND_URL_LEADS=https://leads-api.dronetv.in \
+                          --build-arg VITE_BACKEND_URL_RFQ=https://rfq-api.dronetv.in \
                           --build-arg VITE_BACKEND_URL_PAYMENT=https://payment-api.dronetv.in \
                           --build-arg VITE_BACKEND_URL_ADMIN=https://admin-api.dronetv.in \
                           --build-arg VITE_BACKEND_URL_JOB_APPLICATIONS=https://jobboard-api.dronetv.in \

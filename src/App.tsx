@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import PageErrorBoundary from "./components/common/PageErrorBoundary";
 import Navigation from "./components/Navigation";
 import Hero from "./components/Hero";
 import PagePlacementSlot from "./components/common/PagePlacementSlot";
@@ -558,8 +559,8 @@ const AppContent = () => {
             element={<DashboardEdit2 />}
           />
           {/* main preview routes */}
-          <Route path="/company/:urlSlug" element={<MainCompPreviewT1 />} />
-          <Route path="/companies/:urlSlug" element={<MainCompPreviewT2 />} />
+          <Route path="/company/:urlSlug" element={<PageErrorBoundary><MainCompPreviewT1 /></PageErrorBoundary>} />
+          <Route path="/companies/:urlSlug" element={<PageErrorBoundary><MainCompPreviewT2 /></PageErrorBoundary>} />
 
           {/* professionals route */}
           <Route path="/professional/form/:userId/:professionalId" element={<ProfessionalProfileForm />} />

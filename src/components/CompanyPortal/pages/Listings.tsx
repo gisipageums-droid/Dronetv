@@ -12,6 +12,7 @@ interface Item {
   title: string; description: string; image?: string; category?: string;
   pricing?: string; timeline?: string; detailedDescription?: string;
   features?: string[]; specifications?: Spec[];
+  benefits?: string[]; process?: string[];
 }
 
 type ListType = "products" | "services";
@@ -88,6 +89,8 @@ export default function Listings() {
       ...editing.item,
       features: (editing.item.features || []).map(f => f.trim()).filter(Boolean),
       specifications: (editing.item.specifications || []).map(x => ({ name: x.name.trim(), value: x.value.trim() })).filter(x => x.name && x.value),
+      benefits: (editing.item.benefits || []).map(b => b.trim()).filter(Boolean),
+      process: (editing.item.process || []).map(p => p.trim()).filter(Boolean),
     };
     const next = [...items];
     if (editing.index === -1) next.push(cleaned);
@@ -261,6 +264,36 @@ export default function Listings() {
                     <Btn size="sm" variant="outline" onClick={() => setEditing({ ...editing, item: { ...editing.item, features: [...(editing.item.features || []), ""] } })}>+ Add feature</Btn>
                   </div>
                 </Field>
+                {activeType === "services" && (
+                  <Field label="Benefits" wide>
+                    <div className="space-y-2">
+                      {(editing.item.benefits || []).map((b, i) => (
+                        <div key={i} className="flex gap-2">
+                          <input className={inputCls} value={b} placeholder="e.g. Faster turnaround than manual surveys"
+                            onChange={(e) => { const list = [...(editing.item.benefits || [])]; list[i] = e.target.value; setEditing({ ...editing, item: { ...editing.item, benefits: list } }); }} />
+                          <button type="button" aria-label="Remove benefit" className="p-2 rounded hover:bg-white/10 text-white/50"
+                            onClick={() => setEditing({ ...editing, item: { ...editing.item, benefits: (editing.item.benefits || []).filter((_, j) => j !== i) } })}><Minus className="w-4 h-4" /></button>
+                        </div>
+                      ))}
+                      <Btn size="sm" variant="outline" onClick={() => setEditing({ ...editing, item: { ...editing.item, benefits: [...(editing.item.benefits || []), ""] } })}>+ Add benefit</Btn>
+                    </div>
+                  </Field>
+                )}
+                {activeType === "services" && (
+                  <Field label="Our process" wide>
+                    <div className="space-y-2">
+                      {(editing.item.process || []).map((p, i) => (
+                        <div key={i} className="flex gap-2">
+                          <input className={inputCls} value={p} placeholder="e.g. Site survey and flight planning"
+                            onChange={(e) => { const list = [...(editing.item.process || [])]; list[i] = e.target.value; setEditing({ ...editing, item: { ...editing.item, process: list } }); }} />
+                          <button type="button" aria-label="Remove step" className="p-2 rounded hover:bg-white/10 text-white/50"
+                            onClick={() => setEditing({ ...editing, item: { ...editing.item, process: (editing.item.process || []).filter((_, j) => j !== i) } })}><Minus className="w-4 h-4" /></button>
+                        </div>
+                      ))}
+                      <Btn size="sm" variant="outline" onClick={() => setEditing({ ...editing, item: { ...editing.item, process: [...(editing.item.process || []), ""] } })}>+ Add step</Btn>
+                    </div>
+                  </Field>
+                )}
                 {activeType === "products" && (
                   <Field label="Specifications" wide>
                     <div className="space-y-2">

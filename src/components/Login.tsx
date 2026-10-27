@@ -294,7 +294,6 @@ export default function Login() {
     try {
       const data = await authService.login(loginData);
       login(data);
-      setLoginData({ email: "", password: "" });
       navigate(await landingPath(data));
     } catch (error: any) {
       toast.error(error.message || "Login failed. Please check your credentials.");

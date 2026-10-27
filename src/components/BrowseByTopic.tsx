@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Zap as Drone, Brain, Map, ArrowRight, Play, Users, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const BrowseByTopic = () => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const navigate = useNavigate();
+  // Computed once, not on every hover re-render, to avoid layout thrash.
+  const particleSeeds = useMemo(
+    () => [...Array(12)].map(() => ({
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 3,
+      duration: 2 + Math.random() * 3,
+    })),
+    []
+  );
 
   const topics = [
     {
@@ -43,9 +53,9 @@ const BrowseByTopic = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-brand-yellow via-brand-yellow-soft to-brand-gold relative overflow-hidden min-h-screen">
-      {/* Enhanced Animated Background Elements */}
-      <div className="absolute inset-0">
+    <section className="py-20 bg-gradient-to-br from-brand-yellow via-brand-yellow-soft to-brand-gold relative overflow-hidden">
+      {/* Enhanced Animated Background Elements - desktop only, blur filters are expensive during scroll on mobile */}
+      <div className="absolute inset-0 hidden md:block">
         <div className="absolute top-10 left-10 w-64 h-64 bg-brand-yellow-soft/20 rounded-full animate-pulse blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-brand-gold/20 rounded-full animate-pulse blur-3xl" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-gold/10 rounded-full animate-spin-slow blur-2xl"></div>
@@ -177,17 +187,17 @@ const BrowseByTopic = () => {
                     </div>
                   </div>
                 </div>
-                {/* Enhanced Floating Particles */}
-                <div className="absolute inset-0 overflow-hidden rounded-3xl">
-                  {[...Array(12)].map((_, i) => (
+                {/* Enhanced Floating Particles - desktop only, skip on mobile to keep scroll smooth */}
+                <div className="absolute inset-0 overflow-hidden rounded-3xl hidden md:block">
+                  {particleSeeds.map((p, i) => (
                     <div
                       key={i}
                       className="absolute w-1 h-1 bg-brand-yellow/40 rounded-full animate-float"
                       style={{
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                        animationDelay: `${Math.random() * 3}s`,
-                        animationDuration: `${2 + Math.random() * 3}s`
+                        left: `${p.left}%`,
+                        top: `${p.top}%`,
+                        animationDelay: `${p.delay}s`,
+                        animationDuration: `${p.duration}s`
                       }}
                     ></div>
                   ))}
