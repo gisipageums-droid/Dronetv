@@ -474,9 +474,9 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           with real themed stock photography (never an empty slot, never a
           fake gradient tile) when a company has fewer than 4 real photos. */}
       <div className="grid grid-cols-4 gap-1">
-        {realPhotos.map((p, i) => <img key={i} src={thumb(p.url, 240)} alt={`${company.companyName} ${i + 1}`} loading="lazy" decoding="async" className="h-12 w-full rounded border border-black object-cover" onError={e => { if (e.currentTarget.src !== p.url) e.currentTarget.src = p.url; }} />)}
+        {realPhotos.map((p, i) => <img key={i} src={thumb(p.url, 240)} alt={`${company.companyName} ${i + 1}`} loading="lazy" decoding="async" className="h-12 w-full rounded border border-black bg-slate-100 object-cover" onError={e => { if (e.currentTarget.src !== p.url) e.currentTarget.src = p.url; }} />)}
         {Array.from({ length: missingPhotoCount }).map((_, i) => (
-          <img key={`fb-${i}`} src={fallbackPhotos[i % fallbackPhotos.length]} alt="" loading="lazy" className="h-12 w-full rounded border border-black object-cover" />
+          <img key={`fb-${i}`} src={fallbackPhotos[i % fallbackPhotos.length]} alt="" loading="lazy" className="h-12 w-full rounded border border-black bg-slate-100 object-cover" />
         ))}
       </div>
 
