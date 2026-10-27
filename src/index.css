@@ -106,10 +106,22 @@
   animation: scroll 60s linear infinite;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
+/* `scroll-behavior: smooth` here used to apply to EVERY scroll on the
+   whole site, not just intentional anchor jumps - including plain mouse-
+   wheel scrolling. Fast wheel scrolling fires many scroll deltas in quick
+   succession; with this rule, each one asked the browser to animate
+   smoothly to a new position, and the animations piled up faster than they
+   could finish - especially in Firefox, which gets visibly worse than
+   Chromium here. The result: a frozen, stale paint with a blank gap where
+   the in-flight animation hadn't caught up yet (reported live: real user
+   screenshot, fast scroll on /listed-companies, Firefox, content correct
+   at the very top and bottom of the viewport, empty in between - exactly
+   the "animation never finished painting" signature, not a data/image
+   problem). The few places that actually want a smooth scroll (e.g. the
+   hash-anchor scroll in mainCompanyPreview/t2/src/App.tsx) already pass
+   `behavior: "smooth"` explicitly to scrollIntoView/scrollTo, which works
+   fine without this global rule - removed instead of scoped, since nothing
+   in this codebase relies on an un-opted-in smooth native scroll. */
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
