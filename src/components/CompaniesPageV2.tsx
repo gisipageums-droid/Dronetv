@@ -328,7 +328,17 @@ const CompaniesPageV2: React.FC = () => {
 
           <div className="mb-3 rounded-lg bg-white/70 px-3 py-2 text-[11.5px] text-amber-900">⭐ Verified companies appear first. Get your company verified by submitting GST documents in your dashboard.</div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          {/* notranslate: Google Translate's widget watches the whole page
+              for text changes to translate it live - this grid re-renders
+              constantly (lazy-loaded images, filters, pagination), and real
+              measurement showed its MutationObserver reacting to that was
+              the dominant cause of multi-second page freezes during fast
+              scroll (8-12s long tasks measured; removing the widget's
+              injected elements for a comparison test dropped the worst case
+              to ~3s). Company names are proper nouns anyway - excluding
+              this subtree from Google Translate's scan is a real, safe
+              trade-off for not freezing the page. */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 notranslate" translate="no">
             {withInlineAds(visible, (c, i) => {
               const id = c.publishedId || c.companyId || c.companyName;
               return <CompanyCardV2 key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} saved={savedCompanies.has(id)} onToggleSave={() => toggleSaved(id)} />;
