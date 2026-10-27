@@ -241,7 +241,7 @@ const ServicesPageV2: React.FC = () => {
       </section>
 
       <main className="mx-auto grid max-w-[2100px] grid-cols-1 items-start gap-3 px-3 py-4 sm:px-6 lg:grid-cols-[255px_minmax(0,1fr)]">
-        <aside onClick={e => { if (e.target === e.currentTarget) setSidebarOpen(false); }} className={`${sidebarOpen ? 'fixed inset-0 z-[100000000] overflow-y-auto bg-black/50 p-4 lg:static lg:z-auto lg:bg-transparent lg:p-0' : 'hidden'} self-start lg:block`}>
+        <aside onClick={e => { if (e.target === e.currentTarget) setSidebarOpen(false); }} translate="no" className={`${sidebarOpen ? 'fixed inset-0 z-[100000000] overflow-y-auto bg-black/50 p-4 lg:static lg:z-auto lg:bg-transparent lg:p-0' : 'hidden'} self-start lg:block notranslate`}>
           <div className={sidebarOpen ? 'mx-auto max-w-sm rounded-xl border border-yellow-300 bg-[#fffef0] p-4 shadow-sm lg:mx-0 lg:max-w-none' : 'rounded-xl border border-yellow-300 bg-[#fffef0] p-4 shadow-sm'}>
             <div className="mb-4 flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
               <h2 className="flex items-center gap-2 text-lg font-extrabold"><Filter className="size-5 text-yellow-500" /> Filters</h2>
@@ -303,7 +303,7 @@ const ServicesPageV2: React.FC = () => {
           {visible.length === 0 ? (
             <p className="rounded-lg bg-white p-8 text-center">No services found.</p>
           ) : (
-            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div translate="no" className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 notranslate">
               {withInlineAds(visible, (s, i) => (
                 <ServiceCardV2 key={`${s.id}-${i}`} service={s} onView={() => goDetails(s)} onEnquire={() => goEnquire(s)} />
               ))}
