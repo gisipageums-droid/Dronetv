@@ -18,6 +18,12 @@
   <meta name="twitter:description" content="Discover the Drone Ecosystem in one place with Dronetv.in." />
   <meta name="twitter:image" content="https://www.dronetv.in/images/dronetv-share-logo.png" />
   <!-- Favicon for all browsers and devices -->
+  <!-- Warms the connection to the APIs almost every page calls on load, so
+       the first real request skips DNS+TLS handshake time. -->
+  <link rel="preconnect" href="https://auth-api.dronetv.in" />
+  <link rel="preconnect" href="https://company-api.dronetv.in" />
+  <link rel="preconnect" href="https://media-api.dronetv.in" />
+  <link rel="preconnect" href="https://minio-dev-api.dronetv.in" crossorigin />
   <link rel="icon" type="image/png" href="/images/image.png" sizes="32x32" />
   <link rel="icon" type="image/png" sizes="192x192" href="/images/image.png" />
   <link rel="apple-touch-icon" href="/images/image.png" />
@@ -47,7 +53,7 @@
       }, 'google_translate_element');
     }
   </script>
-  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
   <style>
     .goog-te-banner-frame, .skiptranslate { display: none !important; }
     body { top: 0 !important; position: static !important; }

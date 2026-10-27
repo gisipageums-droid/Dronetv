@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Mail, CheckCircle, Send, Sparkles } from 'lucide-react';
 
 const Newsletter = () => {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  // Computed once, not on every re-render (e.g. every keystroke in the
+  // email field), to avoid layout thrash from re-positioning 15 particles.
+  const particleSeeds = useMemo(
+    () => [...Array(15)].map(() => ({
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 3 + Math.random() * 4,
+    })),
+    []
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,24 +35,24 @@ const Newsletter = () => {
 
   return (
     <section className="py-20 bg-gradient-to-br from-brand-yellow via-brand-yellow-soft to-brand-gold relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0">
+      {/* Animated Background Elements - desktop only, blur filters are expensive during scroll on mobile */}
+      <div className="absolute inset-0 hidden md:block">
         <div className="absolute top-10 left-10 w-64 h-64 bg-brand-yellow-soft/30 rounded-full animate-pulse blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-80 h-80 bg-brand-gold/20 rounded-full animate-pulse blur-3xl" style={{ animationDelay: '1s' }}></div>
         <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-brand-gold/40 rounded-full animate-bounce" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(15)].map((_, i) => (
+      {/* Floating Particles - desktop only */}
+      <div className="absolute inset-0 overflow-hidden hidden md:block">
+        {particleSeeds.map((p, i) => (
           <div
             key={i}
             className="absolute w-2 h-2 bg-brand-gold/30 rounded-full animate-float"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 4}s`
+              left: `${p.left}%`,
+              top: `${p.top}%`,
+              animationDelay: `${p.delay}s`,
+              animationDuration: `${p.duration}s`
             }}
           ></div>
         ))}

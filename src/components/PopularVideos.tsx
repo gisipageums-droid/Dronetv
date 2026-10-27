@@ -173,6 +173,8 @@ const PopularVideos = () => {
                   <img
                     src={video.thumbnail}
                     alt={video.title}
+                    loading="lazy"
+                    decoding="async"
                     className="absolute inset-0 w-full h-full object-cover"
                     onError={() => setThumbFailed(prev => new Set([...prev, video.id]))}
                   />

@@ -26,6 +26,8 @@ const OurPartners = () => (
                 <img
                   src={partnerLogoPath(slug)}
                   alt={name}
+                  loading="lazy"
+                  decoding="async"
                   className="max-h-full max-w-full object-contain"
                 />
               </div>
