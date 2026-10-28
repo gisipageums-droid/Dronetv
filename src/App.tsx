@@ -1030,10 +1030,10 @@ const AppContent = () => {
         <Route path="/professionalsexcel" element={<ProfessionalsDocumentTextExtractor />} />
         <Route path="*" element={<NotFoundPage />} />
         </Routes>
-        </Suspense>
-
         {!hideFooter && <Footer />}
         {!hideFooter && <ScrollingFooter />}
+        </Suspense>
+
         <AdsLoader />
       </CombinedProviders>
     </div>
