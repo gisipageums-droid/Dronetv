@@ -383,7 +383,7 @@ const ProductCardV2: React.FC<{ product: Product; onView: () => void; onEnquire:
   const tags = product.features.slice(0, 3);
 
   return (
-    <article className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-lg">
+    <article className="flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-lg" onClick={onView}>
       <div className="relative h-40 shrink-0 overflow-hidden bg-slate-100">
         {showImg ? (
           <img src={product.image} alt={product.title} loading="lazy" onError={() => setImgErr(true)} className="h-full w-full object-cover object-center" />

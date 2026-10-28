@@ -4,8 +4,8 @@ import { Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // Custom Card Components
-const Card = ({ children, className = "" }) => (
-  <div className={`bg-surface-card rounded-xl shadow-md overflow-hidden ${className}`}>
+const Card = ({ children, className = "", onClick }) => (
+  <div onClick={onClick} className={`bg-surface-card rounded-xl shadow-md overflow-hidden ${className}`}>
     {children}
   </div>
 );
@@ -150,7 +150,7 @@ export default function Products({ productData, publishedId }) {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.1 * index }}
             >
-              <Card className="h-full flex flex-col hover:shadow-xl transition-all duration-300 group relative">
+              <Card onClick={() => goToDetails(product)} className="h-full flex flex-col hover:shadow-xl transition-all duration-300 group relative cursor-pointer">
                 {product.isPopular && (
                   <div className="absolute top-4 right-4 z-10">
                     <Badge className="bg-brand-yellow text-ink shadow-md">
@@ -218,7 +218,7 @@ export default function Products({ productData, publishedId }) {
                     <Button
                       size="sm"
                       className="w-full hover:scale-105"
-                      onClick={() => goToDetails(product)}
+                      onClick={(e) => { e.stopPropagation(); goToDetails(product); }}
                     >
                       View Details →
                     </Button>

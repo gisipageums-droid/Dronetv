@@ -79,7 +79,8 @@ export default function Product({ productData }) {
                 {productData.products.slice(0, visibleCount).map((product, index) => (
                   <Card
                     key={index}
-                    className="group h-full relative overflow-hidden flex flex-col border-2 shadow-lg hover:shadow-xl  shadow-ink-caption"
+                    onClick={() => openModal(index)}
+                    className="group h-full relative overflow-hidden flex flex-col border-2 shadow-lg hover:shadow-xl shadow-ink-caption cursor-pointer"
                   >
                     <div className="relative h-32 overflow-hidden flex-shrink-0">
                       <ImageWithFallback
@@ -127,7 +128,7 @@ export default function Product({ productData }) {
                         <Button
                           size="sm"
                           className="hover:scale-105 w-full"
-                          onClick={() => openModal(index)}
+                          onClick={(e) => { e.stopPropagation(); openModal(index); }}
                         >
                           View Details
                         </Button>
