@@ -7,7 +7,7 @@ import { COMPANY_API, LAMBDA, MEDIA_API } from '../lib/apiConfig';
 import { withInlineAds } from './common/adCreatives';
 import type { Company } from './CompaniesPage';
 import { usePackageTiers } from '../lib/packageTier';
-import { TIER_STYLE, getTier, useSavedCompanies, getIndustry, getSectors, getInitials, requestOptOut, realTagline, ALL_SECTORS, extractState, shortLocation } from './CompaniesPage';
+import { TIER_STYLE, getTier, useSavedCompanies, getIndustry, getSectors, getInitials, requestOptOut, realTagline, ALL_SECTORS, extractState, shortLocation, likeCompany, shareCompany, rateCompany, hasRatedCompany, markCompanyRated } from './CompaniesPage';
 import ToolbarFilterDropdown from './common/ToolbarFilterDropdown';
 
 // Preview build at /companies-v2 - Round 4: a direct, class-string-exact
@@ -379,9 +379,10 @@ const CompaniesPageV2: React.FC = () => {
 // (verified checkmark, RPTO/Managed/Suspended tags, documentation stat,
 // unclaimed banner, quote, share, star rating) are threaded in as additive
 // elements using the same sizing/spacing language as the reference, never
-// fabricated data (no fake like-count; the star rating only renders when a
-// real `rating` field is present on the record - there is no review system
-// behind companies yet, so it stays invisible until one exists).
+// fabricated data. Likes/shares/rating are now backed by real counters on
+// the Company record (companies.likesCount/shareCount/ratingSum/
+// ratingCount, see the company service's /like, /share, /rate endpoints) -
+// nothing here is invented client-side.
 const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
   const ind = getIndustry(company);
   const fallbackPhotos = CATEGORY_PHOTOS[ind];
@@ -389,6 +390,14 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
   const verified = !!company.badgeStatus && company.badgeStatus !== 'NONE' && !company.credentialsExpired;
   const [imgErr, setImgErr] = useState(false);
   const [optedOut, setOptedOut] = useState(false);
+  // Real, backend-tracked counters - seeded from the dashboard-cards
+  // response, then updated optimistically as the visitor likes/shares/rates
+  // right here on the card. Never fabricated.
+  const [likesCount, setLikesCount] = useState(Number(company.likesCount) || 0);
+  const [shareCount, setShareCount] = useState(Number(company.shareCount) || 0);
+  const [avgRating, setAvgRating] = useState<number | null>(typeof company.avgRating === 'number' ? company.avgRating : null);
+  const [ratingCount, setRatingCount] = useState(Number(company.ratingCount) || 0);
+  const [hasRated, setHasRated] = useState(() => company.publishedId ? hasRatedCompany(company.publishedId) : false);
   const detectedSectors = getSectors(company);
   const description = company.realDescription || company.companyDescription || company.aboutDescription || 'No description available.';
 
@@ -414,6 +423,31 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
     company.teamSize ? [Users, company.teamSize, 'Team Size'] : null,
     yearsEstablished ? [CalendarDays, yearsEstablished, 'Years Established'] : null,
   ].filter(Boolean) as [any, any, string][];
+
+  const handleToggleSave = () => {
+    const wasSaved = !!saved;
+    onToggleSave?.();
+    if (!company.publishedId) return;
+    setLikesCount(c => Math.max(0, c + (wasSaved ? -1 : 1)));
+    likeCompany(company.publishedId, wasSaved ? 'unlike' : 'like');
+  };
+
+  const handleShare = () => {
+    setShareCount(c => c + 1);
+    if (company.publishedId) shareCompany(company.publishedId);
+  };
+
+  const handleRate = (stars: number) => {
+    if (!company.publishedId || hasRated) return;
+    setHasRated(true);
+    markCompanyRated(company.publishedId);
+    const prevSum = (avgRating || 0) * ratingCount;
+    setAvgRating((prevSum + stars) / (ratingCount + 1));
+    setRatingCount(c => c + 1);
+    rateCompany(company.publishedId, stars).then(res => {
+      if (res) { setAvgRating(res.avgRating); setRatingCount(res.ratingCount); }
+    });
+  };
 
   const extraTags = [
     company.deliveryTier === 'MANAGED' ? 'Managed' : null,
@@ -451,26 +485,33 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           <h3 className="line-clamp-2 text-xs font-extrabold leading-tight">{company.companyName}</h3>
           {company.location && <p className="mt-1 flex items-center gap-1 text-[10px]"><MapPin className="size-3 shrink-0" /><span className="truncate">{shortLocation(company.location)}</span></p>}
           {verified && <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-blue-700"><BadgeCheck className="size-3.5 shrink-0" />Verified</p>}
-          {typeof company.rating === 'number' && (
-            <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-amber-600">
-              <Star className="size-3 shrink-0 fill-amber-500 text-amber-500" />{company.rating.toFixed(1)}
-              {typeof company.reviewCount === 'number' && <span className="font-normal text-slate-500">({company.reviewCount})</span>}
-            </p>
-          )}
+          {/* Tap a star to rate (real backend counter, see CompaniesPage's
+              rateCompany) - once per browser, guarded via localStorage. The
+              filled stars reflect the real average, never fabricated. */}
+          <div className="mt-1 flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
+            {[1, 2, 3, 4, 5].map(n => (
+              <button key={n} type="button" disabled={hasRated} onClick={() => handleRate(n)} aria-label={`Rate ${n} star${n > 1 ? 's' : ''}`} className={hasRated ? 'cursor-default' : 'cursor-pointer'}>
+                <Star className={`size-3 shrink-0 ${avgRating !== null && n <= Math.round(avgRating) ? 'fill-amber-500 text-amber-500' : 'text-slate-300'}`} />
+              </button>
+            ))}
+            {avgRating !== null && <span className="text-[9px] font-bold text-amber-600">{avgRating.toFixed(1)}</span>}
+            {ratingCount > 0 && <span className="text-[9px] font-normal text-slate-500">({ratingCount})</span>}
+          </div>
         </div>
       </div>
 
-      {/* Heart/share icon column. A star rating now renders next to the
-          company name, but ONLY when a real `rating` field is present on
-          the record (same pattern already used for products in
-          ProductsPageV2.tsx) - there is still no review/rating system
-          backing companies today, so most cards show no star yet. Nothing
-          here is fabricated. */}
+      {/* Heart/share icon column - like and share counts are real,
+          backend-tracked counters (companies.likesCount/shareCount),
+          updated optimistically on click, never fabricated. */}
       <div className="absolute right-2 top-[92px] flex items-start justify-end gap-2 text-center">
         <div className="flex w-7 flex-col items-center">
-          <button type="button" onClick={e => { e.stopPropagation(); onToggleSave?.(); }} aria-label="Save" className={`flex size-7 items-center justify-center ${saved ? 'text-red-600' : ''}`}><Heart className="size-5" fill={saved ? 'currentColor' : 'none'} /></button>
+          <button type="button" onClick={e => { e.stopPropagation(); handleToggleSave(); }} aria-label="Save" className={`flex size-7 items-center justify-center ${saved ? 'text-red-600' : ''}`}><Heart className="size-5" fill={saved ? 'currentColor' : 'none'} /></button>
+          {likesCount > 0 && <span className="text-[8px] font-bold text-slate-600">{likesCount}</span>}
         </div>
-        <ShareMenu url={`${window.location.origin}/s/${company.urlSlug || company.publishedId}`} title={company.companyName} />
+        <div className="flex w-7 flex-col items-center">
+          <ShareMenu url={`${window.location.origin}/s/${company.urlSlug || company.publishedId}`} title={company.companyName} onShare={handleShare} />
+          {shareCount > 0 && <span className="text-[8px] font-bold text-slate-600">{shareCount}</span>}
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-1">

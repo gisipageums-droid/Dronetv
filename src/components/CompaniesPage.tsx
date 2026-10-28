@@ -40,6 +40,10 @@ export interface Company {
   deliveryTier?: 'MANAGED' | 'MARKETPLACE';
   documentation?: { score: number; hasEquipment: boolean; hasUIN: boolean; hasInsurance: boolean; hasProjectHistory: boolean };
   rptoStatus?: 'DGCA_APPROVED_RPTO' | 'NOT_RPTO';
+  likesCount?: number;
+  shareCount?: number;
+  avgRating?: number | null;
+  ratingCount?: number;
   credentialsExpired?: boolean;
   [key: string]: any;
 }
@@ -91,6 +95,55 @@ export async function requestOptOut(publishedId: string, onDone: () => void) {
   try {
     const res = await fetch(url, { method: 'POST' });
     if (res.ok) onDone();
+  } catch { /* best-effort */ }
+}
+
+// Real, backend-tracked engagement counters (likes/shares/rating) - same
+// best-effort, no-auth, no-dedup trust level as the existing profileViews
+// track-view call above. Never fabricated client-side.
+export async function likeCompany(publishedId: string, action: 'like' | 'unlike'): Promise<number | null> {
+  const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/like` : `${LAMBDA.company}/${publishedId}/like`;
+  try {
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action }) });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return typeof data.likesCount === 'number' ? data.likesCount : null;
+  } catch { return null; }
+}
+
+export async function shareCompany(publishedId: string): Promise<number | null> {
+  const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/share` : `${LAMBDA.company}/${publishedId}/share`;
+  try {
+    const res = await fetch(url, { method: 'POST' });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return typeof data.shareCount === 'number' ? data.shareCount : null;
+  } catch { return null; }
+}
+
+export async function rateCompany(publishedId: string, stars: number): Promise<{ avgRating: number | null; ratingCount: number } | null> {
+  const url = COMPANY_API ? `${COMPANY_API}/${publishedId}/rate` : `${LAMBDA.company}/${publishedId}/rate`;
+  try {
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stars }) });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+
+// Per-browser "already rated this company" guard - there's no per-rater
+// ledger on the backend (same best-effort trust level as every other
+// counter here), so this is what stops one visitor re-rating on every
+// click, same convention as the saved-companies Set above.
+const RATED_KEY = 'dronetv_rated_companies';
+export function hasRatedCompany(publishedId: string): boolean {
+  try { return (JSON.parse(localStorage.getItem(RATED_KEY) || '[]') as string[]).includes(publishedId); }
+  catch { return false; }
+}
+export function markCompanyRated(publishedId: string) {
+  try {
+    const list = new Set(JSON.parse(localStorage.getItem(RATED_KEY) || '[]') as string[]);
+    list.add(publishedId);
+    localStorage.setItem(RATED_KEY, JSON.stringify(Array.from(list)));
   } catch { /* best-effort */ }
 }
 

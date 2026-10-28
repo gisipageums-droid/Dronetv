@@ -21,11 +21,15 @@ interface Props {
   title: string;
   // Called when the visitor picks Instagram: lets the page share a picture through the phone's share sheet.
   onInstagram?: () => void;
+  // Called once a share action actually completes (a platform was chosen or
+  // the link was copied) - not on every render/open of the menu. Callers
+  // use this to track a real share count, not a fabricated one.
+  onShare?: () => void;
   buttonClassName?: string;
   iconClassName?: string;
 }
 
-const ShareMenu: React.FC<Props> = ({ url, title, onInstagram, buttonClassName, iconClassName }) => {
+const ShareMenu: React.FC<Props> = ({ url, title, onInstagram, onShare, buttonClassName, iconClassName }) => {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
@@ -100,11 +104,11 @@ const ShareMenu: React.FC<Props> = ({ url, title, onInstagram, buttonClassName, 
         <div ref={popRef} onClick={e => e.stopPropagation()} role="menu" aria-label="Share" style={{ position: 'fixed', top: coords.top, left: coords.left, zIndex: 100000000 }} className="max-w-[calc(100vw-16px)] overflow-x-auto rounded-xl border border-slate-200 bg-white px-3 py-2.5 shadow-lg">
           <div className="flex flex-nowrap items-center gap-2.5">
             {platforms.map(p => (
-              <button key={p.name} type="button" role="menuitem" onClick={() => { p.action(); setOpen(false); }} title={p.name} aria-label={p.name} className="shrink-0">
+              <button key={p.name} type="button" role="menuitem" onClick={() => { p.action(); onShare?.(); setOpen(false); }} title={p.name} aria-label={p.name} className="shrink-0">
                 <span className="flex size-9 items-center justify-center rounded-full text-white shadow-sm transition-transform hover:scale-105" style={{ background: p.bg }}><p.Icon className="size-5" /></span>
               </button>
             ))}
-            <button type="button" role="menuitem" onClick={copyLink} title="Copy link" aria-label="Copy link" className="shrink-0">
+            <button type="button" role="menuitem" onClick={() => { copyLink(); onShare?.(); }} title="Copy link" aria-label="Copy link" className="shrink-0">
               <span className="flex size-9 items-center justify-center rounded-full bg-slate-100 text-slate-700 shadow-sm transition-transform hover:scale-105">{copied ? <Check className="size-5 text-green-600" /> : <Copy className="size-4" />}</span>
             </button>
           </div>
