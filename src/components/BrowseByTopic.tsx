@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Zap as Drone, Brain, Map, ArrowRight, Play, Users, TrendingUp } from 'lucide-react';
+import { Zap as Drone, Brain, Map, Bot, ArrowRight, Play, Users, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const BrowseByTopic = () => {
@@ -49,6 +49,17 @@ const BrowseByTopic = () => {
       stats: { videos: 67, companies: 28, events: 6 },
       image: "https://images.pexels.com/photos/1034662/pexels-photo-1034662.jpeg?auto=compress&cs=tinysrgb&w=600",
       trending: "+18% this month"
+    },
+    {
+      id: 4,
+      name: "Robot Technology",
+      icon: Bot,
+      description: "Industrial and service robotics, robotic arms, and automation systems powering the next generation of smart manufacturing",
+      count: "40+ Videos",
+      subcategories: ["Industrial Robots", "Robotic Arms", "Service Robots", "Process Automation"],
+      stats: { videos: 40, companies: 15, events: 4 },
+      image: "https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=600",
+      trending: "+30% this month"
     }
   ];
 
@@ -75,7 +86,7 @@ const BrowseByTopic = () => {
           <div className="w-24 h-1 bg-ink mx-auto rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-12 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8 mt-12 ">
           {topics.map((topic, index) => {
             const IconComponent = topic.icon;
             const isHovered = hoveredCard === topic.id;
