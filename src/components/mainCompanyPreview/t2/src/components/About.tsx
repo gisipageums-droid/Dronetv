@@ -31,6 +31,7 @@ export default function About({ aboutData }) {
 
     return {
       ...data,
+      features: data.features || [],
       visionPillars: (data.visionPillars || []).map((pillar) => ({
         ...pillar,
         icon: iconMap[pillar.icon] || Globe,

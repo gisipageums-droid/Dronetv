@@ -200,7 +200,7 @@ export default function Footer({
           </motion.div>
 
           {/* Dynamic Sections */}
-          {footerContent.sections.map((section, sectionIndex) => (
+          {(footerContent.sections || []).map((section, sectionIndex) => (
             <motion.div
               key={section.id}
               className="col-span-1"
@@ -213,7 +213,7 @@ export default function Footer({
               </div>
 
               <ul className="space-y-3 text-sm">
-                {section.links.map((link) => (
+                {(section.links || []).map((link) => (
                   <li key={link.id} className="flex items-center gap-2">
                     <a
                       href={link.href}

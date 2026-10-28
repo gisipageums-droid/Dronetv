@@ -24,8 +24,8 @@ export default function Services({ serviceData }) {
 
   const filteredServices = (
     activeCategory === "All"
-      ? serviceData.services
-      : serviceData.services.filter((s) => s.category === activeCategory)
+      ? (serviceData.services || [])
+      : (serviceData.services || []).filter((s) => s.category === activeCategory)
   ).filter((s) => isCleanTitle(s.title));
 
   const visibleServices = filteredServices.slice(0, visibleCount);

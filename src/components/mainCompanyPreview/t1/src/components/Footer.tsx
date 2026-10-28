@@ -100,7 +100,7 @@ export default function Footer({ content }) {
           </motion.div>
 
           {/* Dynamic Sections */}
-          {footerData.sections.map((section) => (
+          {(footerData.sections || []).map((section) => (
             <motion.div
               key={section.id}
               className="col-span-1"
@@ -111,7 +111,7 @@ export default function Footer({ content }) {
               </div>
 
               <ul className="space-y-3 text-sm">
-                {section.links.filter((link) => isCleanTitle(link.text)).map((link) => (
+                {(section.links || []).filter((link) => isCleanTitle(link.text)).map((link) => (
                   <li key={link.id}>
                     <a
                       href={link.href}
