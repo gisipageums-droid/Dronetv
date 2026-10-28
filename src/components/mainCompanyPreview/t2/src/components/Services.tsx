@@ -197,7 +197,7 @@ export default function Services({ serviceData }) {
                     <div>
                       <h3 className="font-semibold text-sm mb-2">Key Benefits</h3>
                       <ul className="space-y-1.5">
-                        {serviceData.services[selectedServiceIndex].benefits.map((b, bi) => (
+                        {(serviceData.services[selectedServiceIndex].benefits || []).map((b, bi) => (
                           <li key={bi} className="flex gap-2 text-sm">
                             <CheckCircle className="w-3.5 h-3.5 text-status-success mt-0.5 flex-shrink-0" />
                             <span className="leading-tight text-justify">{b}</span>
@@ -210,7 +210,7 @@ export default function Services({ serviceData }) {
                     <div>
                       <h3 className="font-semibold text-sm mb-2">Our Process</h3>
                       <ol className="space-y-1.5 text-sm">
-                        {serviceData.services[selectedServiceIndex].process.map((p, pi) => (
+                        {(serviceData.services[selectedServiceIndex].process || []).map((p, pi) => (
                           <li key={pi} className="leading-tight text-justify">
                             <span className="font-medium mr-2">{pi + 1}.</span>
                             {p}

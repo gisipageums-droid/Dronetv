@@ -112,7 +112,7 @@ export default function Product({ productData }) {
                           {product.description}
                         </p>
                         <ul className="space-y-1 mt-3 min-h-[3rem]">
-                          {product.features.map((f, fi) => (
+                          {(product.features || []).map((f, fi) => (
                             <li
                               key={fi}
                               className="text-xs text-muted-foreground flex items-center"

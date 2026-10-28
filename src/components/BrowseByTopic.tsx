@@ -90,7 +90,7 @@ const BrowseByTopic = () => {
                 }}
                 onMouseEnter={() => setHoveredCard(topic.id)}
                 onMouseLeave={() => setHoveredCard(null)}
-                onClick={() => navigate('/videos')}
+                onClick={() => navigate('/media/video-spotlight')}
                 role="button"
                 tabIndex={0}
               >
@@ -118,7 +118,7 @@ const BrowseByTopic = () => {
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <div className="relative">
                       <div className="absolute inset-0 bg-brand-yellow/20 rounded-full blur-xl scale-150 group-hover:scale-200 transition-all duration-700"></div>
-                      <div className="relative bg-brand-yellow/20 backdrop-blur-sm rounded-full p-3 sm:p-4 group-hover:scale-110 transition-all duration-500 border border-brand-yellow/30 group-hover:shadow-lg group-hover:shadow-brand-yellow/30">
+                      <div className="relative bg-brand-yellow/20 md:backdrop-blur-sm rounded-full p-3 sm:p-4 group-hover:scale-110 transition-all duration-500 border border-brand-yellow/30 group-hover:shadow-lg group-hover:shadow-brand-yellow/30">
                         <IconComponent className="h-6 w-6 sm:h-8 sm:w-8 text-brand-yellow drop-shadow-lg" />
                       </div>
                     </div>
@@ -146,7 +146,7 @@ const BrowseByTopic = () => {
                       {topic.subcategories.map((sub, idx) => (
                         <div
                           key={sub}
-                          className="bg-brand-yellow/10 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-brand-yellow-soft text-xs font-medium border border-brand-yellow/20 group-hover:bg-brand-yellow/20 group-hover:border-brand-yellow/40 group-hover:text-yellow transition-all duration-300"
+                          className="bg-brand-yellow/10 md:backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-brand-yellow-soft text-xs font-medium border border-brand-yellow/20 group-hover:bg-brand-yellow/20 group-hover:border-brand-yellow/40 group-hover:text-yellow transition-all duration-300"
                           style={{ transitionDelay: `${idx * 100}ms` }}
                         >
                           {sub}
@@ -173,7 +173,7 @@ const BrowseByTopic = () => {
                   <div className="flex justify-center mt-auto">
                     <div className="flex justify-center mt-auto">
                       <button
-                        className="bg-brand-yellow/20 backdrop-blur-sm rounded-full px-4 sm:px-6 py-2 sm:py-3 border border-brand-yellow/30 group hover:bg-brand-yellow/30 hover:scale-105 hover:border-brand-yellow/50 hover:shadow-lg hover:shadow-brand-yellow/30 transition-all duration-500 flex items-center gap-2"
+                        className="bg-brand-yellow/20 md:backdrop-blur-sm rounded-full px-4 sm:px-6 py-2 sm:py-3 border border-brand-yellow/30 group hover:bg-brand-yellow/30 hover:scale-105 hover:border-brand-yellow/50 hover:shadow-lg hover:shadow-brand-yellow/30 transition-all duration-500 flex items-center gap-2"
                         // onClick handled by card itself
                         tabIndex={-1}
                         type="button"

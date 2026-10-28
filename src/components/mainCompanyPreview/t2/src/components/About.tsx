@@ -31,12 +31,10 @@ export default function About({ aboutData }) {
 
     return {
       ...data,
-      visionPillars:
-        data.visionPillars &&
-        data.visionPillars.map((pillar) => ({
-          ...pillar,
-          icon: iconMap[pillar.icon] || Globe,
-        })),
+      visionPillars: (data.visionPillars || []).map((pillar) => ({
+        ...pillar,
+        icon: iconMap[pillar.icon] || Globe,
+      })),
     };
   };
 

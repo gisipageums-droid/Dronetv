@@ -33,7 +33,7 @@ const HeroWithVideo: React.FC = () => {
           <div className="flex flex-wrap gap-3">
             <button
               className="bg-brand-yellow text-ink px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base rounded-md font-bold hover:bg-brand-gold transition"
-              onClick={() => navigate('/videos')}
+              onClick={() => navigate('/media/video-spotlight')}
             >
               Watch Now
             </button>
