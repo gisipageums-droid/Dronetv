@@ -457,7 +457,20 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
   ].filter(Boolean) as string[];
 
   return (
-    <article onClick={onClick} className="relative flex min-w-0 cursor-pointer flex-col gap-1.5 overflow-hidden rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e] p-2 shadow-md transition-shadow hover:shadow-lg">
+    <article
+      onClick={onClick}
+      className="relative flex min-w-0 cursor-pointer flex-col gap-1.5 overflow-hidden rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e] p-2 shadow-md transition-shadow hover:shadow-lg"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '0 420px' } as React.CSSProperties}
+    >
+      {/* content-visibility:auto skips layout/paint/image-decode work for
+          cards that are off-screen entirely, instead of just relying on each
+          <img>'s own loading="lazy" - a fast scroll across 12+ cards (each
+          with up to 5 images) was triggering real decode work for many
+          images in the same frame, measured as multi-second main-thread
+          freezes (ImageDecodeTask/Decode LazyPixelRef dominating a CPU
+          trace). This defers that work to just before a card is actually
+          about to be visible. containIntrinsicSize is a rough placeholder
+          height so the scrollbar doesn't jump around before layout runs. */}
       {company.bulkImported && company.isClaimed === false && (
         <div className="-mx-2 -mt-2 mb-1 bg-amber-100 px-2 py-1.5 text-center text-[9px] font-extrabold text-amber-900">
           {optedOut ? 'Opt-out requested — DroneTV will review' : (
