@@ -460,7 +460,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
     <article
       onClick={onClick}
       className="relative flex min-w-0 cursor-pointer flex-col gap-1.5 overflow-hidden rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e] p-2 shadow-md transition-shadow hover:shadow-lg"
-      style={{ contentVisibility: 'auto', containIntrinsicSize: '0 420px' } as React.CSSProperties}
+      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 340px' } as React.CSSProperties}
     >
       {/* content-visibility:auto skips layout/paint/image-decode work for
           cards that are off-screen entirely, instead of just relying on each
@@ -469,8 +469,12 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           images in the same frame, measured as multi-second main-thread
           freezes (ImageDecodeTask/Decode LazyPixelRef dominating a CPU
           trace). This defers that work to just before a card is actually
-          about to be visible. containIntrinsicSize is a rough placeholder
-          height so the scrollbar doesn't jump around before layout runs. */}
+          about to be visible. containIntrinsicSize's 340px placeholder
+          matches the common card height (measured ~332px; the "Unclaimed"
+          banner variant runs ~440px) - the `auto` keyword also makes the
+          browser remember each card's real rendered height after its first
+          reveal, so scrolling back over an already-seen card doesn't
+          re-trigger the same placeholder-to-real-size layout jank. */}
       {company.bulkImported && company.isClaimed === false && (
         <div className="-mx-2 -mt-2 mb-1 bg-amber-100 px-2 py-1.5 text-center text-[9px] font-extrabold text-amber-900">
           {optedOut ? 'Opt-out requested — DroneTV will review' : (
