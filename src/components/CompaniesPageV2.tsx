@@ -383,6 +383,34 @@ const CompaniesPageV2: React.FC = () => {
 // the Company record (companies.likesCount/shareCount/ratingSum/
 // ratingCount, see the company service's /like, /share, /rate endpoints) -
 // nothing here is invented client-side.
+// Staggers each photo tile's own mount (and therefore its decode) by a
+// small per-index delay instead of all 4 starting in the same frame -
+// content-visibility already defers a whole off-screen card's decode work,
+// but once a card IS revealed, its logo + 4 photos were all still decoding
+// at once (confirmed via CPU trace: ImageDecodeTask/Decode LazyPixelRef
+// dominating a scroll-triggered long task). Spreading them ~70ms apart
+// keeps the same total work but avoids bunching it into one blocking burst.
+const StaggeredPhoto: React.FC<{ primarySrc: string; fallbackSrc: string; alt: string; delayMs: number }> = ({ primarySrc, fallbackSrc, alt, delayMs }) => {
+  const [ready, setReady] = useState(delayMs === 0);
+  const [src, setSrc] = useState(primarySrc);
+  useEffect(() => {
+    if (delayMs === 0) return;
+    const t = setTimeout(() => setReady(true), delayMs);
+    return () => clearTimeout(t);
+  }, [delayMs]);
+  if (!ready) return <div className="h-12 w-full rounded border border-black bg-slate-100" aria-hidden="true" />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      className="h-12 w-full rounded border border-black bg-slate-100 object-cover"
+      onError={() => { if (src !== fallbackSrc) setSrc(fallbackSrc); }}
+    />
+  );
+};
+
 const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
   const ind = getIndustry(company);
   const fallbackPhotos = CATEGORY_PHOTOS[ind];
@@ -545,9 +573,11 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           with real themed stock photography (never an empty slot, never a
           fake gradient tile) when a company has fewer than 4 real photos. */}
       <div className="grid grid-cols-4 gap-1">
-        {realPhotos.map((p, i) => <img key={i} src={thumb(p.url, 240)} alt={`${company.companyName} ${i + 1}`} loading="lazy" decoding="async" className="h-12 w-full rounded border border-black bg-slate-100 object-cover" onError={e => { if (e.currentTarget.src !== p.url) e.currentTarget.src = p.url; }} />)}
+        {realPhotos.map((p, i) => (
+          <StaggeredPhoto key={i} primarySrc={thumb(p.url, 240) || p.url} fallbackSrc={p.url} alt={`${company.companyName} ${i + 1}`} delayMs={i * 70} />
+        ))}
         {Array.from({ length: missingPhotoCount }).map((_, i) => (
-          <img key={`fb-${i}`} src={fallbackPhotos[i % fallbackPhotos.length]} alt="" loading="lazy" className="h-12 w-full rounded border border-black bg-slate-100 object-cover" />
+          <StaggeredPhoto key={`fb-${i}`} primarySrc={fallbackPhotos[i % fallbackPhotos.length]} fallbackSrc={fallbackPhotos[i % fallbackPhotos.length]} alt="" delayMs={(realPhotos.length + i) * 70} />
         ))}
       </div>
 
