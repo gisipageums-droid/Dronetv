@@ -45,6 +45,14 @@
   <meta name="twitter:description" content="Discover the Drone Ecosystem in one place with Dronetv.in. We showcase products and technologies of Drone, GIS and AI industries." />
   <meta name="twitter:image" content="https://dev.dronetv.in/images/dronetv-social-preview.png" />
   <script type="text/javascript">
+    // Not auto-loaded here on purpose - Google's Website Translator widget
+    // attaches a MutationObserver to the page the moment its script runs,
+    // which keeps running on every single page view even when nobody ever
+    // translates anything. On a page with lots of lazy-loading/re-rendering
+    // content (e.g. the listed-companies grid) that observer alone caused
+    // multi-second main-thread freezes on every fast scroll. Navigation.tsx
+    // injects this script on demand, only once someone actually opens the
+    // language switcher - see ensureGoogleTranslateLoaded() there.
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'en',
@@ -53,7 +61,6 @@
       }, 'google_translate_element');
     }
   </script>
-  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
   <style>
     .goog-te-banner-frame, .skiptranslate { display: none !important; }
     body { top: 0 !important; position: static !important; }

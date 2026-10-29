@@ -116,9 +116,29 @@ const Navigation = () => {
     { label: "Chinese", code: "zh-CN" },
   ];
 
-  const handleLanguageChange = (label: string, code: string) => {
+  const ensureGoogleTranslateLoaded = (): Promise<void> => {
+    if (document.querySelector(".goog-te-combo")) return Promise.resolve();
+    if (!document.querySelector('script[src*="translate.google.com"]')) {
+      const script = document.createElement("script");
+      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.head.appendChild(script);
+    }
+    return new Promise((resolve) => {
+      const check = setInterval(() => {
+        if (document.querySelector(".goog-te-combo")) {
+          clearInterval(check);
+          resolve();
+        }
+      }, 100);
+      setTimeout(() => { clearInterval(check); resolve(); }, 8000);
+    });
+  };
+
+  const handleLanguageChange = async (label: string, code: string) => {
     setSelectedLang(label);
     setIsLanguageOpen(false);
+    await ensureGoogleTranslateLoaded();
     const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
     if (select) {
       select.value = code;
@@ -433,7 +453,7 @@ const Navigation = () => {
           <div className="flex items-center gap-3 flex-shrink-0">
             <div className="relative" ref={languageRef}>
               <button
-                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                onClick={() => { setIsLanguageOpen(!isLanguageOpen); ensureGoogleTranslateLoaded(); }}
                 className="flex items-center gap-1.5 text-ink hover:text-ink transition-colors"
               >
                 <img src="/images/iconre.jpg" alt="Language" className="w-6 h-6 rounded-full" />
