@@ -134,6 +134,13 @@ const CompaniesPageV2: React.FC = () => {
   const navigate = useNavigate();
 
   const debouncedSearch = useDebounced(search, 350);
+  // Only the very first fetch should blank the whole page behind the splash
+  // screen - every later refetch (typing in search, clicking a filter,
+  // changing page) swapped the ENTIRE page out for a generic loading splash
+  // on every single keystroke/click, which is what made filtering feel
+  // stuck/broken even though each fetch itself was fast. Those refetches
+  // now just dim the existing grid instead (see `refetching` below).
+  const hasLoadedOnce = useRef(false);
 
   // Fetch one page from the backend whenever filters/page/perPage change.
   // Backend handles search, industry, state, verified filtering in SQL.
@@ -183,7 +190,7 @@ const CompaniesPageV2: React.FC = () => {
         }, 0);
       })
       .catch(() => setPageCompanies([]))
-      .finally(() => setLoading(false));
+      .finally(() => { setLoading(false); hasLoadedOnce.current = true; });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, industry, selStates, verifiedOnly, page, perPage]);
 
@@ -248,7 +255,8 @@ const CompaniesPageV2: React.FC = () => {
     return { stats, packageCounts, stateCounts, topStates, verifiedCount };
   }, [pageCompanies, listedTotal, totalCount, states]);
 
-  if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Companies..." />;
+  if (loading && !hasLoadedOnce.current) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Companies..." />;
+  const refetching = loading && hasLoadedOnce.current;
 
   // PACKAGE/LOCATION/SERVICES only - INDUSTRY dropped from here (user
   // flagged on mobile, 20260926): the CATEGORY pill row above already
@@ -374,7 +382,7 @@ const CompaniesPageV2: React.FC = () => {
               to ~3s). Company names are proper nouns anyway - excluding
               this subtree from Google Translate's scan is a real, safe
               trade-off for not freezing the page. */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 notranslate" translate="no">
+          <div className={`grid grid-cols-1 gap-3 transition-opacity sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 notranslate ${refetching ? 'opacity-50' : ''}`} translate="no">
             {withInlineAds(visible, (c, i) => {
               const id = c.publishedId || c.companyId || c.companyName;
               return <LazyCard key={`${c.publishedId || c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} saved={savedCompanies.has(id)} onToggleSave={() => toggleSaved(id)} />;
