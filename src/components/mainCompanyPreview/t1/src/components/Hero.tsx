@@ -189,6 +189,7 @@ export default function EditableHero({
                     src={heroState.hero1Image}
                     alt="Innovation showcase"
                     className="w-full h-auto max-h-[70vh] object-contain rounded-3xl shadow-2xl scale-110"
+                    onError={(e) => { e.currentTarget.src = Hero1; }}
                   />
                 </div>
                 <motion.div
@@ -201,6 +202,7 @@ export default function EditableHero({
                       src={heroState.hero3Image}
                       alt="Tech innovation"
                       className="w-auto max-w-[12rem] sm:max-w-[8rem] lg:max-w-[10rem] h-auto object-contain rounded-2xl shadow-xl border-4 border-white scale-110"
+                      onError={(e) => { e.currentTarget.src = Hero3; }}
                     />
                   </div>
                 </motion.div>

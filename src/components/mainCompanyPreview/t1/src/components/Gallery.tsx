@@ -203,6 +203,9 @@ export default function GallerySection({ galleryData }) {
                             src={galleryData.images[selectedImage].url}
                             alt={galleryData.images[selectedImage].title}
                             className="w-full h-auto max-h-[70vh] object-contain rounded-lg"
+                            onError={(e) => {
+                                e.currentTarget.src = "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&h=600&fit=crop";
+                            }}
                         />
                         <div className="text-white text-center mt-4 px-10">
                             <h3 className="text-lg sm:text-xl font-semibold">{galleryData.images[selectedImage].title}</h3>

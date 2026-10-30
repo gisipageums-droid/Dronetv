@@ -197,6 +197,9 @@ export default function Hero({ heroData, badgeStatus }: { heroData: any; badgeSt
                           width: 'auto',
                           margin: '0 auto'
                         }}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800";
+                        }}
                       />
                     ) : (
                       <div className="w-full max-w-full h-64 bg-ink-light rounded-3xl shadow-2xl flex items-center justify-center">
@@ -217,6 +220,9 @@ export default function Hero({ heroData, badgeStatus }: { heroData: any; badgeSt
                           src={heroState.hero3Image}
                           alt="Additional business context"
                           className="block w-auto h-auto max-w-[200px] max-h-[200px] object-contain rounded-2xl shadow-xl border-4 border-white bg-surface-card"
+                          onError={(e) => {
+                            e.currentTarget.src = "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400";
+                          }}
                         />
                       ) : (
                         <div className="block w-32 h-24 bg-ink-light rounded-2xl shadow-xl border-4 border-white flex items-center justify-center">

@@ -212,6 +212,9 @@ const Gallery = ({ galleryData }) => {
                         src={image.url}
                         alt={image.title}
                         className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                        onError={(e) => {
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&h=600&fit=crop";
+                        }}
                       />
                     ) : (
                       <div className="w-full h-64 bg-ink-light flex items-center justify-center">
@@ -268,6 +271,9 @@ const Gallery = ({ galleryData }) => {
                   src={contentState.images[selectedImage].url}
                   alt={contentState.images[selectedImage].title}
                   className="w-full h-auto max-h-full object-contain"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&h=600&fit=crop";
+                  }}
                 />
                 <div className="text-white text-center mt-4">
                   <h3 className="text-xl font-semibold">{contentState.images[selectedImage].title}</h3>
