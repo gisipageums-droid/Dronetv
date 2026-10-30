@@ -249,7 +249,7 @@ const CompaniesPageV2: React.FC = () => {
       {/* No page-local header - the app's persistent global <Navigation/>
           (fixed, h-16) already renders above every route; a page-local
           header duplicated and hid underneath it in an earlier round. */}
-      <div className="mt-16" />
+      <div className="h-16" />
 
       {/* industryBar() - exact classes */}
       <section aria-label="Industry statistics" className="flex min-h-[77px] flex-wrap items-center gap-3 bg-[#07130f] px-3 py-2 text-white sm:px-6">
@@ -400,14 +400,7 @@ const CompaniesPageV2: React.FC = () => {
 // the Company record (companies.likesCount/shareCount/ratingSum/
 // ratingCount, see the company service's /like, /share, /rate endpoints) -
 // nothing here is invented client-side.
-// Staggers each photo tile's own mount (and therefore its decode) by a
-// small per-index delay instead of all 4 starting in the same frame -
-// content-visibility already defers a whole off-screen card's decode work,
-// but once a card IS revealed, its logo + 4 photos were all still decoding
-// at once (confirmed via CPU trace: ImageDecodeTask/Decode LazyPixelRef
-// dominating a scroll-triggered long task). Spreading them ~70ms apart
-// keeps the same total work but avoids bunching it into one blocking burst.
-const StaggeredPhoto: React.FC<{ primarySrc: string; fallbackSrc: string; alt: string; delayMs: number }> = ({ primarySrc, fallbackSrc, alt }) => {
+const StaggeredPhoto: React.FC<{ primarySrc: string; fallbackSrc: string; alt: string }> = ({ primarySrc, fallbackSrc, alt }) => {
   const [src, setSrc] = useState(primarySrc);
   return (
     <img
@@ -421,8 +414,7 @@ const StaggeredPhoto: React.FC<{ primarySrc: string; fallbackSrc: string; alt: s
   );
 };
 
-// Only mount the full card when it's near the viewport — avoids creating
-// 12 × 5 image objects + all card state in one frame on page load/page change.
+// Only mount the full card when it's near the viewport.
 const LazyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = (props) => {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -431,15 +423,16 @@ const LazyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () 
     if (!el) return;
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { rootMargin: '400px' }
+      { rootMargin: '200px' }
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
-  if (!visible) return (
-    <div ref={ref} className="rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e]" style={{ minHeight: 340 }} />
+  return (
+    <div ref={ref}>
+      {visible ? <CompanyCardV2 {...props} /> : <div className="rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e]" style={{ minHeight: 340 }} />}
+    </div>
   );
-  return <CompanyCardV2 {...props} />;
 };
 
 const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
@@ -605,10 +598,10 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
           fake gradient tile) when a company has fewer than 4 real photos. */}
       <div className="grid grid-cols-4 gap-1">
         {realPhotos.map((p, i) => (
-          <StaggeredPhoto key={i} primarySrc={thumb(p.url, 240) || p.url} fallbackSrc={p.url} alt={`${company.companyName} ${i + 1}`} delayMs={i * 70} />
+          <StaggeredPhoto key={i} primarySrc={thumb(p.url, 240) || p.url} fallbackSrc={p.url} alt={`${company.companyName} ${i + 1}`} />
         ))}
         {Array.from({ length: missingPhotoCount }).map((_, i) => (
-          <StaggeredPhoto key={`fb-${i}`} primarySrc={fallbackPhotos[i % fallbackPhotos.length]} fallbackSrc={fallbackPhotos[i % fallbackPhotos.length]} alt="" delayMs={(realPhotos.length + i) * 70} />
+          <StaggeredPhoto key={`fb-${i}`} primarySrc={fallbackPhotos[i % fallbackPhotos.length]} fallbackSrc={fallbackPhotos[i % fallbackPhotos.length]} alt="" />
         ))}
       </div>
 
