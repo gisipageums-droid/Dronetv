@@ -70,14 +70,28 @@ const BTN = 'rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold
 // uploaded size. A listing card only ever displays them a few dozen
 // pixels across, so route our own storage's images through the media
 // service's image-proxy with a small ?w= - it resizes/recompresses on the
-// way through without touching the stored original. Unsplash fallback
-// photos and local /assets paths are left alone (already small / not ours
-// to proxy).
+// way through without touching the stored original. The small, pre-sized
+// CATEGORY_PHOTOS stock list is left alone (never passed through thumb()
+// anyway) - but company.heroImage is also an Unsplash URL and it IS passed
+// through thumb() as a photo-tile fallback (see realPhotos below), built
+// elsewhere in the app at w=1000&h=1000 for an actual full-size hero
+// banner use. Decoding a ~1000x707/200KB+ image to show a 48px-tall tile
+// was a real, measured cause of scroll jank on real (CPU-throttled) phones
+// - confirmed live: ~22% of real company cards hit this fallback. Unsplash
+// already supports its own w/h/q resize params, so rewrite them down to
+// the small size actually needed instead of decoding the full one.
 const OWN_IMAGE_HOST = /(minio[-.]|\.xo\.je$|^xo\.je$|dronetv-company-assets-store\.s3)/i;
 function thumb(url: string | undefined, w: number, q = 75): string | undefined {
-  if (!url || !MEDIA_API) return url;
+  if (!url) return url;
   try {
-    if (!OWN_IMAGE_HOST.test(new URL(url).hostname)) return url;
+    const u = new URL(url);
+    if (u.hostname === 'images.unsplash.com') {
+      u.searchParams.set('w', String(w));
+      u.searchParams.set('h', String(w));
+      u.searchParams.set('q', String(q));
+      return u.toString();
+    }
+    if (!MEDIA_API || !OWN_IMAGE_HOST.test(u.hostname)) return url;
   } catch {
     return url;
   }
