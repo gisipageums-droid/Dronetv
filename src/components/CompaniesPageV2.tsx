@@ -404,15 +404,8 @@ const CompaniesPageV2: React.FC = () => {
 // at once (confirmed via CPU trace: ImageDecodeTask/Decode LazyPixelRef
 // dominating a scroll-triggered long task). Spreading them ~70ms apart
 // keeps the same total work but avoids bunching it into one blocking burst.
-const StaggeredPhoto: React.FC<{ primarySrc: string; fallbackSrc: string; alt: string; delayMs: number }> = ({ primarySrc, fallbackSrc, alt, delayMs }) => {
-  const [ready, setReady] = useState(delayMs === 0);
+const StaggeredPhoto: React.FC<{ primarySrc: string; fallbackSrc: string; alt: string; delayMs: number }> = ({ primarySrc, fallbackSrc, alt }) => {
   const [src, setSrc] = useState(primarySrc);
-  useEffect(() => {
-    if (delayMs === 0) return;
-    const t = setTimeout(() => setReady(true), delayMs);
-    return () => clearTimeout(t);
-  }, [delayMs]);
-  if (!ready) return <div className="h-12 w-full rounded border border-black bg-slate-100" aria-hidden="true" />;
   return (
     <img
       src={src}
@@ -502,7 +495,7 @@ const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire
     <article
       onClick={onClick}
       className="relative flex min-w-0 cursor-pointer flex-col gap-1.5 overflow-hidden rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e] p-2 shadow-md transition-shadow hover:shadow-lg"
-      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 340px' } as React.CSSProperties}
+      style={{ willChange: 'transform' }}
     >
       {/* content-visibility:auto skips layout/paint/image-decode work for
           cards that are off-screen entirely, instead of just relying on each
