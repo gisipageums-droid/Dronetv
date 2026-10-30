@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
@@ -77,6 +77,7 @@ export default function Login() {
   // request to surface "no account for this number" before sending an OTP,
   // instead of the privacy-safe generic message /forgot-password uses.
   const [otpError, setOtpError] = useState<string>("");
+  const otpDigitRefs = useRef<Array<HTMLInputElement | null>>([]);
   const [signUpData, setSignUpData] = useState<SignUpData>({
     email: "",
     fullName: "",
@@ -418,17 +419,40 @@ export default function Login() {
                       <label className="block mb-2 text-sm font-medium" htmlFor="otpCode">
                         Enter the 4-digit code sent to {otpPhone}
                       </label>
-                      <input
-                        type="text"
-                        id="otpCode"
-                        inputMode="numeric"
-                        maxLength={4}
-                        value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-                        className="w-full p-2 text-center tracking-[0.5em] border rounded border-ink-light"
-                        placeholder="----"
-                        required
-                      />
+                      <div className="flex justify-between gap-2" id="otpCode">
+                        {[0, 1, 2, 3].map((i) => (
+                          <input
+                            key={i}
+                            ref={(el) => (otpDigitRefs.current[i] = el)}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={1}
+                            value={otpCode[i] || ""}
+                            onChange={(e) => {
+                              const digit = e.target.value.replace(/\D/g, "").slice(-1);
+                              const chars = otpCode.split("");
+                              chars[i] = digit;
+                              const next = chars.join("").slice(0, 4);
+                              setOtpCode(next);
+                              if (digit && i < 3) otpDigitRefs.current[i + 1]?.focus();
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Backspace" && !otpCode[i] && i > 0) {
+                                otpDigitRefs.current[i - 1]?.focus();
+                              }
+                            }}
+                            onPaste={(e) => {
+                              e.preventDefault();
+                              const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
+                              if (!pasted) return;
+                              setOtpCode(pasted);
+                              otpDigitRefs.current[Math.min(pasted.length, 3)]?.focus();
+                            }}
+                            className="w-14 h-14 text-xl text-center border rounded border-ink-light focus:border-status-info focus:outline-none"
+                            required
+                          />
+                        ))}
+                      </div>
                     </div>
                     <button
                       type="submit"
