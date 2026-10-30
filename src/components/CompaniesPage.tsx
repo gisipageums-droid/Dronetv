@@ -444,14 +444,19 @@ const INDIAN_STATES = [
   'Delhi', 'Goa',
 ].sort((a, b) => b.length - a.length);
 
+// Pre-compiled state regexes — building new RegExp() inside extractState's
+// loop was the dominant CPU cost: ~35 compilations × 1000 companies × every
+// useMemo run. Compiled once at module load instead.
+const STATE_REGEXES: [string, RegExp][] = INDIAN_STATES.map(s => [
+  s,
+  new RegExp(`\\b${s.replace(/ /g, '\\s+')}\\b`, 'i'),
+]);
+
 export function extractState(location: string | undefined): string {
   const text = location || '';
-  for (const state of INDIAN_STATES) {
-    if (new RegExp(`\\b${state.replace(/ /g, '\\s+')}\\b`, 'i').test(text)) return state;
+  for (const [state, rx] of STATE_REGEXES) {
+    if (rx.test(text)) return state;
   }
-  // Fall back to the old last-comma-segment guess for anything that isn't
-  // a recognizable Indian state (e.g. a foreign address, if that ever
-  // shows up), so this never regresses to blank for those.
   const parts = text.split(',').map(p => p.trim()).filter(Boolean);
   for (let i = parts.length - 1; i >= 0; i--) {
     const p = parts[i];

@@ -98,10 +98,26 @@ function thumb(url: string | undefined, w: number, q = 75): string | undefined {
   return `${MEDIA_API}/image-proxy?url=${encodeURIComponent(url)}&w=${w}&q=${q}`;
 }
 
+// Pre-computed per-company fields cached at load time so useMemo passes
+// never re-run getIndustry/getSectors/extractState on every filter change.
+type EnrichedCompany = Company & { _ind: string; _sectors: string[]; _state: string; _tier: string };
+
+// Debounce hook — delays a value by `ms` ms so search doesn't fire on
+// every keystroke.
+function useDebounced<T>(value: T, ms: number): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return debounced;
+}
+
 const CompaniesPageV2: React.FC = () => {
   usePackageTiers();
   const [loading, setLoading] = useState(true);
-  const [allCompanies, setAllCompanies] = useState<Company[]>([]);
+  const [pageCompanies, setPageCompanies] = useState<EnrichedCompany[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [listedTotal, setListedTotal] = useState(0);
   const [industry, setIndustry] = useState<string>('All');
   const [states, setStates] = useState<string[]>([]);
@@ -113,66 +129,81 @@ const CompaniesPageV2: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(12);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { saved: savedCompanies, toggle: toggleSaved } = useSavedCompanies();
   const navigate = useNavigate();
 
+  const debouncedSearch = useDebounced(search, 350);
+
+  // Fetch one page from the backend whenever filters/page/perPage change.
+  // Backend handles search, industry, state, verified filtering in SQL.
+  // Sort is applied client-side on the returned page (backend returns
+  // recency-sorted; A-Z / name sort re-orders the current page only).
   useEffect(() => {
-    const url = COMPANY_API
-      ? `${COMPANY_API}/dashboard-cards?viewType=main&limit=1000`
-      : `${LAMBDA.company}/dashboard-cards?viewType=main&limit=1000`;
-    fetch(url)
+    setLoading(true);
+    const base = COMPANY_API || LAMBDA.company;
+    const params = new URLSearchParams({
+      viewType: 'main',
+      limit: String(perPage),
+      offset: String((page - 1) * perPage),
+    });
+    if (debouncedSearch) params.set('search', debouncedSearch);
+    if (industry !== 'All') params.set('industry', industry.toLowerCase());
+    if (selStates.length) params.set('state', selStates.join(','));
+    if (verifiedOnly) params.set('verified', 'true');
+
+    fetch(`${base}/dashboard-cards?${params}`)
       .then(r => r.json())
       .then(d => {
-        // Defer the heavy dedup + state extraction off the paint frame
         setTimeout(() => {
-          const rawAll: Company[] = Array.isArray(d.cards) ? d.cards : [];
-          const score = (c: Company) =>
-            (Number(c.servicesCount) || 0) + (Number(c.productsCount) || 0) +
-            (Number(c.completionPercentage) || 0) / 1000 +
-            new Date(c.lastModified || c.createdAt || 0).getTime() / 1e15;
-          const bySlug = new Map<string, Company>();
-          rawAll.forEach(c => {
-            const key = (c.urlSlug || c.companyName || c.publishedId || '').toLowerCase().trim();
-            const prev = bySlug.get(key);
-            if (!prev || score(c) > score(prev)) bySlug.set(key, c);
+          const raw: Company[] = Array.isArray(d.cards) ? d.cards : [];
+          const enriched: EnrichedCompany[] = raw.map(c => ({
+            ...c,
+            _ind: getIndustry(c),
+            _sectors: getSectors(c),
+            _state: extractState(c.location),
+            _tier: (getTier(c) || 'listed').replace(/^./, ch => ch.toUpperCase()),
+          }));
+          setPageCompanies(enriched);
+          const serverTotal = typeof d.totalCount === 'number' ? d.totalCount : enriched.length;
+          setTotalCount(serverTotal);
+          // listedTotal is the unfiltered grand total shown in the stats bar.
+          // Only update it when no filters are active so it always reflects
+          // the real directory size, not a filtered subset.
+          if (!debouncedSearch && industry === 'All' && !selStates.length && !verifiedOnly) {
+            setListedTotal(serverTotal);
+          }
+          // Collect states from this page for the sidebar facet.
+          // On first load (no filters) this seeds the full state list.
+          setStates(prev => {
+            const merged = new Set(prev);
+            enriched.forEach(c => { if (c._state && c._state.length > 1 && c._state.length < 30) merged.add(c._state); });
+            return Array.from(merged);
           });
-          const raw = Array.from(bySlug.values());
-          setAllCompanies(raw);
-          setListedTotal(typeof d.totalCount === 'number' ? Math.min(d.totalCount, raw.length) : raw.length);
-          const stateSet = new Set<string>();
-          raw.forEach(c => { const st = extractState(c.location); if (st && st.length > 1 && st.length < 30) stateSet.add(st); });
-          setStates(Array.from(stateSet));
         }, 0);
       })
-      .catch(() => setAllCompanies([]))
+      .catch(() => setPageCompanies([]))
       .finally(() => setLoading(false));
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch, industry, selStates, verifiedOnly, page, perPage]);
 
-  const filtered = useMemo(() => {
-    let list = allCompanies;
-    if (industry !== 'All') list = list.filter(c => getIndustry(c).toLowerCase() === industry.toLowerCase());
-    if (selStates.length) list = list.filter(c => selStates.includes(extractState(c.location)));
-    if (selSectors.length) list = list.filter(c => selSectors.some(s => getSectors(c).includes(s)));
-    if (selPackages.length) list = list.filter(c => selPackages.includes((getTier(c) || 'listed').replace(/^./, ch => ch.toUpperCase())));
-    if (verifiedOnly) list = list.filter(c => !!c.badgeStatus && c.badgeStatus !== 'NONE');
-    if (search) {
-      const q = search.toLowerCase();
-      list = list.filter(c => c.companyName?.toLowerCase().includes(q) || c.companyDescription?.toLowerCase().includes(q) || c.location?.toLowerCase().includes(q));
-    }
+  // Client-side sort on the current page only (backend already returns
+  // recency order; A-Z / name re-orders the fetched page).
+  const visible = useMemo(() => {
+    let list = pageCompanies;
+    // Client-side sector filter (not sent to backend — multi-select sectors
+    // would need OR logic in SQL; keeping it simple here).
+    if (selSectors.length) list = list.filter(c => selSectors.some(s => c._sectors.includes(s)));
+    if (selPackages.length) list = list.filter(c => selPackages.includes(c._tier));
     const recency = (c: Company) => new Date(c.lastModified || c.createdAt || 0).getTime();
     return [...list].sort((a, b) => {
       if (sortBy === 'companyName') return (a.companyName || '').localeCompare(b.companyName || '');
       if (sortBy === 'createdAt') return recency(b) - recency(a);
       return ((b.reviewStatus === 'approved') ? 0 : 1) - ((a.reviewStatus === 'approved') ? 0 : 1);
     });
-  }, [allCompanies, industry, selStates, selSectors, selPackages, verifiedOnly, search, sortBy]);
+  }, [pageCompanies, selSectors, selPackages, sortBy]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-  useEffect(() => { if (page > totalPages) setPage(totalPages); }, [totalPages, page]);
-  const first = (page - 1) * perPage;
-  const visible = filtered.slice(first, first + perPage);
+  const totalPages = Math.max(1, Math.ceil(totalCount / perPage));
 
   const toggleState = (s: string) => { setSelStates(p => p.includes(s) ? p.filter(x => x !== s) : [...p, s]); setPage(1); };
   const toggleSector = (s: string) => { setSelSectors(p => p.includes(s) ? p.filter(x => x !== s) : [...p, s]); setPage(1); };
@@ -192,42 +223,30 @@ const CompaniesPageV2: React.FC = () => {
     navigate(`/${seg}/${slug}#contact`);
   };
 
-  // These scan every one of the ~450+ loaded companies (several regex tests
-  // and a tier-hash call per company). Previously recomputed on every
-  // render - including every search keystroke, page click, or filter
-  // toggle - which is exactly when the component also re-renders most
-  // often. Memoized on allCompanies/listedTotal/states alone so a filter or
-  // page change no longer re-walks the full list just to redraw the same
-  // header counters and sidebar facets. Must run before the `loading` early
-  // return below - every hook in this component has to execute on every
-  // render regardless of that branch, or React throws a hooks-order error
-  // once `loading` flips from true to false.
+  // Stats bar and sidebar facets are derived from the current page only.
+  // listedTotal (grand total) is preserved from the first unfiltered fetch.
   const { stats, packageCounts, stateCounts, topStates, verifiedCount } = useMemo(() => {
-    const verifiedCount = allCompanies.filter(c => !!c.badgeStatus && c.badgeStatus !== 'NONE').length;
-    const droneCount = allCompanies.filter(c => getIndustry(c) === 'drone').length;
-    const gisCount = allCompanies.filter(c => getIndustry(c) === 'gis').length;
-    const aiCount = allCompanies.filter(c => getIndustry(c) === 'ai').length;
-    const roboticsCount = allCompanies.filter(c => /\brobot(?:ics)?\b/i.test(`${c.companyName || ''} ${c.companyDescription || ''}`)).length;
-    const otherCount = allCompanies.length - droneCount - gisCount - aiCount;
-    // Exact same 6-stat shape as industryBar()'s data.stats - real counts in
-    // place of the fictional 12,568/6,230/2,104/1,870/985/1,379.
+    const verifiedCount = pageCompanies.filter(c => !!c.badgeStatus && c.badgeStatus !== 'NONE').length;
+    const droneCount = pageCompanies.filter(c => c._ind === 'drone').length;
+    const gisCount = pageCompanies.filter(c => c._ind === 'gis').length;
+    const aiCount = pageCompanies.filter(c => c._ind === 'ai').length;
+    const roboticsCount = pageCompanies.filter(c => /\brobot(?:ics)?\b/i.test(`${c.companyName || ''} ${c.companyDescription || ''}`)).length;
+    const otherCount = pageCompanies.length - droneCount - gisCount - aiCount;
     const stats: [string, number, any][] = [
-      ['Total Companies', listedTotal || allCompanies.length, Briefcase],
+      ['Total Companies', listedTotal || totalCount, Briefcase],
       ['Drones', droneCount, Building2],
       ['GIS', gisCount, MapPin],
       ['AI', aiCount, Cpu],
       ['Robotics', roboticsCount, Bot],
       ['Other Support Businesses', otherCount, Briefcase],
     ];
-
     const packageCounts: Record<string, number> = { Listed: 0, Silver: 0, Gold: 0, Platinum: 0 };
-    allCompanies.forEach(c => { const t = getTier(c); const label = t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Listed'; packageCounts[label]++; });
+    pageCompanies.forEach(c => { packageCounts[c._tier] = (packageCounts[c._tier] || 0) + 1; });
     const stateCounts: Record<string, number> = {};
-    allCompanies.forEach(c => { const st = extractState(c.location); if (st) stateCounts[st] = (stateCounts[st] || 0) + 1; });
+    pageCompanies.forEach(c => { if (c._state) stateCounts[c._state] = (stateCounts[c._state] || 0) + 1; });
     const topStates = [...states].sort((a, b) => (stateCounts[b] || 0) - (stateCounts[a] || 0)).slice(0, 5);
-
     return { stats, packageCounts, stateCounts, topStates, verifiedCount };
-  }, [allCompanies, listedTotal, states]);
+  }, [pageCompanies, listedTotal, totalCount, states]);
 
   if (loading) return <LoadingScreen logoSrc="/images/logo.png" loadingText="Loading Companies..." />;
 
@@ -358,13 +377,13 @@ const CompaniesPageV2: React.FC = () => {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 notranslate" translate="no">
             {withInlineAds(visible, (c, i) => {
               const id = c.publishedId || c.companyId || c.companyName;
-              return <LazyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} saved={savedCompanies.has(id)} onToggleSave={() => toggleSaved(id)} />;
+              return <LazyCard key={`${c.publishedId || c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} saved={savedCompanies.has(id)} onToggleSave={() => toggleSaved(id)} />;
             })}
           </div>
-          {filtered.length === 0 && <p className="rounded-lg bg-white p-8 text-center">No companies found.</p>}
+          {visible.length === 0 && !loading && <p className="rounded-lg bg-white p-8 text-center">No companies found.</p>}
 
           <div className="mt-5 grid min-w-0 grid-cols-1 items-center gap-4 rounded-lg px-3 py-5 sm:px-5 lg:grid-cols-[1fr_auto_1fr]">
-            <strong className="text-sm">Showing {filtered.length ? first + 1 : 0}–{Math.min(first + perPage, filtered.length)} of {filtered.length.toLocaleString('en-IN')} companies</strong>
+            <strong className="text-sm">Showing {totalCount ? (page - 1) * perPage + 1 : 0}–{Math.min(page * perPage, totalCount)} of {totalCount.toLocaleString('en-IN')} companies</strong>
             <nav aria-label="companies pagination" className="flex min-w-0 flex-wrap items-center justify-center gap-1.5">
               <button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="grid h-9 min-w-9 place-items-center rounded-md border border-amber-300 bg-white text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"><ChevronLeft className="size-4" /></button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1).reduce<(number | '...')[]>((acc, p, i, arr) => { if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push('...'); acc.push(p); return acc; }, []).map((p, i) => p === '...' ? <span key={`e${i}`} className="px-1">…</span> : (
