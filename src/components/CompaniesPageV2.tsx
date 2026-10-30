@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Search, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Heart, ChevronDown, Filter, Box, Wrench, Users, CalendarDays, Eye, Send, Building2, Cpu, Bot, Briefcase, X, Star } from 'lucide-react';
 import ShareMenu from './common/ShareMenu';
 import { useNavigate } from 'react-router-dom';
@@ -125,23 +125,26 @@ const CompaniesPageV2: React.FC = () => {
     fetch(url)
       .then(r => r.json())
       .then(d => {
-        const rawAll: Company[] = Array.isArray(d.cards) ? d.cards : [];
-        const score = (c: Company) =>
-          (Number(c.servicesCount) || 0) + (Number(c.productsCount) || 0) +
-          (Number(c.completionPercentage) || 0) / 1000 +
-          new Date(c.lastModified || c.createdAt || 0).getTime() / 1e15;
-        const bySlug = new Map<string, Company>();
-        rawAll.forEach(c => {
-          const key = (c.urlSlug || c.companyName || c.publishedId || '').toLowerCase().trim();
-          const prev = bySlug.get(key);
-          if (!prev || score(c) > score(prev)) bySlug.set(key, c);
-        });
-        const raw = Array.from(bySlug.values());
-        setAllCompanies(raw);
-        setListedTotal(typeof d.totalCount === 'number' ? Math.min(d.totalCount, raw.length) : raw.length);
-        const stateSet = new Set<string>();
-        raw.forEach(c => { const st = extractState(c.location); if (st && st.length > 1 && st.length < 30) stateSet.add(st); });
-        setStates(Array.from(stateSet));
+        // Defer the heavy dedup + state extraction off the paint frame
+        setTimeout(() => {
+          const rawAll: Company[] = Array.isArray(d.cards) ? d.cards : [];
+          const score = (c: Company) =>
+            (Number(c.servicesCount) || 0) + (Number(c.productsCount) || 0) +
+            (Number(c.completionPercentage) || 0) / 1000 +
+            new Date(c.lastModified || c.createdAt || 0).getTime() / 1e15;
+          const bySlug = new Map<string, Company>();
+          rawAll.forEach(c => {
+            const key = (c.urlSlug || c.companyName || c.publishedId || '').toLowerCase().trim();
+            const prev = bySlug.get(key);
+            if (!prev || score(c) > score(prev)) bySlug.set(key, c);
+          });
+          const raw = Array.from(bySlug.values());
+          setAllCompanies(raw);
+          setListedTotal(typeof d.totalCount === 'number' ? Math.min(d.totalCount, raw.length) : raw.length);
+          const stateSet = new Set<string>();
+          raw.forEach(c => { const st = extractState(c.location); if (st && st.length > 1 && st.length < 30) stateSet.add(st); });
+          setStates(Array.from(stateSet));
+        }, 0);
       })
       .catch(() => setAllCompanies([]))
       .finally(() => setLoading(false));
@@ -355,7 +358,7 @@ const CompaniesPageV2: React.FC = () => {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 notranslate" translate="no">
             {withInlineAds(visible, (c, i) => {
               const id = c.publishedId || c.companyId || c.companyName;
-              return <CompanyCardV2 key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} saved={savedCompanies.has(id)} onToggleSave={() => toggleSaved(id)} />;
+              return <LazyCard key={`${c.companyName}-${i}`} company={c} onClick={() => handleCardClick(c)} onEnquire={() => handleEnquireClick(c)} saved={savedCompanies.has(id)} onToggleSave={() => toggleSaved(id)} />;
             })}
           </div>
           {filtered.length === 0 && <p className="rounded-lg bg-white p-8 text-center">No companies found.</p>}
@@ -416,6 +419,27 @@ const StaggeredPhoto: React.FC<{ primarySrc: string; fallbackSrc: string; alt: s
       onError={() => { if (src !== fallbackSrc) setSrc(fallbackSrc); }}
     />
   );
+};
+
+// Only mount the full card when it's near the viewport — avoids creating
+// 12 × 5 image objects + all card state in one frame on page load/page change.
+const LazyCard: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = (props) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { rootMargin: '400px' }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  if (!visible) return (
+    <div ref={ref} className="rounded-xl border-2 border-[#f1d823] bg-[#f1ee8e]" style={{ minHeight: 340 }} />
+  );
+  return <CompanyCardV2 {...props} />;
 };
 
 const CompanyCardV2: React.FC<{ company: Company; onClick: () => void; onEnquire: () => void; saved?: boolean; onToggleSave?: () => void }> = ({ company, onClick, onEnquire, saved, onToggleSave }) => {
