@@ -71,6 +71,7 @@ export default function About({ aboutData }) {
                         width: 'auto',
                         margin: '0 auto'
                       }}
+                      onError={(e) => { e.currentTarget.src = "/images/about-office.jpg"; }}
                     />
                   </div>
                 </motion.div>

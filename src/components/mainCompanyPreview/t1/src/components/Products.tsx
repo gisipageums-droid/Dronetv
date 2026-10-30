@@ -166,6 +166,7 @@ export default function Products({ productData, publishedId }) {
                       src={product.image}
                       alt={product.title}
                       className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => { e.currentTarget.src = "/images/partner-placeholder.png"; }}
                     />
                   </div>
 

@@ -87,6 +87,7 @@ function BlogModal({ blog, onClose }: { blog: any; onClose: () => void }) {
             src={blog.image}
             className="w-full h-48 object-cover rounded-t-xl"
             alt={blog.title}
+            onError={(e) => { e.currentTarget.src = "/images/partner-placeholder.png"; }}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-ink/70 to-transparent p-4">
             <div className="flex justify-between items-center">

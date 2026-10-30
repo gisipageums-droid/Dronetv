@@ -95,6 +95,9 @@ export default function EditableTestimonials({
                           src={testimonial.image || (testimonial.gender === "male" ? maleAvatar : femaleAvatar)}
                           alt={testimonial.name}
                           className="w-full h-full object-cover scale-110"
+                          onError={(e) => {
+                            e.currentTarget.src = testimonial.gender === "male" ? maleAvatar : femaleAvatar;
+                          }}
                         />
                       </div>
                       <h3 className="font-semibold text-xl text-ink mb-2">
