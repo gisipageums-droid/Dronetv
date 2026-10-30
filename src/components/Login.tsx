@@ -64,7 +64,7 @@ export default function Login() {
     password: "",
   });
 
-  // Login with OTP (WhatsApp) — self-hosted dev only for now.
+  // Login with OTP (SMS via MSG91).
   const [loginMethod, setLoginMethod] = useState<"password" | "otp">("password");
   const [otpStep, setOtpStep] = useState<"phone" | "code">("phone");
   const [otpPhone, setOtpPhone] = useState<string>("");
