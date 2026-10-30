@@ -64,7 +64,7 @@ export default function Login() {
     password: "",
   });
 
-  // Login with OTP (SMS via MSG91).
+  // Login with OTP (WhatsApp).
   const [loginMethod, setLoginMethod] = useState<"password" | "otp">("password");
   const [otpStep, setOtpStep] = useState<"phone" | "code">("phone");
   const [otpPhone, setOtpPhone] = useState<string>("");
@@ -73,6 +73,10 @@ export default function Login() {
   const [otpVerifying, setOtpVerifying] = useState<boolean>(false);
   const [otpResendCooldown, setOtpResendCooldown] = useState<number>(0);
   const [otpAccounts, setOtpAccounts] = useState<OtpAccountOption[]>([]);
+  // Shown inline under the phone field, not a separate step - explicit user
+  // request to surface "no account for this number" before sending an OTP,
+  // instead of the privacy-safe generic message /forgot-password uses.
+  const [otpError, setOtpError] = useState<string>("");
   const [signUpData, setSignUpData] = useState<SignUpData>({
     email: "",
     fullName: "",
@@ -130,14 +134,20 @@ export default function Login() {
     setOtpCode("");
     setOtpAccounts([]);
     setOtpResendCooldown(0);
+    setOtpError("");
   };
 
   const handleSendOtp = async (e?: React.SyntheticEvent) => {
     e?.preventDefault();
     if (!otpPhone.trim()) return;
+    setOtpError("");
     setOtpSending(true);
     try {
       const data = await authService.requestLoginOtp(otpPhone.trim());
+      if (!data.found) {
+        setOtpError(data.message || "No account found for this number");
+        return;
+      }
       toast.success(data.message || "OTP sent");
       setOtpStep("code");
       setOtpResendCooldown(30);
@@ -364,11 +374,14 @@ export default function Login() {
                         id="otpPhone"
                         name="otpPhone"
                         value={otpPhone}
-                        onChange={(e) => setOtpPhone(e.target.value)}
+                        onChange={(e) => { setOtpPhone(e.target.value); setOtpError(""); }}
                         className="w-full p-2 border rounded border-ink-light"
                         placeholder="Enter your registered phone number"
                         required
                       />
+                      {otpError && (
+                        <p className="mt-1 text-xs text-status-error">{otpError}</p>
+                      )}
                     </div>
                     <button
                       type="submit"

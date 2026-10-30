@@ -260,7 +260,7 @@ export interface OtpAccountsChoice {
 
 // Login with OTP — self-hosted only (no Lambda equivalent exists), dev-only
 // until the Meta WhatsApp Authentication template is live on prod too.
-export async function requestLoginOtp(phone: string): Promise<{ message: string }> {
+export async function requestLoginOtp(phone: string): Promise<{ message: string; found: boolean }> {
   if (!AUTH_API) throw new Error('Login with OTP is not available yet');
   return post('/otp/request', { phone });
 }
