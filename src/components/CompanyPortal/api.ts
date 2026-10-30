@@ -1,4 +1,5 @@
 import { COMPANY_API, LEADS_API, AUTH_API, PAYMENT_API, MEDIA_API, LAMBDA } from "../../lib/apiConfig";
+import { compressImage } from "../../lib/compressImage";
 
 export function authHeaders(): Record<string, string> {
   const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
@@ -85,16 +86,22 @@ export async function saveCompanyContent(userId: string, publishedId: string, we
 }
 
 export async function uploadCompanyFile(userId: string, fieldName: string, file: File): Promise<string> {
+  // Downscale/recompress before it ever leaves the browser - this is the
+  // logo/photo re-upload path a logged-in company uses to edit their
+  // listing, and the most likely source of a real 11.6MB logo found in
+  // production (displayed at ~112px). No-ops on files already small or on
+  // types it can't safely re-encode (PDFs, SVGs, GIFs).
+  const uploadFile = await compressImage(file);
   const base = COMPANY_API || LAMBDA.company;
   const presignRes = await fetch(`${base}/upload-file`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, fieldName, filename: file.name, contentType: file.type || "application/octet-stream" }),
+    body: JSON.stringify({ userId, fieldName, filename: uploadFile.name, contentType: uploadFile.type || "application/octet-stream" }),
   });
   const presignData = await presignRes.json();
   if (!presignRes.ok || !presignData.success) throw new Error(presignData.error || "Failed to get upload URL");
   const { uploadUrl, imageUrl } = presignData;
-  await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type || "application/octet-stream" }, body: file });
+  await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": uploadFile.type || "application/octet-stream" }, body: uploadFile });
   return imageUrl;
 }
 

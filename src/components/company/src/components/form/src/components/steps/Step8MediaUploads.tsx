@@ -722,6 +722,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import { compressImage } from "../../../../../../../../lib/compressImage";
 import { FormStep } from "../FormStep";
 import { FormInput } from "../FormInput";
 import { StepProps } from "../../types/form";
@@ -767,13 +768,21 @@ const uploadSingleFile = async (
   userId: string
 ): Promise<any> => {
   try {
+    // Downscale/recompress before it ever leaves the browser - a multi-MB
+    // phone photo (or an unresized logo - a real one in production was
+    // 11.6MB, shown at ~112px) otherwise travels the wire and sits in
+    // storage at full size forever, slowing down every page that renders
+    // it. No-ops on files already small or on types it can't safely
+    // re-encode (PDFs, SVGs, GIFs).
+    const uploadFile = await compressImage(file);
+
     const presignRes = await axios.post(
       FILE_UPLOAD_API_URL,
       {
         userId,
         fieldName,
-        filename: file.name,
-        contentType: file.type || "application/octet-stream",
+        filename: uploadFile.name,
+        contentType: uploadFile.type || "application/octet-stream",
       },
       { headers: { "Content-Type": "application/json" }, timeout: 30000 }
     );
@@ -784,18 +793,18 @@ const uploadSingleFile = async (
 
     const { uploadUrl, imageUrl, metadata } = presignRes.data;
 
-    await axios.put(uploadUrl, file, {
-      headers: { "Content-Type": file.type || "application/octet-stream" },
+    await axios.put(uploadUrl, uploadFile, {
+      headers: { "Content-Type": uploadFile.type || "application/octet-stream" },
       timeout: 300000, // 5 minutes — direct-to-S3, no gateway timeout to race against
     });
 
     return {
-      fileName: metadata?.fileName || file.name,
-      contentType: metadata?.contentType || file.type,
+      fileName: metadata?.fileName || uploadFile.name,
+      contentType: metadata?.contentType || uploadFile.type,
       imageUrl,
       s3Url: metadata?.s3Url || imageUrl,
-      fileSize: file.size,
-      sizeMB: Math.round((file.size / (1024 * 1024)) * 100) / 100,
+      fileSize: uploadFile.size,
+      sizeMB: Math.round((uploadFile.size / (1024 * 1024)) * 100) / 100,
       uploadedAt: metadata?.uploadedAt || Date.now(),
       fieldName,
       metadata: metadata || {},

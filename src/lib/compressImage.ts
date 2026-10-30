@@ -1,14 +1,17 @@
 // Client-side image downscale + recompress, run right before an upload so a
-// multi-MB phone photo doesn't have to travel the wire at full size. A typical
-// 12MP JPEG (~6MB) comes out around 300-500KB at 1920px/0.82 quality — roughly
-// a 10x smaller PUT with no visible quality loss at the sizes these images are
-// actually displayed (portfolio cards, profile photos, hero images).
+// multi-MB phone photo (or a multi-MB logo — a real one found in production
+// was 11.6MB, displayed at ~112px) never reaches storage at full size. A
+// typical 12MP JPEG (~6MB) comes out around 150-300KB at 1920px/WebP 0.85 —
+// WebP beats JPEG at the same visual quality for photos, and unlike JPEG it
+// also keeps transparency, so logos/graphics no longer need a separate PNG
+// branch to avoid losing it.
 //
 // Only touches raster images we can safely re-encode. PDFs, videos, SVGs and
 // GIFs (animation would be lost) pass straight through untouched.
 
 const MAX_DIMENSION = 1920;
-const QUALITY = 0.82;
+const WEBP_QUALITY = 0.85;
+const JPEG_QUALITY = 0.82; // fallback path only, if this browser can't encode WebP
 const SKIP_BELOW_BYTES = 200 * 1024; // already small — not worth the work
 
 function canReencode(file: File): boolean {
@@ -25,6 +28,19 @@ function loadImage(url: string): Promise<HTMLImageElement> {
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error("Could not decode image"));
     img.src = url;
+  });
+}
+
+let webpSupported: boolean | null = null;
+function supportsWebpEncoding(): Promise<boolean> {
+  if (webpSupported !== null) return Promise.resolve(webpSupported);
+  return new Promise((resolve) => {
+    const c = document.createElement("canvas");
+    c.width = c.height = 1;
+    c.toBlob((blob) => {
+      webpSupported = !!blob && blob.type === "image/webp";
+      resolve(webpSupported);
+    }, "image/webp");
   });
 }
 
@@ -45,16 +61,20 @@ export async function compressImage(file: File): Promise<File> {
     if (!ctx) return file;
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-    // PNGs may carry transparency — keep them as PNG (canvas re-encode still
-    // strips metadata and the downscale alone is the win). Everything else
-    // goes out as JPEG.
-    const outType = file.type === "image/png" ? "image/png" : "image/jpeg";
+    // WebP first — smaller than both JPEG and PNG at equal visual quality,
+    // and (unlike JPEG) keeps transparency, so it works for logos too.
+    // Falls back to the old PNG/JPEG behaviour only on a browser that can't
+    // encode WebP (effectively none still in use, but cheap to guard).
+    const useWebp = await supportsWebpEncoding();
+    const outType = useWebp ? "image/webp" : (file.type === "image/png" ? "image/png" : "image/jpeg");
+    const quality = outType === "image/png" ? undefined : (outType === "image/webp" ? WEBP_QUALITY : JPEG_QUALITY);
     const blob: Blob | null = await new Promise((resolve) =>
-      canvas.toBlob(resolve, outType, outType === "image/jpeg" ? QUALITY : undefined)
+      canvas.toBlob(resolve, outType, quality)
     );
     if (!blob || blob.size >= file.size) return file;
 
-    const newName = file.name.replace(/\.(jpe?g|png|webp)$/i, outType === "image/png" ? ".png" : ".jpg");
+    const ext = outType === "image/webp" ? ".webp" : outType === "image/png" ? ".png" : ".jpg";
+    const newName = file.name.replace(/\.(jpe?g|png|webp)$/i, ext);
     return new File([blob], newName, { type: outType, lastModified: Date.now() });
   } catch {
     return file;

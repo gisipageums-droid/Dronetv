@@ -10,13 +10,15 @@ import BulkGalleryUpload from './BulkGalleryUpload';
 import ResizeGalleryPhotos from './ResizeGalleryPhotos';
 import { fetchGalleryEvents, type GalleryEvent } from '../../../lib/galleryEvent';
 import { makeShareCardUrl, refreshShareCard } from '../../../lib/shareCard';
+import { compressImage } from '../../../lib/compressImage';
 
 // The media service only handles content CRUD, not file uploads - there's no
 // presign route on it. Reuse the company service's public /upload-file
 // presign endpoint instead (same one the Company Portal already uploads
 // through successfully) rather than the broken media-service call this used
 // to make.
-async function uploadContentImage(file: File): Promise<string> {
+async function uploadContentImage(rawFile: File): Promise<string> {
+  const file = await compressImage(rawFile);
   const base = COMPANY_API || LAMBDA.company;
   const presignRes = await fetch(`${base}/upload-file`, {
     method: 'POST',
